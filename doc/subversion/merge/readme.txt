@@ -1,5 +1,7 @@
 目前是直接翻译xml文件，很难同步，需要修改为使用xml2po方式。
 
+en: r2517   zh: 2788
+
 xsltproc --nonet --xinclude --output en.xml profile.xsl src/en/book.xml
 
 xsltproc --nonet --xinclude --output zh.xml profile.xsl src/zh/book.xml
