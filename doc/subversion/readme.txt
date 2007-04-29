@@ -11,11 +11,14 @@
     *) 生成英文 pdf  输出格式：ant pdf.en
 
 依赖：
-    *) python 2.4+
-    *) python-libxml2 2.6.27+
-    *) xsltproc 1.1.20+
-    *) gettext 0.16+
-    *) jdk 1.4.2+
+    *) python 2.4+              : http://www.python.org/windows/
+    *) python-libxml2 2.6.27+   : http://users.skynet.be/sbi/libxml-python/
+    *) xsltproc 1.1.20+         : http://www.zlatkovic.com/libxml.en.html
+    *) gettext 0.16+            : http://code.google.com/p/i18n-zh/downloads/list
+    *) jdk 1.4.2+               : http://java.sun.com/javase/downloads/
+    *) xml2po 0.10.3            : 已经包含在 svn 仓库中。http://svn.gnome.org/viewcvs/
+    
+    PS：以上只给出了其 Windows 系统二进制包的下载地址。linux 系统已经包含在发布各种发布版本中。
 
 计划：
     *) 增加多语言支持
