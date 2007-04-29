@@ -18,7 +18,7 @@
     *) jdk 1.4.2+               : http://java.sun.com/javase/downloads/
     *) xml2po 0.10.3            : 已经包含在 svn 仓库中。http://svn.gnome.org/viewcvs/
     
-    PS：以上只给出了其 Windows 系统二进制包的下载地址。linux 系统已经包含在发布各种发布版本中。
+    PS：以上只给出了其 Windows 系统二进制包的下载地址。各种 linux 发布版本中已经包含这些软件。
 
 计划：
     *) 增加多语言支持
