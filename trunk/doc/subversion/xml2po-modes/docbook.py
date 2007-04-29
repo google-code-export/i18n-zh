@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2004 Danilo Segan <danilo@kvota.net>.
+# Copyright (c) 2004, 2005, 2006 Danilo Segan <danilo@gnome.org>.
 #
 # This file is part of xml2po.
 #
@@ -47,9 +47,9 @@ class docbookXmlMode:
     def __init__(self):
         self.lists = ['itemizedlist', 'orderedlist', 'variablelist',
                       'segmentedlist', 'simplelist', 'calloutlist', 'varlistentry' ]
-        self.objects = [ 'table', 'figure', 'textobject', 'imageobject', 'mediaobject',
+        self.objects = [ 'figure', 'textobject', 'imageobject', 'mediaobject',
                          'screenshot' ]
-        
+
     def getIgnoredTags(self):
         "Returns array of tags to be ignored."
         return  self.objects + self.lists
@@ -73,21 +73,17 @@ class docbookXmlMode:
             'userinput'
             ]
 
+    def getTreatedAttributes(self):
+        "Returns array of tag attributes which content is to be translated"
+        return []
+
     def getStringForTranslators(self):
         """Returns string which will be used to credit translators."""
         return "translator-credits"
 
     def getCommentForTranslators(self):
         """Returns a comment to be added next to string for crediting translators."""
-        return """Put one translator per line, in the form of NAME <EMAIL>."""
-
-    def getStringForTranslation(self):
-        """Returns translation of 'translation'."""
-        return "translator-translation"
-
-    def getCommentForTranslation(self):
-        """Returns a string that explains how 'translation' is to be translated."""
-        return """Place the translation of 'translation' here."""
+        return """Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2."""
 
     def _find_articleinfo(self, node):
         if node.name == 'articleinfo' or node.name == 'bookinfo':
@@ -150,10 +146,10 @@ class docbookXmlMode:
         root = doc.getRootElement()
         self._output_images(root,msg)
 
-    def postProcessXmlTranslation(self, doc, language, translators, translation):
+    def postProcessXmlTranslation(self, doc, language, translators):
         """Sets a language and translators in "doc" tree.
         
-        "translators" is a string consisted of "Name <email>" pairs
+        "translators" is a string consisted of "Name <email>, years" pairs
         of each translator, separated by newlines."""
 
         root = doc.getRootElement()
@@ -167,27 +163,26 @@ class docbookXmlMode:
         
         if translators == self.getStringForTranslators():
             return
-        else:
+        elif translators:
             # Now, lets find 'articleinfo' (it can be something else, but this goes along with 'article')
             ai = self._find_articleinfo(root)
             if not ai:
                 return
 
             # Now, lets do one translator at a time
-            transgroup = libxml2.newNode("authorgroup")
             lines = translators.split("\n")
             for line in lines:
                 line = line.strip()
-                match = re.match(r"^([^<,]+)\s*(?:<([^>,]+)>)?$", line)
+                match = re.match(r"^([^<,]+)\s*(?:<([^>,]+)>)?,\s*(.*)$", line)
                 if match:
                     last = self._find_lastcopyright(ai)
-                    copy = libxml2.newNode("othercredit")
+                    copy = libxml2.newNode("copyright")
                     if last:
                         copy = last.addNextSibling(copy)
                     else:
-                        transgroup.addChild(copy)
-                        ai.addChild(transgroup)
-                    copy.newChild(None, "contrib", translation.encode('utf-8'))
+                        ai.addChild(copy)
+                    if match.group(3):
+                        copy.newChild(None, "year", match.group(3).encode('utf-8'))
                     if match.group(1) and match.group(2):
                         holder = match.group(1)+"(%s)" % match.group(2)
                     elif match.group(1):
@@ -196,7 +191,7 @@ class docbookXmlMode:
                         holder = match.group(2)
                     else:
                         holder = "???"
-                    copy.newChild(None, "othername", holder.encode('utf-8'))
+                    copy.newChild(None, "holder", holder.encode('utf-8'))
 
 # Perform some tests when ran standalone
 if __name__ == '__main__':
@@ -207,7 +202,4 @@ if __name__ == '__main__':
 
     print "Credits from string: '%s'" % test.getStringForTranslators()
     print "Explanation for credits:\n\t'%s'" % test.getCommentForTranslators()
-    
-    print "String for translation: '%s'" % test.getStringForTranslation()
-    print "Explanation for translation:\n\t'%s'" % test.getCommentForTranslation()
     
