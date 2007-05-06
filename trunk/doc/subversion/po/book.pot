@@ -1934,4 +1934,1525 @@ msgid "\n$ cat sandwich.txt\nTop piece of bread\nMayonnaise\nLettuce\nTomato\nPr
 msgstr ""
 
 #: ./build/en/book.xml:3273(para) 
-msgid "The strings of less-than signs, equal signs, and greater-than signs are conflict markers, and
+msgid "The strings of less-than signs, equal signs, and greater-than signs are conflict markers, and are not part of the actual data in conflict. You generally want to ensure that those are removed from the file before your next commit. The text between the first two sets of markers is composed of the changes you made in the conflicting area:"
+msgstr ""
+
+#: ./build/en/book.xml:3281(screen) 
+#, no-wrap
+msgid "\n&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine\nSalami\nMortadella\nProsciutto\n=======\n"
+msgstr ""
+
+#: ./build/en/book.xml:3289(para) 
+msgid "The text between the second and third sets of conflict markers is the text from Sally's commit:"
+msgstr ""
+
+#: ./build/en/book.xml:3292(screen) 
+#, no-wrap
+msgid "\n=======\nSauerkraut\nGrilled Chicken\n&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2\n"
+msgstr ""
+
+#: ./build/en/book.xml:3304(para) 
+msgid "And if you ask them for it, they may very well ride you out of town on a rail."
+msgstr ""
+
+#: ./build/en/book.xml:3299(para) 
+msgid "Usually you won't want to just delete the conflict markers and Sally's changes—she's going to be awfully surprised when the sandwich arrives and it's not what she wanted. So this is where you pick up the phone or walk across the office and explain to Sally that you can't get sauerkraut from an Italian deli.<placeholder-1/> Once you've agreed on the changes you will check in, edit your file and remove the conflict markers."
+msgstr ""
+
+#: ./build/en/book.xml:3310(screen) 
+#, no-wrap
+msgid "\nTop piece of bread\nMayonnaise\nLettuce\nTomato\nProvolone\nSalami\nMortadella\nProsciutto\nCreole Mustard\nBottom piece of bread\n"
+msgstr ""
+
+#: ./build/en/book.xml:3323(para) 
+msgid "Now run <command moreinfo=\"none\">svn resolved</command>, and you're ready to commit your changes:"
+msgstr ""
+
+#: ./build/en/book.xml:3326(screen) 
+#, no-wrap
+msgid "\n$ svn resolved sandwich.txt\n$ svn commit -m \"Go ahead and use my sandwich, discarding Sally's edits.\"\n"
+msgstr ""
+
+#: ./build/en/book.xml:3331(para) 
+msgid "Note that <command moreinfo=\"none\">svn resolved</command>, unlike most of the other commands we deal with in this chapter, requires an argument. In any case, you want to be careful and only run <command moreinfo=\"none\">svn resolved</command> when you're certain that you've fixed the conflict in your file—once the temporary files are removed, Subversion will let you commit the file even if it still contains conflict markers."
+msgstr ""
+
+#: ./build/en/book.xml:3339(para) 
+msgid "If you ever get confused while editing the conflicted file, you can always consult the three files that Subversion creates for you in your working copy—including your file as it was before you updated. You can even use a third-party interactive merging tool to examine those three files."
+msgstr ""
+
+#: ./build/en/book.xml:3350(title) 
+msgid "Copying a File Onto Your Working File"
+msgstr ""
+
+#: ./build/en/book.xml:3352(para) 
+msgid "If you get a conflict and decide that you want to throw out your changes, you can merely copy one of the temporary files created by Subversion over the file in your working copy:"
+msgstr ""
+
+#: ./build/en/book.xml:3357(screen) 
+#, no-wrap
+msgid "\n$ svn update\nC  sandwich.txt\nUpdated to revision 2.\n$ ls sandwich.*\nsandwich.txt  sandwich.txt.mine  sandwich.txt.r2  sandwich.txt.r1\n$ cp sandwich.txt.r2 sandwich.txt\n$ svn resolved sandwich.txt\n"
+msgstr ""
+
+#: ./build/en/book.xml:3371(title) 
+msgid "Punting: Using <command moreinfo=\"none\">svn revert</command>"
+msgstr ""
+
+#: ./build/en/book.xml:3373(para) 
+msgid "If you get a conflict, and upon examination decide that you want to throw out your changes and start your edits again, just revert your changes:"
+msgstr ""
+
+#: ./build/en/book.xml:3377(screen) 
+#, no-wrap
+msgid "\n$ svn revert sandwich.txt\nReverted 'sandwich.txt'\n$ ls sandwich.*\nsandwich.txt\n"
+msgstr ""
+
+#: ./build/en/book.xml:3384(para) 
+msgid "Note that when you revert a conflicted file, you don't have to run <command moreinfo=\"none\">svn resolved</command>."
+msgstr ""
+
+#: ./build/en/book.xml:3393(title) 
+msgid "Commit Your Changes"
+msgstr ""
+
+#: ./build/en/book.xml:3395(para) 
+msgid "Finally! Your edits are finished, you've merged all changes from the server, and you're ready to commit your changes to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:3399(para) 
+msgid "The <command moreinfo=\"none\">svn commit</command> command sends all of your changes to the repository. When you commit a change, you need to supply a <firstterm>log message</firstterm>, describing your change. Your log message will be attached to the new revision you create. If your log message is brief, you may wish to supply it on the command line using the <option>--message</option> (or <option>-m</option>) switch:"
+msgstr ""
+
+#: ./build/en/book.xml:3408(screen) 
+#, no-wrap
+msgid "\n$ svn commit -m \"Corrected number of cheese slices.\"\nSending        sandwich.txt\nTransmitting file data .\nCommitted revision 3.\n"
+msgstr ""
+
+#: ./build/en/book.xml:3415(para) 
+msgid "However, if you've been composing your log message as you work, you may want to tell Subversion to get the message from a file by passing the filename with the <option>--file (-F)</option> option:"
+msgstr ""
+
+#: ./build/en/book.xml:3420(screen) 
+#, no-wrap
+msgid "\n$ svn commit -F logmsg\nSending        sandwich.txt\nTransmitting file data .\nCommitted revision 4.\n"
+msgstr ""
+
+#: ./build/en/book.xml:3427(para) 
+msgid "If you fail to specify either the <option>--message</option> or <option>--file</option> switch, then Subversion will automatically launch your favorite editor (see the <literal moreinfo=\"none\">editor-cmd</literal> section in <xref linkend=\"svn.advanced.confarea.opts.config\"/>) for composing a log message."
+msgstr ""
+
+#: ./build/en/book.xml:3436(para) 
+msgid "If you're in your editor writing a commit message and decide that you want to cancel your commit, you can just quit your editor without saving changes. If you've already saved your commit message, simply delete the text, save again, then quit."
+msgstr ""
+
+#: ./build/en/book.xml:3442(screen) 
+#, no-wrap
+msgid "\n$ svn commit\nWaiting for Emacs...Done\n\nLog message unchanged or not specified\na)bort, c)ontinue, e)dit\na\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3453(para) 
+msgid "The repository doesn't know or care if your changes make any sense as a whole; it only checks to make sure that nobody else has changed any of the same files that you did when you weren't looking. If somebody <emphasis>has</emphasis> done that, the entire commit will fail with a message informing you that one or more of your files is out-of-date:"
+msgstr ""
+
+#: ./build/en/book.xml:3460(screen) 
+#, no-wrap
+msgid "\n$ svn commit -m \"Add another rule\"\nSending        rules.txt\nsvn: Commit failed (details follow):\nsvn: Your file or directory 'sandwich.txt' is probably out-of-date\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:3468(para) 
+msgid "At this point, you need to run <command moreinfo=\"none\">svn update</command>, deal with any merges or conflicts that result, and attempt your commit again."
+msgstr ""
+
+#: ./build/en/book.xml:3472(para) 
+msgid "That covers the basic work cycle for using Subversion. There are many other features in Subversion that you can use to manage your repository and working copy, but most of your day-to-day use of Subversion will involve only the commands that we've discussed so far in this chapter. We will, however, cover a few more commands that you'll use just fairly often."
+msgstr ""
+
+#: ./build/en/book.xml:3488(title) 
+msgid "Examining History"
+msgstr ""
+
+#: ./build/en/book.xml:3490(para) 
+msgid "Your Subversion repository is like a time machine. It keeps a record of every change ever committed, and allows you to explore this history by examining previous versions of files and directories as well as the metadata that accompanies them. With a single Subversion command, you can check out the repository (or restore an existing working copy) exactly as it was at any date or revision number in the past. However, sometimes you just want to <emphasis>peer into</emphasis> the past instead of <emphasis>going into</emphasis> the past."
+msgstr ""
+
+#: ./build/en/book.xml:3500(para) 
+msgid "There are several commands that can provide you with historical data from the repository:"
+msgstr ""
+
+#: ./build/en/book.xml:3506(command) ./build/en/book.xml:19948(refname) 
+msgid "svn log"
+msgstr ""
+
+#: ./build/en/book.xml:3508(para) 
+msgid "Shows you broad information: log messages with date and author information attached to revisions, and which paths changed in each revision."
+msgstr ""
+
+#: ./build/en/book.xml:3517(para) 
+msgid "Shows line-level details of a particular change."
+msgstr ""
+
+#: ./build/en/book.xml:3522(command) ./build/en/book.xml:3811(command) ./build/en/book.xml:18329(refname) 
+msgid "svn cat"
+msgstr ""
+
+#: ./build/en/book.xml:3524(para) 
+msgid "This is used to retrieve any file as it existed in a particular revision number and display it on your screen."
+msgstr ""
+
+#: ./build/en/book.xml:3531(command) ./build/en/book.xml:3839(command) ./build/en/book.xml:19736(refname) 
+msgid "svn list"
+msgstr ""
+
+#: ./build/en/book.xml:3533(para) 
+msgid "Displays the files in a directory for any given revision."
+msgstr ""
+
+#: ./build/en/book.xml:3543(title) 
+msgid "Generating a list of historical changes"
+msgstr ""
+
+#: ./build/en/book.xml:3545(para) 
+msgid "To find information about the history of a file or directory, use the <command moreinfo=\"none\">svn log</command> command. <command moreinfo=\"none\">svn log</command> will provide you with a record of who made changes to a file or directory, at what revision it changed, the time and date of that revision, and, if it was provided, the log message that accompanied the commit."
+msgstr ""
+
+#: ./build/en/book.xml:3553(screen) 
+#, no-wrap
+msgid "\n$ svn log\n------------------------------------------------------------------------\nr3 | sally | Mon, 15 Jul 2002 18:03:46 -0500 | 1 line\n\nAdded include lines and corrected # of cheese slices.\n------------------------------------------------------------------------\nr2 | harry | Mon, 15 Jul 2002 17:47:57 -0500 | 1 line\n\nAdded main() methods.\n------------------------------------------------------------------------\nr1 | sally | Mon, 15 Jul 2002 17:40:08 -0500 | 1 line\n\nInitial import\n------------------------------------------------------------------------\n"
+msgstr ""
+
+#: ./build/en/book.xml:3570(para) 
+msgid "Note that the log messages are printed in <emphasis>reverse chronological order</emphasis> by default. If you wish to see a different range of revisions in a particular order, or just a single revision, pass the <option>--revision (-r)</option> option:"
+msgstr ""
+
+#: ./build/en/book.xml:3576(screen) 
+#, no-wrap
+msgid "\n$ svn log -r 5:19    # shows logs 5 through 19 in chronological order\n\n$ svn log -r 19:5    # shows logs 5 through 19 in reverse order\n\n$ svn log -r 8       # shows log for revision 8\n"
+msgstr ""
+
+#: ./build/en/book.xml:3584(para) 
+msgid "You can also examine the log history of a single file or directory. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:3587(screen) 
+#, no-wrap
+msgid "\n$ svn log foo.c\n…\n$ svn log http://foo.com/svn/trunk/code/foo.c\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:3594(para) 
+msgid "These will display log messages <emphasis>only</emphasis> for those revisions in which the working file (or URL) changed."
+msgstr ""
+
+#: ./build/en/book.xml:3598(para) 
+msgid "If you want even more information about a file or directory, <command moreinfo=\"none\">svn log</command> also takes a <option>--verbose (-v)</option> option. Because Subversion allows you to move and copy files and directories, it is important to be able to track path changes in the filesystem, so in verbose mode, <command moreinfo=\"none\">svn log</command> will include a list of changed paths in a revision in its output:"
+msgstr ""
+
+#: ./build/en/book.xml:3606(screen) 
+#, no-wrap
+msgid "\n$ svn log -r 8 -v\n------------------------------------------------------------------------\nr8 | sally | 2002-07-14 08:15:29 -0500 | 1 line\nChanged paths:\nM /trunk/code/foo.c\nM /trunk/code/bar.h\nA /trunk/code/doc/README\n\nFrozzled the sub-space winch.\n\n------------------------------------------------------------------------\n"
+msgstr ""
+
+#: ./build/en/book.xml:3620(para) 
+msgid "<command moreinfo=\"none\">svn log</command> also takes a <option>--quiet</option> (<option>-q</option>) switch, which suppresses the body of the log message. When combined with <option>--verbose</option>, it gives just the names of the changed files."
+msgstr ""
+
+#: ./build/en/book.xml:3627(title) 
+msgid "Why Does <command moreinfo=\"none\">svn log</command> Give Me an Empty Response?"
+msgstr ""
+
+#: ./build/en/book.xml:3630(para) 
+msgid "After working with Subversion for a bit, most users will come across something like this:"
+msgstr ""
+
+#: ./build/en/book.xml:3633(screen) 
+#, no-wrap
+msgid "\n$ svn log -r 2\n------------------------------------------------------------------------\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3639(para) 
+msgid "At first glance, this seems like an error. But recall that while revisions are repository-wide, <command moreinfo=\"none\">svn log</command> operates on a path in the repository. If you supply no path, Subversion uses the current working directory as the default target. As a result, if you're operating in a subdirectory of your working copy and attempt to see the log of a revision in which neither that directory nor any of its children was changed, Subversion will show you an empty log. If you want to see what changed in that revision, try pointing <command moreinfo=\"none\">svn log</command> directly at the top-most URL of your repository, as in <command moreinfo=\"none\">svn log -r 2 http://svn.collab.net/repos/svn</command>."
+msgstr ""
+
+#: ./build/en/book.xml:3658(title) 
+msgid "Examining the details of historical changes"
+msgstr ""
+
+#: ./build/en/book.xml:3660(para) 
+msgid "We've already seen <command moreinfo=\"none\">svn diff</command> before—it displays file differences in unified diff format; it was used to show the local modifications made to our working copy before committing to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:3665(para) 
+msgid "In fact, it turns out that there are <emphasis>three</emphasis> distinct uses of <command moreinfo=\"none\">svn diff</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:3672(para) 
+msgid "Examine local changes"
+msgstr ""
+
+#: ./build/en/book.xml:3676(para) 
+msgid "Compare your working copy to the repository"
+msgstr ""
+
+#: ./build/en/book.xml:3680(para) 
+msgid "Compare repository to repository"
+msgstr ""
+
+#: ./build/en/book.xml:3687(title) 
+msgid "Examining Local Changes"
+msgstr ""
+
+#: ./build/en/book.xml:3689(para) 
+msgid "As we've seen, invoking <command moreinfo=\"none\">svn diff</command> with no switches will compare your working files to the cached <quote>pristine</quote> copies in the <filename moreinfo=\"none\">.svn</filename> area:"
+msgstr ""
+
+#: ./build/en/book.xml:3694(screen) 
+#, no-wrap
+msgid "\n$ svn diff\nIndex: rules.txt\n===================================================================\n--- rules.txt\t(revision 3)\n+++ rules.txt\t(working copy)\n@@ -1,4 +1,5 @@\n Be kind to others\n Freedom = Responsibility\n Everything in moderation\n-Chew with your mouth open\n+Chew with your mouth closed\n+Listen when others are speaking\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3714(title) 
+msgid "Comparing Working Copy to Repository"
+msgstr ""
+
+#: ./build/en/book.xml:3716(para) 
+msgid "If a single <option>--revision</option> (<option>-r</option>) number is passed, then your working copy is compared to the specified revision in the repository."
+msgstr ""
+
+#: ./build/en/book.xml:3721(screen) 
+#, no-wrap
+msgid "\n$ svn diff -r 3 rules.txt\nIndex: rules.txt\n===================================================================\n--- rules.txt\t(revision 3)\n+++ rules.txt\t(working copy)\n@@ -1,4 +1,5 @@\n Be kind to others\n Freedom = Responsibility\n Everything in moderation\n-Chew with your mouth open\n+Chew with your mouth closed\n+Listen when others are speaking\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3741(title) 
+msgid "Comparing Repository to Repository"
+msgstr ""
+
+#: ./build/en/book.xml:3743(para) 
+msgid "If two revision numbers, separated by a colon, are passed via <option>--revision (-r)</option>, then the two revisions are directly compared."
+msgstr ""
+
+#: ./build/en/book.xml:3747(screen) 
+#, no-wrap
+msgid "\n$ svn diff -r 2:3 rules.txt\nIndex: rules.txt\n===================================================================\n--- rules.txt\t(revision 2)\n+++ rules.txt\t(revision 3)\n@@ -1,4 +1,4 @@\n Be kind to others\n-Freedom = Chocolate Ice Cream\n+Freedom = Responsibility\n Everything in moderation\n Chew with your mouth open\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3762(para) 
+msgid "A more convenient way of comparing a revision to the previous revision is to use the <option>--change (-c)</option>:"
+msgstr ""
+
+#: ./build/en/book.xml:3766(screen) 
+#, no-wrap
+msgid "\n$ svn diff -c 3 rules.txt\nIndex: rules.txt\n===================================================================\n--- rules.txt\t(revision 2)\n+++ rules.txt\t(revision 3)\n@@ -1,4 +1,4 @@\n Be kind to others\n-Freedom = Chocolate Ice Cream\n+Freedom = Responsibility\n Everything in moderation\n Chew with your mouth open\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3781(para) 
+msgid "Not only can you use <command moreinfo=\"none\">svn diff</command> to compare files in your working copy to the repository, but if you supply a URL argument, you can examine the differences between items in the repository without even having a working copy. This is especially useful if you wish to inspect changes in a file when you don't have a working copy on your local machine:"
+msgstr ""
+
+#: ./build/en/book.xml:3789(screen) 
+#, no-wrap
+msgid "\n$ svn diff -c 5 http://svn.example.com/repos/example/trunk/text/rules.txt\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3801(title) 
+msgid "Browsing the repository"
+msgstr ""
+
+#: ./build/en/book.xml:3803(para) 
+msgid "Using <command moreinfo=\"none\">svn cat</command> and <command moreinfo=\"none\">svn list</command>, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one."
+msgstr ""
+
+#: ./build/en/book.xml:3814(para) 
+msgid "If you want to examine an earlier version of a file and not necessarily the differences between two files, you can use <command moreinfo=\"none\">svn cat</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:3818(screen) 
+#, no-wrap
+msgid "\n$ svn cat -r 2 rules.txt\nBe kind to others\nFreedom = Chocolate Ice Cream\nEverything in moderation\nChew with your mouth open\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3827(para) 
+msgid "You can also redirect the output directly into a file:"
+msgstr ""
+
+#: ./build/en/book.xml:3830(screen) 
+#, no-wrap
+msgid "\n$ svn cat -r 2 rules.txt &gt; rules.txt.v2\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:3841(para) 
+msgid "The <command moreinfo=\"none\">svn list</command> command shows you what files are in a repository directory without actually downloading the files to your local machine:"
+msgstr ""
+
+#: ./build/en/book.xml:3845(screen) 
+#, no-wrap
+msgid "\n$ svn list http://svn.collab.net/repos/svn\nREADME\nbranches/\nclients/\ntags/\ntrunk/\n"
+msgstr ""
+
+#: ./build/en/book.xml:3854(para) 
+msgid "If you want a more detailed listing, pass the <option>--verbose (-v)</option> flag to get output like this:"
+msgstr ""
+
+#: ./build/en/book.xml:3858(screen) 
+#, no-wrap
+msgid "\n$ svn list -v http://svn.collab.net/repos/svn\n  20620 harry            1084 Jul 13  2006 README\n  23339 harry                 Feb 04 01:40 branches/\n  21282 sally                 Aug 27 09:41 developer-resources/\n  23198 harry                 Jan 23 17:17 tags/\n  23351 sally                 Feb 05 13:26 trunk/\n"
+msgstr ""
+
+#: ./build/en/book.xml:3867(para) 
+msgid "The columns tell you the revision at which the file or directory was last modified, the user who modified it, the size if it is a file, the date it was last modified, and the item's name."
+msgstr ""
+
+#: ./build/en/book.xml:3878(title) 
+msgid "Fetching older repository snapshots"
+msgstr ""
+
+#: ./build/en/book.xml:3884(para) 
+msgid "See? We told you that Subversion was a time machine."
+msgstr ""
+
+#: ./build/en/book.xml:3880(para) 
+msgid "In addition to all of the above commands, you can use <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn checkout</command> with the <option>--revision</option> switch to take an entire working copy <quote>back in time</quote><placeholder-1/>:"
+msgstr ""
+
+#: ./build/en/book.xml:3887(screen) 
+#, no-wrap
+msgid "\n$ svn checkout -r 1729 # Checks out a new working copy at r1729\n…\n$ svn update -r 1729 # Updates an existing working copy to r1729\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:3895(para) 
+msgid "Many Subversion newcomers attempt to use the above <command moreinfo=\"none\">svn update</command> example to <quote>undo</quote> committed changes, but this won't work as you can't commit changes that you obtain from backdating a working copy if the changed files have newer revisions. See <xref linkend=\"svn.branchmerge.commonuses.resurrect\"/> for a description of how to <quote>undo</quote> a commit."
+msgstr ""
+
+#: ./build/en/book.xml:3903(para) 
+msgid "Lastly, if you're building a release and wish to bundle up your files from Subversion but don't want those pesky .svn directories in the way, then you can use svn export to create a local copy of all or part of your repository sans .svn directories. As with <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn checkout</command>, you can also pass the <option>--revision</option> switch to <command moreinfo=\"none\">svn export</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:3912(screen) 
+#, no-wrap
+msgid "\n$ svn export http://svn.example.com/svn/repos1 # Exports latest revision\n…\n$ svn export http://svn.example.com/svn/repos1 -r 1729\n# Exports revision r1729\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:3929(title) 
+msgid "Sometimes You Just Need to Cleanup"
+msgstr ""
+
+#: ./build/en/book.xml:3931(para) 
+msgid "When Subversion modifies your working copy (or any information within <filename moreinfo=\"none\">.svn</filename>), it tries to do so as safely as possible. Before changing the working copy, Subversion writes its intentions to a log file. Next it executes the commands in the log file to apply the requested change, holding a lock on the relevant part of the working copy while it works — to prevent other Subversion clients from accessing the working copy in mid-change. Finally, Subversion removes the log file. Architecturally, this is similar to a journaled filesystem. If a Subversion operation is interrupted (if the process is killed, or if the machine crashes, for example), the log files remain on disk. By re-executing the log files, Subversion can complete the previously started operation, and your working copy can get itself back into a consistent state."
+msgstr ""
+
+#: ./build/en/book.xml:3947(para) 
+msgid "And this is exactly what <command moreinfo=\"none\">svn cleanup</command> does: it searches your working copy and runs any leftover logs, removing working copy locks in the process. If Subversion ever tells you that some part of your working copy is <quote>locked</quote>, then this is the command that you should run. Also, <command moreinfo=\"none\">svn status</command> will display an <literal moreinfo=\"none\">L</literal> next to locked items:"
+msgstr ""
+
+#: ./build/en/book.xml:3955(screen) 
+#, no-wrap
+msgid "\n$ svn status\n  L    somedir\nM      somedir/foo.c\n\n$ svn cleanup\n$ svn status\nM      somedir/foo.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:3965(para) 
+msgid "Don't confuse these working copy locks with the ordinary locks that Subversion users create when using the <quote>lock-modify-unlock</quote> model of concurrent version control; see <xref linkend=\"svn.advanced.locking.meanings\"/> for clarification."
+msgstr ""
+
+#: ./build/en/book.xml:3980(para) 
+msgid "Now we've covered most of the Subversion client commands. Notable exceptions are those dealing with branching and merging (see <xref linkend=\"svn.branchmerge\"/>) and properties (see <xref linkend=\"svn.advanced.props\"/>). However, you may want to take a moment to skim through <xref linkend=\"svn.ref\"/> to get an idea of all the many different commands that Subversion has—and how you can use them to make your work easier."
+msgstr ""
+
+#: ./build/en/book.xml:4000(title) 
+msgid "Advanced Topics"
+msgstr ""
+
+#: ./build/en/book.xml:4002(para) 
+msgid "If you've been reading this book chapter by chapter, from start to finish, you should by now have acquired enough knowledge to use the Subversion client to perform the most common version control operations. You understand how to checkout a working copy from a Subversion repository. You are comfortable with submitting and receiving changes using the <command moreinfo=\"none\">svn commit</command> and <command moreinfo=\"none\">svn update</command> functions. You've probably even developed a reflex which causes you to run the <command moreinfo=\"none\">svn status</command> command almost unconsciously. For all intents and purposes, you are ready to use Subversion in a typical environment."
+msgstr ""
+
+#: ./build/en/book.xml:4014(para) 
+msgid "But the Subversion feature set doesn't stop at <quote>common version control operations</quote>. It has other bits of functionality that extend beyond just communicating file and directory changes to and from a central repository."
+msgstr ""
+
+#: ./build/en/book.xml:4019(para) 
+msgid "This chapter highlights some of Subversion's features that, while important, aren't part of the typical user's daily routine. It assumes that you are familiar with Subversion's basic file and directory versioning capabilities. If you aren't, you'll want to first read <xref linkend=\"svn.basic\"/> and <xref linkend=\"svn.tour\"/>. Once you've mastered those basics and consumed this chapter, you'll be a Subversion power-user!"
+msgstr ""
+
+#: ./build/en/book.xml:4031(title) 
+msgid "Revision Specifiers"
+msgstr ""
+
+#: ./build/en/book.xml:4033(para) 
+msgid "As you saw in <xref linkend=\"svn.basic.in-action.revs\"/>, revision numbers in Subversion are pretty straightforward—integers that keep getting larger as you commit more changes to your versioned data. Still, it doesn't take long before you can no longer remember exactly what happened in each and every revision. Fortunately, the typical Subversion workflow doesn't often demand that you supply arbitrary revisions to the Subversion operations you perform. For operations that <emphasis>do</emphasis> require a revision specifier, you generally supply a revision number that you saw in a commit email, in the output of some other Subversion operation, or in some other context that would yield meaning to that particular number."
+msgstr ""
+
+#: ./build/en/book.xml:4047(para) 
+msgid "But occasionally, you need to pinpoint a moment in time for which you don't already have a revision number memorized or handy. So besides the integer revision numbers, <command moreinfo=\"none\">svn</command> allows as input some additional forms of revision specifiers—revision keywords, and revision dates."
+msgstr ""
+
+#: ./build/en/book.xml:4055(para) 
+msgid "The various forms of Subversion revision specifiers can be mixed and matched when used to specify revision ranges. For example, you can use <option>-r <replaceable>REV1</replaceable>:<replaceable>REV2</replaceable></option> where <replaceable>REV1</replaceable> is a revision keyword and <replaceable>REV2</replaceable> is a revision number, or where <replaceable>REV1</replaceable> is a date and <replaceable>REV2</replaceable> is a revision keyword, and so on. The individual revision specifiers are independently evaluated, so you can put whatever you want on the opposite sides of that colon."
+msgstr ""
+
+#: ./build/en/book.xml:4070(title) 
+msgid "Revision Keywords"
+msgstr ""
+
+#: ./build/en/book.xml:4073(primary) ./build/en/book.xml:4180(primary) 
+msgid "revisions"
+msgstr ""
+
+#: ./build/en/book.xml:4074(secondary) 
+msgid "revision keywords"
+msgstr ""
+
+#: ./build/en/book.xml:4077(primary) ./build/en/book.xml:4098(term) 
+msgid "HEAD"
+msgstr ""
+
+#: ./build/en/book.xml:4080(primary) ./build/en/book.xml:4106(term) 
+msgid "BASE"
+msgstr ""
+
+#: ./build/en/book.xml:4083(primary) ./build/en/book.xml:4116(term) 
+msgid "COMMITTED"
+msgstr ""
+
+#: ./build/en/book.xml:4086(primary) ./build/en/book.xml:4124(term) 
+msgid "PREV"
+msgstr ""
+
+#: ./build/en/book.xml:4089(para) 
+msgid "The Subversion client understands a number of <firstterm>revision keywords</firstterm>. These keywords can be used instead of integer arguments to the <option>--revision (-r)</option> switch, and are resolved into specific revision numbers by Subversion:"
+msgstr ""
+
+#: ./build/en/book.xml:4100(para) 
+msgid "The latest (or <quote>youngest</quote>) revision in the repository."
+msgstr ""
+
+#: ./build/en/book.xml:4108(para) 
+msgid "The revision number of an item in a working copy. If the item has been locally modified, the <quote>BASE version</quote> refers to the way the item appears without those local modifications."
+msgstr ""
+
+#: ./build/en/book.xml:4118(para) 
+msgid "The most recent revision prior to, or equal to, <literal moreinfo=\"none\">BASE</literal>, in which an item changed."
+msgstr ""
+
+#: ./build/en/book.xml:4126(para) 
+msgid "The revision immediately <emphasis>before</emphasis> the last revision in which an item changed. Technically, this boils down to <literal moreinfo=\"none\">COMMITTED</literal>-1."
+msgstr ""
+
+#: ./build/en/book.xml:4135(para) 
+msgid "As can be derived from their descriptions, the <literal moreinfo=\"none\">PREV</literal>, <literal moreinfo=\"none\">BASE</literal>, and <literal moreinfo=\"none\">COMMITTED</literal> revision keywords are used only when referring to a working copy path—they don't apply to repository URLs. <literal moreinfo=\"none\">HEAD</literal>, on the other hand, can be used in conjuction with both of these path types."
+msgstr ""
+
+#: ./build/en/book.xml:4143(para) 
+msgid "Here are some examples of revision keywords in action:"
+msgstr ""
+
+#: ./build/en/book.xml:4146(screen) 
+#, no-wrap
+msgid "\n$ svn diff -r PREV:COMMITTED foo.c\n# shows the last change committed to foo.c\n\n$ svn log -r HEAD\n# shows log message for the latest repository commit\n\n$ svn diff -r HEAD\n# compares your working copy (with all of its local changes) to the\n# latest version of that tree in the repository\n\n$ svn diff -r BASE:HEAD foo.c\n# compares the unmodified version of foo.c with the latest version of\n# foo.c in the repository\n\n$ svn log -r BASE:HEAD\n# shows all commit logs for the current versioned directory since you\n# last updated\n\n$ svn update -r PREV foo.c\n# rewinds the last change on foo.c, decreasing foo.c's working revision\n\n$ svn diff -r BASE:14 foo.c\n# compares the unmodified version of foo.c with the way foo.c looked\n# in revision 14\n"
+msgstr ""
+
+#: ./build/en/book.xml:4177(title) 
+msgid "Revision Dates"
+msgstr ""
+
+#: ./build/en/book.xml:4181(secondary) 
+msgid "specified as dates"
+msgstr ""
+
+#: ./build/en/book.xml:4184(para) 
+msgid "Revision numbers reveal nothing about the world outside the version control system, but sometimes you need to correlate a moment in real time with a moment in version history. To facilitate this, the <option>--revision (-r)</option> option can also accept as input date specifiers wrapped in curly braces (<literal moreinfo=\"none\">{</literal> and <literal moreinfo=\"none\">}</literal>). Subversion accepts the standard ISO-8601 date and time formats, plus a few others. Here are some examples. (Remember to use quotes around any date that contains spaces.)"
+msgstr ""
+
+#: ./build/en/book.xml:4195(screen) 
+#, no-wrap
+msgid "\n$ svn checkout -r {2006-02-17}\n$ svn checkout -r {15:30}\n$ svn checkout -r {15:30:00.200000}\n$ svn checkout -r {\"2006-02-17 15:30\"}\n$ svn checkout -r {\"2006-02-17 15:30 +0230\"}\n$ svn checkout -r {2006-02-17T15:30}\n$ svn checkout -r {2006-02-17T15:30Z}\n$ svn checkout -r {2006-02-17T15:30-04:00}\n$ svn checkout -r {20060217T1530}\n$ svn checkout -r {20060217T1530Z}\n$ svn checkout -r {20060217T1530-0500}\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:4210(para) 
+msgid "When you specify a date, Subversion resolves that date to the most recent revision of the repository as of that date, and then continues to operate against that resolved revision number:"
+msgstr ""
+
+#: ./build/en/book.xml:4215(screen) 
+#, no-wrap
+msgid "\n$ svn log -r {2006-11-28}\n------------------------------------------------------------------------\nr12 | ira | 2006-11-27 12:31:51 -0600 (Mon, 27 Nov 2006) | 6 lines\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:4223(title) 
+msgid "Is Subversion a Day Early?"
+msgstr ""
+
+#: ./build/en/book.xml:4225(para) 
+msgid "If you specify a single date as a revision without specifying a time of day (for example <literal moreinfo=\"none\">2006-11-27</literal>), you may think that Subversion should give you the last revision that took place on the 27th of November. Instead, you'll get back a revision from the 26th, or even earlier. Remember that Subversion will find the <emphasis>most recent revision of the repository</emphasis> as of the date you give. If you give a date without a timestamp, like <literal moreinfo=\"none\">2006-11-27</literal>, Subversion assumes a time of 00:00:00, so looking for the most recent revision won't return anything on the day of the 27th."
+msgstr ""
+
+#: ./build/en/book.xml:4238(para) 
+msgid "If you want to include the 27th in your search, you can either specify the 27th with the time (<literal moreinfo=\"none\">{\"2006-11-27 23:59\"}</literal>), or just specify the next day (<literal moreinfo=\"none\">{2006-11-28}</literal>)."
+msgstr ""
+
+#: ./build/en/book.xml:4245(para) 
+msgid "You can also use a range of dates. Subversion will find all revisions between both dates, inclusive:"
+msgstr ""
+
+#: ./build/en/book.xml:4248(screen) 
+#, no-wrap
+msgid "\n$ svn log -r {2006-11-20}:{2006-11-29}\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:4254(para) 
+msgid "Since the timestamp of a revision is stored as an unversioned, modifiable property of the revision (see <xref linkend=\"svn.advanced.props\"/>, revision timestamps can be changed to represent complete falsifications of true chronology, or even removed altogether. This will wreak havoc on the internal date-to-revision conversion that Subversion performs."
+msgstr ""
+
+#: ./build/en/book.xml:4270(title) 
+msgid "Properties"
+msgstr ""
+
+#: ./build/en/book.xml:4272(primary) 
+msgid "properties"
+msgstr ""
+
+#: ./build/en/book.xml:4275(para) 
+msgid "We've already covered in detail how Subversion stores and retrieves various versions of files and directories in its repository. Whole chapters have been devoted to this most fundamental piece of functionality provided by the tool. And if the versioning support stopped there, Subversion would still be complete from a version control perspective."
+msgstr ""
+
+#: ./build/en/book.xml:4282(para) 
+msgid "But it doesn't stop there."
+msgstr ""
+
+#: ./build/en/book.xml:4284(para) 
+msgid "In addition to versioning your directories and files, Subversion provides interfaces for adding, modifying, and removing versioned metadata on each of your versioned directories and files. We refer to this metadata as <firstterm>properties</firstterm>, and they can be thought of as two-column tables that map property names to arbitrary values attached to each item in your working copy. Generally speaking, the names and values of the properties can be whatever you want them to be, with the constraint that the names must be human-readable text. And the best part about these properties is that they, too, are versioned, just like the textual contents of your files. You can modify, commit, and revert property changes as easily as you can file content changes. And the sending and receiving of property changes occurs as part of your typical commit and update operations—you don't have to change your basic processes to accomodate them."
+msgstr ""
+
+#: ./build/en/book.xml:4301(para) 
+msgid "Properties show up elsewhere in Subversion, too. Just as files and directories may have arbitrary property names and values attached to them, each revision as a whole may have arbitrary properties attached to it. The same constraints apply—human-readable names and anything-you-want binary values. The main difference is that revision properties are not versioned. In other words, if you change the value of, or delete, a revision property, there's no way within the scope of Subversion's functionality to recover the previous value."
+msgstr ""
+
+#: ./build/en/book.xml:4311(para) 
+msgid "Subversion has no particular policy regarding the use of properties. It asks only that you not use property names that begin with the prefix <literal moreinfo=\"none\">svn:</literal>. That's the namespace that it sets aside for its own use. And Subversion does, in fact, use properties, both the versioned and unversioned variety. Certain versioned properties have special meaning or effects when found on files and directories, or house a particular bit of information about the revisions on which they are found. Certain revision properties are automatically attached to revisions by Subversion's commit process, and carry information about the revision. Most of these properties are mentioned elsewhere in this or other chapters as part of the more general topics to which they are related. For an exhaustive list of Subversion's pre-defined properties, see <xref linkend=\"svn.ref.properties\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:4327(para) 
+msgid "In this section, we will examine the utility—both to users of Subversion, and to Subversion itself—of property support. You'll learn about the property-related <command moreinfo=\"none\">svn</command> subcommands, and how property modifications affect your normal Subversion workflow. Hopefully, you'll be convinced that Subversion properties can enhance your version control experience."
+msgstr ""
+
+#: ./build/en/book.xml:4337(title) 
+msgid "Why Properties?"
+msgstr ""
+
+#: ./build/en/book.xml:4339(para) 
+msgid "Just as Subversion uses properties to store extra information about the files, directories, and revisions that it contains, you might also find properties to be of similar use. Some part of the processes around Subversion's usage to which you adhere, or maybe some additional tooling around Subversion that you use, might find utility in having a place close to your versioned data to hang custom metadata about that data."
+msgstr ""
+
+#: ./build/en/book.xml:4348(para) 
+msgid "Say you wish to design a website that houses many digital photos, and displays them with captions and a datestamp. Now, your set of photos is constantly changing, so you'd like to have as much of this site automated as possible. These photos can be quite large, so as is common with sites of this nature, you want to provide smaller thumbnail images to your site visitors."
+msgstr ""
+
+#: ./build/en/book.xml:4356(para) 
+msgid "Now, you can get this functionality using traditional files. That is, you can have your <filename moreinfo=\"none\">image123.jpg</filename> and an <filename moreinfo=\"none\">image123-thumbnail.jpg</filename> side-by-side in a directory. Or if you want to keep the filenames the same, you might have your thumbnails in a different directory, like <filename moreinfo=\"none\">thumbnails/image123.jpg</filename>. You can also store your captions and datestamps in a similar fashion, again separated from the original image file. But the problem here is that your collection of files grows in multiples with each new photo added to the site."
+msgstr ""
+
+#: ./build/en/book.xml:4368(para) 
+msgid "Now consider the same website deployed in a way that makes use of Subversion's file properties. Imagine having a single image file, <filename moreinfo=\"none\">image123.jpg</filename>, and then properties set on that file named <literal moreinfo=\"none\">caption</literal>, <literal moreinfo=\"none\">datestamp</literal>, and even <literal moreinfo=\"none\">thumbnail</literal>. Now your working copy directory looks much more manageable—in fact, it looks to the casual browser like there are nothing but image files in it. But your automation scripts know better. They know that they can use <command moreinfo=\"none\">svn</command> (or better yet, they can use the Subversion language bindings—see <xref linkend=\"svn.developer.usingapi.otherlangs\"/>) to dig out the extra information that your site needs to display without having to read an index file or play path manipulation games."
+msgstr ""
+
+#: ./build/en/book.xml:4383(para) 
+msgid "Custom revision properties are also frequently used. One common such use is a property whose value contains an issue tracker ID with which the revision is associated, perhaps because the change made in that revision fixes a bug filed in the tracker issue with that ID. Other uses include hanging more friendly names on the revision—it might be hard to remember that revision 1935 was a fully tested revision. But if there's, say, a <literal moreinfo=\"none\">test-results</literal> property on that revision with a value <literal moreinfo=\"none\">all passing</literal>, that's meaningful information to have."
+msgstr ""
+
+#: ./build/en/book.xml:4395(title) 
+msgid "Searchability (or, Why <emphasis>Not</emphasis> Properties)"
+msgstr ""
+
+#: ./build/en/book.xml:4398(para) 
+msgid "For all their utility, Subversion properties—or, more accurately, the available interfaces to them—have a major shortcoming which diminishes their practicality. While it is a simple matter to set a custom property, <emphasis>finding</emphasis> that property later is whole different ball of wax."
+msgstr ""
+
+#: ./build/en/book.xml:4405(para) 
+msgid "Trying to locate a custom revision property generally involves performing a linear walk across all the revisions of the repository, asking of each revision, \"Do you have the property I'm looking for?\" Trying to find a custom versioned property is painful, too, and often involves a recursive <command moreinfo=\"none\">svn propget</command> across an entire working copy. In your situation, that might not be as bad as a linear walk across all revisions. But it certainly leaves much to be desired in terms of both performance and likelihood of success, especially if the scope of your search would require a working copy from the root of your repository."
+msgstr ""
+
+#: ./build/en/book.xml:4418(para) 
+msgid "For this reason, you might choose—especially in the revision property use-case—to simply add your metadata to the revision's log message, using some policy-driven (and perhaps programmatically-enforced) formatting that is designed to be quickly parsed from the output of <command moreinfo=\"none\">svn log</command>. It is quite common to see in Subversion log messages the likes of:"
+msgstr ""
+
+#: ./build/en/book.xml:4426(programlisting) 
+#, no-wrap
+msgid "\nIssue(s): IZ2376, IZ1919\nReviewed by:  sally\n\nThis fixes a nasty segfault in the wort frabbing process\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:4434(para) 
+msgid "But here again lies some misfortune. Subversion doesn't yet provide a log message templating mechanism, which would go a long way toward helping users be consistent with the formatting of their log-embedded revision metadata."
+msgstr ""
+
+#: ./build/en/book.xml:4445(title) 
+msgid "Manipulating Properties"
+msgstr ""
+
+#: ./build/en/book.xml:4447(para) 
+msgid "The <command moreinfo=\"none\">svn</command> command affords a few ways to add or modify file and directory properties. For properties with short, human-readable values, perhaps the simplest way to add a new property is to specify the property name and value on the command-line of the <command moreinfo=\"none\">propset</command> subcommand."
+msgstr ""
+
+#: ./build/en/book.xml:4454(screen) 
+#, no-wrap
+msgid "\n$ svn propset copyright '(c) 2006 Red-Bean Software' calc/button.c\nproperty 'copyright' set on 'calc/button.c'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4460(para) 
+msgid "But we've been touting the flexibility that Subversion offers for your property values. And if you are planning to have a multi-line textual, or even binary, property value, you probably do not want to supply that value on the command-line. So the <command moreinfo=\"none\">propset</command> subcommand takes a <option>--file (-F)</option> option for specifying the name of a file which contains the new property value."
+msgstr ""
+
+#: ./build/en/book.xml:4468(screen) 
+#, no-wrap
+msgid "\n$ svn propset license -F /path/to/LICENSE calc/button.c\nproperty 'license' set on 'calc/button.c'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4481(para) 
+msgid "If you're familiar with XML, this is pretty much the ASCII subset of the syntax for XML \"Name\"."
+msgstr ""
+
+#: ./build/en/book.xml:4474(para) 
+msgid "There are some restrictions on the names you can use for properties. A property name must start with a letter, a colon (<literal moreinfo=\"none\">:</literal>), or an underscore (<literal moreinfo=\"none\">_</literal>); after that, you can also use digits, hyphens (<literal moreinfo=\"none\">-</literal>), and periods (<literal moreinfo=\"none\">.</literal>). <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:4486(para) 
+msgid "In addition to the <command moreinfo=\"none\">propset</command> command, the <command moreinfo=\"none\">svn</command> program supplies the <command moreinfo=\"none\">propedit</command> command. This command uses the configured editor program (see <xref linkend=\"svn.advanced.confarea.opts.config\"/>) to add or modify properties. When you run the command, <command moreinfo=\"none\">svn</command> invokes your editor program on a temporary file that contains the current value of the property (or which is empty, if you are adding a new property). Then, you just modify that value in your editor program until it represents the new value you wish to store for the property, save the temporary file, and then exit the editor program. If Subversion detects that you've actually changed the existing value of the property, it will accept that as the new property value. If you exit your editor without making any changes, no property modification will occur."
+msgstr ""
+
+#: ./build/en/book.xml:4502(screen) 
+#, no-wrap
+msgid "\n$ svn propedit copyright calc/button.c  ### exit the editor without changes\nNo changes to property 'copyright' on 'calc/button.c'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4508(para) 
+msgid "We should note that, as with other <command moreinfo=\"none\">svn</command> subcommands, those related to properties can act on multiple paths at once. This enables you to modify properties on whole sets of files with a single command. For example, we could have done:"
+msgstr ""
+
+#: ./build/en/book.xml:4514(screen) 
+#, no-wrap
+msgid "\n$ svn propset copyright '(c) 2006 Red-Bean Software' calc/*\nproperty 'copyright' set on 'calc/Makefile'\nproperty 'copyright' set on 'calc/button.c'\nproperty 'copyright' set on 'calc/integer.c'\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4523(para) 
+msgid "All of this property adding and editing isn't really very useful if you can't easily get the stored property value. So the <command moreinfo=\"none\">svn</command> program supplies two subcommands for displaying the names and values of properties stored on files and directories. The <command moreinfo=\"none\">svn proplist</command> command will list the names of properties that exist on a path. Once you know the names of the properties on the node, you can request their values individually using <command moreinfo=\"none\">svn propget</command>. This command will, given a path (or set of paths) and a property name, print the value of the property to the standard output stream."
+msgstr ""
+
+#: ./build/en/book.xml:4535(screen) 
+#, no-wrap
+msgid "\n$ svn proplist calc/button.c\nProperties on 'calc/button.c':\n  copyright\n  license\n$ svn propget copyright calc/button.c\n(c) 2006 Red-Bean Software\n"
+msgstr ""
+
+#: ./build/en/book.xml:4544(para) 
+msgid "There's even a variation of the <command moreinfo=\"none\">proplist</command> command that will list both the name and value of all of the properties. Simply supply the <option>--verbose</option> (<option>-v</option>) option."
+msgstr ""
+
+#: ./build/en/book.xml:4549(screen) 
+#, no-wrap
+msgid "\n$ svn proplist -v calc/button.c\nProperties on 'calc/button.c':\n  copyright : (c) 2006 Red-Bean Software\n  license : ================================================================\nCopyright (c) 2006 Red-Bean Software.  All rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions \nare met:\n\n1. Redistributions of source code must retain the above copyright\nnotice, this list of conditions, and the recipe for Fitz's famous\nred-beans-and-rice.\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:4566(para) 
+msgid "The last property-related subcommand is <command moreinfo=\"none\">propdel</command>. Since Subversion allows you to store properties with empty values, you can't remove a property altogether using <command moreinfo=\"none\">propedit</command> or <command moreinfo=\"none\">propset</command>. For example, this command will <emphasis>not</emphasis> yield the desired effect:"
+msgstr ""
+
+#: ./build/en/book.xml:4573(screen) 
+#, no-wrap
+msgid "\n$ svn propset license '' calc/button.c\nproperty 'license' set on 'calc/button.c'\n$ svn proplist -v calc/button.c\nProperties on 'calc/button.c':\n  copyright : (c) 2006 Red-Bean Software\n  license : \n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4583(para) 
+msgid "You need to use the <command moreinfo=\"none\">propdel</command> subcommand to delete properties altogether. The syntax is similar to the other property commands:"
+msgstr ""
+
+#: ./build/en/book.xml:4587(screen) 
+#, no-wrap
+msgid "\n$ svn propdel license calc/button.c\nproperty 'license' deleted from 'calc/button.c'.\n$ svn proplist -v calc/button.c\nProperties on 'calc/button.c':\n  copyright : (c) 2006 Red-Bean Software\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4610(para) 
+msgid "Fixing spelling errors, grammatical gotchas, and <quote>just-plain-wrongness</quote> in commit log messages is perhaps the most common use case for the <option>--revprop</option> option."
+msgstr ""
+
+#: ./build/en/book.xml:4596(para) 
+msgid "Remember those unversioned revision properties? You can modify those, too, using the same <command moreinfo=\"none\">svn</command> subcommands that we just described. Simply add the <option>--revprop</option> command-line parameter, and specify the revision whose property you wish to modify. Since revisions are global, you don't need to specify a target path to these property-related commands so long as you are positioned in a working copy of the repository whose revision property you wish to modify. Otherwise, you can simply provide the URL of any path in the repository of interest (including the repository's root URL). For example, you might want to replace the commit log message of an existing revision. <placeholder-1/> If your current working directory is part of a working copy of your repository, you can simply run the <command moreinfo=\"none\">svn propset</command> command with no target path:"
+msgstr ""
+
+#: ./build/en/book.xml:4619(screen) 
+#, no-wrap
+msgid "\n$ svn propset svn:log '* button.c: Fix a compiler warning.' -r11 --revprop\nproperty 'svn:log' set on repository revision '11'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4625(para) 
+msgid "But even if you haven't checked out a working copy from that repository, you can still affect the property change by providing the repository's root URL:"
+msgstr ""
+
+#: ./build/en/book.xml:4629(screen) 
+#, no-wrap
+msgid "\n$ svn propset svn:log '* button.c: Fix a compiler warning.' -r11 --revprop \\\n              http://svn.example.com/repos/project\nproperty 'svn:log' set on repository revision '11'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4636(para) 
+msgid "Note that the ability to modify these unversioned properties must be explicitly added by the repository administrator (see <xref linkend=\"svn.reposadmin.create.hooks\"/>). Since the properties aren't versioned, you run the risk of losing information if you aren't careful with your edits. The repository administrator can setup methods to protect against this loss, and by default, modification of unversioned properties is disabled."
+msgstr ""
+
+#: ./build/en/book.xml:4646(para) 
+msgid "Users should, where possible, use <command moreinfo=\"none\">svn propedit</command> instead of <command moreinfo=\"none\">svn propset</command>. While the end result of the commands is identical, the former will allow them to see the current value of the property they are about to change, which helps them to verify that they are, in fact, making the change they think they are making. This is especially true when modifying unversioned revision properties. Also, it is significantly easier to modify multiline property values in a text editor than at the command line."
+msgstr ""
+
+#: ./build/en/book.xml:4662(title) 
+msgid "Properties and the Subversion Workflow"
+msgstr ""
+
+#: ./build/en/book.xml:4664(para) 
+msgid "Now that you are familiar with all of the property-related <command moreinfo=\"none\">svn</command> subcommands, let's see how property modifications affect the usual Subversion workflow. As we mentioned earlier, file and directory properties are versioned, just like your file contents. As a result, Subversion provides the same opportunities for merging—in cleanly or conflicting fashions—someone else's modifications into your own."
+msgstr ""
+
+#: ./build/en/book.xml:4673(para) 
+msgid "And as with file contents, your property changes are local modifications, only made permanent when you commit them to the repository with <command moreinfo=\"none\">svn commit</command>. Your property changes can be easily unmade, too—the <command moreinfo=\"none\">svn revert</command> command will restore your files and directories to their un-edited states, contents, properties, and all. Also, you can receive interesting information about the state of your file and directory properties by using the <command moreinfo=\"none\">svn status</command> and <command moreinfo=\"none\">svn diff</command> commands."
+msgstr ""
+
+#: ./build/en/book.xml:4684(screen) 
+#, no-wrap
+msgid "\n$ svn status calc/button.c\n M     calc/button.c\n$ svn diff calc/button.c\nProperty changes on: calc/button.c\n___________________________________________________________________\nName: copyright\n   + (c) 2006 Red-Bean Software\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4696(para) 
+msgid "Notice how the <command moreinfo=\"none\">status</command> subcommand displays <literal moreinfo=\"none\">M</literal> in the second column instead of the first. That is because we have modified the properties on <filename moreinfo=\"none\">calc/button.c</filename>, but not modified its textual contents. Had we changed both, we would have seen <literal moreinfo=\"none\">M</literal> in the first column, too (see <xref linkend=\"svn.tour.cycle.examine.status\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:4704(title) 
+msgid "Property Conflicts"
+msgstr ""
+
+#: ./build/en/book.xml:4706(para) 
+msgid "As with file contents, local property modifications can conflict with changes committed by someone else. If you update your working copy directory and receive property changes on a versioned object that clash with your own, Subversion will report that the object is in a conflicted state."
+msgstr ""
+
+#: ./build/en/book.xml:4713(screen) 
+#, no-wrap
+msgid "\n% svn update calc\nM  calc/Makefile.in\n C calc/button.c\nUpdated to revision 143.\n$ \n"
+msgstr ""
+
+#: ./build/en/book.xml:4721(para) 
+msgid "Subversion will also create, in the same directory as the conflicted object, a file with a <filename moreinfo=\"none\">.prej</filename> extension which contains the details of the conflict. You should examine the contents of this file so you can decide how to resolve the conflict. Until the conflict is resolved, you will see a <literal moreinfo=\"none\">C</literal> in the second column of <command moreinfo=\"none\">svn status</command> output for that object, and attempts to commit your local modifications will fail."
+msgstr ""
+
+#: ./build/en/book.xml:4731(screen) 
+#, no-wrap
+msgid "\n$ svn status calc\n C     calc/button.c\n?      calc/button.c.prej\n$ cat calc/button.c.prej \nprop 'linecount': user set to '1256', but update set to '1301'.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:4740(para) 
+msgid "To resolve property conflicts, simply ensure that the conflicting properties contain the values that they should, and then use the <command moreinfo=\"none\">svn resolved</command> command to alert Subversion that you have manually resolved the problem."
+msgstr ""
+
+#: ./build/en/book.xml:4748(para) 
+msgid "You might also have noticed the non-standard way that Subversion currently displays property differences. You can still run <command moreinfo=\"none\">svn diff</command> and redirect the output to create a usable patch file. The <command moreinfo=\"none\">patch</command> program will ignore property patches—as a rule, it ignores any noise it can't understand. This does unfortunately mean that to fully apply a patch generated by <command moreinfo=\"none\">svn diff</command>, any property modifications will need to be applied by hand."
+msgstr ""
+
+#: ./build/en/book.xml:4762(title) 
+msgid "Automatic Property Setting"
+msgstr ""
+
+#: ./build/en/book.xml:4764(para) 
+msgid "Properties are a powerful feature of Subversion, acting as key components of many Subversion features discussed elsewhere in this and other chapters—textual diff and merge support, keyword substitution, newline translation, etc. But to get the full benefit of properties, they must be set on the right files and directories. Unfortunately, that can be a step easily forgotten in the routine of things, especially since failing to set a property doesn't usually result in an obvious error condition (at least compared to, say, failing to add a file to version control). To help your properties get applied to the places that need them, Subversion provides a couple of simple but useful features."
+msgstr ""
+
+#: ./build/en/book.xml:4777(para) 
+msgid "Whenever you introduce a file to version control using the <command moreinfo=\"none\">svn add</command> or <command moreinfo=\"none\">svn import</command> commands, Subversion tries to assist by setting some common file properties automatically. First, on operating systems whose filesystems support an execute permission bit, Subversion will automatically set the <literal moreinfo=\"none\">svn:executable</literal> property on newly added or imported files whose execute bit is enabled. (See <xref linkend=\"svn.advanced.props.special.executable\"/> for more about this property.) Secondly, it runs a very basic heuristic to determine if that file contains human-readable content. If not, Subversion will automatically set the <literal moreinfo=\"none\">svn:mime-type</literal> property on that file to <literal moreinfo=\"none\">application/octet-stream</literal> (the generic <quote>this is a collection of bytes</quote> MIME type). Of course, if Subversion guesses incorrectly, or if you wish to set the <literal moreinfo=\"none\">svn:mime-type</literal> property to something more precise—perhaps <literal moreinfo=\"none\">image/png</literal> or <literal moreinfo=\"none\">application/x-shockwave-flash</literal>—you can always remove or edit that property. (For more on Subversion's use of MIME types, see <xref linkend=\"svn.advanced.props.special.mime-type\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:4798(para) 
+msgid "Subversion also provides, via its runtime configuration system (see <xref linkend=\"svn.advanced.confarea\"/>), a more flexible automatic property setting feature which allows you to create mappings of filename patterns to property names and values. Once again, these mappings affect adds and imports, and not only can override the default MIME type decision made by Subversion during those operations, but can also set additional Subversion or custom properties, too. For example, you might create a mapping that says that any time you add JPEG files—ones that match the pattern <literal moreinfo=\"none\">*.jpg</literal>—Subversion should automatically set the <literal moreinfo=\"none\">svn:mime-type</literal> property on those files to <literal moreinfo=\"none\">image/jpeg</literal>. Or perhaps any files that match <literal moreinfo=\"none\">*.cpp</literal> should have <literal moreinfo=\"none\">svn:eol-style</literal> set to <literal moreinfo=\"none\">native</literal>, and <literal moreinfo=\"none\">svn:keywords</literal> set to <literal moreinfo=\"none\">Id</literal>. Automatic property support is perhaps the handiest property related tool in the Subversion toolbox. See <xref linkend=\"svn.advanced.confarea.opts.config\"/> for more about configuring that support."
+msgstr ""
+
+#: ./build/en/book.xml:4826(title) 
+msgid "File Portability"
+msgstr ""
+
+#: ./build/en/book.xml:4828(para) 
+msgid "Fortunately for Subversion users who routinely find themselves on different computers with different operating systems, Subversion's command-line program behaves almost identically on all those systems. If you know how to wield <command moreinfo=\"none\">svn</command> on one platform, you know how to wield it everywhere."
+msgstr ""
+
+#: ./build/en/book.xml:4835(para) 
+msgid "However, the same is not always true of other general classes of software, or of the actual files you keep in Subversion. For example, on a Windows machine, the definition of a <quote>text file</quote> would be similar to that used on a Linux box, but with a key difference—the character sequences used to mark the ends of the lines of those files. There are other differences, too. Unix platforms have (and Subversion supports) symbolic links; Windows does not. Unix platforms use filesystem permission to determine executability; Windows uses filename extensions."
+msgstr ""
+
+#: ./build/en/book.xml:4846(para) 
+msgid "Because Subversion is in no position to unite the whole world in common definitions and implementations of all of these things, the best it can do is to try to help make your life simpler when you need to work with your versioned files and directories on multiple computers and operating systems. This section describes some of the ways Subversion does this."
+msgstr ""
+
+#: ./build/en/book.xml:4855(title) 
+msgid "File Content Type"
+msgstr ""
+
+#: ./build/en/book.xml:4857(para) 
+msgid "Subversion joins the ranks of the many applications which recognize and make use of Multipurpose Internet Mail Extensions (MIME) content types. Besides being a general-purpose storage location for a file's content type, the value of the <literal moreinfo=\"none\">svn:mime-type</literal> file property determines some behavioral characteristics of Subversion itself."
+msgstr ""
+
+#: ./build/en/book.xml:4866(title) 
+msgid "Identifying File Types"
+msgstr ""
+
+#: ./build/en/book.xml:4868(para) 
+msgid "Software programs on most modern operating systems make assumptions about the type and format of the contents of a file by the file's name, specifically its file extension. For example, files whose names end in <filename moreinfo=\"none\">.txt</filename> are generally assumed to be human-readable, able to be understood by simple perusal rather than requiring complex processing to decipher. Files whose names end in <filename moreinfo=\"none\">.png</filename>, on the other hand, are assumed to be of the Portable Network Graphics type—not human-readable at all, and sensible only when interpreted by software which understands the PNG format and can render the information in that format as a raster image."
+msgstr ""
+
+#: ./build/en/book.xml:4895(para) 
+msgid "You think that was rough? During that same era, WordPerfect also used <filename moreinfo=\"none\">.DOC</filename> for their proprietary file format's preferred extension!"
+msgstr ""
+
+#: ./build/en/book.xml:4882(para) 
+msgid "Unfortunately, some of those extensions have changed meanings over time. When personal computers first appeared, a file named <filename moreinfo=\"none\">README.DOC</filename> would have almost certainly been a plaintext file, just like today's <filename moreinfo=\"none\">.txt</filename> files. But by the mid-1990's, you could almost bet that a file of that name would not be a plaintext file at all, but instead a Microsoft Word document with a proprietary, non-human-readable format. But this change didn't occur overnight—there was certainly a period of confusion for computer users over what exactly they had in hand when they saw a <filename moreinfo=\"none\">.DOC</filename> file. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:4901(para) 
+msgid "The popularity of computer networking cast still more doubt on the mapping between a file's name and its content. With information being served across networks and generated dynamically by server-side scripts, there was often no real file per se to speak of, and therefore no file name. Web servers, for example, needed some other way to tell browsers what they were downloading so the browser could do something intelligent with that information, whether that was to display the data using a program registered to handle that data type, or to prompt the user for where on the client machine to store the downloaded data."
+msgstr ""
+
+#: ./build/en/book.xml:4913(para) 
+msgid "Eventually, a standard emerged for, among other things, describing the contents of a data stream. In 1996, RFC2045 was published, the first of five RFCs describing MIME. In it, this RFC describes the concept of media types and subtypes, and recommends a syntax for the representation of those types. Today, MIME media types—or, MIME types— are used almost universally across e-mail applications, Web servers, and other software as the de facto mechanism for clearing up the file content confusion."
+msgstr ""
+
+#: ./build/en/book.xml:4926(para) 
+msgid "For example, one of the benefits that Subversion typically provides is contextual, line-based merging of changes received from the server during an update into your working file. But for files containing non-textual data, there is often no concept of a <quote>line</quote>. So, for versioned files whose <literal moreinfo=\"none\">svn:mime-type</literal> property is set to a non-textual MIME type (generally, something that doesn't begin with <literal moreinfo=\"none\">text/</literal>, though there are exceptions), Subversion does not attempt to perform contextual merges during updates. Instead, any time you have locally modified a binary working copy file that is also being updated, your file is renamed with a <filename moreinfo=\"none\">.orig</filename> extension, and then Subversion stores a new working copy file that contains the changes received during the update, but not your own local modifications, at the original filename. This behavior is really for the protection of the user against failed attempts at performing contextual merges on files that simply cannot be contextually merged."
+msgstr ""
+
+#: ./build/en/book.xml:4945(para) 
+msgid "Also, if the <literal moreinfo=\"none\">svn:mime-type</literal> property is set, then the Subversion Apache module will use its value to populate the <literal moreinfo=\"none\">Content-type:</literal> HTTP header when responding to GET requests. This gives your web browser a crucial clue about how to display a file when using it to peruse your Subversion repository's contents."
+msgstr ""
+
+#: ./build/en/book.xml:4956(title) 
+msgid "File Executability"
+msgstr ""
+
+#: ./build/en/book.xml:4958(para) 
+msgid "On many operating systems, the ability to execute a file as a command is governed by the presence of an execute permission bit. This bit usually defaults to being disabled, and must be explicitly enabled by the user for each file that needs it. But it would be a monumental hassle to have to remember exactly which files in freshly checked-out working copy were supposed to have their executable bits toggled on, and then to have to do that toggling. So, Subversion provides the <literal moreinfo=\"none\">svn:executable</literal> property as a way to specify that the executable bit for the file on which that property is set should be enabled, and Subversion honors that request when populating working copies with such files."
+msgstr ""
+
+#: ./build/en/book.xml:4975(para) 
+msgid "The Windows filesystems use file extensions (such as <literal moreinfo=\"none\">.EXE</literal>, <literal moreinfo=\"none\">.BAT</literal>, and <literal moreinfo=\"none\">.COM</literal>) to denote executable files."
+msgstr ""
+
+#: ./build/en/book.xml:4971(para) 
+msgid "This property has no effect on filesystems that have no concept of an executable permission bit, such as FAT32 and NTFS. <placeholder-1/> Also, although it has no defined values, Subversion will force its value to <literal moreinfo=\"none\">*</literal> when setting this property. Finally, this property is valid only on files, not on directories."
+msgstr ""
+
+#: ./build/en/book.xml:4989(title) 
+msgid "End-of-Line Character Sequences"
+msgstr ""
+
+#: ./build/en/book.xml:4991(para) 
+msgid "Unless otherwise noted using a versioned file's <literal moreinfo=\"none\">svn:mime-type</literal> property, Subversion assumes the file contains human-readable data. Generally speaking, Subversion only uses this knowledge to determine if contextual difference reports for that file are possible. Otherwise, to Subversion, bytes are bytes."
+msgstr ""
+
+#: ./build/en/book.xml:4998(para) 
+msgid "This means that by default, Subversion doesn't pay any attention to the type of <firstterm>end-of-line (EOL) markers</firstterm> used in your files. Unfortunately, different operating systems have different conventions about which character sequences represent the end of a line of text in a file. For example, the usual line ending token used by software on the Windows platform is a pair of ASCII control characters—a carriage return (<literal moreinfo=\"none\">CR</literal>) followed by a line feed (<literal moreinfo=\"none\">LF</literal>). Unix software, however, just uses the <literal moreinfo=\"none\">LF</literal> character to denote the end of a line."
+msgstr ""
+
+#: ./build/en/book.xml:5010(para) 
+msgid "Not all of the various tools on these operating systems are prepared to understand files that contain line endings in a format that differs from the <firstterm>native line ending style</firstterm> of the operating system on which they are running. Common results are that Unix programs treat the <literal moreinfo=\"none\">CR</literal> character present in Windows files as a regular character (usually rendered as <literal moreinfo=\"none\">^M</literal>), and that Windows programs combine all of the lines of a Unix file into one giant line because no carriage return-linefeed (or <literal moreinfo=\"none\">CRLF</literal>) character combination was found to denote the end of line."
+msgstr ""
+
+#: ./build/en/book.xml:5023(para) 
+msgid "This sensitivity to foreign EOL markers can become frustrating for folks who share a file across different operating systems. For example, consider a source code file, and developers that edit this file on both Windows and Unix systems. If all the developers always use tools which preserve the line ending style of the file, no problems occur."
+msgstr ""
+
+#: ./build/en/book.xml:5031(para) 
+msgid "But in practice, many common tools either fail to properly read a file with foreign EOL markers, or they convert the file's line endings to the native style when the file is saved. If the former is true for a developer, he has to use an external conversion utility (such as <command moreinfo=\"none\">dos2unix</command> or its companion, <command moreinfo=\"none\">unix2dos</command>) to prepare the file for editing. The latter case requires no extra preparation. But both cases result in a file that differs from the original quite literally on every line! Prior to committing his changes, the user has two choices. Either he can use a conversion utility to restore the modified file to the same line ending style that it was in before his edits were made. Or, he can simply commit the file—new EOL markers and all."
+msgstr ""
+
+#: ./build/en/book.xml:5047(para) 
+msgid "The result of scenarios like these include wasted time and unnecessary modifications to committed files. Wasted time is painful enough. But when commits change every line in a file, this complicates the job of determining which of those lines were changed in a non-trivial way. Where was that bug really fixed? On what line was a syntax error introduced?"
+msgstr ""
+
+#: ./build/en/book.xml:5055(para) 
+msgid "The solution to this problem is the <literal moreinfo=\"none\">svn:eol-style</literal> property. When this property is set to a valid value, Subversion uses it to determine what special processing to perform on the file so that the file's line ending style isn't flip-flopping with every commit that comes from a different operating system. The valid values are:"
+msgstr ""
+
+#: ./build/en/book.xml:5065(literal) 
+msgid "native"
+msgstr ""
+
+#: ./build/en/book.xml:5067(para) 
+msgid "This causes the file to contain the EOL markers that are native to the operating system on which Subversion was run. In other words, if a user on a Windows machine checks out a working copy that contains a file with an <literal moreinfo=\"none\">svn:eol-style</literal> property set to <literal moreinfo=\"none\">native</literal>, that file will contain <literal moreinfo=\"none\">CRLF</literal> EOL markers. A Unix user checking out a working copy which contains the same file will see <literal moreinfo=\"none\">LF</literal> EOL markers in his copy of the file."
+msgstr ""
+
+#: ./build/en/book.xml:5079(para) 
+msgid "Note that Subversion will actually store the file in the repository using normalized <literal moreinfo=\"none\">LF</literal> EOL markers regardless of the operating system. This is basically transparent to the user, though."
+msgstr ""
+
+#: ./build/en/book.xml:5087(literal) 
+msgid "CRLF"
+msgstr ""
+
+#: ./build/en/book.xml:5089(para) 
+msgid "This causes the file to contain <literal moreinfo=\"none\">CRLF</literal> sequences for EOL markers, regardless of the operating system in use."
+msgstr ""
+
+#: ./build/en/book.xml:5095(literal) 
+msgid "LF"
+msgstr ""
+
+#: ./build/en/book.xml:5097(para) 
+msgid "This causes the file to contain <literal moreinfo=\"none\">LF</literal> characters for EOL markers, regardless of the operating system in use."
+msgstr ""
+
+#: ./build/en/book.xml:5103(literal) 
+msgid "CR"
+msgstr ""
+
+#: ./build/en/book.xml:5105(para) 
+msgid "This causes the file to contain <literal moreinfo=\"none\">CR</literal> characters for EOL markers, regardless of the operating system in use. This line ending style is not very common. It was used on older Macintosh platforms (on which Subversion doesn't even run)."
+msgstr ""
+
+#: ./build/en/book.xml:5122(title) 
+msgid "Ignoring Unversioned Items"
+msgstr ""
+
+#: ./build/en/book.xml:5124(para) 
+msgid "In any given working copy there is a good chance that alongside all those versioned files and directories are other files and directories which are neither versioned nor intended to be. Text editors litter directories with backup files. Code compilation processes generate intermediate—or even final—files which you typically wouldn't bother to version. And users themselves drop various other files and directories wherever they see fit, often in version control working copies."
+msgstr ""
+
+#: ./build/en/book.xml:5134(para) 
+msgid "It's ludicrous to expect Subversion working copies to be somehow impervious to this kind of clutter and impurity. In fact, Subversion counts it as a <emphasis>feature</emphasis> that its working copies are just typical directories, just like unversioned trees. But these not-to-be-versioned files and directories can cause some annoyance for Subversion users. For example, because the <command moreinfo=\"none\">svn add</command> and <command moreinfo=\"none\">svn import</command> commands act recursively by default, and don't know which files in a given tree you do and don't wish to version, it's easy to accidentally add stuff to version control that you didn't mean to. And because <command moreinfo=\"none\">svn status</command> reports, by default, every item of interest in a working copy—including unversioned files and directories—its output can get quite noisy where many of these things exist."
+msgstr ""
+
+#: ./build/en/book.xml:5150(para) 
+msgid "So Subversion provides two ways for telling it which files you would prefer that it simply disregard. One of the ways involves the use of Subversion's runtime configuration system (see <xref linkend=\"svn.advanced.confarea\"/>), and therefore applies to all the Subversion operations which make use of that runtime configuration, generally those performed on a particular computer, or by a particular user of a computer. The other way makes use of Subversion's directory property support, is more tightly bound to the versioned tree itself, and therefore affects everyone who has a working copy of that tree. Both of the mechanisms use file patterns."
+msgstr ""
+
+#: ./build/en/book.xml:5162(para) 
+msgid "The Subversion runtime configuration system provides an option, <literal moreinfo=\"none\">global-ignores</literal>, whose value is a whitespace-delimited collection of file patterns (or globs). These patterns are applied to files which are candidates for addition to version control, as well as to unversioned files which the <command moreinfo=\"none\">svn status</command> command notices. If the filenames match one of the patterns, Subversion will basically act as if the file didn't exist at all. This is really useful for file patterns which are nearly universally of the variety that you don't want to version, such as editor backup files like Emacs' <literal moreinfo=\"none\">*~</literal> and <literal moreinfo=\"none\">.*~</literal> files."
+msgstr ""
+
+#: ./build/en/book.xml:5175(para) 
+msgid "When found on a versioned directory, the <literal moreinfo=\"none\">svn:ignore</literal> property is expected to contain a list of newline-delimited file patterns which Subversion should use to determine ignorable objects in that same directory. These patterns do not override those found in the <literal moreinfo=\"none\">global-ignores</literal> runtime configuration option, but are instead appended to that list. And it's worth noting again that, unlike the <literal moreinfo=\"none\">global-ignores</literal> option, the patterns found in the <literal moreinfo=\"none\">svn:eol-ignore</literal> property apply only to the directory on which that property is set, and not to any of its subdirectories. The <literal moreinfo=\"none\">svn:ignore</literal> property is a good way to tell Subversion to ignore files that are likely to be present in every user's working copy of that directory, such as compiler output or—to use an example more appropriate to this book—the HTML, PDF, or PostScript files generated as the result of a conversion of some source DocBook XML files to a more legible output format."
+msgstr ""
+
+#: ./build/en/book.xml:5195(para) 
+msgid "Subversion's support for ignorable file patterns extends only to the one-time process of adding unversioned files and directories to version control. Once an object is under Subversion's control, the ignore pattern mechanisms no longer apply to it. In other words, don't expect Subversion to avoid committing changes you've made to a versioned file simply because that file's name matches an ignore pattern—Subversion <emphasis>always</emphasis> notices all of its versioned objects."
+msgstr ""
+
+#: ./build/en/book.xml:5207(title) 
+msgid "Ignore Patterns for CVS Users"
+msgstr ""
+
+#: ./build/en/book.xml:5209(para) 
+msgid "The Subversion <literal moreinfo=\"none\">svn:ignore</literal> property is very similar in syntax and function to the CVS <filename moreinfo=\"none\">.cvsignore</filename> file. In fact, if you are migrating a CVS working copy to Subversion, you can directly migrate the ignore patterns by using the <filename moreinfo=\"none\">.cvsignore</filename> file as input file to the <command moreinfo=\"none\">svn propset</command> command:"
+msgstr ""
+
+#: ./build/en/book.xml:5217(screen) 
+#, no-wrap
+msgid "\n$ svn propset svn:ignore -F .cvsignore .\nproperty 'svn:ignore' set on '.'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5223(para) 
+msgid "There are, however, some differences in the ways that CVS and Subversion handle ignore patterns. The two systems use the ignore patterns at some different times, and there are slight discrepancies in what the ignore patterns apply to. Also, Subversion does not recognize the use of the <literal moreinfo=\"none\">!</literal> pattern as a reset back to having no ignore patterns at all."
+msgstr ""
+
+#: ./build/en/book.xml:5233(para) 
+msgid "The global list of ignore patterns tends to be more a matter of personal taste, and tied more closely to a user's particular tool chain than to the details of any particular working copy's needs. So, the rest of this section will focus on the <literal moreinfo=\"none\">svn:ignore</literal> property and its uses."
+msgstr ""
+
+#: ./build/en/book.xml:5240(para) 
+msgid "Say you have the following output from <command moreinfo=\"none\">svn status</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:5243(screen) 
+#, no-wrap
+msgid "\n$ svn status calc\n M     calc/button.c\n?      calc/calculator\n?      calc/data.c\n?      calc/debug_log\n?      calc/debug_log.1\n?      calc/debug_log.2.gz\n?      calc/debug_log.3.gz\n"
+msgstr ""
+
+#: ./build/en/book.xml:5263(para) 
+msgid "Isn't that the whole point of a build system?"
+msgstr ""
+
+#: ./build/en/book.xml:5254(para) 
+msgid "In this example, you have made some property modifications to <filename moreinfo=\"none\">button.c</filename>, but in your working copy you also have some unversioned files: the latest <filename moreinfo=\"none\">calculator</filename> program that you've compiled from your source code, a source file named <filename moreinfo=\"none\">data.c</filename>, and a set of debugging output log files. Now, you know that your build system always results in the <filename moreinfo=\"none\">calculator</filename> program being generated. <placeholder-1/> And you know that your test suite always leaves those debugging log files lying around. These facts are true for all working copies of this project, not just your own. And you know that you aren't interested in seeing those things every time you run <command moreinfo=\"none\">svn status</command>, and pretty sure that nobody else is interested in them either. So you use <command moreinfo=\"none\">svn propedit svn:ignore calc</command> to add some ignore patterns to the <filename moreinfo=\"none\">calc</filename> directory. For example, you might add this as the new value of the <literal moreinfo=\"none\">svn:ignore</literal> property:"
+msgstr ""
+
+#: ./build/en/book.xml:5276(programlisting) 
+#, no-wrap
+msgid "\ncalculator\ndebug_log*\n"
+msgstr ""
+
+#: ./build/en/book.xml:5281(para) 
+msgid "After you've added this property, you will now have a local property modification on the <filename moreinfo=\"none\">calc</filename> directory. But notice what else is different about your <command moreinfo=\"none\">svn status</command> output:"
+msgstr ""
+
+#: ./build/en/book.xml:5286(screen) 
+#, no-wrap
+msgid "\n$ svn status\n M     calc\n M     calc/button.c\n?      calc/data.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:5293(para) 
+msgid "Now, all that cruft is missing from the output! Of course, your <filename moreinfo=\"none\">calculator</filename> compiled program and all those logfiles are still in your working copy. Subversion is simply not reminding you that they are present and unversioned. And now with all the uninteresting noise removed from the display, you are left with more interesting items—such as that source code file <filename moreinfo=\"none\">data.c</filename> that you probably forgot to add to version control."
+msgstr ""
+
+#: ./build/en/book.xml:5302(para) 
+msgid "Of course, this less-verbose report of your working copy status isn't the only one available. If you actually want to see the ignored files as part of the status report, you can pass the <option>--no-ignore</option> option to Subversion:"
+msgstr ""
+
+#: ./build/en/book.xml:5307(screen) 
+#, no-wrap
+msgid "\n$ svn status --no-ignore\n M     calc\n M     calc/button.c\nI      calc/calculator\n?      calc/data.c\nI      calc/debug_log\nI      calc/debug_log.1\nI      calc/debug_log.2.gz\nI      calc/debug_log.3.gz\n"
+msgstr ""
+
+#: ./build/en/book.xml:5319(para) 
+msgid "As mentioned earlier, the list of file patterns to ignore is also used by <command moreinfo=\"none\">svn add</command> and <command moreinfo=\"none\">svn import</command>. Both of these operations involve asking Subversion to begin managing some set of files and directories. Rather than force the user to pick and choose which files in a tree she wishes to start versioning, Subversion uses the ignore patterns—both the global and the per-directory lists—to determine which files should not be swept into the version control system as part of a larger recursive addition or import operation. And here again, you can use the <option>--no-ignore</option> option to tell Subversion ignore its ignores list and operate on all the files and directories present."
+msgstr ""
+
+#: ./build/en/book.xml:5339(title) 
+msgid "Keyword Substitution"
+msgstr ""
+
+#: ./build/en/book.xml:5341(para) 
+msgid "Subversion has the ability to substitute <firstterm>keywords</firstterm>—pieces of useful, dynamic information about a versioned file—into the contents of the file itself. Keywords generally describe information about the last time the file was known to be modified. Because this information changes each time the file changes, and more importantly, just <emphasis>after</emphasis> the file changes, it is a hassle for any process except the version control system to keep the data completely up-to-date. Left to human authors, the information would inevitably grow stale."
+msgstr ""
+
+#: ./build/en/book.xml:5353(para) 
+msgid "For example, say you have a document in which you would like to display the last date on which it was modified. You could burden every author of that document to, just before committing their changes, also tweak the part of the document that describes when it was last changed. But sooner or later, someone would forget to do that. Instead simply ask Subversion to perform keyword substitution on the <literal moreinfo=\"none\">LastChangedDate</literal> keyword. You control where the keyword is inserted into your document by placing a <firstterm>keyword anchor</firstterm> at the desired location in the file. This anchor is just a string of text formatted as <literal moreinfo=\"none\">$</literal><replaceable>KeywordName</replaceable><literal moreinfo=\"none\">$</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5367(para) 
+msgid "All keywords are case-sensitive where they appear as anchors in files: you must use the correct capitalization in order for the keyword to be expanded. You should consider the value of the <literal moreinfo=\"none\">svn:keywords</literal> property to be case-sensitive too—certain keyword names will be recognized regardless of case, but this behavior is deprecated."
+msgstr ""
+
+#: ./build/en/book.xml:5374(para) 
+msgid "Subversion defines the list of keywords available for substitution. That list contains the following five keywords, some of which have aliases that you can also use:"
+msgstr ""
+
+#: ./build/en/book.xml:5380(literal) 
+msgid "Date"
+msgstr ""
+
+#: ./build/en/book.xml:5382(para) 
+msgid "This keyword describes the last time the file was known to have been changed in the repository, and looks something like <literal moreinfo=\"none\">$Date: 2006-07-22 21:42:37 -0700 (Sat, 22 Jul 2006) $</literal>. It may also be specified as <literal moreinfo=\"none\">LastChangedDate</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5391(literal) ./build/en/book.xml:19596(para) 
+msgid "Revision"
+msgstr ""
+
+#: ./build/en/book.xml:5393(para) 
+msgid "This keyword describes the last known revision in which this file changed in the repository, and looks something like <literal moreinfo=\"none\">$Revision: 144 $</literal>. It may also be specified as <literal moreinfo=\"none\">LastChangedRevision</literal> or <literal moreinfo=\"none\">Rev</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5402(literal) 
+msgid "Author"
+msgstr ""
+
+#: ./build/en/book.xml:5404(para) 
+msgid "This keyword describes the last known user to change this file in the repository, and looks something like <literal moreinfo=\"none\">$Author: harry $</literal>. It may also be specified as <literal moreinfo=\"none\">LastChangedBy</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5412(literal) 
+msgid "HeadURL"
+msgstr ""
+
+#: ./build/en/book.xml:5414(para) 
+msgid "This keyword describes the full URL to the latest version of the file in the repository, and looks something like <literal moreinfo=\"none\">$HeadURL: http://svn.collab.net/repos/trunk/README $</literal>. It may be abbreviated as <literal moreinfo=\"none\">URL</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5423(literal) 
+msgid "Id"
+msgstr ""
+
+#: ./build/en/book.xml:5425(para) 
+msgid "This keyword is a compressed combination of the other keywords. Its substitution looks something like <literal moreinfo=\"none\">$Id: calc.c 148 2006-07-28 21:30:43Z sally $</literal>, and is interpreted to mean that the file <filename moreinfo=\"none\">calc.c</filename> was last changed in revision 148 on the evening of July 28, 2006 by the user <literal moreinfo=\"none\">sally</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:5442(para) 
+msgid "… or maybe even a section of a book …"
+msgstr ""
+
+#: ./build/en/book.xml:5436(para) 
+msgid "Simply adding keyword anchor text to your file does nothing special. Subversion will never attempt to perform textual substitutions on your file contents unless explicitly asked to do so. After all, you might be writing a document <placeholder-1/> about how to use keywords, and you don't want Subversion to substitute your beautiful examples of un-substituted keyword anchors!"
+msgstr ""
+
+#: ./build/en/book.xml:5448(para) 
+msgid "To tell Subversion whether or not to substitute keywords on a particular file, we again turn to the property-related subcommands. The <literal moreinfo=\"none\">svn:keywords</literal> property, when set on a versioned file, controls which keywords will be substituted on that file. The value is a space-delimited list of the keyword names or aliases found in the previous table."
+msgstr ""
+
+#: ./build/en/book.xml:5456(para) 
+msgid "For example, say you have a versioned file named <filename moreinfo=\"none\">weather.txt</filename> that looks like this:"
+msgstr ""
+
+#: ./build/en/book.xml:5460(programlisting) 
+#, no-wrap
+msgid "\nHere is the latest report from the front lines.\n$LastChangedDate$\n$Rev$\nCumulus clouds are appearing more frequently as summer approaches.\n"
+msgstr ""
+
+#: ./build/en/book.xml:5467(para) 
+msgid "With no <literal moreinfo=\"none\">svn:keywords</literal> property set on that file, Subversion will do nothing special. Now, let's enable substitution of the <literal moreinfo=\"none\">LastChangedDate</literal> keyword."
+msgstr ""
+
+#: ./build/en/book.xml:5472(screen) 
+#, no-wrap
+msgid "\n$ svn propset svn:keywords \"Date Author\" weather.txt\nproperty 'svn:keywords' set on 'weather.txt'\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5478(para) 
+msgid "Now you have made a local property modification on the <filename moreinfo=\"none\">weather.txt</filename> file. You will see no changes to the file's contents (unless you made some of your own prior to setting the property). Notice that the file contained a keyword anchor for the <literal moreinfo=\"none\">Rev</literal> keyword, yet we did not include that keyword in the property value we set. Subversion will happily ignore requests to substitute keywords that are not present in the file, and will not substitute keywords that are not present in the <literal moreinfo=\"none\">svn:keywords</literal> property value."
+msgstr ""
+
+#: ./build/en/book.xml:5489(para) 
+msgid "Immediately after you commit this property change, Subversion will update your working file with the new substitute text. Instead of seeing your keyword anchor <literal moreinfo=\"none\">$LastChangedDate$</literal>, you'll see its substituted result. That result also contains the name of the keyword, and continues to be bounded by the dollar sign (<literal moreinfo=\"none\">$</literal>) characters. And as we predicted, the <literal moreinfo=\"none\">Rev</literal> keyword was not substituted because we didn't ask for it to be."
+msgstr ""
+
+#: ./build/en/book.xml:5499(para) 
+msgid "Note also that we set the <literal moreinfo=\"none\">svn:keywords</literal> property to <quote>Date Author</quote> yet the keyword anchor used the alias <literal moreinfo=\"none\">$LastChangedDate$</literal> and still expanded correctly."
+msgstr ""
+
+#: ./build/en/book.xml:5504(screen) 
+#, no-wrap
+msgid "\nHere is the latest report from the front lines.\n$LastChangedDate: 2006-07-22 21:42:37 -0700 (Sat, 22 Jul 2006) $\n$Rev$\nCumulus clouds are appearing more frequently as summer approaches.\n"
+msgstr ""
+
+#: ./build/en/book.xml:5511(para) 
+msgid "If someone else now commits a change to <filename moreinfo=\"none\">weather.txt</filename>, your copy of that file will continue to display the same substituted keyword value as before—until you update your working copy. At that time the keywords in your <filename moreinfo=\"none\">weather.txt</filename> file will be re-substituted with information that reflects the most recent known commit to that file."
+msgstr ""
+
+#: ./build/en/book.xml:5520(title) 
+msgid "Where's $GlobalRev$?"
+msgstr ""
+
+#: ./build/en/book.xml:5522(para) 
+msgid "New users are often confused by how the <literal moreinfo=\"none\">$Rev$</literal> keyword works. Since the repository has a single, globally increasing revision number, many people assume that it is this number which is reflected by the <literal moreinfo=\"none\">$Rev$</literal> keyword's value. But <literal moreinfo=\"none\">$Rev$</literal> expands to show the last revision in which the file <emphasis>changed</emphasis>, not the last revision to which it was updated. Understanding this clears the confusion, but frustration often remains—without the support of a Subversion keyword to do so, how can you automatically get the global revision number into your files?"
+msgstr ""
+
+#: ./build/en/book.xml:5535(para) 
+msgid "To do this, you need external processing. Subversion ships with a tool called <command moreinfo=\"none\">svnversion</command> which was designed for just this purpose. <command moreinfo=\"none\">svnversion</command> crawls your working copy and generates as output the revision(s) it finds. You can use this program, plus some additionally tooling, to embed that revision information into your files. For more information on <command moreinfo=\"none\">svnversion</command>, see <xref linkend=\"svn.ref.svnversion\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:5546(para) 
+msgid "Subversion 1.2 introduced a new variant of the keyword syntax which brought additional, useful—though perhaps atypical—functionality. You can now tell Subversion to maintain a fixed length (in terms of the number of bytes consumed) for the substituted keyword. By using a double-colon (<literal moreinfo=\"none\">::</literal>) after the keyword name, followed by a number of space characters, you define that fixed width. When Subversion goes to substitute your keyword for the keyword and its value, it will essentially replace only those space characters, leaving the overall width of the keyword field unchanged. If the substituted value is shorter than the defined field width, there will be extra padding characters (spaces) at the end of the substituted field; if it is too long, it is truncated with a special hash (<literal moreinfo=\"none\">#</literal>) character just before the final dollar sign terminator."
+msgstr ""
+
+#: ./build/en/book.xml:5563(para) 
+msgid "For example, say you have a document in which you have some section of tabular data reflecting the document's Subversion keywords. Using the original Subversion keyword substitution syntax, your file might look something like:"
+msgstr ""
+
+#: ./build/en/book.xml:5569(screen) 
+#, no-wrap
+msgid "\n$Rev$:     Revision of last commit\n$Author$:  Author of last commit\n$Date$:    Date of last commit\n"
+msgstr ""
+
+#: ./build/en/book.xml:5575(para) 
+msgid "Now, that looks nice and tabular at the start of things. But when you then commit that file (with keyword substitution enabled, of course), you see:"
+msgstr ""
+
+#: ./build/en/book.xml:5579(screen) 
+#, no-wrap
+msgid "\n$Rev: 12 $:     Revision of last commit\n$Author: harry $:  Author of last commit\n$Date: 2006-03-15 02:33:03 -0500 (Wed, 15 Mar 2006) $:    Date of last commit\n"
+msgstr ""
+
+#: ./build/en/book.xml:5585(para) 
+msgid "The result is not so beautiful. And you might be tempted to then adjust the file after the substitution so that it again looks tabular. But that only holds as long as the keyword values are the same width. If the last committed revision rolls into a new place value (say, from 99 to 100), or if another person with a longer username commits the file, stuff gets all crooked again. However, if you are using Subversion 1.2 or better, you can use the new fixed-length keyword syntax, define some field widths that seem sane, and now your file might look like this:"
+msgstr ""
+
+#: ./build/en/book.xml:5596(screen) 
+#, no-wrap
+msgid "\n$Rev::               $:  Revision of last commit\n$Author::            $:  Author of last commit\n$Date::              $:  Date of last commit\n"
+msgstr ""
+
+#: ./build/en/book.xml:5602(para) 
+msgid "You commit this change to your file. This time, Subversion notices the new fixed-length keyword syntax, and maintains the width of the fields as defined by the padding you placed between the double-colon and the trailing dollar sign. After substitution, the width of the fields is completely unchanged—the short values for <literal moreinfo=\"none\">Rev</literal> and <literal moreinfo=\"none\">Author</literal> are padded with spaces, and the long <literal moreinfo=\"none\">Date</literal> field is truncated by a hash character:"
+msgstr ""
+
+#: ./build/en/book.xml:5612(screen) 
+#, no-wrap
+msgid "\n$Rev:: 13            $:  Revision of last commit\n$Author:: harry      $:  Author of last commit\n$Date:: 2006-03-15 0#$:  Date of last commit\n"
+msgstr ""
+
+#: ./build/en/book.xml:5618(para) 
+msgid "The use of fixed-length keywords is especially handy when performing substitutions into complex file formats that themselves use fixed-length fields for data, or for which the stored size of a given data field is overbearingly difficult to modify from outside the format's native application (such as for Microsoft Office documents)."
+msgstr ""
+
+#: ./build/en/book.xml:5626(para) 
+msgid "Be aware that because the width of a keyword field is measured in bytes, the potential for corruption of multi-byte values exists. For example, a username which contains some multi-byte UTF-8 characters might suffer truncation in the middle of the string of bytes which make up one of those characters. The result will be a mere truncation when viewed at the byte level, but will likely appear as a string with an incorrect or garbled final character when viewed as UTF-8 text. It is conceivable that certain applications, when asked to load the file, would notice the broken UTF-8 text and deem the entire file corrupt, refusing to operate on the file altogether."
+msgstr ""
+
+#: ./build/en/book.xml:5647(title) 
+msgid "Locking"
+msgstr ""
+
+#: ./build/en/book.xml:5649(para) 
+msgid "Subversion's copy-modify-merge version control model lives and dies on its data merging algorithms, specifically on how well those algorithms perform when trying to resolve conflicts caused by multiple users modifying the same file concurrently. Subversion itself provides only one such algorithm, a three-way differencing algorithm which is smart enough to handle data at a granularity of a single line of text. Subversion also allows you to supplement its content merge processing with external differencing utilities (as described in <xref linkend=\"svn.advanced.externaldifftools.diff3\"/>), some of which may do an even better job, perhaps providing granularity of a word or a single character of text. But common among those algorithms is that they generally work only on text files. The landscape starts to look pretty grim when you start talking about content merges of non-textual file formats. And when you can't find a tool that can handle that type of merging, you begin to run into problems with the copy-modify-merge model."
+msgstr ""
+
+#: ./build/en/book.xml:5667(para) 
+msgid "Let's look at a real-life example of where this model runs aground. Harry and Sally are both graphic designers working on the same project, a bit of marketing collateral for an automobile mechanic. Central to the design of a particular poster is an image of a car in need of some body work, stored in a file using the PNG image format. The poster's layout is almost finished, and both Harry and Sally are pleased with the particular photo they chose for their damaged car—a baby blue 1967 Ford Mustang with an unfortunate bit of crumpling on the left front fender."
+msgstr ""
+
+#: ./build/en/book.xml:5678(para) 
+msgid "Now, as is common in graphic design work, there's a change in plans which causes the car's color to be a concern. So Sally updates her working copy to <literal moreinfo=\"none\">HEAD</literal>, fires up her photo editing software, and sets about tweaking the image so that the car is now cherry red. Meanwhile, Harry, feeling particularly inspired that day, decides that the image would have greater impact if the car also appears to have suffered greater impact. He, too, updates to <literal moreinfo=\"none\">HEAD</literal>, and then draws some cracks on the vehicle's windshield. He manages to finish his work before Sally finishes hers, and after admiring the fruits of his undeniable talent, commits the modified image. Shortly thereafter, Sally is finished with the car's new finish, and tries to commit her changes. But, as expected, Subversion fails the commit, informing Sally that now her version of the image is out of date."
+msgstr ""
+
+#: ./build/en/book.xml:5694(para) 
+msgid "Here's where the difficulty sets in. Were Harry and Sally making changes to a text file, Sally would simply update her working copy, receiving Harry's changes in the process. In the worst possible case, they would have modified the same region of the file, and Sally would have to work out by hand the proper resolution to the conflict. But these aren't text files—they are binary images. And while it's a simple matter to describe what one would expect the results of this content merge to be, there is precious little chance that any software exists which is smart enough to examine the common baseline image that each of these graphic artists worked against, the changes that Harry made, and the changes that Sally made, and spit out an image of a busted-up red Mustang with a cracked windshield!"
+msgstr ""
+
+#: ./build/en/book.xml:5717(para) 
+msgid "Communication wouldn't have been such bad medicine for Harry and Sally's Hollywood namesakes, either, for that matter."
+msgstr ""
+
+#: ./build/en/book.xml:5709(para) 
+msgid "Clearly, things would have gone more smoothly if Harry and Sally had serialized their modifications to the image. If, say, Harry had waited to draw his windshield cracks on Sally's now-red car, or if Sally had tweaked the color of a car whose windshield was already cracked. As is discussed in <xref linkend=\"svn.basic.vsn-models.copy-merge\"/>, much of these types problems go away entirely where perfect communication between Harry and Sally exists. <placeholder-1/> But as one's version control system is, in fact, one form of communication, it follows that having that software facilitate the serialization of non-parallelizable energies is no bad thing. And this where Subversion's implementation of the lock-modify-unlock model steps into the spotlight. This is where we talk about Subversion's <firstterm>locking</firstterm> feature, which is similar to the <quote>reserved checkouts</quote> mechanisms of other version control systems."
+msgstr ""
+
+#: ./build/en/book.xml:5731(para) 
+msgid "Subversion's locking feature serves two main purposes:"
+msgstr ""
+
+#: ./build/en/book.xml:5736(para) 
+msgid "<emphasis>Serializing access to a versioned object</emphasis>. By allowing a user to programmatically claim the exclusive right to change to a file in the repository, that user can be reasonably confident that energy invested on unmergeable changes won't be wasted—his commit of those changes will succeed."
+msgstr ""
+
+#: ./build/en/book.xml:5744(para) 
+msgid "<emphasis>Aiding communication</emphasis>. By alerting other users that serialization is in effect for particular versioned object, those other users can reasonably expect that the object is about to be changed by someone else, and they, too, can avoid wasting their time and energy on unmergeable changes that won't be committable due to eventual out-of-dateness."
+msgstr ""
+
+#: ./build/en/book.xml:5758(para) 
+msgid "Subversion does not currently allow locks on directories."
+msgstr ""
+
+#: ./build/en/book.xml:5754(para) 
+msgid "When referring to Subversion's locking feature, one is actually talking about a fairly diverse collection of behaviors which include the ability to lock a versioned file <placeholder-1/> (claiming the exclusive right to modify the file), to unlock that file (yielding that exclusive right to modify), to see reports about which files are locked and by whom, to annotate files for which locking before editing is strongly advised, and so on. In this section, we'll cover all of these facets of the larger locking feature."
+msgstr ""
+
+#: ./build/en/book.xml:5768(title) 
+msgid "The three meanings of <quote>lock</quote>"
+msgstr ""
+
+#: ./build/en/book.xml:5770(para) 
+msgid "In this section, and almost everywhere in this book, the words <quote>lock</quote> and <quote>locking</quote> describe a mechanism for mutual exclusion between users to avoid clashing commits. Unfortunately, there are two other sorts of <quote>lock</quote> with which Subversion, and therefore this book, sometimes needs to be concerned."
+msgstr ""
+
+#: ./build/en/book.xml:5777(para) 
+msgid "The first is <firstterm>working copy locks</firstterm>, used internally by Subversion to prevent clashes between multiple Subversion clients operating on the same working copy. This is the sort of lock indicated by an <computeroutput moreinfo=\"none\">L</computeroutput> in the third column of <command moreinfo=\"none\">svn status</command> output, and removed by the <command moreinfo=\"none\">svn cleanup</command> command, as described in <xref linkend=\"svn.tour.cleanup\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:5785(para) 
+msgid "Secondly, there are <firstterm>database locks</firstterm>, used internally by the Berkeley DB backend to prevent clashes between multiple programs trying to access the database. This is the sort of lock whose unwanted persistence after an error can cause a repository to be <quote>wedged</quote>, as described in <xref linkend=\"svn.reposadmin.maint.recovery\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:5792(para) 
+msgid "You can generally forget about these other kinds of locks until something goes wrong that requires you to care about them. In this book, <quote>lock</quote> means the first sort unless the contrary is either clear from context or explicitly stated."
+msgstr ""
+
+#: ./build/en/book.xml:5802(title) 
+msgid "Creating locks"
+msgstr ""
+
+#: ./build/en/book.xml:5804(para) 
+msgid "In the Subversion repository, a <firstterm>lock</firstterm> is a piece of metadata which grants exclusive access to one user to change a file. This user is said to be the <firstterm>lock owner</firstterm>. Each lock also has a unique identifier, typically a long string of characters, known as the <firstterm>lock token</firstterm>. The repository manages locks, ultimately handling their creation, enforcement, and removal. If any commit transaction attempts to modify or delete a locked file (or delete one of the parent directories of the file), the repository will demand two pieces of information—that the client performing the commit be authenticated as the lock owner, and that the lock token has been provided as part of the commit process as a sort of proof that client knows which lock it is using."
+msgstr ""
+
+#: ./build/en/book.xml:5820(para) 
+msgid "To demonstrate lock creation, let's refer back to our example of multiple graphic designers working with on the same binary image files. Harry has decided to change a JPEG image. To prevent other people from committing changes to the file while he is modifying it (as well as alerting them that he is about to change it), he locks the file in the repository using the <command moreinfo=\"none\">svn lock</command> command."
+msgstr ""
+
+#: ./build/en/book.xml:5828(screen) 
+#, no-wrap
+msgid "\n$ svn lock banana.jpg -m \"Editing file for tomorrow's release.\"\n'banana.jpg' locked by user 'harry'.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5834(para) 
+msgid "There are a number of new things demonstrated in the previous example. First, notice that Harry passed the <option>--message (-m)</option> option to <command moreinfo=\"none\">svn lock</command>. Similar to <command moreinfo=\"none\">svn commit</command>, the <command moreinfo=\"none\">svn lock</command> command can take comments (either via <option>--message (-m)</option> or <option>--file (-F)</option>) to describe the reason for locking the file. Unlike <command moreinfo=\"none\">svn commit</command>, however, <command moreinfo=\"none\">svn lock</command> will not demand a message by launching your preferred text editor. Lock comments are optional, but still recommended to aid communication."
+msgstr ""
+
+#: ./build/en/book.xml:5846(para) 
+msgid "Secondly, the lock attempt succeeded. This means that the file wasn't already locked, and that Harry had the latest version of the file. If Harry's working copy of the file had been out-of-date, the repository would have rejected the request, forcing Harry to <command moreinfo=\"none\">svn update</command> and reattempt the locking command. The locking command would also have failed if the file already been locked by someone else."
+msgstr ""
+
+#: ./build/en/book.xml:5855(para) 
+msgid "As you can see, the <command moreinfo=\"none\">svn lock</command> command prints confirmation of the successful lock. At this point, the fact that the file is locked becomes apparent in the output of the <command moreinfo=\"none\">svn status</command> and <command moreinfo=\"none\">svn info</command> reporting subcommands."
+msgstr ""
+
+#: ./build/en/book.xml:5861(screen) 
+#, no-wrap
+msgid "\n$ svn status\n     K banana.jpg\n\n$ svn info banana.jpg\nPath: banana.jpg\nName: banana.jpg\nURL: http://svn.example.com/repos/project/banana.jpg\nRepository UUID: edb2f264-5ef2-0310-a47a-87b0ce17a8ec\nRevision: 2198\nNode Kind: file\nSchedule: normal\nLast Changed Author: frank\nLast Changed Rev: 1950\nLast Changed Date: 2006-03-15 12:43:04 -0600 (Wed, 15 Mar 2006)\nText Last Updated: 2006-06-08 19:23:07 -0500 (Thu, 08 Jun 2006)\nProperties Last Updated: 2006-06-08 19:23:07 -0500 (Thu, 08 Jun 2006)\nChecksum: 3b110d3b10638f5d1f4fe0f436a5a2a5\nLock Token: opaquelocktoken:0c0f600b-88f9-0310-9e48-355b44d4a58e\nLock Owner: harry\nLock Created: 2006-06-14 17:20:31 -0500 (Wed, 14 Jun 2006)\nLock Comment (1 line):\nEditing file for tomorrow's release.\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5888(para) 
+msgid "That the <command moreinfo=\"none\">svn info</command> command, which does not contact the repository when run against working copy paths, can display the lock token reveals an important fact about lock tokens—that they are cached in the working copy. The presence of the lock token is critical. It gives the working copy authorization to make use of the lock later on. Also, the <command moreinfo=\"none\">svn status</command> command shows a <literal moreinfo=\"none\">K</literal> next to the file (short for locKed), indicating that the lock token is present."
+msgstr ""
+
+#: ./build/en/book.xml:5899(title) 
+msgid "Regarding lock tokens"
+msgstr ""
+
+#: ./build/en/book.xml:5901(para) 
+msgid "A lock token isn't an authentication token, so much as an <emphasis>authorization</emphasis> token. The token isn't a protected secret. In fact, a lock's unique token is discoverable by anyone who runs <command moreinfo=\"none\">svn info URL</command>. A lock token is special only when it lives inside a working copy. It's proof that the lock was created in that particular working copy, and not somewhere else by some other client. Merely authenticating as the lock owner isn't enough to prevent accidents."
+msgstr ""
+
+#: ./build/en/book.xml:5911(para) 
+msgid "For example, suppose you lock a file using a computer at your office, but leave work for the day before you finish your changes to that file. It should not be possible to accidentally commit changes to that same file from your home computer later that evening simply because you've authenticated as the lock's owner. In other words, the lock token prevents one piece of Subversion-related software from undermining the work of another. (In our example, if you really need to change the file from an alternate working copy, you would need to break the lock and re-lock the file.)"
+msgstr ""
+
+#: ./build/en/book.xml:5925(para) 
+msgid "Now that Harry has locked <filename moreinfo=\"none\">banana.jpg</filename>, Sally is unable to change or delete that file:"
+msgstr ""
+
+#: ./build/en/book.xml:5928(screen) 
+#, no-wrap
+msgid "\n$ svn delete banana.jpg\nD         banana.jpg\n$ svn commit -m \"Delete useless file.\"\nDeleting       banana.jpg\nsvn: Commit failed (details follow):\nsvn: DELETE of\n'/repos/project/!svn/wrk/64bad3a9-96f9-0310-818a-df4224ddc35d/banana.jpg':\n423 Locked (http://svn.example.com)\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5940(para) 
+msgid "But Harry, after touching up the banana's shade of yellow, is able to commit his changes to the file. That's because he authenticates as the lock owner, and also because his working copy holds the correct lock token:"
+msgstr ""
+
+#: ./build/en/book.xml:5945(screen) 
+#, no-wrap
+msgid "\n$ svn status\nM    K banana.jpg\n$ svn commit -m \"Make banana more yellow\"\nSending        banana.jpg\nTransmitting file data .\nCommitted revision 2201.\n$ svn status\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:5956(para) 
+msgid "Notice that after the commit is finished, <command moreinfo=\"none\">svn status</command> shows that the lock token is no longer present in working copy. This is the standard behavior of <command moreinfo=\"none\">svn commit</command>—it searches the working copy (or list of targets, if you provide such a list) for local modifications, and sends all the lock tokens it encounters during this walk to the server as part of the commit transaction. After the commit completes successfully, all of the repository locks that were mentioned are released—<emphasis>even on files that weren't committed</emphasis>. This is meant to discourage users from being sloppy about locking, or from holding locks for too long. If Harry haphazardly locks thirty files in a directory named <filename moreinfo=\"none\">images</filename> because he's unsure of which files he needs to change, yet only only changes four of those file, when he runs <command moreinfo=\"none\">svn commit images</command>, the process will still release all thirty locks."
+msgstr ""
+
+#: ./build/en/book.xml:5974(para) 
+msgid "This behavior of automatically releasing locks can be overridden with the <option>--no-unlock</option> option to <command moreinfo=\"none\">svn commit</command>. This is best used for those times when you want to commit changes, but still plan to make more changes and thus need to retain existing locks. You can also make this your default behavior by setting the <literal moreinfo=\"none\">no-unlock</literal> runtime configuration option (see <xref linkend=\"svn.advanced.confarea\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:5983(para) 
+msgid "Of course, locking a file doesn't oblige one to commit a change to it. The lock can be released at any time with a simple <command moreinfo=\"none\">svn unlock</command> command:"
+msgstr ""
+
+#: ./build/en/book.xml:5987(screen) 
+#, no-wrap
+msgid "\n$ svn unlock banana.c\n'banana.c' unlocked.\n"
+msgstr ""
+
+#: ./build/en/book.xml:5996(title) 
+msgid "Discovering locks"
+msgstr ""
+
+#: ./build/en/book.xml:5998(para) 
+msgid "When a commit fails due to someone else's locks, it's fairly easy to learn about them. The easiest of these is <command moreinfo=\"none\">svn status --show-updates</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:6002(screen) 
+#, no-wrap
+msgid "\n$ svn status -u\nM              23   bar.c\nM    O         32   raisin.jpg\n       *       72   foo.h\nStatus against revision:     105\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6011(para) 
+msgid "In this example, Sally can see not only that her copy of <filename moreinfo=\"none\">foo.h</filename> is out-of-date, but that one of the two modified files she plans to commit is locked in the repository. The <literal moreinfo=\"none\">O</literal> symbol stands for <quote>Other</quote>, meaning that a lock exists on the file, and was created by somebody else. If she were to attempt a commit, the lock on <filename moreinfo=\"none\">raisin.jpg</filename> would prevent it. Sally is left wondering who made the lock, when, and why. Once again, <command moreinfo=\"none\">svn info</command> has the answers:"
+msgstr ""
+
+#: ./build/en/book.xml:6022(screen) 
+#, no-wrap
+msgid "\n$ svn info http://svn.example.com/repos/project/raisin.jpg\nPath: raisin.jpg\nName: raisin.jpg\nURL: http://svn.example.com/repos/project/raisin.jpg\nRepository UUID: edb2f264-5ef2-0310-a47a-87b0ce17a8ec\nRevision: 105\nNode Kind: file\nLast Changed Author: sally\nLast Changed Rev: 32\nLast Changed Date: 2006-01-25 12:43:04 -0600 (Sun, 25 Jan 2006)\nLock Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b\nLock Owner: harry\nLock Created: 2006-02-16 13:29:18 -0500 (Thu, 16 Feb 2006)\nLock Comment (1 line):\nNeed to make a quick tweak to this image.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6041(para) 
+msgid "Just as <command moreinfo=\"none\">svn info</command> can be used to examine objects in the working copy, it can also be used to examine objects in the repository. If the main argument to <command moreinfo=\"none\">svn info</command> is a working copy path, then all of the working copy's cached information is displayed; any mention of a lock means that the working copy is holding a lock token (if a file is locked by another user or in another working copy, <command moreinfo=\"none\">svn info</command> on a working copy path will show no lock information at all). If the main argument to <command moreinfo=\"none\">svn info</command> is a URL, then the information reflects the latest version of an object in the repository, and any mention of a lock describes the current lock on the object."
+msgstr ""
+
+#: ./build/en/book.xml:6055(para) 
+msgid "So in this particular example, Sally can see that Harry locked the file on February 16th to <quote>make a quick tweak</quote>. It being June, she suspects that he probably forgot all about the lock. She might phone Harry to complain and ask him to release the lock. If he's unavailable, she might try to forcibly break the lock herself or ask an administrator to do so."
+msgstr ""
+
+#: ./build/en/book.xml:6067(title) 
+msgid "Breaking and stealing locks"
+msgstr ""
+
+#: ./build/en/book.xml:6069(para) 
+msgid "A repository lock isn't sacred—in Subversion's default configuration state, locks can be released not only by the person who created them, but by anyone at all. When somebody other than the original lock creator destroys a lock, we refer to this as <firstterm>breaking</firstterm> the lock."
+msgstr ""
+
+#: ./build/en/book.xml:6076(para) 
+msgid "From the administrator's chair, it's simple to break locks. The <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command> programs have the ability to display and remove locks directly from the repository. (For more information about these tools, see <xref linkend=\"svn.reposadmin.maint.tk\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:6083(screen) 
+#, no-wrap
+msgid "\n$ svnadmin lslocks /usr/local/svn/repos\nPath: /project2/images/banana.jpg\nUUID Token: opaquelocktoken:c32b4d88-e8fb-2310-abb3-153ff1236923\nOwner: frank\nCreated: 2006-06-15 13:29:18 -0500 (Thu, 15 Jun 2006)\nExpires: \nComment (1 line):\nStill improving the yellow color.\n\nPath: /project/raisin.jpg\nUUID Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b\nOwner: harry\nCreated: 2006-02-16 13:29:18 -0500 (Thu, 16 Feb 2006)\nExpires: \nComment (1 line):\nNeed to make a quick tweak to this image.\n\n$ svnadmin rmlocks /usr/local/svn/repos /project/raisin.jpg\nRemoved lock on '/project/raisin.jpg'.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6106(para) 
+msgid "The more interesting option is allowing users to break each other's locks over the network. To do this, Sally simply needs to pass the <option>--force</option> to the unlock command:"
+msgstr ""
+
+#: ./build/en/book.xml:6111(screen) 
+#, no-wrap
+msgid "\n$ svn status -u\nM              23   bar.c\nM    O         32   raisin.jpg\n       *       72   foo.h\nStatus against revision:     105\n$ svn unlock raisin.jpg\nsvn: 'raisin.jpg' is not locked in this working copy\n$ svn info raisin.jpg | grep URL\nURL: http://svn.example.com/repos/project/raisin.jpg\n$ svn unlock http://svn.example.com/repos/project/raisin.jpg\nsvn: Unlock request failed: 403 Forbidden (http://svn.example.com)\n$ svn unlock --force http://svn.example.com/repos/project/raisin.jpg\n'raisin.jpg' unlocked.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6128(para) 
+msgid "Now, Sally's initial attempt to unlock failed because she ran <command moreinfo=\"none\">svn unlock</command> directly on her working copy of the file, and no lock token was present. To remove the lock directly from the repository, she needs to pass a URL to <command moreinfo=\"none\">svn unlock</command>. Her first attempt to unlock the URL fails, because she can't authenticate as the lock owner (nor does she have the lock token). But when she passes <option>--force</option>, the authentication and authorization requirements are ignored, and the remote lock is broken."
+msgstr ""
+
+#: ./build/en/book.xml:6139(para) 
+msgid "Of course, simply breaking a lock may not be enough. In the running example, Sally may not only want to break Harry's long-forgotten lock, but re-lock the file for her own use. She can accomplish this by running <command moreinfo=\"none\">svn unlock --force</command> and then <command moreinfo=\"none\">svn lock</command> back-to-back, but there's a small chance that somebody else might lock the file between the two commands. The simpler thing to is <firstterm>steal</firstterm> the lock, which involves breaking and re-locking the file all in one atomic step. To do this, Sally passes the <option>--force</option> option to <command moreinfo=\"none\">svn lock</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:6151(screen) 
+#, no-wrap
+msgid "\n$ svn lock raisin.jpg\nsvn: Lock request failed: 423 Locked (http://svn.example.com)\n$ svn lock --force raisin.jpg\n'raisin.jpg' locked by user 'sally'.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6159(para) 
+msgid "In any case, whether the lock is broken or stolen, Harry may be in for a surprise. Harry's working copy still contains the original lock token, but that lock no longer exists. The lock token is said to be <firstterm>defunct</firstterm>. The lock represented by the lock-token has either been broken (no longer in the repository), or stolen (replaced with a different lock). Either way, Harry can see this by asking <command moreinfo=\"none\">svn status</command> to contact the repository:"
+msgstr ""
+
+#: ./build/en/book.xml:6169(screen) 
+#, no-wrap
+msgid "\n$ svn status\n     K raisin.jpg\n$ svn status -u\n     B         32   raisin.jpg\n$ svn update\n  B  raisin.jpg\n$ svn status\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6180(para) 
+msgid "If the repository lock was broken, then <command moreinfo=\"none\">svn status --show-updates</command> displays a <literal moreinfo=\"none\">B</literal> (Broken) symbol next to the file. If a new lock exists in place of the old one, then a <literal moreinfo=\"none\">T</literal> (sTolen) symbol is shown. Finally, <command moreinfo=\"none\">svn update</command> notices any defunct lock tokens and removes them from the working copy."
+msgstr ""
+
+#: ./build/en/book.xml:6189(title) 
+msgid "Locking Policies"
+msgstr ""
+
+#: ./build/en/book.xml:6191(para) 
+msgid "Different systems have different notions of how strict a lock should be. Some folks argue that locks must be strictly enforced at all costs, releasable only by the original creator or administrator. They argue that if anyone can break a lock, then chaos runs rampant and the whole point of locking is defeated. The other side argues that locks are first and foremost a communication tool. If users are constantly breaking each others' locks, then it represents a cultural failure within the team and the problem falls outside the scope of software enforcement."
+msgstr ""
+
+#: ./build/en/book.xml:6202(para) 
+msgid "Subversion defaults to the <quote>softer</quote> approach, but still allows administrators to create stricter enforcement policies through the use of hook scripts. In particular, the <filename moreinfo=\"none\">pre-lock</filename> and <filename moreinfo=\"none\">pre-unlock</filename> hooks allow administrators to decide when lock creation and lock releases are allowed to happen. Depending on whether or not a lock already exists, these two hooks can decide whether or not to allow a certain user to break or steal a lock. The <filename moreinfo=\"none\">post-lock</filename> and <filename moreinfo=\"none\">post-unlock</filename> hooks are also available, and can be used to send email after locking actions. To learn more about repository hooks, see <xref linkend=\"svn.reposadmin.create.hooks\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:6222(title) 
+msgid "Lock Communication"
+msgstr ""
+
+#: ./build/en/book.xml:6224(para) 
+msgid "We've seen how <command moreinfo=\"none\">svn lock</command> and <command moreinfo=\"none\">svn unlock</command> can be used to create, release, break, and steal locks. This satisfies the goal of serializing commit access to a file. But what about the larger problem of preventing wasted time?"
+msgstr ""
+
+#: ./build/en/book.xml:6230(para) 
+msgid "For example, suppose Harry locks an image file and then begins editing it. Meanwhile, miles away, Sally wants to do the same thing. She doesn't think to run <command moreinfo=\"none\">svn status --show-updates</command>, so she has no idea that Harry has already locked the file. She spends hours editing the file, and when she tries to commit her change, she discovers that either the file is locked or that she's out-of-date. Regardless, her changes aren't mergeable with Harry's. One of these two people has to throw away their work, and a lot of time has been wasted."
+msgstr ""
+
+#: ./build/en/book.xml:6241(para) 
+msgid "Subversion's solution to this problem is to provide a mechanism to remind users that a file ought to be locked <emphasis>before</emphasis> the editing begins. The mechanism is a special property, <literal moreinfo=\"none\">svn:needs-lock</literal>. If that property is attached to a file (regardless of its value, which is irrelevant), then Subversion will try to use filesystem-level permissions to make the file read-only, unless, of course, the user has explicitly locked the file. When a lock-token is present (as a result of running <command moreinfo=\"none\">svn lock</command>), the file becomes read-write. When the lock is released, the file becomes read-only again."
+msgstr ""
+
+#: ./build/en/book.xml:6254(para) 
+msgid "The theory, then, is that if the image file has this property attached, then Sally would immediately notice something is strange when she opens the file for editing. Many applications alert users immediately when a read-only file is opened for editing. And nearly all applications would at least prevent her from saving changes to the file. This reminds her to lock the file before editing, whereby she discovers the pre-existing lock:"
+msgstr ""
+
+#: ./build/en/book.xml:6263(screen) 
+#, no-wrap
+msgid "\n$ /usr/local/bin/gimp raisin.jpg\ngimp: error: file is read-only!\n$ ls -l raisin.jpg\n-r--r--r--   1 sally   sally   215589 Jun  8 19:23 raisin.jpg\n$ svn lock raisin.jpg\nsvn: Lock request failed: 423 Locked (http://svn.example.com)\n$ svn info http://svn.example.com/repos/project/raisin.jpg | grep Lock\nLock Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b\nLock Owner: harry\nLock Created: 2006-06-08 07:29:18 -0500 (Thu, 08 June 2006)\nLock Comment (1 line):\nMaking some tweaks.  Locking for the next two hours.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6280(para) 
+msgid "Users and administrators alike are encouraged to attach the <literal moreinfo=\"none\">svn:needs-lock</literal> property to any file which cannot be contextually merged. This is the primary technique for encouraging good locking habits and preventing wasted effort."
+msgstr ""
+
+#: ./build/en/book.xml:6287(para) 
+msgid "Note that this property is a communication tool which works independently from the locking system. In other words, any file can be locked, whether or not this property is present. And conversely, the presence of this property doesn't make the repository require a lock when committing."
+msgstr ""
+
+#: ./build/en/book.xml:6303(para) 
+msgid "Except, perhaps, a classic Vulcan mind-meld."
+msgstr ""
+
+#: ./build/en/book.xml:6294(para) 
+msgid "Unfortunately, the system isn't flawless. It's possible that even when a file has the property, 
