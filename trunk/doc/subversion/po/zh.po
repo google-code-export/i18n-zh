@@ -15472,4 +15472,1285 @@ msgstr "不像CVS，Subversion工作拷贝会意识到它检出了一个模块�
 
 #: build/en/book.xml:25763(para)
 msgid "Subversion defines modules as a list of directories within a directory property: see <xref linkend=\"svn.advanced.externals\"/>."
-msgstr "Subversion定义了模块作为一个目录属性的目录�
+msgstr "Subversion定义了模块作为一个目录属性的目录列表：见<xref linkend=\"svn.advanced.externals\"/>。"
+
+#: build/en/book.xml:25773(title)
+msgid "Authentication"
+msgstr "认证"
+
+#: build/en/book.xml:25775(para)
+msgid "With CVS's pserver, you are required to <quote>login</quote> to the server before any read or write operation—you even have to login for anonymous operations. With a Subversion repository using Apache <command moreinfo=\"none\">httpd</command> or <command moreinfo=\"none\">svnserve</command> as the server, you don't provide any authentication credentials at the outset—if an operation that you perform requires authentication, the server will challenge you for your credentials (whether those credentials are username and password, a client certificate, or even both). So if your repository is world-readable, you will not be required to authenticate at all for read operations."
+msgstr "通过CVS的pserver，你需要在读写操作之前<quote>登陆</quote>到服务器—即使是匿名操作。Subversion版本库使用Apache的<command moreinfo=\"none\">httpd</command>或<command moreinfo=\"none\">svnserve</command>作为服务器，你不需要开始时提供认证凭证—如果一个操作需要认证，服务器会要求你的凭证（不管这凭证是用户名与密码，客户证书还是两个都有）。所以如果你的工作拷贝是全局可读的，在所有的读操作中不需要任何认证。"
+
+#: build/en/book.xml:25788(para)
+msgid "As with CVS, Subversion still caches your credentials on disk (in your <filename moreinfo=\"none\">~/.subversion/auth/</filename> directory) unless you tell it not to by using the <option>--no-auth-cache</option> switch."
+msgstr "相对于CVS，Subversion会一直在磁盘（在你的<filename moreinfo=\"none\">~/.subversion/auth/</filename>目录）缓存凭证，除非你通过<option>--no-auth-cache</option>选项告诉它不这样做。"
+
+#: build/en/book.xml:25793(para)
+msgid "The exception to this behavior, however, is in the case of accessing an <command moreinfo=\"none\">svnserve</command> server over an SSH tunnel, using the <literal moreinfo=\"none\">svn+ssh://</literal> URL schema. In that case, the <command moreinfo=\"none\">ssh</command> program unconditionally demands authentication just to start the tunnel."
+msgstr "这个行为也有例外，当使用SSH管道的<command moreinfo=\"none\">svnserve</command>服务器时，使用<literal moreinfo=\"none\">svn+ssh://</literal>的URL模式这种情况下，<command moreinfo=\"none\">ssh</command>会在通道刚开始时无条件的要求认证。"
+
+#: build/en/book.xml:25806(title)
+msgid "Converting a Repository from CVS to Subversion"
+msgstr "转化CVS版本库到Subversion"
+
+#: build/en/book.xml:25808(para)
+msgid "Perhaps the most important way to familiarize CVS users with Subversion is to let them continue to work on their projects using the new system. And while that can be somewhat accomplished using a flat import into a Subversion repository of an exported CVS repository, the more thorough solution involves transferring not just the latest snapshot of their data, but all the history behind it as well, from one system to another. This is an extremely difficult problem to solve that involves deducing changesets in the absence of atomicity, and translating between the systems' completely orthogonal branching policies, among other complications. Still, there are a handful of tools claiming to at least partially support the ability to convert existing CVS repositories into Subversion ones."
+msgstr "或许让CVS用户熟悉Subversion最好的办法就是让他们的项目继续在新系统下工作，这可以简单得通过平淡的把CVS版本库的导出数据导入到Subversion完成，或者是更加完全的方案，不仅仅包括最新数据快照，还包括所有的历史，从一个系统到另一个系统。这是一个非常困难的问题，包括推导保持原子性的修改集，转化两个系统完全不同的分支政策。但是我们还是有许多工具声称至少部分具备了的转化已存在的CVS版本库为Subversion版本库的能力。"
+
+#: build/en/book.xml:25822(para)
+msgid "One such tool is cvs2svn (<ulink url=\"http://cvs2svn.tigris.org/\"/>), a Python script originally created by members of Subversion's own development community. Others include Lev Serebryakov's RefineCVS (<ulink url=\"http://lev.serebryakov.spb.ru/refinecvs/\"/>). These tools have various levels of completeness, and may make entirely different decisions about how to handle your CVS repository history. Whichever tool you decide to use, be sure to perform as much verification as you can stand on the conversion results—after all, you've worked hard to build that history!"
+msgstr "其中一个工具是cvs2svn（<ulink url=\"http://cvs2svn.tigris.org/\"/>），是一个Python脚本，最初是Subversion自己的开发社区的成员编写的。其他的如Lev Serebryakov的RefineCVS（<ulink url=\"http://lev.serebryakov.spb.ru/refinecvs/\"/>）。这些工具具备不同程度的完成性，也许会具备完全不同的处理CVS历史的方法。无论你决定使用哪个工具，确定要执行尽可能多的验证来确定你可以接受转化结果—毕竟，你曾经努力创建这些历史！"
+
+#: build/en/book.xml:25834(para)
+msgid "For an updated collection of links to known converter tools, visit the Links page of the Subversion website (<ulink url=\"http://subversion.tigris.org/project_links.html\"/>)."
+msgstr "关于最新的转化工具链接列表，可以访问Subversion的网站（<ulink url=\"http://subversion.tigris.org/project_links.html\"/>）。"
+
+#: build/en/book.xml:25849(title)
+msgid "WebDAV and Autoversioning"
+msgstr "WebDAV和自动版本化"
+
+#: build/en/book.xml:25851(para)
+msgid "WebDAV is an extension to HTTP, and is growing more and more popular as a standard for file-sharing. Today's operating systems are becoming extremely Web-aware, and many now have built-in support for mounting <quote>shares</quote> exported by WebDAV servers."
+msgstr "WebDAV是HTTP的一个扩展，作为一个文件共享的标准不断发展。当今的操作系统变得极端的web化，许多内置了对装配WebDAV服务器导出的<quote>共享</quote>的支持。"
+
+#: build/en/book.xml:25857(para)
+#, fuzzy
+msgid "If you use Apache as your Subversion network server, then to some extent you are also running a WebDAV server. This appendix gives some background on the nature of this protocol, how Subversion uses it, and how well Subversion interoperates with other software that is WebDAV-aware."
+msgstr "如果你使用Apache/mod_dav_svn作为你的Subversion网络服务器，某种程度上，你也是在运行一个WebDAV服务器。这个附录提供了这种协议一些背景知识，Subversion如何使用它，Subversion如何和认识WebDAV的软件交互工作。"
+
+#: build/en/book.xml:2586(command)
+msgid "svn add foo"
+msgstr "svn add foo"
+
+#: build/en/book.xml:25868(title)
+msgid "What is WebDAV?"
+msgstr ""
+
+#: build/en/book.xml:25870(para)
+#, fuzzy
+msgid "<firstterm>DAV</firstterm> stands for <quote>Distributed Authoring and Versioning</quote>. RFC 2518 defines a set of concepts and accompanying extension methods to HTTP 1.1 that make the web into a more universal read/write medium. The basic idea is that a WebDAV-compliant web server can act like a generic file server; clients can <quote>mount</quote> shared folders over HTTP that behave much like other network filesystems (such as NFS or SMB.)"
+msgstr "RFC 2518为HTTP 1.1定义了一组概念和附加扩展方法来把web变成一个更加普遍的读/写媒体，基本思想是一个WebDAV兼容的web服务器可以像普通的文件服务器一样工作；客户端可以装配类似于NFS或SMB的WebDAV共享文件夹。"
+
+#: build/en/book.xml:25879(para)
+#, fuzzy
+msgid "The tragedy, though, is that despite the acronym, the RFC specification doesn't actually describe any sort of version control. Basic WebDAV clients and servers assume only one version of each file or directory exists, and can be repeatedly overwritten."
+msgstr "悲惨的是，WebDAV规范RFC 2518并没有提供任何版本控制模型，尽管DAV中有<quote>V</quote>。基本的DAV客户端和服务器只是假定每个文件或目录只有一个版本存在，可以重复的覆盖。"
+
+#: build/en/book.xml:2588(para)
+#, fuzzy
+msgid "Schedule file, directory, or symbolic link <filename moreinfo=\"none\">foo</filename> to be added to the repository. When you next commit, <filename moreinfo=\"none\">foo</filename> will become a child of its parent directory. Note that if <filename moreinfo=\"none\">foo</filename> is a directory, everything underneath <filename moreinfo=\"none\">foo</filename> will be scheduled for addition. If you only want to add <filename moreinfo=\"none\">foo</filename> itself, pass the <option>--non-recursive (-N)</option> option."
+msgstr "预定将文件、目录或者符号链<filename moreinfo=\"none\">foo</filename>添加到版本库，当你下次提交后，<filename moreinfo=\"none\">foo</filename>会成为其父目录的一个子对象。注意，如果<filename moreinfo=\"none\">foo</filename>是目录，所有foo中的内容也会预定添加进去，如果你只想添加<filename moreinfo=\"none\">foo</filename>本身，使用<option>--non-recursive</option>（<option>-N</option>）参数。"
+
+#: build/en/book.xml:25885(para)
+#, fuzzy
+msgid "Because RFC 2518 left out versioning concepts, another committee was left with the responsibility of writing RFC 3253 a few years later. The new RFC adds versioning concepts to WebDAV, placing the <quote>V</quote> back in <quote>DAV</quote> — hence the term <quote>DeltaV</quote>. WebDAV/DeltaV clients and servers are often called just <quote>DeltaV</quote> programs, since DeltaV implies the existence of basic WebDAV."
+msgstr "因为RFC 2518漏下了版本概念，另一个委员会留下来负责撰写RFC 3253来添加WebDAV的版本化，也就是<quote>DeltaV</quote>。WebDAV/DeltaV客户端和服务器经常叫做<quote>DeltaV</quote>客户端和服务器，因为DeltaV暗含了基本的WebDAV。"
+
+#: build/en/book.xml:25894(para)
+msgid "The original WebDAV standard has been widely successful. Every modern computer operating system has a general WebDAV client built-in (details to follow), and a number of popular standalone applications are also able to speak WebDAV — Microsoft Office, Dreamweaver, and Photoshop to name a few. On the server end, the Apache webserver has been able to provide WebDAV services since 1998 and is considered the de-facto open-source standard. There are several other commercial WebDAV servers available, including Microsoft's own IIS."
+msgstr "最初的WebDAV标准得到了广泛的成功，所有的现代操作系统拥有内置的（后面有详细资料）对普通WebDAV的支持，许多流行的应用程序也可以使用WebDAV—Microsoft Office，Dreamweaver和Photoshop。在服务器方面，Apache从1998年就开始支持WebDAV，并被认为是一个事实上的开源标准，也有许多商业的WebDAV服务器，例如Microsoft的IIS。"
+
+#: build/en/book.xml:25904(para)
+msgid "DeltaV, unfortunately, has not been so successful. It's very difficult to find any DeltaV clients or servers. The few that do exist are relatively unknown commercial products, and thus it's very difficult to test interoperability. It's not entirely clear as to why DeltaV has remained stagnant. Some argue that the specification is just too complex, others argue that while WebDAV's features have mass appeal (even the least technical users appreciate network file-sharing), version control features aren't interesting or necessary for most users. Finally, some have argued that DeltaV remains unpopular because there's still no open-source server product which implements it."
+msgstr "不幸的是，DeltaV没有这样的成功，很难寻找到任何DeltaV客户端和服务器。只有一些不太出名的商业产品，因此很难测试交互性，不清楚为什么DeltaV还这样停滞，一些人说规范太复杂了，还有些人认为尽管DeltaV的特性有很大的吸引力（即使最新的技术用户也喜欢使用网络文件共享），版本控制特性对大多数用户还不是这样有趣和必须。最后，有些人认为DeltaV还这样不流行主要是因为一直没有开源的服务器产品实现它。"
+
+#: build/en/book.xml:25917(para)
+#, fuzzy
+msgid "When Subversion was still in its design phase, it seemed like a great idea to use Apache as a network server. It already had a module to provide WebDAV services. DeltaV was a relatively new specification. The hope was that the Subversion server module (<command moreinfo=\"none\">mod_dav_svn</command>) would eventually evolve into an open-source DeltaV reference implementation. Unfortunately, DeltaV has a very specific versioning model that doesn't quite line up with Subversion's model. Some concepts were mappable, others were not."
+msgstr "当Subversion还在设计阶段时，使用Apache的httpd作为主要网络服务器就是一个很好的想法，已经有了支持WebDAV服务的模块。DeltaV有一个很新的规范，希望就是Subversion服务器模块最终能够成为一个开源的DeltaV参考实现，但非常不幸，DeltaV得版本模型过于详细，与Subversion的模型并不匹配，虽然有些概念可以对应起来，但有些则不能。"
+
+#: build/en/book.xml:25927(para)
+msgid "What does this mean, then?"
+msgstr ""
+
+#: build/en/book.xml:25929(para)
+#, fuzzy
+msgid "First, the Subversion client is not a fully-implemented DeltaV client. It needs certain types of things from the server that DeltaV itself cannot provide, and thus is largely dependent on a number of Subversion-specific HTTP <literal moreinfo=\"none\">REPORT</literal> requests that only <command moreinfo=\"none\">mod_dav_svn</command> understands."
+msgstr "客户端需要从服务器得到DeltaV不能提供的东西，因此非常依赖于只有mod_dav_svn理解的Subversion特定的<literal moreinfo=\"none\">REPORT</literal>请求。"
+
+#: build/en/book.xml:25936(para)
+#, fuzzy
+msgid "Second, <command moreinfo=\"none\">mod_dav_svn</command> is not a fully-realized DeltaV server. Many portions of the DeltaV specification were irrelevant to Subversion, and thus left unimplemented."
+msgstr "许多与Subversion不相关的DeltaV规范还没有实现。"
+
+#: build/en/book.xml:25941(para)
+#, fuzzy
+msgid "There is still some debate in the developer community as to whether or not it's worthwhile to remedy either of these situations. It's fairly unrealistic to change Subversion's design to match DeltaV, so there's probably no way the client can ever learn to get everything it needs from a general DeltaV server. On the other hand, <command moreinfo=\"none\">mod_dav_svn</command><emphasis>could</emphasis> be further developed to implement all of DeltaV, but it's hard to find motivation to do so—there are almost no DeltaV clients to interoperate with."
+msgstr "在开发者社区一直有这样的讨论，是否值得弥补这种形势。改变Subversion的设计来匹配DeltaV看起来并不值得，所以可能没有办法让客户端从普通的DeltaV服务器上得到所有的东西。另一方面，mod_dav_svn<emphasis>可以</emphasis>继续开发来实现所有的DeltaV，但缺乏这样做的动力—几乎没有能与之交户的DeltaV客户端。"
+
+#: build/en/book.xml:25958(title)
+msgid "Autoversioning"
+msgstr "自动版本化"
+
+#: build/en/book.xml:25960(para)
+msgid "While the Subversion client is not a full DeltaV client, nor the Subversion server a full DeltaV server, there's still a glimmer of WebDAV interoperability to be happy about: it's called autoversioning."
+msgstr "因为Subversion客户端不是完整的DeltaV客户端，Subversion服务器也不是完整的DeltaV服务器，但仍有值得高兴的交互特性：叫做自动版本化。"
+
+#: build/en/book.xml:25965(para)
+#, fuzzy
+msgid "Autoversioning is an optional feature defined in the DeltaV standard. A typical DeltaV server will reject an ignorant WebDAV client attempting to do a <literal moreinfo=\"none\">PUT</literal> to a file that's under version control. To change a version-controlled file, the server expects a series proper versioning requests: something like <literal moreinfo=\"none\">MKACTIVITY</literal>, <literal moreinfo=\"none\">CHECKOUT</literal>, <literal moreinfo=\"none\">PUT</literal>, <literal moreinfo=\"none\">CHECKIN</literal>. But if the DeltaV server supports autoversioning, then write-requests from basic WebDAV clients are accepted. The server behaves as if the client <emphasis>had</emphasis> issued the proper series of versioning requests, performing a commit under the hood. In other words, it allows a DeltaV server to interoperate with ordinary WebDAV clients that don't understand versioning."
+msgstr "自动版本化是DeltaV标准中的可选特性，一个典型的DeltaV服务器会拒绝一个对版本控制之下文件的<literal moreinfo=\"none\">PUT</literal>操作，为了修改一个版本控制下的文件，服务器只会接受一系列正确的版本请求：例如<literal moreinfo=\"none\">MKACTIVITY</literal>、<literal moreinfo=\"none\">CHECKOUT</literal>、<literal moreinfo=\"none\">PUT</literal>和<literal moreinfo=\"none\">CHECKIN</literal>。但是如果DeltaV服务器支持自动版本化，服务器可以在后台假装客户端执行了一些列正确的版本请求，也就是说，DeltaV服务器可以与一个对版本化一无所知的普通WebDAV客户端交互。"
+
+#: build/en/book.xml:25980(para)
+msgid "Because so many operating systems already have integrated WebDAV clients, the use case for this feature borders on fantastical: imagine an office of ordinary users running Microsoft Windows or Mac OS. Each user <quote>mounts</quote> the Subversion repository, which appears to be an ordinary network folder. They use the shared folder as they always do: open files, edit them, save them. Meanwhile, the server is automatically versioning everything. Any administrator (or knowledgeable user) can still use a Subversion client to search history and retrieve older versions of data."
+msgstr "因为有许多操作系统已经集成了WebDAV客户端，这个特性的用例可能是这样的：假设一个办公室有许多使用Microsoft Windows或Mac OS的普通用户，每个用户<quote>装载</quote>了一个Subversion版本库，看起来就是普通的网络共享文件夹。他们像普通目录一样的操作这个目录：打开文件、编辑它们，保存它们。同时，服务器自动的版本化所有的东西，任何管理员（或有知识的用户）可以一直使用Subversion客户端来查询历史来检索旧版本的数据。"
+
+#: build/en/book.xml:25991(para)
+#, fuzzy
+msgid "This scenario isn't fiction: it's real and it works, as of Subversion 1.2 and later. To activate autoversioning in <command moreinfo=\"none\">mod_dav_svn</command>, use the <literal moreinfo=\"none\">SVNAutoversioning</literal> directive within the <filename moreinfo=\"none\">httpd.conf</filename> Location block, like so:"
+msgstr "这个场景不是小说：对于Subversion 1.2来说，是真实的和有效的。为了激活mod_dav_svn的自动版本化，需要使用<filename moreinfo=\"none\">httpd.conf</filename>中Location区块的<literal moreinfo=\"none\">SVNAutoversioning</literal>指示，例如："
+
+#: build/en/book.xml:25998(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /path/to/repository\n"
+"  SVNAutoversioning on\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /path/to/repository\n"
+"  SVNAutoversioning on\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:260(para)
+#, fuzzy
+msgid "For consistency, the examples in this book assume the reader is using a Unix-like operating system and relatively comfortable with Unix and command-line interfaces. That said, the <command moreinfo=\"none\">svn</command> program also runs on non-Unix platforms like Microsoft Windows. With a few minor exceptions, such as the use of backward slashes (<literal moreinfo=\"none\">\\</literal>) instead of forward slashes (<literal moreinfo=\"none\">/</literal>) for path separators, the input to and output from this tool when run on Windows are identical to its Unix counterpart."
+msgstr "同样，<command moreinfo=\"none\">svn</command>程序也可以在入Microsoft Windows这样的非Unix平台上运行。除了一些微小的不同，如使用反斜线（<literal moreinfo=\"none\">\\</literal>）代替正斜线（<literal moreinfo=\"none\">/</literal>）作为路径分隔符，在Windows上运行svn程序的输入和输出与在Unix平台上运行完全一致。不过在Cygwin（Windows下的模拟Unix的环境）运行本书的例子可能更容易成功。"
+
+#: build/en/book.xml:26006(para)
+msgid "When SVNAutoversioning is active, write requests from WebDAV clients result in automatic commits. A generic log message is auto-generated and attached to each revision."
+msgstr "当激活了SVNAutoversioning，来自WebDAV的客户端请求会导致自动提交，每个修订版本会自动附加一个原始的日志信息。"
+
+#: build/en/book.xml:26010(para)
+#, fuzzy
+msgid "Before activating this feature, however, understand what you're getting into. WebDAV clients tend to do <emphasis>many</emphasis> write requests, resulting in a huge number of automatically committed revisions. For example, when saving data, many clients will do a <literal moreinfo=\"none\">PUT</literal> of a 0-byte file (as a way of reserving a name) followed by another <literal moreinfo=\"none\">PUT</literal> with the real file data. The single file-write results in two separate commits. Also consider that many applications auto-save every few minutes, resulting in even more commits."
+msgstr "然而，在激活这个特性之前，需要理解你做的事情。WebDAV会做许多写请求，导致了产生数量绝大的自动提交修订版本。例如，当保存数据，许多客户端会使用一个<literal moreinfo=\"none\">PUT</literal>一个0字节的文件，然后紧跟一个<literal moreinfo=\"none\">PUT</literal>真实的文件数据。一个单独的文件写操作产生了两个不同的提交。考虑到许多应用程序隔几分钟的自动保存，会产生更多的提交。"
+
+#: build/en/book.xml:2602(command)
+msgid "svn delete foo"
+msgstr "svn delete foo"
+
+#: build/en/book.xml:26021(para)
+msgid "If you have a post-commit hook program that sends email, you may want to disable email generation either altogether, or on certain sections of the repository; it depends on whether you think the influx of emails will still prove to be valuable notifications or not. Also, a smart post-commit hook program can distinguish between a transaction created via autoversioning and one created through a normal <command moreinfo=\"none\">svn commit</command>. The trick is to look for a revision property named <literal moreinfo=\"none\">svn:autoversioned</literal>. If present, the commit was made by a generic WebDAV client."
+msgstr "如果你有发送邮件的post-commit钩子程序，例如，你会根据是否有价值来开启和关闭邮件通知，另外，一个聪明的post-commit钩子也应该能够区分自动版本化和<command moreinfo=\"none\">svn commit</command>产生的事务。技巧就是检查修订版本的<literal moreinfo=\"none\">svn:autoversioned</literal>属性，如果有，则提交来自一个原始的WebDAV客户端。"
+
+#: build/en/book.xml:26032(para)
+#, fuzzy
+msgid "Another feature that may be a useful complement for <literal moreinfo=\"none\">SVNAutoversioning</literal> comes from Apache's <literal moreinfo=\"none\">mod_mime</literal> module. If a WebDAV client adds a new file to the repository, there's no opportunity for the user to set the the <literal moreinfo=\"none\">svn:mime-type</literal> property. This might cause the file to appear as generic icon when viewed within a WebDAV shared folder, not having an association with any application. One remedy is to have a sysadmin (or other Subversion-knowledgable person) check out a working copy and manually set the <literal moreinfo=\"none\">svn:mime-type</literal> property on necessary files. But there's potentially no end to such cleanup tasks. Instead, you can use the <literal moreinfo=\"none\">ModMimeUsePathInfo</literal> directive in your Subversion <literal moreinfo=\"none\">&lt;Location&gt;</literal> block:"
+msgstr "另一个作为<literal moreinfo=\"none\">SVNAutoversioning</literal>特性补充的特性来自Apache的<literal moreinfo=\"none\">mod_mime</literal>模块，如果一个原始的WebDAV客户端在版本库添加了一个新文件，用户就没有机会设置<literal moreinfo=\"none\">svn:mime-type</literal>属性，这会导致使用WebDAV共享目录查看时会看到原始的图标，而没有关联到任何应用。一个补救办法就是让系统管理员（或其他理解Subversion）的人检出一份工作拷贝，然后为需要的文件手动设置<literal moreinfo=\"none\">svn:mime-type</literal>属性，但是这个整理工作永远不会结束，作为替代，你可以在你的Subversion<literal moreinfo=\"none\">&lt;Location&gt;</literal>区使用<literal moreinfo=\"none\">ModMimeUsePathInfo</literal>指示："
+
+#: build/en/book.xml:2604(para)
+msgid "Schedule file, directory, or symbolic link <filename moreinfo=\"none\">foo</filename> to be deleted from the repository. If <filename moreinfo=\"none\">foo</filename> is a file or link, it is immediately deleted from your working copy. If <filename moreinfo=\"none\">foo</filename> is a directory, it is not deleted, but Subversion schedules it for deletion. When you commit your changes, <filename moreinfo=\"none\">foo</filename> will be removed from your working copy and the repository. <placeholder-1/>"
+msgstr "预定将文件、目录或者符号链<filename moreinfo=\"none\">foo</filename>从版本库中删除掉，如果foo是文件，它马上从工作拷贝中删除，如果是目录，不会被删除，但是Subversion准备好删除了，当你提交你的修改，<filename moreinfo=\"none\">foo</filename>就会在你的工作拷贝和版本库中被删除。<placeholder-1/>"
+
+#: build/en/book.xml:26048(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /path/to/repository\n"
+"  SVNAutoversioning on\n"
+"\n"
+"  ModMimeUsePathInfo on\n"
+"\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /path/to/repository\n"
+"  SVNAutoversioning on\n"
+"\n"
+"  ModMimeUsePathInfo on\n"
+"\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:26059(para)
+#, fuzzy
+msgid "This directive allows <literal moreinfo=\"none\">mod_mime</literal> to attempt automatic deduction of the mime-type on new files that enter the repository via autoversioning. The module looks at the file's named extension and possibly the contents as well; if the file matches some common patterns, then the the file's <literal moreinfo=\"none\">svn:mime-type</literal> property will be set automatically."
+msgstr "这个指示允许<literal moreinfo=\"none\">mod_mime</literal>在使用自动版本化添加新文件时尝试自动检测新文件的mime-type，这个模块查看文件的扩展名，有可能的话还包括检查内容；如果文件符合某个常用模式，就会自动设置文件的<literal moreinfo=\"none\">svn;mime-type</literal>。"
+
+#: build/en/book.xml:26073(title)
+msgid "Client Interoperability"
+msgstr "客户端交互性"
+
+#: build/en/book.xml:26075(para)
+msgid "All WebDAV clients fall into one of three categories—standalone applications, file-explorer extensions, or filesystem implementations. These categories broadly define the types of WebDAV functionality available to users. <xref linkend=\"svn.webdav.clients.tbl-1\"/> gives our categorization and a quick description of some common pieces of WebDAV-enabled software. More details about these software offerings, as well as their general category, can be found in the sections that follow."
+msgstr "所有的WebDAV客户端分为三类—独立应用程序，文件浏览器扩展或文件系统实现，这些分类定义了WebDAV用户可用的功能性。<xref linkend=\"svn.webdav.clients.tbl-1\"/>给WebDAV常见软件进行了分类，并提供了的简短描述。"
+
+#: build/en/book.xml:26086(title)
+msgid "Common WebDAV Clients"
+msgstr "Common WebDAV Clients"
+
+#: build/en/book.xml:26090(entry)
+msgid "Software"
+msgstr "软件"
+
+#: build/en/book.xml:26091(entry)
+msgid "Type"
+msgstr ""
+
+#: build/en/book.xml:26092(entry)
+msgid "Windows"
+msgstr "Windows"
+
+#: build/en/book.xml:26093(entry)
+msgid "Mac"
+msgstr "Mac"
+
+#: build/en/book.xml:26094(entry)
+msgid "Linux"
+msgstr "Linux"
+
+#: build/en/book.xml:26100(entry)
+msgid "Adobe Photoshop"
+msgstr "Adobe Photoshop"
+
+#: build/en/book.xml:26101(entry) build/en/book.xml:26110(entry)
+#: build/en/book.xml:26119(entry) build/en/book.xml:26163(entry)
+#: build/en/book.xml:26172(entry) build/en/book.xml:26215(title)
+msgid "Standalone WebDAV applications"
+msgstr "独立WebDAV应用程序"
+
+#: build/en/book.xml:26102(entry) build/en/book.xml:26112(entry)
+#: build/en/book.xml:26113(entry) build/en/book.xml:26120(entry)
+#: build/en/book.xml:26121(entry) build/en/book.xml:26122(entry)
+#: build/en/book.xml:26130(entry) build/en/book.xml:26139(entry)
+#: build/en/book.xml:26148(entry) build/en/book.xml:26156(entry)
+#: build/en/book.xml:26164(entry) build/en/book.xml:26173(entry)
+#: build/en/book.xml:26183(entry) build/en/book.xml:26192(entry)
+#: build/en/book.xml:26201(entry)
+msgid "X"
+msgstr "X"
+
+#: build/en/book.xml:26105(entry)
+msgid "Image editing software, allowing direct opening from, and writing to, WebDAV URLs"
+msgstr "图像编辑软件，允许直接从WebDAV的URL打开文件和修改。"
+
+#: build/en/book.xml:26109(entry)
+msgid "Cadaver"
+msgstr "Cadaver"
+
+#: build/en/book.xml:26114(entry)
+msgid "Command-line WebDAV client supporting file transfer, tree, and locking operations"
+msgstr "命令行的WebDAV客户端，支持文件传输，目录树显示和锁定操作"
+
+#: build/en/book.xml:26118(entry)
+msgid "DAV Explorer"
+msgstr "DAV Explorer"
+
+#: build/en/book.xml:2612(para)
+#, fuzzy
+msgid "Of course, nothing is ever totally deleted from the repository—just from the <literal moreinfo=\"none\">HEAD</literal> of the repository. You can get back anything you delete by checking out (or updating your working copy) a revision earlier than the one in which you deleted it. Also see <xref linkend=\"svn.branchmerge.commonuses.resurrect\"/>&gt;"
+msgstr "当然没有任何东西是在版本库里被删除了—只是在版本库的<literal moreinfo=\"none\">HEAD</literal>里消失了，你可以通过检出（或者更新你的工作拷贝）你做出删除操作的前一个修订版本来找回所有的东西。"
+
+#: build/en/book.xml:26123(entry)
+#, fuzzy
+msgid "Java GUI tool for exploring WebDAV shares"
+msgstr "浏览WebDAV共享的GUI工具"
+
+#: build/en/book.xml:26126(entry)
+msgid "davfs2"
+msgstr "davfs2"
+
+#: build/en/book.xml:26127(entry) build/en/book.xml:26154(entry)
+#: build/en/book.xml:26191(entry) build/en/book.xml:26200(entry)
+#: build/en/book.xml:26434(title)
+msgid "WebDAV filesystem implementation"
+msgstr "WebDAV文件系统实现"
+
+#: build/en/book.xml:26131(entry)
+msgid "Linux file system driver that allows you to mount a WebDAV share"
+msgstr "Linux文件系统驱动允许加载WebDAV共享"
+
+#: build/en/book.xml:26135(entry)
+msgid "GNOME Nautilus"
+msgstr "GNOME Nautilus"
+
+#: build/en/book.xml:26136(entry) build/en/book.xml:26145(entry)
+#: build/en/book.xml:26182(entry) build/en/book.xml:26305(title)
+msgid "File-explorer WebDAV extensions"
+msgstr "文件浏览器WebDAV扩展"
+
+#: build/en/book.xml:26140(entry) build/en/book.xml:26149(entry)
+msgid "GUI file explorer able to perform tree operations on a WebDAV share"
+msgstr "GUI文件浏览器，可以对WebDAV共享执行目录树操作"
+
+#: build/en/book.xml:26144(entry)
+msgid "KDE Konqueror"
+msgstr "KDE Konqueror"
+
+#: build/en/book.xml:26153(entry) build/en/book.xml:26466(title)
+msgid "Mac OS X"
+msgstr "Mac OS X"
+
+#: build/en/book.xml:26158(entry)
+#, fuzzy
+msgid "Operating system has built-in support for mounting WebDAV shares."
+msgstr "内置可以加载WebDAV到本地功能的操作系统"
+
+#: build/en/book.xml:26162(entry)
+msgid "Macromedia Dreamweaver"
+msgstr "Macromedia Dreamweaver"
+
+#: build/en/book.xml:26167(entry)
+msgid "Web production software able to directly read from and write to WebDAV URLs"
+msgstr "Web制作软件，可以直接读写WebDAV的URL"
+
+#: build/en/book.xml:26171(entry)
+msgid "Microsoft Office"
+msgstr "Microsoft Office"
+
+#: build/en/book.xml:26176(entry)
+msgid "Office productivity suite with several components able to directly read from and write to WebDAV URLs"
+msgstr "Office上产套件，可以直接读写WebDAV的URL"
+
+#: build/en/book.xml:26181(entry) build/en/book.xml:26321(title)
+msgid "Microsoft Web Folders"
+msgstr "Microsoft Webfolders"
+
+#: build/en/book.xml:26186(entry)
+msgid "GUI file explorer program able to perform tree operations on a WebDAV share"
+msgstr "Novell NetDrive"
+
+#: build/en/book.xml:26190(entry)
+msgid "Novell NetDrive"
+msgstr "驱动器映射程序，可以将Windows驱动器加载为远程的WebDAV共享"
+
+#: build/en/book.xml:26195(entry)
+msgid "Drive-mapping program for assigning Windows drive letters to a mounted remote WebDAV share"
+msgstr "SRT WebDrive"
+
+#: build/en/book.xml:26199(entry)
+msgid "SRT WebDrive"
+msgstr "文件传输软件，可以将Windows驱动器加载为远程的WebDAV共享"
+
+#: build/en/book.xml:26204(entry)
+msgid "File transfer software which, among other things, allows the assignment of Windows drive letters to a mounted remote WebDAV share"
+msgstr "一个WebDAV应用就是一个内置WebDAV协议的程序，我们会覆盖大多数支持WebDAV的流行程序。"
+
+#: build/en/book.xml:26217(para)
+msgid "A WebDAV application is a program which contains built-in functionality for speaking WebDAV protocols with a WebDAV server. We'll cover some of the most popular programs with this kind of WebDAV support."
+msgstr "Microsoft Office，Dreamweaver，Photoshop"
+
+#: build/en/book.xml:2622(command)
+msgid "svn copy foo bar"
+msgstr "svn copy foo bar"
+
+#: build/en/book.xml:26224(title)
+msgid "Microsoft Office, Dreamweaver, Photoshop"
+msgstr "WebDAV支持因为一些原因从Microsoft Access里删除了。"
+
+#: build/en/book.xml:26226(para)
+#, fuzzy
+msgid "On Windows, there are several well-known applications that contain integrated WebDAV client functionality, such as Microsoft's Office, <placeholder-1/> Adobe's Photoshop, and Macromedia's Dreamweaver programs. They're able to directly open and save to URLs, and tend to make heavy use of WebDAV locks when editing a file."
+msgstr "请注意，尽管这些程序都有Mac OS X版本，但在这个平台并不直接支持。事实上，在Mac OS X上，不允许<guimenu moreinfo=\"none\">File-&gt;Open</guimenu>对话框中出现URL路径。也有可能WebDAV特性是被故意漏掉，因为OS X已经提供了完美的WebDAV文件系统支持。"
+
+#: build/en/book.xml:26230(para)
+msgid "WebDAV support was removed from Microsoft Access for some reason, but exists in the rest of the Office suite."
+msgstr "在Windows下，有一些有名的集成WebDAV客户端功能的软件，例如Microsoft's Office、Adobe的Photoshop和Macromedia的Dreamweaver。它们都可以直接打开和保存URL，也可以在编辑时大量的使用WebDAV的锁定。"
+
+#: build/en/book.xml:26238(para)
+msgid "Note that while many of these programs also exist for the Mac OS X, they do not appear to support WebDAV directly on that platform. In fact, on Mac OS X, the <guimenu moreinfo=\"none\">File-&gt;Open</guimenu> dialog box doesn't allow one to type a path or URL at all. It's likely that the WebDAV features were deliberately left out of Macintosh versions of these programs, since OS X already provides such excellent low-level filesystem support for WebDAV."
+msgstr ""
+
+#: build/en/book.xml:2624(para)
+#, fuzzy
+msgid "Create a new item <filename moreinfo=\"none\">bar</filename> as a duplicate of <filename moreinfo=\"none\">foo</filename> and automatically schedule <filename moreinfo=\"none\">bar</filename> for addition. When <filename moreinfo=\"none\">bar</filename> is added to the repository on the next commit, its copy history is recorded (as having originally come from <filename moreinfo=\"none\">foo</filename>). <command moreinfo=\"none\">svn copy</command> does not create intermediate directories."
+msgstr "建立一个新的项目<filename moreinfo=\"none\">bar</filename>作为<filename moreinfo=\"none\">foo</filename>的复制品，当在下次提交时会将<filename moreinfo=\"none\">bar</filename>添加到版本库，这种拷贝历史会记录下来（按照来自<filename moreinfo=\"none\">foo</filename>的方式记录），<command moreinfo=\"none\">svn copy</command>并不建立中介目录。"
+
+#: build/en/book.xml:26251(title)
+msgid "Cadaver, DAV Explorer"
+msgstr "Cadaver，DAV 浏览器"
+
+#: build/en/book.xml:26253(para)
+msgid "Cadaver is a bare-bones Unix commandline program for browsing and changing WebDAV shares. Like the Subversion client, it uses the neon HTTP library—not surprisingly, both neon and cadaver are written by the same author. Cadaver is free software (GPL license) and is available at <ulink url=\"http://www.webdav.org/cadaver/\"/>."
+msgstr "使用cadaver就像使用命令行的FTP程序，因此它很适合基本的WebDAV调试。它可以以压缩方式上传和下载文件，也会检验属性、拷贝、移动、锁定和解锁文件："
+
+#: build/en/book.xml:26259(para)
+msgid "Using cadaver is similar to using a commandline FTP program, and thus it's extremely useful for basic WebDAV debugging. It can be used to upload or download files in a pinch, and also to examine properties, copy, move, lock or unlock files:"
+msgstr ""
+
+#: build/en/book.xml:26265(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cadaver http://host/repos\n"
+"dav:/repos/&gt; ls\n"
+"Listing collection `/repos/': succeeded.\n"
+"Coll: &gt; foobar                                 0  May 10 16:19\n"
+"      &gt; playwright.el                       2864  May  4 16:18\n"
+"      &gt; proofbypoem.txt                     1461  May  5 15:09\n"
+"      &gt; westcoast.jpg                      66737  May  5 15:09\n"
+"\n"
+"dav:/repos/&gt; put README\n"
+"Uploading README to `/repos/README':\n"
+"Progress: [=============================&gt;] 100.0% of 357 bytes succeeded.\n"
+"\n"
+"dav:/repos/&gt; get proofbypoem.txt\n"
+"Downloading `/repos/proofbypoem.txt' to proofbypoem.txt:\n"
+"Progress: [=============================&gt;] 100.0% of 1461 bytes succeeded.\n"
+msgstr ""
+"\n"
+"$ cadaver http://host/repos\n"
+"dav:/repos/&gt; ls\n"
+"Listing collection `/repos/': succeeded.\n"
+"Coll: &gt; foobar                                 0  May 10 16:19\n"
+"      &gt; playwright.el                       2864  May  4 16:18\n"
+"      &gt; proofbypoem.txt                     1461  May  5 15:09\n"
+"      &gt; westcoast.jpg                      66737  May  5 15:09\n"
+"\n"
+"dav:/repos/&gt; put README\n"
+"Uploading README to `/repos/README':\n"
+"Progress: [=============================&gt;] 100.0% of 357 bytes succeeded.\n"
+"\n"
+"dav:/repos/&gt; get proofbypoem.txt\n"
+"Downloading `/repos/proofbypoem.txt' to proofbypoem.txt:\n"
+"Progress: [=============================&gt;] 100.0% of 1461 bytes succeeded.\n"
+
+#: build/en/book.xml:26283(para)
+#, fuzzy
+msgid "DAV Explorer is another standalone WebDAV client, written in Java. It's under a free Apache-like license and is available at <ulink url=\"http://www.ics.uci.edu/~webdav/\"/>. DAV Explorer does everything cadaver does, but has the advantages of being portable and being a more user-friendly GUI application. It's also one of the first clients to support the new WebDAV Access Control Protocol (RFC 3744)."
+msgstr "DAV Explorer是另一个独立运行的WebDAV客户端，使用Java编写，有一个类Apache的许可证，网站是<ulink url=\"http://www.ics.uci.edu/~webdav/\"/>。DAV Explorer与cadaver功能差不多，优点可移植，并有一个用户友好的GUI程序。它也是最早的支持WebDAV访问控制协议（RFC 3744）的客户端。"
+
+#: build/en/book.xml:26291(para)
+#, fuzzy
+msgid "Of course, DAV Explorer's ACL support is useless in this case, since <command moreinfo=\"none\">mod_dav_svn</command> doesn't support it. The fact that both Cadaver and DAV Explorer support some limited DeltaV commands isn't particularly useful either, since they don't allow <literal moreinfo=\"none\">MKACTIVITY</literal> requests. But it's not relevant anyway; we're assuming all of these clients are operating against an autoversioning repository."
+msgstr "一些流行的文件浏览器程序支持WebDAV扩展，允许用户浏览DAV共享如同访问本机，并允许基本的目录树操作。例如，Windows的资源管理器可以把WebDAV服务器看作一个<quote>网络位置</quote>，用户可以从桌面托拽文件到这个目录，或者是重命名、拷贝或者删除文件。但是这只是文件浏览器的特性，DAV共享对于普通的应用不可见，所有的DAV操作需要通过浏览器界面完成。"
+
+#: build/en/book.xml:26307(para)
+msgid "Some popular file explorer GUI programs support WebDAV extensions which allow a user to browse a DAV share as if it was just another directory on the local computer, and allowing basic tree editing operations on the items in that share. For example, Windows Explorer is able to browse a WebDAV server as a <quote>network place</quote>. Users can drag files to and from the desktop, or can rename, copy, or delete files in the usual way. But because it's only a feature of the file-explorer, the DAV share isn't visible to ordinary applications. All DAV interaction must happen through the explorer interface."
+msgstr ""
+
+#: build/en/book.xml:26323(para)
+msgid "Microsoft was one of the original backers of the WebDAV specification, and first started shipping a client in Windows 98, known as <quote>Web Folders</quote>. This client was also shipped in Windows NT4 and 2000."
+msgstr "Microsoft是WebDAV规范最早的支持者，最早在Windows 98配置客户端，被称作<quote>网络文件夹</quote>，这个客户端在Windows NT4和2000上也存在。"
+
+#: build/en/book.xml:26328(para)
+msgid "The original Web Folders client was an extension to Explorer, the main GUI program used to browse filesystems. It works well enough. In Windows 98, the feature might need to be explicitly installed if Web Folders aren't already visible inside <quote>My Computer</quote>. In Windows 2000, simply add a new <quote>network place</quote>, enter the URL, and the WebDAV share will pop up for browsing."
+msgstr "最早的Webfolders客户端是浏览器的扩展，主要的浏览文件系统的GUI程序，工作良好。在Windows 98，如果<quote>我的电脑</quote>里没有网络文件夹，这个特性需要明确安装。在Windows 2000，只需要添加一个新的<quote>网络位置</quote>，输入URL，WebDAV共享就会弹出让你浏览。"
+
+#: build/en/book.xml:26336(para)
+msgid "With the release of Windows XP, Microsoft started shipping a new implementation of Web Folders, known as the <quote>WebDAV mini-redirector</quote>. The new implementation is a filesystem-level client, allowing WebDAV shares to be mounted as drive letters. Unfortunately, this implementation is incredibly buggy. The client usually tries to convert http URLs (<literal moreinfo=\"none\">http://host/repos</literal>) into UNC share notation (<literal moreinfo=\"none\">\\\\host\\repos</literal>); it also often tries to use Windows Domain authentication to respond to basic-auth HTTP challenges, sending usernames as <literal moreinfo=\"none\">HOST\\username</literal>. These interoperability problems are severe and documented in numerous places around the web, to the frustration of many users. Even Greg Stein, the original author of Apache's WebDAV module, recommends against trying to use XP Web Folders against an Apache server."
+msgstr "伴随着Windows XP，Microsoft开始了另一种网络文件夹的实现，叫做<quote>WebDAV mini-redirector</quote>，这个新的实现是文件系统级的客户端，允许WebDAV转载到驱动器盘符上。不幸的是，这个实现充满难以相信的bug。客户端经常会尝试把http的URL（<literal moreinfo=\"none\">http://host/repos</literal>）转化为UNC共享符号（<literal moreinfo=\"none\">\\\\host\\repos</literal>），它也经常使用Windows域认证来回应基本的HTTP认证，按照<literal moreinfo=\"none\">HOST\\username</literal>发送用户名。这类互动性问题在网络上大量传播，使大量用户受挫。即使是ApacheWebDAV的作者Greg Stein也建议不要对Apaache服务器使用XP的网络文件夹。"
+
+#: build/en/book.xml:26353(para)
+msgid "It turns out that the original <quote>Explorer-only</quote> Web Folders implementation isn't dead in XP, it's just buried. It's still possible to find it by using this technique:"
+msgstr "结果是原始的网络文件夹并没有在XP中死掉，只是要被埋葬了。还是有办法适用这个技术："
+
+#: build/en/book.xml:2636(command)
+msgid "svn move foo bar"
+msgstr "svn move foo bar"
+
+#: build/en/book.xml:26361(para)
+msgid "Go to 'Network Places'."
+msgstr "到网络位置。"
+
+#: build/en/book.xml:26365(para)
+msgid "Add a new network place."
+msgstr "添加一个新的网络位置。"
+
+#: build/en/book.xml:26369(para)
+msgid "When prompted, enter the URL of the repository, but <emphasis>include a port number</emphasis> in the URL. For example, <literal moreinfo=\"none\">http://host/repos</literal> would be entered as <literal moreinfo=\"none\">http://host:80/repos</literal> instead."
+msgstr "当要求输入，输入版本库的URL，但URL中<emphasis>要包含端口号</emphasis>。例如<literal moreinfo=\"none\">http://host/repos</literal>的输入是<literal moreinfo=\"none\">http://host:80/repos</literal>。"
+
+#: build/en/book.xml:26377(para)
+msgid "Respond to any authentication prompts."
+msgstr "回应所有的认证请求。"
+
+#: build/en/book.xml:2638(para)
+msgid "This command is exactly the same as running <command moreinfo=\"none\">svn copy foo bar; svn delete foo</command>. That is, <filename moreinfo=\"none\">bar</filename> is scheduled for addition as a copy of <filename moreinfo=\"none\">foo</filename>, and <filename moreinfo=\"none\">foo</filename> is scheduled for removal. <command moreinfo=\"none\">svn move</command> does not create intermediate directories."
+msgstr "这个命令与与运行<command moreinfo=\"none\">svn copy foo bar; svn delete foo</command>完全相同，<filename moreinfo=\"none\">bar</filename>作为<filename moreinfo=\"none\">foo</filename>的拷贝准备添加，<filename moreinfo=\"none\">foo</filename>已经预定要被删除，<command moreinfo=\"none\">svn move</command>不建立中介的目录。"
+
+#: build/en/book.xml:26382(para)
+#, fuzzy
+msgid "There are a number of other rumored workarounds to the problems, but none of them seem to work on all versions and patchlevels of Windows XP. In our tests, only the previous algorithm seems to work consistently on every system. The general consensus of the WebDAV community is that you should avoid the new Web Folders implementation and use the old one instead, and that if you need a real filesystem-level client for Windows XP, then use a third-party program like WebDrive or NetDrive."
+msgstr "有各种解决问题的方法，但好像没有一种能够在各版本和各级别的Windows XP中有效。在我们的测试里，只有上面这种策略在各种系统中有效。WebDAV社区一致认为避免使用新的网络文件夹实现，而使用旧的，如果你希望在Windows XP使用真实的文件系统级的客户端，请使用第三方的程序，例如WebDrive或NetDrive。"
+
+#: build/en/book.xml:26392(para)
+msgid "A final tip: if you're attempting to use XP Web Folders, make sure you have the absolute latest version from Microsoft. For example, Microsoft released a bug-fixed version in January 2005, available at <ulink url=\"http://support.microsoft.com/?kbid=892211\"/>. In particular, this release is known to fix a bug whereby browsing a DAV share shows an unexpected infinite recursion."
+msgstr "最后一个提示：如果你尝试使用XP的网络文件夹，确定你有Microsoft最新的版本，Microsoft在2005年1月发布了一个问题修正，在<ulink url=\"http://support.microsoft.com/?kbid=892211\"/>，特别的，这个发布是用来修正在访问DAV时发生无限递归的问题。"
+
+#: build/en/book.xml:26405(title)
+msgid "Nautilus, Konqueror"
+msgstr "Nautilus，Konqueror"
+
+#: build/en/book.xml:26407(para)
+#, fuzzy
+msgid "Nautilus is the official file manager/browser for the GNOME desktop (<ulink url=\"http://www.gnome.org\"/>), and Konqueror is the manager/browser for the KDE desktop (<ulink url=\"http://www.kde.org\"/>). Both of these applications have an explorer-level WebDAV client built-in, and operate just fine against an autoversioning repository."
+msgstr "Nautilus是GNOME桌面（<ulink url=\"http://www.gnome.org\"/>）官方的文件管理/浏览器，KDE桌面（<ulink url=\"http://www.kde.org\"/>）的则是Konqueror。两个应用程序都是浏览器级别的WebDAV客户端，对自动版本化的版本库工作良好。"
+
+#: build/en/book.xml:26413(para)
+msgid "In GNOME's Nautilus, from the <guimenu moreinfo=\"none\">File menu</guimenu>, select <guimenuitem moreinfo=\"none\">Open location</guimenuitem> and enter the URL. The repository should then be displayed like any other filesystem."
+msgstr "GNOME的Nautilus里，从<guimenu moreinfo=\"none\">File menu</guimenu>选择<guimenuitem moreinfo=\"none\">Open location</guimenuitem>，并且输入URL。版本库就会显示出来，就像其他文件系统。"
+
+#: build/en/book.xml:26418(para)
+#, fuzzy
+msgid "In KDE's Konqueror, you need to use the <literal moreinfo=\"none\">webdav://</literal> scheme when entering the URL in the location bar. If you enter an <literal moreinfo=\"none\">http://</literal> URL, Konqueror will behave like an ordinary web browser. You'll likely see the generic HTML directory listing produced by <command moreinfo=\"none\">mod_dav_svn</command>. By entering <literal moreinfo=\"none\">webdav://host/repos</literal> instead of <literal moreinfo=\"none\">http://host/repos</literal>, Konqueror becomes a WebDAV client and displays the repository as a filesystem."
+msgstr "KDE的Konqueror里你需要在地址栏使用<literal moreinfo=\"none\">webdav://</literal>模式来输入URL，如果你输入<literal moreinfo=\"none\">http://</literal>的URL，Konqueror会像普通的web浏览器。你会看到mod_dav_svn输出的普通HTML目录列表。通过输入<literal moreinfo=\"none\">webdav://host/repos</literal>代替<literal moreinfo=\"none\">http://host/repos</literal>，Konqueror就成为了一个WebDAV客户端，并且按照文件系统的方式显示版本库。"
+
+#: build/en/book.xml:26436(para)
+msgid "The WebDAV filesystem implementation is arguably the best sort of WebDAV client. It's implemented as a low-level filesystem module, typically within the operating system's kernel. This means that the DAV share is mounted like any other network filesystem, similar to mounting an NFS share on Unix, or attaching an SMB share as drive-letter in Windows. As a result, this sort of client provides completely transparent read/write WebDAV access to all programs. Applications aren't even aware that WebDAV requests are happening."
+msgstr "WebDAV文件系统实现被认为是最佳的WebDAV客户端，它通过低级的文件系统模块实现，通常在操作系统的核心。这意味着DAV共享像网络的其他文件系统一样装载，就像在Unix下面装载NFS，或者是在Windows下装载一个SMB共享。结果就是这种客户端为所有程序提供了对WebDAV得透明访问。"
+
+#: build/en/book.xml:26449(title)
+msgid "WebDrive, NetDrive"
+msgstr "WebDrive，NetDrive"
+
+#: build/en/book.xml:26451(para)
+#, fuzzy
+msgid "Both WebDrive and NetDrive are excellent commercial products which allow a WebDAV share to be attached as drive letters in Windows. We've had nothing but success with these products. At the time of writing, WebDrive can be purchased from South River Technologies (<ulink url=\"http://www.southrivertech.com\"/>). NetDrive ships with Netware, is free of charge, and can be found by searching the web for <quote>netdrive.exe</quote>. Though it is freely available online, users are required to have a Netware license. (If any of that sounds odd to you, you're not alone. See this page on Novell's website: <ulink url=\"http://www.novell.com/coolsolutions/qna/999.html\"/>)"
+msgstr "WebDrive和NetDrive都是完美的商业产品，允许将WebDAV绑定到Windows的盘符，当我们写作的时候，WebDrive可以从South River Technologies（<ulink url=\"http://www.southrivertech.com\"/>）购买。NetDrive由Netware装运，通过查找<quote>netdrive.exe</quote>就会找到。尽管它可以自由得到，用户还是需要一个Netware许可证。（如果着听起来有点奇怪，你并不孤单，看Novell网站的这个页面：<ulink url=\"http://www.novell.com/coolsolutions/qna/999.html\"/>）"
+
+#: build/en/book.xml:26468(para)
+#, fuzzy
+msgid "Apple's OS X operating system has an integrated filesystem-level WebDAV client. From the Finder, select the <guimenuitem moreinfo=\"none\">Connect to Server</guimenuitem> item from the <guimenu moreinfo=\"none\">Go menu</guimenu>. Enter a WebDAV URL, and it appears as a disk on the desktop, just like any other mounted volume. You can also mount a WebDAV share from the Darwin terminal by using the <literal moreinfo=\"none\">webdav</literal> filesystem type with the <command moreinfo=\"none\">mount</command> command:"
+msgstr "Apple的OS X操作系统是集成的文件系统级的客户端，通过Finder，选择<guimenu moreinfo=\"none\">Go menu</guimenu>的<guimenuitem moreinfo=\"none\">Connect to Server</guimenuitem>条目，输入WebDAV的URL，会在桌面显示一个磁盘，就像其他装载的卷。<placeholder-1/>。"
+
+#: build/en/book.xml:26477(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ mount -t webdav http://svn.example.com/repos/project /some/mountpoint\n"
+"$\n"
+msgstr ""
+"\n"
+"$ mount -t webdav http://svn.example.com/repos/project /some/mountpoint\n"
+"$\n"
+
+#: build/en/book.xml:26482(para)
+#, fuzzy
+msgid "Note that if your <command moreinfo=\"none\">mod_dav_svn</command> is older than version 1.2, OS X will refuse to mount the share as read-write; it will appear as read-only. This is because OS X insists on locking support for read-write shares, and the ability to lock files first appeared in Subversion 1.2."
+msgstr "注意如果mod_dav_svn是1.2之前的版本，OS X不能按照可读写装载，而是会成为只读。这是因为，OS X坚持要读些共享支持锁定，而锁定文件出现在Subversion 1.2。"
+
+#: build/en/book.xml:26489(para)
+msgid "One more word of warning: OS X's WebDAV client can sometimes be overly sensitive to HTTP redirects. If OS X is unable to mount the repository at all, you may need to enable the BrowserMatch directive in the Apache server's <filename moreinfo=\"none\">httpd.conf</filename>:"
+msgstr "警告一句话：OS X的WebDAV客户端有时候对HTTP重定向很敏感，如果OS X不能装载版本库，你或许需要开启Apache服务器<filename moreinfo=\"none\">httpd.conf</filename>的BrowserMatch指示："
+
+#: build/en/book.xml:2649(command)
+msgid "svn mkdir blort"
+msgstr "svn mkdir blort"
+
+#: build/en/book.xml:26495(screen)
+#, no-wrap
+msgid ""
+"\n"
+"BrowserMatch \"^WebDAVFS/1.[012]\" redirect-carefully\n"
+msgstr ""
+"\n"
+"BrowserMatch \"^WebDAVFS/1.[012]\" redirect-carefully\n"
+
+#: build/en/book.xml:26503(title)
+msgid "Linux davfs2"
+msgstr "Linux davfs2"
+
+#: build/en/book.xml:26505(para)
+msgid "Linux davfs2 is a filesystem module for the Linux kernel, whose development is located at <ulink url=\"http://dav.sourceforge.net/\"/>. Once installed, a WebDAV network share can be mounted with the usual Linux mount command:"
+msgstr "Linux davfs2是一个Linux核心的文件系统模块，开发坐落在<ulink url=\"http://dav.sourceforge.net/\"/>。一旦安装，一个WebDAV网络共享可以使用mount命令装载："
+
+#: build/en/book.xml:2651(para)
+msgid "This command is exactly the same as running <command moreinfo=\"none\">mkdir blort; svn add blort</command>. That is, a new directory named <filename moreinfo=\"none\">blort</filename> is created and scheduled for addition."
+msgstr ""
+
+#: build/en/book.xml:26510(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ mount.davfs http://host/repos /mnt/dav\n"
+msgstr ""
+"\n"
+"$ mount.davfs http://host/repos /mnt/dav\n"
+
+#: build/en/book.xml:26527(title)
+msgid "Third Party Tools"
+msgstr "第三方工具"
+
+#: build/en/book.xml:26529(para)
+msgid "Subversion's modular design (covered in <xref linkend=\"svn.developer.layerlib\"/>) and the availability of language bindings (as described in <xref linkend=\"svn.developer.usingapi.otherlangs\"/>) make it a likely candidate for use as an extension or backend to other pieces of software. For a listing of many third-party tools that are using Subversion functionality under-the-hood, check out the Links page on the Subversion website (<ulink url=\"http://subversion.tigris.org/project_links.html\"/>)."
+msgstr "Subversion的模块设计（在<xref linkend=\"svn.developer.layerlib\"/>讨论过）和语言绑定的能力（在<xref linkend=\"svn.developer.usingapi.otherlangs\"/>描述过）使的我们可以作为扩展和后端支持来替代软件的某些部分，在这个附录里，我们会简略介绍一些使用Subversion功能的第三方的工具。关于更新的信息，可以在Subversion的网站（<ulink url=\"http://subversion.tigris.org/project_links.html\"/>）查看。"
+
+#: build/en/book.xml:26545(title)
+msgid "Copyright"
+msgstr ""
+
+#: build/en/book.xml:26547(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"\n"
+"Copyright (c) 2002-2006\n"
+"Ben Collins-Sussman, Brian W. Fitzpatrick, C. Michael Pilato.  \n"
+"\n"
+"This work is licensed under the Creative Commons Attribution License.\n"
+"To view a copy of this license, visit\n"
+"http://creativecommons.org/licenses/by/2.0/ or send a letter to\n"
+"Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305,\n"
+"USA.\n"
+"\n"
+"A summary of the license is given below, followed by the full legal\n"
+"text.\n"
+"\n"
+"--------------------------------------------------------------------\n"
+"\n"
+"You are free:\n"
+"\n"
+"    * to copy, distribute, display, and perform the work\n"
+"    * to make derivative works\n"
+"    * to make commercial use of the work\n"
+"\n"
+"Under the following conditions:\n"
+"\t\n"
+"Attribution. You must give the original author credit.\n"
+"\n"
+"    * For any reuse or distribution, you must make clear to others the\n"
+"      license terms of this work.\n"
+"\n"
+"    * Any of these conditions can be waived if you get permission from\n"
+"      the author.\n"
+"\n"
+"Your fair use and other rights are in no way affected by the above.\n"
+"\n"
+"The above is a summary of the full license below.\n"
+"\n"
+"====================================================================\n"
+"\n"
+"Creative Commons Legal Code\n"
+"Attribution 2.0\n"
+"\n"
+"CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE\n"
+"LEGAL SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN\n"
+"ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS\n"
+"INFORMATION ON AN \"AS-IS\" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES\n"
+"REGARDING THE INFORMATION PROVIDED, AND DISCLAIMS LIABILITY FOR\n"
+"DAMAGES RESULTING FROM ITS USE.\n"
+"\n"
+"License\n"
+"\n"
+"THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS\n"
+"CREATIVE COMMONS PUBLIC LICENSE (\"CCPL\" OR \"LICENSE\"). THE WORK IS\n"
+"PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE\n"
+"WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS\n"
+"PROHIBITED.\n"
+"\n"
+"BY EXERCISING ANY RIGHTS TO THE WORK PROVIDED HERE, YOU ACCEPT AND\n"
+"AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE. THE LICENSOR GRANTS\n"
+"YOU THE RIGHTS CONTAINED HERE IN CONSIDERATION OF YOUR ACCEPTANCE OF\n"
+"SUCH TERMS AND CONDITIONS.\n"
+"\n"
+"1. Definitions\n"
+"\n"
+"   a. \"Collective Work\" means a work, such as a periodical issue,\n"
+"      anthology or encyclopedia, in which the Work in its entirety in\n"
+"      unmodified form, along with a number of other contributions,\n"
+"      constituting separate and independent works in themselves, are\n"
+"      assembled into a collective whole. A work that constitutes a\n"
+"      Collective Work will not be considered a Derivative Work (as\n"
+"      defined below) for the purposes of this License.\n"
+"\n"
+"   b. \"Derivative Work\" means a work based upon the Work or upon the\n"
+"      Work and other pre-existing works, such as a translation,\n"
+"      musical arrangement, dramatization, fictionalization, motion\n"
+"      picture version, sound recording, art reproduction, abridgment,\n"
+"      condensation, or any other form in which the Work may be recast,\n"
+"      transformed, or adapted, except that a work that constitutes a\n"
+"      Collective Work will not be considered a Derivative Work for the\n"
+"      purpose of this License. For the avoidance of doubt, where the\n"
+"      Work is a musical composition or sound recording, the\n"
+"      synchronization of the Work in timed-relation with a moving\n"
+"      image (\"synching\") will be considered a Derivative Work for the\n"
+"      purpose of this License.\n"
+"\n"
+"   c. \"Licensor\" means the individual or entity that offers the Work\n"
+"      under the terms of this License.\n"
+"\n"
+"   d. \"Original Author\" means the individual or entity who created the Work.\n"
+"\n"
+"   e. \"Work\" means the copyrightable work of authorship offered under\n"
+"      the terms of this License.\n"
+"\n"
+"   f. \"You\" means an individual or entity exercising rights under this\n"
+"      License who has not previously violated the terms of this\n"
+"      License with respect to the Work, or who has received express\n"
+"      permission from the Licensor to exercise rights under this\n"
+"      License despite a previous violation.\n"
+"\n"
+"2. Fair Use Rights. Nothing in this license is intended to reduce,\n"
+"   limit, or restrict any rights arising from fair use, first sale or\n"
+"   other limitations on the exclusive rights of the copyright owner\n"
+"   under copyright law or other applicable laws.\n"
+"\n"
+"3. License Grant. Subject to the terms and conditions of this License,\n"
+"   Licensor hereby grants You a worldwide, royalty-free,\n"
+"   non-exclusive, perpetual (for the duration of the applicable\n"
+"   copyright) license to exercise the rights in the Work as stated\n"
+"   below:\n"
+"\n"
+"   a. to reproduce the Work, to incorporate the Work into one or more\n"
+"      Collective Works, and to reproduce the Work as incorporated in\n"
+"      the Collective Works;\n"
+"\n"
+"   b. to create and reproduce Derivative Works;\n"
+"\n"
+"   c. to distribute copies or phonorecords of, display publicly,\n"
+"      perform publicly, and perform publicly by means of a digital\n"
+"      audio transmission the Work including as incorporated in\n"
+"      Collective Works;\n"
+"\n"
+"   d. to distribute copies or phonorecords of, display publicly,\n"
+"      perform publicly, and perform publicly by means of a digital\n"
+"      audio transmission Derivative Works.\n"
+"\n"
+"   e.\n"
+"\n"
+"      For the avoidance of doubt, where the work is a musical composition:\n"
+"\n"
+"         i. Performance Royalties Under Blanket Licenses. Licensor\n"
+"            waives the exclusive right to collect, whether\n"
+"            individually or via a performance rights society\n"
+"            (e.g. ASCAP, BMI, SESAC), royalties for the public\n"
+"            performance or public digital performance (e.g. webcast)\n"
+"            of the Work.\n"
+"\n"
+"        ii. Mechanical Rights and Statutory Royalties. Licensor waives\n"
+"            the exclusive right to collect, whether individually or\n"
+"            via a music rights agency or designated agent (e.g. Harry\n"
+"            Fox Agency), royalties for any phonorecord You create from\n"
+"            the Work (\"cover version\") and distribute, subject to the\n"
+"            compulsory license created by 17 USC Section 115 of the US\n"
+"            Copyright Act (or the equivalent in other jurisdictions).\n"
+"\n"
+"   f. Webcasting Rights and Statutory Royalties. For the avoidance of\n"
+"      doubt, where the Work is a sound recording, Licensor waives the\n"
+"      exclusive right to collect, whether individually or via a\n"
+"      performance-rights society (e.g. SoundExchange), royalties for\n"
+"      the public digital performance (e.g. webcast) of the Work,\n"
+"      subject to the compulsory license created by 17 USC Section 114\n"
+"      of the US Copyright Act (or the equivalent in other\n"
+"      jurisdictions).\n"
+"\n"
+"The above rights may be exercised in all media and formats whether now\n"
+"known or hereafter devised. The above rights include the right to make\n"
+"such modifications as are technically necessary to exercise the rights\n"
+"in other media and formats. All rights not expressly granted by\n"
+"Licensor are hereby reserved.\n"
+"\n"
+"4. Restrictions.The license granted in Section 3 above is expressly\n"
+"   made subject to and limited by the following restrictions:\n"
+"\n"
+"   a. You may distribute, publicly display, publicly perform, or\n"
+"      publicly digitally perform the Work only under the terms of this\n"
+"      License, and You must include a copy of, or the Uniform Resource\n"
+"      Identifier for, this License with every copy or phonorecord of\n"
+"      the Work You distribute, publicly display, publicly perform, or\n"
+"      publicly digitally perform. You may not offer or impose any\n"
+"      terms on the Work that alter or restrict the terms of this\n"
+"      License or the recipients' exercise of the rights granted\n"
+"      hereunder. You may not sublicense the Work. You must keep intact\n"
+"      all notices that refer to this License and to the disclaimer of\n"
+"      warranties. You may not distribute, publicly display, publicly\n"
+"      perform, or publicly digitally perform the Work with any\n"
+"      technological measures that control access or use of the Work in\n"
+"      a manner inconsistent with the terms of this License\n"
+"      Agreement. The above applies to the Work as incorporated in a\n"
+"      Collective Work, but this does not require the Collective Work\n"
+"      apart from the Work itself to be made subject to the terms of\n"
+"      this License. If You create a Collective Work, upon notice from\n"
+"      any Licensor You must, to the extent practicable, remove from\n"
+"      the Collective Work any reference to such Licensor or the\n"
+"      Original Author, as requested. If You create a Derivative Work,\n"
+"      upon notice from any Licensor You must, to the extent\n"
+"      practicable, remove from the Derivative Work any reference to\n"
+"      such Licensor or the Original Author, as requested.\n"
+"\n"
+"   b. If you distribute, publicly display, publicly perform, or\n"
+"      publicly digitally perform the Work or any Derivative Works or\n"
+"      Collective Works, You must keep intact all copyright notices for\n"
+"      the Work and give the Original Author credit reasonable to the\n"
+"      medium or means You are utilizing by conveying the name (or\n"
+"      pseudonym if applicable) of the Original Author if supplied; the\n"
+"      title of the Work if supplied; to the extent reasonably\n"
+"      practicable, the Uniform Resource Identifier, if any, that\n"
+"      Licensor specifies to be associated with the Work, unless such\n"
+"      URI does not refer to the copyright notice or licensing\n"
+"      information for the Work; and in the case of a Derivative Work,\n"
+"      a credit identifying the use of the Work in the Derivative Work\n"
+"      (e.g., \"French translation of the Work by Original Author,\" or\n"
+"      \"Screenplay based on original Work by Original Author\"). Such\n"
+"      credit may be implemented in any reasonable manner; provided,\n"
+"      however, that in the case of a Derivative Work or Collective\n"
+"      Work, at a minimum such credit will appear where any other\n"
+"      comparable authorship credit appears and in a manner at least as\n"
+"      prominent as such other comparable authorship credit.\n"
+"\n"
+"5. Representations, Warranties and Disclaimer\n"
+"\n"
+"UNLESS OTHERWISE MUTUALLY AGREED TO BY THE PARTIES IN WRITING,\n"
+"LICENSOR OFFERS THE WORK AS-IS AND MAKES NO REPRESENTATIONS OR\n"
+"WARRANTIES OF ANY KIND CONCERNING THE WORK, EXPRESS, IMPLIED,\n"
+"STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, WARRANTIES OF\n"
+"TITLE, MERCHANTIBILITY, FITNESS FOR A PARTICULAR PURPOSE,\n"
+"NONINFRINGEMENT, OR THE ABSENCE OF LATENT OR OTHER DEFECTS, ACCURACY,\n"
+"OR THE PRESENCE OF ABSENCE OF ERRORS, WHETHER OR NOT\n"
+"DISCOVERABLE. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED\n"
+"WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.\n"
+"\n"
+"6. Limitation on Liability. EXCEPT TO THE EXTENT REQUIRED BY\n"
+"   APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE TO YOU ON ANY\n"
+"   LEGAL THEORY FOR ANY SPECIAL, INCIDENTAL, CONSEQUENTIAL, PUNITIVE\n"
+"   OR EXEMPLARY DAMAGES ARISING OUT OF THIS LICENSE OR THE USE OF THE\n"
+"   WORK, EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH\n"
+"   DAMAGES.\n"
+"\n"
+"7. Termination\n"
+"\n"
+"   a. This License and the rights granted hereunder will terminate\n"
+"      automatically upon any breach by You of the terms of this\n"
+"      License. Individuals or entities who have received Derivative\n"
+"      Works or Collective Works from You under this License, however,\n"
+"      will not have their licenses terminated provided such\n"
+"      individuals or entities remain in full compliance with those\n"
+"      licenses. Sections 1, 2, 5, 6, 7, and 8 will survive any\n"
+"      termination of this License.\n"
+"\n"
+"   b. Subject to the above terms and conditions, the license granted\n"
+"      here is perpetual (for the duration of the applicable copyright\n"
+"      in the Work). Notwithstanding the above, Licensor reserves the\n"
+"      right to release the Work under different license terms or to\n"
+"      stop distributing the Work at any time; provided, however that\n"
+"      any such election will not serve to withdraw this License (or\n"
+"      any other license that has been, or is required to be, granted\n"
+"      under the terms of this License), and this License will continue\n"
+"      in full force and effect unless terminated as stated above.\n"
+"\n"
+"8. Miscellaneous\n"
+"\n"
+"   a. Each time You distribute or publicly digitally perform the Work\n"
+"      or a Collective Work, the Licensor offers to the recipient a\n"
+"      license to the Work on the same terms and conditions as the\n"
+"      license granted to You under this License.\n"
+"\n"
+"   b. Each time You distribute or publicly digitally perform a\n"
+"      Derivative Work, Licensor offers to the recipient a license to\n"
+"      the original Work on the same terms and conditions as the\n"
+"      license granted to You under this License.\n"
+"\n"
+"   c. If any provision of this License is invalid or unenforceable\n"
+"      under applicable law, it shall not affect the validity or\n"
+"      enforceability of the remainder of the terms of this License,\n"
+"      and without further action by the parties to this agreement,\n"
+"      such provision shall be reformed to the minimum extent necessary\n"
+"      to make such provision valid and enforceable.\n"
+"\n"
+"   d. No term or provision of this License shall be deemed waived and\n"
+"      no breach consented to unless such waiver or consent shall be in\n"
+"      writing and signed by the party to be charged with such waiver\n"
+"      or consent.\n"
+"\n"
+"   e. This License constitutes the entire agreement between the\n"
+"      parties with respect to the Work licensed here. There are no\n"
+"      understandings, agreements or representations with respect to\n"
+"      the Work not specified here. Licensor shall not be bound by any\n"
+"      additional provisions that may appear in any communication from\n"
+"      You. This License may not be modified without the mutual written\n"
+"      agreement of the Licensor and You.\n"
+"\n"
+"Creative Commons is not a party to this License, and makes no warranty\n"
+"whatsoever in connection with the Work. Creative Commons will not be\n"
+"liable to You or any party on any legal theory for any damages\n"
+"whatsoever, including without limitation any general, special,\n"
+"incidental or consequential damages arising in connection to this\n"
+"license. Notwithstanding the foregoing two (2) sentences, if Creative\n"
+"Commons has expressly identified itself as the Licensor hereunder, it\n"
+"shall have all rights and obligations of Licensor.\n"
+"\n"
+"Except for the limited purpose of indicating to the public that the\n"
+"Work is licensed under the CCPL, neither party will use the trademark\n"
+"\"Creative Commons\" or any related trademark or logo of Creative\n"
+"Commons without the prior written consent of Creative Commons. Any\n"
+"permitted use will be in compliance with Creative Commons'\n"
+"then-current trademark usage guidelines, as may be published on its\n"
+"website or otherwise made available upon request from time to time.\n"
+"\n"
+"Creative Commons may be contacted at http://creativecommons.org/.\n"
+"\n"
+"====================================================================\n"
+msgstr ""
+
+#: build/en/book.xml:2661(title)
+msgid "Changing the Repository Without a Working Copy"
+msgstr "不通过工作拷贝修改版本库"
+
+#: build/en/book.xml:2663(para)
+#, fuzzy
+msgid "There <emphasis>are</emphasis> some use cases that immediately commit tree changes to the repository. This only happens when a subcommand is operating directly on a URL, rather than on a working-copy path. In particular, specific uses of <command moreinfo=\"none\">svn mkdir</command>, <command moreinfo=\"none\">svn copy</command>, <command moreinfo=\"none\">svn move</command>, and <command moreinfo=\"none\">svn delete</command> can work with URLs (And don't forget that <command moreinfo=\"none\">svn import</command> always makes changes to a URL)."
+msgstr "本章的前面曾经说过，为了使版本库反映你的改动，你应该提交所有改动。这并不完全正确—有一些方式<emphasis>是</emphasis>可以直接操作版本库的，当然只有子命令直接操作URL而不是本地拷贝路径时才可以实现，通常<command moreinfo=\"none\">svn mkdir</command>、<command moreinfo=\"none\">svn copy</command>、<command moreinfo=\"none\">svn move</command>、和 <command moreinfo=\"none\">svn delete</command>可以使用URL工作。"
+
+#: build/en/book.xml:2673(para)
+msgid "URL operations behave in this manner because commands that operate on a working copy can use the working copy as a sort of <quote>staging area</quote> to set up your changes before committing them to the repository. Commands that operate on URLs don't have this luxury, so when you operate directly on a URL, any of the above actions represent an immediate commit."
+msgstr "指定URL的操作方式有一些区别，因为在使用工作拷贝的运作方式时，工作拷贝成为一个<quote>集结地</quote>，可以在提交之前整理组织所要做的修改，直接对URL操作就没有这种奢侈，所以当你直接操作URL的时候，所有以上的动作代表一个立即的提交。"
+
+#: build/en/book.xml:2687(title)
+msgid "Examine Your Changes"
+msgstr "检查你的修改"
+
+#: build/en/book.xml:2689(para)
+#, fuzzy
+msgid "Once you've finished making changes, you need to commit them to the repository, but before you do so, it's usually a good idea to take a look at exactly what you've changed. By examining your changes before you commit, you can make a more accurate log message. You may also discover that you've inadvertently changed a file, and this gives you a chance to revert those changes before committing. Additionally, this is a good opportunity to review and scrutinize changes before publishing them. You can see an overview of the changes you've made by using <command moreinfo=\"none\">svn status</command>, and dig into the details of those changes by using <command moreinfo=\"none\">svn diff</command>."
+msgstr "当你完成修改，你需要提交他们到版本库，但是在此之前，检查一下做过什么修改是个好主意，通过提交前的检查，你可以整理一份精确的日志信息，你也可以发现你不小心修改的文件，给了你一次恢复修改的机会。此外，这是一个审查和仔细察看修改的好机会，你可通过命令<command moreinfo=\"none\">svn status</command>、<command moreinfo=\"none\">svn diff</command>和<command moreinfo=\"none\">svn revert</command>精确地察看所做的修改。你可以使用前两个命令察看工作拷贝中的修改，使用第三个来撤销部分（或全部)的修改。"
+
+#: build/en/book.xml:270(para)
+#, fuzzy
+msgid "Most readers are probably programmers or system administrators who need to track changes to source code. This is the most common use for Subversion, and therefore it is the scenario underlying all of the book's examples. But Subversion can be used to manage changes to any sort of information—images, music, databases, documentation, and so on. To Subversion, all data is just data."
+msgstr "大多数读者可能是那些需要跟踪代码变化的程序员或者系统管理员。这是Subversion最普遍的用途，因此这个场景贯穿于整本书的例子中。但是Subversion是可以用来管理任何类型的数据：图像、音乐、数据库、文档，等等。对于Subversion，数据不过是数据而已。"
+
+#: build/en/book.xml:2703(title)
+msgid "Look Ma! No Network!"
+msgstr "看！没有网络！"
+
+#: build/en/book.xml:2705(para)
+#, fuzzy
+msgid "The commands (<command moreinfo=\"none\">svn status</command>, <command moreinfo=\"none\">svn diff</command>, and <command moreinfo=\"none\">svn revert</command>) can be used without any network access (assuming, of course, that your repository is across the network and not local). This makes it easy to manage your changes-in-progress when you are somewhere without a network connection, such as travelling on an airplane, riding a commuter train or hacking on the beach.<placeholder-1/>"
+msgstr "这三个命令（<command moreinfo=\"none\">svn status</command>、<command moreinfo=\"none\">svn diff</command>和 <command moreinfo=\"none\">svn revert</command>）都可以在没有网络的情况下工作，这让你在没有网络连接时的管理修改过程更加简单，像在飞机上旅行，乘坐火车往返或是在海滩上奋力工作时。"
+
+#: build/en/book.xml:2712(para)
+msgid "And also that you don't have a WAN card. Thought you got us, huh?"
+msgstr ""
+
+#: build/en/book.xml:2716(para)
+#, fuzzy
+msgid "Subversion does this by keeping private caches of pristine versions of each versioned file inside of the <filename moreinfo=\"none\">.svn</filename> administrative areas. This allows Subversion to report—and revert—local modifications to those files <emphasis>without network access</emphasis>. This cache (called the <quote>text-base</quote>) also allows Subversion to send the user's local modifications during a commit to the server as a compressed <firstterm>delta</firstterm> (or <quote>difference</quote>) against the pristine version. Having this cache is a tremendous benefit—even if you have a fast net connection, it's much faster to send only a file's changes rather than the whole file to the server."
+msgstr "Subversion通过在<filename moreinfo=\"none\">.svn</filename>管理区域使用原始的版本缓存来做到这一点，这使得恢复本地版本而<emphasis>不必访问网络</emphasis>，这个缓存（叫做<quote>text-base</quote>）也允许Subversion可以根据原始版本生成一个压缩的增量（<quote>区别</quote>） 提交—即使你有个非常快的网络，有这样一个缓存有极大的好处，非常的快，只向服务器提交修改的部分，这一点乍一看好像并不重要，但当你要提交一个400M大小的文件的修改时，你就会明白！"
+
+#: build/en/book.xml:2733(para)
+msgid "Subversion has been optimized to help you with this task, and is able to do many things without communicating with the repository. In particular, your working copy contains a secret cached <quote>pristine</quote> copy of each version controlled file within the <filename moreinfo=\"none\">.svn</filename> area. Because of this, Subversion can quickly show you how your working files have changed, or even allow you to undo your changes without contacting the repository."
+msgstr "Subversion已经被优化来帮助你完成这个任务，可以在不与版本库通讯的情况下做许多事情，详细来说，对于每一个文件，你的的工作拷贝在<filename moreinfo=\"none\">.svn</filename>包含了一个<quote>原始的</quote>拷贝，所以Subversion可以快速的告诉你那些文件修改了，甚至允许你在不与版本库通讯的情况下恢复修改。"
+
+#: build/en/book.xml:2744(title)
+#, fuzzy
+msgid "See an overview of your changes"
+msgstr "检验修改"
+
+#: build/en/book.xml:2746(para)
+#, fuzzy
+msgid "To get an overview of your changes, you'll use the <command moreinfo=\"none\">svn status</command> command. You'll probably use <command moreinfo=\"none\">svn status</command> more than any other Subversion command."
+msgstr "相对于其他命令，你会更多地使用这个<command moreinfo=\"none\">svn status</command>命令。"
+
+#: build/en/book.xml:2752(title)
+msgid "CVS Users: Hold That Update!"
+msgstr "CVS用户：控制另类的更新！"
+
+#: build/en/book.xml:2754(para)
+msgid "You're probably used to using <command moreinfo=\"none\">cvs update</command> to see what changes you've made to your working copy. <command moreinfo=\"none\">svn status</command> will give you all the information you need regarding what has changed in your working copy—without accessing the repository or potentially incorporating new changes published by other users."
+msgstr "你也许使用<command moreinfo=\"none\">cvs update</command>来看你做了哪些修改，<command moreinfo=\"none\">svn status</command>会给你所有你做的改变—而不需要访问版本库，并且不会在不知情的情况下与其他用户作的更改比较。"
+
+#: build/en/book.xml:2762(para)
+#, fuzzy
+msgid "In Subversion, <command moreinfo=\"none\">update</command> does just that—it updates your working copy with any changes committed to the repository since the last time you've updated your working copy. You may have to break the habit of using the <command moreinfo=\"none\">update</command> command to see what local modifications you've made."
+msgstr "在Subversion，<command moreinfo=\"none\">update</command>只是做这件事—将工作拷贝更新到版本库的最新版本，你可以消除使用<command moreinfo=\"none\">update</command>察看本地修改的习惯。"
+
+#: build/en/book.xml:2771(para)
+#, fuzzy
+msgid "If you run <command moreinfo=\"none\">svn status</command> at the top of your working copy with no arguments, it will detect all file and tree changes you've made. Below are a few examples of the most common status codes that <command moreinfo=\"none\">svn status</command> can return. (Note that the text following <literal moreinfo=\"none\">#</literal> is not actually printed by <command moreinfo=\"none\">svn status</command>.)"
+msgstr "如果你在工作拷贝的顶级目录运行不带参数的<command moreinfo=\"none\">svn status</command>命令，它会检测你做的所有的文件或目录的修改，以下的例子是来展示<command moreinfo=\"none\">svn status</command>可能返回的状态码（注意，<literal moreinfo=\"none\">#</literal>之后的不是<command moreinfo=\"none\">svn status</command>打印的）。"
+
+#: build/en/book.xml:2779(screen)
+#, no-wrap
+msgid ""
+"\n"
+"A       stuff/loot/bloo.h   # file is scheduled for addition\n"
+"C       stuff/loot/lump.c   # file has textual conflicts from an update\n"
+"D       stuff/fish.c        # file is scheduled for deletion\n"
+"M       bar.c               # the content in bar.c has local modifications\n"
+msgstr ""
+"\n"
+"A       stuff/loot/bloo.h   # file is scheduled for addition\n"
+"C       stuff/loot/lump.c   # file has textual conflicts from an update\n"
+"D       stuff/fish.c        # file is scheduled for deletion\n"
+"M       bar.c               # the content in bar.c has local modifications\n"
+
+#: build/en/book.xml:278(para)
+#, fuzzy
+msgid "While this book is written with the assumption that the reader has never used a version control system, we've also tried to make it easy for users of CVS (and other systems) to make a painless leap into Subversion. Special sidebars may mention other version control systems from time to time, and a special appendix summarizes many of the differences between CVS and Subversion."
+msgstr "本书假定读者从来没有使用过任何版本控制工具，同时，我们也努力使CVS用户能够轻而易举的跃入Subversion中。有时某些条目可能会涉及到CVS，此外，在附录的一个章节中总结了Subversion和CVS的区别。"
+
+#: build/en/book.xml:2786(para)
+#, fuzzy
+msgid "In this output format <command moreinfo=\"none\">svn status</command> prints six columns of characters, followed by several whitespace characters, followed by a file or directory name. The first column tells the status of a file or directory and/or its contents. The codes we listed are:"
+msgstr "在这种格式下，<command moreinfo=\"none\">svn status</command>打印五列字符，紧跟一些空格，接着是文件或者目录名。第一列告诉一个文件的状态或它的内容，返回代码解释如下："
+
+#: build/en/book.xml:2795(computeroutput)
+#, no-wrap
+msgid "A      item"
+msgstr "A      item"
+
+#: build/en/book.xml:2797(para)
+msgid "The file, directory, or symbolic link <filename moreinfo=\"none\">item</filename> has been scheduled for addition into the repository."
+msgstr "文件、目录或是符号链<filename moreinfo=\"none\">item</filename>预定加入到版本库。"
+
+#: build/en/book.xml:2804(computeroutput)
+#, no-wrap
+msgid "C      item"
+msgstr "C      item"
+
+#: build/en/book.xml:2806(para)
+msgid "The file <filename moreinfo=\"none\">item</filename> is in a state of conflict. That is, changes received from the server during an update overlap with local changes that you have in your working copy. You must resolve this conflict before committing your changes to the repository."
+msgstr "文件<filename moreinfo=\"none\">item</filename>发生冲突，在从服务器更新时与本地版本发生交迭，在你提交到版本库前，必须手工的解决冲突。"
+
+#: build/en/book.xml:2816(computeroutput)
+#, no-wrap
+msgid "D      item"
+msgstr "D      item"
+
+#: build/en/book.xml:2818(para)
+msgid "The file, directory, or symbolic link <filename moreinfo=\"none\">item</filename> has been scheduled for deletion from the repository."
+msgstr "文件、目录或是符号链<filename moreinfo=\"none\">item</filename>预定从版本库中删除。"
+
+#: build/en/book.xml:2825(computeroutput)
+#, no-wrap
+msgid "M      item"
+msgstr "M      item"
+
+#: build/en/book.xml:2827(para)
+msgid "The contents of the file <filename moreinfo=\"none\">item</filename> have been modified."
+msgstr "文件<filename moreinfo=\"none\">item</filename>的内容被修改了。"
+
+#: build/en/book.xml:2834(para)
+#, fuzzy
+msgid "If you pass a specific path to <command moreinfo=\"none\">svn status</command>, you get information about that item alone:"
+msgstr "如果你传递一个路径给<command moreinfo=\"none\">svn status</command>，它只给你这个项目的信息："
+
+#: build/en/book.xml:2838(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status stuff/fish.c\n"
+"D      stuff/fish.c\n"
+msgstr ""
+"\n"
+"$ svn status stuff/fish.c\n"
+"D      stuff/fish.c\n"
+
+#: build/en/book.xml:2843(para)
+#, fuzzy
+msgid "<command moreinfo=\"none\">svn status</command> also has a <option>--verbose (-v)</option> switch, which will show you the status of <emphasis>every</emphasis> item in your working copy, even if it has not been changed:"
+msgstr "<command moreinfo=\"none\">svn status</command>也有一个<option>--verbose</option>（<option>-v</option>）选项，它可以显示工作拷贝中的<emphasis>所有</emphasis>项目，即使没有改变过："
+
+#: build/en/book.xml:2848(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status -v\n"
+"M               44        23    sally     README\n"
+"                44        30    sally     INSTALL\n"
+"M               44        20    harry     bar.c\n"
+"                44        18    ira       stuff\n"
+"                44        35    harry     stuff/trout.c\n"
+"D               44        19    ira       stuff/fish.c\n"
+"                44        21    sally     stuff/things\n"
+"A                0         ?     ?        stuff/things/bloo.h\n"
+"                44        36    harry     stuff/things/gloo.c\n"
+msgstr ""
+"\n"
+"$ svn status -v\n"
+"M               44        23    sally     README\n"
+"                44        30    sally     INSTALL\n"
+"M               44        20    harry     bar.c\n"
+"                44        18    ira       stuff\n"
+"                44        35    harry     stuff/trout.c\n"
+"D               44        19    ira       stuff/fish.c\n"
+"                44        21    sally     stuff/things\n"
+"A                0         ?     ?        stuff/things/bloo.h\n"
+"                44        36    harry     stuff/things/gloo.c\n"
+
+#: build/en/book.xml:286(para)
+#, fuzzy
+msgid "Note also that the source code examples used throughout the book are only examples. While they will compile with the proper compiler incantations, they are intended to illustrate a particular scenario, not necessarily serve as examples of good programming style or practices."
+msgstr "需要说明的是，所有源代码示例仅仅是例子而已。这些例子需要通过正确编译参数进行编译，在这里列举它们只是为了说明眼前的问题，并非为了展示优秀的编码风格。"
+
+#: build/en/book.xml:2861(para)
+#, fuzzy
+msgid "This is the <quote>long form</quote> output of <command moreinfo=\"none\">svn status</command>. The first column remains the same, but the second column shows the working-revision of the item. The third and fourth columns show the revision in which the item last changed, and who changed it (these columns are not to be confused with the columns of characters that we just discussed)."
+msgstr "这是<command moreinfo=\"none\">svn status</command>的<quote>加长形式</quote>，第一列保持相同，第二列显示一个工作版本号，第三和第四列显示最后一次修改的版本号和修改人。"
+
+#: build/en/book.xml:2869(para)
+#, fuzzy
+msgid "None of the above invocations to <command moreinfo=\"none\">svn status</command> contact the repository, they work only locally by comparing the metadata in the <filename moreinfo=\"none\">.svn</filename> directory with the working copy. Finally, there is the <option>--show-updates (-u)</option> option, which contacts the repository and adds information about things that are out-of-date:"
+msgstr "上面所有的<command moreinfo=\"none\">svn status</command>调用并没有联系版本库，只是与<filename moreinfo=\"none\">.svn</filename>中的元数据进行比较的结果，最后，是<option>--show-updates</option>（<option>-u</option>）参数，它将会联系版本库为已经过时的数据添加新信息："
+
+#: build/en/book.xml:2877(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status -u -v\n"
+"M      *        44        23    sally     README\n"
+"M               44        20    harry     bar.c\n"
+"       *        44        35    harry     stuff/trout.c\n"
+"D               44        19    ira       stuff/fish.c\n"
+"A                0         ?     ?        stuff/things/bloo.h\n"
+"Status against revision:   46\n"
+msgstr ""
+"\n"
+"$ svn status -u -v\n"
+"M      *        44        23    sally     README\n"
+"M               44        20    harry     bar.c\n"
+"       *        44        35    harry     stuff/trout.c\n"
+"D               44        19    ira       stuff/fish.c\n"
+"A                0         ?     ?        stuff/things/bloo.h\n"
+"Status against revision:   46\n"
+
+#: build/en/book.xml:2887(para)
+msgid "Notice the two asterisks: if you were to run <command moreinfo=\"none\">svn update</command> at this point, you would receive changes to <filename moreinfo=\"none\">README</filename> and <filename moreinfo=\"none\">trout.c</filename>. This tells you some very useful information—you'll need to update and get the server changes on <filename moreinfo=\"none\">README</filename> before you commit, or the repository will reject your commit for being out-of-date. (More on this subject later.)"
+msgstr "注意这两个星号：如果你现在执行<command moreinfo=\"none\">svn update</command>，你的<filename moreinfo=\"none\">README</filename>和<filename moreinfo=\"none\">trout.c</filename>会被更新，这告诉你许多有用的信息—你可以在提交之前，需要使用更新操作得到文件<filename moreinfo=\"none\">README</filename>的更新，或者说文件已经过时，版本库会拒绝了你的提交。（后面还有更多关于此主题）。"
+
+#: build/en/book.xml:2896(para)
+msgid "<command moreinfo=\"none\">svn status</command> displays much more information about the files and directories in your working copy than we've shown here—for an exhaustive description of svn status and its output, see <xref linkend=\"svn.ref.svn.c.status\"/>."
+msgstr ""
+
+#: build/en/book.xml:29(firstname)
+msgid "C. Michael"
+msgstr "C. Michael"
+
+#: build/en/book.xml:2905(title)
+msgid "Examine the details of your local modifications"
+msgstr ""
+
+#: build/en/book.xml:2907(para)
+#, fuzzy
+msgid "Another way to examine your changes is with the <command moreinfo=\"none\">svn diff</command> command. You can find out <emphasis>exactly</emphasis> how you've modified things by running <command moreinfo=\"none\">svn diff</command> with no arguments, which prints out file changes in unified diff format:"
+msgstr "另一种检查修改的方式是<command moreinfo=\"none\">svn diff</command>命令，你可以通过不带参数的<command moreinfo=\"none\">svn diff</command><emphasis>精确的</emphasis>找出你所做的修改，这会输出统一区别格式：<footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:2914(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff\n"
+"Index: bar.c\n"
+"===================================================================\n"
+"--- bar.c\t(revision 3)\n"
+"+++ bar.c\t(working copy)\n"
+"@@ -1,7 +1,12 @@\n"
+"+#include &lt;sys/types.h&gt;\n"
+"+#include &lt;sys/stat.h&gt;\n"
+"+#include &lt;unistd.h&gt;\n"
+"+\n"
+"+#include &lt;stdio.h&gt;\n"
+"\n"
+" int main(void) {\n"
+"-  printf(\"Sixty-four slices of American Cheese...\\n\");\n"
+"+  printf(\"Sixty-five slices of American Cheese...\\n\");\n"
+" return 0;\n"
+" }\n"
+"\n"
+"Index: README\n"
+"===================================================================\n"
+"--- README\t(revision 3)\n"
+"+++ README\t(working copy)\n"
+"@@ -193,3 +193,4 @@\n"
+"+Note to self:  pick up laundry.\n"
+"\n"
+"Index: stuff/fish.c\n"
+"===================================================================\n"
+"--- stuff/fish.c\t(revision 1)\n"
+"+++ stuff/fish.c\t(working copy)\n"
+"-Welcome to the file known as 'fish'.\n"
+"-Information on fish will be here soon.\n"
+"\n"
+"Index: stuff/things/bloo.h\n"
+"===================================================================\n"
+"--- stuff/things/bloo.h\t(revision 8)\n"
+"+++ stuff/things/bloo.h\t(working copy)\n"
+"+Here is a new file to describe\n"
+"+things about bloo.\n"
+msgstr ""
+"\n"
+"$ svn diff\n"
+"Index: bar.c\n"
+"===================================================================\n"
+"--- bar.c\t(revision 3)\n"
+"+++ bar.c\t(working copy)\n"
+"@@ -1,7 +1,12 @@\n"
+"+#include &lt;sys/types.h&gt;\n"
+"+#include &lt;sys/stat.h&gt;\n"
+"+#include &lt;unistd.h&gt;\n"
+"+\n"
+"+#include &lt;stdio.h&gt;\n"
+"\n"
+" int main(void) {\n"
+"-  printf(\"Sixty-four slices of American Cheese...\\n\");\n"
+"+  printf(\"Sixty-five slices of American Cheese...\\n\");\n"
+" return 0;\n"
+" }\n"
+"\n"
+"Index: README\n"
+"===================================================================\n"
+"--- README\t(revision 3)\n"
+"+++ README\t(working copy)\n"
+"@@ -193,3 +193,4 @@\n"
+"+Note to self:  pick up laundry.\n"
+"\n"
+"Index: stuff/fish.c\n"
+"===================================================================\n"
+"--- stuff/fish.c\t(revision 1)\n"
+"+++ stuff/fish.c\t(working copy)\n"
+"-Welcome to the file known as 'fish'.\n"
+"-Information on fish will be here soon.\n"
+"\n"
+"Index: stuff/things/bloo.h\n"
+"===================================================================\n"
+"--- stuff/things/bloo.h\t(revision 8)\n"
+"+++ stuff/things/bloo.h\t(working copy)\n"
+"+Here is a new file to describe\n"
+"+things about bloo.\n"
+
+#: build/en/book.xml:2955(para)
+msgid "The <command moreinfo=\"none\">svn diff</command> command produces this output by comparing your working files against the cached <quote>pristine</quote> copies within the <filename moreinfo=\"none\">.svn</filename> area. Files scheduled for addition are displayed as all added-text, and files scheduled for deletion are displayed as all deleted text."
+msgstr "<command moreinfo=\"none\">svn diff</command>命令通过比较你的文件和<filename moreinfo=\"none\">.svn</filename>的<quote>原始</quote>文件来输出信息，预定要增加的文件会显示所有增加的文本，要删除的文件会显示所有要删除的文本。"
+
+#: build/en/book.xml:2963(para)
+msgid "Output is displayed in <firstterm>unified diff format</firstterm>. That is, removed lines are prefaced with a <literal moreinfo=\"none\">-</literal> and added lines are prefaced with a <literal moreinfo=\"none\">+</literal>. <command moreinfo=\"none\">svn diff</command> also prints filename and offset information useful to the <command moreinfo=\"none\">patch</command> program, so you can generate <quote>patches</quote> by redirecting the diff output to a file:"
+msgstr "输出的格式为<firstterm>统一区别格式</firstterm>（unified diff format），删除的行前面加一个<literal moreinfo=\"none\">-</literal>，添加的行前面有一个<literal moreinfo=\"none\">+</literal>，<command moreinfo=\"none\">svn diff</command>命令也打印文件名和<command moreinfo=\"none\">打补丁</command>需要的信息，所以你可以通过重定向一个区别文件来生成<quote>补丁</quote>："
+
+#: build/en/book.xml:2972(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff &gt; patchfile\n"
+msgstr ""
+"\n"
+"$ svn diff &gt; patchfile\n"
+
+#: build/en/book.xml:2976(para)
+msgid "You could, for example, email the patch file to another developer for review or testing prior to commit."
+msgstr "举个例子，你可以把补丁文件发送邮件到其他开发者，在提交之前审核和测试。"
+
+#: build/en/book.xml:2979(para)
+#, fuzzy
+msgid "Subversion uses its internal diff engine, which produces unified diff format, by default. If you want diff output in a different format, specify an external diff program using <option>--diff-cmd</option> and pass any flags you'd like to it using the <option>--extensions (-x)</option> switch. For example, to see local differences in file <filename moreinfo=\"none\">foo.c</filename> in context output format while ignoring case differences, you might run <command moreinfo=\"none\">svn diff --diff-cmd /usr/bin/diff --extensions '-i' foo.c</command>."
+msgstr "Subversion使用内置区别引擎，缺省情况下输出为统一区别格式。如果你期望不同的输出格式，你可以使用<option>--diff-cmd</option>指定外置的区别程序，并且通过<option>--extensions</option>传递其他参数，举个例子，察看本地文件<filename moreinfo=\"none\">foo.c</filename>的区别，同时忽略空格修改，你可以运行<command moreinfo=\"none\">svn diff --diff-cmd /usr/bin/diff --extensions '-bc' foo.c</command>。"
+
+#: build/en/book.xml:298(title)
+msgid "How to Read this Book"
+msgstr "怎样阅读本书"
+
+#: build/en/book.xml:2997(title)
+#, fuzzy
+msgid "Undoing Working Changes"
+msgstr "取消修改"
+
+#: build/en/book.xml:30(surname)
+msgid "Pilato"
+msgstr "Pilato"
+
+#: build/en/book.xml:300(para)
+msgid "This book aims to be useful to people of widely different backgrounds—from people with no previous experience in version control to experienced system administrators. Depending on your own background, certain chapters may be more or less important to you. The following can be considered a <quote>recommended reading list</quote> for various types of readers:"
+msgstr "本书适用于具有不同背景知识的各个层次的读者—从未使用过版本控制的新手到经验丰富的系统管理员都能够从本书中获益。根据基础的不同，某些的章节可能对某些读者更有价值。下面的内容可以看作是为不同类型的读者提供的<quote>推荐阅读清单</quote>："
+
+#: build/en/book.xml:3000(para)
+msgid "Suppose while viewing the output of <command moreinfo=\"none\">svn diff</command> you determine that all the changes you made to a particular file are mistakes. Maybe you shouldn't have changed the file at all, or perhaps it would be easier
