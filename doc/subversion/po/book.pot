@@ -7827,4 +7827,1658 @@ msgstr ""
 
 #: ./build/en/book.xml:15013(para) 
 msgid "To be more specific: the value of the section-names are either of the form <literal moreinfo=\"none\">[repos-name:path]</literal> or the form <literal moreinfo=\"none\">[path]</literal>. If you're using the <literal moreinfo=\"none\">SVNParentPath</literal> directive, then it's important to specify the repository names in your sections. If you omit them, then a section like <literal moreinfo=\"none\">[/some/dir]</literal> will match the path <filename moreinfo=\"none\">/some/dir</filename> in <emphasis>every</emphasis> repository. If you're using the <literal moreinfo=\"none\">SVNPath</literal> directive, however, then it's fine to only define paths in your sections—after all, there's only one repository."
-msgs
+msgstr ""
+
+#: ./build/en/book.xml:15025(screen) 
+#, no-wrap
+msgid "\n[calc:/branches/calc/bug-142]\nharry = rw\nsally = r\n"
+msgstr ""
+
+#: ./build/en/book.xml:15031(para) 
+msgid "In this first example, the user <literal moreinfo=\"none\">harry</literal> has full read and write access on the <filename moreinfo=\"none\">/branches/calc/bug-142</filename> directory in the <literal moreinfo=\"none\">calc</literal> repository, but the user <literal moreinfo=\"none\">sally</literal> has read-only access. Any other users are blocked from accessing this directory."
+msgstr ""
+
+#: ./build/en/book.xml:15038(para) 
+msgid "Of course, permissions are inherited from parent to child directory. That means that we can specify a subdirectory with a different access policy for Sally:"
+msgstr ""
+
+#: ./build/en/book.xml:15042(screen) 
+#, no-wrap
+msgid "\n[calc:/branches/calc/bug-142]\nharry = rw\nsally = r\n\n# give sally write access only to the 'testing' subdir\n[calc:/branches/calc/bug-142/testing]\nsally = rw\n"
+msgstr ""
+
+#: ./build/en/book.xml:15052(para) 
+msgid "Now Sally can write to the <filename moreinfo=\"none\">testing</filename> subdirectory of the branch, but can still only read other parts. Harry, meanwhile, continues to have complete read-write access to the whole branch."
+msgstr ""
+
+#: ./build/en/book.xml:15057(para) 
+msgid "It's also possible to explicitly deny permission to someone via inheritance rules, by setting the username variable to nothing:"
+msgstr ""
+
+#: ./build/en/book.xml:15061(screen) 
+#, no-wrap
+msgid "\n[calc:/branches/calc/bug-142]\nharry = rw\nsally = r\n\n[calc:/branches/calc/bug-142/secret]\nharry =\n"
+msgstr ""
+
+#: ./build/en/book.xml:15070(para) 
+msgid "In this example, Harry has read-write access to the entire <filename moreinfo=\"none\">bug-142</filename> tree, but has absolutely no access at all to the <filename moreinfo=\"none\">secret</filename> subdirectory within it."
+msgstr ""
+
+#: ./build/en/book.xml:15075(para) 
+msgid "The thing to remember is that the most specific path always matches first. The server tries to match the path itself, and then the parent of the path, then the parent of that, and so on. The net effect is that mentioning a specific path in the accessfile will always override any permissions inherited from parent directories."
+msgstr ""
+
+#: ./build/en/book.xml:15082(para) 
+msgid "By default, nobody has any access to the repository at all. That means that if you're starting with an empty file, you'll probably want to give at least read permission to all users at the root of the repository. You can do this by using the asterisk variable (<literal moreinfo=\"none\">*</literal>), which means <quote>all users</quote>:"
+msgstr ""
+
+#: ./build/en/book.xml:15089(screen) 
+#, no-wrap
+msgid "\n[/]\n* = r\n"
+msgstr ""
+
+#: ./build/en/book.xml:15094(para) 
+msgid "This is a common setup; notice that there's no repository name mentioned in the section name. This makes all repositories world readable to all users. Once all users have read-access to the repositories, you can give explicit <literal moreinfo=\"none\">rw</literal> permission to certain users on specific subdirectories within specific repositories."
+msgstr ""
+
+#: ./build/en/book.xml:15101(para) 
+msgid "The asterisk variable (<literal moreinfo=\"none\">*</literal>) is also worth special mention here: it's the <emphasis>only</emphasis> pattern which matches an anonymous user. If you've configured your server block to allow a mixture of anonymous and authenticated access, all users start out accessing anonymously. The server looks for a <literal moreinfo=\"none\">*</literal> value defined for the path being accessed; if it can't find one, then it demands real authentication from the client."
+msgstr ""
+
+#: ./build/en/book.xml:15111(para) 
+msgid "The access file also allows you to define whole groups of users, much like the Unix <filename moreinfo=\"none\">/etc/group</filename> file:"
+msgstr ""
+
+#: ./build/en/book.xml:15115(screen) 
+#, no-wrap
+msgid "\n[groups]\ncalc-developers = harry, sally, joe\npaint-developers = frank, sally, jane\neveryone = harry, sally, joe, frank, sally, jane\n"
+msgstr ""
+
+#: ./build/en/book.xml:15122(para) 
+msgid "Groups can be granted access control just like users. Distinguish them with an <quote>at</quote> (<literal moreinfo=\"none\">@</literal>) prefix:"
+msgstr ""
+
+#: ./build/en/book.xml:15126(screen) 
+#, no-wrap
+msgid "\n[calc:/projects/calc]\n@calc-developers = rw\n\n[paint:/projects/paint]\n@paint-developers = rw\njane = r\n"
+msgstr ""
+
+#: ./build/en/book.xml:15135(para) 
+msgid "Groups can also be defined to contain other groups:"
+msgstr ""
+
+#: ./build/en/book.xml:15137(screen) 
+#, no-wrap
+msgid "\n[groups]\ncalc-developers = harry, sally, joe\npaint-developers = frank, sally, jane\neveryone = @calc-developers, @paint-developers\n"
+msgstr ""
+
+#: ./build/en/book.xml:15152(title) 
+msgid "Supporting Multiple Repository Access Methods"
+msgstr ""
+
+#: ./build/en/book.xml:15154(para) 
+msgid "You've seen how a repository can be accessed in many different ways. But is it possible—or safe—for your repository to be accessed by multiple methods simultaneously? The answer is yes, provided you use a bit of foresight."
+msgstr ""
+
+#: ./build/en/book.xml:15159(para) 
+msgid "At any given time, these processes may require read and write access to your repository:"
+msgstr ""
+
+#: ./build/en/book.xml:15164(para) 
+msgid "regular system users using a Subversion client (as themselves) to access the repository directly via <literal moreinfo=\"none\">file://</literal> URLs;"
+msgstr ""
+
+#: ./build/en/book.xml:15169(para) 
+msgid "regular system users connecting to SSH-spawned private <command moreinfo=\"none\">svnserve</command> processes (running as themselves) which access the repository;"
+msgstr ""
+
+#: ./build/en/book.xml:15174(para) 
+msgid "an <command moreinfo=\"none\">svnserve</command> process—either a daemon or one launched by <command moreinfo=\"none\">inetd</command>—running as a particular fixed user;"
+msgstr ""
+
+#: ./build/en/book.xml:15180(para) 
+msgid "an Apache <command moreinfo=\"none\">httpd</command> process, running as a particular fixed user."
+msgstr ""
+
+#: ./build/en/book.xml:15185(para) 
+msgid "The most common problem administrators run into is repository ownership and permissions. Does every process (or user) in the previous list have the rights to read and write the Berkeley DB files? Assuming you have a Unix-like operating system, a straightforward approach might be to place every potential repository user into a new <literal moreinfo=\"none\">svn</literal> group, and make the repository wholly owned by that group. But even that's not enough, because a process may write to the database files using an unfriendly umask—one that prevents access by other users."
+msgstr ""
+
+#: ./build/en/book.xml:15196(para) 
+msgid "So the next step beyond setting up a common group for repository users is to force every repository-accessing process to use a sane umask. For users accessing the repository directly, you can make the <command moreinfo=\"none\">svn</command> program into a wrapper script that first sets <command moreinfo=\"none\">umask 002</command> and then runs the real <command moreinfo=\"none\">svn</command> client program. You can write a similar wrapper script for the <command moreinfo=\"none\">svnserve</command> program, and add a <command moreinfo=\"none\">umask 002</command> command to Apache's own startup script, <filename moreinfo=\"none\">apachectl</filename>. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:15207(screen) 
+#, no-wrap
+msgid "\n$ cat /usr/bin/svn\n\n#!/bin/sh\n\numask 002\n/usr/bin/svn-real \"$@\"\n\n"
+msgstr ""
+
+#: ./build/en/book.xml:15217(para) 
+msgid "Another common problem is often encountered on Unix-like systems. As a repository is used, Berkeley DB occasionally creates new log files to journal its actions. Even if the repository is wholly owned by the <command moreinfo=\"none\">svn</command> group, these newly created files won't necessarily be owned by that same group, which then creates more permissions problems for your users. A good workaround is to set the group SUID bit on the repository's <filename moreinfo=\"none\">db</filename> directory. This causes all newly-created log files to have the same group owner as the parent directory."
+msgstr ""
+
+#: ./build/en/book.xml:15228(para) 
+msgid "Once you've jumped through these hoops, your repository should be accessible by all the necessary processes. It may seem a bit messy and complicated, but the problems of having multiple users sharing write-access to common files are classic ones that are not often elegantly solved."
+msgstr ""
+
+#: ./build/en/book.xml:15234(para) 
+msgid "Fortunately, most repository administrators will never <emphasis>need</emphasis> to have such a complex configuration. Users who wish to access repositories that live on the same machine are not limited to using <literal moreinfo=\"none\">file://</literal> access URLs—they can typically contact the Apache HTTP server or <command moreinfo=\"none\">svnserve</command> using <literal moreinfo=\"none\">localhost</literal> for the server name in their <literal moreinfo=\"none\">http://</literal> or <literal moreinfo=\"none\">svn://</literal> URLs. And to maintain multiple server processes for your Subversion repositories is likely to be more of a headache than necessary. We recommend you choose the server that best meets your needs and stick with it!"
+msgstr ""
+
+#: ./build/en/book.xml:15248(title) 
+msgid "The svn+ssh:// server checklist"
+msgstr ""
+
+#: ./build/en/book.xml:15250(para) 
+msgid "It can be quite tricky to get a bunch of users with existing SSH accounts to share a repository without permissions problems. If you're confused about all the things that you (as an administrator) need to do on a Unix-like system, here's a quick checklist that resummarizes some of things discussed in this section:"
+msgstr ""
+
+#: ./build/en/book.xml:15259(para) 
+msgid "All of your SSH users need to be able to read and write to the repository. Put all the SSH users into a single group. Make the repository wholly owned by that group, and set the group permissions to read/write."
+msgstr ""
+
+#: ./build/en/book.xml:15266(para) 
+msgid "Your users need to use a sane umask when accessing the repository. Make sure that <command moreinfo=\"none\">svnserve</command> (<filename moreinfo=\"none\">/usr/bin/svnserve</filename>, or wherever it lives in <literal moreinfo=\"none\">$PATH</literal>) is actually a wrapper script which sets <command moreinfo=\"none\">umask 002</command> and executes the real <command moreinfo=\"none\">svnserve</command> binary. Take similar measures when using <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command>. Either run them with a sane umask, or wrap them as described above."
+msgstr ""
+
+#: ./build/en/book.xml:15295(title) 
+msgid "Customizing Your Subversion Experience"
+msgstr ""
+
+#: ./build/en/book.xml:15297(para) 
+msgid "### TODO: Chapter opening ###"
+msgstr ""
+
+#: ./build/en/book.xml:15299(para) 
+msgid "### TODO: Gut the runtime config stuff like I did the property stuff, making larger topical sections to which the runtime config stuff generally refers. Like already exists for external diff/diff3, add, for example, a section on external editors. ###"
+msgstr ""
+
+#: ./build/en/book.xml:15309(title) 
+msgid "Runtime Configuration Area"
+msgstr ""
+
+#: ./build/en/book.xml:15311(para) 
+msgid "Subversion provides many optional behaviors that can be controlled by the user. Many of these options are of the kind that a user would wish to apply to all Subversion operations. So, rather than forcing users to remember command-line arguments for specifying these options, and to use them for each and every operation they perform, Subversion uses configuration files, segregated into a Subversion configuration area."
+msgstr ""
+
+#: ./build/en/book.xml:15319(para) 
+msgid "The Subversion <firstterm>configuration area</firstterm> is a two-tiered hierarchy of option names and their values. Usually, this boils down to a special directory that contains <firstterm>configuration files</firstterm> (the first tier), which are just text files in standard INI format (with <quote>sections</quote> providing the second tier). These files can be easily edited using your favorite text editor (such as Emacs or vi), and contain directives read by the client to determine which of several optional behaviors the user prefers."
+msgstr ""
+
+#: ./build/en/book.xml:15332(title) 
+msgid "Configuration Area Layout"
+msgstr ""
+
+#: ./build/en/book.xml:15346(para) 
+msgid "The <literal moreinfo=\"none\">APPDATA</literal> environment variable points to the <filename moreinfo=\"none\">Application Data</filename> area, so you can always refer to this folder as <filename moreinfo=\"none\">%APPDATA%\\Subversion</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:15334(para) 
+msgid "The first time that the <command moreinfo=\"none\">svn</command> command-line client is executed, it creates a per-user configuration area. On Unix-like systems, this area appears as a directory named <filename moreinfo=\"none\">.subversion</filename> in the user's home directory. On Win32 systems, Subversion creates a folder named <filename moreinfo=\"none\">Subversion</filename>, typically inside the <filename moreinfo=\"none\">Application Data</filename> area of the user's profile directory (which, by the way, is usually a hidden directory). However, on this platform the exact location differs from system to system, and is dictated by the Windows registry. <placeholder-1/> We will refer to the per-user configuration area using its Unix name, <filename moreinfo=\"none\">.subversion</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:15354(para) 
+msgid "In addition to the per-user configuration area, Subversion also recognizes the existence of a system-wide configuration area. This gives system administrators the ability to establish defaults for all users on a given machine. Note that the system-wide configuration area does not alone dictate mandatory policy—the settings in the per-user configuration area override those in the system-wide one, and command-line arguments supplied to the <command moreinfo=\"none\">svn</command> program have the final word on behavior. On Unix-like platforms, the system-wide configuration area is expected to be the <filename moreinfo=\"none\">/etc/subversion</filename> directory; on Windows machines, it looks for a <filename moreinfo=\"none\">Subversion</filename> directory inside the common <filename moreinfo=\"none\">Application Data</filename> location (again, as specified by the Windows Registry). Unlike the per-user case, the <command moreinfo=\"none\">svn</command> program does not attempt to create the system-wide configuration area."
+msgstr ""
+
+#: ./build/en/book.xml:15372(para) 
+msgid "The per-user configuration area currently contains three files—two configuration files (<filename moreinfo=\"none\">config</filename> and <filename moreinfo=\"none\">servers</filename>), and a <filename moreinfo=\"none\">README.txt</filename> file which describes the INI format. At the time of their creation, the files contain default values for each of the supported Subversion options, mostly commented out and grouped with textual descriptions about how the values for the key affect Subversion's behavior. To change a certain behavior, you need only to load the appropriate configuration file into a text editor, and modify the desired option's value. If at any time you wish to have the default configuration settings restored, you can simply remove (or rename) your configuration directory and then run some innocuous <command moreinfo=\"none\">svn</command> command, such as <command moreinfo=\"none\">svn --version</command>. A new configuration directory with the default contents will be created."
+msgstr ""
+
+#: ./build/en/book.xml:15389(para) 
+msgid "The per-user configuration area also contains a cache of authentication data. The <filename moreinfo=\"none\">auth</filename> directory holds a set of subdirectories that contain pieces of cached information used by Subversion's various supported authentication methods. This directory is created in such a way that only the user herself has permission to read its contents."
+msgstr ""
+
+#: ./build/en/book.xml:15401(title) 
+msgid "Configuration and the Windows Registry"
+msgstr ""
+
+#: ./build/en/book.xml:15403(para) 
+msgid "In addition to the usual INI-based configuration area, Subversion clients running on Windows platforms may also use the Windows registry to hold the configuration data. The option names and their values are the same as in the INI files. The <quote>file/section</quote> hierarchy is preserved as well, though addressed in a slightly different fashion—in this schema, files and sections are just levels in the registry key tree."
+msgstr ""
+
+#: ./build/en/book.xml:15412(para) 
+msgid "Subversion looks for system-wide configuration values under the <literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion</literal> key. For example, the <literal moreinfo=\"none\">global-ignores</literal> option, which is in the <literal moreinfo=\"none\">miscellany</literal> section of the <filename moreinfo=\"none\">config</filename> file, would be found at <literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Config\\Miscellany\\global-ignores</literal>. Per-user configuration values should be stored under <literal moreinfo=\"none\">HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:15423(para) 
+msgid "Registry-based configuration options are parsed <emphasis>before</emphasis> their file-based counterparts, so are overridden by values found in the configuration files. In other words, configuration priority is granted in the following order on a Windows system:"
+msgstr ""
+
+#: ./build/en/book.xml:15431(para) 
+msgid "Command-line options"
+msgstr ""
+
+#: ./build/en/book.xml:15434(para) 
+msgid "The per-user INI files"
+msgstr ""
+
+#: ./build/en/book.xml:15437(para) 
+msgid "The per-user Registry values"
+msgstr ""
+
+#: ./build/en/book.xml:15440(para) 
+msgid "The system-wide INI files"
+msgstr ""
+
+#: ./build/en/book.xml:15443(para) 
+msgid "The system-wide Registry values"
+msgstr ""
+
+#: ./build/en/book.xml:15447(para) 
+msgid "Also, the Windows Registry doesn't really support the notion of something being <quote>commented out</quote>. However, Subversion will ignore any option key whose name begins with a hash (<literal moreinfo=\"none\">#</literal>) character. This allows you to effectively comment out a Subversion option without deleting the entire key from the Registry, obviously simplifying the process of restoring that option."
+msgstr ""
+
+#: ./build/en/book.xml:15455(para) 
+msgid "The <command moreinfo=\"none\">svn</command> command-line client never attempts to write to the Windows Registry, and will not attempt to create a default configuration area there. You can create the keys you need using the <command moreinfo=\"none\">REGEDIT</command> program. Alternatively, you can create a <filename moreinfo=\"none\">.reg</filename> file, and then double-click on that file from the Explorer shell, which will cause the data to be merged into your registry."
+msgstr ""
+
+#: ./build/en/book.xml:15465(title) 
+msgid "Sample Registration Entries (.reg) File."
+msgstr ""
+
+#: ./build/en/book.xml:15467(programlisting) 
+#, no-wrap
+msgid "\nREGEDIT4\n\n[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\groups]\n\n[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\global]\n\"#http-proxy-host\"=\"\"\n\"#http-proxy-port\"=\"\"\n\"#http-proxy-username\"=\"\"\n\"#http-proxy-password\"=\"\"\n\"#http-proxy-exceptions\"=\"\"\n\"#http-timeout\"=\"0\"\n\"#http-compression\"=\"yes\"\n\"#neon-debug-mask\"=\"\"\n\"#ssl-authority-files\"=\"\"\n\"#ssl-trust-default-ca\"=\"\"\n\"#ssl-client-cert-file\"=\"\"\n\"#ssl-client-cert-password\"=\"\"\n\n[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auth]\n\"#store-passwords\"=\"yes\"\n\"#store-auth-creds\"=\"yes\"\n\n[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\helpers]\n\"#editor-cmd\"=\"notepad\"\n\"#diff-cmd\"=\"\"\n\"#diff3-cmd\"=\"\"\n\"#diff3-has-program-arg\"=\"\"\n\n[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\tunnels]\n\n[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\miscellany]\n\"#global-ignores\"=\"*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store\"\n\"#log-encoding\"=\"\"\n\"#use-commit-times\"=\"\"\n\"#no-unlock\"=\"\"\n\"#enable-auto-props\"=\"\"\n\n[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auto-props]\n\n"
+msgstr ""
+
+#: ./build/en/book.xml:15510(para) 
+msgid "The previous example shows the contents of a <filename moreinfo=\"none\">.reg</filename> file which contains some of the most commonly used configuration options and their default values. Note the presence of both system-wide (for network proxy-related options) and per-user settings (editor programs and password storage, among others). Also note that all the options are effectively commented out. You need only to remove the hash (<literal moreinfo=\"none\">#</literal>) character from the beginning of the option names, and set the values as you desire."
+msgstr ""
+
+#: ./build/en/book.xml:15525(title) 
+msgid "Configuration Options"
+msgstr ""
+
+#: ./build/en/book.xml:15527(para) 
+msgid "### TODO: Rework and move this section to the Reference ###"
+msgstr ""
+
+#: ./build/en/book.xml:15529(para) 
+msgid "In this section, we will discuss the specific run-time configuration options that are currently supported by Subversion."
+msgstr ""
+
+#: ./build/en/book.xml:15535(title) 
+msgid "Servers"
+msgstr ""
+
+#: ./build/en/book.xml:15537(para) 
+msgid "The <filename moreinfo=\"none\">servers</filename> file contains Subversion configuration options related to the network layers. There are two special section names in this file—<literal moreinfo=\"none\">groups</literal> and <literal moreinfo=\"none\">global</literal>. The <literal moreinfo=\"none\">groups</literal> section is essentially a cross-reference table. The keys in this section are the names of other sections in the file; their values are <firstterm>globs</firstterm>—textual tokens which possibly contain wildcard characters—that are compared against the hostnames of the machine to which Subversion requests are sent."
+msgstr ""
+
+#: ./build/en/book.xml:15549(programlisting) 
+#, no-wrap
+msgid "\n[groups]\nbeanie-babies = *.red-bean.com\ncollabnet = svn.collab.net\n\n[beanie-babies]\n…\n\n[collabnet]\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:15561(para) 
+msgid "When Subversion is used over a network, it attempts to match the name of the server it is trying to reach with a group name under the <literal moreinfo=\"none\">groups</literal> section. If a match is made, Subversion then looks for a section in the <filename moreinfo=\"none\">servers</filename> file whose name is the matched group's name. From that section it reads the actual network configuration settings."
+msgstr ""
+
+#: ./build/en/book.xml:15569(para) 
+msgid "The <literal moreinfo=\"none\">global</literal> section contains the settings that are meant for all of the servers not matched by one of the globs under the <literal moreinfo=\"none\">groups</literal> section. The options available in this section are exactly the same as those valid for the other server sections in the file (except, of course, the special <literal moreinfo=\"none\">groups</literal> section), and are as follows:"
+msgstr ""
+
+#: ./build/en/book.xml:15580(literal) 
+msgid "http-proxy-host"
+msgstr ""
+
+#: ./build/en/book.xml:15582(para) 
+msgid "This specifies the hostname of the proxy computer through which your HTTP-based Subversion requests must pass. It defaults to an empty value, which means that Subversion will not attempt to route HTTP requests through a proxy computer, and will instead attempt to contact the destination machine directly."
+msgstr ""
+
+#: ./build/en/book.xml:15591(literal) 
+msgid "http-proxy-port"
+msgstr ""
+
+#: ./build/en/book.xml:15593(para) 
+msgid "This specifies the port number on the proxy host to use. It defaults to an empty value."
+msgstr ""
+
+#: ./build/en/book.xml:15598(literal) 
+msgid "http-proxy-username"
+msgstr ""
+
+#: ./build/en/book.xml:15600(para) 
+msgid "This specifies the username to supply to the proxy machine. It defaults to an empty value."
+msgstr ""
+
+#: ./build/en/book.xml:15605(literal) 
+msgid "http-proxy-password"
+msgstr ""
+
+#: ./build/en/book.xml:15607(para) 
+msgid "This specifies the password to supply to the proxy machine. It defaults to an empty value."
+msgstr ""
+
+#: ./build/en/book.xml:15612(literal) 
+msgid "http-timeout"
+msgstr ""
+
+#: ./build/en/book.xml:15614(para) 
+msgid "This specifies the amount of time, in seconds, to wait for a server response. If you experience problems with a slow network connection causing Subversion operations to timeout, you should increase the value of this option. The default value is <literal moreinfo=\"none\">0</literal>, which instructs the underlying HTTP library, Neon, to use its default timeout setting."
+msgstr ""
+
+#: ./build/en/book.xml:15625(literal) 
+msgid "http-compression"
+msgstr ""
+
+#: ./build/en/book.xml:15627(para) 
+msgid "This specifies whether or not Subversion should attempt to compress network requests made to DAV-ready servers. The default value is <literal moreinfo=\"none\">yes</literal> (though compression will only occur if that capability is compiled into the network layer). Set this to <literal moreinfo=\"none\">no</literal> to disable compression, such as when debugging network transmissions."
+msgstr ""
+
+#: ./build/en/book.xml:15637(literal) 
+msgid "neon-debug-mask"
+msgstr ""
+
+#: ./build/en/book.xml:15639(para) 
+msgid "This is an integer mask that the underlying HTTP library, Neon, uses for choosing what type of debugging output to yield. The default value is <literal moreinfo=\"none\">0</literal>, which will silence all debugging output. For more information about how Subversion makes use of Neon, see <xref linkend=\"svn.developer\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:15648(literal) 
+msgid "ssl-authority-files"
+msgstr ""
+
+#: ./build/en/book.xml:15650(para) 
+msgid "This is a semicolon-delimited list of paths to files containing certificates of the certificate authorities (or CAs) that are accepted by the Subversion client when accessing the repository over HTTPS."
+msgstr ""
+
+#: ./build/en/book.xml:15658(literal) 
+msgid "ssl-trust-default-ca"
+msgstr ""
+
+#: ./build/en/book.xml:15660(para) 
+msgid "Set this variable to <literal moreinfo=\"none\">yes</literal> if you want Subversion to automatically trust the set of default CAs that ship with OpenSSL."
+msgstr ""
+
+#: ./build/en/book.xml:15666(literal) 
+msgid "ssl-client-cert-file"
+msgstr ""
+
+#: ./build/en/book.xml:15668(para) 
+msgid "If a host (or set of hosts) requires an SSL client certificate, you'll normally be prompted for a path to your certificate. By setting this variable to that same path, Subversion will be able to find your client certificate automatically without prompting you. There's no standard place to store your certificate on disk; Subversion will grab it from any path you specify."
+msgstr ""
+
+#: ./build/en/book.xml:15679(literal) 
+msgid "ssl-client-cert-password"
+msgstr ""
+
+#: ./build/en/book.xml:15681(para) 
+msgid "If your SSL client certificate file is encrypted by a passphrase, Subversion will prompt you for the passphrase whenever the certificate is used. If you find this annoying (and don't mind storing the password in the <filename moreinfo=\"none\">servers</filename> file), then you can set this variable to the certificate's passphrase. You won't be prompted anymore."
+msgstr ""
+
+#: ./build/en/book.xml:15696(title) 
+msgid "Config"
+msgstr ""
+
+#: ./build/en/book.xml:15698(para) 
+msgid "The <filename moreinfo=\"none\">config</filename> file contains the rest of the currently available Subversion run-time options, those not related to networking. There are only a few options in use at this time, but they are again grouped into sections in expectation of future additions."
+msgstr ""
+
+#: ./build/en/book.xml:15704(para) 
+msgid "The <literal moreinfo=\"none\">auth</literal> section contains settings related to Subversion's authentication and authorization against the repository. It contains:"
+msgstr ""
+
+#: ./build/en/book.xml:15710(literal) 
+msgid "store-passwords"
+msgstr ""
+
+#: ./build/en/book.xml:15712(para) 
+msgid "This instructs Subversion to cache, or not to cache, passwords that are supplied by the user in response to server authentication challenges. The default value is <literal moreinfo=\"none\">yes</literal>. Set this to <literal moreinfo=\"none\">no</literal> to disable this on-disk password caching. You can override this option for a single instance of the <command moreinfo=\"none\">svn</command> command using the <option>--no-auth-cache</option> command-line parameter (for those subcommands that support it). For more information, see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:15725(literal) 
+msgid "store-auth-creds"
+msgstr ""
+
+#: ./build/en/book.xml:15727(para) 
+msgid "This setting is the same as <literal moreinfo=\"none\">store-passwords</literal>, except that it enables or disables disk-caching of <emphasis>all</emphasis> authentication information: usernames, passwords, server certificates, and any other types of cacheable credentials."
+msgstr ""
+
+#: ./build/en/book.xml:15737(para) 
+msgid "The <literal moreinfo=\"none\">helpers</literal> section controls which external applications Subversion uses to accomplish its tasks. Valid options in this section are:"
+msgstr ""
+
+#: ./build/en/book.xml:15743(literal) 
+msgid "editor-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:15745(para) 
+msgid "This specifies the program Subversion will use to query the user for a log message during a commit operation, such as when using <command moreinfo=\"none\">svn commit</command> without either the <option>--message</option> (<option>-m</option>) or <option>--file</option> (<option>-F</option>) options. This program is also used with the <command moreinfo=\"none\">svn propedit</command> command—a temporary file is populated with the current value of the property the user wishes to edit, and the edits take place right in the editor program (see <xref linkend=\"svn.advanced.props\"/>). This option's default value is empty. The order of priority for determining the editor command is:"
+msgstr ""
+
+#: ./build/en/book.xml:15760(para) 
+msgid "Command-line option <literal moreinfo=\"none\">--editor-cmd</literal>"
+msgstr ""
+
+#: ./build/en/book.xml:15763(para) 
+msgid "Environment variable <literal moreinfo=\"none\">SVN_EDITOR</literal>"
+msgstr ""
+
+#: ./build/en/book.xml:15766(para) 
+msgid "Configuration option <literal moreinfo=\"none\">editor-cmd</literal>"
+msgstr ""
+
+#: ./build/en/book.xml:15769(para) 
+msgid "Environment variable <literal moreinfo=\"none\">VISUAL</literal>"
+msgstr ""
+
+#: ./build/en/book.xml:15772(para) 
+msgid "Environment variable <literal moreinfo=\"none\">EDITOR</literal>"
+msgstr ""
+
+#: ./build/en/book.xml:15775(para) 
+msgid "Possibly, a default value built in to Subversion (not present in the official builds)"
+msgstr ""
+
+#: ./build/en/book.xml:15779(para) 
+msgid "The value of any of these options or variables is (unlike <literal moreinfo=\"none\">diff-cmd</literal>) the beginning of a command line to be executed by the shell. Subversion appends a space and the pathname of the temporary file to be edited. The editor should modify the temporary file and return a zero exit code to indicate success."
+msgstr ""
+
+#: ./build/en/book.xml:15788(literal) 
+msgid "diff-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:15790(para) 
+msgid "This specifies the absolute path of a differencing program, used when Subversion generates <quote>diff</quote> output (such as when using the <command moreinfo=\"none\">svn diff</command> command). By default Subversion uses an internal differencing library—setting this option will cause it to perform this task using an external program. See <xref linkend=\"svn.advanced.externaldifftools\"/> for more details on using such programs."
+msgstr ""
+
+#: ./build/en/book.xml:15802(literal) 
+msgid "diff3-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:15804(para) 
+msgid "This specifies the absolute path of a three-way differencing program. Subversion uses this program to merge changes made by the user with those received from the repository. By default Subversion uses an internal differencing library—setting this option will cause it to perform this task using an external program. See <xref linkend=\"svn.advanced.externaldifftools\"/> for more details on using such programs."
+msgstr ""
+
+#: ./build/en/book.xml:15815(literal) 
+msgid "diff3-has-program-arg"
+msgstr ""
+
+#: ./build/en/book.xml:15817(para) 
+msgid "This flag should be set to <literal moreinfo=\"none\">true</literal> if the program specified by the <literal moreinfo=\"none\">diff3-cmd</literal> option accepts a <option>--diff-program</option> command-line parameter."
+msgstr ""
+
+#: ./build/en/book.xml:15826(para) 
+msgid "The <literal moreinfo=\"none\">tunnels</literal> section allows you to define new tunnel schemes for use with <command moreinfo=\"none\">svnserve</command> and <literal moreinfo=\"none\">svn://</literal> client connections. For more details, see <xref linkend=\"svn.serverconfig.svnserve.sshauth\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:15834(para) 
+msgid "Anyone for potluck dinner?"
+msgstr ""
+
+#: ./build/en/book.xml:15831(para) 
+msgid "The <literal moreinfo=\"none\">miscellany</literal> section is where everything that doesn't belong elsewhere winds up. <placeholder-1/> In this section, you can find:"
+msgstr ""
+
+#: ./build/en/book.xml:15840(literal) 
+msgid "global-ignores"
+msgstr ""
+
+#: ./build/en/book.xml:15842(para) 
+msgid "When running the <command moreinfo=\"none\">svn status</command> command, Subversion lists unversioned files and directories along with the versioned ones, annotating them with a <literal moreinfo=\"none\">?</literal> character (see <xref linkend=\"svn.tour.cycle.examine.status\"/>). Sometimes, it can be annoying to see uninteresting, unversioned items—for example, object files that result from a program's compilation—in this display. The <literal moreinfo=\"none\">global-ignores</literal> option is a list of whitespace-delimited globs which describe the names of files and directories that Subversion should not display unless they are versioned. The default value is <literal moreinfo=\"none\">*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:15856(para) 
+msgid "As well as <command moreinfo=\"none\">svn status</command>, the <command moreinfo=\"none\">svn add</command> and <command moreinfo=\"none\">svn import</command> commands also ignore files that match the list when they are scanning a directory. You can override this behaviour for a single instance of any of these commands by explicitly specifying the file name, or by using the <option>--no-ignore</option> command-line flag."
+msgstr ""
+
+#: ./build/en/book.xml:15864(para) 
+msgid "For information on more fine-grained control of ignored items, see <xref linkend=\"svn.advanced.props.special.ignore\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:15870(literal) 
+msgid "enable-auto-props"
+msgstr ""
+
+#: ./build/en/book.xml:15872(para) 
+msgid "This instructs Subversion to automatically set properties on newly added or imported files. The default value is <literal moreinfo=\"none\">no</literal>, so set this to <literal moreinfo=\"none\">yes</literal> to enable Auto-props. The <literal moreinfo=\"none\">auto-props</literal> section of this file specifies which properties are to be set on which files."
+msgstr ""
+
+#: ./build/en/book.xml:15882(literal) 
+msgid "log-encoding"
+msgstr ""
+
+#: ./build/en/book.xml:15884(para) 
+msgid "This variable sets the default character set encoding for commit log messages. It's a permanent form of the <option>--encoding</option> option (see <xref linkend=\"svn.ref.svn.sw\"/>). The Subversion repository stores log messages in UTF-8, and assumes that your log message is written using your operating system's native locale. You should specify a different encoding if your commit messages are written in any other encoding."
+msgstr ""
+
+#: ./build/en/book.xml:15897(literal) 
+msgid "use-commit-times"
+msgstr ""
+
+#: ./build/en/book.xml:15899(para) 
+msgid "Normally your working copy files have timestamps that reflect the last time they were touched by any process, whether that be your own editor or by some <command moreinfo=\"none\">svn</command> subcommand. This is generally convenient for people developing software, because build systems often look at timestamps as a way of deciding which files need to be recompiled."
+msgstr ""
+
+#: ./build/en/book.xml:15907(para) 
+msgid "In other situations, however, it's sometimes nice for the working copy files to have timestamps that reflect the last time they were changed in the repository. The <command moreinfo=\"none\">svn export</command> command always places these <quote>last-commit timestamps</quote> on trees that it produces. By setting this config variable to <literal moreinfo=\"none\">yes</literal>, the <command moreinfo=\"none\">svn checkout</command>, <command moreinfo=\"none\">svn update</command>, <command moreinfo=\"none\">svn switch</command>, and <command moreinfo=\"none\">svn revert</command> commands will also set last-commit timestamps on files that they touch."
+msgstr ""
+
+#: ./build/en/book.xml:15926(para) 
+msgid "The <literal moreinfo=\"none\">auto-props</literal> section controls the Subversion client's ability to automatically set properties on files when they are added or imported. It contains any number of key-value pairs in the format <literal moreinfo=\"none\">PATTERN = PROPNAME=PROPVALUE</literal> where <literal moreinfo=\"none\">PATTERN</literal> is a file pattern that matches a set of filenames and the rest of the line is the property and its value. Multiple matches on a file will result in multiple propsets for that file; however, there is no guarantee that auto-props will be applied in the order in which they are listed in the config file, so you can't have one rule <quote>override</quote> another. You can find several examples of auto-props usage in the <filename moreinfo=\"none\">config</filename> file. Lastly, don't forget to set <literal moreinfo=\"none\">enable-auto-props</literal> to <literal moreinfo=\"none\">yes</literal> in the <literal moreinfo=\"none\">miscellany</literal> section if you want to enable auto-props."
+msgstr ""
+
+#: ./build/en/book.xml:15954(title) 
+msgid "Localization"
+msgstr ""
+
+#: ./build/en/book.xml:15956(para) 
+msgid "<firstterm>Localization</firstterm> is the act of making programs behave in a region-specific way. When a program formats numbers or dates in a way specific to your part of the world, or prints messages (or accepts input) in your native language, the program is said to be <firstterm>localized</firstterm>. This section describes steps Subversion has made towards localization."
+msgstr ""
+
+#: ./build/en/book.xml:15966(title) 
+msgid "Understanding locales"
+msgstr ""
+
+#: ./build/en/book.xml:15968(para) 
+msgid "Most modern operating systems have a notion of the <quote>current locale</quote>—that is, the region or country whose localization conventions are honored. These conventions—typically chosen by some runtime configuration mechanism on the computer—affect the way in which programs present data to the user, as well as the way in which they accept user input."
+msgstr ""
+
+#: ./build/en/book.xml:15976(para) 
+msgid "On Unix-like systems, you can check the values of the locale-related runtime configuration options by running the <command moreinfo=\"none\">locale</command> command:"
+msgstr ""
+
+#: ./build/en/book.xml:15980(screen) 
+#, no-wrap
+msgid "\n$ locale\nLANG=\nLC_COLLATE=\"C\"\nLC_CTYPE=\"C\"\nLC_MESSAGES=\"C\"\nLC_MONETARY=\"C\"\nLC_NUMERIC=\"C\"\nLC_TIME=\"C\"\nLC_ALL=\"C\"\n"
+msgstr ""
+
+#: ./build/en/book.xml:15992(para) 
+msgid "The output is a list of locale-related environment variables and their current values. In this example, the variables are all set to the default <literal moreinfo=\"none\">C</literal> locale, but users can set these variables to specific country/language code combinations. For example, if one were to set the <literal moreinfo=\"none\">LC_TIME</literal> variable to <literal moreinfo=\"none\">fr_CA</literal>, then programs would know to present time and date information formatted according a French-speaking Canadian's expectations. And if one were to set the <literal moreinfo=\"none\">LC_MESSAGES</literal> variable to <literal moreinfo=\"none\">zh_TW</literal>, then programs would know to present human-readable messages in Traditional Chinese. Setting the <literal moreinfo=\"none\">LC_ALL</literal> variable has the effect of changing every locale variable to the same value. The value of <literal moreinfo=\"none\">LANG</literal> is used as a default value for any locale variable that is unset. To see the list of available locales on a Unix system, run the command <command moreinfo=\"none\">locale -a</command>."
+msgstr ""
+
+#: ./build/en/book.xml:16011(para) 
+msgid "On Windows, locale configuration is done via the <quote>Regional and Language Options</quote> control panel item. There you can view and select the values of individual settings from the available locales, and even customize (at a sickening level of detail) several of the display formatting conventions."
+msgstr ""
+
+#: ./build/en/book.xml:16022(title) 
+msgid "Subversion's use of locales"
+msgstr ""
+
+#: ./build/en/book.xml:16024(para) 
+msgid "The Subversion client, <command moreinfo=\"none\">svn</command>, honors the current locale configuration in two ways. First, it notices the value of the <literal moreinfo=\"none\">LC_MESSAGES</literal> variable and attempts to print all messages in the specified language. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:16030(screen) 
+#, no-wrap
+msgid "\n$ export LC_MESSAGES=de_DE\n$ svn help cat\ncat: Gibt den Inhalt der angegebenen Dateien oder URLs aus.\nAufruf: cat ZIEL[@REV]...\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:16038(para) 
+msgid "This behavior works identically on both Unix and Windows systems. Note, though, that while your operating system might have support for a certain locale, the Subversion client still may not be able to speak the particular language. In order to produce localized messages, human volunteers must provide translations for each language. The translations are written using the GNU gettext package, which results in translation modules that end with the <filename moreinfo=\"none\">.mo</filename> filename extension. For example, the German translation file is named <filename moreinfo=\"none\">de.mo</filename>. These translation files are installed somewhere on your system. On Unix, they typically live in <filename moreinfo=\"none\">/usr/share/locale/</filename>, while on Windows they're often found in the <filename moreinfo=\"none\">\\share\\locale\\</filename> folder in Subversion's installation area. Once installed, a module is named after the program it provides translations for. For example, the <filename moreinfo=\"none\">de.mo</filename> file may ultimately end up installed as <filename moreinfo=\"none\">/usr/share/locale/de/LC_MESSAGES/subversion.mo</filename>. By browsing the installed <filename moreinfo=\"none\">.mo</filename> files, you can see which languages the Subversion client is able to speak."
+msgstr ""
+
+#: ./build/en/book.xml:16061(para) 
+msgid "The second way in which the locale is honored involves how <command moreinfo=\"none\">svn</command> interprets your input. The repository stores all paths, filenames, and log messages in Unicode, encoded as UTF-8. In that sense, the repository is <firstterm>internationalized</firstterm>—that is, the repository is ready to accept input in any human language. This means, however, that the Subversion client is responsible for sending only UTF-8 filenames and log messages into the repository. In order to do this, it must convert the data from the native locale into UTF-8."
+msgstr ""
+
+#: ./build/en/book.xml:16072(para) 
+msgid "For example, suppose you create a file named <filename moreinfo=\"none\">caffè.txt</filename>, and then when committing the file, you write the log message as <quote>Adesso il caffè è più forte</quote>. Both the filename and log message contain non-ASCII characters, but because your locale is set to <literal moreinfo=\"none\">it_IT</literal>, the Subversion client knows to interpret them as Italian. It uses an Italian character set to convert the data to UTF-8 before sending them off to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:16082(para) 
+msgid "Note that while the repository demands UTF-8 filenames and log messages, it <emphasis>does not</emphasis> pay attention to file contents. Subversion treats file contents as opaque strings of bytes, and neither client nor server makes an attempt to understand the character set or encoding of the contents."
+msgstr ""
+
+#: ./build/en/book.xml:16090(title) 
+msgid "Character set conversion errors"
+msgstr ""
+
+#: ./build/en/book.xml:16092(para) 
+msgid "While using Subversion, you might get hit with an error related to character set conversions:"
+msgstr ""
+
+#: ./build/en/book.xml:16095(screen) 
+#, no-wrap
+msgid "\nsvn: Can't convert string from native encoding to 'UTF-8':\n…\nsvn: Can't convert string from 'UTF-8' to native encoding:\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:16102(para) 
+msgid "Errors like this typically occur when the Subversion client has received a UTF-8 string from the repository, but not all of the characters in that string can be represented using the encoding of the current locale. For example, if your locale is <literal moreinfo=\"none\">en_US</literal> but a collaborator has committed a Japanese filename, you're likely to see this error when you receive the file during an <command moreinfo=\"none\">svn update</command>."
+msgstr ""
+
+#: ./build/en/book.xml:16111(para) 
+msgid "The solution is either to set your locale to something which <emphasis>can</emphasis> represent the incoming UTF-8 data, or to change the filename or log message in the repository. (And don't forget to slap your collaborator's hand—projects should decide on common languages ahead of time, so that all participants are using the same locale.)"
+msgstr ""
+
+#: ./build/en/book.xml:16128(title) 
+msgid "Using External Differencing Tools"
+msgstr ""
+
+#: ./build/en/book.xml:16130(para) 
+msgid "The presence of <option>--diff-cmd</option> and <option>--diff3-cmd</option> options, and similarly named runtime configuration parameters (see <xref linkend=\"svn.advanced.confarea.opts.config\"/>), can lead to a false notion of how easy it is to use external differencing (or <quote>diff</quote>) and merge tools with Subversion. While Subversion can use most of popular such tools available, the effort invested in setting this up often turns out to be non-trivial."
+msgstr ""
+
+#: ./build/en/book.xml:16150(para) 
+msgid "Subversion developers are good, but even the best make mistakes."
+msgstr ""
+
+#: ./build/en/book.xml:16139(para) 
+msgid "The interface between Subversion and external diff and merge tools harkens back to a time when Subversion's only contextual differencing capabilities were built around invocations of the GNU diffutils toolchain, specifically the <command moreinfo=\"none\">diff</command> and <command moreinfo=\"none\">diff3</command> utilities. To get the kind of behavior Subversion needed, it called these utilities with more than a handful of options and parameters, most of which were quite specific to the utilities. Some time later, Subversion grew its own internal differencing library, and as a failover mechanism, <placeholder-1/> the <option>--diff-cmd</option> and <option>--diff3-cmd</option> options were added to the Subversion command-line client so users could more easily indicate that they preferred to use the GNU diff and diff3 utilities instead of the newfangled internal diff library. If those options were used, Subversion would simply ignore the internal diff library, and fall back to running those external programs, lengthy argument lists and all. And that's where things remain today."
+msgstr ""
+
+#: ./build/en/book.xml:16162(para) 
+msgid "It didn't take long for folks to realize that having such easy configuration mechanisms for specifying that Subversion should use the external GNU diff and diff3 utilities located at a particular place on the system could be applied toward the use of other diff and merge tools, too. After all, Subversion didn't actually verify that the things it was being told to run were members of the GNU diffutils toolchain. But the only configurable aspect of using those external tools is their location on the system—not the option set, parameter order, etc. Subversion continues throwing all those GNU utility options at your external diff tool regardless of whether or not that program can understand those options. And that's where things get unintuitive for most users."
+msgstr ""
+
+#: ./build/en/book.xml:16176(para) 
+msgid "The key to using external diff and merge tools (other than GNU diff and diff3, of course) with Subversion is to use wrapper scripts which convert the input from Subversion into something that your differencing tool can understand, and then to convert the output of your tool back into a format which Subversion expects—the format that the GNU tools would have used. The following sections cover the specifics of those expectations."
+msgstr ""
+
+#: ./build/en/book.xml:16186(para) 
+msgid "The decision on when to fire off a contextual diff or merge as part of a larger Subversion operation is made entirely by Subversion, and is affected by, among other things, whether or not the files being operated on are human-readable as determined by their <literal moreinfo=\"none\">svn:mime-type</literal> property. This means, for example, that even if you had the niftiest Microsoft Word-aware differencing or merging tool in the Universe, it would never be invoked by Subversion so long as your versioned Word documents had a configured MIME type that denoted that they were not human-readable (such as <literal moreinfo=\"none\">application/msword</literal>). For more about MIME type settings, see <xref linkend=\"svn.advanced.props.special.mime-type\"/>"
+msgstr ""
+
+#: ./build/en/book.xml:16203(title) 
+msgid "External diff"
+msgstr ""
+
+#: ./build/en/book.xml:16220(para) 
+msgid "The GNU diff manual page puts it this way: <quote>An exit status of 0 means no differences were found, 1 means some differences were found, and 2 means trouble.</quote>"
+msgstr ""
+
+#: ./build/en/book.xml:16205(para) 
+msgid "Subversion calls external diff programs with parameters suitable for the GNU diff utility, and expects only that the external program return with a successful error code. For most alternative diff program, only the sixth and seventh arguments, the paths of the files which represent the left and right sides of the diff, respectively, are of interest. Note that Subversion runs the diff program once per modified file covered by the Subversion operation, so if your program runs in an asynchronous fashion (or <quote>backgrounded</quote>), you might have several instances of it all running simultaneously. Finally, Subversion expects that your program return an errorcode of 1 if your program detected differences, or 0 if it did not—any other errorcode is considered a fatal error. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:16226(para) 
+msgid "<xref linkend=\"svn.advanced.externaldifftools.diff.ex-1\"/> and <xref linkend=\"svn.advanced.externaldifftools.diff.ex-2\"/> are templates for external diff tool wrappers in the Bourne shell and Windows batch scripting languages, respectively."
+msgstr ""
+
+#: ./build/en/book.xml:16233(title) 
+msgid "diffwrap.sh"
+msgstr ""
+
+#: ./build/en/book.xml:16234(programlisting) 
+#, no-wrap
+msgid "\n#!/bin/sh\n\n# Configure your favorite diff program here.\nDIFF=\"/usr/local/bin/my-diff-tool\"\n\n# Subversion provides the paths we need as the sixth and seventh \n# parameters.\nLEFT=${6}\nRIGHT=${7}\n\n# Call the diff command (change the following line to make sense for\n# your merge program).\n$DIFF --left $LEFT --right $RIGHT\n\n# Return an errorcode of 0 if no differences were detected, 1 if some were.\n# Any other errorcode will be treated as fatal.\n"
+msgstr ""
+
+#: ./build/en/book.xml:16255(title) 
+msgid "diffwrap.bat"
+msgstr ""
+
+#: ./build/en/book.xml:16256(programlisting) 
+#, no-wrap
+msgid "\n@ECHO OFF\n\nREM Configure your favorite diff program here.\nSET DIFF=\"C:\\Program Files\\Funky Stuff\\My Diff Tool.exe\"\n\nREM Subversion provides the paths we need as the sixth and seventh \nREM parameters.\nSET LEFT=%6\nSET RIGHT=%7\n\nREM Call the diff command (change the following line to make sense for\nREM your merge program).\n%DIFF% --left %LEFT% --right %RIGHT%\n\nREM Return an errorcode of 0 if no differences were detected, 1 if some were.\nREM Any other errorcode will be treated as fatal.\n"
+msgstr ""
+
+#: ./build/en/book.xml:16279(title) 
+msgid "External diff3"
+msgstr ""
+
+#: ./build/en/book.xml:16281(para) 
+msgid "Subversion calls external merge programs with parameters suitable for the GNU diff3 utility, expecting that the external program return with a successful error code and that the full file contents which result from the completed merge operation are printed on the standard output stream (so that Subversion can redirect them into the appropriate version controlled file). For most alternative merge programs, only the ninth, tenth, and eleventh arguments, the paths of the files which represent the <quote>mine</quote>, <quote>older</quote>, and <quote>yours</quote> inputs, respectively, are of interest. Note that because Subversion depends on the output of your merge program, you wrapper script must not exit before that output has been delivered to Subversion. When it finally does exit, it should return an errorcode of 0 if the merge was successful, or 1 if unresolved conflicts remain in the output—any other errorcode is considered a fatal error."
+msgstr ""
+
+#: ./build/en/book.xml:16299(para) 
+msgid "<xref linkend=\"svn.advanced.externaldifftools.diff3.ex-1\"/> and <xref linkend=\"svn.advanced.externaldifftools.diff3.ex-2\"/> are templates for external merge tool wrappers in the Bourne shell and Windows batch scripting languages, respectively."
+msgstr ""
+
+#: ./build/en/book.xml:16305(title) 
+msgid "diff3wrap.sh"
+msgstr ""
+
+#: ./build/en/book.xml:16306(programlisting) 
+#, no-wrap
+msgid "\n#!/bin/sh\n\n# Configure your favorite diff3/merge program here.\nDIFF3=\"/usr/local/bin/my-merge-tool\"\n\n# Subversion provides the paths we need as the ninth, tenth, and eleventh \n# parameters.\nMINE=${9}\nOLDER=${10}\nYOURS=${11}\n\n# Call the merge command (change the following line to make sense for\n# your merge program).\n$DIFF3 --older $OLDER --mine $MINE --yours $YOURS\n\n# After performing the merge, this script needs to print the contents\n# of the merged file to stdout.  Do that in whatever way you see fit.\n# Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\n# remain in the result.  Any other errorcode will be treated as fatal.\n"
+msgstr ""
+
+#: ./build/en/book.xml:16330(title) 
+msgid "diff3wrap.bat"
+msgstr ""
+
+#: ./build/en/book.xml:16331(programlisting) 
+#, no-wrap
+msgid "\n@ECHO OFF\n\nREM Configure your favorite diff3/merge program here.\nSET DIFF3=\"C:\\Program Files\\Funky Stuff\\My Merge Tool.exe\"\n\nREM Subversion provides the paths we need as the ninth, tenth, and eleventh \nREM parameters.  But we only have access to nine parameters at a time, so we\nREM shift our nine-parameter window twice to let us get to what we need.\nSHIFT\nSHIFT\nSET MINE=%7\nSET OLDER=%8\nSET YOURS=%9\n\nREM Call the merge command (change the following line to make sense for\nREM your merge program).\n%DIFF3% --older %OLDER% --mine %MINE% --yours %YOURS%\n\nREM After performing the merge, this script needs to print the contents\nREM of the merged file to stdout.  Do that in whatever way you see fit.\nREM Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\nREM remain in the result.  Any other errorcode will be treated as fatal.\n"
+msgstr ""
+
+#: ./build/en/book.xml:16369(title) 
+msgid "Embedding Subversion"
+msgstr ""
+
+#: ./build/en/book.xml:16371(para) 
+msgid "Subversion has a modular design, written in C and implemented as a collection of libraries. Each library has a well-defined purpose and Application Programming Interface (API), and that interface is available not only for Subversion itself to use, but for any software that wishes to embed or otherwise programmatically control Subversion. Additionally, Subversion's API is available not only to other C programs, but also to programs written in higher-level languages such as Python, Perl, Java, or Ruby."
+msgstr ""
+
+#: ./build/en/book.xml:16381(para) 
+msgid "This chapter is for those who wish to interact with Subversion through its public API or its various language bindings. If you wish to write robust wrapper scripts around Subversion functionality to simplify your own life, are trying to develop more complex integrations between Subversion and other pieces of software, or just have an interest in Subversion's various library modules and what they offer, this chapter is for you. If, however, you don't foresee yourself participating with Subversion at such a level, feel free to skip this chapter with the confidence that your experience as a Subversion user will not be affected."
+msgstr ""
+
+#: ./build/en/book.xml:16397(title) 
+msgid "Layered Library Design"
+msgstr ""
+
+#: ./build/en/book.xml:16399(para) 
+msgid "Each of Subversion's core libraries can be said to exist in one of three main layers—the Repository Layer, the Repository Access (RA) Layer, or the Client Layer. We will examine these layers shortly, but first, let's briefly summarize Subversion's various libraries. For the sake of consistency, we will refer to the libraries by their extensionless Unix library names (libsvn_fs, libsvn_wc, mod_dav_svn, etc.)."
+msgstr ""
+
+#: ./build/en/book.xml:16409(term) 
+msgid "libsvn_client"
+msgstr ""
+
+#: ./build/en/book.xml:16410(para) 
+msgid "Primary interface for client programs"
+msgstr ""
+
+#: ./build/en/book.xml:16414(term) 
+msgid "libsvn_delta"
+msgstr ""
+
+#: ./build/en/book.xml:16415(para) 
+msgid "Tree and byte-stream differencing routines"
+msgstr ""
+
+#: ./build/en/book.xml:16419(term) 
+msgid "libsvn_diff"
+msgstr ""
+
+#: ./build/en/book.xml:16420(para) 
+msgid "Contextual differencing and merging routines"
+msgstr ""
+
+#: ./build/en/book.xml:16424(term) 
+msgid "libsvn_fs"
+msgstr ""
+
+#: ./build/en/book.xml:16425(para) 
+msgid "Filesystem commons and module loader"
+msgstr ""
+
+#: ./build/en/book.xml:16429(term) 
+msgid "libsvn_fs_base"
+msgstr ""
+
+#: ./build/en/book.xml:16430(para) 
+msgid "The Berkeley DB filesystem back-end"
+msgstr ""
+
+#: ./build/en/book.xml:16434(term) 
+msgid "libsvn_fs_fs"
+msgstr ""
+
+#: ./build/en/book.xml:16435(para) 
+msgid "The native filesystem (FSFS) back-end"
+msgstr ""
+
+#: ./build/en/book.xml:16439(term) 
+msgid "libsvn_ra"
+msgstr ""
+
+#: ./build/en/book.xml:16440(para) 
+msgid "Repository Access commons and module loader"
+msgstr ""
+
+#: ./build/en/book.xml:16444(term) 
+msgid "libsvn_ra_dav"
+msgstr ""
+
+#: ./build/en/book.xml:16445(para) 
+msgid "The WebDAV Repository Access module"
+msgstr ""
+
+#: ./build/en/book.xml:16449(term) 
+msgid "libsvn_ra_local"
+msgstr ""
+
+#: ./build/en/book.xml:16450(para) 
+msgid "The local Repository Access module"
+msgstr ""
+
+#: ./build/en/book.xml:16454(term) 
+msgid "libsvn_ra_serf"
+msgstr ""
+
+#: ./build/en/book.xml:16455(para) 
+msgid "Another (experimental) WebDAV Repository Access module"
+msgstr ""
+
+#: ./build/en/book.xml:16459(term) 
+msgid "libsvn_ra_svn"
+msgstr ""
+
+#: ./build/en/book.xml:16460(para) 
+msgid "The custom protocol Repository Access module"
+msgstr ""
+
+#: ./build/en/book.xml:16464(term) 
+msgid "libsvn_repos"
+msgstr ""
+
+#: ./build/en/book.xml:16465(para) 
+msgid "Repository interface"
+msgstr ""
+
+#: ./build/en/book.xml:16468(term) 
+msgid "libsvn_subr"
+msgstr ""
+
+#: ./build/en/book.xml:16469(para) 
+msgid "Miscellaneous helpful subroutines"
+msgstr ""
+
+#: ./build/en/book.xml:16473(term) 
+msgid "libsvn_wc"
+msgstr ""
+
+#: ./build/en/book.xml:16474(para) 
+msgid "The working copy management library"
+msgstr ""
+
+#: ./build/en/book.xml:16478(term) 
+msgid "mod_authz_svn"
+msgstr ""
+
+#: ./build/en/book.xml:16479(para) 
+msgid "Apache authorization module for Subversion repositories access via WebDAV"
+msgstr ""
+
+#: ./build/en/book.xml:16484(para) 
+msgid "Apache module for mapping WebDAV operations to Subversion ones"
+msgstr ""
+
+#: ./build/en/book.xml:16489(para) 
+msgid "The fact that the word <quote>miscellaneous</quote> only appears once in the previous list is a good sign. The Subversion development team is serious about making sure that functionality lives in the right layer and libraries. Perhaps the greatest advantage of the modular design is its lack of complexity from a developer's point of view. As a developer, you can quickly formulate that kind of <quote>big picture</quote> that allows you to pinpoint the location of certain pieces of functionality with relative ease."
+msgstr ""
+
+#: ./build/en/book.xml:16499(para) 
+msgid "Another benefit of modularity is the ability to replace a given module with a whole new library that implements the same API without affecting the rest of the code base. In some sense, this happens within Subversion already. The libsvn_ra_dav, libsvn_ra_local, libsvn_ra_serf, and libsvn_ra_svn libraries each implement the same interface, all working as plugins to libsvn_ra. And all four communicate with the Repository Layer—libsvn_ra_local connects to the repository directly; the other three do so over a network. The libsvn_fs_base and libsvn_fs_fs libraries are another pair of libraries that implement the same functionality in different ways—both are plugins to the common libsvn_fs library."
+msgstr ""
+
+#: ./build/en/book.xml:16512(para) 
+msgid "The client itself also highlights the benefits of modularity in the Subversion design. Subversion's libsvn_client library is a one-stop shop for most of the functionality necessary for designing a working Subversion client (see <xref linkend=\"svn.developer.layerlib.client\"/>). So while the Subversion distribution provides only the <command moreinfo=\"none\">svn</command> command-line client program, there are several third-party programs which provide various forms of graphical client UI. These GUIs use the same APIs that the stock command-line client does. This type of modularity has played a large role in the proliferation of available Subversion clients and IDE integrations and, by extension, to the tremendous adoption rate of Subversion itself."
+msgstr ""
+
+#: ./build/en/book.xml:16527(title) 
+msgid "Repository Layer"
+msgstr ""
+
+#: ./build/en/book.xml:16529(para) 
+msgid "When referring to Subversion's Repository Layer, we're generally talking about two basic concepts—the versioned filesystem implementation (accessed via libsvn_fs, and supported by its libsvn_fs_base and libsvn_fs_fs plugins), and the repository logic that wraps it (as implemented in libsvn_repos). These libraries provide the storage and reporting mechanisms for the various revisions of your version-controlled data. This layer is connected to the Client Layer via the Repository Access Layer, and is, from the perspective of the Subversion user, the stuff at the <quote>other end of the line.</quote>"
+msgstr ""
+
+#: ./build/en/book.xml:16541(para) 
+msgid "The Subversion Filesystem is not a kernel-level filesystem that one would install in an operating system (like the Linux ext2 or NTFS), but a virtual filesystem. Rather than storing <quote>files</quote> and <quote>directories</quote> as real files and directories (as in, the kind you can navigate through using your favorite shell program), it uses one of two available abstract storage backends—either a Berkeley DB database environment, or a flat-file representation. (To learn more about the two repository back-ends, see <xref linkend=\"svn.reposadmin.basics.backends\"/>.) There has even been considerable interest by the development community in giving future releases of Subversion the ability to use other back-end database systems, perhaps through a mechanism such as Open Database Connectivity (ODBC). In fact, Google did something similar to this before launching the Google Code Project Hosting service, announcing in mid-2006 that members of its Open Source team had written a new proprietary Subversion filesystem plugin which used their ultra-scalable Bigtable database for its storage."
+msgstr ""
+
+#: ./build/en/book.xml:16560(para) 
+msgid "The filesystem API exported by libsvn_fs contains the kinds of functionality you would expect from any other filesystem API—you can create and remove files and directories, copy and move them around, modify file contents, and so on. It also has features that are not quite as common, such as the ability to add, modify, and remove metadata (<quote>properties</quote>) on each file or directory. Furthermore, the Subversion Filesystem is a versioning filesystem, which means that as you make changes to your directory tree, Subversion remembers what your tree looked like before those changes. And before the previous changes. And the previous ones. And so on, all the way back through versioning time to (and just beyond) the moment you first started adding things to the filesystem."
+msgstr ""
+
+#: ./build/en/book.xml:16575(para) 
+msgid "All the modifications you make to your tree are done within the context of a Subversion commit transaction. The following is a simplified general routine for modifying your filesystem:"
+msgstr ""
+
+#: ./build/en/book.xml:16582(para) 
+msgid "Begin a Subversion commit transaction."
+msgstr ""
+
+#: ./build/en/book.xml:16585(para) 
+msgid "Make your changes (adds, deletes, property modifications, etc.)."
+msgstr ""
+
+#: ./build/en/book.xml:16589(para) 
+msgid "Commit your transaction."
+msgstr ""
+
+#: ./build/en/book.xml:16593(para) 
+msgid "Once you have committed your transaction, your filesystem modifications are permanently stored as historical artifacts. Each of these cycles generates a single new revision of your tree, and each revision is forever accessible as an immutable snapshot of <quote>the way things were.</quote>"
+msgstr ""
+
+#: ./build/en/book.xml:16600(title) 
+msgid "The Transaction Distraction"
+msgstr ""
+
+#: ./build/en/book.xml:16602(para) 
+msgid "The notion of a Subversion transaction can become easily confused with the transaction support provided by the underlying database itself, especially given the former's close proximity to the Berkeley DB database code in libsvn_fs_base. Both types of transaction exist to provide atomicity and isolation. In other words, transactions give you the ability to perform a set of actions in an all-or-nothing fashion—either all the actions in the set complete with success, or they all get treated as if <emphasis>none</emphasis> of them ever happened—and in a way that does not interfere with other processes acting on the data."
+msgstr ""
+
+#: ./build/en/book.xml:16615(para) 
+msgid "Database transactions generally encompass small operations related specifically to the modification of data in the database itself (such as changing the contents of a table row). Subversion transactions are larger in scope, encompassing higher-level operations like making modifications to a set of files and directories which are intended to be stored as the next revision of the filesystem tree. If that isn't confusing enough, consider the fact that Subversion uses a database transaction during the creation of a Subversion transaction (so that if the creation of Subversion transaction fails, the database will look as if we had never attempted that creation in the first place)!"
+msgstr ""
+
+#: ./build/en/book.xml:16629(para) 
+msgid "Fortunately for users of the filesystem API, the transaction support provided by the database system itself is hidden almost entirely from view (as should be expected from a properly modularized library scheme). It is only when you start digging into the implementation of the filesystem itself that such things become visible (or interesting)."
+msgstr ""
+
+#: ./build/en/book.xml:16639(para) 
+msgid "Most of the functionality provided by the filesystem interface is the result of an action that occurs on a filesystem path. That is, from outside of the filesystem, the primary mechanism for describing and accessing the individual revisions of files and directories comes through the use of path strings like <filename moreinfo=\"none\">/foo/bar</filename>, just as if you were addressing files and directories through your favorite shell program. You add new files and directories by passing their paths-to-be to the right API functions. You query for information about them by the same mechanism."
+msgstr ""
+
+#: ./build/en/book.xml:16650(para) 
+msgid "Unlike most filesystems, though, a path alone is not enough information to identify a file or directory in Subversion. Think of a directory tree as a two-dimensional system, where a node's siblings represent a sort of left-and-right motion, and descending into subdirectories a downward motion. <xref linkend=\"svn.developer.layerlib.repos.dia-1\"/> shows a typical representation of a tree as exactly that."
+msgstr ""
+
+#: ./build/en/book.xml:16659(title) 
+msgid "Files and directories in two dimensions"
+msgstr ""
+
+#: ./build/en/book.xml:16667(para) 
+msgid "We understand that this may come as a shock to sci-fi fans who have long been under the impression that Time was actually the <emphasis>fourth</emphasis> dimension, and we apologize for any emotional trauma induced by our assertion of a different theory."
+msgstr ""
+
+#: ./build/en/book.xml:16663(para) 
+msgid "The different here is that the Subversion filesystem has a nifty third dimension that most filesystems do not have—Time! <placeholder-1/> In the filesystem interface, nearly every function that has a <parameter moreinfo=\"none\">path</parameter> argument also expects a <parameter moreinfo=\"none\">root</parameter> argument. This <structname>svn_fs_root_t</structname> argument describes either a revision or a Subversion transaction (which is simply a revision-in-the-making), and provides that third-dimensional context needed to understand the difference between <filename moreinfo=\"none\">/foo/bar</filename> in revision 32, and the same path as it exists in revision 98. <xref linkend=\"svn.developer.layerlib.repos.dia-2\"/> shows revision history as an added dimension to the Subversion filesystem universe."
+msgstr ""
+
+#: ./build/en/book.xml:16686(title) 
+msgid "Versioning time—the third dimension!"
+msgstr ""
+
+#: ./build/en/book.xml:16690(para) 
+msgid "As we mentioned earlier, the libsvn_fs API looks and feels like any other filesystem, except that it has this wonderful versioning capability. It was designed to be usable by any program interested in a versioning filesystem. Not coincidentally, Subversion itself is interested in that functionality. But while the filesystem API should be sufficient for basic file and directory versioning support, Subversion wants more—and that is where libsvn_repos comes in."
+msgstr ""
+
+#: ./build/en/book.xml:16700(para) 
+msgid "The Subversion repository library (libsvn_repos) sits (logically speaking) atop the libsvn_fs API, providing additional functionality beyond that of the underlying versioned filesystem logic. It does not completely wrap each and every filesystem function—only certain major steps in the general cycle of filesystem activity are wrapped by the repository interface. Some of these include the creation and commit of Subversion transactions, and the modification of revision properties. These particular events are wrapped by the repository layer because they have hooks associated with them. A repository hook system is not strictly related to implementing a versioning filesystem, so it lives in the repository wrapper library."
+msgstr ""
+
+#: ./build/en/book.xml:16714(para) 
+msgid "The hooks mechanism is but one of the reasons for the abstraction of a separate repository library from the rest of the filesystem code. The libsvn_repos API provides several other important utilities to Subversion. These include the abilities to:"
+msgstr ""
+
+#: ./build/en/book.xml:16722(para) 
+msgid "create, open, destroy, and perform recovery steps on a Subversion repository and the filesystem included in that repository."
+msgstr ""
+
+#: ./build/en/book.xml:16727(para) 
+msgid "describe the differences between two filesystem trees."
+msgstr ""
+
+#: ./build/en/book.xml:16731(para) 
+msgid "query for the commit log messages associated with all (or some) of the revisions in which a set of files was modified in the filesystem."
+msgstr ""
+
+#: ./build/en/book.xml:16736(para) 
+msgid "generate a human-readable <quote>dump</quote> of the filesystem, a complete representation of the revisions in the filesystem."
+msgstr ""
+
+#: ./build/en/book.xml:16741(para) 
+msgid "parse that dump format, loading the dumped revisions into a different Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:16746(para) 
+msgid "As Subversion continues to evolve, the repository library will grow with the filesystem library to offer increased functionality and configurable option support."
+msgstr ""
+
+#: ./build/en/book.xml:16754(title) 
+msgid "Repository Access Layer"
+msgstr ""
+
+#: ./build/en/book.xml:16756(para) 
+msgid "If the Subversion Repository Layer is at <quote>the other end of the line</quote>, the Repository Access (RA) Layer is the line itself. Charged with marshaling data between the client libraries and the repository, this layer includes the libsvn_ra module loader library, the RA modules themselves (which currently includes libsvn_ra_dav, libsvn_ra_local, libsvn_ra_serf, and libsvn_ra_svn), and any additional libraries needed by one or more of those RA modules, such as the mod_dav_svn Apache module with which libsvn_ra_dav communicates or libsvn_ra_svn's server, <command moreinfo=\"none\">svnserve</command>."
+msgstr ""
+
+#: ./build/en/book.xml:16768(para) 
+msgid "Since Subversion uses URLs to identify its repository resources, the protocol portion of the URL schema (usually <literal moreinfo=\"none\">file://</literal>, <literal moreinfo=\"none\">http://</literal>, <literal moreinfo=\"none\">https://</literal>, or <literal moreinfo=\"none\">svn://</literal>) is used to determine which RA module will handle the communications. Each module registers a list of the protocols it knows how to <quote>speak</quote> so that the RA loader can, at runtime, determine which module to use for the task at hand. You can determine which RA modules are available to the Subversion command-line client, and what protocols they claim to support, by running <command moreinfo=\"none\">svn --version</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:16780(screen) 
+#, no-wrap
+msgid "\n$ svn --version\nsvn, version 1.4.3 (r23084)\n   compiled Jan 18 2007, 07:47:40\n\nCopyright (C) 2000-2006 CollabNet.\nSubversion is open source software, see http://subversion.tigris.org/\nThis product includes software developed by CollabNet (http://www.Collab.Net/).\n\nThe following repository access (RA) modules are available:\n\n* ra_dav : Module for accessing a repository via WebDAV (DeltaV) protocol.\n  - handles 'http' scheme\n  - handles 'https' scheme\n* ra_svn : Module for accessing a repository using the svn network protocol.\n  - handles 'svn' scheme\n* ra_local : Module for accessing a repository on local disk.\n  - handles 'file' scheme\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:16802(para) 
+msgid "The public API exported by the RA Layer contains functionality necessary for sending and recieving versioned data to and from the repository. And each of the available RA plugins is able to perform that task using a specific protocol—libsvn_ra_dav speaks HTTP/WebDAV (optionally using SSL encryption) with an Apache HTTP Server that is running the mod_dav_svn Subversion server module; libsvn_ra_svn speaks a custom network protocol with the <command moreinfo=\"none\">svnserve</command> program; and so on."
+msgstr ""
+
+#: ./build/en/book.xml:16812(para) 
+msgid "And for those who wish to access a Subversion repository using still another protocol, that is precisely why the Repository Access Layer is modularized! Developers can simply write a new library that implements the RA interface on one side and communicates with the repository on the other. Your new library can use existing network protocols, or you can invent your own. You could use inter-process communication (IPC) calls, or—let's get crazy, shall we?—you could even implement an email-based protocol. Subversion supplies the APIs; you supply the creativity."
+msgstr ""
+
+#: ./build/en/book.xml:16827(title) 
+msgid "Client Layer"
+msgstr ""
+
+#: ./build/en/book.xml:16829(para) 
+msgid "On the client side, the Subversion working copy is where all the action takes place. The bulk of functionality implemented by the client-side libraries exists for the sole purpose of managing working copies—directories full of files and other subdirectories which serve as a sort of local, editable <quote>reflection</quote> of one or more repository locations—and propagating changes to and from the Repository Access layer."
+msgstr ""
+
+#: ./build/en/book.xml:16838(para) 
+msgid "Subversion's working copy library, libsvn_wc, is directly responsible for managing the data in the working copies. To accomplish this, the library stores administrative information about each working copy directory within a special subdirectory. This subdirectory, named <filename moreinfo=\"none\">.svn</filename>, is present in each working copy directory and contains various other files and directories which record state and provide a private workspace for administrative action. For those familiar with CVS, this <filename moreinfo=\"none\">.svn</filename> subdirectory is similar in purpose to the <filename moreinfo=\"none\">CVS</filename> administrative directories found in CVS working copies. For more information about the <filename moreinfo=\"none\">.svn</filename> administrative area, see <xref linkend=\"svn.developer.insidewc\"/>in this chapter."
+msgstr ""
+
+#: ./build/en/book.xml:16852(para) 
+msgid "The Subversion client library, libsvn_client, has the broadest responsibility; its job is to mingle the functionality of the working copy library with that of the Repository Access Layer, and then to provide the highest-level API to any application that wishes to perform general revision control actions. For example, the function <function moreinfo=\"none\">svn_client_checkout()</function> takes a URL as an argument. It passes this URL to the RA layer and opens an authenticated session with a particular repository. It then asks the repository for a certain tree, and sends this tree into the working copy library, which then writes a full working copy to disk (<filename moreinfo=\"none\">.svn</filename> directories and all)."
+msgstr ""
+
+#: ./build/en/book.xml:16866(para) 
+msgid "The client library is designed to be used by any application. While the Subversion source code includes a standard command-line client, it should be very easy to write any number of GUI clients on top of the client library. New GUIs (or any new client, really) for Subversion need not be clunky wrappers around the included command-line client—they have full access via the libsvn_client API to same functionality, data, and callback mechanisms that the command-line client uses. In fact, the Subversion source code tree contains a small C program (which can be found at <filename moreinfo=\"none\">tools/examples/minimal_client.c</filename> that exemplifies how to wield the Subversion API to create a simple client program"
+msgstr ""
+
+#: ./build/en/book.xml:16881(title) 
+msgid "Binding Directly—A Word About Correctness"
+msgstr ""
+
+#: ./build/en/book.xml:16883(para) 
+msgid "Why should your GUI program bind directly with a libsvn_client instead of acting as a wrapper around a command-line program? Besides simply being more efficient, this can address potential correctness issues as well. A command-line program (like the one supplied with Subversion) that binds to the client library needs to effectively translate feedback and requested data bits from C types to some form of human-readable output. This type of translation can be lossy. That is, the program may not display all of the information harvested from the API, or may combine bits of information for compact representation."
+msgstr ""
+
+#: ./build/en/book.xml:16895(para) 
+msgid "If you wrap such a command-line program with yet another program, the second program has access only to already-interpreted (and as we mentioned, likely incomplete) information, which it must <emphasis>again</emphasis> translate into <emphasis>its</emphasis> representation format. With each layer of wrapping, the integrity of the original data is potentially tainted more and more, much like the result of making a copy of a copy (of a copy …) of a favorite audio or video cassette."
+msgstr ""
+
+#: ./build/en/book.xml:16905(para) 
+msgid "But the most compelling argument for binding directly to the APIs instead of wrapping other programs is that the Subversion project makes compatibility promises regarding its APIs. Across minor versions of those APIs (such as between 1.3 and 1.4), no function's prototype will change. In other words, you aren't forced to update your program's source code simply because you've upgraded to a new version of Subversion. Certain functions might be deprecated, but they still work, and this gives you a buffer of time to eventually embrace the newer APIs. These kinds of compatibility promises do not exist for Subversion command-line program output, which is subject to change from release to release."
+msgstr ""
+
+#: ./build/en/book.xml:16928(title) 
+msgid "Inside the Working Copy Administration Area"
+msgstr ""
+
+#: ./build/en/book.xml:16930(para) 
+msgid "As we mentioned earlier, each directory of a Subversion working copy contains a special subdirectory called <filename moreinfo=\"none\">.svn</filename> which houses administrative data about that working copy directory. Subversion uses the information in <filename moreinfo=\"none\">.svn</filename> to keep track of things like:"
+msgstr ""
+
+#: ./build/en/book.xml:16938(para) 
+msgid "Which repository location(s) are represented by the files and subdirectories in the working copy directory."
+msgstr ""
+
+#: ./build/en/book.xml:16943(para) 
+msgid "What revision of each of those files and directories are currently present in the working copy."
+msgstr ""
+
+#: ./build/en/book.xml:16947(para) 
+msgid "Any user-defined properties that might be attached to those files and directories."
+msgstr ""
+
+#: ./build/en/book.xml:16951(para) 
+msgid "Pristine (un-edited) copies of the working copy files."
+msgstr ""
+
+#: ./build/en/book.xml:16956(para) 
+msgid "The Subversion working copy administration area's layout and contents are considered implementation details not really intended for human consumption. Developers are encouraged to use Subversion's public APIs or provided tools to access and manipulate the working copy data, as opposed to directly reading or modifying the files of which the working copy administrative area is comprised. The file formats employed by the working copy library for its administrative data do change from time to time—a fact that the public APIs do a great job of successfully hiding from the average user. In this section, we expose some of these implementation details sheerly to appease your overwhelming curiousity."
+msgstr ""
+
+#: ./build/en/book.xml:16971(title) 
+msgid "The Entries File"
+msgstr ""
+
+#: ./build/en/book.xml:16973(para) 
+msgid "Perhaps the single most important file in the <filename moreinfo=\"none\">.svn</filename> directory is the <filename moreinfo=\"none\">entries</filename> file. The entries file is a single file which contains the bulk of the administrative information about a versioned item in a working copy directory. It is this one file which tracks the repository URLs, pristine revision, file checksums, pristine text and property timestamps, scheduling and conflict state information, last-known commit information (author, revision, timestamp), local copy history—practically everything that a Subversion client is interested in knowing about a versioned (or to-be-versioned) resource!"
+msgstr ""
+
+#: ./build/en/book.xml:16986(para) 
+msgid "Folks familiar with CVS's administrative directories will have recognized at this point that Subversion's <filename moreinfo=\"none\">.svn/entries</filename> file serves the purposes of, among other things, CVS's <filename moreinfo=\"none\">CVS/Entries</filename>, <filename moreinfo=\"none\">CVS/Root</filename>, and <filename moreinfo=\"none\">CVS/Repository</filename> files combined."
+msgstr ""
+
+#: ./build/en/book.xml:16993(para) 
+msgid "The format of the <filename moreinfo=\"none\">.svn/entries</filename> file has changed over time. Originally an XML file, it now uses a custom—though still human-readable—file format. While XML was a great choice for early developers of Subversion who were frequently debugging the file's contents (and Subversion's behavior in light of them), the need for easy developer debugging has diminished as Subversion has matured, and has been replaced by the user's need for snappier performance. Of course, Subversion's working copy library makes upgrading from one working copy format to another a breeze—it reads the old formats, and writes the new."
+msgstr ""
+
+#: ./build/en/book.xml:17010(title) 
+msgid "Pristine Copies and Property Files"
+msgstr ""
+
+#: ./build/en/book.xml:17012(para) 
+msgid "As mentioned before, the <filename moreinfo=\"none\">.svn</filename> directory also holds the pristine <quote>text-base</quote> versions of files. Those can be found in <filename moreinfo=\"none\">.svn/text-base</filename>. The benefits of these pristine copies are multiple—network-free checks for local modifications and difference reporting, network-free reversion of modified or missing files, smaller transmission of changes to the server—but comes at the cost of having each versioned file stored at least twice on disk. These days, this seems to be a negligible penalty for most files. However, the situation gets uglier as the size of your versioned files grows. Some attention is being given to making the presence of the <quote>text-base</quote> an option. Ironically though, it is as your versioned files' sizes get larger that the existence of the <quote>text-base</quote> becomes more crucial—who wants to transmit a huge file across a network just because they want to commit a tiny change to it?"
+msgstr ""
+
+#: ./build/en/book.xml:17031(para) 
+msgid "Similar in purpose to the <quote>text-base</quote> files are the property files and their pristine <quote>prop-base</quote> copies, located in <filename moreinfo=\"none\">.svn/props</filename> and <filename moreinfo=\"none\">.svn/prop-base</filename> respectively. Since directories can have properties, too, there are also <filename moreinfo=\"none\">.svn/dir-props</filename> and <filename moreinfo=\"none\">.svn/dir-prop-base</filename> files. Each of these property files (<quote>working</quote> and <quote>base</quote> versions) uses a simple <quote>hash-on-disk</quote> file format for storing the property names and values."
+msgstr ""
+
+#: ./build/en/book.xml:17051(title) 
+msgid "Using the APIs"
+msgstr ""
+
+#: ./build/en/book.xml:17053(para) 
+msgid "Developing applications against the Subversion library APIs is fairly straightforward. All of the public header files live in the <filename moreinfo=\"none\">subversion/include</filename> directory of the source tree. These headers are copied into your system locations when you build and install Subversion itself from source. These headers represent the entirety of the functions and types meant to be accessible by users of the Subversion libraries. The Subversion developer community is meticulous about ensuring that the public API is well-documented—refer directly to the header files for that documentation."
+msgstr ""
+
+#: ./build/en/book.xml:17065(para) 
+msgid "When examining the public header files, the first thing you might notice is that Subversion's datatypes and functions are namespace protected. Every public Subversion symbol name begins with <literal moreinfo=\"none\">svn_</literal>, followed by a short code for the library in which the symbol is defined (such as <literal moreinfo=\"none\">wc</literal>, <literal moreinfo=\"none\">client</literal>, <literal moreinfo=\"none\">fs</literal>, etc.), followed by a single underscore (<literal moreinfo=\"none\">_</literal>) and then the rest of the symbol name. Semi-public functions (used among source files of a given library but not by code outside that library, and found inside the library directories themselves) differ from this naming scheme in that instead of a single underscore after the library code, they use a double underscore (<literal moreinfo=\"none\">__</literal>). Functions that are private to a given source file have no special prefixing, and are declared <literal moreinfo=\"none\">static</literal>. Of course, a compiler isn't interested in these naming conventions, but they help to clarify the scope of a given function or datatype."
+msgstr ""
+
+#: ./build/en/book.xml:17092(para) 
+msgid "After all, Subversion uses Subversion's APIs, too."
+msgstr ""
+
+#: ./build/en/book.xml:17084(para) 
+msgid "Another good source of information about programming against the Subversion APIs is the project's own hacking guidelines, which can be found at <ulink url=\"http://subversion.tigris.org/hacking.html\"/>. This document contains useful information which, while aimed at developers and would-be developers of Subversion itself, is equally applicable to folks developing against Subversion as a set of third-party libraries. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:17099(title) 
+msgid "The Apache Portable Runtime Library"
+msgstr ""
+
+#: ./build/en/book.xml:17101(para) 
+msgid "Along with Subversion's own datatypes, you will see many references to datatypes that begin with <literal moreinfo=\"none\">apr_</literal>—symbols from the Apache Portable Runtime (APR) library. APR is Apache's portability library, originally carved out of its server code as an attempt to separate the OS-specific bits from the OS-independent portions of the code. The result was a library that provides a generic API for performing operations that differ mildly—or wildly—from OS to OS. While the Apache HTTP Server was obviously the first user of the APR library, the Subversion developers immediately recognized the value of using APR as well. This means that there are practically no OS-specific code portions in Subversion itself. Also, it means that the Subversion client compiles and runs anywhere that the server does. Currently this list includes all flavors of Unix, Win32, BeOS, OS/2, and Mac OS X."
+msgstr ""
+
+#: ./build/en/book.xml:17121(para) 
+msgid "Subversion uses ANSI system calls and datatypes as much as possible."
+msgstr ""
+
+#: ./build/en/book.xml:17134(para) 
+msgid "Neon and Berkeley DB are examples of such libraries."
+msgstr ""
+
+#: ./build/en/book.xml:17118(para) 
+msgid "In addition to providing consistent implementations of system calls that differ across operating systems, <placeholder-1/> APR gives Subversion immediate access to many custom datatypes, such as dynamic arrays and hash tables. Subversion uses these types extensively throughout the codebase. But perhaps the most pervasive APR datatype, found in nearly every Subversion API prototype, is the <structname>apr_pool_t</structname>—the APR memory pool. Subversion uses pools internally for all its memory allocation needs (unless an external library requires a different memory management schema for data passed through its API), <placeholder-2/> and while a person coding against the Subversion APIs is not required to do the same, they are required to provide pools to the API functions that need them. This means that users of the Subversion API must also link against APR, must call <function moreinfo=\"none\">apr_initialize()</function> to initialize the APR subsystem, and then must create and manage pools for use with Subversion API calls, typically by using <function moreinfo=\"none\">svn_pool_create()</function>, <function moreinfo=\"none\">svn_pool_clear()</function>, and <function moreinfo=\"none\">svn_pool_destroy()</function>."
+msgstr ""
+
+#: ./build/en/book.xml:17148(title) 
+msgid "Programming with Memory Pools"
+msgstr ""
+
+#: ./build/en/book.xml:17150(para) 
+msgid "Almost every developer who has used the C programming language has at some point sighed at the daunting task of managing memory usage. Allocating enough memory to use, keeping track of those allocations, freeing the memory when you no longer need it—these tasks can be quite complex. And of course, failure to do those things properly can result in a program that crashes itself, or worse, crashes the computer."
+msgstr ""
+
+#: ./build/en/book.xml:17162(para) 
+msgid "Or at least make it something you only toy with when doing extremely tight program optimization."
+msgstr ""
+
+#: ./build/en/book.xml:17159(para) 
+msgid "Higher-level languages, on the other hand, take the job of memory management away from the developer completely. <placeholder-1/> Languages like Java and Python use <firstterm>garbage collection</firstterm> principles, allocating memory for objects when needed, and automatically freeing that memory when the object is no longer in use."
+msgstr ""
+
+#: ./build/en/book.xml:17170(para) 
+msgid "APR provides a middle-ground approach called pool-based memory management. It allows the developer to control memory usage at a lower resolution—per chunk (or <quote>pool</quote>) of memory, instead of per allocated object. Rather than using <function moreinfo=\"none\">malloc()</function> and friends to allocate enough memory for a given object, you ask APR to allocate the memory from a memory pool. When you're finished using the objects you've created in the pool, you destroy the pool, effectively de-allocating the memory consumed by the objects you allocated from it. Rather than keeping track of individual objects which need to be de-allocated, your program simply considers the general lifetimes of those objects, and allocates the objects in a pool whose lifetime (the time between the pool's creation and its deletion) matches the object's needs."
+msgstr ""
+
+#: ./build/en/book.xml:17192(title) 
+msgid "URL and Path Requirements"
+msgstr ""
+
+#: ./build/en/book.xml:17194(para) 
+msgid "With remote version control operation as the whole point of Subversion's existence, it makes sense that some attention has been paid to internationalization (i18n) support. After all, while <quote>remote</quote> might mean <quote>across the office</quote>, it could just as well mean <quote>across the globe.</quote> To facilitate this, all of Subversion's public interfaces that accept path arguments expect those paths to be canonicalized, and encoded in UTF-8. This means, for example, that any new client binary that drives the libsvn_client interface needs to first convert paths from the locale-specific encoding to UTF-8 before passing those paths to the Subversion libraries, and then re-convert any resultant output paths from Subversion back into the locale's encoding before using those paths for non-Subversion purposes. Fortunately, Subversion provides a suite of functions (see <filename moreinfo=\"none\">subversion/include/svn_utf.h</filename>) that can be used by any program to do these conversions."
+msgstr ""
+
+#: ./build/en/book.xml:17212(para) 
+msgid "Also, Subversion APIs require all URL parameters to be properly URI-encoded. So, instead of passing <uri>file:///home/username/My File.txt</uri> as the URL of a file named <literal moreinfo=\"none\">My File.txt</literal>, you need to pass <uri>file:///home/username/My%20File.txt</uri>. Again, Subversion supplies helper functions that your application can use—<function moreinfo=\"none\">svn_path_uri_encode()</function> and <function moreinfo=\"none\">svn_path_uri_decode()</function>, for URI encoding and decoding, respectively."
+msgstr ""
+
+#: ./build/en/book.xml:17224(title) 
+msgid "Using Languages Other than C and C++"
+msgstr ""
+
+#: ./build/en/book.xml:17226(para) 
+msgid "If you are interested in using the Subversion libraries in conjunction with something other than a C program—say a Python or Perl script—Subversion has some support for this via the Simplified Wrapper and Interface Generator (SWIG). The SWIG bindings for Subversion are located in <filename moreinfo=\"none\">subversion/bindings/swig</filename> and whilst still maturing, they are in a usable state. These bindings allow you to call Subversion API functions indirectly, using wrappers that translate the datatypes native to your scripting language into the datatypes needed by Subversion's C libraries."
+msgstr ""
+
+#: ./build/en/book.xml:17237(para) 
+msgid "There is an obvious benefit to accessing the Subversion APIs via a language binding—simplicity. Generally speaking, languages such as Python and Perl are much more flexible and easy to use than C or C++. The sort of high-level datatypes and context-driven type checking provided by these languages are often better at handling information that comes from users. As you know, humans are proficient at botching up input to a program, and scripting languages tend to handle that misinformation more gracefully. Of course, often that flexibility comes at the cost of performance. That is why using a tightly-optimized, C-based interface and library suite, combined with a powerful, flexible binding language, is so appealing."
+msgstr ""
+
+#: ./build/en/book.xml:17251(para) 
+msgid "Unfortunately, Subversion's language bindings tend to lack the level of developer attention given to the core Subversion modules. However, there have been significant efforts towards creating functional bindings for Python, Perl, and Ruby. To some extent, the work done preparing the SWIG interface files for these languages is reusable in efforts to generate bindings for other languages supported by SWIG (which include versions of C#, Guile, Java, MzScheme, OCaml, PHP, and Tcl, among others). However, some extra programming is required to compensate for complex APIs that SWIG needs some help translating between languages. For more information on SWIG itself, see the project's website at <ulink url=\"http://www.swig.org/\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:17268(title) 
+msgid "Code Samples"
+msgstr ""
+
+#: ./build/en/book.xml:17270(para) 
+msgid "<xref linkend=\"svn.developer.layerlib.repos.ex-1\"/> contains a code segment (written in C) that illustrates some of the concepts we've been discussing. It uses both the repository and filesystem interfaces (as can be determined by the prefixes <literal moreinfo=\"none\">svn_repos_</literal> and <literal moreinfo=\"none\">svn_fs_</literal> of the function names, respectively) to create a new revision in which a directory is added. You can see the use of an APR pool, which is passed around for memory allocation purposes. Also, the code reveals a somewhat obscure fact about Subversion error handling—all Subversion errors must be explicitly handled to avoid memory leakage (and in some cases, application failure)."
+msgstr ""
+
+#: ./build/en/book.xml:17285(title) 
+msgid "Using the Repository Layer"
+msgstr ""
+
+#: ./build/en/book.xml:17287(programlisting) 
+#, no-wrap
+msgid "\n/* Convert a Subversion error into a simple boolean error code.\n *\n * NOTE:  Subversion errors must be consumed because they are allocated\n *        from the global pool, else memory leaking occurs.\n */\n#define INT_ERR(expr)                           \\\n  do {                                          \\\n    svn_error_t *__temperr = (expr);            \\\n    if (__temperr)                              \\\n      {                                         \\\n        svn_error_clear(__temperr);             \\\n        return 1;                               \\\n      }                                         \\\n    return 0;                                   \\\n  } while (0)\n\n/* Create a new directory at the path NEW_DIRECTORY in the Subversion\n * repository located at REPOS_PATH.  Perform all memory allocation in\n * POOL.  This function will create a new revision for the addition of\n * NEW_DIRECTORY.  Return zero if the operation completes\n * successfully, non-zero otherwise.\n */\nstatic int\nmake_new_directory(const char *repos_path,\n                   const char *new_directory,\n                   apr_pool_t *pool)\n{\n  svn_error_t *err;\n  svn_repos_t *repos;\n  svn_fs_t *fs;\n  svn_revnum_t youngest_rev;\n  svn_fs_txn_t *txn;\n  svn_fs_root_t *txn_root;\n  const char *conflict_str;\n\n  /* Open the repository located at REPOS_PATH. \n   */\n  INT_ERR(svn_repos_open(&amp;repos, repos_path, pool));\n\n  /* Get a pointer to the filesystem object that is stored in REPOS. \n   */\n  fs = svn_repos_fs(repos);\n\n  /* Ask the filesystem to tell us the youngest revision that\n   * currently exists. \n   */\n  INT_ERR(svn_fs_youngest_rev(&amp;youngest_rev, fs, pool));\n\n  /* Begin a new transaction that is based on YOUNGEST_REV.  We are\n   * less likely to have our later commit rejected as conflicting if we\n   * always try to make our changes against a copy of the latest snapshot\n   * of the filesystem tree. \n   */\n  INT_ERR(svn_fs_begin_txn(&amp;txn, fs, youngest_rev, pool));\n\n  /* Now that we have started a new Subversion transaction, get a root\n   * object that represents that transaction. \n   */\n  INT_ERR(svn_fs_txn_root(&amp;txn_root, txn, pool));\n  \n  /* Create our new directory under the transaction root, at the path\n   * NEW_DIRECTORY. \n   */\n  INT_ERR(svn_fs_make_dir(txn_root, new_directory, pool));\n\n  /* Commit the transaction, creating a new revision of the filesystem\n   * which includes our added directory path.\n   */\n  err = svn_repos_fs_commit_txn(&amp;conflict_str, repos, \n                                &amp;youngest_rev, txn, pool);\n  if (! err)\n    {\n      /* No error?  Excellent!  Print a brief report of our success.\n       */\n      printf(\"Directory '%s' was successfully added as new revision \"\n             \"'%ld'.\\n\", new_directory, youngest_rev);\n    }\n  else if (err-&gt;apr_err == SVN_ERR_FS_CONFLICT)\n    {\n      /* Uh-oh.  Our commit failed as the result of a conflict\n       * (someone else seems to have made changes to the same area \n       * of the filesystem that we tried to modify).  Print an error\n       * message.\n       */\n      printf(\"A conflict occurred at path '%s' while attempting \"\n             \"to add directory '%s' to the repository at '%s'.\\n\", \n             conflict_str, new_directory, repos_path);\n    }\n  else\n    {\n      /* Some other error has occurred.  Print an error message.\n       */\n      printf(\"An error occurred while attempting to add directory '%s' \"\n             \"to the repository at '%s'.\\n\", \n             new_directory, repos_path);\n    }\n\n  INT_ERR(err);\n} \n"
+msgstr ""
+
+#: ./build/en/book.xml:17390(para) 
+msgid "Note that in <xref linkend=\"svn.developer.layerlib.repos.ex-1\"/>, the code could just as easily have committed the transaction using <function moreinfo=\"none\">svn_fs_commit_txn()</function>. But the filesystem API knows nothing about the repository library's hook mechanism. If you want your Subversion repository to automatically perform some set of non-Subversion tasks every time you commit a transaction (like, for example, sending an email that describes all the changes made in that transaction to your developer mailing list), you need to use the libsvn_repos-wrapped version of that function was adds the hook triggering functionality—in this case, <function moreinfo=\"none\">svn_repos_fs_commit_txn()</function>. (For more information regarding Subversion's repository hooks, see <xref linkend=\"svn.reposadmin.create.hooks\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:17404(para) 
+msgid "Now let's switch languages. <xref linkend=\"svn.developer.usingapi.otherlangs.ex-1\"/> is a sample program that uses Subversion's SWIG Python bindings to recursively crawl the youngest repository revision, and print the various paths reached during the crawl."
+msgstr ""
+
+#: ./build/en/book.xml:17410(title) 
+msgid "Using the Repository Layer with Python"
+msgstr ""
+
+#: ./build/en/book.xml:17412(programlisting) 
+#, no-wrap
+msgid "\n#!/usr/bin/python\n\n\"\"\"Crawl a repository, printing versioned object path names.\"\"\"\n\nimport sys\nimport os.path\nimport svn.fs, svn.core, svn.repos\n\ndef crawl_filesystem_dir(root, directory):\n    \"\"\"Recursively crawl DIRECTORY under ROOT in the filesystem, and return\n    a list of all the paths at or below DIRECTORY.\"\"\"\n\n    # Print the name of this path.\n    print directory + \"/\"\n    \n    # Get the directory entries for DIRECTORY.\n    entries = svn.fs.svn_fs_dir_entries(root, directory)\n\n    # Loop over the entries.\n    names = entries.keys()\n    for name in names:\n        # Calculate the entry's full path.\n        full_path = directory + '/' + name\n\n        # If the entry is a directory, recurse.  The recursion will return\n        # a list with the entry and all its children, which we will add to\n        # our running list of paths.\n        if svn.fs.svn_fs_is_dir(root, full_path):\n            crawl_filesystem_dir(root, full_path)\n        else:\n            # Else it's a file, so print its path here.\n            print full_path\n\ndef crawl_youngest(repos_path):\n    \"\"\"Open the repository at REPOS_PATH, and recursively crawl its\n    youngest revision.\"\"\"\n    \n    # Open the repository at REPOS_PATH, and get a reference to its\n    # versioning filesystem.\n    repos_obj = svn.repos.svn_repos_open(repos_path)\n    fs_obj = svn.repos.svn_repos_fs(repos_obj)\n\n    # Query the current youngest revision.\n    youngest_rev = svn.fs.svn_fs_youngest_rev(fs_obj)\n    \n    # Open a root object representing the youngest (HEAD) revision.\n    root_obj = svn.fs.svn_fs_revision_root(fs_obj, youngest_rev)\n\n    # Do the recursive crawl.\n    crawl_filesystem_dir(root_obj, \"\")\n    \nif __name__ == \"__main__\":\n    # Check for sane usage.\n    if len(sys.argv) != 2:\n        sys.stderr.write(\"Usage: %s REPOS_PATH\\n\"\n                         % (os.path.basename(sys.argv[0])))\n        sys.exit(1)\n\n    # Canonicalize the repository path.\n    repos_path = svn.core.svn_path_canonicalize(sys.argv[1])\n\n    # Do the real work.\n    crawl_youngest(repos_path)\n"
+msgstr ""
+
+#: ./build/en/book.xml:17479(para) 
+msgid "This same program in C would need to deal with APR's memory pool system. But Python handles memory usage automatically, and Subversion's Python bindings adhere to that convention. In C, you'd be working with custom datatypes (such as those provided by the APR library) for representing the hash of entries and the list of paths, but Python has hashes (called <quote>dictionaries</quote>) and lists as built-in datatypes, and provides a rich collection of functions for operating on those types. So SWIG (with the help of some customizations in Subversion's language bindings layer) takes care of mapping those custom datatypes into the native datatypes of the target language. This provides a more intuitive interface for users of that language."
+msgstr ""
+
+#: ./build/en/book.xml:17493(para) 
+msgid "The Subversion Python bindings can be used for working copy operations, too. In the previous section of this chapter, we mentioned the <filename moreinfo=\"none\">libsvn_client</filename> interface, and how it exists for the sole purpose of simplifying the process of writing a Subversion client. <xref linkend=\"svn.developer.usingapi.otherlangs.ex-2\"/> is a brief example of how that library can be accessed via the SWIG Python bindings to recreate a scaled-down version of the <command moreinfo=\"none\">svn status</command> command."
+msgstr ""
+
+#: ./build/en/book.xml:17503(title) 
+msgid "A Python Status Crawler"
+msgstr ""
+
+#: ./build/en/book.xml:17505(programlisting) 
+#, no-wrap
+msgid "\n#!/usr/bin/env python\n\n\"\"\"Crawl a working copy directory, printing status information.\"\"\"\n\nimport sys\nimport os.path\nimport getopt\nimport svn.core, svn.client, svn.wc\n\ndef generate_status_code(status):\n    \"\"\"Translate a status value into a single-character status code,\n    using the same logic as the Subversion command-line client.\"\"\"\n    code_map = { svn.wc.svn_wc_status_none        : ' ',\n                 svn.wc.svn_wc_status_normal      : ' ',\n                 svn.wc.svn_wc_status_added       : 'A',\n                 svn.wc.svn_wc_status_missing     : '!',\n                 svn.wc.svn_wc_status_incomplete  : '!',\n                 svn.wc.svn_wc_status_deleted     : 'D',\n                 svn.wc.svn_wc_status_replaced    : 'R',\n                 svn.wc.svn_wc_status_modified    : 'M',\n                 svn.wc.svn_wc_status_merged      : 'G',\n                 svn.wc.svn_wc_status_conflicted  : 'C',\n                 svn.wc.svn_wc_status_obstructed  : '~',\n                 svn.wc.svn_wc_status_ignored     : 'I',\n                 svn.wc.svn_wc_status_external    : 'X',\n                 svn.wc.svn_wc_status_unversioned : '?',\n               }\n    return code_map.get(status, '?')\n\ndef do_status(wc_path, verbose):\n    # Calculate the length of the input working copy path.\n    wc_path_len = len(wc_path)\n\n    # Build a client context baton.\n    ctx = svn.client.svn_client_ctx_t()\n\n    def _status_callback(path, status, root_path_len=wc_path_len):\n        \"\"\"A callback function for svn_client_status.\"\"\"\n\n        # Print the path, minus the bit that overlaps with the root of\n        # the status crawl\n        text_status = generate_status_code(status.text_status)\n        prop_status = generate_status_code(status.prop_status)\n        print '%s%s  %s' % (text_status, prop_status, path[wc_path_len + 1:])\n        \n    # Do the status crawl, using _status_callback() as our callback function.\n    svn.client.svn_client_status(wc_path, None, _status_callback,\n                                 1, verbose, 0, 0, ctx)\n\ndef usage_and_exit(errorcode):\n    \"\"\"Print usage message, and exit with ERRORCODE.\"\"\"\n    stream = errorcode and sys.stderr or sys.stdout\n    stream.write(\"\"\"Usage: %s OPTIONS WC-PATH\nOptions:\n  --help, -h    : Show this usage message\n  --verbose, -v : Show all statuses, even uninteresting ones\n\"\"\" % (os.path.basename(sys.argv[0])))\n    sys.exit(errorcode)\n    \nif __name__ == '__main__':\n    # Parse command-line options.\n    try:\n        opts, args = getopt.getopt(sys.argv[1:], \"hv\", [\"help\", \"verbose\"])\n    except getopt.GetoptError:\n        usage_and_exit(1)\n    verbose = 0\n    for opt, arg in opts:\n        if opt in (\"-h\", \"--help\"):\n            usage_and_exit(0)\n        if opt in (\"-v\", \"--verbose\"):\n            verbose = 1\n    if len(args) != 1:\n        usage_and_exit(2)\n            \n    # Canonicalize the repository path.\n    wc_path = svn.core.svn_path_canonicalize(args[0])\n\n    # Do the real work.\n    try:\n        do_status(wc_path, verbose)\n    except svn.core.SubversionException, e:\n        sys.stderr.write(\"Error (%d): %s\\n\" % (e[1], e[0]))\n        sys.exit(1)\n"
+msgstr ""
+
+#: ./build/en/book.xml:17592(para) 
+msgid "As was the case in <xref linkend=\"svn.developer.usingapi.otherlangs.ex-1\"/>, this program is pool-free and uses, for the most part, normal Python data types. The call to <function moreinfo=\"none\">svn_client_ctx_t()</function> is deceiving because the public Subversion API has no such function—this just happens to be a case where SWIG's automatic language generation bleeds through a little bit (the function is a sort of factory function for Python's version of the corresponding complex C structure). Also note that the path passed to this program (like the last one) gets run through <function moreinfo=\"none\">svn_path_canonicalize()</function>, because to <emphasis>not</emphasis> do so runs the risk of triggering the underlying Subversion C library's assertions about such things, which translate into rather immediate and unceremonious program abortion."
+msgstr ""
+
+#: ./build/en/book.xml:17620(title) 
+msgid "Subversion Complete Reference"
+msgstr ""
+
+#: ./build/en/book.xml:17622(para) 
+msgid "This chapter is intended to be a complete reference to using Subversion. This includes the command line client (<command moreinfo=\"none\">svn</command>) and all its subcommands, as well as the repository administration programs (<command moreinfo=\"none\">svnadmin</command> and <command moreinfo=\"none\">svnlook</command>) and their respective subcommands."
+msgstr ""
+
+#: ./build/en/book.xml:17634(title) 
+msgid "The Subversion Command Line Client: <command moreinfo=\"none\">svn</command>"
+msgstr ""
+
+#: ./build/en/book.xml:17638(para) 
+msgid "Yes, yes, you don't need a subcommand to use the <option>--version</option> switch, but we'll get to that in just a minute."
+msgstr ""
+
+#: ./build/en/book.xml:17636(para) 
+msgid "To use the command line client, you type <command moreinfo=\"none\">svn</command>, the subcommand you wish to use <placeholder-1/>, and any switches or targets that you wish to operate on—there is no specific order that the subcommand and the switches must appear in. For example, all of the following are valid ways to use <command moreinfo=\"none\">svn status</command>:"
+msgstr ""
+
+#: ./build/en/book.xml:17646(screen) 
+#, no-wrap
+msgid "\n$ svn -v status\n$ svn status -v \n$ svn status -v myfile\n"
+msgstr ""
+
+#: ./build/en/book.xml:17652(para) 
+msgid "You can find many more examples of how to use most client commands in <xref linkend=\"svn.tour\"/> and commands for managing properties in <xref linkend=\"svn.advanced.props\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:17658(title) 
+msgid "<command moreinfo=\"none\">svn</command> Switches"
+msgstr ""
+
+#: ./build/en/book.xml:17660(para) 
+msgid "While Subversion has different switches for its subcommands, all switches are global—that is, each switch is guaranteed to mean the same thing regardless of the subcommand you use it with. For example, <option>--verbose</option> (<option>-v</option>) always means <quote>verbose output</quote>, regardless of the subcommand you use it with."
+msgstr ""
+
+#: ./build/en/book.xml:17671(option) 
+msgid "--auto-props"
+msgstr ""
+
+#: ./build/en/book.xml:17673(para) 
+msgid "Enables auto-props, overriding the <literal moreinfo=\"none\">enable-auto-props</literal> directive in the <filename moreinfo=\"none\">config</filename> file."
+msgstr ""
+
+#: ./build/en/book.xml:17680(option) 
+msgid "--config-dir"
+msgstr ""
+
+#: ./build/en/book.xml:17681(replaceable) ./build/en/book.xml:22048(replaceable) 
+msgid "DIR"
+msgstr ""
+
+#: ./build/en/book.xml:17683(para) 
+msgid "Instructs Subversion to read configuration information from the specified directory instead of the default location (<filename moreinfo=\"none\">.subversion</filename> in the user's home directory)."
+msgstr ""
+
+#: ./build/en/book.xml:17691(option) 
+msgid "--diff-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:17692(replaceable) ./build/en/book.xml:17707(replaceable) ./build/en/book.xml:17724(replaceable) 
+msgid "CMD"
+msgstr ""
+
+#: ./build/en/book.xml:17694(para) 
+msgid "Specifies an external program to use to show differences between files. When <command moreinfo=\"none\">svn diff</command> is invoked, it uses Subversion's internal diff engine, which provides unified diffs by default. If you want to use an external diff program, use <option>--diff-cmd</option>. You can pass switches to the diff program with the <option>--extensions</option> switch (more on that later in this section)."
+msgstr ""
+
+#: ./build/en/book.xml:17706(option) 
+msgid "--diff3-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:17709(para) 
+msgid "Specifies an external program to use to merge files."
+msgstr ""
+
+#: ./build/en/book.xml:17714(option) 
+msgid "--dry-run"
+msgstr ""
+
+#: ./build/en/book.xml:17716(para) 
+msgid "Goes through all the motions of running a command, but makes no actual changes—either on disk or in the repository."
+msgstr ""
+
+#: ./build/en/book.xml:17723(option) 
+msgid "--editor-cmd"
+msgstr ""
+
+#: ./build/en/book.xml:17726(para) 
+msgid "Specifies an external program to use to edit a log message or a property value. See the <literal moreinfo=\"none\">editor-cmd</literal> section in <xref linkend=\"svn.advanced.confarea.opts.config\"/> for ways to specify a default editor."
+msgstr ""
+
+#: ./build/en/book.xml:17734(option) 
+msgid "--encoding"
+msgstr ""
+
+#: ./build/en/book.xml:17734(replaceable) 
+msgid "ENC"
+msgstr ""
+
+#: ./build/en/book.xml:17736(para) 
+msgid "Tells Subversion that your commit message is encoded in the charset provided. The default is your operating system's native locale, and you should specify the encoding if your commit message is in any other encoding."
+msgstr ""
+
+#: ./build/en/book.xml:17745(term) 
+msgid "<option>--extensions</option> (<option>-x</option>) <replaceable>ARGS</replaceable>"
+msgstr ""
+
+#: ./build/en/book.xml:17748(para) 
+msgid "Specifies an argument or arguments that Subversion should pass to an external diff command when providing differences between files. If you wish to pass multiple arguments, you must enclose all of them in quotes (for example, <command moreinfo=\"none\">svn diff --diff-cmd /usr/bin/diff -x \"-b -E\"</command>). This switch can <emphasis>only</emphasis> be used if you also pass the <option>--diff-cmd</option> switch."
+msgstr ""
+
+#: ./build/en/book.xml:17760(term) 
+msgid "<option>--file</option> (<option>-F</option>) <replaceable>FILENAME</replaceable>"
+msgstr ""
+
+#: ./build/en/book.xml:17764(para) 
+msgid "Uses the contents of the file passed as an argument to this switch for the specified subcommand."
+msgstr ""
+
+#: ./build/en/book.xml:17770(option) 
+msgid "--force"
+msgstr ""
+
+#: ./build/en/book.xml:17772(para) 
+msgid "Forces a particular command or operation to run. There are some operations that Subversion will prevent you from doing in normal usage, but you can pass the force switch to tell Subversion <quote>I know what I'm doing as well as the possible repercussions of doing it, so let me at 'em</quote>. This switch is the programmatic equivalent of doing your own electrical work with the power on—if you don't know what you're doing, you're likely to get a nasty shock."
+msgstr ""
+
+#: ./build/en/book.xml:17785(option) 
+msgid "--force-log"
+msgstr ""
+
+#: ./build/en/book.xml:17787(para) 
+msgid "Forces a suspicious parameter passed to the <option>--message</option> (<option>-m</option>) or <option>--file</option> (<option>-F</option>) options to be accepted as valid. By default, Subversion will produce an error if parameters to these options look like they might instead be targets of the subcommand. For example, if you pass a versioned file's path to the <option>--file</option> (<option>-F</option>) option, Subversion will assume you've made a mistake, that the path was instead intended as the target of the operation, and that you simply failed to provide some other—unversioned—file as the source of your log message. To assert your intent and override these types of errors, pass the <option>--force-log</option> option to subcommands that accept log messages."
+msgstr ""
+
+#: ./build/en/book.xml:17806(term) 
+msgid "<option>--help</option> (<option>-h</option> or <option>-?</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:17810(para) 
+msgid "If used with one or more subcommands, shows the built-in help text for each subcommand. If used alone, it displays the general client help text."
+msgstr ""
+
+#: ./build/en/book.xml:17817(option) 
+msgid "--ignore-ancestry"
+msgstr ""
+
+#: ./build/en/book.xml:17819(para) 
+msgid "Tells Subversion to ignore ancestry when calculating differences (rely on path contents alone)."
+msgstr ""
+
+#: ./build/en/book.xml:17825(option) 
+msgid "--ignore-externals"
+msgstr ""
+
+#: ./build/en/book.xml:17827(para) 
+msgid "Tells Subversion to ignore external definitions and the external working copies managed by them."
+msgstr ""
+
+#: ./build/en/book.xml:17833(option) ./build/en/book.xml:22038(option) 
+msgid "--incremental"
+msgstr ""
+
+#: ./build/en/book.xml:17835(para) 
+msgid "Prints output in a format suitable for concatenation."
+msgstr ""
+
+#: ./build/en/book.xml:17841(option) 
+msgid "--limit"
+msgstr ""
+
+#: ./build/en/book.xml:17842(replaceable) 
+msgid "NUM"
+msgstr ""
+
+#: ./build/en/book.xml:17844(para) 
+msgid "Show only the first <replaceable>NUM</replaceable> log messages."
+msgstr ""
+
+#: ./build/en/book.xml:17850(term) 
+msgid "<option>--message</option> (<option>-m</option>) <replaceable>MESSAGE</replaceable>"
+msgstr ""
+
+#: ./build/en/book.xml:17854(para) 
+msgid "Indicates that you will specify a commit message on the command line, following this switch. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:17858(screen) 
+#, no-wrap
+msgid "\n$ svn commit -m \"They don't make Sunday.\"\n"
+msgstr ""
+
+#: ./build/en/book.xml:17865(option) 
+msgid "--new"
+msgstr ""
+
+#: ./build/en/book.xml:17865(replaceable) ./build/en/book.xml:17965(replaceable) 
+msgid "ARG"
+msgstr ""
+
+#: ./build/en/book.xml:17867(para) 
+msgid "Uses <replaceable>ARG</replaceable> as the newer target."
+msgstr ""
+
+#: ./build/en/book.xml:17873(option) 
+msgid "--no-auth-cache"
+msgstr ""
+
+#: ./build/en/book.xml:17875(para) 
+msgid "Prevents caching of authentication information (e.g. username and password) in the Subversion administrative directories."
+msgstr ""
+
+#: ./build/en/book.xml:17882(option) 
+msgid "--no-auto-props"
+msgstr ""
+
+#: ./build/en/book.xml:17884(para) 
+msgid "Disables auto-props, overriding the <literal moreinfo=\"none\">enable-auto-props</literal> directive in the <filename moreinfo=\"none\">config</filename> file."
+msgstr ""
+
+#: ./build/en/book.xml:17891(option) 
+msgid "--no-diff-added"
+msgstr ""
+
+#: ./build/en/book.xml:17893(para) 
+msgid "Prevents Subversion from printing differences for added files. The default behavior when you add a file is for <command moreinfo=\"none\">svn diff</command> to print the same differences that you would see if you had added the entire contents of an existing (empty) file."
+msgstr ""
+
+#: ./build/en/book.xml:17902(option) ./build/en/book.xml:22940(option) 
+msgid "--no-diff-deleted"
+msgstr ""
+
+#: ./build/en/book.xml:17904(para) 
+msgid "Prevents Subversion from printing differences for deleted files. The default behavior when you remove a file is for <command moreinfo=\"none\">svn diff</command> to print the same differences that you would see if you had left the file but removed all the content."
+msgstr ""
+
+#: ./build/en/book.xml:17913(option) 
+msgid "--no-ignore"
+msgstr ""
+
+#: ./build/en/book.xml:17915(para) 
+msgid "Shows files in the status listing that would normally be omitted since they match a pattern in the <literal moreinfo=\"none\">global-ignores</literal> configuration option or the <literal moreinfo=\"none\">svn:ignore</literal> property. See <xref linkend=\"svn.advanced.confarea.opts.config\"/> and <xref linkend=\"svn.advanced.props.special.ignore\"/> for more information."
+msgstr ""
+
+#: ./build/en/book.xml:17924(option) 
+msgid "--no-unlock"
+msgstr ""
+
+#: ./build/en/book.xml:17926(para) 
+msgid "Don't automatically unlock files (the default commit behavior is to unlock all files listed as part of the commit). See <xref linkend=\"svn.advanced.locking\"/> for more information."
+msgstr ""
+
+#: ./build/en/book.xml:17934(option) 
+msgid "--non-interactive"
+msgstr ""
+
+#: ./build/en/book.xml:17936(para) 
+msgid "In the case of an authentication failure, or insufficient credentials, prevents prompting for credentials (e.g. username or password). This is useful if you're running Subversion inside of an automated script and it's more appropriate to have Subversion fail than to prompt for more information."
+msgstr ""
+
+#: ./build/en/book.xml:17946(term) 
+msgid "<option>--non-recursive</option> (<option>-N</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:17948(para) 
+msgid "Stops a subcommand from recursing into subdirectories. Most subcommands recurse by default, but some subcommands—usually those that have the potential to remove or undo your local modifications—do not."
+msgstr ""
+
+#: ./build/en/book.xml:17957(option) 
+msgid "--notice-ancestry"
+msgstr ""
+
+#: ./build/en/book.xml:17959(para) 
+msgid "Pay attention to ancestry when calculating differences."
+msgstr ""
+
+#: ./build/en/book.xml:17965(option) 
+msgid "--old"
+msgstr ""
+
+#: ./build/en/book.xml:17967(para) 
+msgid "Uses <replaceable>ARG</replaceable> as the older target."
+msgstr ""
+
+#: ./build/en/book.xml:17973(option) 
+msgid "--password"
+msgstr ""
+
+#: ./build/en/book.xml:17974(replaceable) 
+msgid "PASS"
+msgstr ""
+
+#: ./build/en/book.xml:17976(para) 
+msgid "Indicates that you are providing your password for authentication on the command line—otherwise, if it is needed, Subversion will prompt you for it."
+msgstr ""
+
+#: ./build/en/book.xml:17984(term) 
+msgid "<option>--quiet</option> (<option>-q</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:17986(para) 
+msgid "Requests that the client print only essential information while performing an operation."
+msgstr ""
+
+#: ./build/en/book.xml:17992(term) 
+msgid "<option>--recursive</option> (<option>-R</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:17994(para) 
+msgid "Makes a subcommand recurse into subdirectories. Most subcommands recurse by default."
+msgstr ""
+
+#: ./build/en/book.xml:18000(option) 
+msgid "--relocate"
+msgstr ""
+
+#: ./build/en/book.xml:18000(replaceable) 
+msgid "FROM TO [PATH...]"
+msgstr ""
+
+#: ./build/en/book.xml:18003(para) 
+msgid "Used with the <command moreinfo=\"none\">svn switch</command> subcommand, changes the location of the repository that your working copy references. This is useful if the location of your repository changes and you have an existing working copy that you'd like to continue to use. See <command moreinfo=\"none\">svn switch</command> for an example."
+msgstr ""
+
+#: ./build/en/book.xml:18014(term) 
+msgid "<option>--revision</option> (<option>-r</option>) <replaceable>REV</replaceable>"
+msgstr ""
+
+#: ./build/en/book.xml:18018(para) 
+msgid "Indicates that you're going to supply a revision (or range of revisions) for a particular operation. You can provide revision numbers, revision keywords or dates (in curly braces), as arguments to the revision switch. If you wish to provide a range of revisions, you can provide two revisions separated by a colon. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:18026(screen) 
+#, no-wrap
+msgid "\n$ svn log -r 1729\n$ svn log -r 1729:HEAD\n$ svn log -r 1729:1744\n$ svn log -r {2001-12-04}:{2002-02-17}\n$ svn log -r 1729:{2002-02-17}\n"
+msgstr ""
+
+#: ./build/en/book.xml:18034(para) 
+msgid "See <xref linkend=\"svn.tour.revs.keywords\"/> for more information."
+msgstr ""
+
+#: ./build/en/book.xml:18040(option) ./build/en/book.xml:22960(option) 
+msgid "--revprop"
+msgstr ""
+
+#: ./build/en/book.xml:18042(para) ./build/en/book.xml:22962(para) 
+msgid "Operates on a revision property instead of a property specific to a file or directory. This switch requires that you also pass a revision with the <option>--revision</option> (<option>-r</option>) switch."
+msgstr ""
+
+#: ./build/en/book.xml:18051(term) 
+msgid "<option>--show-updates</option> (<option>-u</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:18053(para) 
+msgid "Causes the client to display information about which files in your working copy are out-of-date. This doesn't actually update any of your files—it just shows you which files will be updated if you run <command moreinfo=\"none\">svn update</command>."
+msgstr ""
+
+#: ./build/en/book.xml:18063(option) 
+msgid "--stop-on-copy"
+msgstr ""
+
+#: ./build/en/book.xml:18065(para) 
+msgid "Causes a Subversion subcommand which is traversing the history of a versioned resource to stop harvesting that historical information when a copy—that is, a location in history where that resource was copied from another location in the repository—is encountered."
+msgstr ""
+
+#: ./build/en/book.xml:18075(option) 
+msgid "--strict"
+msgstr ""
+
+#: ./build/en/book.xml:18077(para) 
+msgid "Causes Subversion to use strict semantics, a notion which is rather vague unless talking about specific subcommands."
+msgstr ""
+
+#: ./build/en/book.xml:18084(option) 
+msgid "--targets"
+msgstr ""
+
+#: ./build/en/book.xml:18085(replaceable) 
+msgid "FILENAME"
+msgstr ""
+
+#: ./build/en/book.xml:18087(para) 
+msgid "Tells Subversion to get the list of files that you wish to operate on from the filename you provide instead of listing all the files on the command line."
+msgstr ""
+
+#: ./build/en/book.xml:18095(option) 
+msgid "--username"
+msgstr ""
+
+#: ./build/en/book.xml:18096(replaceable) 
+msgid "NAME"
+msgstr ""
+
+#: ./build/en/book.xml:18098(para) 
+msgid "Indicates that you are providing your username for authentication on the command line—otherwise, if it is needed, Subversion will prompt you for it."
+msgstr ""
+
+#: ./build/en/book.xml:18106(term) 
+msgid "<option>--verbose</option> (<option>-v</option>)"
+msgstr ""
+
+#: ./build/en/book.xml:18108(para) 
+msgid "Requests that the client print out as much information as it can while running any subcommand. This may result in Subversion printing out additional fields, detailed information about every file, or additional information regarding its actions."
+msgstr ""
+
+#: ./build/en/book.xml:18117(option) ./build/en/book.xml:23947(option) ./build/en/book.xml:24096(option) 
+msgid "--version"
+msgstr ""
+
+#: ./build/en/book.xml:18119(para) 
+msgid "Prints the client version info. This information not only includes the version number of the client, but also a listing of all repository access modules that the client can use to access a Subversion repository. With <option>--quiet</option> (<option>-q</option>) it prints only the version number in a compact form."
+msgstr ""
+
+#: ./build/en/book.xml:18130(option) 
+msgid "--xml"
+msgstr ""
+
+#: ./build/en/book.xml:18132(para)
