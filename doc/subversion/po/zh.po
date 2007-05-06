@@ -3067,4 +3067,704 @@ msgstr ""
 
 #: build/en/book.xml:13563(para)
 msgid "This example demonstrates a couple of things. First, it shows how to make the Subversion client launch a very specific tunneling binary (the one located at <filename moreinfo=\"none\">/opt/alternate/ssh</filename>) with specific options. In this case, accessing a <literal moreinfo=\"none\">svn+joessh://</literal> URL would invoke the particular SSH binary with <option>-p 29934</option> as arguments—useful if you want the tunnel program to connect to a non-standard port."
-msgstr "这个例子里论证了一些事情，首先，它展现了如何让Subversion客户端启动一个特定的管道�
+msgstr "这个例子里论证了一些事情，首先，它展现了如何让Subversion客户端启动一个特定的管道程序（这个在<filename moreinfo=\"none\">/opt/alternate/ssh</filename>），在这个例子里，使用<literal moreinfo=\"none\">svn+joessh://</literal>的URL会以<option>-p 29934</option>参数调用特定的SSH程序—对连接到非标准端口的程序非常有用。"
+
+#: build/en/book.xml:13573(para)
+msgid "Second, it shows how to define a custom environment variable that can override the name of the tunneling program. Setting the <literal moreinfo=\"none\">SVN_SSH</literal> environment variable is a convenient way to override the default SSH tunnel agent. But if you need to have several different overrides for different servers, each perhaps contacting a different port or passing a different set of options to SSH, you can use the mechanism demonstrated in this example. Now if we were to set the <literal moreinfo=\"none\">JOESSH</literal> environment variable, its value would override the entire value of the tunnel variable—<command moreinfo=\"none\">$JOESSH</command> would be executed instead of <command moreinfo=\"none\">/opt/alternate/ssh -p 29934</command>."
+msgstr "第二点，它展示了怎样定义一个自定义的环境变量来覆盖管道程序中的名字，设置<literal moreinfo=\"none\">SVN_SSH</literal>环境变量是覆盖缺省的SSH管道的一种简便方法，但是如果你需要为多个服务器做出多个不同的覆盖，或许每一个都联系不同的端口或传递不同的SSH选项，你可以使用本例论述的机制。现在如果我们设置<literal moreinfo=\"none\">JOESSH</literal>环境变量，它的值会覆盖管道中的变量值—会执行<command moreinfo=\"none\">$JOESSH</command>而不是<command moreinfo=\"none\">/opt/alternate/ssh -p 29934</command>。"
+
+#: build/en/book.xml:13591(title)
+msgid "SSH configuration tricks"
+msgstr "SSH配置技巧"
+
+#: build/en/book.xml:13593(para)
+msgid "It's not only possible to control the way in which the client invokes <command moreinfo=\"none\">ssh</command>, but also to control the behavior of <command moreinfo=\"none\">sshd</command> on your server machine. In this section, we'll show how to control the exact <command moreinfo=\"none\">svnserve</command> command executed by <command moreinfo=\"none\">sshd</command>, as well as how to have multiple users share a single system account."
+msgstr "不仅仅是可以控制客户端调用<command moreinfo=\"none\">ssh</command>方式，也可以控制服务器中的<command moreinfo=\"none\">sshd</command>的行为方式，在本小节，我们会展示怎样控制<command moreinfo=\"none\">sshd</command>执行<command moreinfo=\"none\">svnserve</command>，包括如何让多个用户分享同一个系统帐户。"
+
+#: build/en/book.xml:13605(para)
+msgid "To begin, locate the home directory of the account you'll be using to launch <command moreinfo=\"none\">svnserve</command>. Make sure the account has an SSH public/private keypair installed, and that the user can log in via public-key authentication. Password authentication will not work, since all of the following SSH tricks revolve around using the SSH <filename moreinfo=\"none\">authorized_keys</filename> file."
+msgstr "作为开始，定位到你启动<command moreinfo=\"none\">svnserve</command>的帐号的主目录，确定这个账户已经安装了一套SSH公开/私有密钥对，用户可以通过公开密钥认证，因为所有如下的技巧围绕着使用SSH<filename moreinfo=\"none\">authorized_keys</filename>文件，密码认证在这里不会工作。"
+
+#: build/en/book.xml:13613(para)
+msgid "If it doesn't already exist, create the <filename moreinfo=\"none\">authorized_keys</filename> file (on Unix, typically <filename moreinfo=\"none\">~/.ssh/authorized_keys</filename>). Each line in this file describes a public key that is allowed to connect. The lines are typically of the form:"
+msgstr "如果这个文件还不存在，创建一个<filename moreinfo=\"none\">authorized_keys</filename>文件（在UNIX下通常是<filename moreinfo=\"none\">~/.ssh/authorized_keys</filename>），这个文件的每一行描述了一个允许连接的公钥，这些行通常是下面的形式："
+
+#: build/en/book.xml:1362(para)
+#, fuzzy
+msgid "The copy-modify-merge model may sound a bit chaotic, but in practice, it runs extremely smoothly. Users can work in parallel, never waiting for one another. When they work on the same files, it turns out that most of their concurrent changes don't overlap at all; conflicts are infrequent. And the amount of time it takes to resolve conflicts is usually far less than the time lost by a locking system."
+msgstr "拷贝-修改-合并模型感觉是有一点混乱，但在实践中，通常运行的很平稳，用户可以并行的工作，不必等待别人，当工作在同一个文件上时，也很少会有交迭发生，冲突并不频繁，处理冲突的时间远比等待解锁花费的时间少。"
+
+#: build/en/book.xml:13620(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  ssh-dsa AAAABtce9euch… user@example.com\n"
+msgstr ""
+"\n"
+"  ssh-dsa AAAABtce9euch.... user@example.com\n"
+
+#: build/en/book.xml:13624(para)
+msgid "The first field describes the type of key, the second field is the uuencoded key itself, and the third field is a comment. However, it's a lesser known fact that the entire line can be preceded by a <literal moreinfo=\"none\">command</literal> field:"
+msgstr "第一个字段描述了密钥的类型，第二个字段是未加密的密钥本身，第三个字段是注释。然而，这是一个很少人知道的事实，可以使用一个<literal moreinfo=\"none\">command</literal>来处理整行："
+
+#: build/en/book.xml:13630(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  command=\"program\" ssh-dsa AAAABtce9euch… user@example.com\n"
+msgstr ""
+"\n"
+"  command=\"program\" ssh-dsa AAAABtce9euch.... user@example.com\n"
+
+#: build/en/book.xml:13634(para)
+msgid "When the <literal moreinfo=\"none\">command</literal> field is set, the SSH daemon will run the named program instead of the typical <command moreinfo=\"none\">svnserve -t</command> invocation that the Subversion client asks for. This opens the door to a number of server-side tricks. In the following examples, we abbreviate the lines of the file as:"
+msgstr "当<literal moreinfo=\"none\">command</literal>字段设置后，SSH守护进程运行命名的程序而不是通常Subversion客户端询问的<command moreinfo=\"none\">svnserve -t</command>。这为实施许多服务器端技巧开启了大门，在下面的例子里，我们简写了文件的这些行："
+
+#: build/en/book.xml:13641(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  command=\"program\" TYPE KEY COMMENT\n"
+msgstr ""
+"\n"
+"  command=\"program\" TYPE KEY COMMENT\n"
+
+#: build/en/book.xml:13649(title)
+msgid "Controlling the invoked command"
+msgstr "控制调用的命令"
+
+#: build/en/book.xml:13651(para)
+msgid "Because we can specify the executed server-side command, it's easy to name a specific <command moreinfo=\"none\">svnserve</command> binary to run and to pass it extra arguments:"
+msgstr "因为我们可以指定服务器端执行的命令，我们很容易来选择运行一个特定的<command moreinfo=\"none\">svnserve</command>程序来并且传递给它额外的参数："
+
+#: build/en/book.xml:13655(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  command=\"/path/to/svnserve -t -r /virtual/root\" TYPE KEY COMMENT\n"
+msgstr ""
+"\n"
+"  command=\"/path/to/svnserve -t -r /virtual/root\" TYPE KEY COMMENT\n"
+
+#: build/en/book.xml:13659(para)
+msgid "In this example, <filename moreinfo=\"none\">/path/to/svnserve</filename> might be a custom wrapper script around <command moreinfo=\"none\">svnserve</command> which sets the umask (see <xref linkend=\"svn.serverconfig.multimethod\"/>). It also shows how to anchor <command moreinfo=\"none\">svnserve</command> in a virtual root directory, just as one often does when running <command moreinfo=\"none\">svnserve</command> as a daemon process. This might be done either to restrict access to parts of the system, or simply to relieve the user of having to type an absolute path in the <literal moreinfo=\"none\">svn+ssh://</literal> URL."
+msgstr "在这个例子里，<filename moreinfo=\"none\">/path/to/svnserve</filename>也许会是一个<command moreinfo=\"none\">svnserve</command>程序的包裹脚本，会来设置umask（见<xref linkend=\"svn.serverconfig.multimethod\"/>）。它也展示了怎样在虚拟根目录定位一个<command moreinfo=\"none\">svnserve</command>，就像我们经常在使用守护进程模式下运行<command moreinfo=\"none\">svnserve</command>一样。这样做不仅可以把访问限制在系统的一部分，也可以使用户不需要在<literal moreinfo=\"none\">svn+ssh://</literal>URL里输入绝对路径。"
+
+#: build/en/book.xml:13671(para)
+msgid "It's also possible to have multiple users share a single account. Instead of creating a separate system account for each user, generate a public/private keypair for each person. Then place each public key into the <filename moreinfo=\"none\">authorized_users</filename> file, one per line, and use the <option>--tunnel-user</option> option:"
+msgstr "多个用户也可以共享同一个帐号，作为为每个用户创建系统帐户的替代，我们创建一个公开/私有密钥对，然后在<filename moreinfo=\"none\">authorized_users</filename>文件里放置各自的公钥，一个用户一行，使用<option>--tunnel-user</option>选项："
+
+#: build/en/book.xml:13679(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  command=\"svnserve -t --tunnel-user=harry\" TYPE1 KEY1 harry@example.com\n"
+"  command=\"svnserve -t --tunnel-user=sally\" TYPE2 KEY2 sally@example.com\n"
+msgstr ""
+"\n"
+"  command=\"svnserve -t --tunnel-user=harry\" TYPE1 KEY1 harry@example.com\n"
+"  command=\"svnserve -t --tunnel-user=sally\" TYPE2 KEY2 sally@example.com\n"
+
+#: build/en/book.xml:13684(para)
+msgid "This example allows both Harry and Sally to connect to the same account via public-key authentication. Each of them has a custom command that will be executed; the <option>--tunnel-user</option> option tells <command moreinfo=\"none\">svnserve -t</command> to assume that the named argument is the authenticated user. Without <option>--tunnel-user</option>, it would appear as though all commits were coming from the one shared system account."
+msgstr "这个例子允许Harry和Sally通过公钥认证连接同一个的账户，每个人自定义的命令将会执行。<option>--tunnel-user</option>选项告诉<command moreinfo=\"none\">svnserve -t</command>命令采用命名的参数作为经过认证的用户，如果没有<option>--tunnel-user</option>，所有的提交会作为共享的系统帐户提交。"
+
+#: build/en/book.xml:13694(para)
+msgid "A final word of caution: giving a user access to the server via public-key in a shared account might still allow other forms of SSH access, even if you've set the <literal moreinfo=\"none\">command</literal> value in <filename moreinfo=\"none\">authorized_keys</filename>. For example, the user may still get shell access through SSH, or be able to perform X11 or general port-forwarding through your server. To give the user as little permission as possible, you may want to specify a number of restrictive options immediately after the <literal moreinfo=\"none\">command</literal>:"
+msgstr "最后要小心：设定通过公钥共享账户进行用户访问时还会允许其它形式的SSH访问，即使你设置了<filename moreinfo=\"none\">authorized_keys</filename>的<literal moreinfo=\"none\">command</literal>值，举个例子，用户仍然可以通过SSH得到shell访问，或者是通过服务器执行X11或者是端口转发。为了给用户尽可能少的访问权限，你或许希望在<literal moreinfo=\"none\">command</literal>命令之后指定一些限制选项："
+
+#: build/en/book.xml:1370(para)
+msgid "In the end, it all comes down to one critical factor: user communication. When users communicate poorly, both syntactic and semantic conflicts increase. No system can force users to communicate perfectly, and no system can detect semantic conflicts. So there's no point in being lulled into a false promise that a locking system will somehow prevent conflicts; in practice, locking seems to inhibit productivity more than anything else."
+msgstr "最后，一切都要归结到一条重要的因素：用户交流。当用户交流贫乏，语法和语义的冲突就会增加，没有系统可以强制用户完美的交流，没有系统可以检测语义上的冲突，所以没有任何证据能够承诺锁定系统可以防止冲突，实践中，锁定除了约束了生产力，并没有做什么事。"
+
+#: build/en/book.xml:13705(screen)
+#, no-wrap
+msgid ""
+"\n"
+"  command=\"svnserve -t --tunnel-user=harry\",no-port-forwarding,\\\n"
+"           no-agent-forwarding,no-X11-forwarding,no-pty \\\n"
+"           TYPE1 KEY1 harry@example.com\n"
+msgstr ""
+"\n"
+"  command=\"svnserve -t --tunnel-user=harry\",no-port-forwarding,\\\n"
+"           no-agent-forwarding,no-X11-forwarding,no-pty \\\n"
+"           TYPE1 KEY1 harry@example.com\n"
+
+#: build/en/book.xml:13723(title)
+msgid "httpd, the Apache HTTP server"
+msgstr "httpd，Apache的HTTP服务器"
+
+#: build/en/book.xml:13725(para)
+#, fuzzy
+msgid "The Apache HTTP Server is a <quote>heavy duty</quote> network server that Subversion can leverage. Via a custom module, <command moreinfo=\"none\">httpd</command> makes Subversion repositories available to clients via the WebDAV/DeltaV protocol, which is an extension to HTTP 1.1 (see <ulink url=\"http://www.webdav.org/\"/> for more information). This protocol takes the ubiquitous HTTP protocol that is the core of the World Wide Web, and adds writing—specifically, versioned writing—capabilities. The result is a standardized, robust system that is conveniently packaged as part of the Apache 2.0 software, is supported by numerous operating systems and third-party products, and doesn't require network administrators to open up yet another custom port. <placeholder-1/> While an Apache-Subversion server has more features than <command moreinfo=\"none\">svnserve</command>, it's also a bit more difficult to set up. With flexibility often comes more complexity."
+msgstr "Apache的HTTP服务器是一个Subversion可以利用的<quote>重型</quote>网络服务器，通过一个自定义模块，<command moreinfo=\"none\">httpd</command>可以让Subversion版本库通过WebDAV/DeltaV协议在客户端前可见，WebDAV/DeltaV协议是HTTP 1.1的扩展（见<ulink url=\"http://www.webdav.org/\"/>来查看详细信息）。这个协议利用了无处不在的HTTP协议是广域网的核心这一点，添加了写能力—更明确一点，版本化的写—能力。结果就是这样一个标准化的健壮的系统，作为Apache 2.0软件的一部分打包，被许多操作系统和第三方产品支持，网络管理员也不需要打开另一个自定义端口。 <footnote><placeholder-1/></footnote>这样一个Apache-Subversion服务器具备了许多<command moreinfo=\"none\">svnserve</command>没有的特性，但是也有一点难于配置，灵活通常会带来复杂性。"
+
+#: build/en/book.xml:13739(para)
+msgid "They really hate doing that."
+msgstr "他们讨厌这样做。"
+
+#: build/en/book.xml:13745(para)
+msgid "Much of the following discussion includes references to Apache configuration directives. While some examples are given of the use of these directives, describing them in full is outside the scope of this chapter. The Apache team maintains excellent documentation, publicly available on their website at <ulink url=\"http://httpd.apache.org\"/>. For example, a general reference for the configuration directives is located at <ulink url=\"       http://httpd.apache.org/docs-2.0/mod/directives.html\"/>."
+msgstr "下面的讨论包括了对Apache配置指示的引用，给了一些使用这些指示的例子，详细地描述不在本章的范围之内，Apache小组维护了完美的文档，公开存放在他们的站点<ulink url=\"http://httpd.apache.org\"/>。例如，一个一般的配置参考位于<ulink url=\"       http://httpd.apache.org/docs-2.0/mod/directives.html\"/>。"
+
+#: build/en/book.xml:13753(para)
+msgid "Also, as you make changes to your Apache setup, it is likely that somewhere along the way a mistake will be made. If you are not already familiar with Apache's logging subsystem, you should become aware of it. In your <filename moreinfo=\"none\">httpd.conf</filename> file are directives that specify the on-disk locations of the access and error logs generated by Apache (the <literal moreinfo=\"none\">CustomLog</literal> and <literal moreinfo=\"none\">ErrorLog</literal> directives, respectively). Subversion's mod_dav_svn uses Apache's error logging interface as well. You can always browse the contents of those files for information that might reveal the source of a problem that is not clearly noticeable otherwise."
+msgstr "同样，当你修改你的Apache设置，很有可能会出现一些错误，如果你还不熟悉Apache的日志子系统，你一定需要认识到这一点。在你的文件<filename moreinfo=\"none\">httpd.conf</filename>里会指定Apache生成的访问和错误日志（<literal moreinfo=\"none\">CustomLog</literal>和<literal moreinfo=\"none\">ErrorLog</literal>指示）的磁盘位置。Subversion的mod_dav_svn使用Apache的错误日志接口，你可以浏览这个文件的内容查看信息来查找难于发现的问题根源。"
+
+#: build/en/book.xml:13767(title)
+msgid "Why Apache 2?"
+msgstr "为什么是Apache 2？"
+
+#: build/en/book.xml:13769(para)
+msgid "If you're a system administrator, it's very likely that you're already running the Apache web server and have some prior experience with it. At the time of writing, Apache 1.3 is by far the most popular version of Apache. The world has been somewhat slow to upgrade to the Apache 2.X series for various reasons: some people fear change, especially changing something as critical as a web server. Other people depend on plug-in modules that only work against the Apache 1.3 API, and are waiting for a 2.X port. Whatever the reason, many people begin to worry when they first discover that Subversion's Apache module is written specifically for the Apache 2 API."
+msgstr "如果你系统管理员，很有可能是你已经运行了Apache服务器，并且有一些高级经验。写本文的时候，Apache 1.3是Apache最流行的版本，这个世界因为许多原因而放缓升级到2.X系列：如人们害怕改变，特别是像web服务器这种重要的变化，有些人需要一些在Apache 1.3 API下工作的插件模块，在等待2.X的版本。无论什么原因，许多人会在首次发现Subversion的Apache模块只是为Apache 2 API写的后开始担心。"
+
+#: build/en/book.xml:13781(para)
+msgid "The proper response to this problem is: don't worry about it. It's easy to run Apache 1.3 and Apache 2 side-by-side; simply install them to separate places, and use Apache 2 as a dedicated Subversion server that runs on a port other than 80. Clients can access the repository by placing the port number into the URL:"
+msgstr "对此问题的适当反应是：不需要担心，同时运行Apache 1.3和Apache 2非常简单，只需要安装到不同的位置，用Apache 2作为Subversion的专用服务器，并且不使用80端口，客户端可以访问版本库时在URL里指定端口："
+
+#: build/en/book.xml:13788(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://host.example.com:7382/repos/project\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn checkout http://host.example.com:7382/repos/project\n"
+"…\n"
+
+#: build/en/book.xml:13797(title)
+msgid "Prerequisites"
+msgstr "必备条件"
+
+#: build/en/book.xml:13799(para)
+msgid "To network your repository over HTTP, you basically need four components, available in two packages. You'll need Apache <command moreinfo=\"none\">httpd</command> 2.0, the <command moreinfo=\"none\">mod_dav</command> DAV module that comes with it, Subversion, and the <command moreinfo=\"none\">mod_dav_svn</command> filesystem provider module distributed with Subversion. Once you have all of those components, the process of networking your repository is as simple as:"
+msgstr "为了让你的版本库使用HTTP网络，你基本上需要两个包里的四个部分。你需要Apache <command moreinfo=\"none\">httpd</command> 2.0和包括的<command moreinfo=\"none\">mod_dav</command> DAV模块，Subversion和与之一同分发的<command moreinfo=\"none\">mod_dav_svn</command>文件系统提供者模块，如果你有了这些组件，网络化你的版本库将非常简单，如："
+
+#: build/en/book.xml:138(para)
+msgid "The three co-authors of the new book were thus presented with an unusual opportunity. Officially, their task was to write a book top-down, starting from a table of contents and an initial draft. But they also had access to a steady stream—indeed, an uncontrollable geyser—of bottom-up source material. Subversion was already in the hands of thousands of early adopters, and those users were giving tons of feedback, not only about Subversion, but about its existing documentation."
+msgstr "新书的三位合著者因而面临着一个不寻常的机会。从职责上讲，他们的任务是从一个目录和一些草稿为基础，自上而下的写一部专著。但事实上，他们的灵感源泉则来自一些具体的内容，稳定却难以组织。Subversion被数以千计的早期用户采用，这些用户提供了大量的反馈，不仅仅针对Subversion，还包括业已存在的文档。"
+
+#: build/en/book.xml:1380(title)
+msgid "When Locking is Necessary"
+msgstr "什么时候锁定是必需的"
+
+#: build/en/book.xml:13810(para)
+msgid "getting httpd 2.0 up and running with the mod_dav module,"
+msgstr "配置好httpd 2.0，并且使用mod_dav启动，"
+
+#: build/en/book.xml:13814(para)
+msgid "installing the mod_dav_svn plugin to mod_dav, which uses Subversion's libraries to access the repository, and"
+msgstr "为mod_dav安装mod_dav_svn插件，它会使用Subversion的库访问版本库，并且"
+
+#: build/en/book.xml:13819(para)
+msgid "configuring your <filename moreinfo=\"none\">httpd.conf</filename> file to export (or expose) the repository."
+msgstr "配置你的<filename moreinfo=\"none\">httpd.conf</filename>来输出（或者说暴露）版本库。"
+
+#: build/en/book.xml:1382(para)
+msgid "While the lock-modify-unlock model is considered generally harmful to collaboration, there are still times when locking is appropriate."
+msgstr "锁定-修改-解锁模型被认为不利于协作，但有时候锁定会更好。"
+
+#: build/en/book.xml:13824(para)
+msgid "You can accomplish the first two items either by compiling <command moreinfo=\"none\">httpd</command> and Subversion from source code, or by installing pre-built binary packages of them on your system. For the most up-to-date information on how to compile Subversion for use with the Apache HTTP Server, as well as how to compile and configure Apache itself for this purpose, see the <filename moreinfo=\"none\">INSTALL</filename> file in the top level of the Subversion source code tree."
+msgstr "你可以通过从源代码编译<command moreinfo=\"none\">httpd</command>和Subversion来完成前两个项目，也可以通过你的系统上的已经编译好的二进制包来安装。最新的使用Apache HTTP的Subversion的编译方法和Apache的配置方式可以看Subversion源代码树根目录的<filename moreinfo=\"none\">INSTALL</filename>文件。"
+
+#: build/en/book.xml:13837(title)
+msgid "Basic Apache Configuration"
+msgstr "基本的Apache配置"
+
+#: build/en/book.xml:13839(para)
+msgid "Once you have all the necessary components installed on your system, all that remains is the configuration of Apache via its <filename moreinfo=\"none\">httpd.conf</filename> file. Instruct Apache to load the mod_dav_svn module using the <literal moreinfo=\"none\">LoadModule</literal> directive. This directive must precede any other Subversion-related configuration items. If your Apache was installed using the default layout, your <command moreinfo=\"none\">mod_dav_svn</command> module should have been installed in the <filename moreinfo=\"none\">modules</filename> subdirectory of the Apache install location (often <filename moreinfo=\"none\">/usr/local/apache2</filename>). The <literal moreinfo=\"none\">LoadModule</literal> directive has a simple syntax, mapping a named module to the location of a shared library on disk:"
+msgstr "一旦你安装了必须的组件，剩下的工作就是在<filename moreinfo=\"none\">httpd.conf</filename>里配置Apache，使用<literal moreinfo=\"none\">LoadModule</literal>来加载mod_dav_svn模块，这个指示必须先与其它Subversion相关的其它配置出现，如果你的Apache使用缺省布局安装，你的<command moreinfo=\"none\">mod_dav_svn</command>模块一定在Apache安装目录（通常是在<filename moreinfo=\"none\">/usr/local/apache2</filename>）的<filename moreinfo=\"none\">modules</filename>子目录，<literal moreinfo=\"none\">LoadModule</literal>指示的语法很简单，影射一个名字到它的共享库的物理位置："
+
+#: build/en/book.xml:13854(screen)
+#, no-wrap
+msgid ""
+"\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+msgstr ""
+"\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+
+#: build/en/book.xml:13858(para)
+msgid "Note that if <command moreinfo=\"none\">mod_dav</command> was compiled as a shared object (instead of statically linked directly to the <command moreinfo=\"none\">httpd</command> binary), you'll need a similar <literal moreinfo=\"none\">LoadModule</literal> statement for it, too. Be sure that it comes before the <command moreinfo=\"none\">mod_dav_svn</command> line:"
+msgstr "注意，如果<command moreinfo=\"none\">mod_dav</command>是作为共享对象编译（而不是静态链接到<command moreinfo=\"none\">httpd</command>程序），你需要为它使用使用<literal moreinfo=\"none\">LoadModule</literal>语句，一定确定它在<command moreinfo=\"none\">mod_dav_svn</command>之前："
+
+#: build/en/book.xml:1386(para)
+msgid "The copy-modify-merge model is based on the assumption that files are contextually mergeable: that is, that the majority of the files in the repository are line-based text files (such as program source code). But for files with binary formats, such as artwork or sound, it's often impossible to merge conflicting changes. In these situations, it really is necessary to users to take strict turns when changing the file. Without serialized access, somebody ends up wasting time on changes that are ultimately discarded."
+msgstr "拷贝-修改-合并模型假定文件是可以根据上下文合并的：就是版本库的文件主要是以行为基础的文本文件（例如程序源代码）。但对于二进制格式，例如艺术品或声音，在这种情况下，十分有必要让用户轮流修改文件，如果没有线性的访问，有些人的许多工作就最终要被放弃。"
+
+#: build/en/book.xml:13864(screen)
+#, no-wrap
+msgid ""
+"\n"
+"LoadModule dav_module         modules/mod_dav.so\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+msgstr ""
+"\n"
+"LoadModule dav_module         modules/mod_dav.so\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+
+#: build/en/book.xml:13870(para)
+msgid "At a later location in your configuration file, you now need to tell Apache where you keep your Subversion repository (or repositories). The <literal moreinfo=\"none\">Location</literal> directive has an XML-like notation, starting with an opening tag, and ending with a closing tag, with various other configuration directives in the middle. The purpose of the <literal moreinfo=\"none\">Location</literal> directive is to instruct Apache to do something special when handling requests that are directed at a given URL or one of its children. In the case of Subversion, you want Apache to simply hand off support for URLs that point at versioned resources to the DAV layer. You can instruct Apache to delegate the handling of all URLs whose path portions (the part of the URL that follows the server's name and the optional port number) begin with <filename moreinfo=\"none\">/repos/</filename> to a DAV provider whose repository is located at <filename moreinfo=\"none\">/absolute/path/to/repository</filename> using the following <filename moreinfo=\"none\">httpd.conf</filename> syntax:"
+msgstr "在你的配置文件后面的位置，你需要告诉Apache你在什么地方保存Subversion版本库（也许是多个），<literal moreinfo=\"none\">位置</literal>指示有一个很像XML的符号，开始于一个开始标签，以一个结束标签结束，配合中间许多的其它配置。<literal moreinfo=\"none\">Location</literal>指示的目的是告诉Apache在特定的URL以及子URL下需要特殊的处理，如果是为Subversion准备的，你希望可以通过告诉Apache特定URL是指向版本化的资源，从而把支持转交给DAV层，你可以告诉Apache将所有路径部分（URL中服务器名称和端口之后的部分）以<filename moreinfo=\"none\">/repos/</filename>开头的URL交由DAV服务提供者处理。一个DAV服务提供者的版本库位于<filename moreinfo=\"none\">/absolute/path/to/repository</filename>，可以使用如下的<filename moreinfo=\"none\">httpd.conf</filename>语法："
+
+#: build/en/book.xml:13889(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /absolute/path/to/repository\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNPath /absolute/path/to/repository\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:13896(para)
+#, fuzzy
+msgid "If you plan to support multiple Subversion repositories that will reside in the same parent directory on your local disk, you can use an alternative directive, the <literal moreinfo=\"none\">SVNParentPath</literal> directive, to indicate that common parent directory. For example, if you know you will be creating multiple Subversion repositories in a directory <filename moreinfo=\"none\">/usr/local/svn</filename> that would be accessed via URLs like <uri>http://my.server.com/svn/repos1</uri>, <uri>http://my.server.com/svn/repos2</uri>, and so on, you could use the <filename moreinfo=\"none\">httpd.conf</filename> configuration syntax in the following example:"
+msgstr "如果你计划支持多个具备相同父目录的Subversion版本库，你有另外的选择，<literal moreinfo=\"none\">SVNParentPath</literal>指示，来表示共同的父目录。举个例子，如果你知道你会在<filename moreinfo=\"none\">/usr/local/svn</filename>下创建多个Subversion版本库，并且通过类似<systemitem class=\"url\" moreinfo=\"none\">http://my.server.com/svn/repos1</systemitem>，<systemitem class=\"url\" moreinfo=\"none\">http://my.server.com/svn/repos2</systemitem>的URL访问，你可以用后面例子中的<filename moreinfo=\"none\">httpd.conf</filename>配置语法："
+
+#: build/en/book.xml:13908(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"\n"
+"  # any \"/svn/foo\" URL will map to a repository /usr/local/svn/foo\n"
+"  SVNParentPath /usr/local/svn\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"\n"
+"  # any \"/svn/foo\" URL will map to a repository /usr/local/svn/foo\n"
+"  SVNParentPath /usr/local/svn\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:13917(para)
+msgid "Using the previous syntax, Apache will delegate the handling of all URLs whose path portions begin with <filename moreinfo=\"none\">/svn/</filename> to the Subversion DAV provider, which will then assume that any items in the directory specified by the <literal moreinfo=\"none\">SVNParentPath</literal> directive are actually Subversion repositories. This is a particularly convenient syntax in that, unlike the use of the <literal moreinfo=\"none\">SVNPath</literal> directive, you don't have to restart Apache in order to create and network new repositories."
+msgstr "使用上面的语法，Apache会代理所有URL路径部分为<filename moreinfo=\"none\">/svn/</filename>的请求到Subversion的DAV提供者，Subversion会认为<literal moreinfo=\"none\">SVNParentPath</literal>指定的目录下的所有项目是真实的Subversion版本库，这通常是一个便利的语法，不像是用<literal moreinfo=\"none\">SVNPath</literal>指示，我们在此不必为创建新的版本库而重启Apache。"
+
+#: build/en/book.xml:13928(para)
+#, fuzzy
+msgid "Be sure that when you define your new <literal moreinfo=\"none\">Location</literal>, it doesn't overlap with other exported Locations. For example, if your main <literal moreinfo=\"none\">DocumentRoot</literal> is exported to <filename moreinfo=\"none\">/www</filename>, do not export a Subversion repository in <literal moreinfo=\"none\">&lt;Location /www/repos&gt;</literal>. If a request comes in for the URI <filename moreinfo=\"none\">/www/repos/foo.c</filename>, Apache won't know whether to look for a file <filename moreinfo=\"none\">repos/foo.c</filename> in the <literal moreinfo=\"none\">DocumentRoot</literal>, or whether to delegate <command moreinfo=\"none\">mod_dav_svn</command> to return <filename moreinfo=\"none\">foo.c</filename> from the Subversion repository."
+msgstr "请确定当你定义新的<literal moreinfo=\"none\">位置</literal>，不会与其它输出的位置重叠，例如你的主要<literal moreinfo=\"none\">DocumentRoot</literal>是<filename moreinfo=\"none\">/www</filename>，不要把Subversion版本库输出到<literal moreinfo=\"none\">&lt;Location /www/repos&gt;</literal>，如果一个请求的URI是<filename moreinfo=\"none\">/www/repos/foo.c</filename>，Apache不知道是直接到<filename moreinfo=\"none\">repos/foo.c</filename>访问这个文件还是让<command moreinfo=\"none\">mod_dav_svn</command>代理从Subversion版本库返回<filename moreinfo=\"none\">foo.c</filename>。"
+
+#: build/en/book.xml:13943(title)
+msgid "Server Names and the COPY Request"
+msgstr "服务器名称和拷贝请求"
+
+#: build/en/book.xml:13945(para)
+msgid "Subversion makes use of the <literal moreinfo=\"none\">COPY</literal> request type to perform server-side copies of files and directories. As part of the sanity checking done by the Apache modules, the source of the copy is expected to be located on the same machine as the destination of the copy. To satisfy this requirement, you might need to tell mod_dav the name you use as the hostname of your server. Generally, you can use the <literal moreinfo=\"none\">ServerName</literal> directive in <filename moreinfo=\"none\">httpd.conf</filename> to accomplish this."
+msgstr "Subversion利用<literal moreinfo=\"none\">COPY</literal>请求类型来执行服务器端的文件和目录拷贝，作为一个健全的Apache模块的一部分，拷贝源和拷贝的目标通常坐落在同一个机器上，为了满足这个需求，你或许需要告诉mod_dav服务器主机的名称，通常你可以使用<filename moreinfo=\"none\">httpd.conf</filename>的<literal moreinfo=\"none\">ServerName</literal>指示来完成此目的。"
+
+#: build/en/book.xml:13955(screen)
+#, no-wrap
+msgid ""
+"\n"
+"ServerName svn.example.com\n"
+msgstr ""
+"\n"
+"ServerName svn.example.com\n"
+
+#: build/en/book.xml:13959(para)
+msgid "If you are using Apache's virtual hosting support via the <literal moreinfo=\"none\">NameVirtualHost</literal> directive, you may need to use the <literal moreinfo=\"none\">ServerAlias</literal> directive to specify additional names that your server is known by. Again, refer to the Apache documentation for full details."
+msgstr "如果你通过<literal moreinfo=\"none\">NameVirtualHost</literal>指示使用Apache的虚拟主机，你或许需要<literal moreinfo=\"none\">ServerAlias</literal>指示来指定额外的名称，再说一次，可以查看Apache文档的来得到更多细节。"
+
+#: build/en/book.xml:13967(para)
+#, fuzzy
+msgid "At this stage, you should strongly consider the question of permissions. If you've been running Apache for some time now as your regular web server, you probably already have a collection of content—web pages, scripts and such. These items have already been configured with a set of permissions that allows them to work with Apache, or more appropriately, that allows Apache to work with those files. Apache, when used as a Subversion server, will also need the correct permissions to read and write to your Subversion repository."
+msgstr "在本阶段，你一定要考虑访问权限问题，如果你已经作为普通的web服务器运行过Apache，你一定有了一些内容—网页、脚本和其他。这些项目已经配置了许多在Apache下可以工作的访问许可，或者更准确一点，允许Apache与这些文件一起工作。Apache当作为Subversion服务器运行时，同样需要正确的访问许可来读写你的Subversion版本库。（见<xref linkend=\"svn.serverconfig.svnserve.invoking.sb-1\"/>。）"
+
+#: build/en/book.xml:1397(para)
+#, fuzzy
+msgid "While Subversion is still primarily a copy-modify-merge system, it still recognizes the need to lock an occasional file ands provide mechanisms for this. This feature is discussed later in this book, in <xref linkend=\"svn.advanced.locking\"/>."
+msgstr "尽管CVS和Subversion一直主要是拷贝-修改-合并系统，它们都意识到了需要锁定一些文件，并且提供这种锁定机制。见<xref linkend=\"svn.advanced.locking\"/>。"
+
+#: build/en/book.xml:13978(para)
+msgid "You will need to determine a permission system setup that satisfies Subversion's requirements without messing up any previously existing web page or script installations. This might mean changing the permissions on your Subversion repository to match those in use by other things that Apache serves for you, or it could mean using the <literal moreinfo=\"none\">User</literal> and <literal moreinfo=\"none\">Group</literal> directives in <filename moreinfo=\"none\">httpd.conf</filename> to specify that Apache should run as the user and group that owns your Subversion repository. There is no single correct way to set up your permissions, and each administrator will have different reasons for doing things a certain way. Just be aware that permission-related problems are perhaps the most common oversight when configuring a Subversion repository for use with Apache."
+msgstr "你会需要检验权限系统的设置满足Subversion的需求，同时不会把以前的页面和脚本搞乱。这或许意味着修改Subversion的访问许可来配合Apache服务器已经使用的工具，或者可能意味着需要使用<filename moreinfo=\"none\">httpd.conf</filename>的<literal moreinfo=\"none\">User</literal>和<literal moreinfo=\"none\">Group</literal>指示来指定Apache作为运行的用户和Subversion版本库的组。并不是只有一条正确的方式来设置许可，每个管理员都有不同的原因来以特定的方式操作，只需要意识到许可关联的问题经常在为Apache配置Subversion版本库的过程中被疏忽。"
+
+#: build/en/book.xml:13998(title)
+msgid "Authentication Options"
+msgstr "认证选项"
+
+#: build/en/book.xml:14(edition)
+msgid "Second"
+msgstr ""
+
+#: build/en/book.xml:14000(para)
+msgid "At this point, if you configured <filename moreinfo=\"none\">httpd.conf</filename> to contain something like"
+msgstr "此时，如果你配置的<filename moreinfo=\"none\">httpd.conf</filename>保存如下的内容"
+
+#: build/en/book.xml:14003(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14010(para)
+msgid "…then your repository is <quote>anonymously</quote> accessible to the world. Until you configure some authentication and authorization policies, the Subversion repositories you make available via the <literal moreinfo=\"none\">Location</literal> directive will be generally accessible to everyone. In other words,"
+msgstr "这样你的版本库对全世界是可以<quote>匿名</quote>访问的，直到你配置了一些认证授权政策，你通过<literal moreinfo=\"none\">Location</literal>指示来使Subversion版本库可以被任何人访问，换句话说，"
+
+#: build/en/book.xml:14019(para)
+msgid "anyone can use their Subversion client to checkout a working copy of a repository URL (or any of its subdirectories),"
+msgstr "任何人可以使用Subversion客户端来从版本库URL取出一个工作拷贝（或者是它的子目录），"
+
+#: build/en/book.xml:14024(para)
+msgid "anyone can interactively browse the repository's latest revision simply by pointing their web browser to the repository URL, and"
+msgstr "任何人可以在浏览器输入版本库URL交互浏览的方式来查看版本库的最新修订版本，并且"
+
+#: build/en/book.xml:14029(para)
+msgid "anyone can commit to the repository."
+msgstr "任何人可以提交到版本库。"
+
+#: build/en/book.xml:14033(para)
+msgid "Of course, you might have already set up a <filename moreinfo=\"none\">pre-commit</filename> hook script to prevent commits (see <xref linkend=\"svn.reposadmin.create.hooks\"/>). But as you read on, you'll see that it's also possible use Apache's built-in methods to restrict access in specific ways."
+msgstr ""
+
+#: build/en/book.xml:14042(title)
+msgid "Basic HTTP Authentication"
+msgstr "基本HTTP认证"
+
+#: build/en/book.xml:14044(para)
+msgid "The easiest way to authenticate a client is via the HTTP Basic authentication mechanism, which simply uses a username and password to verify that a user is who she says she is. Apache provides an <command moreinfo=\"none\">htpasswd</command> utility for managing the list of acceptable usernames and passwords, those to whom you wish to grant special access to your Subversion repository. Let's grant commit access to Sally and Harry. First, we need to add them to the password file."
+msgstr "最简单的客户端认证方式是通过HTTP基本认证机制，简单的使用用户名和密码来验证一个用户所自称的身份，Apache提供了一个<command moreinfo=\"none\">htpasswd</command>工具来管理可接受的用户名和密码，这些就是你希望赋予Subversion特别权限的用户，让我们给Sally和Harry赋予提交权限，首先，我们需要添加他们到密码文件。"
+
+#: build/en/book.xml:14054(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ ### First time: use -c to create the file\n"
+"$ ### Use -m to use MD5 encryption of the password, which is more secure\n"
+"$ htpasswd -cm /etc/svn-auth-file harry\n"
+"New password: *****\n"
+"Re-type new password: *****\n"
+"Adding password for user harry\n"
+"$ htpasswd -m /etc/svn-auth-file sally\n"
+"New password: *******\n"
+"Re-type new password: *******\n"
+"Adding password for user sally\n"
+"$\n"
+msgstr ""
+"\n"
+"$ ### First time: use -c to create the file\n"
+"$ ### Use -m to use MD5 encryption of the password, which is more secure\n"
+"$ htpasswd -cm /etc/svn-auth-file harry\n"
+"New password: *****\n"
+"Re-type new password: *****\n"
+"Adding password for user harry\n"
+"$ htpasswd -m /etc/svn-auth-file sally\n"
+"New password: *******\n"
+"Re-type new password: *******\n"
+"Adding password for user sally\n"
+"$\n"
+
+#: build/en/book.xml:14068(para)
+msgid "Next, you need to add some more <filename moreinfo=\"none\">httpd.conf</filename> directives inside your <literal moreinfo=\"none\">Location</literal> block to tell Apache what to do with your new password file. The <literal moreinfo=\"none\">AuthType</literal> directive specifies the type of authentication system to use. In this case, we want to specify the <literal moreinfo=\"none\">Basic</literal> authentication system. <literal moreinfo=\"none\">AuthName</literal> is an arbitrary name that you give for the authentication domain. Most browsers will display this name in the pop-up dialog box when the browser is querying the user for his name and password. Finally, use the <literal moreinfo=\"none\">AuthUserFile</literal> directive to specify the location of the password file you created using <command moreinfo=\"none\">htpasswd</command>."
+msgstr "下一步，你需要在<filename moreinfo=\"none\">httpd.conf</filename>的<literal moreinfo=\"none\">Location</literal>区里添加一些指示来告诉Apache如何来使用这些密码文件，<literal moreinfo=\"none\">AuthType</literal>指示指定系统使用的认证类型，这种情况下，我们需要指定<literal moreinfo=\"none\">Basic</literal>认证系统，<literal moreinfo=\"none\">AuthName</literal>是你提供给认证域一个任意名称，大多数浏览器会在向用户询问名称和密码的弹出窗口里显示这个名称，最终，使用<literal moreinfo=\"none\">AuthUserFile</literal>指示来指定使用<command moreinfo=\"none\">htpasswd</command>创建的密码文件的位置。"
+
+#: build/en/book.xml:14083(para)
+msgid "After adding these three directives, your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block should look something like this:"
+msgstr "添加完这三个指示，你的<literal moreinfo=\"none\">&lt;Location&gt;</literal>区块一定像这个样子："
+
+#: build/en/book.xml:14087(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /etc/svn-auth-file\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /etc/svn-auth-file\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14097(para)
+msgid "This <literal moreinfo=\"none\">&lt;Location&gt;</literal> block is not yet complete, and will not do anything useful. It's merely telling Apache that whenever authorization is required, Apache should harvest a username and password from the Subversion client. What's missing here, however, are directives that tell Apache <emphasis>which</emphasis> sorts of client requests require authorization. Wherever authorization is required, Apache will demand authentication as well. The simplest thing to do is protect all requests. Adding <literal moreinfo=\"none\">Require valid-user</literal> tells Apache that all requests require an authenticated user:"
+msgstr "这个<literal moreinfo=\"none\">&lt;Location&gt;</literal>区块还没有结束，还不能做任何有用的事情，它只是告诉Apache当需要授权时，要去向Subversion客户端索要用户名和密码。我们这里遗漏的，是一些告诉Apache<emphasis>什么样</emphasis>客户端需要授权的指示。哪里需要授权，Apache就会在哪里要求认证，最简单的方式是保护所有的请求，添加<literal moreinfo=\"none\">Require valid-user</literal>来告诉Apache任何请求需要认证的用户："
+
+#: build/en/book.xml:14110(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /etc/svn-auth-file\n"
+"  Require valid-user\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /etc/svn-auth-file\n"
+"  Require valid-user\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14121(para)
+msgid "Be sure to read the next section (<xref linkend=\"svn.serverconfig.httpd.authz\"/>) for more detail on the <literal moreinfo=\"none\">Require</literal> directive and other ways to set authorization policies."
+msgstr "一定要阅读后面的部分（<xref linkend=\"svn.serverconfig.httpd.authz\"/>）来得到<literal moreinfo=\"none\">Require</literal>的细节，和授权政策的其他设置方法。"
+
+#: build/en/book.xml:14125(para)
+#, fuzzy
+msgid "One word of warning: HTTP Basic Auth passwords pass in very nearly plain-text over the network, and thus are extremely insecure. If you're worried about password snooping, it may be best to use some sort of SSL encryption, so that clients authenticate via <literal moreinfo=\"none\">https://</literal> instead of <literal moreinfo=\"none\">http://</literal>; at a bare minimum, you can configure Apache to use a self-signed server certificate. <placeholder-1/> Consult Apache's documentation (and OpenSSL documentation) about how to do that."
+msgstr "需要警惕：HTTP基本认证的密码是用明文传输，因此非常不可靠的，如果你担心密码偷窥，最好是使用某种SSL加密，所以客户端认证使用<literal moreinfo=\"none\">https://</literal>而不是<literal moreinfo=\"none\">http://</literal>，为了方便，你可以配置Apache为自签名认证。 <footnote><placeholder-1/></footnote> 参考Apache的文档（和OpenSSL文档）来查看怎样做。"
+
+#: build/en/book.xml:14134(para)
+msgid "While self-signed server certificates are still vulnerable to a <quote>man in the middle</quote> attack, such an attack is still much more difficult for a casual observer to pull off, compared to sniffing unprotected passwords."
+msgstr "当使用自签名的服务器时仍会遭受<quote>中间人</quote>攻击，但是与偷取未保护的密码相比，这样的攻击比一个偶然的获取要艰难许多。"
+
+#: build/en/book.xml:14148(title)
+msgid "SSL Certificate Management"
+msgstr "SSL证书管理"
+
+#: build/en/book.xml:1415(title)
+msgid "Subversion in Action"
+msgstr "Subversion实战"
+
+#: build/en/book.xml:14150(para)
+msgid "Businesses that need to expose their repositories for access outside the company firewall should be conscious of the possibility that unauthorized parties could be <quote>sniffing</quote> their network traffic. SSL makes that kind of unwanted attention less likely to result in sensitive data leaks."
+msgstr "商业应用需要越过公司防火墙的版本库访问，防火墙需要小心的考虑非认证用户<quote>吸取</quote>他们的网络流量的情况，SSL让那种形式的关注更不容易导致敏感数据泄露。"
+
+#: build/en/book.xml:14157(para)
+msgid "If a Subversion client is compiled to use OpenSSL, then it gains the ability to speak to an Apache server via <literal moreinfo=\"none\">https://</literal> URLs. The Neon library used by the Subversion client is not only able to verify server certificates, but can also supply client certificates when challenged. When the client and server have exchanged SSL certificates and successfully authenticated one another, all further communication is encrypted via a session key."
+msgstr "如果Subversion使用OpenSSL编译，它就会具备与Subversion服务器使用<literal moreinfo=\"none\">https://</literal>的URL通讯的能力，Subversion客户端使用的Neon库不仅仅可以用来验证服务器证书，也可以必要时提供客户端证书，如果客户端和服务器交换了SSL证书并且成功地互相认证，所有剩下的交流都会通过一个会话关键字加密。"
+
+#: build/en/book.xml:14166(para)
+msgid "It's beyond the scope of this book to describe how to generate client and server certificates, and how to configure Apache to use them. Many other books, including Apache's own documentation, describe this task. But what <emphasis>can</emphasis> be covered here is how to manage server and client certificates from an ordinary Subversion client."
+msgstr "怎样产生客户端和服务器端证书以及怎样使用它们已经超出了本书的范围，许多书籍，包括Apache自己的文档，描述这个任务，现在我们<emphasis>可以</emphasis>覆盖的是普通的客户端怎样来管理服务器与客户端证书。"
+
+#: build/en/book.xml:1417(para)
+msgid "It's time to move from the abstract to the concrete. In this section, we'll show real examples of Subversion being used."
+msgstr "是时候从抽象转到具体了，在本小节，我们会展示一个Subversion真实使用的例子。"
+
+#: build/en/book.xml:14174(para)
+msgid "When speaking to Apache via <literal moreinfo=\"none\">https://</literal>, a Subversion client can receive two different types of information:"
+msgstr "当通过<literal moreinfo=\"none\">https://</literal>与Apache通讯时，一个Subversion客户端可以接收两种类型的信息："
+
+#: build/en/book.xml:14179(para)
+msgid "a server certificate"
+msgstr "一个服务器证书"
+
+#: build/en/book.xml:14180(para)
+msgid "a demand for a client certificate"
+msgstr "一个客户端证书的要求"
+
+#: build/en/book.xml:14183(para)
+msgid "If the client receives a server certificate, it needs to verify that it trusts the certificate: is the server really who it claims to be? The OpenSSL library does this by examining the signer of the server certificate, or <firstterm>certifying authority</firstterm> (CA). If OpenSSL is unable to automatically trust the CA, or if some other problem occurs (such as an expired certificate or hostname mismatch), the Subversion command-line client will ask you whether you want to trust the server certificate anyway:"
+msgstr "如果客户端接收了一个服务器证书，它需要去验证它是可以相信的：这个服务器是它自称的那一个吗？OpenSSL库会去检验服务器证书的签名人或者是<firstterm>核证机构</firstterm>（CA）。如果OpenSSL不可以自动信任这个CA，或者是一些其他的问题（如证书过期或者是主机名不匹配），Subversion命令行客户端会询问你是否愿意仍然信任这个证书："
+
+#: build/en/book.xml:14194(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn list https://host.example.com/repos/project\n"
+"\n"
+"Error validating server certificate for 'https://host.example.com:443':\n"
+" - The certificate is not issued by a trusted authority. Use the\n"
+"   fingerprint to validate the certificate manually!\n"
+"Certificate information:\n"
+" - Hostname: host.example.com\n"
+" - Valid: from Jan 30 19:23:56 2004 GMT until Jan 30 19:23:56 2006 GMT\n"
+" - Issuer: CA, example.com, Sometown, California, US\n"
+" - Fingerprint: 7d:e1:a9:34:33:39:ba:6a:e9:a5:c4:22:98:7b:76:5c:92:a0:9c:7b\n"
+"\n"
+"(R)eject, accept (t)emporarily or accept (p)ermanently?\n"
+msgstr ""
+"\n"
+"$ svn list https://host.example.com/repos/project\n"
+"\n"
+"Error validating server certificate for 'https://host.example.com:443':\n"
+" - The certificate is not issued by a trusted authority. Use the\n"
+"   fingerprint to validate the certificate manually!\n"
+"Certificate information:\n"
+" - Hostname: host.example.com\n"
+" - Valid: from Jan 30 19:23:56 2004 GMT until Jan 30 19:23:56 2006 GMT\n"
+" - Issuer: CA, example.com, Sometown, California, US\n"
+" - Fingerprint: 7d:e1:a9:34:33:39:ba:6a:e9:a5:c4:22:98:7b:76:5c:92:a0:9c:7b\n"
+"\n"
+"(R)eject, accept (t)emporarily or accept (p)ermanently?\n"
+
+#: build/en/book.xml:14209(para)
+msgid "This dialogue should look familiar; it's essentially the same question you've probably seen coming from your web browser (which is just another HTTP client like Subversion!). If you choose the (p)ermanent option, the server certificate will be cached in your private run-time <filename moreinfo=\"none\">auth/</filename> area in just the same way your username and password are cached (see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>). If cached, Subversion will automatically remember to trust this certificate in future negotiations."
+msgstr "这个对话看起来很熟悉，这是你会在web浏览器（另一种HTTP客户端，就像Subversion）经常看到的问题，如果你选择(p)ermanent选项，服务器证书会存放在你存放那个用户名和密码缓存（见<xref linkend=\"svn.serverconfig.netmodel.credcache\"/>。）的私有运行区<filename moreinfo=\"none\">auth/</filename>中，缓存后，Subversion会自动记住在以后的交流中信任这个证书。"
+
+#: build/en/book.xml:14219(para)
+msgid "Your run-time <filename moreinfo=\"none\">servers</filename> file also gives you the ability to make your Subversion client automatically trust specific CAs, either globally or on a per-host basis. Simply set the <literal moreinfo=\"none\">ssl-authority-files</literal> variable to a semicolon-separated list of PEM-encoded CA certificates:"
+msgstr "你的运行中<filename moreinfo=\"none\">servers</filename>文件也会给你能力可以让Subversion客户端自动信任特定的CA，包括全局的或是每主机为基础的，只需要设置<literal moreinfo=\"none\">ssl-authority-files</literal>为一组逗号隔开的PEM加密的CA证书列表："
+
+#: build/en/book.xml:14226(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[global]\n"
+"ssl-authority-files = /path/to/CAcert1.pem;/path/to/CAcert2.pem\n"
+msgstr ""
+"\n"
+"[global]\n"
+"ssl-authority-files = /path/to/CAcert1.pem;/path/to/CAcert2.pem\n"
+
+#: build/en/book.xml:1423(title)
+msgid "Subversion Repository URLs"
+msgstr "Subversion版本库URL"
+
+#: build/en/book.xml:14231(para)
+msgid "Many OpenSSL installations also have a pre-defined set of <quote>default</quote> CAs that are nearly universally trusted. To make the Subversion client automatically trust these standard authorities, set the <literal moreinfo=\"none\">ssl-trust-default-ca</literal> variable to <literal moreinfo=\"none\">true</literal>."
+msgstr "许多OpenSSL安装包括一些预先定义好的可以普遍信任的<quote>缺省的</quote>CA，为了让Subversion客户端自动信任这些标准权威，设置<literal moreinfo=\"none\">ssl-trust-default-ca</literal>为<literal moreinfo=\"none\">true</literal>。"
+
+#: build/en/book.xml:14238(para)
+msgid "When talking to Apache, a Subversion client might also receive a challenge for a client certificate. Apache is asking the client to identify itself: is the client really who it says it is? If all goes correctly, the Subversion client sends back a private certificate signed by a CA that Apache trusts. A client certificate is usually stored on disk in encrypted format, protected by a local password. When Subversion receives this challenge, it will ask you for both a path to the certificate and the password which protects it:"
+msgstr "当与Apache通话时，Subversion客户端也会收到一个证书的要求，Apache是询问客户端来证明自己的身份：这个客户端是否是他所说的那一个？如果一切正常，Subversion客户端会发送回一个通过Apache信任的CA签名的私有证书，一个客户端证书通常会以加密方式存放在磁盘，使用本地密码保护，当Subversion收到这个要求，它会询问你证书的路径和保护用的密码："
+
+#: build/en/book.xml:14249(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn list https://host.example.com/repos/project\n"
+"\n"
+"Authentication realm: https://host.example.com:443\n"
+"Client certificate filename: /path/to/my/cert.p12\n"
+"Passphrase for '/path/to/my/cert.p12':  ********\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn list https://host.example.com/repos/project\n"
+"\n"
+"Authentication realm: https://host.example.com:443\n"
+"Client certificate filename: /path/to/my/cert.p12\n"
+"Passphrase for '/path/to/my/cert.p12':  ********\n"
+"…\n"
+
+#: build/en/book.xml:1425(para)
+#, fuzzy
+msgid "Throughout this book, Subversion uses URLs to identify versioned files and directories in Subversion repositories. For the most part, these URLs use the standard syntax, allowing for server names and port numbers to be specified as part of the URL:"
+msgstr "正如我们在整本书里描述的，Subversion使用URL来识别Subversion版本库中的版本化资源，通常情况下，这些URL使用标准的语法，允许服务器名称和端口作为URL的一部分："
+
+#: build/en/book.xml:14258(para)
+msgid "Notice that the client certificate is a <quote>p12</quote> file. To use a client certificate with Subversion, it must be in PKCS#12 format, which is a portable standard. Most web browsers are already able to import and export certificates in that format. Another option is to use the OpenSSL command-line tools to convert existing certificates into PKCS#12."
+msgstr "注意这个客户端证书是一个<quote>p12</quote>文件，为了让Subversion使用客户端证书，它必须是运输标准的PKCS#12格式，大多数浏览器可以导入和导出这种格式的证书，另一个选择是用OpenSSL命令行工具来转化存在的证书为PKCS#12格式。"
+
+#: build/en/book.xml:14266(para)
+msgid "Again, the runtime <filename moreinfo=\"none\">servers</filename> file allows you to automate this challenge on a per-host basis. Either or both pieces of information can be described in runtime variables:"
+msgstr "再次，运行中<filename moreinfo=\"none\">servers</filename>文件允许你为每个主机自动响应这种要求，单个或两条信息可以用运行参数来描述："
+
+#: build/en/book.xml:14271(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[groups]\n"
+"examplehost = host.example.com\n"
+"\n"
+"[examplehost]\n"
+"ssl-client-cert-file = /path/to/my/cert.p12\n"
+"ssl-client-cert-password = somepassword\n"
+msgstr ""
+"\n"
+"[groups]\n"
+"examplehost = host.example.com\n"
+"\n"
+"[examplehost]\n"
+"ssl-client-cert-file = /path/to/my/cert.p12\n"
+"ssl-client-cert-password = somepassword\n"
+
+#: build/en/book.xml:14280(para)
+#, fuzzy
+msgid "Once you've set the <literal moreinfo=\"none\">ssl-client-cert-file</literal> and <literal moreinfo=\"none\">ssl-client-cert-password</literal> variables, the Subversion client can automatically respond to a client certificate challenge without prompting you. <placeholder-1/>"
+msgstr "一旦你设置了<literal moreinfo=\"none\">ssl-client-cert-file</literal>和 <literal moreinfo=\"none\">ssl-client-cert-password</literal>参数，Subversion客户端可以自动响应客户端证书请求而不会打扰你。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:14286(para)
+msgid "More security-conscious folk might not want to store the client certificate password in the runtime <filename moreinfo=\"none\">servers</filename> file."
+msgstr "更多有安全意识的人不会希望在运行中<filename moreinfo=\"none\">servers</filename>文件保存客户端证书密码。"
+
+#: build/en/book.xml:14298(title)
+msgid "Authorization Options"
+msgstr "授权选项"
+
+#: build/en/book.xml:14300(para)
+msgid "At this point, you've configured authentication, but not authorization. Apache is able to challenge clients and confirm identities, but it has not been told how to allow or restrict access to the clients bearing those identities. This section describes two strategies for controlling access to your repositories."
+msgstr "此刻，你已经配置了认证，但是没有配置授权，Apache可以要求用户认证并且确定身份，但是并没有说明这个身份的怎样允许和限制，这个部分描述了两种控制访问版本库的策略。"
+
+#: build/en/book.xml:14309(title)
+msgid "Blanket Access Control"
+msgstr "整体访问控制"
+
+#: build/en/book.xml:1431(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://svn.example.com:9834/repos\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn checkout http://svn.example.com:9834/repos\n"
+"…\n"
+
+#: build/en/book.xml:14311(para)
+msgid "The simplest form of access control is to authorize certain users for either read-only access to a repository, or read/write access to a repository."
+msgstr "最简单的访问控制形式是授权特定用户为只读版本库访问或者是读/写访问版本库。"
+
+#: build/en/book.xml:14315(para)
+msgid "You can restrict access on all repository operations by adding the <literal moreinfo=\"none\">Require valid-user</literal> directive to your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block. Using our previous example, this would mean that only clients that claimed to be either <literal moreinfo=\"none\">harry</literal> or <literal moreinfo=\"none\">sally</literal>, and provided the correct password for their respective username, would be allowed to do anything with the Subversion repository:"
+msgstr "你可以通过在<literal moreinfo=\"none\">&lt;Location&gt;</literal>区块添加<literal moreinfo=\"none\">Require valid-user</literal>指示来限制所有的版本库操作，使用我们前面的例子，这意味着只有客户端只可以是<literal moreinfo=\"none\">harry</literal>或者<literal moreinfo=\"none\">sally</literal>，而且他们必须提供正确的用户名及对应密码，这样允许对Subversion版本库做任何事："
+
+#: build/en/book.xml:14324(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"\n"
+"  # only authenticated users may access the repository\n"
+"  Require valid-user\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"\n"
+"  # only authenticated users may access the repository\n"
+"  
