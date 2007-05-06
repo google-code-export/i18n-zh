@@ -20702,4 +20702,1123 @@ msgid "Branching, tagging, and merging are concepts common to almost all version
 msgstr "分支、标签和合并是所有版本控制系统的共同概念，如果你并不熟悉这些概念，我们会在这一章里很好的介绍，如果你很熟悉，非常希望你有兴趣知道Subversion是怎样实现这些概念的。"
 
 #: build/en/book.xml:7143(para)
-msgid "Branching is a fundamental part of version control. If you're going to allow Subversion to manage your data, then this is a feature you'll eventually come to depend on. This chapter assumes
+msgid "Branching is a fundamental part of version control. If you're going to allow Subversion to manage your data, then this is a feature you'll eventually come to depend on. This chapter assumes that you're already familiar with Subversion's basic concepts (<xref linkend=\"svn.basic\"/>)."
+msgstr "分支是版本控制的基础组成部分，如果你允许Subversion来管理你的数据，这个特性将是你所必须依赖的 ，这一章假定你已经熟悉了Subversion的基本概念（<xref linkend=\"svn.basic\"/>）。"
+
+#: build/en/book.xml:7154(title)
+msgid "What's a Branch?"
+msgstr "什么是分支？"
+
+#: build/en/book.xml:7156(para)
+msgid "Suppose it's your job to maintain a document for a division in your company, a handbook of some sort. One day a different division asks you for the same handbook, but with a few parts <quote>tweaked</quote> for them, since they do things slightly differently."
+msgstr "假设你的工作是维护本公司一个部门的手册文档，一天，另一个部门问你要相同的手册，但一些地方会有<quote>区别</quote>，因为他们有不同的需要。"
+
+#: build/en/book.xml:7162(para)
+msgid "What do you do in this situation? You do the obvious thing: you make a second copy of your document, and begin maintaining the two copies separately. As each department asks you to make small changes, you incorporate them into one copy or the other."
+msgstr "这种情况下你会怎样做？显而易见的方法是：作一个版本的拷贝，然后分别维护两个版本，只要任何一个部门告诉要做一些小修改，你必须选择在对应的版本进行更改。"
+
+#: build/en/book.xml:7168(para)
+msgid "You often want to make the same change to both copies. For example, if you discover a typo in the first copy, it's very likely that the same typo exists in the second copy. The two documents are almost the same, after all; they only differ in small, specific ways."
+msgstr "你也许希望在两个版本同时作修改，举个例子，你在第一个版本发现了一个拼写错误，很显然这个错误也会出现在第二个版本里。两份文档几乎相同，毕竟，只有许多特定的微小区别。"
+
+#: build/en/book.xml:717(para)
+msgid "Lastly, thanks to my Grandfather who always told me that <quote>freedom equals responsibility.</quote> I couldn't agree more."
+msgstr "最后，感谢我的祖父，他一直跟我说<quote>自由等于责任</quote>，我深信不疑。"
+
+#: build/en/book.xml:7174(para)
+msgid "This is the basic concept of a <firstterm>branch</firstterm>—namely, a line of development that exists independently of another line, yet still shares a common history if you look far enough back in time. A branch always begins life as a copy of something, and moves on from there, generating its own history (see <xref linkend=\"svn.branchmerge.whatis.dia-1\"/>)."
+msgstr "这是<firstterm>分支</firstterm>的基本概念—正如它的名字，开发的一条线独立于另一条线，如果回顾历史，可以发现两条线分享共同的历史，一个分支总是从一个备份开始的，从那里开始，发展自己独有的历史（见 <xref linkend=\"svn.branchmerge.whatis.dia-1\"/>）。"
+
+#: build/en/book.xml:7182(title)
+msgid "Branches of development"
+msgstr "分支开发"
+
+#: build/en/book.xml:7186(para)
+msgid "Subversion has commands to help you maintain parallel branches of your files and directories. It allows you to create branches by copying your data, and remembers that the copies are related to one another. It also helps you duplicate changes from one branch to another. Finally, it can make portions of your working copy reflect different branches, so that you can <quote>mix and match</quote> different lines of development in your daily work."
+msgstr "Subversion允许你并行的维护文件和目录的分支，它允许你通过拷贝数据建立分支，记住，分支互相联系，它也帮助你从一个分支复制修改到另一个分支。最终，它可以让你的工作拷贝反映到不同的分支上，所以你在日常工作可以<quote>混合和比较</quote>不同的开发线。"
+
+#: build/en/book.xml:7201(title)
+msgid "Using Branches"
+msgstr "使用分支"
+
+#: build/en/book.xml:7203(para)
+msgid "At this point, you should understand how each commit creates an entire new filesystem tree (called a <quote>revision</quote>) in the repository. If not, go back and read about revisions in <xref linkend=\"svn.basic.in-action.revs\"/>."
+msgstr "在这一点上，你必须理解每一次提交是怎样建立整个新的文件系统树（叫做<quote>修订版本</quote>）的，如果没有，可以回头去读<xref linkend=\"svn.basic.in-action.revs\"/>。"
+
+#: build/en/book.xml:7208(para)
+msgid "For this chapter, we'll go back to the same example from <xref linkend=\"svn.basic\"/>. Remember that you and your collaborator, Sally, are sharing a repository that contains two projects, <filename moreinfo=\"none\">paint</filename> and <filename moreinfo=\"none\">calc</filename>. Notice that in <xref linkend=\"svn.branchmerge.using.dia-1\"/>, however, each project directory now contains subdirectories named <filename moreinfo=\"none\">trunk</filename> and <filename moreinfo=\"none\">branches</filename>. The reason for this will soon become clear."
+msgstr "对于本章节，我们会回到第2章的同一个例子，还记得你和你的合作者Sally分享一个包含两个项目的版本库，<filename moreinfo=\"none\">paint</filename>和<filename moreinfo=\"none\">calc</filename>。注意<xref linkend=\"svn.branchmerge.using.dia-1\"/>，然而，现在每个项目的都有一个<filename moreinfo=\"none\">trunk</filename>和<filename moreinfo=\"none\">branches</filename>子目录，它们存在的理由很快就会清晰起来。"
+
+#: build/en/book.xml:7218(title)
+msgid "Starting repository layout"
+msgstr "开始规划版本库"
+
+#: build/en/book.xml:7222(para)
+msgid "As before, assume that Sally and you both have working copies of the <quote>calc</quote> project. Specifically, you each have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename>. All the files for the project are in this subdirectory rather than in <filename moreinfo=\"none\">/calc</filename> itself, because your team has decided that <filename moreinfo=\"none\">/calc/trunk</filename> is where the <quote>main line</quote> of development is going to take place."
+msgstr "像以前一样，假定Sally和你都有<quote>calc</quote>项目的一份拷贝，更准确地说，你有一份<filename moreinfo=\"none\">/calc/trunk</filename>的工作拷贝，这个项目的所有的文件在这个子目录里，而不是在<filename moreinfo=\"none\">/calc</filename>下，因为你的小组决定使用<filename moreinfo=\"none\">/calc/trunk</filename>作为开发使用的<quote>主线</quote>。"
+
+#: build/en/book.xml:7231(para)
+msgid "Let's say that you've been given the task of performing a radical reorganization of the project. It will take a long time to write, and will affect all the files in the project. The problem here is that you don't want to interfere with Sally, who is in the process of fixing small bugs here and there. She's depending on the fact that the latest version of the project (in <filename moreinfo=\"none\">/calc/trunk</filename>) is always usable. If you start committing your changes bit-by-bit, you'll surely break things for Sally."
+msgstr "假定你有一个任务，将要对项目做基本的重新组织，这需要花费大量时间来完成，会影响项目的所有文件，问题是你不会希望打扰Sally，她正在处理这样或那样的程序小Bug，一直使用整个项目（<filename moreinfo=\"none\">/calc/trunk</filename>）的最新版本，如果你一点一点的提交你的修改，你一定会干扰Sally的工作。"
+
+#: build/en/book.xml:7241(para)
+msgid "One strategy is to crawl into a hole: you and Sally can stop sharing information for a week or two. That is, start gutting and reorganizing all the files in your working copy, but don't commit or update until you're completely finished with the task. There are a number of problems with this, though. First, it's not very safe. Most people like to save their work to the repository frequently, should something bad accidentally happen to their working copy. Second, it's not very flexible. If you do your work on different computers (perhaps you have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename> on two different machines), you'll need to manually copy your changes back and forth, or just do all the work on a single computer. By that same token, it's difficult to share your changes-in-progress with anyone else. A common software development <quote>best practice</quote> is to allow your peers to review your work as you go. If nobody sees your intermediate commits, you lose potential feedback. Finally, when you're finished with all your changes, you might find it very difficult to re-merge your final work with the rest of the company's main body of code. Sally (or others) may have made many other changes in the repository that are difficult to incorporate into your working copy—especially if you run <command moreinfo=\"none\">svn update</command> after weeks of isolation."
+msgstr "一种策略是自己闭门造车：你和Sally可以停止一个到两个星期的共享，也就是说，开始作出本质上的修改和重新组织工作拷贝的文件，但是在完成这个任务之前不做提交和更新。这样会有很多问题，首先，这样并不安全，许多人习惯频繁的保存修改到版本库，工作拷贝一定有许多意外的修改。第二，这样并不灵活，如果你的工作在不同的计算机（或许你在不同的机器有两份<filename moreinfo=\"none\">/calc/trunk</filename>的工作拷贝），你需要手工的来回拷贝修改，或者只在一个计算机上工作，这时很难做到共享你即时的修改，一项软件开发的<quote>最佳实践</quote>就是允许审核你做过的工作，如果没有人看到你的提交，你失去了潜在的反馈。最后，当你完成了公司主干代码的修改工作，你会发现合并你的工作拷贝和公司的主干代码会是一件非常困难的事情，Sally（或者其他人）也许已经对版本库做了许多修改，已经很难和你的工作拷贝结合—当你单独工作几周后运行<command moreinfo=\"none\">svn update</command>时就会发现这一点。"
+
+#: build/en/book.xml:725(title)
+msgid "From C. Michael Pilato"
+msgstr "来自C. Michael Pilato"
+
+#: build/en/book.xml:7265(para)
+msgid "The better solution is to create your own branch, or line of development, in the repository. This allows you to save your half-broken work frequently without interfering with others, yet you can still selectively share information with your collaborators. You'll see exactly how this works later on."
+msgstr "最佳方案是创建你自己的分支，或者是版本库的开发线。这允许你保存破坏了一半的工作而不打扰别人，尽管你仍可以选择性的同你的合作者分享信息，你将会看到这是怎样工作的。"
+
+#: build/en/book.xml:727(para)
+msgid "Special thanks to Amy, my best friend and wife of nine incredible years, for her love and patient support, for putting up with the late nights, and for graciously enduring the version control processes I've imposed on her. Don't worry, Sweetheart—you'll be a TortoiseSVN wizard in no time!"
+msgstr ""
+
+#: build/en/book.xml:7274(title)
+msgid "Creating a Branch"
+msgstr "创建分支"
+
+#: build/en/book.xml:7276(para)
+msgid "Creating a branch is very simple—you make a copy of the project in the repository using the <command moreinfo=\"none\">svn copy</command> command. Subversion is not only able to copy single files, but whole directories as well. In this case, you want to make a copy of the <filename moreinfo=\"none\">/calc/trunk</filename> directory. Where should the new copy live? Wherever you wish—it's a matter of project policy. Let's say that your team has a policy of creating branches in the <filename moreinfo=\"none\">/calc/branches</filename> area of the repository, and you want to name your branch <literal moreinfo=\"none\">my-calc-branch</literal>. You'll want to create a new directory, <filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename>, which begins its life as a copy of <filename moreinfo=\"none\">/calc/trunk</filename>."
+msgstr "建立分支非常的简单—使用<command moreinfo=\"none\">svn copy</command>命令给你的工程做个拷贝，Subversion不仅可以拷贝单个文件，也可以拷贝整个目录，在目前情况下，你希望作<filename moreinfo=\"none\">/calc/trunk</filename>的拷贝，新的拷贝应该在哪里？在你希望的任何地方—它只是在于项目的政策，我们假设你们项目的政策是在<filename moreinfo=\"none\">/calc/branches</filename>建立分支，并且你希望把你的分支叫做<literal moreinfo=\"none\">my-calc-branch</literal>，你希望建立一个新的目录<filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename>，作为/calc/trunk的拷贝开始它的生命周期。"
+
+#: build/en/book.xml:7292(para)
+msgid "There are two different ways to make a copy. We'll demonstrate the messy way first, just to make the concept clear. To begin, check out a working copy of the project's root directory, <filename moreinfo=\"none\">/calc</filename>:"
+msgstr "有两个方法作拷贝，我们首先介绍一个混乱的方法，只是让概念更清楚，作为开始，取出一个工程的根目录，<filename moreinfo=\"none\">/calc</filename>："
+
+#: build/en/book.xml:7297(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc bigwc\n"
+"A  bigwc/trunk/\n"
+"A  bigwc/trunk/Makefile\n"
+"A  bigwc/trunk/integer.c\n"
+"A  bigwc/trunk/button.c\n"
+"A  bigwc/branches/\n"
+"Checked out revision 340.\n"
+msgstr ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc bigwc\n"
+"A  bigwc/trunk/\n"
+"A  bigwc/trunk/Makefile\n"
+"A  bigwc/trunk/integer.c\n"
+"A  bigwc/trunk/button.c\n"
+"A  bigwc/branches/\n"
+"Checked out revision 340.\n"
+
+#: build/en/book.xml:7307(para)
+msgid "Making a copy is now simply a matter of passing two working-copy paths to the <command moreinfo=\"none\">svn copy</command> command:"
+msgstr "建立一个备份只是传递两个目录参数到<command moreinfo=\"none\">svn copy</command>命令："
+
+#: build/en/book.xml:7311(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd bigwc\n"
+"$ svn copy trunk branches/my-calc-branch\n"
+"$ svn status\n"
+"A  +   branches/my-calc-branch\n"
+msgstr ""
+"\n"
+"$ cd bigwc\n"
+"$ svn copy trunk branches/my-calc-branch\n"
+"$ svn status\n"
+"A  +   branches/my-calc-branch\n"
+
+#: build/en/book.xml:7318(para)
+msgid "In this case, the <command moreinfo=\"none\">svn copy</command> command recursively copies the <filename moreinfo=\"none\">trunk</filename> working directory to a new working directory, <filename moreinfo=\"none\">branches/my-calc-branch</filename>. As you can see from the <command moreinfo=\"none\">svn status</command> command, the new directory is now scheduled for addition to the repository. But also notice the <quote>+</quote> sign next to the letter A. This indicates that the scheduled addition is a <emphasis>copy</emphasis> of something, not something new. When you commit your changes, Subversion will create <filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename> in the repository by copying <filename moreinfo=\"none\">/calc/trunk</filename>, rather than resending all of the working copy data over the network:"
+msgstr "在这个情况下，<command moreinfo=\"none\">svn copy</command>命令迭代的将<filename moreinfo=\"none\">trunk</filename>工作目录拷贝到一个新的目录branhes/my-calc-branch，像你从<command moreinfo=\"none\">svn status</command>看到的，新的目录是准备添加到版本库的，但是也要注意A后面的<quote>+</quote>号，这表明这个准备添加的东西是一份<emphasis>备份</emphasis>，而不是新的东西。当你提交修改，Subversion会通过拷贝<filename moreinfo=\"none\">/calc/trunk</filename>建立<filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename>目录，而不是通过网络传递所有数据："
+
+#: build/en/book.xml:7333(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -m \"Creating a private branch of /calc/trunk.\"\n"
+"Adding         branches/my-calc-branch\n"
+"Committed revision 341.\n"
+msgstr ""
+"\n"
+"$ svn commit -m \"Creating a private branch of /calc/trunk.\"\n"
+"Adding         branches/my-calc-branch\n"
+"Committed revision 341.\n"
+
+#: build/en/book.xml:7339(para)
+#, fuzzy
+msgid "And now here's the easier method of creating a branch, which we should have told you about in the first place: <command moreinfo=\"none\">svn copy</command> is able to operate directly on two URLs."
+msgstr "现在，我们必须告诉你建立分支最简单的方法：<command moreinfo=\"none\">svn copy</command>可以直接对两个URL操作。"
+
+#: build/en/book.xml:734(para)
+msgid "Gavin, there probably aren't many words in this book that you can successfully <quote>sound out</quote> at this stage, but when you've finally got a handle on the written form of this crazy language we speak, I hope you're as proud of your Daddy as he is of you."
+msgstr ""
+
+#: build/en/book.xml:7344(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"           http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"      -m \"Creating a private branch of /calc/trunk.\"\n"
+"\n"
+"Committed revision 341.\n"
+msgstr ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"           http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"      -m \"Creating a private branch of /calc/trunk.\"\n"
+"\n"
+"Committed revision 341.\n"
+
+#: build/en/book.xml:7352(para)
+#, fuzzy
+msgid "There's really no difference between these two methods. Both procedures create a new directory in revision 341, and the new directory is a copy of <filename moreinfo=\"none\">/calc/trunk</filename>. This is shown in <xref linkend=\"svn.branchmerge.using.create.dia-1\"/>. Notice that the second method, however, performs an <emphasis>immediate</emphasis> commit. <placeholder-1/> It's an easier procedure, because it doesn't require you to check out a large portion of the repository. In fact, this technique doesn't even require you to have a working copy at all. This is the way most users create branches."
+msgstr "其实这两种方法没有什么区别，两个过程都在版本341建立了一个新目录作为<filename moreinfo=\"none\">/calc/trunk</filename>的一个备份，这些可以在<xref linkend=\"svn.branchmerge.using.create.dia-1\"/>看到，注意第二种方法，只是执行了一个<emphasis>立即</emphasis>提交。 <footnote><placeholder-1/></footnote>这是一个简单的过程，因为你不需要取出版本库一个庞大的镜像，事实上，这个技术不需要你有工作拷贝。"
+
+#: build/en/book.xml:7360(para)
+#, fuzzy
+msgid "Subversion does not support copying between different repositories. When using URLs with <command moreinfo=\"none\">svn copy</command> or <command moreinfo=\"none\">svn move</command>, you can only copy items within the same repository."
+msgstr "Subversion不支持跨版本库的拷贝，当使用<command moreinfo=\"none\">svn copy</command>或者<command moreinfo=\"none\">svn move</command>直接操作URL时你只能在同一个版本库内操作。"
+
+#: build/en/book.xml:7371(title)
+msgid "Repository with new copy"
+msgstr "拷贝后的版本库"
+
+#: build/en/book.xml:7376(title)
+msgid "Cheap Copies"
+msgstr "代价低廉的拷贝"
+
+#: build/en/book.xml:7378(para)
+#, fuzzy
+msgid "Subversion's repository has a special design. When you copy a directory, you don't need to worry about the repository growing huge—Subversion doesn't actually duplicate any data. Instead, it creates a new directory entry that points to an <emphasis>existing</emphasis> tree. If you're a Unix user, this is the same concept as a hard-link. As further changes are made to files and directories beneath the copied directory, Subversion continues to employ this hard-link concept where it can. It only duplicates data when it is necessary to disambiguate different versions of objects."
+msgstr "Subversion的版本库有特殊的设计，当你复制一个目录，你不需要担心版本库会变得十分巨大—Subversion并不是拷贝所有的数据，相反，它建立了一个<emphasis>已存在</emphasis>目录树的入口，如果你是Unix用户，可以把它理解成硬链接，在这里，这个拷贝被可以被认为是<quote>懒的</quote>，如果你提交一个文件的修改，只有这个文件改变了—余下的文件还是作为原来文件的链接存在。"
+
+#: build/en/book.xml:7390(para)
+msgid "This is why you'll often hear Subversion users talk about <quote>cheap copies</quote>. It doesn't matter how large the directory is—it takes a very tiny, constant amount of time to make a copy of it. In fact, this feature is the basis of how commits work in Subversion: each revision is a <quote>cheap copy</quote> of the previous revision, with a few items lazily changed within. (To read more about this, visit Subversion's website and read about the <quote>bubble up</quote> method in Subversion's design documents.)"
+msgstr "这就是为什么经常听到Subversion用户谈论<quote>廉价的拷贝</quote>，与目录的大小无关—这个操作会使用很少的时间，事实上，这个特性是Subversion提交工作的基础：每一次版本都是前一个版本的一个<quote>廉价的拷贝</quote>，只有少数项目修改了。（要阅读更多关于这部分的内容，访问Subversion网站并且阅读设计文档中的<quote>bubble up</quote>方法）。"
+
+#: build/en/book.xml:74(firstname)
+msgid "Karl"
+msgstr "Karl"
+
+#: build/en/book.xml:740(para)
+msgid "Aidan, Daddy luffoo et ope Aiduh yike contootoo as much as Aiduh yike batetball, base-ball, et bootball. <placeholder-1/>"
+msgstr ""
+
+#: build/en/book.xml:7401(para)
+#, fuzzy
+msgid "Of course, these internal mechanics of copying and sharing data are hidden from the user, who simply sees copies of trees. The main point here is that copies are cheap, both in time and space. If you create a branch entirely within the repository (by running <command moreinfo=\"none\">svn copy URL1 URL2</command>), it's a quick, constant-time operation. Make branches as often as you want."
+msgstr "当然，拷贝与分享的内部机制对用户来讲是不可见的，用户只是看到拷贝树，这里的要点是拷贝的时间与空间代价很小，所以你可以随意做想要的分支。"
+
+#: build/en/book.xml:7414(title)
+msgid "Working with Your Branch"
+msgstr "在分支上工作"
+
+#: build/en/book.xml:7416(para)
+msgid "Now that you've created a branch of the project, you can check out a new working copy to start using it:"
+msgstr "现在你已经在项目里建立分支了，你可以取出一个新的工作拷贝来开始使用："
+
+#: build/en/book.xml:7419(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"A  my-calc-branch/Makefile\n"
+"A  my-calc-branch/integer.c\n"
+"A  my-calc-branch/button.c\n"
+"Checked out revision 341.\n"
+msgstr ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"A  my-calc-branch/Makefile\n"
+"A  my-calc-branch/integer.c\n"
+"A  my-calc-branch/button.c\n"
+"Checked out revision 341.\n"
+
+#: build/en/book.xml:7427(para)
+msgid "There's nothing special about this working copy; it simply mirrors a different directory in the repository. When you commit changes, however, Sally won't ever see them when she updates. Her working copy is of <filename moreinfo=\"none\">/calc/trunk</filename>. (Be sure to read <xref linkend=\"svn.branchmerge.switchwc\"/> later in this chapter: the <command moreinfo=\"none\">svn switch</command> command is an alternate way of creating a working copy of a branch.)"
+msgstr "这一份工作拷贝没有什么特别的，它只是版本库另一个目录的一个镜像罢了，当你提交修改时，Sally在更新时不会看到改变，她是<filename moreinfo=\"none\">/calc/trunk</filename>的工作拷贝。（确定要读本章后面的<xref linkend=\"svn.branchmerge.switchwc\"/>，<command moreinfo=\"none\">svn switch</command>命令是建立分支工作拷贝的另一个选择。）"
+
+#: build/en/book.xml:743(para)
+msgid "Translation: Daddy loves you and hopes you like computers as much as you like basketball, baseball, and football. (Wasn't that obvious?)"
+msgstr ""
+
+#: build/en/book.xml:7435(para)
+msgid "Let's pretend that a week goes by, and the following commits happen:"
+msgstr "我们假定本周就要过去了，如下的提交发生："
+
+#: build/en/book.xml:7439(para)
+msgid "You make a change to <filename moreinfo=\"none\">/calc/branches/my-calc-branch/button.c</filename>, which creates revision 342."
+msgstr "你修改了<filename moreinfo=\"none\">/calc/branches/my-calc-branch/button.c</filename>，生成版本号342。"
+
+#: build/en/book.xml:7445(para)
+msgid "You make a change to <filename moreinfo=\"none\">/calc/branches/my-calc-branch/integer.c</filename>, which creates revision 343."
+msgstr "你修改了<filename moreinfo=\"none\">/calc/branches/my-calc-branch/integer.c</filename>，生成版本号343。"
+
+#: build/en/book.xml:7451(para)
+msgid "Sally makes a change to <filename moreinfo=\"none\">/calc/trunk/integer.c</filename>, which creates revision 344."
+msgstr "Sally修改了<filename moreinfo=\"none\">/calc/trunk/integer.c</filename>，生成了版本号344。"
+
+#: build/en/book.xml:7458(para)
+msgid "There are now two independent lines of development, shown in <xref linkend=\"svn.branchmerge.using.work.dia-1\"/>, happening on <filename moreinfo=\"none\">integer.c</filename>."
+msgstr "现在有两个独立开发线，<xref linkend=\"svn.branchmerge.using.work.dia-1\"/>显示了<filename moreinfo=\"none\">integer.c</filename>的历史。"
+
+#: build/en/book.xml:7463(title)
+msgid "The branching of one file's history"
+msgstr "一个文件的分支历史"
+
+#: build/en/book.xml:7467(para)
+msgid "Things get interesting when you look at the history of changes made to your copy of <filename moreinfo=\"none\">integer.c</filename>:"
+msgstr "当你看到<filename moreinfo=\"none\">integer.c</filename>的改变时，你会发现很有趣："
+
+#: build/en/book.xml:7471(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ pwd\n"
+"/home/user/my-calc-branch\n"
+"\n"
+"$ svn log -v integer.c\n"
+"------------------------------------------------------------------------\n"
+"r343 | user | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/branches/my-calc-branch/integer.c\n"
+"\n"
+"* integer.c:  frozzled the wazjub.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n"
+"\n"
+"Creating a private branch of /calc/trunk.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  changed a docstring.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  adding this file to the project.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+msgstr ""
+"\n"
+"$ pwd\n"
+"/home/user/my-calc-branch\n"
+"\n"
+"$ svn log -v integer.c\n"
+"------------------------------------------------------------------------\n"
+"r343 | user | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/branches/my-calc-branch/integer.c\n"
+"\n"
+"* integer.c:  frozzled the wazjub.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n"
+"\n"
+"Creating a private branch of /calc/trunk.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  changed a docstring.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  adding this file to the project.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+
+#: build/en/book.xml:749(para)
+msgid "Mom and Dad, thanks for your constant support and enthusiasm. Mom- and Dad-in-law, thanks for all of the same <emphasis>plus</emphasis> your fabulous daughter."
+msgstr ""
+
+#: build/en/book.xml:75(surname)
+msgid "Fogel"
+msgstr "Fogel"
+
+#: build/en/book.xml:7507(para)
+msgid "Notice that Subversion is tracing the history of your branch's <filename moreinfo=\"none\">integer.c</filename> all the way back through time, even traversing the point where it was copied. It shows the creation of the branch as an event in the history, because <filename moreinfo=\"none\">integer.c</filename> was implicitly copied when all of <filename moreinfo=\"none\">/calc/trunk/</filename> was copied. Now look what happens when Sally runs the same command on her copy of the file:"
+msgstr "注意，Subversion追踪分支上的<filename moreinfo=\"none\">integer.c</filename>的历史，包括所有的操作，甚至追踪到拷贝之前。这表示了建立分支也是历史中的一次事件，因为在拷贝整个<filename moreinfo=\"none\">/calc/trunk/</filename>时已经拷贝了一份<filename moreinfo=\"none\">integer.c</filename>。现在看Sally在她的工作拷贝运行同样的命令："
+
+#: build/en/book.xml:7516(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ pwd\n"
+"/home/sally/calc\n"
+"\n"
+"$ svn log -v integer.c\n"
+"------------------------------------------------------------------------\n"
+"r344 | sally | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  fix a bunch of spelling errors.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  changed a docstring.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  adding this file to the project.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+msgstr ""
+"\n"
+"$ pwd\n"
+"/home/sally/calc\n"
+"\n"
+"$ svn log -v integer.c\n"
+"------------------------------------------------------------------------\n"
+"r344 | sally | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  fix a bunch of spelling errors.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  changed a docstring.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+"r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\n"
+"Changed paths:\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"* integer.c:  adding this file to the project.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+
+#: build/en/book.xml:753(para)
+msgid "Hats off to Shep Kendall, through whom the world of computers was first opened to me; Ben Collins-Sussman, my tour-guide through the open-source world; Karl Fogel—you <emphasis>are</emphasis> my <filename moreinfo=\"none\">.emacs</filename>; Greg Stein, for oozing practical programming know-how; Brian Fitzpatrick—for sharing this writing experience with me. To the many folks from whom I am constantly picking up new knowledge—keep dropping it!"
+msgstr "向你们致敬，Shep Kendall，为我打开了通向计算机世界的大门；Ben Collins Sussman，我在开源世界的导师；Karl Fogel—你<emphasis>是</emphasis>我的<filename moreinfo=\"none\">.emacs</filename>；Greg Stain，让我在困境中知道怎样编程；Brain Fitzpatrick—同我分享他的写作经验。所有我曾经从你们那里获得知识的人—尽管又不断忘记。"
+
+#: build/en/book.xml:7545(para)
+msgid "Sally sees her own revision 344 change, but not the change you made in revision 343. As far as Subversion is concerned, these two commits affected different files in different repository locations. However, Subversion <emphasis>does</emphasis> show that the two files share a common history. Before the branch-copy was made in revision 341, they used to be the same file. That's why you and Sally both see the changes made in revisions 303 and 98."
+msgstr "sally看到她自己的344修订，你做的343修改她看不到，从Subversion看来，两次提交只是影响版本库中不同位置上的两个文件。然而，Subversion<emphasis>显示</emphasis>了两个文件有共同的历史，在分支拷贝之前，他们使用同一个文件，所以你和Sally都看到版本号303到98的修改。"
+
+#: build/en/book.xml:7558(title)
+msgid "The Key Concepts Behind Branches"
+msgstr "分支背后的关键概念"
+
+#: build/en/book.xml:7560(para)
+#, fuzzy
+msgid "There are two important lessons that you should remember from this section. First, Subversion has no internal concept of a branch—it only knows how to make copies. When you copy a directory, the resulting directory is only a <quote>branch</quote> because <emphasis>you</emphasis> attach that meaning to it. You may think of the directory differently, or treat it differently, but to Subversion it's just an ordinary directory that happens to carry some extra historical information. Second, because of this copy mechanism, Subversion's branches exist as <emphasis>normal filesystem directories</emphasis> in the repository. This is different from other version control systems, where branches are typically defined by adding extra-dimensional <quote>labels</quote> to collections of files."
+msgstr "Subversion并没有内在的分支概念—只有拷贝，当你拷贝一个目录，这个结果目录就是一个<quote>分支</quote>，只是因为你给了它这样一个含义而已。你可以换一种角度考虑，或者特别处理，但是对于Subversion它只是一个普通的拷贝的结果。"
+
+#: build/en/book.xml:7584(title)
+msgid "Copying Changes Between Branches"
+msgstr "在分支间拷贝修改"
+
+#: build/en/book.xml:7586(para)
+msgid "Now you and Sally are working on parallel branches of the project: you're working on a private branch, and Sally is working on the <firstterm>trunk</firstterm>, or main line of development."
+msgstr "现在你与Sally在同一个项目的并行分支上工作：你在私有分支上，而Sally在主干（<firstterm>trunk</firstterm>）或者叫做开发主线上。"
+
+#: build/en/book.xml:7591(para)
+msgid "For projects that have a large number of contributors, it's common for most people to have working copies of the trunk. Whenever someone needs to make a long-running change that is likely to disrupt the trunk, a standard procedure is to create a private branch and commit changes there until all the work is complete."
+msgstr "由于有众多的人参与项目，大多数人拥有主干拷贝是很正常的，任何人如果进行一个长周期的修改会使得主干陷入混乱，所以通常的做法是建立一个私有分支，提交修改到自己的分支，直到这阶段工作结束。"
+
+#: build/en/book.xml:7598(para)
+msgid "So, the good news is that you and Sally aren't interfering with each other. The bad news is that it's very easy to drift <emphasis>too</emphasis> far apart. Remember that one of the problems with the <quote>crawl in a hole</quote> strategy is that by the time you're finished with your branch, it may be near-impossible to merge your changes back into the trunk without a huge number of conflicts."
+msgstr "所以，好消息就是你和Sally不会互相打扰，坏消息是有时候分离会<emphasis>太</emphasis>远。记住<quote>闭门造车</quote>策略的问题，当你完成你的分支后，可能因为太多冲突，已经无法轻易合并你的分支和主干的修改。"
+
+#: build/en/book.xml:7606(para)
+msgid "Instead, you and Sally might continue to share changes as you work. It's up to you to decide which changes are worth sharing; Subversion gives you the ability to selectively <quote>copy</quote> changes between branches. And when you're completely finished with your branch, your entire set of branch changes can be copied back into the trunk."
+msgstr "相反，在你工作的时候你和Sally仍然可以继续分享修改，这依赖于你决定什么值得分享，Subversion给你在分支间选择性<quote>拷贝</quote>修改的能力，当你完成了分支上的所有工作，所有的分支修改可以被拷贝回到主干。"
+
+#: build/en/book.xml:7616(title)
+msgid "Copying Specific Changes"
+msgstr "拷贝特定的修改"
+
+#: build/en/book.xml:7619(para)
+msgid "In the previous section, we mentioned that both you and Sally made changes to <filename moreinfo=\"none\">integer.c</filename> on different branches. If you look at Sally's log message for revision 344, you can see that she fixed some spelling errors. No doubt, your copy of the same file still has the same spelling errors. It's likely that your future changes to this file will be affecting the same areas that have the spelling errors, so you're in for some potential conflicts when you merge your branch someday. It's better, then, to receive Sally's change now, <emphasis>before</emphasis> you start working too heavily in the same places."
+msgstr "在上一章节，我们提到你和Sally对<filename moreinfo=\"none\">integer.c</filename>在不同的分支上做过修改，如果你看了Sally的344版本的日志信息，你会知道她修正了一些拼写错误，毋庸置疑，你的拷贝的文件也一定存在这些拼写错误，所以你以后的对这个文件修改也会保留这些拼写错误，所以你会在将来合并时得到许多冲突。最好是现在接收Sally的修改，而不是作了许多工作之后才来做。"
+
+#: build/en/book.xml:762(para)
+#, fuzzy
+msgid "Finally, to the One who perfectly demonstrates creative excellence—thank You."
+msgstr "最后，对所有为我展现完美卓越创造力的人们—感谢。"
+
+#: build/en/book.xml:7631(para)
+msgid "It's time to use the <command moreinfo=\"none\">svn merge</command> command. This command, it turns out, is a very close cousin to the <command moreinfo=\"none\">svn diff</command> command (which you read about in <xref linkend=\"svn.tour\"/>). Both commands are able to compare any two objects in the repository and describe the differences. For example, you can ask <command moreinfo=\"none\">svn diff</command> to show you the exact change made by Sally in revision 344:"
+msgstr "是时间使用<command moreinfo=\"none\">svn merge</command>命令，这个命令的结果非常类似<command moreinfo=\"none\">svn diff</command>命令（在第3章的内容），两个命令都可以比较版本库中的任何两个对象并且描述其区别，举个例子，你可以使用<command moreinfo=\"none\">svn diff</command>来查看Sally在版本344作的修改："
+
+#: build/en/book.xml:7640(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -c 344 http://svn.example.com/repos/calc/trunk\n"
+"\n"
+"Index: integer.c\n"
+"===================================================================\n"
+"--- integer.c\t(revision 343)\n"
+"+++ integer.c\t(revision 344)\n"
+"@@ -147,7 +147,7 @@\n"
+"     case 6:  sprintf(info-&gt;operating_system, \"HPFS (OS/2 or NT)\"); break;\n"
+"     case 7:  sprintf(info-&gt;operating_system, \"Macintosh\"); break;\n"
+"     case 8:  sprintf(info-&gt;operating_system, \"Z-System\"); break;\n"
+"-    case 9:  sprintf(info-&gt;operating_system, \"CPM\"); break;\n"
+"+    case 9:  sprintf(info-&gt;operating_system, \"CP/M\"); break;\n"
+"     case 10:  sprintf(info-&gt;operating_system, \"TOPS-20\"); break;\n"
+"     case 11:  sprintf(info-&gt;operating_system, \"NTFS (Windows NT)\"); break;\n"
+"     case 12:  sprintf(info-&gt;operating_system, \"QDOS\"); break;\n"
+"@@ -164,7 +164,7 @@\n"
+"     low = (unsigned short) read_byte(gzfile);  /* read LSB */\n"
+"     high = (unsigned short) read_byte(gzfile); /* read MSB */\n"
+"     high = high &lt;&lt; 8;  /* interpret MSB correctly */\n"
+"-    total = low + high; /* add them togethe for correct total */\n"
+"+    total = low + high; /* add them together for correct total */\n"
+"\n"
+"     info-&gt;extra_header = (unsigned char *) my_malloc(total);\n"
+"     fread(info-&gt;extra_header, total, 1, gzfile);\n"
+"@@ -241,7 +241,7 @@\n"
+"      Store the offset with ftell() ! */\n"
+"\n"
+"   if ((info-&gt;data_offset = ftell(gzfile))== -1) {\n"
+"-    printf(\"error: ftell() retturned -1.\\n\");\n"
+"+    printf(\"error: ftell() returned -1.\\n\");\n"
+"     exit(1);\n"
+"   }\n"
+"\n"
+"@@ -249,7 +249,7 @@\n"
+"   printf(\"I believe start of compressed data is %u\\n\", info-&gt;data_offset);\n"
+"   #endif\n"
+"\n"
+"-  /* Set postion eight bytes from the end of the file. */\n"
+"+  /* Set position eight bytes from the end of the file. */\n"
+"\n"
+"   if (fseek(gzfile, -8, SEEK_END)) {\n"
+"     printf(\"error: fseek() returned non-zero\\n\");\n"
+msgstr ""
+"\n"
+"$ svn diff -c 344 http://svn.example.com/repos/calc/trunk\n"
+"\n"
+"Index: integer.c\n"
+"===================================================================\n"
+"--- integer.c\t(revision 343)\n"
+"+++ integer.c\t(revision 344)\n"
+"@@ -147,7 +147,7 @@\n"
+"     case 6:  sprintf(info-&gt;operating_system, \"HPFS (OS/2 or NT)\"); break;\n"
+"     case 7:  sprintf(info-&gt;operating_system, \"Macintosh\"); break;\n"
+"     case 8:  sprintf(info-&gt;operating_system, \"Z-System\"); break;\n"
+"-    case 9:  sprintf(info-&gt;operating_system, \"CPM\"); break;\n"
+"+    case 9:  sprintf(info-&gt;operating_system, \"CP/M\"); break;\n"
+"     case 10:  sprintf(info-&gt;operating_system, \"TOPS-20\"); break;\n"
+"     case 11:  sprintf(info-&gt;operating_system, \"NTFS (Windows NT)\"); break;\n"
+"     case 12:  sprintf(info-&gt;operating_system, \"QDOS\"); break;\n"
+"@@ -164,7 +164,7 @@\n"
+"     low = (unsigned short) read_byte(gzfile);  /* read LSB */\n"
+"     high = (unsigned short) read_byte(gzfile); /* read MSB */\n"
+"     high = high &lt;&lt; 8;  /* interpret MSB correctly */\n"
+"-    total = low + high; /* add them togethe for correct total */\n"
+"+    total = low + high; /* add them together for correct total */\n"
+"\n"
+"     info-&gt;extra_header = (unsigned char *) my_malloc(total);\n"
+"     fread(info-&gt;extra_header, total, 1, gzfile);\n"
+"@@ -241,7 +241,7 @@\n"
+"      Store the offset with ftell() ! */\n"
+"\n"
+"   if ((info-&gt;data_offset = ftell(gzfile))== -1) {\n"
+"-    printf(\"error: ftell() retturned -1.\\n\");\n"
+"+    printf(\"error: ftell() returned -1.\\n\");\n"
+"     exit(1);\n"
+"   }\n"
+"\n"
+"@@ -249,7 +249,7 @@\n"
+"   printf(\"I believe start of compressed data is %u\\n\", info-&gt;data_offset);\n"
+"   #endif\n"
+"\n"
+"-  /* Set postion eight bytes from the end of the file. */\n"
+"+  /* Set position eight bytes from the end of the file. */\n"
+"\n"
+"   if (fseek(gzfile, -8, SEEK_END)) {\n"
+"     printf(\"error: fseek() returned non-zero\\n\");\n"
+
+#: build/en/book.xml:7685(para)
+msgid "The <command moreinfo=\"none\">svn merge</command> command is almost exactly the same. Instead of printing the differences to your terminal, however, it applies them directly to your working copy as <emphasis>local modifications</emphasis>:"
+msgstr "<command moreinfo=\"none\">svn merge</command>命令几乎完全相同，但不是打印区别到你的终端，它会直接作为<emphasis>本地修改</emphasis>作用到你的本地拷贝："
+
+#: build/en/book.xml:7690(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge -c 344 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"M  integer.c\n"
+msgstr ""
+"\n"
+"$ svn merge -c 344 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"M  integer.c\n"
+
+#: build/en/book.xml:7698(para)
+msgid "The output of <command moreinfo=\"none\">svn merge</command> shows that your copy of <filename moreinfo=\"none\">integer.c</filename> was patched. It now contains Sally's change—the change has been <quote>copied</quote> from the trunk to your working copy of your private branch, and now exists as a local modification. At this point, it's up to you to review the local modification and make sure it works correctly."
+msgstr "<command moreinfo=\"none\">svn merge</command>的输出告诉你的<filename moreinfo=\"none\">integer.c</filename>文件已经作了补丁（patched），现在已经保留了Sally修改—修改从主干<quote>拷贝</quote>到你的私有分支的工作拷贝，现在作为一个本地修改，在这种情况下，要靠你审查本地的修改来确定它们工作正常。"
+
+#: build/en/book.xml:77(pubdate)
+msgid "Chicago, March 14, 2004"
+msgstr "芝加哥，2004 年 3 月 14 日"
+
+#: build/en/book.xml:7706(para)
+msgid "In another scenario, it's possible that things may not have gone so well, and that <filename moreinfo=\"none\">integer.c</filename> may have entered a conflicted state. You might need to resolve the conflict using standard procedures (see <xref linkend=\"svn.tour\"/>), or if you decide that the merge was a bad idea altogether, simply give up and <command moreinfo=\"none\">svn revert</command> the local change."
+msgstr "在另一种情境下，事情并不会运行得这样正常，也许<filename moreinfo=\"none\">integer.c</filename>也许会进入冲突状态，你必须使用标准过程（见第三章）来解决这种状态，或者你认为合并是一个错误的决定，你只需要运行<command moreinfo=\"none\">svn revert</command>放弃。"
+
+#: build/en/book.xml:7713(para)
+msgid "But assuming that you've reviewed the merged change, you can <command moreinfo=\"none\">svn commit</command> the change as usual. At that point, the change has been merged into your repository branch. In version control terminology, this act of copying changes between branches is commonly called <firstterm>porting</firstterm> changes."
+msgstr "但是当你审查过你的合并结果后，你可以使用<command moreinfo=\"none\">svn commit</command>提交修改，在那一刻，修改已经合并到你的分支上了，在版本控制术语中，这种在分支之间拷贝修改的行为叫做<firstterm>搬运</firstterm>修改。"
+
+#: build/en/book.xml:7720(para)
+msgid "When you commit the local modification, make sure your log message mentions that you're porting a specific change from one branch to another. For example:"
+msgstr "当你提交你的修改时，确定你的日志信息中说明你是从某一版本搬运了修改，举个例子："
+
+#: build/en/book.xml:7724(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -m \"integer.c: ported r344 (spelling fixes) from trunk.\"\n"
+"Sending        integer.c\n"
+"Transmitting file data .\n"
+"Committed revision 360.\n"
+msgstr ""
+"\n"
+"$ svn commit -m \"integer.c: ported r344 (spelling fixes) from trunk.\"\n"
+"Sending        integer.c\n"
+"Transmitting file data .\n"
+"Committed revision 360.\n"
+
+#: build/en/book.xml:7731(para)
+msgid "As you'll see in the next sections, this is a very important <quote>best practice</quote> to follow."
+msgstr "你将会在下一节看到，这是一条非常重要的<quote>最佳实践</quote>。"
+
+#: build/en/book.xml:7735(title)
+msgid "Why Not Use Patches Instead?"
+msgstr "为什么不使用补丁？"
+
+#: build/en/book.xml:7737(para)
+msgid "A question may be on your mind, especially if you're a Unix user: why bother to use <command moreinfo=\"none\">svn merge</command> at all? Why not simply use the operating system's <command moreinfo=\"none\">patch</command> command to accomplish the same job? For example:"
+msgstr "也许你的脑中会出现一个问题，特别如果你是Unix用户，为什么非要使用<command moreinfo=\"none\">svn merge</command>？为什么不简单的使用操作系统的<command moreinfo=\"none\">patch</command>命令来进行相同的工作？举个例子："
+
+#: build/en/book.xml:774(title)
+msgid "What is Subversion?"
+msgstr "Subversion是什么？"
+
+#: build/en/book.xml:7743(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -c 344 http://svn.example.com/repos/calc/trunk &gt; patchfile\n"
+"$ patch -p0  &lt; patchfile\n"
+"Patching file integer.c using Plan A...\n"
+"Hunk #1 succeeded at 147.\n"
+"Hunk #2 succeeded at 164.\n"
+"Hunk #3 succeeded at 241.\n"
+"Hunk #4 succeeded at 249.\n"
+"done\n"
+msgstr ""
+"\n"
+"$ svn diff -c 344 http://svn.example.com/repos/calc/trunk &gt; patchfile\n"
+"$ patch -p0  &lt; patchfile\n"
+"Patching file integer.c using Plan A...\n"
+"Hunk #1 succeeded at 147.\n"
+"Hunk #2 succeeded at 164.\n"
+"Hunk #3 succeeded at 241.\n"
+"Hunk #4 succeeded at 249.\n"
+"done\n"
+
+#: build/en/book.xml:7754(para)
+#, fuzzy
+msgid "In this particular case, yes, there really is no difference. But <command moreinfo=\"none\">svn merge</command> has special abilities that surpass the <command moreinfo=\"none\">patch</command> program. The file format used by <command moreinfo=\"none\">patch</command> is quite limited; it's only able to tweak file contents. There's no way to represent changes to <emphasis>trees</emphasis>, such as the addition, removal, or renaming of files and directories. Nor can the <command moreinfo=\"none\">patch</command> program notice changes to property changes. If Sally's change had, say, added a new directory, the output of <command moreinfo=\"none\">svn diff</command> wouldn't have mentioned it at all. <command moreinfo=\"none\">svn diff</command> only outputs the limited patch-format, so there are some ideas it simply can't express. The <command moreinfo=\"none\">svn merge</command> command, however, can express changes in tree structure and properties by directly applying them to your working copy."
+msgstr "在这种情况下，确实没有区别，但是<command moreinfo=\"none\">svn merge</command>有超越<command moreinfo=\"none\">patch</command>的特别能力，使用<command moreinfo=\"none\">patch</command>对文件格式有一定的限制，它只能针对文件内容，没有方法表现<emphasis>目录树</emphasis>的修改，例如添加、删除或是改名。如果Sally的修改包括增加一个新的目录，<command moreinfo=\"none\">svn diff</command>不会注意到这些，<command moreinfo=\"none\">svn diff</command>只会输出有限的补丁格式，所以有些问题无法表达。<footnote><placeholder-1/></footnote> 但是<command moreinfo=\"none\">svn merge</command>命令会通过直接作用你的工作拷贝来表示目录树的结构和属性变化。"
+
+#: build/en/book.xml:776(para)
+#, fuzzy
+msgid "Subversion is a free/open-source version control system. That is, Subversion manages files and directories, and the changes made to them, over time. This allows you to recover older versions of your data, or examine the history of how your data changed. In this regard, many people think of a version control system as a sort of <quote>time machine</quote>."
+msgstr "Subversion是一个自由/开源的版本控制系统。也就是说，在Subversion管理下，文件和目录可以超越时空。Subversion将文件存放在中心<firstterm>版本库</firstterm>里。这个版本库很像一个普通的文件服务器，不同的是，它可以记录每一次文件和目录的修改情况。于是我们就可以籍此将数据回复到以前的版本，并可以查看数据的更改细节。正因为如此，许多人将版本控制系统当作一种神奇的<quote>时间机器</quote>。"
+
+#: build/en/book.xml:7773(para)
+msgid "A word of warning: while <command moreinfo=\"none\">svn diff</command> and <command moreinfo=\"none\">svn merge</command> are very similar in concept, they do have different syntax in many cases. Be sure to read about them in <xref linkend=\"svn.ref\"/> for details, or ask <command moreinfo=\"none\">svn help</command>. For example, <command moreinfo=\"none\">svn merge</command> requires a working-copy path as a target, i.e. a place where it should apply the tree-changes. If the target isn't specified, it assumes you are trying to perform one of the following common operations:"
+msgstr "一个警告：为什么<command moreinfo=\"none\">svn diff</command>和<command moreinfo=\"none\">svn merge</command>在概念上是很接近，但语法上有许多不同，一定阅读第9章来查看其细节或者使用<command moreinfo=\"none\">svn help</command>查看帮助。举个例子，<command moreinfo=\"none\">svn merge</command>需要一个工作拷贝作为目标，就是一个地方来施展目录树修改，如果一个目标都没有指定，它会假定你要做以下某个普通的操作："
+
+#: build/en/book.xml:7785(para)
+msgid "You want to merge directory changes into your current working directory."
+msgstr "你希望合并目录修改到工作拷贝的当前目录。"
+
+#: build/en/book.xml:7789(para)
+msgid "You want to merge the changes in a specific file into a file by the same name which exists in your current working directory."
+msgstr "你希望合并修改到你的当前工作目录的相同文件名的文件。"
+
+#: build/en/book.xml:7795(para)
+msgid "If you are merging a directory and haven't specified a target path, <command moreinfo=\"none\">svn merge</command> assumes the first case above and tries to apply the changes into your current directory. If you are merging a file, and that file (or a file by the same name) exists in your current working directory, <command moreinfo=\"none\">svn merge</command> assumes the second case and tries to apply the changes to a local file with the same name."
+msgstr "如果你合并一个目录而没有指定特定的目标，<command moreinfo=\"none\">svn merge</command>假定第一种情况，在你的当前目录应用修改。如果你合并一个文件，而这个文件（或是一个有相同的名字文件）在你的当前工作目录存在，<command moreinfo=\"none\">svn merge</command>假定第二种情况，你想对这个同名文件使用合并。"
+
+#: build/en/book.xml:7803(para)
+msgid "If you want changes applied somewhere else, you'll need to say so. For example, if you're sitting in the parent directory of your working copy, you'll have to specify the target directory to receive the changes:"
+msgstr "如果你希望修改应用到别的目录，你需要说出来。举个例子，你在工作拷贝的父目录，你需要指定目标目录："
+
+#: build/en/book.xml:7808(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge -c 344 http://svn.example.com/repos/calc/trunk my-calc-branch\n"
+"U   my-calc-branch/integer.c\n"
+msgstr ""
+"\n"
+"$ svn merge -c 344 http://svn.example.com/repos/calc/trunk my-calc-branch\n"
+"U   my-calc-branch/integer.c\n"
+
+#: build/en/book.xml:7817(title)
+msgid "The Key Concept Behind Merging"
+msgstr "合并背后的关键概念"
+
+#: build/en/book.xml:7819(para)
+msgid "You've now seen an example of the <command moreinfo=\"none\">svn merge</command> command, and you're about to see several more. If you're feeling confused about exactly how merging works, you're not alone. Many users (especially those new to version control) are initially perplexed about the proper syntax of the command, and about how and when the feature should be used. But fear not, this command is actually much simpler than you think! There's a very easy technique for understanding exactly how <command moreinfo=\"none\">svn merge</command> behaves."
+msgstr "你已经看到了<command moreinfo=\"none\">svn merge</command>命令的例子，你将会看到更多，如果你对合并是如何工作的感到迷惑，这并不奇怪，很多人和你一样。许多新用户（特别是对版本控制很陌生的用户）会对这个命令的正确语法感到不知所措，不知道怎样和什么时候使用这个特性，不要害怕，这个命令实际上比你想象的简单！有一个简单的技巧来帮助你理解<command moreinfo=\"none\">svn merge</command>的行为。"
+
+#: build/en/book.xml:783(para)
+#, fuzzy
+msgid "Subversion can operate across networks, which allows it to be used by people on different computers. At some level, the ability for various people to modify and manage the same set of data from their respective locations fosters collaboration. Progress can occur more quickly without a single conduit through which all modifications must occur. And because the work is versioned, you need not fear that quality is the trade-off for losing that conduit—if some incorrect change is made to the data, just undo that change."
+msgstr "Subversion的版本库可以通过网络访问，从而使用户可以在不同的电脑上进行操作。从某种程度上来说，允许用户在各自的空间里修改和管理同一组数据可以促进团队协作。因为修改不再是单线进行（单线进行也就是必须一个一个进行），开发进度会进展迅速。此外，由于所有的工作都已版本化，也就不必担心由于错误的更改而影响软件质量—如果出现不正确的更改，只要撤销那一次更改操作即可。"
+
+#: build/en/book.xml:7830(para)
+msgid "The main source of confusion is the <emphasis>name</emphasis> of the command. The term <quote>merge</quote> somehow denotes that branches are combined together, or that there's some sort of mysterious blending of data going on. That's not the case. A better name for the command might have been <command moreinfo=\"none\">svn diff-and-apply</command>, because that's all that happens: two repository trees are compared, and the differences are applied to a working copy."
+msgstr "迷惑的主要原因是这个命令的<emphasis>名称</emphasis>，术语<quote>合并</quote>不知什么原因被用来表明分支的组合，或者是其他什么神奇的数据混合，这不是事实，一个更好的名称应该是<command moreinfo=\"none\">svn diff-and-apply</command>，这是发生的所有事件：首先两个版本库树比较，然后将区别应用到本地拷贝。"
+
+#: build/en/book.xml:7840(para)
+msgid "The command takes three arguments:"
+msgstr "这个命令包括三个参数："
+
+#: build/en/book.xml:7844(para)
+msgid "An initial repository tree (often called the <firstterm>left side</firstterm> of the comparison),"
+msgstr "初始的版本树（通常叫做比较的<firstterm>左边</firstterm>），"
+
+#: build/en/book.xml:7848(para)
+msgid "A final repository tree (often called the <firstterm>right side</firstterm> of the comparison),"
+msgstr "最终的版本树（通常叫做比较的<firstterm>右边</firstterm>），"
+
+#: build/en/book.xml:7852(para)
+msgid "A working copy to accept the differences as local changes (often called the <firstterm>target</firstterm> of the merge)."
+msgstr "一个接收区别的工作拷贝（通常叫做合并的<firstterm>目标</firstterm>）。"
+
+#: build/en/book.xml:7858(para)
+msgid "Once these three arguments are specified, the two trees are compared, and the resulting differences are applied to the target working copy as local modifications. When the command is done, the results are no different than if you had hand-edited the files, or run various <command moreinfo=\"none\">svn add</command> or <command moreinfo=\"none\">svn delete</command> commands yourself. If you like the results, you can commit them. If you don't like the results, you can simply <command moreinfo=\"none\">svn revert</command> all of the changes."
+msgstr "一旦这三个参数指定以后，两个目录树将要做比较，比较结果将会作为本地修改应用到目标工作拷贝，当命令结束后，结果同你手工修改或者是使用<command moreinfo=\"none\">svn add</command>或<command moreinfo=\"none\">svn delete</command>没有什么区别，如果你喜欢这结果，你可以提交，如果不喜欢，你可以使用<command moreinfo=\"none\">svn revert</command>恢复修改。"
+
+#: build/en/book.xml:7868(para)
+msgid "The syntax of <command moreinfo=\"none\">svn merge</command> allows you to specify the three necessary arguments rather flexibly. Here are some examples:"
+msgstr "<command moreinfo=\"none\">svn merge</command>的语法允许非常灵活的指定参数，如下是一些例子："
+
+#: build/en/book.xml:7872(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge http://svn.example.com/repos/branch1@150 \\\n"
+"            http://svn.example.com/repos/branch2@212 \\\n"
+"            my-working-copy\n"
+"\n"
+"$ svn merge -r 100:200 http://svn.example.com/repos/trunk my-working-copy\n"
+"\n"
+"$ svn merge -r 100:200 http://svn.example.com/repos/trunk\n"
+msgstr ""
+"\n"
+"$ svn merge http://svn.example.com/repos/branch1@150 \\\n"
+"            http://svn.example.com/repos/branch2@212 \\\n"
+"            my-working-copy\n"
+"\n"
+"$ svn merge -r 100:200 http://svn.example.com/repos/trunk my-working-copy\n"
+"\n"
+"$ svn merge -r 100:200 http://svn.example.com/repos/trunk\n"
+
+#: build/en/book.xml:7882(para)
+msgid "The first syntax lays out all three arguments explicitly, naming each tree in the form <emphasis>URL@REV</emphasis> and naming the working copy target. The second syntax can be used as a shorthand for situations when you're comparing two different revisions of the same URL. The last syntax shows how the working-copy argument is optional; if omitted, it defaults to the current directory."
+msgstr "第一种语法使用<emphasis>URL@REV</emphasis>的形式直接列出了所有参数，第二种语法可以用来作为比较同一个URL的不同版本的简略写法，最后一种语法表示工作拷贝是可选的，如果省略，默认是当前目录。"
+
+#: build/en/book.xml:7895(title)
+msgid "Best Practices for Merging"
+msgstr "合并的最佳实践"
+
+#: build/en/book.xml:7899(title)
+msgid "Tracking Merges Manually"
+msgstr "手工追踪合并"
+
+#: build/en/book.xml:7901(para)
+msgid "Merging changes sounds simple enough, but in practice it can become a headache. The problem is that if you repeatedly merge changes from one branch to another, you might accidentally merge the same change <emphasis>twice</emphasis>. When this happens, sometimes things will work fine. When patching a file, Subversion typically notices if the file already has the change, and does nothing. But if the already-existing change has been modified in any way, you'll get a conflict."
+msgstr "合并修改听起来很简单，但是实践起来会是很头痛的事，如果你重复合并两个分支，你也许会合并<emphasis>两次</emphasis>同样的修改。当这种事情发生时，有时候事情会依然正常，当对文件打补丁时，Subversion如果注意到这个文件已经有了相应的修改，而不会作任何操作，但是如果已经应用的修改又被修改了，你会得到冲突。"
+
+#: build/en/book.xml:7911(para)
+msgid "Ideally, your version control system should prevent the double-application of changes to a branch. It should automatically remember which changes a branch has already received, and be able to list them for you. It should use this information to help automate merges as much as possible."
+msgstr "理想情况下，你的版本控制系统应该会阻止对一个分支做两次改变操作，必须自动的记住那一个分支的修改已经接收了，并且可以显示出来，用来尽可能帮助自动化的合并。"
+
+#: build/en/book.xml:7918(para)
+#, fuzzy
+msgid "Unfortunately, Subversion is not such a system; it does not yet record any information about merge operations. <placeholder-1/> When you commit local modifications, the repository has no idea whether those changes came from running <command moreinfo=\"none\">svn merge</command>, or from just hand-editing the files."
+msgstr "不幸的是，Subversion不是这样一个系统，类似于CVS，Subversion并不记录任何合并操作，当你提交本地修改，版本库并不能判断出你是通过<command moreinfo=\"none\">svn merge</command>还是手工修改得到这些文件。"
+
+#: build/en/book.xml:7920(para)
+msgid "However, at the time of writing, this feature is being worked on!"
+msgstr ""
+
+#: build/en/book.xml:7926(para)
+msgid "What does this mean to you, the user? It means that until the day Subversion grows this feature, you'll have to track merge information yourself. The best place to do this is in the commit log-message. As demonstrated in the earlier example, it's recommended that your log-message mention a specific revision number (or range of revisions) that are being merged into your branch. Later on, you can run <command moreinfo=\"none\">svn log</command> to review which changes your branch already contains. This will allow you to carefully construct a subsequent <command moreinfo=\"none\">svn merge</command> command that won't be redundant with previously ported changes."
+msgstr "这对你这样的用户意味着什么？这意味着除非Subversion以后发展这个特性，你必须手工的记录这些信息。最佳的方式是使用提交日志信息，像前面的例子提到的，推荐你在日志信息中说明合并的特定版本号（或是版本号的范围），之后，你可以运行<command moreinfo=\"none\">svn log</command>来查看你的分支包含哪些修改。这可以帮助你小心的依序运行<command moreinfo=\"none\">svn merge</command>命令而不会进行多余的合并。"
+
+#: build/en/book.xml:793(para)
+msgid "Some version control systems are also software configuration management (SCM) systems. These systems are specifically tailored to manage trees of source code, and have many features that are specific to software development—such as natively understanding programming languages, or supplying tools for building software. Subversion, however, is not one of these systems. It is a general system that can be used to manage <emphasis>any</emphasis> collection of files. For you, those files might be source code—for others, anything from grocery shopping lists to digital video mixdowns and beyond."
+msgstr "某些版本控制系统本身也是软件配置管理（SCM）系统，这种系统经过精巧的设计，专门用来管理源代码树，并且具备许多与软件开发有关的特性—比如，对编程语言的支持，或者提供程序构建工具。不过Subversion并不是这样的系统。它是一个通用系统，可以管理<emphasis>任何</emphasis>类型的文件集。对你来说，这些文件这可能是源程序—而对别人，则可能是一个货物清单或者是数字电影。"
+
+#: build/en/book.xml:7939(para)
+msgid "In the next section, we'll show some examples of this technique in action."
+msgstr "在下一小节，我们要展示一些这种技巧的例子。"
+
+#: build/en/book.xml:7946(title)
+msgid "Previewing Merges"
+msgstr "预览合并"
+
+#: build/en/book.xml:7948(para)
+msgid "Because merging only results in local modifications, it's not usually a high-risk operation. If you get the merge wrong the first time, simply <command moreinfo=\"none\">svn revert</command> the changes and try again."
+msgstr "因为合并只是导致本地修改，它不是一个高风险的操作，如果你在第一次操作错误，你可以运行<command moreinfo=\"none\">svn revert</command>来再试一次。"
+
+#: build/en/book.xml:7953(para)
+msgid "It's possible, however, that your working copy might already have local modifications. The changes applied by a merge will be mixed with your pre-existing ones, and running <command moreinfo=\"none\">svn revert</command> is no longer an option. The two sets of changes may be impossible to separate."
+msgstr "有时候你的工作拷贝很可能已经改变了，合并会针对存在的那一个文件，这时运行<command moreinfo=\"none\">svn revert</command>不会恢复你在本地作的修改，两部分的修改无法识别出来。"
+
+#: build/en/book.xml:7959(para)
+msgid "In cases like this, people take comfort in being able to predict or examine merges before they happen. One simple way to do that is to run <command moreinfo=\"none\">svn diff</command> with the same arguments you plan to pass to <command moreinfo=\"none\">svn merge</command>, as we already showed in our first example of merging. Another method of previewing is to pass the <option>--dry-run</option> option to the merge command:"
+msgstr "在这个情况下，人们很乐意能够在合并之前预测一下，一个简单的方法是使用运行<command moreinfo=\"none\">svn merge</command>同样的参数运行<command moreinfo=\"none\">svn diff</command>，另一种方式是传递<option>--dry-run</option>选项给merge命令："
+
+#: build/en/book.xml:7968(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge --dry-run -c 344 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"#  nothing printed, working copy is still unchanged.\n"
+msgstr ""
+"\n"
+"$ svn merge --dry-run -c 344 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"#  nothing printed, working copy is still unchanged.\n"
+
+#: build/en/book.xml:7976(para)
+msgid "The <option>--dry-run</option> option doesn't actually apply any local changes to the working copy. It only shows status codes that <emphasis>would</emphasis> be printed in a real merge. It's useful for getting a <quote>high level</quote> preview of the potential merge, for those times when running <command moreinfo=\"none\">svn diff</command> gives too much detail."
+msgstr "<option>--dry-run</option>选项实际上并不修改本地拷贝，它只是显示实际合并时的状态信息，对于得到<quote>整体</quote>的印象，这个命令很有用，因为<command moreinfo=\"none\">svn diff</command>包括太多细节。"
+
+#: build/en/book.xml:7988(title)
+msgid "Merge Conflicts"
+msgstr "合并冲突"
+
+#: build/en/book.xml:7990(para)
+msgid "Just like the <command moreinfo=\"none\">svn update</command> command, <command moreinfo=\"none\">svn merge</command> applies changes to your working copy. And therefore it's also capable of creating conflicts. The conflicts produced by <command moreinfo=\"none\">svn merge</command>, however, are sometimes different, and this section explains those differences."
+msgstr "就像<command moreinfo=\"none\">svn update</command>命令，<command moreinfo=\"none\">svn merge</command>会把修改应用到工作拷贝，因此它也会造成冲突，因为<command moreinfo=\"none\">svn merge</command>造成的冲突有时候会有些不同，本小节会解释这些区别。"
+
+#: build/en/book.xml:7997(para)
+msgid "To begin with, assume that your working copy has no local edits. When you <command moreinfo=\"none\">svn update</command> to a particular revision, the changes sent by the server will always apply <quote>cleanly</quote> to your working copy. The server produces the delta by comparing two trees: a virtual snapshot of your working copy, and the revision tree you're interested in. Because the left-hand side of the comparison is exactly equal to what you already have, the delta is guaranteed to correctly convert your working copy into the right-hand tree."
+msgstr "作为开始，我们假定本地没有修改，当你<command moreinfo=\"none\">svn update</command>到一个特定修订版本时，修改会<quote>干净的</quote>应用到工作拷贝，服务器产生比较两树的增量数据：一个工作拷贝和你关注的版本树的虚拟快照，因为比较的左边同你拥有的完全相同，增量数据确保你把工作拷贝转化到右边的树。"
+
+#: build/en/book.xml:8(subtitle)
+msgid "For Subversion 1.4"
+msgstr "针对 Subversion 1.4"
+
+#: build/en/book.xml:80(title)
+msgid "Foreword"
+msgstr "前言"
+
+#: build/en/book.xml:8008(para)
+msgid "But <command moreinfo=\"none\">svn merge</command> has no such guarantees and can be much more chaotic: the user can ask the server to compare <emphasis>any</emphasis> two trees at all, even ones that are unrelated to the working copy! This means there's large potential for human error. Users will sometimes compare the wrong two trees, creating a delta that doesn't apply cleanly. <command moreinfo=\"none\">svn merge</command> will do its best to apply as much of the delta as possible, but some parts may be impossible. Just like the Unix <command moreinfo=\"none\">patch</command> command sometimes complains about <quote>failed hunks</quote>, <command moreinfo=\"none\">svn merge</command> will complain about <quote>skipped targets</quote>:"
+msgstr "但是<command moreinfo=\"none\">svn merge</command>没有这样的保证，会导致很多的混乱：用户可以询问服务器比较<emphasis>任何</emphasis>两个树，即使一个与工作拷贝毫不相关的！这意味着有潜在的人为错误，用户有时候会比较两个错误的树，创建的增量数据不会干净的应用，<command moreinfo=\"none\">svn merge</command>会尽力应用更多的增量数据，但是有一些部分也许会难以完成，就像Unix下<command moreinfo=\"none\">patch</command>命令有时候会报告<quote>failed hunks</quote>错误，<command moreinfo=\"none\">svn merge</command>会报告<quote>skipped targets</quote>："
+
+#: build/en/book.xml:8021(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge -r 1288:1351 http://svn.example.com/repos/branch\n"
+"U  foo.c\n"
+"U  bar.c\n"
+"Skipped missing target: 'baz.c'\n"
+"U  glub.c\n"
+"C  glorb.h\n"
+"\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn merge -r 1288:1351 http://svn.example.com/repos/branch\n"
+"U  foo.c\n"
+"U  bar.c\n"
+"Skipped missing target: 'baz.c'\n"
+"U  glub.c\n"
+"C  glorb.h\n"
+"\n"
+"$\n"
+
+#: build/en/book.xml:8032(para)
+#, fuzzy
+msgid "In the previous example it might be the case that <filename moreinfo=\"none\">baz.c</filename> exists in both snapshots of the branch being compared, and the resulting delta wants to change the file's contents, but the file doesn't exist in the working copy. Whatever the case, the <quote>skipped</quote> message means that the user is most likely comparing the wrong two trees; they're the classic sign of user error. When this happens, it's easy to recursively revert all the changes created by the merge (<command moreinfo=\"none\">svn revert --recursive</command>), delete any unversioned files or directories left behind after the revert, and re-run <command moreinfo=\"none\">svn merge</command> with different arguments."
+msgstr "在前一个例子中，<filename moreinfo=\"none\">baz.c</filename>也许会存在于比较的两个分支快照里，但工作拷贝里不存在，比较的增量数据要应用到这个文件，这种情况下会发生什么？<quote>skipped</quote>信息意味着用户可能是在比较错误的两棵树，这是经典的驱动器错误，当发生这种情况，可以使用迭代恢复（<command moreinfo=\"none\">svn revert --recursive</command>）合并所作的修改，删除恢复后留下的所有未版本化的文件和目录，并且使用另外的参数运行<command moreinfo=\"none\">svn merge</command>。"
+
+#: build/en/book.xml:8046(para)
+msgid "Also notice that the previous example shows a conflict happening on <filename moreinfo=\"none\">glorb.h</filename>. We already stated that the working copy has no local edits: how can a conflict possibly happen? Again, because the user can use <command moreinfo=\"none\">svn merge</command> to define and apply any old delta to the working copy, that delta may contain textual changes that don't cleanly apply to a working file, even if the file has no local modifications."
+msgstr "也应当注意前一个例子显示<filename moreinfo=\"none\">glorb.h</filename>发生了冲突，我们已经规定本地拷贝没有修改：冲突怎么会发生呢？因为用户可以使用<command moreinfo=\"none\">svn merge</command>将过去的任何变化应用到当前工作拷贝，变化包含的文本修改也许并不能干净的应用到工作拷贝文件，即使这些文件没有本地修改。"
+
+#: build/en/book.xml:8055(para)
+msgid "Another small difference between <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn merge</command> are the names of the full-text files created when a conflict happens. In <xref linkend=\"svn.tour.cycle.resolve\"/>, we saw that an update produces files named <filename moreinfo=\"none\">filename.mine</filename>, <filename moreinfo=\"none\">filename.rOLDREV</filename>, and <filename moreinfo=\"none\">filename.rNEWREV</filename>. When <command moreinfo=\"none\">svn merge</command> produces a conflict, though, it creates three files named <filename moreinfo=\"none\">filename.working</filename>, <filename moreinfo=\"none\">filename.left</filename>, and <filename moreinfo=\"none\">filename.right</filename>. In this case, the terms <quote>left</quote> and <quote>right</quote> are describing which side of the double-tree comparison the file came from. In any case, these differing names will help you distinguish between conflicts that happened as a result of an update versus ones that happened as a result of a merge."
+msgstr "另一个<command moreinfo=\"none\">svn update</command>和<command moreinfo=\"none\">svn merge</command>的小区别是冲突产生的文件的名字不同，在<xref linkend=\"svn.tour.cycle.resolve\"/>，我们看到过更新产生的文件名字为<filename moreinfo=\"none\">filename.mine</filename>、<filename moreinfo=\"none\">filename.rOLDREV</filename>和<filename moreinfo=\"none\">filename.rNEWREV</filename>，当<command moreinfo=\"none\">svn merge</command>产生冲突时，它产生的三个文件分别为 <filename moreinfo=\"none\">filename.working</filename>、<filename moreinfo=\"none\">filename.left</filename>和<filename moreinfo=\"none\">filename.right</filename>。在这种情况下，术语<quote>left</quote>和<quote>right</quote>表示了两棵树比较时的两边，在两种情况下，不同的名字会帮助你区分冲突是因为更新造成的还是合并造成的。"
+
+#: build/en/book.xml:8078(title)
+msgid "Noticing or Ignoring Ancestry"
+msgstr "关注还是忽视祖先"
+
+#: build/en/book.xml:808(title)
+msgid "Subversion's History"
+msgstr "Subversion的历史"
+
+#: build/en/book.xml:8080(para)
+msgid "When conversing with a Subversion developer, you might very likely hear reference to the term <firstterm>ancestry</firstterm>. This word is used to describe the relationship between two objects in a repository: if they're related to each other, then one object is said to be an ancestor of the other."
+msgstr "当与Subversion开发者交谈时你一定会听到提及术语<firstterm>祖先</firstterm>，这个词是用来描述两个对象的关系：如果他们互相关联，一个对象就是另一个的祖先，或者相反。"
+
+#: build/en/book.xml:8087(para)
+msgid "For example, suppose you commit revision 100, which includes a change to a file <filename moreinfo=\"none\">foo.c</filename>. Then <filename moreinfo=\"none\">foo.c@99</filename> is an <quote>ancestor</quote> of <filename moreinfo=\"none\">foo.c@100</filename>. On the other hand, suppose you commit the deletion of <filename moreinfo=\"none\">foo.c</filename> in revision 101, and then add a new file by the same name in revision 102. In this case, <filename moreinfo=\"none\">foo.c@99</filename> and <filename moreinfo=\"none\">foo.c@102</filename> may appear to be related (they have the same path), but in fact are completely different objects in the repository. They share no history or <quote>ancestry</quote>."
+msgstr "举个例子，假设你提交版本100，包括对<filename moreinfo=\"none\">foo.c</filename>的修改，则foo.c@99是foo.c@100的一个<quote>祖先</quote>，另一方面，假设你在版本101删除这个文件，而在102版本提交一个同名的文件，在这个情况下，<filename moreinfo=\"none\">foo.c@99</filename>与<filename moreinfo=\"none\">foo.c@102</filename>看起来是关联的（有同样的路径），但是事实上他们是完全不同的对象，它们并不共享同一个历史或者说<quote>祖先</quote>。"
+
+#: build/en/book.xml:810(para)
+#, fuzzy
+msgid "<indexterm significance=\"normal\"><primary>Subversion</primary><secondary>history of</secondary></indexterm> In early 2000, CollabNet, Inc. (<ulink url=\"http://www.collab.net\"/>) began seeking developers to write a replacement for CVS. CollabNet offers a collaboration software suite called CollabNet Enterprise Edition (CEE) of which one component is version control. Although CEE used CVS as its initial version control system, CVS's limitations were obvious from the beginning, and CollabNet knew it would eventually have to find something better. Unfortunately, CVS had become the de facto standard in the open source world largely because there <emphasis>wasn't</emphasis> anything better, at least not under a free license. So CollabNet determined to write a new version control system from scratch, retaining the basic ideas of CVS, but without the bugs and misfeatures."
+msgstr "早在2000年，CollabNet, Inc. (<ulink url=\"http://www.collab.net\"/>)就开始寻找CVS替代产品的开发人员。CollabNet提供了一个名为CollabNet企业版（CEE） <footnote><placeholder-1/></footnote> 的协作软件套件。这个软件套件的一个组成部分就是版本控制系统。尽管CEE在最初采用了CVS作为其版本控制系统，但是CVS的局限性从一开始就很明显，CollabNet知道，迟早要找到一个更好的替代品。遗憾的是，CVS之所以成为开源世界<foreignphrase>事实上的</foreignphrase>标准，很大程度上是因为<emphasis>没有</emphasis>更好的替代品，至少是没有可以自由使用的替代品。所以CollabNet决定从头编写一个新的版本控制系统，这个系统保留CVS的基本思想，但是要修正其中的错误和不合理的特性。"
+
+#: build/en/book.xml:8100(para)
+msgid "The reason for bringing this up is to point out an important difference between <command moreinfo=\"none\">svn diff</command> and <command moreinfo=\"none\">svn merge</command>. The former command ignores ancestry, while the latter command is quite sensitive to it. For example, if you asked <command moreinfo=\"none\">svn diff</command> to compare revisions 99 and 102 of <filename moreinfo=\"none\">foo.c</filename>, you would see line-based diffs; the <literal moreinfo=\"none\">diff</literal> command is blindly comparing two paths. But if you asked <command moreinfo=\"none\">svn merge</command> to compare the same two objects, it would notice that they're unrelated and first attempt to delete the old file, then add the new file; the output would indicate a deletion followed by an add:"
+msgstr "指出<command moreinfo=\"none\">svn diff</command>和<command moreinfo=\"none\">svn merge</command>区别的重要性在于，前一个命令忽略祖先，如果你询问<command moreinfo=\"none\">svn diff</command>来比较文件<filename moreinfo=\"none\">foo.c</filename>的版本99和102，你会看到行为基础的区别，<literal moreinfo=\"none\">diff</literal>命令只是盲目的比较两条路径，但是如果你使用<command moreinfo=\"none\">svn merge</command>是比较同样的两个对象，它会注意到他们是不关联的，而且首先尝试删除旧文件，然后添加新文件，输出会是一个删除紧接着一个增加："
+
+#: build/en/book.xml:8113(screen)
+#, no-wrap
+msgid ""
+"\n"
+"D  foo.c\n"
+"A  foo.c\n"
+msgstr ""
+"\n"
+"D  foo.c\n"
+"A  foo.c\n"
+
+#: build/en/book.xml:8118(para)
+msgid "Most merges involve comparing trees that are ancestrally related to one another, and therefore <command moreinfo=\"none\">svn merge</command> defaults to this behavior. Occasionally, however, you may want the <literal moreinfo=\"none\">merge</literal> command to compare two unrelated trees. For example, you may have imported two source-code trees representing different vendor releases of a software project (see <xref linkend=\"svn.advanced.vendorbr\"/>). If you asked <command moreinfo=\"none\">svn merge</command> to compare the two trees, you'd see the entire first tree being deleted, followed by an add of the entire second tree!"
+msgstr "大多数合并包括比较包括祖先关联的两条树，因此<command moreinfo=\"none\">svn merge</command>这样运作，然而，你也许会希望<literal moreinfo=\"none\">merge</literal>命令能够比较两个不相关的目录树，举个例子，你有两个目录树分别代表了卖主软件项目的不同版本（见<xref linkend=\"svn.advanced.vendorbr\"/>），如果你使用<command moreinfo=\"none\">svn merge</command>进行比较，你会看到第一个目录树被删除，而第二个树添加上！"
+
+#: build/en/book.xml:8129(para)
+msgid "In these situations, you'll want <command moreinfo=\"none\">svn merge</command> to do a path-based comparison only, ignoring any relations between files and directories. Add the <option>--ignore-ancestry</option> option to your merge command, and it will behave just like <command moreinfo=\"none\">svn diff</command>. (And conversely, the <option>--notice-ancestry</option> option will cause <command moreinfo=\"none\">svn diff</command> to behave like the <literal moreinfo=\"none\">merge</literal> command.)"
+msgstr "在这个情况下，你只是希望<command moreinfo=\"none\">svn merge</command>能够做一个以路径为基础的比较，忽略所有文件和目录的关系，增加<option>--ignore-ancestry</option>选项会导致命令象<command moreinfo=\"none\">svn diff</command>一样。（相应的，<option>--notice-ancestry</option>选项会使<command moreinfo=\"none\">svn diff</command>象<literal moreinfo=\"none\">merge</literal>命令一样行事。）"
+
+#: build/en/book.xml:8143(title)
+msgid "Merges and Moves"
+msgstr "合并和移动"
+
+#: build/en/book.xml:8145(para)
+msgid "A common desire is to refactor source code, especially in Java-based software projects. Files and directories are shuffled around and renamed, often causing great disruption to everyone working on the project. Sounds like a perfect case to use a branch, doesn't it? Just create a branch, shuffle things around, then merge the branch back to the trunk, right?"
+msgstr ""
+
+#: build/en/book.xml:8153(para)
+msgid "Alas, this scenario doesn't work so well right now, and is considered one of Subversion's current weak spots. The problem is that Subversion's <command moreinfo=\"none\">update</command> command isn't as robust as it should be, particularly when dealing with copy and move operations."
+msgstr ""
+
+#: build/en/book.xml:8159(para)
+msgid "When you use <command moreinfo=\"none\">svn copy</command> to duplicate a file, the repository remembers where the new file came from, but it fails to transmit that information to the client which is running <command moreinfo=\"none\">svn update</command> or <command moreinfo=\"none\">svn merge</command>. Instead of telling the client, <quote>Copy that file you already have to this new location</quote>, it instead sends down an entirely new file. This can lead to problems, especially because the same thing happens with renamed files. A lesser-known fact about Subversion is that it lacks <quote>true renames</quote> — the <command moreinfo=\"none\">svn move</command> command is nothing more than an aggregation of <command moreinfo=\"none\">svn copy</command> and <command moreinfo=\"none\">svn delete</command>."
+msgstr ""
+
+#: build/en/book.xml:8173(para)
+msgid "For example, suppose that while working on your private branch, you rename <filename moreinfo=\"none\">integer.c</filename> to <filename moreinfo=\"none\">whole.c</filename>. Effectively you've created a new file in your branch that is a copy of the original file, and deleted the original file. Meanwhile, back on <filename moreinfo=\"none\">trunk</filename>, Sally has committed some improvements to <filename moreinfo=\"none\">integer.c</filename>. Now you decide to merge your branch to the trunk:"
+msgstr ""
+
+#: build/en/book.xml:8182(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd calc/trunk\n"
+"\n"
+"$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"D   integer.c\n"
+"A   whole.c\n"
+msgstr ""
+"\n"
+"$ cd calc/trunk\n"
+"\n"
+"$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"D   integer.c\n"
+"A   whole.c\n"
+
+#: build/en/book.xml:8190(para)
+msgid "This doesn't look so bad at first glance, but it's also probably not what you or Sally expected. The merge operation has deleted the latest version of <filename moreinfo=\"none\">integer.c</filename> file (the one containing Sally's latest changes), and blindly added your new <filename moreinfo=\"none\">whole.c</filename> file — which is a duplicate of the <emphasis>older</emphasis> version of <filename moreinfo=\"none\">integer.c</filename>. The net effect is that merging your <quote>rename</quote> to the branch has removed Sally's recent changes from the latest revision!"
+msgstr ""
+
+#: build/en/book.xml:82(para)
+msgid "A bad Frequently Asked Questions (FAQ) sheet is one that is composed not of the questions people actually asked, but of the questions the FAQ's author <emphasis>wished</emphasis> people had asked. Perhaps you've seen the type before:"
+msgstr "一个差劲的常见问题列表（FAQ）总是充斥着作者<emphasis>渴望被问到的</emphasis>问题，而不是人们真正想要了解的问题。也许你曾经见过下面这类问题："
+
+#: build/en/book.xml:8201(para)
+msgid "This isn't true data-loss; Sally's changes are still in the repository's history, but it may not be immediately obvious that this has happened. The moral of this story is that until Subversion improves, be very careful about merging copies and renames from one branch to another."
+msgstr ""
+
+#: build/en/book.xml:8219(title)
+msgid "Common Use-Cases"
+msgstr "常见用例"
+
+#: build/en/book.xml:8221(para)
+msgid "There are many different uses for branching and <command moreinfo=\"none\">svn merge</command>, and this section describes the most common ones you're likely to run into."
+msgstr "分支和<command moreinfo=\"none\">svn merge</command>有很多不同的用法，这个小节描述了最常见的用法。"
+
+#: build/en/book.xml:8227(title)
+msgid "Merging a Whole Branch to Another"
+msgstr "合并一条分支到另一支"
+
+#: build/en/book.xml:8229(para)
+msgid "To complete our running example, we'll move forward in time. Suppose several days have passed, and many changes have happened on both the trunk and your private branch. Suppose that you've finished working on your private branch; the feature or bug fix is finally complete, and now you want to merge all of your branch changes back into the trunk for others to enjoy."
+msgstr "为了完成这个例子，我们将时间往前推进，假定已经过了几天，在主干和你的分支上都有许多更改，假定你完成了分支上的工作，已经完成了特性或bug修正，你想合并所有分支的修改到主干上，让别人也可以使用。"
+
+#: build/en/book.xml:8237(para)
+msgid "So how do we use <command moreinfo=\"none\">svn merge</command> in this scenario? Remember that this command compares two trees, and applies the differences to a working copy. So to receive the changes, you need to have a working copy of the trunk. We'll assume that either you still have your original one lying around (fully updated), or that you recently checked out a fresh working copy of <filename moreinfo=\"none\">/calc/trunk</filename>."
+msgstr "这种情况下如何使用<command moreinfo=\"none\">svn merge</command>？记住这个命令比较两个目录树，然后应用比较结果到工作拷贝，所以要接受这种变化，你需要主干的工作拷贝，我们假设你有一个最初的主干工作拷贝（完全更新），或者是你最近取出了<filename moreinfo=\"none\">/calc/trunk</filename>的一个干净的工作拷贝。"
+
+#: build/en/book.xml:8245(para)
+msgid "But which two trees should be compared? At first glance, the answer may seem obvious: just compare the latest trunk tree with your latest branch tree. But beware—this assumption is <emphasis>wrong</emphasis>, and has burned many a new user! Since <command moreinfo=\"none\">svn merge</command> operates like <command moreinfo=\"none\">svn diff</command>, comparing the latest trunk and branch trees will <emphasis>not</emphasis> merely describe the set of changes you made to your branch. Such a comparison shows too many changes: it would not only show the addition of your branch changes, but also the <emphasis>removal</emphasis> of trunk changes that never happened on your branch."
+msgstr "但是要哪两个树进行比较呢？乍一看，回答很明确，只要比较最新的主干与分支。但是你要意识到—这个想法是<emphasis>错误的</emphasis>，伤害了许多新用户！因为<command moreinfo=\"none\">svn merge</command>的操作很像<command moreinfo=\"none\">svn diff</command>，比较最新的主干和分支树不仅仅会描述你在分支上所作的修改，这样的比较会展示太多的不同，不仅包括分支上的增加，也包括了主干上的删除操作，而这些删除根本就没有在分支上发生过。"
+
+#: build/en/book.xml:8257(para)
+msgid "To express only the changes that happened on your branch, you need to compare the initial state of your branch to its final state. Using <command moreinfo=\"none\">svn log</command> on your branch, you can see that your branch was created in revision 341. And the final state of your branch is simply a matter of using the <literal moreinfo=\"none\">HEAD</literal> revision. That means you want to compare revisions 341 and <literal moreinfo=\"none\">HEAD</literal> of your branch directory, and apply those differences to a working copy of the trunk."
+msgstr "为了表示你的分支上的修改，你只需要比较分支的初始状态与最终状态，在你的分支上使用<command moreinfo=\"none\">svn log</command>命令，你可以看到你的分支在341版本建立，你的分支最终的状态用<literal moreinfo=\"none\">HEAD</literal>版本表示，这意味着你希望能够比较版本341和<literal moreinfo=\"none\">HEAD</literal>的分支目录，然后应用这些分支的修改到主干目录的工作拷贝。"
+
+#: build/en/book.xml:8268(para)
+msgid "A nice way of finding the revision in which a branch was created (the <quote>base</quote> of the branch) is to use the <option>--stop-on-copy</option> option to <command moreinfo=\"none\">svn log</command>. The log subcommand will normally show every change ever made to the branch, including tracing back through the copy which created the branch. So normally, you'll see history from the trunk as well. The <option>--stop-on-copy</option> will halt log output as soon as <command moreinfo=\"none\">svn log</command> detects that its target was copied or renamed."
+msgstr "查找分支产生的版本（分支的<quote>基准</quote>）的最好方法是在<command moreinfo=\"none\">svn log</command>中使用<option>--stop-on-copy</option>选项，log子命令通常会显示所有关于分支的变化，包括 创建分支的过程，就好像你在主干上一样，<option>--stop-on-copy</option>会在<command moreinfo=\"none\">svn log</command>检测到目标拷贝或者改名时中止日志输出。"
+
+#: build/en/book.xml:8279(para)
+msgid "So in our continuing example,"
+msgstr "所以，在我们的例子里，"
+
+#: build/en/book.xml:8281(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -v --stop-on-copy \\\n"
+"          http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n"
+"\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn log -v --stop-on-copy \\\n"
+"          http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\n"
+"Changed paths:\n"
+"   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n"
+"\n"
+"$\n"
+
+#: build/en/book.xml:8293(para)
+msgid "As expected, the final revision printed by this command is the revision in which <filename moreinfo=\"none\">my-calc-branch</filename> was created by copying."
+msgstr "正如所料，最后的打印出的版本正是<filename moreinfo=\"none\">my-calc-branch</filename>生成的版本。"
+
+#: build/en/book.xml:8299(para)
+msgid "Here's the final merging procedure, then:"
+msgstr "如下是最终的合并过程，然后："
+
+#: build/en/book.xml:830(para)
+#, fuzzy
+msgid "In February 2000, they contacted Karl Fogel, the author of <citetitle>Open Source Development with CVS</citetitle> (Coriolis, 1999), and asked if he'd like to work on this new project. Coincidentally, at the time Karl was already discussing a design for a new version control system with his friend Jim Blandy. In 1995, the two had started Cyclic Software, a company providing CVS support contracts, and although they later sold the business, they still used CVS every day at their jobs. Their frustration with CVS had led Jim to think carefully about better ways to manage versioned data, and he'd already come up with not only the name <quote>Subversion</quote>, but also with the basic design of the Subversion data store. When CollabNet called, Karl immediately agreed to work on the project, and Jim got his employer, Red Hat Software, to essentially donate him to the project for an indefinite period of time. CollabNet hired Karl and Ben Collins-Sussman, and detailed design work began in May. With the help of some well-placed prods from Brian Behlendorf and Jason Robbins of CollabNet, and Greg Stein (at the time an independent developer active in the WebDAV/DeltaV specification process), Subversion quickly attracted a community of active developers. It turned out that many people had had the same frustrating experiences with CVS, and welcomed the chance to finally do something about it."
+msgstr "2000年2月，他们联系到<citetitle>Open Source Development with CVS</citetitle>(Coriolis, 1999)的作者Karl Fogel，并且询问他是否希望为这个新项目工作。巧合的是，当时Karl正在与朋友Jim Blandy讨论设计一个新的版本控制系统。1995年时，他们两人曾经开办了一个提供CVS支持的公司Cyclic Software，尽管他们最终卖掉了公司，但还是天天使用CVS进行日常工作。在使用CVS时的挫折促使Jim认真的思考如何管理版本化的数据，并且当时他不仅使用了<quote>Subversion</quote>这个名字，并且已经完成了Subversion版本库的最初设计。所以当CollabNet提出邀请的时候，Karl马上同意为这个项目工作，同时Jim也使他的雇主—Red Hat软件公司—允许他到这个项目工作，并且没有限定最终的期限。CollabNet雇佣了Karl和Ben Collins Sussman，详细设计工作从三月开始，在Behlendorf 、CollabNet、Jason Robbins和Greg Stein（当时是一个独立开发者，活跃在WebDAV/DeltaV系统规范制订工作中）恰到好处的激励下，Subversion很快吸引了许多活跃的开发者，结果使得许多具有CVS经验的人们很乐于为这个项目做些事情。"
+
+#: build/en/book.xml:8301(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn update\n"
+"At revision 405.\n"
+"\n"
+"$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"\n"
+"$ svn status\n"
+"M   integer.c\n"
+"M   button.c\n"
+"M   Makefile\n"
+"\n"
+"# ...examine the diffs, compile, test, etc...\n"
+"\n"
+"$ svn commit -m \"Merged my-calc-branch changes r341:405 into the trunk.\"\n"
+"Sending        integer.c\n"
+"Sending        button.c\n"
+"Sending        Makefile\n"
+"Transmitting file data ...\n"
+"Committed revision 406.\n"
+msgstr ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn update\n"
+"At revision 405.\n"
+"\n"
+"$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"\n"
+"$ svn status\n"
+"M   integer.c\n"
+"M   button.c\n"
+"M   Makefile\n"
+"\n"
+"# ...examine the diffs, compile, test, etc...\n"
+"\n"
+"$ svn commit -m \"Merged my-calc-branch changes r341:405 into the trunk.\"\n"
+"Sending        integer.c\n"
+"Sending        button.c\n"
+"Sending        Makefile\n"
+"Transmitting file data ...\n"
+"Committed revision 406.\n"
+
+#: build/en/book.xml:8326(para)
+msgid "Again, notice that the commit log message very specifically mentions the range of changes that was merged into the trunk. Always remember to do this, because it's critical information you'll need later on."
+msgstr "再次说明，日志信息中详细描述了合并到主干的的修改范围，记住一定要这么做，这是你以后需要的重要信息。"
+
+#: build/en/book.xml:8331(para)
+msgid "For example, suppose you decide to keep working on your branch for another week, in order to complete an enhancement to your original feature or bug fix. The repository's <literal moreinfo=\"none\">HEAD</literal> revision is now 480, and you're ready to do another merge from yo
