@@ -5778,3 +5778,1122 @@ msgstr "libsvn_wc"
 #: build/en/book.xml:16474(para)
 msgid "The working copy management library"
 msgstr "工作拷贝管理库"
+
+#: build/en/book.xml:16478(term)
+msgid "mod_authz_svn"
+msgstr "mod_authz_svn"
+
+#: build/en/book.xml:16479(para)
+msgid "Apache authorization module for Subversion repositories access via WebDAV"
+msgstr "使用WebDAV访问Subversion版本库的Apache授权模块"
+
+#: build/en/book.xml:16484(para)
+msgid "Apache module for mapping WebDAV operations to Subversion ones"
+msgstr "影射WebDAV操作为Subversion操作的Apache模块"
+
+#: build/en/book.xml:16489(para)
+#, fuzzy
+msgid "The fact that the word <quote>miscellaneous</quote> only appears once in the previous list is a good sign. The Subversion development team is serious about making sure that functionality lives in the right layer and libraries. Perhaps the greatest advantage of the modular design is its lack of complexity from a developer's point of view. As a developer, you can quickly formulate that kind of <quote>big picture</quote> that allows you to pinpoint the location of certain pieces of functionality with relative ease."
+msgstr "单词<quote>各色各样的</quote>只在列表<xref linkend=\"svn.developer.layerlib.tbl-1\"/>中出现过一次是一个好的迹象。Subversion开发团队非常注意将功能归入合适的层和库，或许模块化设计最大的好处就是从开发者的角度看减少了复杂性。作为一个开发者，你可以很快就描画出一副<quote>大图像</quote>，以便于你更精确地，也相对容易地找出某一功能所在的位置。"
+
+#: build/en/book.xml:16499(para)
+#, fuzzy
+msgid "Another benefit of modularity is the ability to replace a given module with a whole new library that implements the same API without affecting the rest of the code base. In some sense, this happens within Subversion already. The libsvn_ra_dav, libsvn_ra_local, libsvn_ra_serf, and libsvn_ra_svn libraries each implement the same interface, all working as plugins to libsvn_ra. And all four communicate with the Repository Layer—libsvn_ra_local connects to the repository directly; the other three do so over a network. The libsvn_fs_base and libsvn_fs_fs libraries are another pair of libraries that implement the same functionality in different ways—both are plugins to the common libsvn_fs library."
+msgstr "模块化的另一个好处是我们有能力去构造一个全新的，能够完全实现相同API功能的库，以替换整个给定的模块，而又不会影响基础代码。在某种意义上，Subversion已经这样做了。libsvn_ra_dav、libsvn_ra_local和libsvn_ra_svn all都实现了相同的接口，三者均与版本库层进行通讯—libsvn_ra_dav和libsvn_ra_svn通过网络，而libsvn_ra_local则是直接连接，libsvn_fs_base和libsvn_fs_fs是另外两个例子。"
+
+#: build/en/book.xml:16512(para)
+msgid "The client itself also highlights the benefits of modularity in the Subversion design. Subversion's libsvn_client library is a one-stop shop for most of the functionality necessary for designing a working Subversion client (see <xref linkend=\"svn.developer.layerlib.client\"/>). So while the Subversion distribution provides only the <command moreinfo=\"none\">svn</command> command-line client program, there are several third-party programs which provide various forms of graphical client UI. These GUIs use the same APIs that the stock command-line client does. This type of modularity has played a large role in the proliferation of available Subversion clients and IDE integrations and, by extension, to the tremendous adoption rate of Subversion itself."
+msgstr ""
+
+#: build/en/book.xml:1652(para)
+#, fuzzy
+msgid "To publish your changes to others, you can use Subversion's <command moreinfo=\"none\">commit</command> command."
+msgstr "发布你的修改给别人，你可以使用Subversion的提交（<command moreinfo=\"none\">commit</command>）命令："
+
+#: build/en/book.xml:16527(title)
+msgid "Repository Layer"
+msgstr "版本库层"
+
+#: build/en/book.xml:16529(para)
+#, fuzzy
+msgid "When referring to Subversion's Repository Layer, we're generally talking about two basic concepts—the versioned filesystem implementation (accessed via libsvn_fs, and supported by its libsvn_fs_base and libsvn_fs_fs plugins), and the repository logic that wraps it (as implemented in libsvn_repos). These libraries provide the storage and reporting mechanisms for the various revisions of your version-controlled data. This layer is connected to the Client Layer via the Repository Access Layer, and is, from the perspective of the Subversion user, the stuff at the <quote>other end of the line.</quote>"
+msgstr "当提到Subversion版本库层时，我们通常会讨论两个库—版本库（函数）库和文件系统（函数）库。这两个库为你的版本控制数据的各个修订版本提供了存储和报告机制，该层通过版本库访问层连接到客户层，而且，从Subversion用户的角度看，这是资料存储过程中的<quote>链接的另一端</quote>。"
+
+#: build/en/book.xml:16541(para)
+#, fuzzy
+msgid "The Subversion Filesystem is not a kernel-level filesystem that one would install in an operating system (like the Linux ext2 or NTFS), but a virtual filesystem. Rather than storing <quote>files</quote> and <quote>directories</quote> as real files and directories (as in, the kind you can navigate through using your favorite shell program), it uses one of two available abstract storage backends—either a Berkeley DB database environment, or a flat-file representation. (To learn more about the two repository back-ends, see <xref linkend=\"svn.reposadmin.basics.backends\"/>.) There has even been considerable interest by the development community in giving future releases of Subversion the ability to use other back-end database systems, perhaps through a mechanism such as Open Database Connectivity (ODBC). In fact, Google did something similar to this before launching the Google Code Project Hosting service, announcing in mid-2006 that members of its Open Source team had written a new proprietary Subversion filesystem plugin which used their ultra-scalable Bigtable database for its storage."
+msgstr "Subversion文件系统通过libsvn_fs API来访问，它并不是一个安装在操作系统之上的内核级的文件系统（例如Linux ext2或NTFS），而是一个虚拟文件系统。它并未将<quote>文件</quote>和<quote>目录</quote>保存为真实的文件和目录（也就是用你熟知的shell程序可以浏览的那种），而是采用了一种抽象的后端存储方式，这个后端存储方式有两种—一个是Berkeley DB数据库环境，另一个是普通文件表示。（要了解更多关于版本库后端的信息，请看<xref linkend=\"svn.reposadmin.basics.backends\"/>）。除此之外，开发社区也非常有兴趣考虑在Subversion的未来版本 中提供某种使用其它后端数据库系统的能力，也许是开放式数据库连接（ODBC）的机制。"
+
+#: build/en/book.xml:1655(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit button.c -m \"Fixed a typo in button.c.\"\n"
+"Sending        button.c\n"
+"Transmitting file data .\n"
+"Committed revision 57.\n"
+msgstr ""
+"\n"
+"$ svn commit button.c -m \"Fixed a typo in button.c.\"\n"
+"Sending        button.c\n"
+"Transmitting file data .\n"
+"Committed revision 57.\n"
+
+#: build/en/book.xml:16560(para)
+#, fuzzy
+msgid "The filesystem API exported by libsvn_fs contains the kinds of functionality you would expect from any other filesystem API—you can create and remove files and directories, copy and move them around, modify file contents, and so on. It also has features that are not quite as common, such as the ability to add, modify, and remove metadata (<quote>properties</quote>) on each file or directory. Furthermore, the Subversion Filesystem is a versioning filesystem, which means that as you make changes to your directory tree, Subversion remembers what your tree looked like before those changes. And before the previous changes. And the previous ones. And so on, all the way back through versioning time to (and just beyond) the moment you first started adding things to the filesystem."
+msgstr "libsvn_fs支持的文件系统API包含了所有其他文件系统的功能：你可以创建和删除文件和目录、拷贝和移动、修改文件内容等等。它也包含了一些不太常用的特性，如对任意文件和目录添加、修改和删除元数据（<quote>properties</quote>）的能力。此外，Subversion文件系统是一个版本化的文件系统，意味着你修改你的目录树时，Subversion会记住修改以前的样子。等等，可以回到所有初始化版本库之后（且仅仅之后）的版本。"
+
+#: build/en/book.xml:16575(para)
+#, fuzzy
+msgid "All the modifications you make to your tree are done within the context of a Subversion commit transaction. The following is a simplified general routine for modifying your filesystem:"
+msgstr "所有你对目录树的修改包含在Subversion事务的上下文中，下面描述了修改文件系统的例程："
+
+#: build/en/book.xml:16582(para)
+#, fuzzy
+msgid "Begin a Subversion commit transaction."
+msgstr "开始Subversion事务。"
+
+#: build/en/book.xml:16585(para)
+msgid "Make your changes (adds, deletes, property modifications, etc.)."
+msgstr "作出修改（添加、删除、属性修改等等。）。"
+
+#: build/en/book.xml:16589(para)
+msgid "Commit your transaction."
+msgstr "提交事务。"
+
+#: build/en/book.xml:16593(para)
+msgid "Once you have committed your transaction, your filesystem modifications are permanently stored as historical artifacts. Each of these cycles generates a single new revision of your tree, and each revision is forever accessible as an immutable snapshot of <quote>the way things were.</quote>"
+msgstr "一旦你提交了你的事务，你的文件系统修改就会永久的作为历史保存起来，每个这样的周期会产生一个新的树，所有的修订版本都是永远可以访问的一个不变的快照。"
+
+#: build/en/book.xml:16600(title)
+msgid "The Transaction Distraction"
+msgstr "事务其它"
+
+#: build/en/book.xml:16602(para)
+#, fuzzy
+msgid "The notion of a Subversion transaction can become easily confused with the transaction support provided by the underlying database itself, especially given the former's close proximity to the Berkeley DB database code in libsvn_fs_base. Both types of transaction exist to provide atomicity and isolation. In other words, transactions give you the ability to perform a set of actions in an all-or-nothing fashion—either all the actions in the set complete with success, or they all get treated as if <emphasis>none</emphasis> of them ever happened—and in a way that does not interfere with other processes acting on the data."
+msgstr "Subversion的事务概念，特别是在libsvn_fs中的数据库附近的代码，很容易与低层提供支持的数据库事务混淆。两种类型事务都提供了原子和隔离操作，换句话说，事务给你能力可以用<quote>全部或者没有</quote>样式执行一系列的动作—所有的动作都完全成功，或者是所有的<emphasis>没有</emphasis>发生—而且不会干扰别人操作数据。"
+
+#: build/en/book.xml:16615(para)
+#, fuzzy
+msgid "Database transactions generally encompass small operations related specifically to the modification of data in the database itself (such as changing the contents of a table row). Subversion transactions are larger in scope, encompassing higher-level operations like making modifications to a set of files and directories which are intended to be stored as the next revision of the filesystem tree. If that isn't confusing enough, consider the fact that Subversion uses a database transaction during the creation of a Subversion transaction (so that if the creation of Subversion transaction fails, the database will look as if we had never attempted that creation in the first place)!"
+msgstr "数据库事务通常围绕着一些对数据库本身的数据修改相关的小操作（如修改表行的内容），Subversion是更大范围的事务，围绕着一些高一级的操作，如下一个修订版本文件系统的一组文件和目录的修改。如果这还不是很混乱，考虑这个：Subversion在创建Subversion事务（所以如果Subversion创建事务失败，数据库会看起来我们从来没有尝试创建）时会使用一个数据库事务！"
+
+#: build/en/book.xml:1662(para)
+#, fuzzy
+msgid "Now your changes to <filename moreinfo=\"none\">button.c</filename> have been committed to the repository, with a note describing your change (namely, that you fixed a typo). If another user checks out a working copy of <filename moreinfo=\"none\">/calc</filename>, they will see your changes in the latest version of the file."
+msgstr "这时你对<filename moreinfo=\"none\">button.c</filename>的修改已经提交到了版本库，如果其他人取出了<filename moreinfo=\"none\">/calc</filename>的一个工作拷贝，他们会看到这个文件最新的版本。"
+
+#: build/en/book.xml:16629(para)
+msgid "Fortunately for users of the filesystem API, the transaction support provided by the database system itself is hidden almost entirely from view (as should be expected from a properly modularized library scheme). It is only when you start digging into the implementation of the filesystem itself that such things become visible (or interesting)."
+msgstr "很幸运的是用户的文件系统API，数据库提供的事务支持本身几乎完全从外表隐藏（也是一个完全模块化的模式所应该的）。只有当你开始研究文件系统本身的实现时，这些事情才可见（或者是开始感兴趣）。"
+
+#: build/en/book.xml:16639(para)
+#, fuzzy
+msgid "Most of the functionality provided by the filesystem interface is the result of an action that occurs on a filesystem path. That is, from outside of the filesystem, the primary mechanism for describing and accessing the individual revisions of files and directories comes through the use of path strings like <filename moreinfo=\"none\">/foo/bar</filename>, just as if you were addressing files and directories through your favorite shell program. You add new files and directories by passing their paths-to-be to the right API functions. You query for information about them by the same mechanism."
+msgstr "大多数文件系统接口提供的功能作为一个动作发生在一个文件系统路径上，也就是，从文件系统的外部，描述和访问文件和目录独立版本的主要机制是经过如<filename moreinfo=\"none\">/foo/bar</filename>的路径，就像你在喜欢的shell程序中定位文件和目录。你通过传递它们的路径到相应的API功能来添加新的文件和目录，查询这些信息也是同样的机制。"
+
+#: build/en/book.xml:16650(para)
+msgid "Unlike most filesystems, though, a path alone is not enough information to identify a file or directory in Subversion. Think of a directory tree as a two-dimensional system, where a node's siblings represent a sort of left-and-right motion, and descending into subdirectories a downward motion. <xref linkend=\"svn.developer.layerlib.repos.dia-1\"/> shows a typical representation of a tree as exactly that."
+msgstr "然而，不像大多数文件系统，一个单独的路径不足以在Subversion定位一个文件或目录，可以把目录树看作一个二维的系统，一个节点的兄弟代表了一种从左到右的动作，并且递减到子目录是一个向下的动作，<xref linkend=\"svn.developer.layerlib.repos.dia-1\"/>展示了一个典型的树的形式。"
+
+#: build/en/book.xml:16659(title)
+msgid "Files and directories in two dimensions"
+msgstr "二维的文件目录"
+
+#: build/en/book.xml:16663(para)
+#, fuzzy
+msgid "The different here is that the Subversion filesystem has a nifty third dimension that most filesystems do not have—Time! <placeholder-1/> In the filesystem interface, nearly every function that has a <parameter moreinfo=\"none\">path</parameter> argument also expects a <parameter moreinfo=\"none\">root</parameter> argument. This <structname>svn_fs_root_t</structname> argument describes either a revision or a Subversion transaction (which is simply a revision-in-the-making), and provides that third-dimensional context needed to understand the difference between <filename moreinfo=\"none\">/foo/bar</filename> in revision 32, and the same path as it exists in revision 98. <xref linkend=\"svn.developer.layerlib.repos.dia-2\"/> shows revision history as an added dimension to the Subversion filesystem universe."
+msgstr "当然，Subversion文件系统有一个其它文件系统所没有的第三维—时间！ <footnote><placeholder-1/></footnote> 在一个文件系统接口，几乎所有的功能都有个<parameter moreinfo=\"none\">路径</parameter>参数，也期望一个<parameter moreinfo=\"none\">root</parameter>参数。<structname>svn_fs_root_t</structname>参数不仅描述了一个修订版本或一个Subversion事务（通常正好是一个修订版本），而且提供了用来区分修订版本32的<filename moreinfo=\"none\">/foo/bar</filename>和修订版本98在同样路径的三维上下文环境。<xref linkend=\"svn.developer.layerlib.repos.dia-2\"/>展示了修订版本历史作为添加的纬度进入到Subversion文件系统领域。"
+
+#: build/en/book.xml:16667(para)
+msgid "We understand that this may come as a shock to sci-fi fans who have long been under the impression that Time was actually the <emphasis>fourth</emphasis> dimension, and we apologize for any emotional trauma induced by our assertion of a different theory."
+msgstr "我们理解这一定会给科幻小说迷带来一个震撼，他们认为时间是<emphasis>第四</emphasis>维的，我们要为提出这样一个不同理论的断言而伤害了他们的作出道歉。"
+
+#: build/en/book.xml:16686(title)
+msgid "Versioning time—the third dimension!"
+msgstr "版本时间—第三维！"
+
+#: build/en/book.xml:1669(para)
+msgid "Suppose you have a collaborator, Sally, who checked out a working copy of <filename moreinfo=\"none\">/calc</filename> at the same time you did. When you commit your change to <filename moreinfo=\"none\">button.c</filename>, Sally's working copy is left unchanged; Subversion only modifies working copies at the user's request."
+msgstr "假设你有个合作者，Sally，她和你同时取出了<filename moreinfo=\"none\">/calc</filename>的一个工作拷贝，你提交了你对<filename moreinfo=\"none\">button.c</filename>的修改，Sally的工作拷贝并没有改变，Subversion只在用户要求的时候才改变工作拷贝。"
+
+#: build/en/book.xml:16690(para)
+msgid "As we mentioned earlier, the libsvn_fs API looks and feels like any other filesystem, except that it has this wonderful versioning capability. It was designed to be usable by any program interested in a versioning filesystem. Not coincidentally, Subversion itself is interested in that functionality. But while the filesystem API should be sufficient for basic file and directory versioning support, Subversion wants more—and that is where libsvn_repos comes in."
+msgstr "像之前我们提到的，libsvn_fs的API感觉像是其它文件系统，只是有一个美妙的版本化能力。它设计为为所有对版本化的文件系统有兴趣的程序使用，不是巧合，Subversion本身也对这个功能很有兴趣。但是虽然文件系统API一定必须对基本的文件和目录版本化提供足够的支持，Subversion需要的更多—这是libsvn_repos到来的地方。"
+
+#: build/en/book.xml:16700(para)
+#, fuzzy
+msgid "The Subversion repository library (libsvn_repos) sits (logically speaking) atop the libsvn_fs API, providing additional functionality beyond that of the underlying versioned filesystem logic. It does not completely wrap each and every filesystem function—only certain major steps in the general cycle of filesystem activity are wrapped by the repository interface. Some of these include the creation and commit of Subversion transactions, and the modification of revision properties. These particular events are wrapped by the repository layer because they have hooks associated with them. A repository hook system is not strictly related to implementing a versioning filesystem, so it lives in the repository wrapper library."
+msgstr "希望使用libsvn_repos的API的开发者会发现它不是文件系统的一个完全包裹，只有文件系统常规周期中的主要事件使用版本库接口包裹，如包括Subversion事务的创建和提交，修订版本属性的修改。这些特别的事件使用版本库库包裹是因为它们有一些关联的钩子，在将来，别的事件也将会使用版本库API包裹。所有其它的文件系统交互会直接通过libsvn_fs的API发生。"
+
+#: build/en/book.xml:16714(para)
+#, fuzzy
+msgid "The hooks mechanism is but one of the reasons for the abstraction of a separate repository library from the rest of the filesystem code. The libsvn_repos API provides several other important utilities to Subversion. These include the abilities to:"
+msgstr "钩子机制需求是从文件系统代码的其它部分中抽象出单独的版本库库的一个原因，libsvn_repos的API提供了许多其他有用的工具，它们可以做到："
+
+#: build/en/book.xml:16722(para)
+msgid "create, open, destroy, and perform recovery steps on a Subversion repository and the filesystem included in that repository."
+msgstr "在Subversion版本库和版本库包括的文件系统的上创建、打开、销毁和执行恢复步骤。"
+
+#: build/en/book.xml:16727(para)
+msgid "describe the differences between two filesystem trees."
+msgstr "描述两个文件系统树的区别。"
+
+#: build/en/book.xml:16731(para)
+msgid "query for the commit log messages associated with all (or some) of the revisions in which a set of files was modified in the filesystem."
+msgstr "关于所有（或者部分）修订版本中的文件系统中的一组文件的提交日志信息的查询"
+
+#: build/en/book.xml:16736(para)
+msgid "generate a human-readable <quote>dump</quote> of the filesystem, a complete representation of the revisions in the filesystem."
+msgstr "产生可读的文件系统<quote>导出</quote>，一个文件系统修订版本的完整展现。"
+
+#: build/en/book.xml:16741(para)
+msgid "parse that dump format, loading the dumped revisions into a different Subversion repository."
+msgstr "解析导出格式，加载导出的版本到一个不同的Subversion版本库。"
+
+#: build/en/book.xml:16746(para)
+msgid "As Subversion continues to evolve, the repository library will grow with the filesystem library to offer increased functionality and configurable option support."
+msgstr "伴随着Subversion的发展，版本库库会随着文件系统提供更多的功能和配置选项而不断成长。"
+
+#: build/en/book.xml:16754(title)
+msgid "Repository Access Layer"
+msgstr "版本库访问层"
+
+#: build/en/book.xml:16756(para)
+#, fuzzy
+msgid "If the Subversion Repository Layer is at <quote>the other end of the line</quote>, the Repository Access (RA) Layer is the line itself. Charged with marshaling data between the client libraries and the repository, this layer includes the libsvn_ra module loader library, the RA modules themselves (which currently includes libsvn_ra_dav, libsvn_ra_local, libsvn_ra_serf, and libsvn_ra_svn), and any additional libraries needed by one or more of those RA modules, such as the mod_dav_svn Apache module with which libsvn_ra_dav communicates or libsvn_ra_svn's server, <command moreinfo=\"none\">svnserve</command>."
+msgstr "如果说Subversion版本库层是在<quote>这条线的另一端</quote>，那版本库访问层就是这条线。负责在客户端库和版本库之间编码数据，这一层包括libsvn_ra模块加载模块，RA模块本身（现在包括了libsvn_ra_dav、libsvn_ra_local和libsvn_ra_svn），和所有一个或多个RA模块需要的附加库，例如与Apache模块mod_dav_svn通讯的libsvn_ra_dav或者是libsvn_ra_svn的服务器，<command moreinfo=\"none\">svnserve</command>。"
+
+#: build/en/book.xml:1676(para)
+msgid "To bring her project up to date, Sally can ask Subversion to <firstterm>update</firstterm> her working copy, by using the Subversion <command moreinfo=\"none\">update</command> command. This will incorporate your changes into her working copy, as well as any others that have been committed since she checked it out."
+msgstr "要使项目最新，Sally可以要求Subversion<firstterm>更新</firstterm>她的工作备份，通过使用更新（<command moreinfo=\"none\">update</command>）命令，将结合你和所有其他人在她上次更新之后的改变到她的工作拷贝。"
+
+#: build/en/book.xml:16768(para)
+#, fuzzy
+msgid "Since Subversion uses URLs to identify its repository resources, the protocol portion of the URL schema (usually <literal moreinfo=\"none\">file://</literal>, <literal moreinfo=\"none\">http://</literal>, <literal moreinfo=\"none\">https://</literal>, or <literal moreinfo=\"none\">svn://</literal>) is used to determine which RA module will handle the communications. Each module registers a list of the protocols it knows how to <quote>speak</quote> so that the RA loader can, at runtime, determine which module to use for the task at hand. You can determine which RA modules are available to the Subversion command-line client, and what protocols they claim to support, by running <command moreinfo=\"none\">svn --version</command>:"
+msgstr "因为Subversion使用URL来识别版本库资源，URL模式的协议部分（通常是<literal moreinfo=\"none\">file:</literal>、<literal moreinfo=\"none\">http:</literal>、<literal moreinfo=\"none\">https:</literal>或<literal moreinfo=\"none\">svn:</literal>）用来监测那个RA模块用来处理通讯。每个模块注册一组它们知道如何<quote>说话</quote>的协议，所以RA加载器可以在运行中监测在手边的任务中使用哪个模块。通过运行<command moreinfo=\"none\">svn --version</command>，你可以监测Subversion命令行客户端所支持的RA模块和它们声明支持的协议："
+
+#: build/en/book.xml:16780(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn --version\n"
+"svn, version 1.4.3 (r23084)\n"
+"   compiled Jan 18 2007, 07:47:40\n"
+"\n"
+"Copyright (C) 2000-2006 CollabNet.\n"
+"Subversion is open source software, see http://subversion.tigris.org/\n"
+"This product includes software developed by CollabNet (http://www.Collab.Net/).\n"
+"\n"
+"The following repository access (RA) modules are available:\n"
+"\n"
+"* ra_dav : Module for accessing a repository via WebDAV (DeltaV) protocol.\n"
+"  - handles 'http' scheme\n"
+"  - handles 'https' scheme\n"
+"* ra_svn : Module for accessing a repository using the svn network protocol.\n"
+"  - handles 'svn' scheme\n"
+"* ra_local : Module for accessing a repository on local disk.\n"
+"  - handles 'file' scheme\n"
+"\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn --version\n"
+"svn, version 1.4.3 (r23084)\n"
+"   compiled Jan 18 2007, 07:47:40\n"
+"\n"
+"Copyright (C) 2000-2006 CollabNet.\n"
+"Subversion is open source software, see http://subversion.tigris.org/\n"
+"This product includes software developed by CollabNet (http://www.Collab.Net/).\n"
+"\n"
+"The following repository access (RA) modules are available:\n"
+"\n"
+"* ra_dav : Module for accessing a repository via WebDAV (DeltaV) protocol.\n"
+"  - handles 'http' scheme\n"
+"  - handles 'https' scheme\n"
+"* ra_svn : Module for accessing a repository using the svn network protocol.\n"
+"  - handles 'svn' scheme\n"
+"* ra_local : Module for accessing a repository on local disk.\n"
+"  - handles 'file' scheme\n"
+"\n"
+"$\n"
+
+#: build/en/book.xml:16802(para)
+msgid "The public API exported by the RA Layer contains functionality necessary for sending and recieving versioned data to and from the repository. And each of the available RA plugins is able to perform that task using a specific protocol—libsvn_ra_dav speaks HTTP/WebDAV (optionally using SSL encryption) with an Apache HTTP Server that is running the mod_dav_svn Subversion server module; libsvn_ra_svn speaks a custom network protocol with the <command moreinfo=\"none\">svnserve</command> program; and so on."
+msgstr ""
+
+#: build/en/book.xml:16812(para)
+#, fuzzy
+msgid "And for those who wish to access a Subversion repository using still another protocol, that is precisely why the Repository Access Layer is modularized! Developers can simply write a new library that implements the RA interface on one side and communicates with the repository on the other. Your new library can use existing network protocols, or you can invent your own. You could use inter-process communication (IPC) calls, or—let's get crazy, shall we?—you could even implement an email-based protocol. Subversion supplies the APIs; you supply the creativity."
+msgstr "对那些一直希望使用另一个协议来访问Subversion版本库的人，正好是为什么版本库访问层是模块化的！开发者可以简单的编写一个新的库来在一侧实现RA接口并且与另一侧的版本库通讯。你的新库可以使用存在的网络协议，或者发明你自己的。你可以使用进程间的通讯调用，或者—让我们发狂，我们会吗？—你甚至可以实现一个电子邮件为基础的协议，Subversion提供了API，你提供创造性。"
+
+#: build/en/book.xml:16827(title)
+msgid "Client Layer"
+msgstr "客户端层"
+
+#: build/en/book.xml:16829(para)
+msgid "On the client side, the Subversion working copy is where all the action takes place. The bulk of functionality implemented by the client-side libraries exists for the sole purpose of managing working copies—directories full of files and other subdirectories which serve as a sort of local, editable <quote>reflection</quote> of one or more repository locations—and propagating changes to and from the Repository Access layer."
+msgstr "在客户端这一面，Subversion工作拷贝是所有动作发生的地方。大多数客户端库实现的功能是为了管理工作拷贝的目的实现的—满是文件子目录的目录是一个或多个版本库位置的可编辑的本地<quote>影射</quote>—从版本库访问层来回传递修改。"
+
+#: build/en/book.xml:1683(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ pwd\n"
+"/home/sally/calc\n"
+"\n"
+"$ ls -A \n"
+".svn/ Makefile integer.c button.c\n"
+"\n"
+"$ svn update\n"
+"U    button.c\n"
+"Updated to revision 57.\n"
+msgstr ""
+"\n"
+"$ pwd\n"
+"/home/sally/calc\n"
+"\n"
+"$ ls -A \n"
+".svn/ Makefile integer.c button.c\n"
+"\n"
+"$ svn update\n"
+"U    button.c\n"
+"Updated to revision 57.\n"
+
+#: build/en/book.xml:16838(para)
+msgid "Subversion's working copy library, libsvn_wc, is directly responsible for managing the data in the working copies. To accomplish this, the library stores administrative information about each working copy directory within a special subdirectory. This subdirectory, named <filename moreinfo=\"none\">.svn</filename>, is present in each working copy directory and contains various other files and directories which record state and provide a private workspace for administrative action. For those familiar with CVS, this <filename moreinfo=\"none\">.svn</filename> subdirectory is similar in purpose to the <filename moreinfo=\"none\">CVS</filename> administrative directories found in CVS working copies. For more information about the <filename moreinfo=\"none\">.svn</filename> administrative area, see <xref linkend=\"svn.developer.insidewc\"/>in this chapter."
+msgstr "Subversion的工作拷贝库，libsvn_wc直接负责管理工作拷贝的数据，为了完成这一点，库会在工作拷贝的每个目录的特殊子目录中保存关于工作拷贝的管理性信息。这个子目录叫做<filename moreinfo=\"none\">.svn</filename>，出现在所有工作拷贝目录里，保存了各种记录了状态和用来在私有工作区工作的文件和目录。对那些熟悉CVS的用户，<filename moreinfo=\"none\">.svn</filename>子目录与<filename moreinfo=\"none\">CVS</filename>工作拷贝管理目录的作用类似，关于<filename moreinfo=\"none\">.svn</filename>管理区域的更多信息，见本章的<xref linkend=\"svn.developer.insidewc\"/>。"
+
+#: build/en/book.xml:16852(para)
+msgid "The Subversion client library, libsvn_client, has the broadest responsibility; its job is to mingle the functionality of the working copy library with that of the Repository Access Layer, and then to provide the highest-level API to any application that wishes to perform general revision control actions. For example, the function <function moreinfo=\"none\">svn_client_checkout()</function> takes a URL as an argument. It passes this URL to the RA layer and opens an authenticated session with a particular repository. It then asks the repository for a certain tree, and sends this tree into the working copy library, which then writes a full working copy to disk (<filename moreinfo=\"none\">.svn</filename> directories and all)."
+msgstr "Subversion客户端库libsvn_client具备最广泛的职责；它的工作是结合工作拷贝库和版本库访问库的功能，然后为希望普通版本控制的应用提供最高级的API。举个例子，<function moreinfo=\"none\">svn_client_checkout()</function>方法是用一个URL作为参数，传递这个URL到RA层然后在特定版本库打开一个会话。然后向版本库要求一个特定的目录树，然后把目录树发送给工作拷贝库，然后把完全的工作拷贝写到磁盘（<filename moreinfo=\"none\">.svn</filename>目录和一切）。"
+
+#: build/en/book.xml:16866(para)
+#, fuzzy
+msgid "The client library is designed to be used by any application. While the Subversion source code includes a standard command-line client, it should be very easy to write any number of GUI clients on top of the client library. New GUIs (or any new client, really) for Subversion need not be clunky wrappers around the included command-line client—they have full access via the libsvn_client API to same functionality, data, and callback mechanisms that the command-line client uses. In fact, the Subversion source code tree contains a small C program (which can be found at <filename moreinfo=\"none\">tools/examples/minimal_client.c</filename> that exemplifies how to wield the Subversion API to create a simple client program"
+msgstr "客户端库是为任何程序使用设计的，尽管Subversion的源代码包括了一个标准的命令行客户端，用客户端库编写GUI客户端也是很简单，Subversion新的GUI（或者任何新的客户端，真的）不需要紧密围绕包含的命令行客户端—他们对具有相同功能、数据和回调机制的libsvn_client的API有完全的访问权利。"
+
+#: build/en/book.xml:16881(title)
+msgid "Binding Directly—A Word About Correctness"
+msgstr "直接绑定—关于正确性"
+
+#: build/en/book.xml:16883(para)
+msgid "Why should your GUI program bind directly with a libsvn_client instead of acting as a wrapper around a command-line program? Besides simply being more efficient, this can address potential correctness issues as well. A command-line program (like the one supplied with Subversion) that binds to the client library needs to effectively translate feedback and requested data bits from C types to some form of human-readable output. This type of translation can be lossy. That is, the program may not display all of the information harvested from the API, or may combine bits of information for compact representation."
+msgstr "为什么GUI程序要直接访问libsvn_client而不以命令行客户端的包裹运行？除了效率以外，这也关系到潜在的正确性问题。一个命令行客户端程序（如Subversion提供的）如果绑定了客户端库，需要将反馈和请求数据字节从C翻译为可读的输出，这种翻译是有损耗的，程序不能得到API所提供的所有信息，或者是得到紧凑的信息。"
+
+#: build/en/book.xml:16895(para)
+msgid "If you wrap such a command-line program with yet another program, the second program has access only to already-interpreted (and as we mentioned, likely incomplete) information, which it must <emphasis>again</emphasis> translate into <emphasis>its</emphasis> representation format. With each layer of wrapping, the integrity of the original data is potentially tainted more and more, much like the result of making a copy of a copy (of a copy …) of a favorite audio or video cassette."
+msgstr "如果你已经包裹了这样一个命令行程序，第二个程序只能访问已经经过解释的（如我们提到的，不完全）信息，需要<emphasis>再次</emphasis>转化为<emphasis>它本身的</emphasis>展示格式。由于各层的包裹，原始数据的完整性越来越难以保证，结果很像对喜欢的录音带或录像带反复的拷贝（一个拷贝…）。"
+
+#: build/en/book.xml:169(para)
+msgid "Of course, no one can promise that this book will answer every question you have about Subversion. Sometimes, the precision with which it anticipates your questions will seem eerily telepathic; yet occasionally, you will stumble into a hole in the community's knowledge, and come away empty-handed. When this happens, the best thing you can do is email <email>users@subversion.tigris.org</email> and present your problem. The authors are still there, still watching, and they include not just the three listed on the cover, but many others who contributed corrections and original material. From the community's point of view, solving your problem is merely a pleasant side effect of a much larger project—namely, slowly adjusting this book, and ultimately Subversion itself, to more closely match the way people actually use it. They are eager to hear from you not merely because they can help you, but because you can help them. With Subversion as with all active free software projects, <emphasis>you are not alone</emphasis>."
+msgstr "当然，没人可以承诺这本书可以回答所有问题。尽管有时候一些前人提问的惊人一致性让你感觉是心灵感应；你仍有可能在社区的知识库里摔跤，空手而归。如果有这种情况，最好的办法是写明问题发送email到<email>users@subversion.tigris.org</email>，作者还在那里关注着社区，不仅仅封面提到的三位，还包括许多曾经作出修正与提供原始材料的人。从社区的视角，帮你解决问题只是逐步的调整这本书，进一步调整Subversion本身以更合理的适合用户使用这样一个大工程的一个有趣的额外效用。他们渴望你的信息，不仅仅可以帮助你，也因为可以帮助他们。与Subversion这样活跃的自由软件项目一起，<emphasis>你并不孤单</emphasis>。"
+
+#: build/en/book.xml:16905(para)
+msgid "But the most compelling argument for binding directly to the APIs instead of wrapping other programs is that the Subversion project makes compatibility promises regarding its APIs. Across minor versions of those APIs (such as between 1.3 and 1.4), no function's prototype will change. In other words, you aren't forced to update your program's source code simply because you've upgraded to a new version of Subversion. Certain functions might be deprecated, but they still work, and this gives you a buffer of time to eventually embrace the newer APIs. These kinds of compatibility promises do not exist for Subversion command-line program output, which is subject to change from release to release."
+msgstr ""
+
+#: build/en/book.xml:16928(title)
+msgid "Inside the Working Copy Administration Area"
+msgstr "进入工作拷贝的管理区"
+
+#: build/en/book.xml:16930(para)
+msgid "As we mentioned earlier, each directory of a Subversion working copy contains a special subdirectory called <filename moreinfo=\"none\">.svn</filename> which houses administrative data about that working copy directory. Subversion uses the information in <filename moreinfo=\"none\">.svn</filename> to keep track of things like:"
+msgstr "像我们前面提到的，每个Subversion工作拷贝包含了一个特别的子目录叫做<filename moreinfo=\"none\">.svn</filename>，这个目录包含了关于工作拷贝目录的管理数据，Subversion使用<filename moreinfo=\"none\">.svn</filename>中的信息来追踪如下的数据："
+
+#: build/en/book.xml:16938(para)
+msgid "Which repository location(s) are represented by the files and subdirectories in the working copy directory."
+msgstr "工作拷贝中展示的目录和文件在版本库中的位置。"
+
+#: build/en/book.xml:16943(para)
+msgid "What revision of each of those files and directories are currently present in the working copy."
+msgstr "工作拷贝中当前展示的文件和目录的修订版本。"
+
+#: build/en/book.xml:16947(para)
+msgid "Any user-defined properties that might be attached to those files and directories."
+msgstr "所有附加在文件和目录上的用户定义属性。"
+
+#: build/en/book.xml:1695(para)
+msgid "The output from the <command moreinfo=\"none\">svn update</command> command indicates that Subversion updated the contents of <filename moreinfo=\"none\">button.c</filename>. Note that Sally didn't need to specify which files to update; Subversion uses the information in the <filename moreinfo=\"none\">.svn</filename> directory, and further information in the repository, to decide which files need to be brought up to date."
+msgstr "<command moreinfo=\"none\">svn update</command>命令的输出表明Subversion更新了<filename moreinfo=\"none\">button.c</filename>的内容，注意，Sally不必指定要更新的文件，subversion利用<filename moreinfo=\"none\">.svn</filename>以及版本库的进一步信息决定哪些文件需要更新。"
+
+#: build/en/book.xml:16951(para)
+msgid "Pristine (un-edited) copies of the working copy files."
+msgstr "初始（未编辑）的工作拷贝文件的拷贝。"
+
+#: build/en/book.xml:16956(para)
+msgid "The Subversion working copy administration area's layout and contents are considered implementation details not really intended for human consumption. Developers are encouraged to use Subversion's public APIs or provided tools to access and manipulate the working copy data, as opposed to directly reading or modifying the files of which the working copy administrative area is comprised. The file formats employed by the working copy library for its administrative data do change from time to time—a fact that the public APIs do a great job of successfully hiding from the average user. In this section, we expose some of these implementation details sheerly to appease your overwhelming curiousity."
+msgstr ""
+
+#: build/en/book.xml:16971(title)
+msgid "The Entries File"
+msgstr "条目文件"
+
+#: build/en/book.xml:16973(para)
+#, fuzzy
+msgid "Perhaps the single most important file in the <filename moreinfo=\"none\">.svn</filename> directory is the <filename moreinfo=\"none\">entries</filename> file. The entries file is a single file which contains the bulk of the administrative information about a versioned item in a working copy directory. It is this one file which tracks the repository URLs, pristine revision, file checksums, pristine text and property timestamps, scheduling and conflict state information, last-known commit information (author, revision, timestamp), local copy history—practically everything that a Subversion client is interested in knowing about a versioned (or to-be-versioned) resource!"
+msgstr "或许<filename moreinfo=\"none\">.svn</filename>目录中最重要的单个文件就是<filename moreinfo=\"none\">entries</filename>了，这个条目文件是一个XML文档，包含了关于工作拷贝中的版本化的资源的大多数管理性信息，这个文件保留了版本库URL、原始修订版本、可知的最后提交信息（作者、修订版本和时间戳）和本地拷贝历史—实际上是Subversion客户端关于一个版本化（或者是将要版本化的）资源的所有感兴趣的信息！"
+
+#: build/en/book.xml:16986(para)
+#, fuzzy
+msgid "Folks familiar with CVS's administrative directories will have recognized at this point that Subversion's <filename moreinfo=\"none\">.svn/entries</filename> file serves the purposes of, among other things, CVS's <filename moreinfo=\"none\">CVS/Entries</filename>, <filename moreinfo=\"none\">CVS/Root</filename>, and <filename moreinfo=\"none\">CVS/Repository</filename> files combined."
+msgstr "扫视一下典型的<filename moreinfo=\"none\">.svn</filename>目录会发现比CVS在<filename moreinfo=\"none\">CVS</filename>目录中的内容多一些，<filename moreinfo=\"none\">entries</filename>文件包含的XML描述了工作拷贝目录的当前状态，而且基本上合并了CVS的<filename moreinfo=\"none\">Entries</filename>、<filename moreinfo=\"none\">Root</filename>和<filename moreinfo=\"none\">Repository</filename>的功能。"
+
+#: build/en/book.xml:16993(para)
+msgid "The format of the <filename moreinfo=\"none\">.svn/entries</filename> file has changed over time. Originally an XML file, it now uses a custom—though still human-readable—file format. While XML was a great choice for early developers of Subversion who were frequently debugging the file's contents (and Subversion's behavior in light of them), the need for easy developer debugging has diminished as Subversion has matured, and has been replaced by the user's need for snappier performance. Of course, Subversion's working copy library makes upgrading from one working copy format to another a breeze—it reads the old formats, and writes the new."
+msgstr ""
+
+#: build/en/book.xml:17010(title)
+msgid "Pristine Copies and Property Files"
+msgstr "原始拷贝和属性文件"
+
+#: build/en/book.xml:17012(para)
+msgid "As mentioned before, the <filename moreinfo=\"none\">.svn</filename> directory also holds the pristine <quote>text-base</quote> versions of files. Those can be found in <filename moreinfo=\"none\">.svn/text-base</filename>. The benefits of these pristine copies are multiple—network-free checks for local modifications and difference reporting, network-free reversion of modified or missing files, smaller transmission of changes to the server—but comes at the cost of having each versioned file stored at least twice on disk. These days, this seems to be a negligible penalty for most files. However, the situation gets uglier as the size of your versioned files grows. Some attention is being given to making the presence of the <quote>text-base</quote> an option. Ironically though, it is as your versioned files' sizes get larger that the existence of the <quote>text-base</quote> becomes more crucial—who wants to transmit a huge file across a network just because they want to commit a tiny change to it?"
+msgstr "如我们前面提到的，<filename moreinfo=\"none\">.svn</filename>也包含了一些原始的<quote>text-base</quote>文件版本，可以在<filename moreinfo=\"none\">.svn/text-base</filename>看到。这些原始文件的好处是多方面的—察看本地修改和区别不需要经过网络访问，减少传递修改时的数据—但是随之而来的代价是每个版本化的文件都在磁盘至少保存两次，现在看来这是对大多数文件可以忽略不计的一个惩罚。但是，当你版本控制的文件增多之后形势会变得很严峻，我们已经注意到了应该可以选择使用<quote>text-base</quote>，但是具有讽刺意味的是，当版本化文件增大时，<quote>text-base</quote>文件的存在会更加重要—谁会希望在提交一个小修改时在网络上传递一个大文件？"
+
+#: build/en/book.xml:17031(para)
+msgid "Similar in purpose to the <quote>text-base</quote> files are the property files and their pristine <quote>prop-base</quote> copies, located in <filename moreinfo=\"none\">.svn/props</filename> and <filename moreinfo=\"none\">.svn/prop-base</filename> respectively. Since directories can have properties, too, there are also <filename moreinfo=\"none\">.svn/dir-props</filename> and <filename moreinfo=\"none\">.svn/dir-prop-base</filename> files. Each of these property files (<quote>working</quote> and <quote>base</quote> versions) uses a simple <quote>hash-on-disk</quote> file format for storing the property names and values."
+msgstr "同<quote>text-base</quote>文件的用途一样的还有属性文件和它们的<quote>prop-base</quote>拷贝，分别位于<filename moreinfo=\"none\">.svn/props</filename>和<filename moreinfo=\"none\">.svn/prop-base</filename>。因为目录也有属性，所以也有<filename moreinfo=\"none\">.svn/dir-props</filename>和<filename moreinfo=\"none\">.svn/dir-prop-base</filename>文件。所有的属性文件（<quote>working</quote>和<quote>base</quote>版本）都使用同样的<quote>hash-on-disk</quote>文件格式来排序属性名称和值。"
+
+#: build/en/book.xml:17051(title)
+msgid "Using the APIs"
+msgstr "使用API"
+
+#: build/en/book.xml:17053(para)
+#, fuzzy
+msgid "Developing applications against the Subversion library APIs is fairly straightforward. All of the public header files live in the <filename moreinfo=\"none\">subversion/include</filename> directory of the source tree. These headers are copied into your system locations when you build and install Subversion itself from source. These headers represent the entirety of the functions and types meant to be accessible by users of the Subversion libraries. The Subversion developer community is meticulous about ensuring that the public API is well-documented—refer directly to the header files for that documentation."
+msgstr "使用Subversion库API开发应用看起来相当的直接，所有的公共头文件放在源文件的<filename moreinfo=\"none\">subversion/include</filename>目录，从源代码编译和安装Subversion本身，需要这些头文件拷贝到系统位置。这些头文件包括了所有用户可以访问的功能和类型。"
+
+#: build/en/book.xml:17065(para)
+#, fuzzy
+msgid "When examining the public header files, the first thing you might notice is that Subversion's datatypes and functions are namespace protected. Every public Subversion symbol name begins with <literal moreinfo=\"none\">svn_</literal>, followed by a short code for the library in which the symbol is defined (such as <literal moreinfo=\"none\">wc</literal>, <literal moreinfo=\"none\">client</literal>, <literal moreinfo=\"none\">fs</literal>, etc.), followed by a single underscore (<literal moreinfo=\"none\">_</literal>) and then the rest of the symbol name. Semi-public functions (used among source files of a given library but not by code outside that library, and found inside the library directories themselves) differ from this naming scheme in that instead of a single underscore after the library code, they use a double underscore (<literal moreinfo=\"none\">__</literal>). Functions that are private to a given source file have no special prefixing, and are declared <literal moreinfo=\"none\">static</literal>. Of course, a compiler isn't interested in these naming conventions, but they help to clarify the scope of a given function or datatype."
+msgstr "你首先应该注意Subversion的数据类型和方法是命名空间保护的，每一个公共Subversion对象名以<literal moreinfo=\"none\">svn_</literal>开头，然后紧跟一个这个对象定义（如<literal moreinfo=\"none\">wc</literal>、<literal moreinfo=\"none\">client</literal>和<literal moreinfo=\"none\">fs</literal>其他）所在的库的简短编码，然后是一个下划线（<literal moreinfo=\"none\">_</literal>）和后面的对象名称。半公开的方法（库使用，但是但库之外代码不可以使用并且只可以在库自己的目录看到）与这个命名模式不同，并不是库代码之后紧跟一个下划线，他们是用两个下划线（<literal moreinfo=\"none\">__</literal>）。给定源文件的私有方法没有特殊前缀，使用<literal moreinfo=\"none\">static</literal>声明。当然，一个编译器不会关心命名习惯，只是用来区分给定方法或数据类型。"
+
+#: build/en/book.xml:1708(title)
+msgid "Revisions"
+msgstr "修订版本"
+
+#: build/en/book.xml:17084(para)
+msgid "Another good source of information about programming against the Subversion APIs is the project's own hacking guidelines, which can be found at <ulink url=\"http://subversion.tigris.org/hacking.html\"/>. This document contains useful information which, while aimed at developers and would-be developers of Subversion itself, is equally applicable to folks developing against Subversion as a set of third-party libraries. <placeholder-1/>"
+msgstr ""
+
+#: build/en/book.xml:17092(para)
+msgid "After all, Subversion uses Subversion's APIs, too."
+msgstr ""
+
+#: build/en/book.xml:17099(title)
+msgid "The Apache Portable Runtime Library"
+msgstr "Apache可移植运行库"
+
+#: build/en/book.xml:1710(para)
+#, fuzzy
+msgid "An <command moreinfo=\"none\">svn commit</command> operation publishes changes to any number of files and directories as a single atomic transaction. In your working copy, you can change files' contents, create, delete, rename and copy files and directories, and then commit a complete set of changes as an atomic transaction."
+msgstr "一个<command moreinfo=\"none\">svn commit</command>操作可以作为一个原子事务操作发布任意数量文件和目录的修改，在你的工作拷贝里，你可以改变文件内容、删除、改名和拷贝文件和目录，然后作为一个整体提交。"
+
+#: build/en/book.xml:17101(para)
+msgid "Along with Subversion's own datatypes, you will see many references to datatypes that begin with <literal moreinfo=\"none\">apr_</literal>—symbols from the Apache Portable Runtime (APR) library. APR is Apache's portability library, originally carved out of its server code as an attempt to separate the OS-specific bits from the OS-independent portions of the code. The result was a library that provides a generic API for performing operations that differ mildly—or wildly—from OS to OS. While the Apache HTTP Server was obviously the first user of the APR library, the Subversion developers immediately recognized the value of using APR as well. This means that there are practically no OS-specific code portions in Subversion itself. Also, it means that the Subversion client compiles and runs anywhere that the server does. Currently this list includes all flavors of Unix, Win32, BeOS, OS/2, and Mac OS X."
+msgstr "伴随Subversion自己的数据类型，你会看到许多<literal moreinfo=\"none\">apr</literal>开头的数据类型引用—来自Apache可移植运行库（APR）的对象。APR是Apache可移植运行库，源自为了服务器代码的多平台性，尝试将不同的操作系统特定字节与操作系统无关代码隔离。结果就提供了一个基础API的库，只有一些适度区别—或者是广泛的—来自各个操作系统。Apache HTTP服务器很明显是APR库的第一个用户，Subversion开发者立刻发现了使用APR库的价值。意味着Subversion没有操作系统特定的代码，也意味着Subversion客户端可以在Server存在的平台编译和运行。当前这个列表包括，各种类型的Unix、Win32、OS/2和Mac OS X。"
+
+#: build/en/book.xml:17118(para)
+#, fuzzy
+msgid "In addition to providing consistent implementations of system calls that differ across operating systems, <placeholder-1/> APR gives Subversion immediate access to many custom datatypes, such as dynamic arrays and hash tables. Subversion uses these types extensively throughout the codebase. But perhaps the most pervasive APR datatype, found in nearly every Subversion API prototype, is the <structname>apr_pool_t</structname>—the APR memory pool. Subversion uses pools internally for all its memory allocation needs (unless an external library requires a different memory management schema for data passed through its API), <placeholder-2/> and while a person coding against the Subversion APIs is not required to do the same, they are required to provide pools to the API functions that need them. This means that users of the Subversion API must also link against APR, must call <function moreinfo=\"none\">apr_initialize()</function> to initialize the APR subsystem, and then must create and manage pools for use with Subversion API calls, typically by using <function moreinfo=\"none\">svn_pool_create()</function>, <function moreinfo=\"none\">svn_pool_clear()</function>, and <function moreinfo=\"none\">svn_pool_destroy()</function>."
+msgstr "除了提供了跨平台一致的系统调用， <footnote><placeholder-1/></footnote> APR给Subversion对多种数据类型有快速的访问，如动态数组和哈希表。Subversion在代码中广泛使用这些类型，但是或许大多数普遍深入的APR数据类型可以在所有的Subversion的API原型中发现，是<structname>apr_pool_t</structname>—APR内存池，Subversion使用内部缓冲池用来进行内存分配（除非外部库在API传递参数时需要一个不同的内存管理模式）， <footnote><placeholder-2/></footnote> 而且一个人如果针对Subversion的API编码不需要做同样的事情，他们可以在需要时给API提供缓冲池，这意味着Subversion的API使用者也必须链接到APR，必须调用<function moreinfo=\"none\">apr_initialize()</function>来初始化APR字系统，然后必须得到一个缓冲池用来进行Subversion的API调用。详情见<xref linkend=\"svn.developer.pools\"/>。"
+
+#: build/en/book.xml:17121(para)
+msgid "Subversion uses ANSI system calls and datatypes as much as possible."
+msgstr "Subversion使用尽可能多ANSI系统调用和数据类型。"
+
+#: build/en/book.xml:17134(para)
+msgid "Neon and Berkeley DB are examples of such libraries."
+msgstr "Neon和Berkeley DB就是这种库的例子。"
+
+#: build/en/book.xml:17148(title)
+msgid "Programming with Memory Pools"
+msgstr "使用内存池编程"
+
+#: build/en/book.xml:17150(para)
+#, fuzzy
+msgid "Almost every developer who has used the C programming language has at some point sighed at the daunting task of managing memory usage. Allocating enough memory to use, keeping track of those allocations, freeing the memory when you no longer need it—these tasks can be quite complex. And of course, failure to do those things properly can result in a program that crashes itself, or worse, crashes the computer."
+msgstr "几乎每一个使用过C语言的开发者曾经感叹令人畏缩的内存管理，分配足够的内存，并且追踪内存的分配，在不需要时释放内存—这个任务会非常复杂。当然，如果没有正确地做到这一点会导致程序毁掉自己，或者更加严重一点，把电脑搞瘫。幸运的是，Subversion所依赖的APR库为了移植性提供了<structname>apr_pool_t</structname>类型，代表了应用可以分配内存的池。"
+
+#: build/en/book.xml:17159(para)
+msgid "Higher-level languages, on the other hand, take the job of memory management away from the developer completely. <placeholder-1/> Languages like Java and Python use <firstterm>garbage collection</firstterm> principles, allocating memory for objects when needed, and automatically freeing that memory when the object is no longer in use."
+msgstr ""
+
+#: build/en/book.xml:17162(para)
+msgid "Or at least make it something you only toy with when doing extremely tight program optimization."
+msgstr ""
+
+#: build/en/book.xml:1717(para)
+#, fuzzy
+msgid "By <quote>atomic transaction</quote>, we mean simply this: either all of the changes happen in the repository, or none of them happen. Subversion tries to retain this atomicity in the face of program crashes, system crashes, network problems, and other users' actions."
+msgstr "在版本库中，每一次提交被当作一次原子事务操作：要么所有的改变发生，要么都不发生，Subversion努力保持原子性以应对程序错误、系统错误、网络问题和其他用户行为。"
+
+#: build/en/book.xml:17170(para)
+msgid "APR provides a middle-ground approach called pool-based memory management. It allows the developer to control memory usage at a lower resolution—per chunk (or <quote>pool</quote>) of memory, instead of per allocated object. Rather than using <function moreinfo=\"none\">malloc()</function> and friends to allocate enough memory for a given object, you ask APR to allocate the memory from a memory pool. When you're finished using the objects you've created in the pool, you destroy the pool, effectively de-allocating the memory consumed by the objects you allocated from it. Rather than keeping track of individual objects which need to be de-allocated, your program simply considers the general lifetimes of those objects, and allocates the objects in a pool whose lifetime (the time between the pool's creation and its deletion) matches the object's needs."
+msgstr ""
+
+#: build/en/book.xml:17192(title)
+msgid "URL and Path Requirements"
+msgstr "URL和路径需求"
+
+#: build/en/book.xml:17194(para)
+msgid "With remote version control operation as the whole point of Subversion's existence, it makes sense that some attention has been paid to internationalization (i18n) support. After all, while <quote>remote</quote> might mean <quote>across the office</quote>, it could just as well mean <quote>across the globe.</quote> To facilitate this, all of Subversion's public interfaces that accept path arguments expect those paths to be canonicalized, and encoded in UTF-8. This means, for example, that any new client binary that drives the libsvn_client interface needs to first convert paths from the locale-specific encoding to UTF-8 before passing those paths to the Subversion libraries, and then re-convert any resultant output paths from Subversion back into the locale's encoding before using those paths for non-Subversion purposes. Fortunately, Subversion provides a suite of functions (see <filename moreinfo=\"none\">subversion/include/svn_utf.h</filename>) that can be used by any program to do these conversions."
+msgstr "因为分布式版本控制操作是Subversion存在的重点，有意义来关注一下国际化（i18n）支持。毕竟，当<quote>分布式</quote>或许意味着<quote>横跨办公室</quote>，它也意味着<quote>横跨全球</quote>。为了更容易一点，Subversion的所有公共接口只接受路径参数,这些参数是传统的，使用UTF-8编码。这意味着，举个例子，任何新的使用libsvn_client接口客户端库，在把这些参数传递给Subversion库前，需要首先将路径从本地代码转化为UTF-8代码，然后将Subversion传递回来的路径转换为本地代码，很幸运，Subversion提供了一组任何程序可以使用的转化方法（见<filename moreinfo=\"none\">subversion/include/svn_utf.h</filename>）。"
+
+#: build/en/book.xml:17212(para)
+#, fuzzy
+msgid "Also, Subversion APIs require all URL parameters to be properly URI-encoded. So, instead of passing <uri>file:///home/username/My File.txt</uri> as the URL of a file named <literal moreinfo=\"none\">My File.txt</literal>, you need to pass <uri>file:///home/username/My%20File.txt</uri>. Again, Subversion supplies helper functions that your application can use—<function moreinfo=\"none\">svn_path_uri_encode()</function> and <function moreinfo=\"none\">svn_path_uri_decode()</function>, for URI encoding and decoding, respectively."
+msgstr "同样，Subversion的API需要所有的URL参数是正确的URI编码，所以，我们不会传递<systemitem class=\"url\" moreinfo=\"none\">file:///home/username/My File.txt</systemitem>作为<literal moreinfo=\"none\">My File.txt</literal>的URL，而会传递<systemitem class=\"url\" moreinfo=\"none\">file:///home/username/My%20File.txt</systemitem>。再次，Subversion提供了一些你可以使用的助手方法—<function moreinfo=\"none\">svn_path_uri_encode()</function>和<function moreinfo=\"none\">svn_path_uri_decode()</function>，分别用来URI的编码和解码。"
+
+#: build/en/book.xml:17224(title)
+msgid "Using Languages Other than C and C++"
+msgstr "使用C和C++以外的语言"
+
+#: build/en/book.xml:17226(para)
+msgid "If you are interested in using the Subversion libraries in conjunction with something other than a C program—say a Python or Perl script—Subversion has some support for this via the Simplified Wrapper and Interface Generator (SWIG). The SWIG bindings for Subversion are located in <filename moreinfo=\"none\">subversion/bindings/swig</filename> and whilst still maturing, they are in a usable state. These bindings allow you to call Subversion API functions indirectly, using wrappers that translate the datatypes native to your scripting language into the datatypes needed by Subversion's C libraries."
+msgstr "除C语言以外，如果你对使用其他语言结合Subversion库感兴趣—如Python脚本或是Java应用—Subversion通过简单包裹生成器（SWIG）提供了最初的支持。Subversion的SWIG绑定位于<filename moreinfo=\"none\">subversion/bindings/swig</filename>，并且慢慢的走向成熟进入可用状态。这个绑定允许你直接调用Subversion的API方法，使用包裹器会把脚本数据类型转化为Subversion需要的C语言库类型。"
+
+#: build/en/book.xml:1723(para)
+msgid "Each time the repository accepts a commit, this creates a new state of the filesystem tree, called a <firstterm>revision</firstterm>. Each revision is assigned a unique natural number, one greater than the number of the previous revision. The initial revision of a freshly created repository is numbered zero, and consists of nothing but an empty root directory."
+msgstr "每当版本库接受了一个提交，文件系统进入了一个新的状态，叫做一次修订（<firstterm>revision</firstterm>），每一个修订版本被赋予一个独一无二的自然数，一个比一个大，初始修订号是0，只创建了一个空目录，没有任何内容。"
+
+#: build/en/book.xml:17237(para)
+msgid "There is an obvious benefit to accessing the Subversion APIs via a language binding—simplicity. Generally speaking, languages such as Python and Perl are much more flexible and easy to use than C or C++. The sort of high-level datatypes and context-driven type checking provided by these languages are often better at handling information that comes from users. As you know, humans are proficient at botching up input to a program, and scripting languages tend to handle that misinformation more gracefully. Of course, often that flexibility comes at the cost of performance. That is why using a tightly-optimized, C-based interface and library suite, combined with a powerful, flexible binding language, is so appealing."
+msgstr "通过语言绑定访问Subversion的API有一个明显的好处—简单性。通常来讲，Python和Perl之类的语言比C和C++更加的灵活和简单，这些语言的高级数据类型和上下文驱动类型更加易于处理用户提供的信息，就像你知道的，人们精于把程序搞坏，脚本语言可以更优雅的处理这些错误信息，当然，灵活性经常带来性能的损失，这就是为什么使用紧密优化的，C基础的接口和库组件，然后与一种高效的、灵活的绑定语言，是这样的吸引人。"
+
+#: build/en/book.xml:17251(para)
+#, fuzzy
+msgid "Unfortunately, Subversion's language bindings tend to lack the level of developer attention given to the core Subversion modules. However, there have been significant efforts towards creating functional bindings for Python, Perl, and Ruby. To some extent, the work done preparing the SWIG interface files for these languages is reusable in efforts to generate bindings for other languages supported by SWIG (which include versions of C#, Guile, Java, MzScheme, OCaml, PHP, and Tcl, among others). However, some extra programming is required to compensate for complex APIs that SWIG needs some help translating between languages. For more information on SWIG itself, see the project's website at <ulink url=\"http://www.swig.org/\"/>."
+msgstr "非常不幸，Subversion的语言绑定缺乏对核心Subversion模块的关注，但是，花了很多力气处理创建针对Python、Perl和Ruby的绑定，在一定程度上，在这些接口上的工作量可以在其他语言的SWIG（包括C#、Guile、Java、MzScheme、OCaml、PHP、Tcl等等）接口上得到重用。然而，一些接口仍然需要额外的编程工作，关于SWIG本身的更多信息可以看项目的网站<ulink url=\"http://www.swig.org/\"/>。"
+
+#: build/en/book.xml:17268(title)
+msgid "Code Samples"
+msgstr "代码样例"
+
+#: build/en/book.xml:17270(para)
+msgid "<xref linkend=\"svn.developer.layerlib.repos.ex-1\"/> contains a code segment (written in C) that illustrates some of the concepts we've been discussing. It uses both the repository and filesystem interfaces (as can be determined by the prefixes <literal moreinfo=\"none\">svn_repos_</literal> and <literal moreinfo=\"none\">svn_fs_</literal> of the function names, respectively) to create a new revision in which a directory is added. You can see the use of an APR pool, which is passed around for memory allocation purposes. Also, the code reveals a somewhat obscure fact about Subversion error handling—all Subversion errors must be explicitly handled to avoid memory leakage (and in some cases, application failure)."
+msgstr ""
+
+#: build/en/book.xml:17285(title)
+msgid "Using the Repository Layer"
+msgstr "使用版本库层"
+
+#: build/en/book.xml:17287(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"/* Convert a Subversion error into a simple boolean error code.\n"
+" *\n"
+" * NOTE:  Subversion errors must be consumed because they are allocated\n"
+" *        from the global pool, else memory leaking occurs.\n"
+" */\n"
+"#define INT_ERR(expr)                           \\\n"
+"  do {                                          \\\n"
+"    svn_error_t *__temperr = (expr);            \\\n"
+"    if (__temperr)                              \\\n"
+"      {                                         \\\n"
+"        svn_error_clear(__temperr);             \\\n"
+"        return 1;                               \\\n"
+"      }                                         \\\n"
+"    return 0;                                   \\\n"
+"  } while (0)\n"
+"\n"
+"/* Create a new directory at the path NEW_DIRECTORY in the Subversion\n"
+" * repository located at REPOS_PATH.  Perform all memory allocation in\n"
+" * POOL.  This function will create a new revision for the addition of\n"
+" * NEW_DIRECTORY.  Return zero if the operation completes\n"
+" * successfully, non-zero otherwise.\n"
+" */\n"
+"static int\n"
+"make_new_directory(const char *repos_path,\n"
+"                   const char *new_directory,\n"
+"                   apr_pool_t *pool)\n"
+"{\n"
+"  svn_error_t *err;\n"
+"  svn_repos_t *repos;\n"
+"  svn_fs_t *fs;\n"
+"  svn_revnum_t youngest_rev;\n"
+"  svn_fs_txn_t *txn;\n"
+"  svn_fs_root_t *txn_root;\n"
+"  const char *conflict_str;\n"
+"\n"
+"  /* Open the repository located at REPOS_PATH. \n"
+"   */\n"
+"  INT_ERR(svn_repos_open(&amp;repos, repos_path, pool));\n"
+"\n"
+"  /* Get a pointer to the filesystem object that is stored in REPOS. \n"
+"   */\n"
+"  fs = svn_repos_fs(repos);\n"
+"\n"
+"  /* Ask the filesystem to tell us the youngest revision that\n"
+"   * currently exists. \n"
+"   */\n"
+"  INT_ERR(svn_fs_youngest_rev(&amp;youngest_rev, fs, pool));\n"
+"\n"
+"  /* Begin a new transaction that is based on YOUNGEST_REV.  We are\n"
+"   * less likely to have our later commit rejected as conflicting if we\n"
+"   * always try to make our changes against a copy of the latest snapshot\n"
+"   * of the filesystem tree. \n"
+"   */\n"
+"  INT_ERR(svn_fs_begin_txn(&amp;txn, fs, youngest_rev, pool));\n"
+"\n"
+"  /* Now that we have started a new Subversion transaction, get a root\n"
+"   * object that represents that transaction. \n"
+"   */\n"
+"  INT_ERR(svn_fs_txn_root(&amp;txn_root, txn, pool));\n"
+"  \n"
+"  /* Create our new directory under the transaction root, at the path\n"
+"   * NEW_DIRECTORY. \n"
+"   */\n"
+"  INT_ERR(svn_fs_make_dir(txn_root, new_directory, pool));\n"
+"\n"
+"  /* Commit the transaction, creating a new revision of the filesystem\n"
+"   * which includes our added directory path.\n"
+"   */\n"
+"  err = svn_repos_fs_commit_txn(&amp;conflict_str, repos, \n"
+"                                &amp;youngest_rev, txn, pool);\n"
+"  if (! err)\n"
+"    {\n"
+"      /* No error?  Excellent!  Print a brief report of our success.\n"
+"       */\n"
+"      printf(\"Directory '%s' was successfully added as new revision \"\n"
+"             \"'%ld'.\\n\", new_directory, youngest_rev);\n"
+"    }\n"
+"  else if (err-&gt;apr_err == SVN_ERR_FS_CONFLICT)\n"
+"    {\n"
+"      /* Uh-oh.  Our commit failed as the result of a conflict\n"
+"       * (someone else seems to have made changes to the same area \n"
+"       * of the filesystem that we tried to modify).  Print an error\n"
+"       * message.\n"
+"       */\n"
+"      printf(\"A conflict occurred at path '%s' while attempting \"\n"
+"             \"to add directory '%s' to the repository at '%s'.\\n\", \n"
+"             conflict_str, new_directory, repos_path);\n"
+"    }\n"
+"  else\n"
+"    {\n"
+"      /* Some other error has occurred.  Print an error message.\n"
+"       */\n"
+"      printf(\"An error occurred while attempting to add directory '%s' \"\n"
+"             \"to the repository at '%s'.\\n\", \n"
+"             new_directory, repos_path);\n"
+"    }\n"
+"\n"
+"  INT_ERR(err);\n"
+"} \n"
+msgstr ""
+"\n"
+"/* Convert a Subversion error into a simple boolean error code.\n"
+" *\n"
+" * NOTE:  Subversion errors must be consumed because they are allocated\n"
+" *        from the global pool, else memory leaking occurs.\n"
+" */\n"
+"#define INT_ERR(expr)                           \\\n"
+"  do {                                          \\\n"
+"    svn_error_t *__temperr = (expr);            \\\n"
+"    if (__temperr)                              \\\n"
+"      {                                         \\\n"
+"        svn_error_clear(__temperr);             \\\n"
+"        return 1;                               \\\n"
+"      }                                         \\\n"
+"    return 0;                                   \\\n"
+"  } while (0)\n"
+"\n"
+"/* Create a new directory at the path NEW_DIRECTORY in the Subversion\n"
+" * repository located at REPOS_PATH.  Perform all memory allocation in\n"
+" * POOL.  This function will create a new revision for the addition of\n"
+" * NEW_DIRECTORY.  Return zero if the operation completes\n"
+" * successfully, non-zero otherwise.\n"
+" */\n"
+"static int\n"
+"make_new_directory(const char *repos_path,\n"
+"                   const char *new_directory,\n"
+"                   apr_pool_t *pool)\n"
+"{\n"
+"  svn_error_t *err;\n"
+"  svn_repos_t *repos;\n"
+"  svn_fs_t *fs;\n"
+"  svn_revnum_t youngest_rev;\n"
+"  svn_fs_txn_t *txn;\n"
+"  svn_fs_root_t *txn_root;\n"
+"  const char *conflict_str;\n"
+"\n"
+"  /* Open the repository located at REPOS_PATH. \n"
+"   */\n"
+"  INT_ERR(svn_repos_open(&amp;repos, repos_path, pool));\n"
+"\n"
+"  /* Get a pointer to the filesystem object that is stored in REPOS. \n"
+"   */\n"
+"  fs = svn_repos_fs(repos);\n"
+"\n"
+"  /* Ask the filesystem to tell us the youngest revision that\n"
+"   * currently exists. \n"
+"   */\n"
+"  INT_ERR(svn_fs_youngest_rev(&amp;youngest_rev, fs, pool));\n"
+"\n"
+"  /* Begin a new transaction that is based on YOUNGEST_REV.  We are\n"
+"   * less likely to have our later commit rejected as conflicting if we\n"
+"   * always try to make our changes against a copy of the latest snapshot\n"
+"   * of the filesystem tree. \n"
+"   */\n"
+"  INT_ERR(svn_fs_begin_txn(&amp;txn, fs, youngest_rev, pool));\n"
+"\n"
+"  /* Now that we have started a new Subversion transaction, get a root\n"
+"   * object that represents that transaction. \n"
+"   */\n"
+"  INT_ERR(svn_fs_txn_root(&amp;txn_root, txn, pool));\n"
+"  \n"
+"  /* Create our new directory under the transaction root, at the path\n"
+"   * NEW_DIRECTORY. \n"
+"   */\n"
+"  INT_ERR(svn_fs_make_dir(txn_root, new_directory, pool));\n"
+"\n"
+"  /* Commit the transaction, creating a new revision of the filesystem\n"
+"   * which includes our added directory path.\n"
+"   */\n"
+"  err = svn_repos_fs_commit_txn(&amp;conflict_str, repos, \n"
+"                                &amp;youngest_rev, txn, pool);\n"
+"  if (! err)\n"
+"    {\n"
+"      /* No error?  Excellent!  Print a brief report of our success.\n"
+"       */\n"
+"      printf(\"Directory '%s' was successfully added as new revision \"\n"
+"             \"'%ld'.\\n\", new_directory, youngest_rev);\n"
+"    }\n"
+"  else if (err-&gt;apr_err == SVN_ERR_FS_CONFLICT)\n"
+"    {\n"
+"      /* Uh-oh.  Our commit failed as the result of a conflict\n"
+"       * (someone else seems to have made changes to the same area \n"
+"       * of the filesystem that we tried to modify).  Print an error\n"
+"       * message.\n"
+"       */\n"
+"      printf(\"A conflict occurred at path '%s' while attempting \"\n"
+"             \"to add directory '%s' to the repository at '%s'.\\n\", \n"
+"             conflict_str, new_directory, repos_path);\n"
+"    }\n"
+"  else\n"
+"    {\n"
+"      /* Some other error has occurred.  Print an error message.\n"
+"       */\n"
+"      printf(\"An error occurred while attempting to add directory '%s' \"\n"
+"             \"to the repository at '%s'.\\n\", \n"
+"             new_directory, repos_path);\n"
+"    }\n"
+"\n"
+"  INT_ERR(err);\n"
+"} \n"
+
+#: build/en/book.xml:1731(para)
+msgid "<xref linkend=\"svn.basic.in-action.revs.dia-1\"/> illustrates a nice way to visualize the repository. Imagine an array of revision numbers, starting at 0, stretching from left to right. Each revision number has a filesystem tree hanging below it, and each tree is a <quote>snapshot</quote> of the way the repository looked after a commit."
+msgstr "<xref linkend=\"svn.basic.in-action.revs.dia-1\"/>可以更形象的描述版本库，想象有一组修订号，从0开始，从左到右，每一个修订号有一个目录树挂在它下面，每一个树好像是一次提交后的版本库<quote>快照</quote>。"
+
+#: build/en/book.xml:1739(title)
+msgid "The repository"
+msgstr "版本库2"
+
+#: build/en/book.xml:17390(para)
+#, fuzzy
+msgid "Note that in <xref linkend=\"svn.developer.layerlib.repos.ex-1\"/>, the code could just as easily have committed the transaction using <function moreinfo=\"none\">svn_fs_commit_txn()</function>. But the filesystem API knows nothing about the repository library's hook mechanism. If you want your Subversion repository to automatically perform some set of non-Subversion tasks every time you commit a transaction (like, for example, sending an email that describes all the changes made in that transaction to your developer mailing list), you need to use the libsvn_repos-wrapped version of that function was adds the hook triggering functionality—in this case, <function moreinfo=\"none\">svn_repos_fs_commit_txn()</function>. (For more information regarding Subversion's repository hooks, see <xref linkend=\"svn.reposadmin.create.hooks\"/>.)"
+msgstr "在前面的代码片断中，同时调用了版本库和文件系统接口，我们可以正像这样简单的用<function moreinfo=\"none\">svn_fs_commit_txn()</function>提交事务。但是文件系统的API对版本库库的钩子一无所知，如果你希望你的Subversion版本库在每次提交一个事务时自动执行一些非Subversion的任务（例如，给开发者邮件组发送一个描述事务修改的邮件），你需要使用libsvn_repos包裹的功能版本—<function moreinfo=\"none\">svn_repos_fs_commit_txn()</function>。这个功能会实际上首先运行一个如果存在的<literal moreinfo=\"none\">pre-commit</literal>钩子脚本，然后提交事务，最后会运行一个<literal moreinfo=\"none\">post-commit</literal>钩子脚本。钩子提供了一种特别的报告机制，不是真的属于核心文件系统库本身。（关于Subversion版本库钩子的更多信息，见<xref linkend=\"svn.reposadmin.create.hooks\"/>。）"
+
+#: build/en/book.xml:17404(para)
+#, fuzzy
+msgid "Now let's switch languages. <xref linkend=\"svn.developer.usingapi.otherlangs.ex-1\"/> is a sample program that uses Subversion's SWIG Python bindings to recursively crawl the youngest repository revision, and print the various paths reached during the crawl."
+msgstr "让我们看看Subversion的Python SWIG绑定的实例，这个例子迭代遍历最新的修订版本，并且打印遍历到的路径。"
+
+#: build/en/book.xml:17410(title)
+msgid "Using the Repository Layer with Python"
+msgstr "使用Python处理版本库层"
+
+#: build/en/book.xml:17412(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"\n"
+"\"\"\"Crawl a repository, printing versioned object path names.\"\"\"\n"
+"\n"
+"import sys\n"
+"import os.path\n"
+"import svn.fs, svn.core, svn.repos\n"
+"\n"
+"def crawl_filesystem_dir(root, directory):\n"
+"    \"\"\"Recursively crawl DIRECTORY under ROOT in the filesystem, and return\n"
+"    a list of all the paths at or below DIRECTORY.\"\"\"\n"
+"\n"
+"    # Print the name of this path.\n"
+"    print directory + \"/\"\n"
+"    \n"
+"    # Get the directory entries for DIRECTORY.\n"
+"    entries = svn.fs.svn_fs_dir_entries(root, directory)\n"
+"\n"
+"    # Loop over the entries.\n"
+"    names = entries.keys()\n"
+"    for name in names:\n"
+"        # Calculate the entry's full path.\n"
+"        full_path = directory + '/' + name\n"
+"\n"
+"        # If the entry is a directory, recurse.  The recursion will return\n"
+"        # a list with the entry and all its children, which we will add to\n"
+"        # our running list of paths.\n"
+"        if svn.fs.svn_fs_is_dir(root, full_path):\n"
+"            crawl_filesystem_dir(root, full_path)\n"
+"        else:\n"
+"            # Else it's a file, so print its path here.\n"
+"            print full_path\n"
+"\n"
+"def crawl_youngest(repos_path):\n"
+"    \"\"\"Open the repository at REPOS_PATH, and recursively crawl its\n"
+"    youngest revision.\"\"\"\n"
+"    \n"
+"    # Open the repository at REPOS_PATH, and get a reference to its\n"
+"    # versioning filesystem.\n"
+"    repos_obj = svn.repos.svn_repos_open(repos_path)\n"
+"    fs_obj = svn.repos.svn_repos_fs(repos_obj)\n"
+"\n"
+"    # Query the current youngest revision.\n"
+"    youngest_rev = svn.fs.svn_fs_youngest_rev(fs_obj)\n"
+"    \n"
+"    # Open a root object representing the youngest (HEAD) revision.\n"
+"    root_obj = svn.fs.svn_fs_revision_root(fs_obj, youngest_rev)\n"
+"\n"
+"    # Do the recursive crawl.\n"
+"    crawl_filesystem_dir(root_obj, \"\")\n"
+"    \n"
+"if __name__ == \"__main__\":\n"
+"    # Check for sane usage.\n"
+"    if len(sys.argv) != 2:\n"
+"        sys.stderr.write(\"Usage: %s REPOS_PATH\\n\"\n"
+"                         % (os.path.basename(sys.argv[0])))\n"
+"        sys.exit(1)\n"
+"\n"
+"    # Canonicalize the repository path.\n"
+"    repos_path = svn.core.svn_path_canonicalize(sys.argv[1])\n"
+"\n"
+"    # Do the real work.\n"
+"    crawl_youngest(repos_path)\n"
+msgstr ""
+"\n"
+"#!/usr/bin/python\n"
+"\n"
+"\"\"\"Crawl a repository, printing versioned object path names.\"\"\"\n"
+"\n"
+"import sys\n"
+"import os.path\n"
+"import svn.fs, svn.core, svn.repos\n"
+"\n"
+"def crawl_filesystem_dir(root, directory):\n"
+"    \"\"\"Recursively crawl DIRECTORY under ROOT in the filesystem, and return\n"
+"    a list of all the paths at or below DIRECTORY.\"\"\"\n"
+"\n"
+"    # Print the name of this path.\n"
+"    print directory + \"/\"\n"
+"    \n"
+"    # Get the directory entries for DIRECTORY.\n"
+"    entries = svn.fs.svn_fs_dir_entries(root, directory)\n"
+"\n"
+"    # Loop over the entries.\n"
+"    names = entries.keys()\n"
+"    for name in names:\n"
+"        # Calculate the entry's full path.\n"
+"        full_path = directory + '/' + name\n"
+"\n"
+"        # If the entry is a directory, recurse.  The recursion will return\n"
+"        # a list with the entry and all its children, which we will add to\n"
+"        # our running list of paths.\n"
+"        if svn.fs.svn_fs_is_dir(root, full_path):\n"
+"            crawl_filesystem_dir(root, full_path)\n"
+"        else:\n"
+"            # Else it's a file, so print its path here.\n"
+"            print full_path\n"
+"\n"
+"def crawl_youngest(repos_path):\n"
+"    \"\"\"Open the repository at REPOS_PATH, and recursively crawl its\n"
+"    youngest revision.\"\"\"\n"
+"    \n"
+"    # Open the repository at REPOS_PATH, and get a reference to its\n"
+"    # versioning filesystem.\n"
+"    repos_obj = svn.repos.svn_repos_open(repos_path)\n"
+"    fs_obj = svn.repos.svn_repos_fs(repos_obj)\n"
+"\n"
+"    # Query the current youngest revision.\n"
+"    youngest_rev = svn.fs.svn_fs_youngest_rev(fs_obj)\n"
+"    \n"
+"    # Open a root object representing the youngest (HEAD) revision.\n"
+"    root_obj = svn.fs.svn_fs_revision_root(fs_obj, youngest_rev)\n"
+"\n"
+"    # Do the recursive crawl.\n"
+"    crawl_filesystem_dir(root_obj, \"\")\n"
+"    \n"
+"if __name__ == \"__main__\":\n"
+"    # Check for sane usage.\n"
+"    if len(sys.argv) != 2:\n"
+"        sys.stderr.write(\"Usage: %s REPOS_PATH\\n\"\n"
+"                         % (os.path.basename(sys.argv[0])))\n"
+"        sys.exit(1)\n"
+"\n"
+"    # Canonicalize the repository path.\n"
+"    repos_path = svn.core.svn_path_canonicalize(sys.argv[1])\n"
+"\n"
+"    # Do the real work.\n"
+"    crawl_youngest(repos_path)\n"
+
+#: build/en/book.xml:1744(title)
+msgid "Global Revision Numbers"
+msgstr "全局修订号"
+
+#: build/en/book.xml:1746(para)
+#, fuzzy
+msgid "Unlike most version control systems, Subversion's revision numbers apply to <emphasis>entire trees</emphasis>, not individual files. Each revision number selects an entire tree, a particular state of the repository after some committed change. Another way to think about it is that revision N represents the state of the repository filesystem after the Nth commit. When Subversion users talk about <quote>revision 5 of <filename moreinfo=\"none\">foo.c</filename></quote>, they really mean <quote><filename moreinfo=\"none\">foo.c</filename> as it appears in revision 5.</quote> Notice that in general, revisions N and M of a file do <emphasis>not</emphasis> necessarily differ! Many other version control systems use per-file revision numbers, so this concept may seem unusual at first. (Former CVS users might want to see <xref linkend=\"svn.forcvs\"/> for more details.)"
+msgstr "不像其他版本控制系统，Subversion的修订号是针对整个<emphasis>目录树</emphasis>的，而不是单个文件。每一个修订号代表了一次提交后版本库整个目录树的特定状态，另一种理解是修订号N代表版本库已经经过了N次提交。当Subversion用户讨论<quote><filename moreinfo=\"none\">foo.c</filename>的修订号5</quote>时，他们的实际意思是<quote>在修订号5时的<filename moreinfo=\"none\">foo.c</filename></quote>。需要注意的是，修订号N和M并<emphasis>不</emphasis>表示一个文件需要不同。因为CVS使用每一个文件一个修订号的策略，CVS用户可能希望察看<xref linkend=\"svn.forcvs\"/>来得到更多细节。"
+
+#: build/en/book.xml:17479(para)
+#, fuzzy
+msgid "This same program in C would need to deal with APR's memory pool system. But Python handles memory usage automatically, and Subversion's Python bindings adhere to that convention. In C, you'd be working with custom datatypes (such as those provided by the APR library) for representing the hash of entries and the list of paths, but Python has hashes (called <quote>dictionaries</quote>) and lists as built-in datatypes, and provides a rich collection of functions for operating on those types. So SWIG (with the help of some customizations in Subversion's language bindings layer) takes care of mapping those custom datatypes into the native datatypes of the target language. This provides a more intuitive interface for users of that language."
+msgstr "同样的C程序为表示路径和条目的hash需要处理自定义的数据类型（例如APR提供的库），但是Python有hash（叫做<quote>dictionaries</quote>），并且是内置数据类型，而且还提供了一系列操作这些类型的函数，所以SWIG（通过Subversion的语言绑定层的自定义帮助）要小心的将这些自定义数据类型映射到目标语言的数据类型，这为目标语言的用户提供了一个更加直观的接口。"
+
+#: build/en/book.xml:17493(para)
+#, fuzzy
+msgid "The Subversion Python bindings can be used for working copy operations, too. In the previous section of this chapter, we mentioned the <filename moreinfo=\"none\">libsvn_client</filename> interface, and how it exists for the sole purpose of simplifying the process of writing a Subversion client. <xref linkend=\"svn.developer.usingapi.otherlangs.ex-2\"/> is a brief example of how that library can be accessed via the SWIG Python bindings to recreate a scaled-down version of the <command moreinfo=\"none\">svn status</command> command."
+msgstr "Subversion的Python绑定也可以用来进行工作拷贝的操作，在本章前面的小节中，我们提到过<filename moreinfo=\"none\">libsvn_client</filename>接口，它存在的目的就是简化编写Subversion客户端的难度，下面是一个例子，讲的是如何使用SWIG绑定创建一个扩展的<command moreinfo=\"none\">svn status</command>命令。"
+
+#: build/en/book.xml:17503(title)
+msgid "A Python Status Crawler"
+msgstr "A Python Status Crawler"
+
+#: build/en/book.xml:17505(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/usr/bin/env python\n"
+"\n"
+"\"\"\"Crawl a working copy directory, printing status information.\"\"\"\n"
+"\n"
+"import sys\n"
+"import os.path\n"
+"import getopt\n"
+"import svn.core, svn.client, svn.wc\n"
+"\n"
+"def generate_status_code(status):\n"
+"    \"\"\"Translate a status value into a single-character status code,\n"
+"    using the same logic as the Subversion command-line client.\"\"\"\n"
+"    code_map = { svn.wc.svn_wc_status_none        : ' ',\n"
+"                 svn.wc.svn_wc_status_normal      : ' ',\n"
+"                 svn.wc.svn_wc_status_added       : 'A',\n"
+"                 svn.wc.svn_wc_status_missing     : '!',\n"
+"                 svn.wc.svn_wc_status_incomplete  : '!',\n"
+"                 svn.wc.svn_wc_status_deleted     : 'D',\n"
+"                 svn.wc.svn_wc_status_replaced    : 'R',\n"
+"                 svn.wc.svn_wc_status_modified    : 'M',\n"
+"                 svn.wc.svn_wc_status_merged      : 'G',\n"
+"                 svn.wc.svn_wc_status_conflicted  : 'C',\n"
+"                 svn.wc.svn_wc_status_obstructed  : '~',\n"
+"                 svn.wc.svn_wc_status_ignored     : 'I',\n"
+"                 svn.wc.svn_wc_status_external    : 'X',\n"
+"                 svn.wc.svn_wc_status_unversioned : '?',\n"
+"               }\n"
+"    return code_map.get(status, '?')\n"
+"\n"
+"def do_status(wc_path, verbose):\n"
+"    # Calculate the length of the input working copy path.\n"
+"    wc_path_len = len(wc_path)\n"
+"\n"
+"    # Build a client context baton.\n"
+"    ctx = svn.client.svn_client_ctx_t()\n"
+"\n"
+"    def _status_callback(path, status, root_path_len=wc_path_len):\n"
+"        \"\"\"A callback function for svn_client_status.\"\"\"\n"
+"\n"
+"        # Print the path, minus the bit that overlaps with the root of\n"
+"        # the status crawl\n"
+"        text_status = generate_status_code(status.text_status)\n"
+"        prop_status = generate_status_code(status.prop_status)\n"
+"        print '%s%s  %s' % (text_status, prop_status, path[wc_path_len + 1:])\n"
+"        \n"
+"    # Do the status crawl, using _status_callback() as our callback function.\n"
+"    svn.client.svn_client_status(wc_path, None, _status_callback,\n"
+"                                 1, verbose, 0, 0, ctx)\n"
+"\n"
+"def usage_and_exit(errorcode):\n"
+"    \"\"\"Print usage message, and exit with ERRORCODE.\"\"\"\n"
+"    stream = errorcode and sys.stderr or sys.stdout\n"
+"    stream.write(\"\"\"Usage: %s OPTIONS WC-PATH\n"
+"Options:\n"
+"  --help, -h    : Show this usage message\n"
+"  --verbose, -v : Show all statuses, even uninteresting ones\n"
+"\"\"\" % (os.path.basename(sys.argv[0])))\n"
+"    sys.exit(errorcode)\n"
+"    \n"
+"if __name__ == '__main__':\n"
+"    # Parse command-line options.\n"
+"    try:\n"
+"        opts, args = getopt.getopt(sys.argv[1:], \"hv\", [\"help\", \"verbose\"])\n"
+"    except getopt.GetoptError:\n"
+"        usage_and_exit(1)\n"
+"    verbose = 0\n"
+"    for opt, arg in opts:\n"
+"        if opt in (\"-h\", \"--help\"):\n"
+"            usage_and_exit(0)\n"
+"        if opt in (\"-v\", \"--verbose\"):\n"
+"            verbose = 1\n"
+"    if len(args) != 1:\n"
+"        usage_and_exit(2)\n"
+"            \n"
+"    # Canonicalize the repository path.\n"
+"    wc_path = svn.core.svn_path_canonicalize(args[0])\n"
+"\n"
+"    # Do the real work.\n"
+"    try:\n"
+"        do_status(wc_path, verbose)\n"
+"    except svn.core.SubversionException, e:\n"
+"        sys.stderr.write(\"Error (%d): %s\\n\" % (e[1], e[0]))\n"
+"        sys.exit(1)\n"
+msgstr ""
+"\n"
+"#!/usr/bin/env python\n"
+"\n"
+"\"\"\"Crawl a working copy directory, printing status information.\"\"\"\n"
+"\n"
+"import sys\n"
+"import os.path\n"
+"import getopt\n"
+"import svn.core, svn.client, svn.wc\n"
+"\n"
+"def generate_status_code(status):\n"
+"    \"\"\"Translate a status value into a single-character status code,\n"
+"    using the same logic as the Subversion command-line client.\"\"\"\n"
+"    code_map = { svn.wc.svn_wc_status_none        : ' ',\n"
+"                 svn.wc.svn_wc_status_normal      : ' ',\n"
+"                 svn.wc.svn_wc_status_added       : 'A',\n"
+"                 svn.wc.svn_wc_status_missing     : '!',\n"
+"                 svn.wc.svn_wc_status_incomplete  : '!',\n"
+"                 svn.wc.svn_wc_status_deleted     : 'D',\n"
+"                 svn.wc.svn_wc_status_replaced    : 'R',\n"
+"                 svn.wc.svn_wc_status_modified    : 'M',\n"
+"                 svn.wc.svn_wc_status_merged      : 'G',\n"
+"                 svn.wc.svn_wc_status_conflicted  : 'C',\n"
+"                 svn.wc.svn_wc_status_obstructed  : '~',\n"
+"                 svn.wc.svn_wc_status_ignored     : 'I',\n"
+"                 svn.wc.svn_wc_status_external    : 'X',\n"
+"                 svn.wc.svn_wc_status_unversioned : '?',\n"
+"               }\n"
+"    return code_map.get(status, '?')\n"
+"\n"
+"def do_status(wc_path, verbose):\n"
+"    # Calculate the length of the input working copy path.\n"
+"    wc_path_len = len(wc_path)\n"
+"\n"
+"    # Build a client context baton.\n"
+"    ctx = svn.client.svn_client_ctx_t()\n"
+"\n"
+"    def _status_callback(path, status, root_path_len=wc_path_len):\n"
+"        \"\"\"A callback function for svn_client_status.\"\"\"\n"
+"\n"
+"        # Print the path, minus the bit that overlaps with the root of\n"
+"        # the status crawl\n"
+"        text_status = generate_status_code(status.text_status)\n"
+"        prop_status = generate_status_code(status.prop_status)\n"
+"        print '%s%s  %s' % (text_status, prop_status, path[wc_path_len + 1:])\n"
+"        \n"
+"    # Do the status crawl, using _status_callback() as our callback function.\n"
+"    svn.client.svn_client_status(wc_path, None, _status_callback,\n"
+"                                 1, verbose, 0, 0, ctx)\n"
+"\n"
+"def usage_and_exit(errorcode):\n"
+"    \"\"\"Print usage message, and exit with ERRORCODE.\"\"\"\n"
+"    stream = errorcode and sys.stderr or sys.stdout\n"
+"    stream.write(\"\"\"Usage: %s OPTIONS WC-PATH\n"
+"Options:\n"
+"  --help, -h    : Show this usage message\n"
+"  --verbose, -v : Show all statuses, even uninteresting ones\n"
+"\"\"\" % (os.path.basename(sys.argv[0])))\n"
+"    sys.exit(errorcode)\n"
+"    \n"
+"if __name__ == '__main__':\n"
+"    # Parse command-line options.\n"
+"    try:\n"
+"        opts, args = getopt.getopt(sys.argv[1:], \"hv\", [\"help\", \"verbose\"])\n"
+"    except getopt.GetoptError:\n"
+"        usage_and_exit(1)\n"
+"    verbose = 0\n"
+"    for opt, arg in opts:\n"
+"        if opt in (\"-h\", \"--help\"):\n"
+"            usage_and_exit(0)\n"
+"        if opt in (\"-v\", \"--verbose\"):\n"
+"            verbose = 1\n"
+"    if len(args) != 1:\n"
+"        usage_and_exit(2)\n"
+"            \n"
+"    # Canonicalize the repository path.\n"
+"    wc_path = svn.core.svn_path_canonicalize(args[0])\n"
+"\n"
+"    # Do the real work.\n"
+"    try:\n"
+"        do_status(wc_path, verbose)\n"
+"    except svn.core.SubversionException, e:\n"
+"        sys.stderr.write(\"Error (%d): %s\\n\" % (e[1], e[0]))\n"
+"        sys.exit(1)\n"
+
+#: build/en/book.xml:17592(para)
+msgid "As was the case in <xref linkend=\"svn.developer.usingapi.otherlangs.ex-1\"/>, this program is pool-free and uses, for the most part, normal Python data types. The call to <function moreinfo=\"none\">svn_client_ctx_t()</function> is deceiving because the public Subversion API has no such function—this just happens to be a case where SWIG's automatic language generation bleeds through a little bit (the function is a sort of factory function for Python's version of the corresponding complex C structure). Also note that the path passed to this program (like the last one) gets run through <function moreinfo=\"none\">svn_path_canonicalize()</function>, because to <emphasis>not</emphasis> do so runs the risk of triggering the underlying Subversion C library's assertions about such things, which translate into rather immediate and unceremonious program abortion."
+msgstr ""
+
+#: build/en/book.xml:17620(title)
+msgid "Subversion Complete Reference"
+msgstr "Subversion完全参考"
+
+#: build/en/book.xml:17622(para)
+msgid "This chapter is intended to be a complete reference to using Subversion. This includes the command line client (<command moreinfo=\"none\">svn</command>) and all its subcommands, as well as the repository administration programs (<command moreinfo=\"none\">svnadmin</command> and <command moreinfo=\"none\">svnlook</command>) and their respective subcommands."
+msgstr "本章是使用Subversion的一个完全手册，包括了命令行客户端（<command moreinfo=\"none\">svn</command>）和它的所有子命令，也有版本库管理程序（<command moreinfo=\"none\">svnadmin</command>和<command moreinfo=\"none\">svnlook</command>）和它们各自的子命令。"
+
+#: build/en/book.xml:17634(title)
+msgid "The Subversion Command Line Client: <command moreinfo=\"none\">svn</command>"
+msgstr "Subversion命令行客户端：<command moreinfo=\"none\">svn</command>"
+
+#: build/en/book.xml:17636(para)
+msgid "To use the command line client, you type <command moreinfo=\"none\">svn</command>, the subcommand you wish to use <placeholder-1/>, and any switches or targets that you wish to operate on—there is no specific order that the subcommand and the switches must appear in. For example, all of the following are valid ways to use <command moreinfo=\"none\">svn status</command>:"
+msgstr "为了使用命令行客户端，只需要输入<command moreinfo=\"none\">svn</command>和它的子命令<footnote><placeholder-1/></footnote>以及相关的选项或操作的对象—输入的子命令和选项没有特定的顺序，下面使用<command moreinfo=\"none\">svn status</command>的方式都是合法的："
+
+#: build/en/book.xml:17638(para)
+msgid "Yes, yes, you don't need a subcommand to use the <option>--version</option> switch, but we'll get to that in just a minute."
+msgstr "是的，使用<option>--version</option>选项不需要子命令，几分钟后我们会到达那个部分。"
+
+#: build/en/book.xml:1764(para)
+msgid "It's important to note that working copies do not always correspond to any single revision in the repository; they may contain files from several different revisions. For example, suppose you check out a working copy from a repository whose most recent revision is 4:"
+msgstr "需要特别注意的是，工作拷贝并不一定对应版本库中的单个修订版本，他们可能包含多个修订版本的文件。举个例子，你从版本库检出一个工作拷贝，最近的修订号是4："
+
+#: build/en/book.xml:17646(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn -v status\n"
+"$ svn status -v \n"
+"$ svn status -v myfile\n"
+msgstr ""
+"\n"
+"$ svn -v status\n"
+"$ svn status -v \n"
+"$ svn status -v myfile\n"
+
+#: build/en/book.xml:17652(para)
+msgid "You can find many more examples of how to use most client commands in <xref linkend=\"svn.tour\"/> and commands for managing properties in <xref linkend=\"svn.advanced.props\"/>."
+msgstr "你可以在<xref linkend=\"svn.tour\"/>发现更多使用客户端命令的例子，以及<xref linkend=\"svn.advanced.props\"/>中的管理属性的命令。"
+
+#: build/en/book.xml:17658(title)
+msgid "<command moreinfo=\"none\">svn</command> Switches"
+msgstr "<command moreinfo=\"none\">svn</command>选项"
+
+#: build/en/book.xml:17660(para)
+msgid "While Subversion has different switches for its subcommands, all switches are global—that is, each switch is guaranteed to mean the same thing regardless of the subcommand you use it with. For example, <option>--verbose</option> (<option>-v</option>) always means <quote>verbose output</quote>, regardless of the subcommand you use it with."
+msgstr "虽然Subversion的子命令有一些不同的选项，但有的选项是全局的—也就是说，每个选项保证是表示同样的事情，而不管是哪个子命令使用的。举个例子，<option>--verbose</option>（<option>-v</option>）一直意味着<quote>冗长输出</quote>，而不管使用它的命令是什么。"
+
+#: build/en/book.xml:17671(option)
+msgid "--auto-props"
+msgstr "--auto-props"
+
+#: build/en/book.xml:17673(para)
+msgid "Enables auto-props, overriding the <literal moreinfo=\"none\">enable-auto-props</literal> directive in the <filename moreinfo=\"none\">config</filename> file."
+msgstr "开启auto-props，覆盖<filename moreinfo=\"none\">config</filename>文件中的<literal moreinfo
