@@ -3455,4 +3455,1339 @@ msgid "Except, perhaps, a classic Vulcan mind-meld."
 msgstr ""
 
 #: ./build/en/book.xml:6294(para) 
-msgid "Unfortunately, the system isn't flawless. It's possible that even when a file has the property, 
+msgid "Unfortunately, the system isn't flawless. It's possible that even when a file has the property, the read-only reminder won't always work. Sometimes applications misbehave and <quote>hijack</quote> the read-only file, silently allowing users to edit and save the file anyway. There's not much that Subversion can do in this situation—at the end of the day, there's simply no substitution for good interpersonal communication. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:6315(title) 
+msgid "Externals Definitions"
+msgstr ""
+
+#: ./build/en/book.xml:6317(para) 
+msgid "Sometimes it is useful to construct a working copy that is made out of a number of different checkouts. For example, you may want different subdirectories to come from different locations in a repository, or perhaps from different repositories altogether. You could certainly setup such a scenario by hand—using <command moreinfo=\"none\">svn checkout</command> to create the sort of nested working copy structure you are trying to achieve. But if this layout is important for everyone who uses your repository, every other user will need to perform the same checkout operations that you did."
+msgstr ""
+
+#: ./build/en/book.xml:6328(para) 
+msgid "Fortunately, Subversion provides support for <firstterm>externals definitions</firstterm>. An externals definition is a mapping of a local directory to the URL—and possibly a particular revision—of a versioned directory. In Subversion, you declare externals definitions in groups using the <literal moreinfo=\"none\">svn:externals</literal> property. You can create or modify this property using <command moreinfo=\"none\">svn propset</command> or <command moreinfo=\"none\">svn propedit</command> (see <xref linkend=\"svn.advanced.props.manip\"/>). It can be set on any versioned directory, and its value is a multi-line table of subdirectories (relative to the versioned directory on which the property is set), optional revision flags, and a fully qualified, absolute Subversion repository URLs."
+msgstr ""
+
+#: ./build/en/book.xml:6342(screen) 
+#, no-wrap
+msgid "\n$ svn propget svn:externals calc\nthird-party/sounds             http://sounds.red-bean.com/repos\nthird-party/skins              http://skins.red-bean.com/repositories/skinproj\nthird-party/skins/toolkit -r21 http://svn.red-bean.com/repos/skin-maker\n"
+msgstr ""
+
+#: ./build/en/book.xml:6349(para) 
+msgid "The convenience of the <literal moreinfo=\"none\">svn:externals</literal> property is that once it is set on a versioned directory, everyone who checks out a working copy with that directory also gets the benefit of the externals definition. In other words, once one person has made the effort to define those nested working copy checkouts, no one else has to bother—Subversion will, upon checkout of the original working copy, also checkout the external working copies."
+msgstr ""
+
+#: ./build/en/book.xml:6359(para) 
+msgid "The relative target subdirectories of externals definitions needn't already exist on your or other users' systems—Subversion will create them when it checks out the external working copy. In fact, you should <emphasis>not</emphasis> try to use externals definitions to populate directories that are already under version control."
+msgstr ""
+
+#: ./build/en/book.xml:6368(para) 
+msgid "Note the previous externals definition example. When someone checks out a working copy of the <filename moreinfo=\"none\">calc</filename> directory, Subversion also continues to checkout the items found in its externals definition."
+msgstr ""
+
+#: ./build/en/book.xml:6373(screen) 
+#, no-wrap
+msgid "\n$ svn checkout http://svn.example.com/repos/calc\nA  calc\nA  calc/Makefile\nA  calc/integer.c\nA  calc/button.c\nChecked out revision 148.\n\nFetching external item into calc/third-party/sounds\nA  calc/third-party/sounds/ding.ogg\nA  calc/third-party/sounds/dong.ogg\nA  calc/third-party/sounds/clang.ogg\n…\nA  calc/third-party/sounds/bang.ogg\nA  calc/third-party/sounds/twang.ogg\nChecked out revision 14.\n\nFetching external item into calc/third-party/skins\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:6394(para) 
+msgid "If you need to change the externals definition, you can do so using the regular property modification subcommands. When you commit a change to the <literal moreinfo=\"none\">svn:externals</literal> property, Subversion will synchronize the checked-out items against the changed externals definition when you next run <command moreinfo=\"none\">svn update</command>. The same thing will happen when others update their working copies and receive your changes to the externals definition."
+msgstr ""
+
+#: ./build/en/book.xml:6404(para) 
+msgid "Because the <literal moreinfo=\"none\">svn:externals</literal> property has a multiline value, we strongly recommend that you use <command moreinfo=\"none\">svn propedit</command> instead of <command moreinfo=\"none\">svn propset</command>."
+msgstr ""
+
+#: ./build/en/book.xml:6411(para) 
+msgid "You should strongly consider using explicit revision numbers in all of your externals definitions. Doing so means that you get to decide when to pull down a different snapshot of external information, and exactly which snapshot to pull. Besides avoiding the surprise of getting changes to third-party repositories that you might not have any control over, using explicit revision numbers also means that as you backdate your working copy to a previous revision, your externals definitions will also revert to the way they looked in that previous revision, which in turn means that the external working copies will be updated to match they way <emphasis>they</emphasis> looked back when your repository was at that previous revision. For software projects, this could be the difference between a successful and a failed build of an older snapshot of your complex codebase."
+msgstr ""
+
+#: ./build/en/book.xml:6428(para) 
+msgid "The <command moreinfo=\"none\">svn status</command> command also recognizes externals definitions, displaying a status code of <literal moreinfo=\"none\">X</literal> for the disjoint subdirectories into which externals are checked out, and then recursing into those subdirectories to display the status of the external items themselves."
+msgstr ""
+
+#: ./build/en/book.xml:6435(para) 
+msgid "The support that exists for externals definitions in Subversion today can be a little misleading, though. First, an externals definition can only point to directories, not files. Second, the externals definition cannot point to relative paths (paths like <filename moreinfo=\"none\">../../skins/myskin</filename>). Third, the working copies created via the externals definition support are still disconnected from the primary working copy (on whose versioned directories the <literal moreinfo=\"none\">svn:externals</literal> property was actually set). And Subversion still only truly operates on non-disjoint working copies. So, for example, if you want to commit changes that you've made in one or more of those external working copies, you must run <command moreinfo=\"none\">svn commit</command> explicitly on those working copies—committing on the primary working copy will not recurse into any external ones."
+msgstr ""
+
+#: ./build/en/book.xml:6451(para) 
+msgid "Also, since the definitions themselves use absolute URLs, moving or copying a directory to which they are attached will not affect what gets checked out as an external (though the relative local target subdirectory will, of course, move with renamed directory). This can be confusing—even frustrating—in certain situations. For example, say you have a top-level directory named <filename moreinfo=\"none\">my-project</filename>, and you've created an externals definition on one of its subdirectories (<filename moreinfo=\"none\">my-project/some-dir</filename>) which tracks the latest revision of another of its subdirectories (<filename moreinfo=\"none\">my-project/external-dir</filename>)."
+msgstr ""
+
+#: ./build/en/book.xml:6464(screen) 
+#, no-wrap
+msgid "\n$ svn checkout http://svn.example.com/projects .\nA    my-project\nA    my-project/some-dir\nA    my-project/external-dir\n…\nFetching external item into 'my-project/some-dir/subdir'\nChecked out external at revision 11.\n\nChecked out revision 11.\n$ svn propget svn:externals my-project/some-dir\nsubdir http://svn.example.com/projects/my-project/external-dir\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6480(para) 
+msgid "Now you use <command moreinfo=\"none\">svn move</command> to rename the <filename moreinfo=\"none\">my-project</filename> directory. At this point, your externals definition will still refer to a path under the <filename moreinfo=\"none\">my-project</filename> directory, even though that directory no longer exists."
+msgstr ""
+
+#: ./build/en/book.xml:6486(screen) 
+#, no-wrap
+msgid "\n$ svn move -q my-project renamed-project\n$ svn commit -m \"Rename my-project to renamed-project.\"\nDeleting       my-project\nAdding         my-renamed-project\n\nCommitted revision 12.\n$ svn update\n\nFetching external item into 'renamed-project/some-dir/subdir'\nsvn: Target path does not exist\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:6500(para) 
+msgid "Also, the fact that externals definitions use absolute URLs can cause problems with repositories that are available via multiple URL schemes. For example, if your Subversion server is configured to allow everyone to checkout the repository over <literal moreinfo=\"none\">http://</literal> or <literal moreinfo=\"none\">https://</literal>, but only allow commits to come in via <literal moreinfo=\"none\">https://</literal>, you have an interesting problem on your hands. If your externals definitions use the <literal moreinfo=\"none\">http://</literal> form of the repository URLs, you won't be able to commit anything from the working copies created by those externals. On the other hand, if they use the <literal moreinfo=\"none\">https://</literal> form of the URLs, anyone who might be checking out via <literal moreinfo=\"none\">http://</literal> because their client doesn't support <literal moreinfo=\"none\">https://</literal> will be unable to fetch the external items. Be aware, too, that if you need to re-parent your working copy (using <command moreinfo=\"none\">svn switch --relocate</command>), externals definitions will <emphasis>not</emphasis> also be re-parented."
+msgstr ""
+
+#: ./build/en/book.xml:6519(para) 
+msgid "Finally, there might be times when you would prefer that <command moreinfo=\"none\">svn</command> subcommands would not recognize or otherwise operate on the external working copies created as the result of externals definition handling. In those instances, you can pass the <option>--ignore-externals</option> option to the subcommand."
+msgstr ""
+
+#: ./build/en/book.xml:6531(title) 
+msgid "Peg and Operative Revisions"
+msgstr ""
+
+#: ./build/en/book.xml:6533(para) 
+msgid "We make use of the ability to copy, move, rename, and completely replace files and directories on our computers all the time. And your version control system shouldn't get in the way of your doing these things with your version-controlled files and directories, either. Subversion's file management support is quite liberating, affording almost as much flexibility for versioned files as you'd expect when manipulating your unversioned ones. But that flexibility means that across the lifetime of your repository, a given versioned object might have many paths, and a given path might represent several entirely different versioned objects. And this introduces a certain level of complexity to your interactions with those paths and objects."
+msgstr ""
+
+#: ./build/en/book.xml:6547(para) 
+msgid "Subversion is pretty smart about noticing when an object's version history includes such <quote>changes of address</quote>. For example, if you ask for the revision history log of a particular file that was renamed last week, Subversion happily provides all those logs—the revision in which the rename itself happened, plus the logs of relevant revisions both before and after that rename. So, most of the time, you don't even have to think about such things. But occasionally, Subversion needs your help to clear up ambiguities."
+msgstr ""
+
+#: ./build/en/book.xml:6557(para) 
+msgid "The simplest example of this occurs when a directory or file is deleted from version control, and then a new directory or file is created with the same name and added to version control. Clearly the thing you deleted and the thing you later added aren't the same thing. They merely happen to have had the same path, <filename moreinfo=\"none\">/trunk/object</filename> for example. What, then, does it mean to ask Subversion about the history of <filename moreinfo=\"none\">/trunk/object</filename>? Are you asking about the thing currently at that location, or the old thing you deleted from that location? Are you asking about the operations that have happened to <emphasis>all</emphasis> the objects that have ever lived at that path? Clearly, Subversion needs a hint about what you really want."
+msgstr ""
+
+#: ./build/en/book.xml:6579(para) 
+msgid "<quote>You're not supposed to name it. Once you name it, you start getting attached to it.</quote> — Mike Wazowski"
+msgstr ""
+
+#: ./build/en/book.xml:6571(para) 
+msgid "And thanks to moves, versioned object history can get far more twisted than that, even. For example, you might have a directory named <filename moreinfo=\"none\">concept</filename>, containing some nascent software project you've been toying with. Eventually, though, that project matures to the point that the idea seems to actually have some wings, so you do the unthinkable and decide to give the project a name. <placeholder-1/> Let's say you called your software Frabnaggilywort. At this point, it makes sense to rename the directory to reflect the project's new name, so <filename moreinfo=\"none\">concept</filename> is renamed to <filename moreinfo=\"none\">frabnaggilywort</filename>. Life goes on, Frabnaggilywort releases a 1.0 version, and is downloaded and used daily by hordes of people aiming to improve their lives."
+msgstr ""
+
+#: ./build/en/book.xml:6591(para) 
+msgid "It's a nice story, really, but it doesn't end there. Entrepreneur that you are, you've already got another think in the tank. So you make a new directory, <filename moreinfo=\"none\">concept</filename>, and the cycle begins again. In fact, the cycle begins again many times over the years, each time starting with that old <filename moreinfo=\"none\">concept</filename> directory, then sometimes seeing that directory renamed as the idea cures, sometimes seeing it deleted when you scrap the idea. Or, to get really sick, maybe you rename <filename moreinfo=\"none\">concept</filename> to something else for a while, but later rename the thing back to <filename moreinfo=\"none\">concept</filename> for some reason."
+msgstr ""
+
+#: ./build/en/book.xml:6604(para) 
+msgid "When scenarios like these occur, attempting to instruct Subversion to work with these re-used paths can be a little like instructing a motorist in Chicago's West Suburbs to drive east down Roosevelt Road and turn left onto Main Street. In a mere twenty minutes, you can cross <quote>Main Street</quote> in Wheaton, Glen Ellyn, and Lombard. And no, they aren't the same street. Our motorist—and our Subversion—need a little more detail in order to do the right thing."
+msgstr ""
+
+#: ./build/en/book.xml:6613(para) 
+msgid "In version 1.1, Subversion introduced a way for you to tell it exactly which Main Street you meant. It's called the <firstterm>peg revision</firstterm>, and it is a revision provided to Subversion for the sole purpose of identifying a unique line of history. Because at most one versioned object may occupy a path at any given time—or, more precisely, in any one revision—the combination of a path and a peg revision is all that is needed to refer to a specific line of history. Peg revisions are specified to the Subversion command-line client using <firstterm>at syntax</firstterm>, so called because the syntax involves appending an <quote>at sign</quote> (<literal moreinfo=\"none\">@</literal>) and the peg revision to the end of the path with which the revision is associated."
+msgstr ""
+
+#: ./build/en/book.xml:6637(para) 
+msgid "606 N. Main Street, Wheaton, Illinois, is the home of the Wheaton History Center. Get it—<quote>History Center</quote>? It seemed appropriate…."
+msgstr ""
+
+#: ./build/en/book.xml:6627(para) 
+msgid "But what of the <option>--revision (-r)</option> of which we've spoken so much in this book? That revision (or set of revisions) is called the <firstterm>operative revision</firstterm> (or <firstterm>operative revision range</firstterm>). Once a particular line of history has been identified using a path and peg revision, Subversion performs the requested operation using the operative revision(s). To map this to our Chicagoland streets analogy, if we are told to go to 606 N. Main Street in Wheaton, <placeholder-1/> we can think of <quote>Main Street</quote> as our path and <quote>Wheaton</quote> as our peg revision. These two pieces of information identify a unique path which can travelled (north or south on Main Street), and will keep us from travelling up and down the wrong Main Street in search of our destination. Now we throw in <quote>606 N.</quote> as our operative revision, of sorts, and we know <emphasis>exactly</emphasis> where to go."
+msgstr ""
+
+#: ./build/en/book.xml:6651(title) 
+msgid "The peg revision algorithm"
+msgstr ""
+
+#: ./build/en/book.xml:6653(para) 
+msgid "The Subversion command-line performs the peg revision algorithm any time it needs to resolve possible ambiguities in the paths and revisions provided to it. Here's an example of such an invocation for the purposes of illustrating that algorithm."
+msgstr ""
+
+#: ./build/en/book.xml:6660(replaceable) 
+msgid "command"
+msgstr ""
+
+#: ./build/en/book.xml:6660(replaceable) 
+msgid "OPERATIVE-REV"
+msgstr ""
+
+#: ./build/en/book.xml:6660(replaceable) 
+msgid "PEG-REV"
+msgstr ""
+
+#: ./build/en/book.xml:6659(screen) 
+#, no-wrap
+msgid "\n$ svn <placeholder-1/> -r <placeholder-2/> item@<placeholder-3/>\n"
+msgstr ""
+
+#: ./build/en/book.xml:6663(para) 
+msgid "The algorithm has three simple steps:"
+msgstr ""
+
+#: ./build/en/book.xml:6668(para) 
+msgid "Locate <replaceable>item</replaceable> in the revision identified by <replaceable>PEG-REV</replaceable>. There can be only one such object."
+msgstr ""
+
+#: ./build/en/book.xml:6674(para) 
+msgid "Trace the object's history backwards (through any possible renames) to its ancestor in the revision <replaceable>OPERATIVE-REV</replaceable>."
+msgstr ""
+
+#: ./build/en/book.xml:6680(para) 
+msgid "Perform the requested action on that ancestor, wherever it is located, or whatever its name might be or have been at that time."
+msgstr ""
+
+#: ./build/en/book.xml:6687(para) 
+msgid "Note that even when you don't explicitly supply a peg revision or operative revision, they are still present. For your convenience, the default peg revision is <literal moreinfo=\"none\">BASE</literal> for working copy items and <literal moreinfo=\"none\">HEAD</literal> for repository URLs. And when no operative revision is provided, it defaults to being the same revision as the peg revision."
+msgstr ""
+
+#: ./build/en/book.xml:6697(para) 
+msgid "Say that long ago we created our repository, and in revision 1 added our first <filename moreinfo=\"none\">concept</filename> directory, plus an <filename moreinfo=\"none\">IDEA</filename> file in that directory talking about the concept. After several revisions in which real code was added and tweaked, we, in revision 20, renamed this directory to <filename moreinfo=\"none\">frabnaggilywort</filename>. By revision 27, we had a new concept, a new <filename moreinfo=\"none\">concept</filename> directory to hold it, and a new <filename moreinfo=\"none\">IDEA</filename> file to describe it. And then five years and twenty thousand revisions flew by, just like they would in any good romance story."
+msgstr ""
+
+#: ./build/en/book.xml:6708(para) 
+msgid "Now, years later, we wonder what the <filename moreinfo=\"none\">IDEA</filename> file looked like back in revision 1. But Subversion needs to know if we are asking about how the <emphasis>current</emphasis> file looked back in revision 1, or are we asking for the contents of whatever file lived at <filename moreinfo=\"none\">concepts/IDEA</filename> in revision 1? Certainly those questions have different answers, and because of peg revisions, you can ask either of them. To find out how the current <filename moreinfo=\"none\">IDEA</filename> file looked in that old revision, you run:"
+msgstr ""
+
+#: ./build/en/book.xml:6719(screen) 
+#, no-wrap
+msgid "\n$ svn cat -r 1 concept/IDEA \nsvn: Unable to find repository location for 'concept/IDEA' in revision 1\n"
+msgstr ""
+
+#: ./build/en/book.xml:6724(para) 
+msgid "Of course, in this example, the current <filename moreinfo=\"none\">IDEA</filename> file didn't exist yet in revision 1, so Subversion gives an error. The command above is shorthand for a longer notation which explicitly lists a peg revision. The expanded notation is:"
+msgstr ""
+
+#: ./build/en/book.xml:6730(screen) 
+#, no-wrap
+msgid "\n$ svn cat -r 1 concept/IDEA@BASE\nsvn: Unable to find repository location for 'concept/IDEA' in revision 1\n"
+msgstr ""
+
+#: ./build/en/book.xml:6735(para) 
+msgid "And when executed, it has the expected results. Peg revisions generally default to a value of <literal moreinfo=\"none\">BASE</literal> (the revision currently present in the working copy) when applied to working copy paths, and of <literal moreinfo=\"none\">HEAD</literal> when applied to URLs."
+msgstr ""
+
+#: ./build/en/book.xml:6741(para) 
+msgid "The perceptive reader is probably wondering at this point if the peg revision syntax causes problems for working copy paths or URLs that actually have at signs in them. After all, how does <command moreinfo=\"none\">svn</command> know whether <literal moreinfo=\"none\">news@11</literal> is the name of a directory in my tree, or just a syntax for <quote>revision 11 of <filename moreinfo=\"none\">news</filename></quote>? Thankfully, while <command moreinfo=\"none\">svn</command> will always assume the latter, there is a trivial workaround. You need only append an at sign to the end of the path, such as <literal moreinfo=\"none\">news@11@</literal>. <command moreinfo=\"none\">svn</command> only cares about the last at sign in the argument, and it is not considered illegal to omit a literal peg revision specifier after that at sign. This workaround even applies to paths that end in an at sign—you would use <literal moreinfo=\"none\">filename@@</literal> to talk about a file named <filename moreinfo=\"none\">filename@</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:6758(para) 
+msgid "Let's ask the other question, then—in revision 1, what were the contents of whatever file occupied the address <filename moreinfo=\"none\">concepts/IDEA</filename> at the time? We'll use an explicit peg revision to help us out."
+msgstr ""
+
+#: ./build/en/book.xml:6763(screen) 
+#, no-wrap
+msgid "\n$ svn cat concept/IDEA@1\nThe idea behind this project is to come up with a piece of software\nthat can frab a naggily wort.  Frabbing naggily worts is tricky\nbusiness, and doing it incorrectly can have serious ramifications, so\nwe need to employ over-the-top input validation and data verification\nmechanisms.\n"
+msgstr ""
+
+#: ./build/en/book.xml:6772(para) 
+msgid "Notice that we didn't provide an operative revision this time. That's because when no operative revision is specified, Subversion assumes a default operative revision that's the same as the peg revision."
+msgstr ""
+
+#: ./build/en/book.xml:6777(para) 
+msgid "As you can see, the output from our operation appears to be correct. The text even mentions frabbing naggily worts, so this is almost certainly the file which describes the software now called Frabnaggilywort. In fact, we can verify this using the combination of an explicit peg revision and explicit operative revision. We know that in <literal moreinfo=\"none\">HEAD</literal>, the Frabnaggilywort project is located in the <filename moreinfo=\"none\">frabnaggilywort</filename> directory. So we specify that we want to see how the line of history identified in <literal moreinfo=\"none\">HEAD</literal> as the path <filename moreinfo=\"none\">frabnaggilywort/IDEA</filename> looked in revision 1."
+msgstr ""
+
+#: ./build/en/book.xml:6790(screen) 
+#, no-wrap
+msgid "\n$ svn cat -r 1 frabnaggilywort/IDEA@HEAD\nThe idea behind this project is to come up with a piece of software\nthat can frab a naggily wort.  Frabbing naggily worts is tricky\nbusiness, and doing it incorrectly can have serious ramifications, so\nwe need to employ over-the-top input validation and data verification\nmechanisms.\n"
+msgstr ""
+
+#: ./build/en/book.xml:6799(para) 
+msgid "And the peg and operative revisions need not be so trivial, either. For example, say <filename moreinfo=\"none\">frabnaggilywort</filename> had been deleted from <literal moreinfo=\"none\">HEAD</literal>, but we know it existed in revision 20, and we want to see the diffs for its <filename moreinfo=\"none\">IDEA</filename> file between revisions 4 and 10. We can use the peg revision 20 in conjunction with the URL that would have held Frabnaggilywort's <filename moreinfo=\"none\">IDEA</filename> file in revision 20, and then use 4 and 10 as our operative revision range."
+msgstr ""
+
+#: ./build/en/book.xml:6809(screen) 
+#, no-wrap
+msgid "\n$ svn diff -r 4:10 http://svn.red-bean.com/projects/frabnaggilywort/IDEA@20\nIndex: frabnaggilywort/IDEA\n===================================================================\n--- frabnaggilywort/IDEA\t(revision 4)\n+++ frabnaggilywort/IDEA\t(revision 10)\n@@ -1,5 +1,5 @@\n-The idea behind this project is to come up with a piece of software\n-that can frab a naggily wort.  Frabbing naggily worts is tricky\n-business, and doing it incorrectly can have serious ramifications, so\n-we need to employ over-the-top input validation and data verification\n-mechanisms.\n+The idea behind this project is to come up with a piece of\n+client-server software that can remotely frab a naggily wort.\n+Frabbing naggily worts is tricky business, and doing it incorrectly\n+can have serious ramifications, so we need to employ over-the-top\n+input validation and data verification mechanisms.\n"
+msgstr ""
+
+#: ./build/en/book.xml:6828(para) 
+msgid "Fortunately, most folks aren't faced with such complex situations. But when you are, remember that peg revisions are that extra hint Subversion needs to clear up ambiguity."
+msgstr ""
+
+#: ./build/en/book.xml:6839(title) 
+msgid "Network Model"
+msgstr ""
+
+#: ./build/en/book.xml:6841(para) 
+msgid "At some point, you're going to need to understand how your Subversion client communicates with its server. Subversion's networking layer is abstracted, meaning that Subversion clients exhibit the same general behaviors no matter what sort of server they are operating against. Whether speaking the HTTP protocol (<literal moreinfo=\"none\">http://</literal>) with the Apache HTTP Server or speaking the custom Subversion protocol (<literal moreinfo=\"none\">svn://</literal>) with <command moreinfo=\"none\">svnserve</command>, the basic network model is the same. In this section, we'll explain the basics of that network model, including how Subversion manages authentication and authorization matters."
+msgstr ""
+
+#: ./build/en/book.xml:6856(title) 
+msgid "Requests and Responses"
+msgstr ""
+
+#: ./build/en/book.xml:6858(para) 
+msgid "The Subversion client spends most of its time managing working copies. When it needs information from a remote repository, however, it makes a network request, and the server responds with an appropriate answer. The details of the network protocol are hidden from the user—the client attempts to access a URL, and depending on the URL schema, a particular protocol is used to contact the server (see <xref linkend=\"svn.basic.in-action.wc.sb-1\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:6866(para) 
+msgid "Users can run <command moreinfo=\"none\">svn --version</command> to see which URL schemas and protocols the client knows how to use."
+msgstr ""
+
+#: ./build/en/book.xml:6871(para) 
+msgid "When the server process receives a client request, it often demands that the client identify itself. It issues an authentication challenge to the client, and the client responds by providing <firstterm>credentials</firstterm> back to the server. Once authentication is complete, the server responds with the original information the client asked for. Notice that this system is different from systems like CVS, where the client pre-emptively offers credentials (<quote>logs in</quote>) to the server before ever making a request. In Subversion, the server <quote>pulls</quote> credentials by challenging the client at the appropriate moment, rather than the client <quote>pushing</quote> them. This makes certain operations more elegant. For example, if a server is configured to allow anyone in the world to read a repository, then the server will never issue an authentication challenge when a client attempts to <command moreinfo=\"none\">svn checkout</command>."
+msgstr ""
+
+#: ./build/en/book.xml:6900(para) 
+msgid "This problem is actually a FAQ, resulting from a misconfigured server setup."
+msgstr ""
+
+#: ./build/en/book.xml:6888(para) 
+msgid "If the particular network requests issued by the client result in a new revision being created in the repository, (e.g. <command moreinfo=\"none\">svn commit</command>), then Subversion uses the authenticated username associated with those requests as the author of the revision. That is, the authenticated user's name is stored as the value of the <literal moreinfo=\"none\">svn:author</literal> property on the new revision (see <xref linkend=\"svn.ref.properties\"/>). If the client was not authenticated (in other words, the server never issued an authentication challenge), then the revision's <literal moreinfo=\"none\">svn:author</literal> property is empty. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:6909(title) 
+msgid "Client Credentials Caching"
+msgstr ""
+
+#: ./build/en/book.xml:6911(para) 
+msgid "Many servers are configured to require authentication on every request. This can become a big annoyance to users, who are forced to type their passwords over and over again. Fortunately, the Subversion client has a remedy for this—a built-in system for caching authentication credentials on disk. By default, whenever the command-line client successfully responds to a server's authentication challenge, it saves the credentials in the user's private runtime configuration area (<filename moreinfo=\"none\">~/.subversion/auth/</filename> on Unix-like systems or <filename moreinfo=\"none\">%APPDATA%/Subversion/auth/</filename> on Windows; see <xref linkend=\"svn.advanced.confarea\"/> for more details about the runtime configuration system). Successful credentials are cached on disk, keyed on a combination of the server's hostname, port, and authentication realm."
+msgstr ""
+
+#: ./build/en/book.xml:6927(para) 
+msgid "When the client receives an authentication challenge, it first looks for the appropriate credentials in the user's disk cache. If seemingly suitable credentials are not present, or if the cached credentials ultimately fail to authenticate, then the client will, by default, fall back to prompting the user for the necessary information."
+msgstr ""
+
+#: ./build/en/book.xml:6934(para) 
+msgid "The security-conscious reader will suspect immediately that there is reason for concern here. <quote>Caching passwords on disk? That's terrible! You should never do that!</quote>"
+msgstr ""
+
+#: ./build/en/book.xml:6939(para) 
+msgid "The Subversion developers recognize the legitimacy of such concerns, and so Subversion works with available mechanisms provided by the operating system and environment to try to minimize the risk of leaking this information. Here's a breakdown of what this means on for users on the most common platforms:"
+msgstr ""
+
+#: ./build/en/book.xml:6949(para) 
+msgid "On Windows 2000 and later, the Subversion client uses standard Windows cryptography services to encrypt the password on disk. Because the encryption key is managed by Windows and is tied to the user's own login credentials, only the user can decrypt the cached password. (Note that if the user's Windows account password is reset by an administrator, all of the cached passwords become undecipherable. The Subversion client will behave as if they don't exist, prompting for passwords when required.)"
+msgstr ""
+
+#: ./build/en/book.xml:6962(para) 
+msgid "Similarly, on Mac OS X, the Subversion client stores all repository passwords in the login keyring (managed by the Keychain service), which is protected by the user's account password. User preference settings can impose additional policies, such as requiring the user's account password be entered each time the Subversion password is used."
+msgstr ""
+
+#: ./build/en/book.xml:6972(para) 
+msgid "For other Unix-like operating systems, no standard <quote>keychain</quote> services exist. However, the <filename moreinfo=\"none\">auth/</filename> caching area is still permission-protected so that only the user (owner) can read data from it, not the world at large. The operating system's own file permissions protect the passwords."
+msgstr ""
+
+#: ./build/en/book.xml:6982(para) 
+msgid "Of course, for the truly paranoid, none of these mechanisms meets the test of perfection. So for those folks willing to sacrifice convenience for the ultimate security, Subversion provides various ways of disabling its credentials caching system altogether."
+msgstr ""
+
+#: ./build/en/book.xml:6988(para) 
+msgid "To disable caching for a single command, pass the <option>--no-auth-cache</option> option:"
+msgstr ""
+
+#: ./build/en/book.xml:6991(screen) 
+#, no-wrap
+msgid "\n$ svn commit -F log_msg.txt --no-auth-cache\nAuthentication realm: &lt;svn://host.example.com:3690&gt; example realm\nUsername:  joe\nPassword for 'joe':\n\nAdding         newfile\nTransmitting file data .\nCommitted revision 2324.\n\n# password was not cached, so a second commit still prompts us\n\n$ svn delete newfile\n$ svn commit -F new_msg.txt\nAuthentication realm: &lt;svn://host.example.com:3690&gt; example realm\nUsername:  joe\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:7010(para) 
+msgid "Or, if you want to disable credential caching permanently, you can edit the <filename moreinfo=\"none\">config</filename> file in your runtime configuration area, and set the <option>store-auth-creds</option> option to <literal moreinfo=\"none\">no</literal>. This will prevent the storing of credentials used in any Subversion interactions you perform on the affected computer. This can be extended to cover all users on the computer, too, by modifying the system-wide runtime configuration area."
+msgstr ""
+
+#: ./build/en/book.xml:7020(screen) 
+#, no-wrap
+msgid "\n[auth]\nstore-auth-creds = no\n"
+msgstr ""
+
+#: ./build/en/book.xml:7025(para) 
+msgid "Sometimes users will want to remove specific credentials from the disk cache. To do this, you need to navigate into the <filename moreinfo=\"none\">auth/</filename> area and manually delete the appropriate cache file. Credentials are cached in individual files; if you look inside each file, you will see keys and values. The <literal moreinfo=\"none\">svn:realmstring</literal> key describes the particular server realm that the file is associated with:"
+msgstr ""
+
+#: ./build/en/book.xml:7034(screen) 
+#, no-wrap
+msgid "\n$ ls ~/.subversion/auth/svn.simple/\n5671adf2865e267db74f09ba6f872c28\n3893ed123b39500bca8a0b382839198e\n5c3c22968347b390f349ff340196ed39\n\n$ cat ~/.subversion/auth/svn.simple/5671adf2865e267db74f09ba6f872c28\n\nK 8\nusername\nV 3\njoe\nK 8\npassword\nV 4\nblah\nK 15\nsvn:realmstring\nV 45\n&lt;https://svn.domain.com:443&gt; Joe's repository\nEND\n"
+msgstr ""
+
+#: ./build/en/book.xml:7057(para) 
+msgid "Once you have located the proper cache file, just delete it."
+msgstr ""
+
+#: ./build/en/book.xml:7072(para) 
+msgid "Again, a common mistake is to misconfigure a server so that it never issues an authentication challenge. When users pass <option>--username</option> and <option>--password</option> options to the client, they're surprised to see that they're never used, i.e. new revisions still appear to have been committed anonymously!"
+msgstr ""
+
+#: ./build/en/book.xml:7060(para) 
+msgid "One last word about <command moreinfo=\"none\">svn</command>'s authentication behavior, specifically regarding the <option>--username</option> and <option>--password</option> options. Many client subcommands accept these options, but it is important to understand using these options does <emphasis>not</emphasis> automatically send credentials to the server. As discussed earlier, the server <quote>pulls</quote> credentials from the client when it deems necessary; the client cannot <quote>push</quote> them at will. If a username and/or password are passed as options, they will only be presented to the server if the server requests them. <placeholder-1/> These options are typically used to authenticate as a different user than Subversion would have chosen by default (such as your system login name), or when trying to avoid interactive prompting (such as when calling <command moreinfo=\"none\">svn</command> from a script)."
+msgstr ""
+
+#: ./build/en/book.xml:7087(para) 
+msgid "Here is a final summary that describes how a Subversion client behaves when it receives an authentication challenge."
+msgstr ""
+
+#: ./build/en/book.xml:7093(para) 
+msgid "First, the client checks whether the user specified any credentials as command-line options (<option>--username</option> and/or <option>--password</option>). If not, or if these options fail to authenticate successfully, then"
+msgstr ""
+
+#: ./build/en/book.xml:7101(para) 
+msgid "the client looks up the server's hostname, port, and realm in the runtime <filename moreinfo=\"none\">auth/</filename> area, to see if the user already has the appropriate credentials cached. If not, or if the cached credentials fail to authenticate, then"
+msgstr ""
+
+#: ./build/en/book.xml:7109(para) 
+msgid "finally, the client resorts to prompting the user (unless instructed not to do so via the <option>--non-interactive</option> option or its client-specific equivalents)."
+msgstr ""
+
+#: ./build/en/book.xml:7117(para) 
+msgid "If the client successfully authenticates by any of the methods listed above, it will attempt to cache the credentials on disk (unless the user has disabled this behavior, as mentioned earlier)."
+msgstr ""
+
+#: ./build/en/book.xml:7135(title) 
+msgid "Branching and Merging"
+msgstr ""
+
+#: ./build/en/book.xml:7137(para) 
+msgid "Branching, tagging, and merging are concepts common to almost all version control systems. If you're not familiar with these ideas, we provide a good introduction in this chapter. If you are familiar, then hopefully you'll find it interesting to see how Subversion implements these ideas."
+msgstr ""
+
+#: ./build/en/book.xml:7143(para) 
+msgid "Branching is a fundamental part of version control. If you're going to allow Subversion to manage your data, then this is a feature you'll eventually come to depend on. This chapter assumes that you're already familiar with Subversion's basic concepts (<xref linkend=\"svn.basic\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:7154(title) 
+msgid "What's a Branch?"
+msgstr ""
+
+#: ./build/en/book.xml:7156(para) 
+msgid "Suppose it's your job to maintain a document for a division in your company, a handbook of some sort. One day a different division asks you for the same handbook, but with a few parts <quote>tweaked</quote> for them, since they do things slightly differently."
+msgstr ""
+
+#: ./build/en/book.xml:7162(para) 
+msgid "What do you do in this situation? You do the obvious thing: you make a second copy of your document, and begin maintaining the two copies separately. As each department asks you to make small changes, you incorporate them into one copy or the other."
+msgstr ""
+
+#: ./build/en/book.xml:7168(para) 
+msgid "You often want to make the same change to both copies. For example, if you discover a typo in the first copy, it's very likely that the same typo exists in the second copy. The two documents are almost the same, after all; they only differ in small, specific ways."
+msgstr ""
+
+#: ./build/en/book.xml:7174(para) 
+msgid "This is the basic concept of a <firstterm>branch</firstterm>—namely, a line of development that exists independently of another line, yet still shares a common history if you look far enough back in time. A branch always begins life as a copy of something, and moves on from there, generating its own history (see <xref linkend=\"svn.branchmerge.whatis.dia-1\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:7182(title) 
+msgid "Branches of development"
+msgstr ""
+
+#: ./build/en/book.xml:7186(para) 
+msgid "Subversion has commands to help you maintain parallel branches of your files and directories. It allows you to create branches by copying your data, and remembers that the copies are related to one another. It also helps you duplicate changes from one branch to another. Finally, it can make portions of your working copy reflect different branches, so that you can <quote>mix and match</quote> different lines of development in your daily work."
+msgstr ""
+
+#: ./build/en/book.xml:7201(title) 
+msgid "Using Branches"
+msgstr ""
+
+#: ./build/en/book.xml:7203(para) 
+msgid "At this point, you should understand how each commit creates an entire new filesystem tree (called a <quote>revision</quote>) in the repository. If not, go back and read about revisions in <xref linkend=\"svn.basic.in-action.revs\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:7208(para) 
+msgid "For this chapter, we'll go back to the same example from <xref linkend=\"svn.basic\"/>. Remember that you and your collaborator, Sally, are sharing a repository that contains two projects, <filename moreinfo=\"none\">paint</filename> and <filename moreinfo=\"none\">calc</filename>. Notice that in <xref linkend=\"svn.branchmerge.using.dia-1\"/>, however, each project directory now contains subdirectories named <filename moreinfo=\"none\">trunk</filename> and <filename moreinfo=\"none\">branches</filename>. The reason for this will soon become clear."
+msgstr ""
+
+#: ./build/en/book.xml:7218(title) 
+msgid "Starting repository layout"
+msgstr ""
+
+#: ./build/en/book.xml:7222(para) 
+msgid "As before, assume that Sally and you both have working copies of the <quote>calc</quote> project. Specifically, you each have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename>. All the files for the project are in this subdirectory rather than in <filename moreinfo=\"none\">/calc</filename> itself, because your team has decided that <filename moreinfo=\"none\">/calc/trunk</filename> is where the <quote>main line</quote> of development is going to take place."
+msgstr ""
+
+#: ./build/en/book.xml:7231(para) 
+msgid "Let's say that you've been given the task of performing a radical reorganization of the project. It will take a long time to write, and will affect all the files in the project. The problem here is that you don't want to interfere with Sally, who is in the process of fixing small bugs here and there. She's depending on the fact that the latest version of the project (in <filename moreinfo=\"none\">/calc/trunk</filename>) is always usable. If you start committing your changes bit-by-bit, you'll surely break things for Sally."
+msgstr ""
+
+#: ./build/en/book.xml:7241(para) 
+msgid "One strategy is to crawl into a hole: you and Sally can stop sharing information for a week or two. That is, start gutting and reorganizing all the files in your working copy, but don't commit or update until you're completely finished with the task. There are a number of problems with this, though. First, it's not very safe. Most people like to save their work to the repository frequently, should something bad accidentally happen to their working copy. Second, it's not very flexible. If you do your work on different computers (perhaps you have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename> on two different machines), you'll need to manually copy your changes back and forth, or just do all the work on a single computer. By that same token, it's difficult to share your changes-in-progress with anyone else. A common software development <quote>best practice</quote> is to allow your peers to review your work as you go. If nobody sees your intermediate commits, you lose potential feedback. Finally, when you're finished with all your changes, you might find it very difficult to re-merge your final work with the rest of the company's main body of code. Sally (or others) may have made many other changes in the repository that are difficult to incorporate into your working copy—especially if you run <command moreinfo=\"none\">svn update</command> after weeks of isolation."
+msgstr ""
+
+#: ./build/en/book.xml:7265(para) 
+msgid "The better solution is to create your own branch, or line of development, in the repository. This allows you to save your half-broken work frequently without interfering with others, yet you can still selectively share information with your collaborators. You'll see exactly how this works later on."
+msgstr ""
+
+#: ./build/en/book.xml:7274(title) 
+msgid "Creating a Branch"
+msgstr ""
+
+#: ./build/en/book.xml:7276(para) 
+msgid "Creating a branch is very simple—you make a copy of the project in the repository using the <command moreinfo=\"none\">svn copy</command> command. Subversion is not only able to copy single files, but whole directories as well. In this case, you want to make a copy of the <filename moreinfo=\"none\">/calc/trunk</filename> directory. Where should the new copy live? Wherever you wish—it's a matter of project policy. Let's say that your team has a policy of creating branches in the <filename moreinfo=\"none\">/calc/branches</filename> area of the repository, and you want to name your branch <literal moreinfo=\"none\">my-calc-branch</literal>. You'll want to create a new directory, <filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename>, which begins its life as a copy of <filename moreinfo=\"none\">/calc/trunk</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:7292(para) 
+msgid "There are two different ways to make a copy. We'll demonstrate the messy way first, just to make the concept clear. To begin, check out a working copy of the project's root directory, <filename moreinfo=\"none\">/calc</filename>:"
+msgstr ""
+
+#: ./build/en/book.xml:7297(screen) 
+#, no-wrap
+msgid "\n$ svn checkout http://svn.example.com/repos/calc bigwc\nA  bigwc/trunk/\nA  bigwc/trunk/Makefile\nA  bigwc/trunk/integer.c\nA  bigwc/trunk/button.c\nA  bigwc/branches/\nChecked out revision 340.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7307(para) 
+msgid "Making a copy is now simply a matter of passing two working-copy paths to the <command moreinfo=\"none\">svn copy</command> command:"
+msgstr ""
+
+#: ./build/en/book.xml:7311(screen) 
+#, no-wrap
+msgid "\n$ cd bigwc\n$ svn copy trunk branches/my-calc-branch\n$ svn status\nA  +   branches/my-calc-branch\n"
+msgstr ""
+
+#: ./build/en/book.xml:7318(para) 
+msgid "In this case, the <command moreinfo=\"none\">svn copy</command> command recursively copies the <filename moreinfo=\"none\">trunk</filename> working directory to a new working directory, <filename moreinfo=\"none\">branches/my-calc-branch</filename>. As you can see from the <command moreinfo=\"none\">svn status</command> command, the new directory is now scheduled for addition to the repository. But also notice the <quote>+</quote> sign next to the letter A. This indicates that the scheduled addition is a <emphasis>copy</emphasis> of something, not something new. When you commit your changes, Subversion will create <filename moreinfo=\"none\">/calc/branches/my-calc-branch</filename> in the repository by copying <filename moreinfo=\"none\">/calc/trunk</filename>, rather than resending all of the working copy data over the network:"
+msgstr ""
+
+#: ./build/en/book.xml:7333(screen) 
+#, no-wrap
+msgid "\n$ svn commit -m \"Creating a private branch of /calc/trunk.\"\nAdding         branches/my-calc-branch\nCommitted revision 341.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7339(para) 
+msgid "And now here's the easier method of creating a branch, which we should have told you about in the first place: <command moreinfo=\"none\">svn copy</command> is able to operate directly on two URLs."
+msgstr ""
+
+#: ./build/en/book.xml:7344(screen) 
+#, no-wrap
+msgid "\n$ svn copy http://svn.example.com/repos/calc/trunk \\\n           http://svn.example.com/repos/calc/branches/my-calc-branch \\\n      -m \"Creating a private branch of /calc/trunk.\"\n\nCommitted revision 341.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7360(para) 
+msgid "Subversion does not support copying between different repositories. When using URLs with <command moreinfo=\"none\">svn copy</command> or <command moreinfo=\"none\">svn move</command>, you can only copy items within the same repository."
+msgstr ""
+
+#: ./build/en/book.xml:7352(para) 
+msgid "There's really no difference between these two methods. Both procedures create a new directory in revision 341, and the new directory is a copy of <filename moreinfo=\"none\">/calc/trunk</filename>. This is shown in <xref linkend=\"svn.branchmerge.using.create.dia-1\"/>. Notice that the second method, however, performs an <emphasis>immediate</emphasis> commit. <placeholder-1/> It's an easier procedure, because it doesn't require you to check out a large portion of the repository. In fact, this technique doesn't even require you to have a working copy at all. This is the way most users create branches."
+msgstr ""
+
+#: ./build/en/book.xml:7371(title) 
+msgid "Repository with new copy"
+msgstr ""
+
+#: ./build/en/book.xml:7376(title) 
+msgid "Cheap Copies"
+msgstr ""
+
+#: ./build/en/book.xml:7378(para) 
+msgid "Subversion's repository has a special design. When you copy a directory, you don't need to worry about the repository growing huge—Subversion doesn't actually duplicate any data. Instead, it creates a new directory entry that points to an <emphasis>existing</emphasis> tree. If you're a Unix user, this is the same concept as a hard-link. As further changes are made to files and directories beneath the copied directory, Subversion continues to employ this hard-link concept where it can. It only duplicates data when it is necessary to disambiguate different versions of objects."
+msgstr ""
+
+#: ./build/en/book.xml:7390(para) 
+msgid "This is why you'll often hear Subversion users talk about <quote>cheap copies</quote>. It doesn't matter how large the directory is—it takes a very tiny, constant amount of time to make a copy of it. In fact, this feature is the basis of how commits work in Subversion: each revision is a <quote>cheap copy</quote> of the previous revision, with a few items lazily changed within. (To read more about this, visit Subversion's website and read about the <quote>bubble up</quote> method in Subversion's design documents.)"
+msgstr ""
+
+#: ./build/en/book.xml:7401(para) 
+msgid "Of course, these internal mechanics of copying and sharing data are hidden from the user, who simply sees copies of trees. The main point here is that copies are cheap, both in time and space. If you create a branch entirely within the repository (by running <command moreinfo=\"none\">svn copy URL1 URL2</command>), it's a quick, constant-time operation. Make branches as often as you want."
+msgstr ""
+
+#: ./build/en/book.xml:7414(title) 
+msgid "Working with Your Branch"
+msgstr ""
+
+#: ./build/en/book.xml:7416(para) 
+msgid "Now that you've created a branch of the project, you can check out a new working copy to start using it:"
+msgstr ""
+
+#: ./build/en/book.xml:7419(screen) 
+#, no-wrap
+msgid "\n$ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch\nA  my-calc-branch/Makefile\nA  my-calc-branch/integer.c\nA  my-calc-branch/button.c\nChecked out revision 341.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7427(para) 
+msgid "There's nothing special about this working copy; it simply mirrors a different directory in the repository. When you commit changes, however, Sally won't ever see them when she updates. Her working copy is of <filename moreinfo=\"none\">/calc/trunk</filename>. (Be sure to read <xref linkend=\"svn.branchmerge.switchwc\"/> later in this chapter: the <command moreinfo=\"none\">svn switch</command> command is an alternate way of creating a working copy of a branch.)"
+msgstr ""
+
+#: ./build/en/book.xml:7435(para) 
+msgid "Let's pretend that a week goes by, and the following commits happen:"
+msgstr ""
+
+#: ./build/en/book.xml:7439(para) 
+msgid "You make a change to <filename moreinfo=\"none\">/calc/branches/my-calc-branch/button.c</filename>, which creates revision 342."
+msgstr ""
+
+#: ./build/en/book.xml:7445(para) 
+msgid "You make a change to <filename moreinfo=\"none\">/calc/branches/my-calc-branch/integer.c</filename>, which creates revision 343."
+msgstr ""
+
+#: ./build/en/book.xml:7451(para) 
+msgid "Sally makes a change to <filename moreinfo=\"none\">/calc/trunk/integer.c</filename>, which creates revision 344."
+msgstr ""
+
+#: ./build/en/book.xml:7458(para) 
+msgid "There are now two independent lines of development, shown in <xref linkend=\"svn.branchmerge.using.work.dia-1\"/>, happening on <filename moreinfo=\"none\">integer.c</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:7463(title) 
+msgid "The branching of one file's history"
+msgstr ""
+
+#: ./build/en/book.xml:7467(para) 
+msgid "Things get interesting when you look at the history of changes made to your copy of <filename moreinfo=\"none\">integer.c</filename>:"
+msgstr ""
+
+#: ./build/en/book.xml:7471(screen) 
+#, no-wrap
+msgid "\n$ pwd\n/home/user/my-calc-branch\n\n$ svn log -v integer.c\n------------------------------------------------------------------------\nr343 | user | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\nChanged paths:\n   M /calc/branches/my-calc-branch/integer.c\n\n* integer.c:  frozzled the wazjub.\n\n------------------------------------------------------------------------\nr341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\nChanged paths:\n   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n\nCreating a private branch of /calc/trunk.\n\n------------------------------------------------------------------------\nr303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\nChanged paths:\n   M /calc/trunk/integer.c\n\n* integer.c:  changed a docstring.\n\n------------------------------------------------------------------------\nr98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\nChanged paths:\n   M /calc/trunk/integer.c\n\n* integer.c:  adding this file to the project.\n\n------------------------------------------------------------------------\n"
+msgstr ""
+
+#: ./build/en/book.xml:7507(para) 
+msgid "Notice that Subversion is tracing the history of your branch's <filename moreinfo=\"none\">integer.c</filename> all the way back through time, even traversing the point where it was copied. It shows the creation of the branch as an event in the history, because <filename moreinfo=\"none\">integer.c</filename> was implicitly copied when all of <filename moreinfo=\"none\">/calc/trunk/</filename> was copied. Now look what happens when Sally runs the same command on her copy of the file:"
+msgstr ""
+
+#: ./build/en/book.xml:7516(screen) 
+#, no-wrap
+msgid "\n$ pwd\n/home/sally/calc\n\n$ svn log -v integer.c\n------------------------------------------------------------------------\nr344 | sally | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\nChanged paths:\n   M /calc/trunk/integer.c\n\n* integer.c:  fix a bunch of spelling errors.\n\n------------------------------------------------------------------------\nr303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines\nChanged paths:\n   M /calc/trunk/integer.c\n\n* integer.c:  changed a docstring.\n\n------------------------------------------------------------------------\nr98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines\nChanged paths:\n   M /calc/trunk/integer.c\n\n* integer.c:  adding this file to the project.\n\n------------------------------------------------------------------------\n"
+msgstr ""
+
+#: ./build/en/book.xml:7545(para) 
+msgid "Sally sees her own revision 344 change, but not the change you made in revision 343. As far as Subversion is concerned, these two commits affected different files in different repository locations. However, Subversion <emphasis>does</emphasis> show that the two files share a common history. Before the branch-copy was made in revision 341, they used to be the same file. That's why you and Sally both see the changes made in revisions 303 and 98."
+msgstr ""
+
+#: ./build/en/book.xml:7558(title) 
+msgid "The Key Concepts Behind Branches"
+msgstr ""
+
+#: ./build/en/book.xml:7560(para) 
+msgid "There are two important lessons that you should remember from this section. First, Subversion has no internal concept of a branch—it only knows how to make copies. When you copy a directory, the resulting directory is only a <quote>branch</quote> because <emphasis>you</emphasis> attach that meaning to it. You may think of the directory differently, or treat it differently, but to Subversion it's just an ordinary directory that happens to carry some extra historical information. Second, because of this copy mechanism, Subversion's branches exist as <emphasis>normal filesystem directories</emphasis> in the repository. This is different from other version control systems, where branches are typically defined by adding extra-dimensional <quote>labels</quote> to collections of files."
+msgstr ""
+
+#: ./build/en/book.xml:7584(title) 
+msgid "Copying Changes Between Branches"
+msgstr ""
+
+#: ./build/en/book.xml:7586(para) 
+msgid "Now you and Sally are working on parallel branches of the project: you're working on a private branch, and Sally is working on the <firstterm>trunk</firstterm>, or main line of development."
+msgstr ""
+
+#: ./build/en/book.xml:7591(para) 
+msgid "For projects that have a large number of contributors, it's common for most people to have working copies of the trunk. Whenever someone needs to make a long-running change that is likely to disrupt the trunk, a standard procedure is to create a private branch and commit changes there until all the work is complete."
+msgstr ""
+
+#: ./build/en/book.xml:7598(para) 
+msgid "So, the good news is that you and Sally aren't interfering with each other. The bad news is that it's very easy to drift <emphasis>too</emphasis> far apart. Remember that one of the problems with the <quote>crawl in a hole</quote> strategy is that by the time you're finished with your branch, it may be near-impossible to merge your changes back into the trunk without a huge number of conflicts."
+msgstr ""
+
+#: ./build/en/book.xml:7606(para) 
+msgid "Instead, you and Sally might continue to share changes as you work. It's up to you to decide which changes are worth sharing; Subversion gives you the ability to selectively <quote>copy</quote> changes between branches. And when you're completely finished with your branch, your entire set of branch changes can be copied back into the trunk."
+msgstr ""
+
+#: ./build/en/book.xml:7616(title) 
+msgid "Copying Specific Changes"
+msgstr ""
+
+#: ./build/en/book.xml:7619(para) 
+msgid "In the previous section, we mentioned that both you and Sally made changes to <filename moreinfo=\"none\">integer.c</filename> on different branches. If you look at Sally's log message for revision 344, you can see that she fixed some spelling errors. No doubt, your copy of the same file still has the same spelling errors. It's likely that your future changes to this file will be affecting the same areas that have the spelling errors, so you're in for some potential conflicts when you merge your branch someday. It's better, then, to receive Sally's change now, <emphasis>before</emphasis> you start working too heavily in the same places."
+msgstr ""
+
+#: ./build/en/book.xml:7631(para) 
+msgid "It's time to use the <command moreinfo=\"none\">svn merge</command> command. This command, it turns out, is a very close cousin to the <command moreinfo=\"none\">svn diff</command> command (which you read about in <xref linkend=\"svn.tour\"/>). Both commands are able to compare any two objects in the repository and describe the differences. For example, you can ask <command moreinfo=\"none\">svn diff</command> to show you the exact change made by Sally in revision 344:"
+msgstr ""
+
+#: ./build/en/book.xml:7640(screen) 
+#, no-wrap
+msgid "\n$ svn diff -c 344 http://svn.example.com/repos/calc/trunk\n\nIndex: integer.c\n===================================================================\n--- integer.c\t(revision 343)\n+++ integer.c\t(revision 344)\n@@ -147,7 +147,7 @@\n     case 6:  sprintf(info-&gt;operating_system, \"HPFS (OS/2 or NT)\"); break;\n     case 7:  sprintf(info-&gt;operating_system, \"Macintosh\"); break;\n     case 8:  sprintf(info-&gt;operating_system, \"Z-System\"); break;\n-    case 9:  sprintf(info-&gt;operating_system, \"CPM\"); break;\n+    case 9:  sprintf(info-&gt;operating_system, \"CP/M\"); break;\n     case 10:  sprintf(info-&gt;operating_system, \"TOPS-20\"); break;\n     case 11:  sprintf(info-&gt;operating_system, \"NTFS (Windows NT)\"); break;\n     case 12:  sprintf(info-&gt;operating_system, \"QDOS\"); break;\n@@ -164,7 +164,7 @@\n     low = (unsigned short) read_byte(gzfile);  /* read LSB */\n     high = (unsigned short) read_byte(gzfile); /* read MSB */\n     high = high &lt;&lt; 8;  /* interpret MSB correctly */\n-    total = low + high; /* add them togethe for correct total */\n+    total = low + high; /* add them together for correct total */\n\n     info-&gt;extra_header = (unsigned char *) my_malloc(total);\n     fread(info-&gt;extra_header, total, 1, gzfile);\n@@ -241,7 +241,7 @@\n      Store the offset with ftell() ! */\n\n   if ((info-&gt;data_offset = ftell(gzfile))== -1) {\n-    printf(\"error: ftell() retturned -1.\\n\");\n+    printf(\"error: ftell() returned -1.\\n\");\n     exit(1);\n   }\n\n@@ -249,7 +249,7 @@\n   printf(\"I believe start of compressed data is %u\\n\", info-&gt;data_offset);\n   #endif\n\n-  /* Set postion eight bytes from the end of the file. */\n+  /* Set position eight bytes from the end of the file. */\n\n   if (fseek(gzfile, -8, SEEK_END)) {\n     printf(\"error: fseek() returned non-zero\\n\");\n"
+msgstr ""
+
+#: ./build/en/book.xml:7685(para) 
+msgid "The <command moreinfo=\"none\">svn merge</command> command is almost exactly the same. Instead of printing the differences to your terminal, however, it applies them directly to your working copy as <emphasis>local modifications</emphasis>:"
+msgstr ""
+
+#: ./build/en/book.xml:7690(screen) 
+#, no-wrap
+msgid "\n$ svn merge -c 344 http://svn.example.com/repos/calc/trunk\nU  integer.c\n\n$ svn status\nM  integer.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:7698(para) 
+msgid "The output of <command moreinfo=\"none\">svn merge</command> shows that your copy of <filename moreinfo=\"none\">integer.c</filename> was patched. It now contains Sally's change—the change has been <quote>copied</quote> from the trunk to your working copy of your private branch, and now exists as a local modification. At this point, it's up to you to review the local modification and make sure it works correctly."
+msgstr ""
+
+#: ./build/en/book.xml:7706(para) 
+msgid "In another scenario, it's possible that things may not have gone so well, and that <filename moreinfo=\"none\">integer.c</filename> may have entered a conflicted state. You might need to resolve the conflict using standard procedures (see <xref linkend=\"svn.tour\"/>), or if you decide that the merge was a bad idea altogether, simply give up and <command moreinfo=\"none\">svn revert</command> the local change."
+msgstr ""
+
+#: ./build/en/book.xml:7713(para) 
+msgid "But assuming that you've reviewed the merged change, you can <command moreinfo=\"none\">svn commit</command> the change as usual. At that point, the change has been merged into your repository branch. In version control terminology, this act of copying changes between branches is commonly called <firstterm>porting</firstterm> changes."
+msgstr ""
+
+#: ./build/en/book.xml:7720(para) 
+msgid "When you commit the local modification, make sure your log message mentions that you're porting a specific change from one branch to another. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:7724(screen) 
+#, no-wrap
+msgid "\n$ svn commit -m \"integer.c: ported r344 (spelling fixes) from trunk.\"\nSending        integer.c\nTransmitting file data .\nCommitted revision 360.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7731(para) 
+msgid "As you'll see in the next sections, this is a very important <quote>best practice</quote> to follow."
+msgstr ""
+
+#: ./build/en/book.xml:7735(title) 
+msgid "Why Not Use Patches Instead?"
+msgstr ""
+
+#: ./build/en/book.xml:7737(para) 
+msgid "A question may be on your mind, especially if you're a Unix user: why bother to use <command moreinfo=\"none\">svn merge</command> at all? Why not simply use the operating system's <command moreinfo=\"none\">patch</command> command to accomplish the same job? For example:"
+msgstr ""
+
+#: ./build/en/book.xml:7743(screen) 
+#, no-wrap
+msgid "\n$ svn diff -c 344 http://svn.example.com/repos/calc/trunk &gt; patchfile\n$ patch -p0  &lt; patchfile\nPatching file integer.c using Plan A...\nHunk #1 succeeded at 147.\nHunk #2 succeeded at 164.\nHunk #3 succeeded at 241.\nHunk #4 succeeded at 249.\ndone\n"
+msgstr ""
+
+#: ./build/en/book.xml:7754(para) 
+msgid "In this particular case, yes, there really is no difference. But <command moreinfo=\"none\">svn merge</command> has special abilities that surpass the <command moreinfo=\"none\">patch</command> program. The file format used by <command moreinfo=\"none\">patch</command> is quite limited; it's only able to tweak file contents. There's no way to represent changes to <emphasis>trees</emphasis>, such as the addition, removal, or renaming of files and directories. Nor can the <command moreinfo=\"none\">patch</command> program notice changes to property changes. If Sally's change had, say, added a new directory, the output of <command moreinfo=\"none\">svn diff</command> wouldn't have mentioned it at all. <command moreinfo=\"none\">svn diff</command> only outputs the limited patch-format, so there are some ideas it simply can't express. The <command moreinfo=\"none\">svn merge</command> command, however, can express changes in tree structure and properties by directly applying them to your working copy."
+msgstr ""
+
+#: ./build/en/book.xml:7773(para) 
+msgid "A word of warning: while <command moreinfo=\"none\">svn diff</command> and <command moreinfo=\"none\">svn merge</command> are very similar in concept, they do have different syntax in many cases. Be sure to read about them in <xref linkend=\"svn.ref\"/> for details, or ask <command moreinfo=\"none\">svn help</command>. For example, <command moreinfo=\"none\">svn merge</command> requires a working-copy path as a target, i.e. a place where it should apply the tree-changes. If the target isn't specified, it assumes you are trying to perform one of the following common operations:"
+msgstr ""
+
+#: ./build/en/book.xml:7785(para) 
+msgid "You want to merge directory changes into your current working directory."
+msgstr ""
+
+#: ./build/en/book.xml:7789(para) 
+msgid "You want to merge the changes in a specific file into a file by the same name which exists in your current working directory."
+msgstr ""
+
+#: ./build/en/book.xml:7795(para) 
+msgid "If you are merging a directory and haven't specified a target path, <command moreinfo=\"none\">svn merge</command> assumes the first case above and tries to apply the changes into your current directory. If you are merging a file, and that file (or a file by the same name) exists in your current working directory, <command moreinfo=\"none\">svn merge</command> assumes the second case and tries to apply the changes to a local file with the same name."
+msgstr ""
+
+#: ./build/en/book.xml:7803(para) 
+msgid "If you want changes applied somewhere else, you'll need to say so. For example, if you're sitting in the parent directory of your working copy, you'll have to specify the target directory to receive the changes:"
+msgstr ""
+
+#: ./build/en/book.xml:7808(screen) 
+#, no-wrap
+msgid "\n$ svn merge -c 344 http://svn.example.com/repos/calc/trunk my-calc-branch\nU   my-calc-branch/integer.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:7817(title) 
+msgid "The Key Concept Behind Merging"
+msgstr ""
+
+#: ./build/en/book.xml:7819(para) 
+msgid "You've now seen an example of the <command moreinfo=\"none\">svn merge</command> command, and you're about to see several more. If you're feeling confused about exactly how merging works, you're not alone. Many users (especially those new to version control) are initially perplexed about the proper syntax of the command, and about how and when the feature should be used. But fear not, this command is actually much simpler than you think! There's a very easy technique for understanding exactly how <command moreinfo=\"none\">svn merge</command> behaves."
+msgstr ""
+
+#: ./build/en/book.xml:7830(para) 
+msgid "The main source of confusion is the <emphasis>name</emphasis> of the command. The term <quote>merge</quote> somehow denotes that branches are combined together, or that there's some sort of mysterious blending of data going on. That's not the case. A better name for the command might have been <command moreinfo=\"none\">svn diff-and-apply</command>, because that's all that happens: two repository trees are compared, and the differences are applied to a working copy."
+msgstr ""
+
+#: ./build/en/book.xml:7840(para) 
+msgid "The command takes three arguments:"
+msgstr ""
+
+#: ./build/en/book.xml:7844(para) 
+msgid "An initial repository tree (often called the <firstterm>left side</firstterm> of the comparison),"
+msgstr ""
+
+#: ./build/en/book.xml:7848(para) 
+msgid "A final repository tree (often called the <firstterm>right side</firstterm> of the comparison),"
+msgstr ""
+
+#: ./build/en/book.xml:7852(para) 
+msgid "A working copy to accept the differences as local changes (often called the <firstterm>target</firstterm> of the merge)."
+msgstr ""
+
+#: ./build/en/book.xml:7858(para) 
+msgid "Once these three arguments are specified, the two trees are compared, and the resulting differences are applied to the target working copy as local modifications. When the command is done, the results are no different than if you had hand-edited the files, or run various <command moreinfo=\"none\">svn add</command> or <command moreinfo=\"none\">svn delete</command> commands yourself. If you like the results, you can commit them. If you don't like the results, you can simply <command moreinfo=\"none\">svn revert</command> all of the changes."
+msgstr ""
+
+#: ./build/en/book.xml:7868(para) 
+msgid "The syntax of <command moreinfo=\"none\">svn merge</command> allows you to specify the three necessary arguments rather flexibly. Here are some examples:"
+msgstr ""
+
+#: ./build/en/book.xml:7872(screen) 
+#, no-wrap
+msgid "\n$ svn merge http://svn.example.com/repos/branch1@150 \\\n            http://svn.example.com/repos/branch2@212 \\\n            my-working-copy\n\n$ svn merge -r 100:200 http://svn.example.com/repos/trunk my-working-copy\n\n$ svn merge -r 100:200 http://svn.example.com/repos/trunk\n"
+msgstr ""
+
+#: ./build/en/book.xml:7882(para) 
+msgid "The first syntax lays out all three arguments explicitly, naming each tree in the form <emphasis>URL@REV</emphasis> and naming the working copy target. The second syntax can be used as a shorthand for situations when you're comparing two different revisions of the same URL. The last syntax shows how the working-copy argument is optional; if omitted, it defaults to the current directory."
+msgstr ""
+
+#: ./build/en/book.xml:7895(title) 
+msgid "Best Practices for Merging"
+msgstr ""
+
+#: ./build/en/book.xml:7899(title) 
+msgid "Tracking Merges Manually"
+msgstr ""
+
+#: ./build/en/book.xml:7901(para) 
+msgid "Merging changes sounds simple enough, but in practice it can become a headache. The problem is that if you repeatedly merge changes from one branch to another, you might accidentally merge the same change <emphasis>twice</emphasis>. When this happens, sometimes things will work fine. When patching a file, Subversion typically notices if the file already has the change, and does nothing. But if the already-existing change has been modified in any way, you'll get a conflict."
+msgstr ""
+
+#: ./build/en/book.xml:7911(para) 
+msgid "Ideally, your version control system should prevent the double-application of changes to a branch. It should automatically remember which changes a branch has already received, and be able to list them for you. It should use this information to help automate merges as much as possible."
+msgstr ""
+
+#: ./build/en/book.xml:7920(para) 
+msgid "However, at the time of writing, this feature is being worked on!"
+msgstr ""
+
+#: ./build/en/book.xml:7918(para) 
+msgid "Unfortunately, Subversion is not such a system; it does not yet record any information about merge operations. <placeholder-1/> When you commit local modifications, the repository has no idea whether those changes came from running <command moreinfo=\"none\">svn merge</command>, or from just hand-editing the files."
+msgstr ""
+
+#: ./build/en/book.xml:7926(para) 
+msgid "What does this mean to you, the user? It means that until the day Subversion grows this feature, you'll have to track merge information yourself. The best place to do this is in the commit log-message. As demonstrated in the earlier example, it's recommended that your log-message mention a specific revision number (or range of revisions) that are being merged into your branch. Later on, you can run <command moreinfo=\"none\">svn log</command> to review which changes your branch already contains. This will allow you to carefully construct a subsequent <command moreinfo=\"none\">svn merge</command> command that won't be redundant with previously ported changes."
+msgstr ""
+
+#: ./build/en/book.xml:7939(para) 
+msgid "In the next section, we'll show some examples of this technique in action."
+msgstr ""
+
+#: ./build/en/book.xml:7946(title) 
+msgid "Previewing Merges"
+msgstr ""
+
+#: ./build/en/book.xml:7948(para) 
+msgid "Because merging only results in local modifications, it's not usually a high-risk operation. If you get the merge wrong the first time, simply <command moreinfo=\"none\">svn revert</command> the changes and try again."
+msgstr ""
+
+#: ./build/en/book.xml:7953(para) 
+msgid "It's possible, however, that your working copy might already have local modifications. The changes applied by a merge will be mixed with your pre-existing ones, and running <command moreinfo=\"none\">svn revert</command> is no longer an option. The two sets of changes may be impossible to separate."
+msgstr ""
+
+#: ./build/en/book.xml:7959(para) 
+msgid "In cases like this, people take comfort in being able to predict or examine merges before they happen. One simple way to do that is to run <command moreinfo=\"none\">svn diff</command> with the same arguments you plan to pass to <command moreinfo=\"none\">svn merge</command>, as we already showed in our first example of merging. Another method of previewing is to pass the <option>--dry-run</option> option to the merge command:"
+msgstr ""
+
+#: ./build/en/book.xml:7968(screen) 
+#, no-wrap
+msgid "\n$ svn merge --dry-run -c 344 http://svn.example.com/repos/calc/trunk\nU  integer.c\n\n$ svn status\n#  nothing printed, working copy is still unchanged.\n"
+msgstr ""
+
+#: ./build/en/book.xml:7976(para) 
+msgid "The <option>--dry-run</option> option doesn't actually apply any local changes to the working copy. It only shows status codes that <emphasis>would</emphasis> be printed in a real merge. It's useful for getting a <quote>high level</quote> preview of the potential merge, for those times when running <command moreinfo=\"none\">svn diff</command> gives too much detail."
+msgstr ""
+
+#: ./build/en/book.xml:7988(title) 
+msgid "Merge Conflicts"
+msgstr ""
+
+#: ./build/en/book.xml:7990(para) 
+msgid "Just like the <command moreinfo=\"none\">svn update</command> command, <command moreinfo=\"none\">svn merge</command> applies changes to your working copy. And therefore it's also capable of creating conflicts. The conflicts produced by <command moreinfo=\"none\">svn merge</command>, however, are sometimes different, and this section explains those differences."
+msgstr ""
+
+#: ./build/en/book.xml:7997(para) 
+msgid "To begin with, assume that your working copy has no local edits. When you <command moreinfo=\"none\">svn update</command> to a particular revision, the changes sent by the server will always apply <quote>cleanly</quote> to your working copy. The server produces the delta by comparing two trees: a virtual snapshot of your working copy, and the revision tree you're interested in. Because the left-hand side of the comparison is exactly equal to what you already have, the delta is guaranteed to correctly convert your working copy into the right-hand tree."
+msgstr ""
+
+#: ./build/en/book.xml:8008(para) 
+msgid "But <command moreinfo=\"none\">svn merge</command> has no such guarantees and can be much more chaotic: the user can ask the server to compare <emphasis>any</emphasis> two trees at all, even ones that are unrelated to the working copy! This means there's large potential for human error. Users will sometimes compare the wrong two trees, creating a delta that doesn't apply cleanly. <command moreinfo=\"none\">svn merge</command> will do its best to apply as much of the delta as possible, but some parts may be impossible. Just like the Unix <command moreinfo=\"none\">patch</command> command sometimes complains about <quote>failed hunks</quote>, <command moreinfo=\"none\">svn merge</command> will complain about <quote>skipped targets</quote>:"
+msgstr ""
+
+#: ./build/en/book.xml:8021(screen) 
+#, no-wrap
+msgid "\n$ svn merge -r 1288:1351 http://svn.example.com/repos/branch\nU  foo.c\nU  bar.c\nSkipped missing target: 'baz.c'\nU  glub.c\nC  glorb.h\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:8032(para) 
+msgid "In the previous example it might be the case that <filename moreinfo=\"none\">baz.c</filename> exists in both snapshots of the branch being compared, and the resulting delta wants to change the file's contents, but the file doesn't exist in the working copy. Whatever the case, the <quote>skipped</quote> message means that the user is most likely comparing the wrong two trees; they're the classic sign of user error. When this happens, it's easy to recursively revert all the changes created by the merge (<command moreinfo=\"none\">svn revert --recursive</command>), delete any unversioned files or directories left behind after the revert, and re-run <command moreinfo=\"none\">svn merge</command> with different arguments."
+msgstr ""
+
+#: ./build/en/book.xml:8046(para) 
+msgid "Also notice that the previous example shows a conflict happening on <filename moreinfo=\"none\">glorb.h</filename>. We already stated that the working copy has no local edits: how can a conflict possibly happen? Again, because the user can use <command moreinfo=\"none\">svn merge</command> to define and apply any old delta to the working copy, that delta may contain textual changes that don't cleanly apply to a working file, even if the file has no local modifications."
+msgstr ""
+
+#: ./build/en/book.xml:8055(para) 
+msgid "Another small difference between <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn merge</command> are the names of the full-text files created when a conflict happens. In <xref linkend=\"svn.tour.cycle.resolve\"/>, we saw that an update produces files named <filename moreinfo=\"none\">filename.mine</filename>, <filename moreinfo=\"none\">filename.rOLDREV</filename>, and <filename moreinfo=\"none\">filename.rNEWREV</filename>. When <command moreinfo=\"none\">svn merge</command> produces a conflict, though, it creates three files named <filename moreinfo=\"none\">filename.working</filename>, <filename moreinfo=\"none\">filename.left</filename>, and <filename moreinfo=\"none\">filename.right</filename>. In this case, the terms <quote>left</quote> and <quote>right</quote> are describing which side of the double-tree comparison the file came from. In any case, these differing names will help you distinguish between conflicts that happened as a result of an update versus ones that happened as a result of a merge."
+msgstr ""
+
+#: ./build/en/book.xml:8078(title) 
+msgid "Noticing or Ignoring Ancestry"
+msgstr ""
+
+#: ./build/en/book.xml:8080(para) 
+msgid "When conversing with a Subversion developer, you might very likely hear reference to the term <firstterm>ancestry</firstterm>. This word is used to describe the relationship between two objects in a repository: if they're related to each other, then one object is said to be an ancestor of the other."
+msgstr ""
+
+#: ./build/en/book.xml:8087(para) 
+msgid "For example, suppose you commit revision 100, which includes a change to a file <filename moreinfo=\"none\">foo.c</filename>. Then <filename moreinfo=\"none\">foo.c@99</filename> is an <quote>ancestor</quote> of <filename moreinfo=\"none\">foo.c@100</filename>. On the other hand, suppose you commit the deletion of <filename moreinfo=\"none\">foo.c</filename> in revision 101, and then add a new file by the same name in revision 102. In this case, <filename moreinfo=\"none\">foo.c@99</filename> and <filename moreinfo=\"none\">foo.c@102</filename> may appear to be related (they have the same path), but in fact are completely different objects in the repository. They share no history or <quote>ancestry</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:8100(para) 
+msgid "The reason for bringing this up is to point out an important difference between <command moreinfo=\"none\">svn diff</command> and <command moreinfo=\"none\">svn merge</command>. The former command ignores ancestry, while the latter command is quite sensitive to it. For example, if you asked <command moreinfo=\"none\">svn diff</command> to compare revisions 99 and 102 of <filename moreinfo=\"none\">foo.c</filename>, you would see line-based diffs; the <literal moreinfo=\"none\">diff</literal> command is blindly comparing two paths. But if you asked <command moreinfo=\"none\">svn merge</command> to compare the same two objects, it would notice that they're unrelated and first attempt to delete the old file, then add the new file; the output would indicate a deletion followed by an add:"
+msgstr ""
+
+#: ./build/en/book.xml:8113(screen) 
+#, no-wrap
+msgid "\nD  foo.c\nA  foo.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:8118(para) 
+msgid "Most merges involve comparing trees that are ancestrally related to one another, and therefore <command moreinfo=\"none\">svn merge</command> defaults to this behavior. Occasionally, however, you may want the <literal moreinfo=\"none\">merge</literal> command to compare two unrelated trees. For example, you may have imported two source-code trees representing different vendor releases of a software project (see <xref linkend=\"svn.advanced.vendorbr\"/>). If you asked <command moreinfo=\"none\">svn merge</command> to compare the two trees, you'd see the entire first tree being deleted, followed by an add of the entire second tree!"
+msgstr ""
+
+#: ./build/en/book.xml:8129(para) 
+msgid "In these situations, you'll want <command moreinfo=\"none\">svn merge</command> to do a path-based comparison only, ignoring any relations between files and directories. Add the <option>--ignore-ancestry</option> option to your merge command, and it will behave just like <command moreinfo=\"none\">svn diff</command>. (And conversely, the <option>--notice-ancestry</option> option will cause <command moreinfo=\"none\">svn diff</command> to behave like the <literal moreinfo=\"none\">merge</literal> command.)"
+msgstr ""
+
+#: ./build/en/book.xml:8143(title) 
+msgid "Merges and Moves"
+msgstr ""
+
+#: ./build/en/book.xml:8145(para) 
+msgid "A common desire is to refactor source code, especially in Java-based software projects. Files and directories are shuffled around and renamed, often causing great disruption to everyone working on the project. Sounds like a perfect case to use a branch, doesn't it? Just create a branch, shuffle things around, then merge the branch back to the trunk, right?"
+msgstr ""
+
+#: ./build/en/book.xml:8153(para) 
+msgid "Alas, this scenario doesn't work so well right now, and is considered one of Subversion's current weak spots. The problem is that Subversion's <command moreinfo=\"none\">update</command> command isn't as robust as it should be, particularly when dealing with copy and move operations."
+msgstr ""
+
+#: ./build/en/book.xml:8159(para) 
+msgid "When you use <command moreinfo=\"none\">svn copy</command> to duplicate a file, the repository remembers where the new file came from, but it fails to transmit that information to the client which is running <command moreinfo=\"none\">svn update</command> or <command moreinfo=\"none\">svn merge</command>. Instead of telling the client, <quote>Copy that file you already have to this new location</quote>, it instead sends down an entirely new file. This can lead to problems, especially because the same thing happens with renamed files. A lesser-known fact about Subversion is that it lacks <quote>true renames</quote> — the <command moreinfo=\"none\">svn move</command> command is nothing more than an aggregation of <command moreinfo=\"none\">svn copy</command> and <command moreinfo=\"none\">svn delete</command>."
+msgstr ""
+
+#: ./build/en/book.xml:8173(para) 
+msgid "For example, suppose that while working on your private branch, you rename <filename moreinfo=\"none\">integer.c</filename> to <filename moreinfo=\"none\">whole.c</filename>. Effectively you've created a new file in your branch that is a copy of the original file, and deleted the original file. Meanwhile, back on <filename moreinfo=\"none\">trunk</filename>, Sally has committed some improvements to <filename moreinfo=\"none\">integer.c</filename>. Now you decide to merge your branch to the trunk:"
+msgstr ""
+
+#: ./build/en/book.xml:8182(screen) 
+#, no-wrap
+msgid "\n$ cd calc/trunk\n\n$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\nD   integer.c\nA   whole.c\n"
+msgstr ""
+
+#: ./build/en/book.xml:8190(para) 
+msgid "This doesn't look so bad at first glance, but it's also probably not what you or Sally expected. The merge operation has deleted the latest version of <filename moreinfo=\"none\">integer.c</filename> file (the one containing Sally's latest changes), and blindly added your new <filename moreinfo=\"none\">whole.c</filename> file — which is a duplicate of the <emphasis>older</emphasis> version of <filename moreinfo=\"none\">integer.c</filename>. The net effect is that merging your <quote>rename</quote> to the branch has removed Sally's recent changes from the latest revision!"
+msgstr ""
+
+#: ./build/en/book.xml:8201(para) 
+msgid "This isn't true data-loss; Sally's changes are still in the repository's history, but it may not be immediately obvious that this has happened. The moral of this story is that until Subversion improves, be very careful about merging copies and renames from one branch to another."
+msgstr ""
+
+#: ./build/en/book.xml:8219(title) 
+msgid "Common Use-Cases"
+msgstr ""
+
+#: ./build/en/book.xml:8221(para) 
+msgid "There are many different uses for branching and <command moreinfo=\"none\">svn merge</command>, and this section describes the most common ones you're likely to run into."
+msgstr ""
+
+#: ./build/en/book.xml:8227(title) 
+msgid "Merging a Whole Branch to Another"
+msgstr ""
+
+#: ./build/en/book.xml:8229(para) 
+msgid "To complete our running example, we'll move forward in time. Suppose several days have passed, and many changes have happened on both the trunk and your private branch. Suppose that you've finished working on your private branch; the feature or bug fix is finally complete, and now you want to merge all of your branch changes back into the trunk for others to enjoy."
+msgstr ""
+
+#: ./build/en/book.xml:8237(para) 
+msgid "So how do we use <command moreinfo=\"none\">svn merge</command> in this scenario? Remember that this command compares two trees, and applies the differences to a working copy. So to receive the changes, you need to have a working copy of the trunk. We'll assume that either you still have your original one lying around (fully updated), or that you recently checked out a fresh working copy of <filename moreinfo=\"none\">/calc/trunk</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:8245(para) 
+msgid "But which two trees should be compared? At first glance, the answer may seem obvious: just compare the latest trunk tree with your latest branch tree. But beware—this assumption is <emphasis>wrong</emphasis>, and has burned many a new user! Since <command moreinfo=\"none\">svn merge</command> operates like <command moreinfo=\"none\">svn diff</command>, comparing the latest trunk and branch trees will <emphasis>not</emphasis> merely describe the set of changes you made to your branch. Such a comparison shows too many changes: it would not only show the addition of your branch changes, but also the <emphasis>removal</emphasis> of trunk changes that never happened on your branch."
+msgstr ""
+
+#: ./build/en/book.xml:8257(para) 
+msgid "To express only the changes that happened on your branch, you need to compare the initial state of your branch to its final state. Using <command moreinfo=\"none\">svn log</command> on your branch, you can see that your branch was created in revision 341. And the final state of your branch is simply a matter of using the <literal moreinfo=\"none\">HEAD</literal> revision. That means you want to compare revisions 341 and <literal moreinfo=\"none\">HEAD</literal> of your branch directory, and apply those differences to a working copy of the trunk."
+msgstr ""
+
+#: ./build/en/book.xml:8268(para) 
+msgid "A nice way of finding the revision in which a branch was created (the <quote>base</quote> of the branch) is to use the <option>--stop-on-copy</option> option to <command moreinfo=\"none\">svn log</command>. The log subcommand will normally show every change ever made to the branch, including tracing back through the copy which created the branch. So normally, you'll see history from the trunk as well. The <option>--stop-on-copy</option> will halt log output as soon as <command moreinfo=\"none\">svn log</command> detects that its target was copied or renamed."
+msgstr ""
+
+#: ./build/en/book.xml:8279(para) 
+msgid "So in our continuing example,"
+msgstr ""
+
+#: ./build/en/book.xml:8281(screen) 
+#, no-wrap
+msgid "\n$ svn log -v --stop-on-copy \\\n          http://svn.example.com/repos/calc/branches/my-calc-branch\n…\n------------------------------------------------------------------------\nr341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines\nChanged paths:\n   A /calc/branches/my-calc-branch (from /calc/trunk:340)\n\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:8293(para) 
+msgid "As expected, the final revision printed by this command is the revision in which <filename moreinfo=\"none\">my-calc-branch</filename> was created by copying."
+msgstr ""
+
+#: ./build/en/book.xml:8299(para) 
+msgid "Here's the final merging procedure, then:"
+msgstr ""
+
+#: ./build/en/book.xml:8301(screen) 
+#, no-wrap
+msgid "\n$ cd calc/trunk\n$ svn update\nAt revision 405.\n\n$ svn merge -r 341:405 http://svn.example.com/repos/calc/branches/my-calc-branch\nU   integer.c\nU   button.c\nU   Makefile\n\n$ svn status\nM   integer.c\nM   button.c\nM   Makefile\n\n# ...examine the diffs, compile, test, etc...\n\n$ svn commit -m \"Merged my-calc-branch changes r341:405 into the trunk.\"\nSending        integer.c\nSending        button.c\nSending        Makefile\nTransmitting file data ...\nCommitted revision 406.\n"
+msgstr ""
+
+#: ./build/en/book.xml:8326(para) 
+msgid "Again, notice that the commit log message very specifically mentions the range of changes that was merged into the trunk. Always remember to do this, because it's critical information you'll need later on."
+msgstr ""
+
+#: ./build/en/book.xml:8331(para) 
+msgid "For example, suppose you decide to keep working on your branch for another week, in order to complete an enhancement to your original feature or bug fix. The repository's <literal moreinfo=\"none\">HEAD</literal> revision is now 480, and you're ready to do another merge from your private branch to the trunk. But as discussed in <xref linkend=\"svn.branchmerge.copychanges.bestprac\"/>, you don't want to merge the changes you've already merged before; you only want to merge everything <quote>new</quote> on your branch since the last time you merged. The trick is to figure out what's new."
+msgstr ""
+
+#: ./build/en/book.xml:8342(para) 
+msgid "The first step is to run <command moreinfo=\"none\">svn log</command> on the trunk, and look for a log message about the last time you merged from the branch:"
+msgstr ""
+
+#: ./build/en/book.xml:8346(screen) 
+#, no-wrap
+msgid "\n$ cd calc/trunk\n$ svn log\n…\n------------------------------------------------------------------------\nr406 | user | 2004-02-08 11:17:26 -0600 (Sun, 08 Feb 2004) | 1 line\n\nMerged my-calc-branch changes r341:405 into the trunk.\n------------------------------------------------------------------------\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:8358(para) 
+msgid "Aha! Since all branch-changes that happened between revisions 341 and 405 were previously merged to the trunk as revision 406, you now know that you want to merge only the branch changes after that—by comparing revisions 406 and <literal moreinfo=\"none\">HEAD</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:8364(screen) 
+#, no-wrap
+msgid "\n$ cd calc/trunk\n$ svn update\nAt revision 480.\n\n# We notice that HEAD is currently 480, so we use it to do the merge:\n\n$ svn merge -r 406:480 http://svn.example.com/repos/calc/branches/my-calc-branch\nU   integer.c\nU   button.c\nU   Makefile\n\n$ svn commit -m \"Merged my-calc-branch changes r406:480 into the trunk.\"\nSending        integer.c\nSending        button.c\nSending        Makefile\nTransmitting file data ...\nCommitted revision 481.\n"
+msgstr ""
+
+#: ./build/en/book.xml:8384(para) 
+msgid "Now the trunk contains the complete second wave of changes made to the branch. At this point, you can either delete your branch (we'll discuss this later on), or continue working on your branch and repeat this procedure for subsequent merges."
+msgstr ""
+
+#: ./build/en/book.xml:8394(title) 
+msgid "Undoing Changes"
+msgstr ""
+
+#: ./build/en/book.xml:8396(para) 
+msgid "Another common use for <command moreinfo=\"none\">svn merge</command> is to roll back a change that has already been committed. Suppose you're working away happily on a working copy of <filename moreinfo=\"none\">/calc/trunk</filename>, and you discover that the change made way back in revision 303, which changed <filename moreinfo=\"none\">integer.c</filename>, is completely wrong. It never should have been committed. You can use <command moreinfo=\"none\">svn merge</command> to <quote>undo</quote> the change in your working copy, and then commit the local modification to the repository. All you need to do is to specify a <emphasis>reverse</emphasis> difference. (You can do this by specifying <option>--revision 303:302</option>, or by an equivalent <option>--change -303</option>.)"
+msgstr ""
+
+#: ./build/en/book.xml:8411(screen) 
+#, no-wrap
+msgid "\n$ svn merge -c -303 http://svn.example.com/repos/calc/trunk\nU  integer.c\n\n$ svn status\nM  integer.c\n\n$ svn diff\n…\n# verify that the change is removed\n…\n\n$ svn commit -m \"Undoing change committed in r303.\"\nSending        integer.c\nTransmitting file data .\nCommitted revision 350.\n"
+msgstr ""
+
+#: ./build/en/book.xml:8429(para) 
+msgid "One way to think about a repository revision is as a specific group of changes (some version control systems call these <firstterm>changesets</firstterm>). By using the <option>-r</option> switch, you can ask <command moreinfo=\"none\">svn merge</command> to apply a changeset, or whole range of changesets, to your working copy. In our case of undoing a change, we're asking <command moreinfo=\"none\">svn merge</command> to apply changeset #303 to our working copy <emphasis>backwards</emphasis>."
+msgstr ""
+
+#: ./build/en/book.xml:8440(title) 
+msgid "Subversion and Changesets"
+msgstr ""
+
+#: ./build/en/book.xml:8442(para) 
+msgid "Everyone seems to have a slightly different definition of <quote>changeset</quote>, or at least a different expectation of what it means for a version control system to have <quote>changeset features</quote>. For our purpose, let's say that a changeset is just a collection of changes with a unique name. The changes might include textual edits to file contents, modifications to tree structure, or tweaks to metadata. In more common speak, a changeset is just a patch with a name you can refer to."
+msgstr ""
+
+#: ./build/en/book.xml:8452(para) 
+msgid "In Subversion, a global revision number N names a tree in the repository: it's the way the repository looked after the Nth commit. It's also the name of an implicit changeset: if you compare tree N with tree N-1, you can derive the exact patch that was committed. For this reason, it's easy to think of <quote>revision N</quote> as not just a tree, but a changeset as well. If you use an issue tracker to manage bugs, you can use the revision numbers to refer to particular patches that fix bugs—for example, <quote>this issue was fixed by revision 9238.</quote>. Somebody can then run <command moreinfo=\"none\">svn log -r9238</command> to read about the exact changeset which fixed the bug, and run <command moreinfo=\"none\">svn diff -c 9238</command> to see the patch itself. And Subversion's <literal moreinfo=\"none\">merge</literal> command also uses revision numbers. You can merge specific changesets from one branch to another by naming them in the merge arguments: <command moreinfo=\"none\">svn merge -r9237:9238</command> would merge changeset #9238 into your working copy."
+msgstr ""
+
+#: ./build/en/book.xml:8472(para) 
+msgid "Keep in mind that rolling back a change like this is just like any other <command moreinfo=\"none\">svn merge</command> operation, so you should use <command moreinfo=\"none\">svn status</command> and <command moreinfo=\"none\">svn diff</command> to confirm that your work is in the state you want it to be in, and then use <command moreinfo=\"none\">svn commit</command> to send the final version to the repository. After committing, this particular changeset is no longer reflected in the <literal moreinfo=\"none\">HEAD</literal> revision."
+msgstr ""
+
+#: ./build/en/book.xml:8481(para) 
+msgid "Again, you may be thinking: well, that really didn't undo the commit, did it? The change still exists in revision 303. If somebody checks out a version of the <filename moreinfo=\"none\">calc</filename> project between revisions 303 and 349, they'll still see the bad change, right?"
+msgstr ""
+
+#: ./build/en/book.xml:8503(para) 
+msgid "The Subversion project has plans, however, to someday implement a command that would accomplish the task of permanently deleting information. In the meantime, see <xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/> for a possible workaround."
+msgstr ""
+
+#: ./build/en/book.xml:8487(para) 
+msgid "Yes, that's true. When we talk about <quote>removing</quote> a change, we're really talking about removing it from <literal moreinfo=\"none\">HEAD</literal>. The original change still exists in the repository's history. For most situations, this is good enough. Most people are only interested in tracking the <literal moreinfo=\"none\">HEAD</literal> of a project anyway. There are special cases, however, where you really might want to destroy all evidence of the commit. (Perhaps somebody accidentally committed a confidential document.) This isn't so easy, it turns out, because Subversion was deliberately designed to never lose information. Revisions are immutable trees which build upon one another. Removing a revision from history would cause a domino effect, creating chaos in all subsequent revisions and possibly invalidating all working copies. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:8515(title) 
+msgid "Resurrecting Deleted Items"
+msgstr ""
+
+#: ./build/en/book.xml:8517(para) 
+msgid "The great thing about version control systems is that information is never lost. Even when you delete a file or directory, it may be gone from the <literal moreinfo=\"none\">HEAD</literal> revision, but the object still exists in earlier revisions. One of the most common questions new users ask is, <quote>How do I get my old file or directory back?</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:8524(para) 
+msgid "The first step is to define exactly <emphasis role=\"bold\">which</emphasis> item you're trying to resurrect. Here's a useful metaphor: you can think of every object in the repository as existing in a sort of two-dimensional coordinate system. The first coordinate is a particular revision tree, and the second coordinate is a path within that tree. So every version of your file or directory can be defined by a specific coordinate pair. (Remember the familiar <quote>peg revision</quote> syntax — foo.c@224 — mentioned back in <xref linkend=\"svn.advanced.pegrevs\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:8536(para) 
+msgid "First, you might need to use <command moreinfo=\"none\">svn log</command> to discover the exact coordinate pair you wish to resurrect. A good strategy is to run <command moreinfo=\"none\">svn log --verbose</command> in a directory which used to contain your deleted item. The <option>--verbose (-v)</option> option shows a list of all changed items in each revision; all you need to do is find the revision in which you deleted the file or directory. You can do this visually, or by using another tool to examine the log output (via <command moreinfo=\"none\">grep</command>, or perhaps via an incremental search in an editor)."
+msgstr ""
+
+#: ./build/en/book.xml:8547(screen) 
+#, no-wrap
+msgid "\n$ cd parent-dir\n$ svn log -v\n…\n------------------------------------------------------------------------\nr808 | joe | 2003-12-26 14:29:40 -0600 (Fri, 26 Dec 2003) | 3 lines\nChanged paths:\n   D /calc/trunk/real.c\n   M /calc/trunk/integer.c\n\nAdded fast fourier transform functions to integer.c.\nRemoved real.c because code now in double.c.\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:8562(para) 
+msgid "In the example, we're assuming that you're looking for a deleted file <filename moreinfo=\"none\">real.c</filename>. By looking through the logs of a parent directory, you've spotted that this file was deleted in revision 808. Therefore, the last version of the file to exist was in the revision right before that. Conclusion: you want to resurrect the path <filename moreinfo=\"none\">/calc/trunk/real.c</filename> from revision 807."
+msgstr ""
+
+#: ./build/en/book.xml:8571(para) 
+msgid "That was the hard part—the research. Now that you know what you want to restore, you have two different choices."
+msgstr ""
+
+#: ./build/en/book.xml:8575(para) 
+msgid "One option is to use <command moreinfo=\"none\">svn merge</command> to apply revision 808 <quote>in reverse</quote>. (We've already discussed how to undo changes, see <xref linkend=\"svn.branchmerge.commonuses.undo\"/>.) This would have the effect of re-adding <filename moreinfo=\"none\">real.c</filename> as a local modification. The file would be scheduled for addition, and after a commit, the file would again exist in <literal moreinfo=\"none\">HEAD</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:8584(para) 
+msgid "In this particular example, however, this is probably not the best strategy. Reverse-applying revision 808 would not only schedule <filename moreinfo=\"none\">real.c</filename> for addition, but the log message indicates that it would also undo certain changes to <filename moreinfo=\"none\">integer.c</filename>, which you don't want. Certainly, you could reverse-merge revision 808 and then <command moreinfo=\"none\">svn revert</command> the local modifications to <filename moreinfo=\"none\">integer.c</filename>, but this technique doesn't scale well. What if there were 90 files changed in revision 808?"
+msgstr ""
+
+#: ./build/en/book.xml:8595(para) 
+msgid "A second, more targeted strategy is not to use <command moreinfo=\"none\">svn merge</command> at all, but rather the <command moreinfo=\"none\">svn copy</command> command. Simply copy the exact revision and path <quote>coordinate pair</quote> from the repository to your working copy:"
+msgstr ""
+
+#: ./build/en/book.xml:8601(screen) 
+#, no-wrap
+msgid "\n$ svn copy -r 807 \\\n           http://svn.example.com/repos/calc/trunk/real.c ./real.c\n\n$ svn status\nA  +   real.c\n\n$ svn commit -m \"Resurrected real.c from revision 807, /calc/trunk/real.c.\"\nAdding         real.c\nTransmitting file data .\nCommitted revision 1390.\n"
+msgstr ""
+
+#: ./build/en/book.xml:8614(para) 
+msgid "The plus sign in the status output indicates that the item isn't merely scheduled for addition, but scheduled for addition <quote>with history</quote>. Subversion remembers where it was copied from. In the future, running <command moreinfo=\"none\">svn log</command> on this file will traverse back through the file's resurrection and through all the history it had prior to revision 807. In other words, this new <filename moreinfo=\"none\">real.c</filename> isn't really new; it's a direct descendant of the original, deleted file."
+msgstr ""
+
+#: ./build/en/book.xml:8624(para) 
+msgid "Although our example shows us resurrecting a file, note that these same techniques work just as well for resurrecting deleted directories."
+msgstr ""
+
+#: ./build/en/book.xml:8632(title) 
+msgid "Common Branching Patterns"
+msgstr ""
+
+#: ./build/en/book.xml:8634(para) 
+msgid "Version control is most often used for software development, so here's a quick peek at two of the most common branching/merging patterns used by teams of programmers. If you're not using Subversion for software development, feel free to skip this section. If you're a software developer using version control for the first time, pay close attention, as these patterns are often considered best practices by experienced folk. These processes aren't specific to Subversion; they're applicable to any version control system. Still, it may help to see them described in Subversion terms."
+msgstr ""
+
+#: ./build/en/book.xml:8648(title) 
+msgid "Release Branches"
+msgstr ""
+
+#: ./build/en/book.xml:8650(para) 
+msgid "Most software has a typical lifecycle: code, test, release, repeat. There are two problems with this process. First, developers need to keep writing new features while quality-assurance teams take time to test supposedly-stable versions of the software. New work cannot halt while the software is tested. Second, the team almost always needs to support older, released versions of software; if a bug is discovered in the latest code, it most likely exists in released versions as well, and customers will want to get that bugfix without having to wait for a major new release."
+msgstr ""
+
+#: ./build/en/book.xml:8662(para) 
+msgid "Here's where version control can help. The typical procedure looks like this:"
+msgstr ""
+
+#: ./build/en/book.xml:8668(para) 
+msgid "<emphasis>Developers commit all new work to the trunk.</emphasis> Day-to-day changes are committed to <filename moreinfo=\"none\">/trunk</filename>: new features, bugfixes, and so on."
+msgstr ""
+
+#: ./build/en/book.xml:8677(para) 
+msgid "<emphasis>The trunk is copied to a <quote>release</quote> branch.</emphasis> When the team thinks the software is ready for release (say, a 1.0 release), then <filename moreinfo=\"none\">/trunk</filename> might be copied to <filename moreinfo=\"none\">/branches/1.0</filename>."
+msgstr ""
+
+#: ./build/en/book.xml:8687(para) 
+msgid "<emphasis>Teams continue to work in parallel.</emphasis> One team begins rigorous testing of the release branch, while another team continues new work (say, for version 2.0) on <filename moreinfo=\"none\">/trunk</filename>. If bugs are discovered in either location, fixes are ported back and forth as necessary. At some point, however, even that process stops. The branch is <quote>frozen</quote> for final testing right before a release."
+msgstr ""
+
+#: ./build/en/book.xml:8699(para) 
+msgid "<emphasis>The branch is tagged and released.</emphasis> When testing is complete, <filename moreinfo=\"none\">/branches/1.0</filename> is copied to <filename moreinfo=\"none\">/tags/1.0.0</filename> as a reference snapshot. The tag is packaged and released to customers."
+msgstr ""
+
+#: ./build/en/book.xml:8709(para) 
+msgid "<emphasis>The branch is maintained over time.</emphasis> While work continues on <filename moreinfo=\"none\">/trunk</filename> for version 2.0, bugfixes continue to be ported from <filename moreinfo=\"none\">/trunk</filename> to <filename moreinfo=\"none\">/branches/1.0</filename>. When enough bugfixes have accumulated, management may decide to do a 1.0.1 release: <filename moreinfo=\"none\">/branches/1.0</filename> is copied to <filename moreinfo=\"none\">/tags/1.0.1</filename>, and the tag is packaged and released."
+msgstr ""
+
+#: ./build/en/book.xml:8723(para) 
+msgid "This entire process repeats as the software matures: when the 2.0 work is complete, a new 2.0 release branch is created, tested, tagged, and eventually released. After some years, the repository ends up with a number of release branches in <quote>maintenance</quote> mode, and a number of tags representing final shipped versions."
+msgstr ""
+
+#: ./build/en/book.xml:8734(title) 
+msgid "Feature Branches"
+msgstr ""
+
+#: ./build/en/book.xml:8736(para) 
+msgid "A <firstterm>feature branch</firstterm> is the sort of branch that's been the dominant example in this chapter, the one you've been working on while Sally continues to work on <filename moreinfo=\"none\">/trunk</filename>. It's a temporary branch created to work on a complex change without interfering with the stability of <filename moreinfo=\"none\">/trunk</filename>. Unlike release branches (which may need to be supported forever), feature branches are born, used for a while, merged back to the trunk, then ultimately deleted. They have a finite span of usefulness."
+msgstr ""
+
+#: ./build/en/book.xml:8747(para) 
+msgid "Again, project policies vary widely concerning exactly when it's appropriate to create a feature branch. Some projects never use feature branches at all: commits to <filename moreinfo=\"none\">/trunk</filename> are a free-for-all. The advantage to this system is that it's simple—nobody needs to learn about branching or merging. The disadvantage is that the trunk code is often unstable or unusable. Other projects use branches to an extreme: no change is <emphasis>ever</emphasis> committed to the trunk directly. Even the most trivial changes are created on a short-lived branch, carefully reviewed and merged to the trunk. Then the branch is deleted. This system guarantees an exceptionally stable and usable trunk at all times, but at the cost of tremendous process overhead."
+msgstr ""
+
+#: ./build/en/book.xml:8762(para) 
+msgid "Most projects take a middle-of-the-road approach. They commonly insist that <filename moreinfo=\"none\">/trunk</filename> compile and pass regression tests at all times. A feature branch is only required when a change requires a large number of destabilizing commits. A good rule of thumb is to ask this question: if the developer worked for days in isolation and then committed the large change all at once (so that <filename moreinfo=\"none\">/trunk</filename> were never destabilized), would it be too large a change to review? If the answer to that question is <quote>yes</quote>, then the change should be developed on a feature branch. As the developer commits incremental changes to the branch, they can be easily reviewed by peers."
+msgstr ""
+
+#: ./build/en/book.xml:8776(para) 
+msgid "Finally, there's the issue of how to best keep a feature branch in <quote>sync</quote> with the trunk as work progresses. As we mentioned earlier, there's a great risk to working on a branch for weeks or months; trunk changes may continue to pour in, to the point where the two lines of development differ so greatly that it may become a nightmare trying to merge the branch back to the trunk."
+msgstr ""
+
+#: ./build/en/book.xml:8784(para) 
+msgid "This situation is best avoided by regularly merging trunk changes to the branch. Make up a policy: once a week, merge the last week's worth of trunk changes to the branch. Take care when doing this; the merging needs to be hand-tracked to avoid the problem of repeated merges (as described in <xref linkend=\"svn.branchmerge.copychanges.bestprac.track\"/>). You'll need to write careful log messages detailing exactly which revision ranges have been merged already (as demonstrated in <xref linkend=\"svn.branchmerge.commonuses.wholebr\"/>). It may sound intimidating, but it's actually pretty easy to do."
+msgstr ""
+
+#: ./build/en/book.xml:8798(para) 
+msgid "At some point, you'll be ready to merge the <quote>synchronized</quote> feature branch back to the trunk. To do this, begin by doing a final merge of the latest trunk changes to the branch. When that's done, the latest versions of branch and trunk will be absolutely identical except for your branch changes. So in this special case, you would merge by comparing the branch with the trunk:"
+msgstr ""
+
+#: ./build/en/book.xml:8807(screen) 
+#, no-wrap
+msgid "\n$ cd trunk-working-copy\n\n$ svn update\nAt revision 1910.\n\n$ svn merge http://svn.example.com/repos/calc/trunk@1910 \\\n            http://svn.example.com/repos/calc/branches/mybranch@1910\nU  real.c\nU  integer.c\nA  newdirectory\nA  newdirectory/newfile\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:8822(para) 
+msgid "By comparing the <literal moreinfo=\"none\">HEAD</literal> revision of the trunk with the <literal moreinfo=\"none\">HEAD</literal> revision of the branch, you're defining a delta that describes only the changes you made to the branch; both lines of development already have all of the trunk changes."
+msgstr ""
+
+#: ./build/en/book.xml:8828(para) 
+msgid "Another way of thinking about this pattern is that your weekly sync of trunk to branch is analogous to running <command moreinfo=\"none\">svn update</command> in a working copy, while the final merge step is analogous to running <command moreinfo=\"none\">svn commit</command> from a working copy. After all, what else <emphasis>is</emphasis> a working copy but a very shallow private branch? It's a branch that's only capable of storing one change at a time."
+msgstr ""
+
+#: ./build/en/book.xml:8847(title) 
+msgid "Traversing Branches"
+msgstr ""
+
+#: ./build/en/book.xml:8849(para) 
+msgid "The <command moreinfo=\"none\">svn switch</command> command transforms an existing working copy to reflect a different branch. While this command isn't strictly necessary for working with branches, it provides a nice shortcut to users. In our earlier example, after creating your private branch, you checked out a fresh working copy of the new repository directory. Instead, you can simply ask Subversion to change your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to mirror the new branch location:"
+msgstr ""
+
+#: ./build/en/book.xml:8859(screen) 
+#, no-wrap
+msgid "\n$ cd calc\n\n$ svn info | grep URL\nURL: http://svn.example.com/repos/calc/trunk\n\n$ svn switch http://svn.example.com/repos/calc/branches/my-calc-branch\nU   integer.c\nU   button.c\nU   Makefile\nUpdated to revision 341.\n\n$ svn info | grep URL\nURL: http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+msgstr ""
+
+#: ./build/en/book.xml:8875(para) 
+msgid "After <quote>switching</quote> to the branch, your working copy is no different than what you would get from doing a fresh checkout of the directory. And it's usually more efficient to use this command, because often branches only differ by a small degree. The server sends only the minimal set of changes necessary to make your working copy reflect the branch directory."
+msgstr ""
+
+#: ./build/en/book.xml:8883(para) 
+msgid "The <command moreinfo=\"none\">svn switch</command> command also takes a <option>--revision</option> (<option>-r</option>) option, so you need not always move your working copy to the <quote>tip</quote> of the branch."
+msgstr ""
+
+#: ./build/en/book.xml:8888(para) 
+msgid "Of course, most projects are more complicated than our <filename moreinfo=\"none\">calc</filename> example, containing multiple subdirectories. Subversion users often follow a specific algorithm when using branches:"
+msgstr ""
+
+#: ./build/en/book.xml:8895(para) 
+msgid "Copy the project's entire <quote>trunk</quote> to a new branch directory."
+msgstr ""
+
+#: ./build/en/book.xml:8899(para) 
+msgid "Switch only <emphasis>part</emphasis> of the trunk working copy to mirror the branch."
+msgstr ""
+
+#: ./build/en/book.xml:8904(para) 
+msgid "In other words, if a user knows that the branch-work only needs to happen on a specific subdirectory, they use <command moreinfo=\"none\">svn switch</command> to move only that subdirectory to the branch. (Or sometimes users will switch just a single working file to the branch!) That way, they can continue to receive normal <quote>trunk</quote> updates to most of their working copy, but the switched portions will remain immune (unless someone commits a change to their branch). This feature adds a whole new dimension to the concept of a <quote>mixed working copy</quote>—not only can working copies contain a mixture of working revisions, but a mixture of repository locations as well."
+msgstr ""
+
+#: ./build/en/book.xml:8917(para) 
+msgid "If your working copy contains a number of switched subtrees from different repository locations, it continues to function as normal. When you update, you'll receive patches to each subtree as appropriate. When you commit, your local changes will still be applied as a single, atomic change to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:8930(para) 
+msgid "You <emphasis>can</emphasis>, however, use <command moreinfo=\"none\">svn switch</command> with the <option>--relocate</option> switch if the URL of your server changes and you don't want to abandon an existing working copy. See <xref linkend=\"svn.ref.svn.c.switch\"/> for more information and an example."
+msgstr ""
+
+#: ./build/en/book.xml:8923(para) 
+msgid "Note that while it's okay for your working copy to reflect a mixture of repository locations, these locations must all be within the <emphasis>same</emphasis> repository. Subversion repositories aren't yet able to communicate with one another; that's a feature planned for the future. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:8938(title) 
+msgid "Switches and Updates"
+msgstr ""
+
+#: ./build/en/book.xml:8940(para) 
+msgid "Have you noticed that the output of <command moreinfo=\"none\">svn switch</command> and <command moreinfo=\"none\">svn update</command> look the same? The <literal moreinfo=\"none\">switch</literal> command is actually a superset of the update command."
+msgstr ""
+
+#: ./build/en/book.xml:8945(para) 
+msgid "When you run <command moreinfo=\"none\">svn update</command>, you're asking the repository to compare two trees. The repository does so, and then sends a description of the differences back to the client. The only difference between <command moreinfo=\"none\">svn switch</command> and <command moreinfo=\"none\">svn update</command> is that the <literal moreinfo=\"none\">update</literal> command always compares two identical paths."
+msgstr ""
+
+#: ./build/en/book.xml:8953(para) 
+msgid "That is, if your working copy is a mirror of <filename moreinfo=\"none\">/calc/trunk</filename>, then <command moreinfo=\"none\">svn update</command> will automatically compare your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to <filename moreinfo=\"none\">/calc/trunk</filename> in the <literal moreinfo=\"none\">HEAD</literal> revision. If you're switching your working copy to a branch, then <command moreinfo=\"none\">svn switch</command> will compare your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to some <emphasis>other</emphasis> branch-directory in the <literal moreinfo=\"none\">HEAD</literal> revision."
+msgstr ""
+
+#: ./build/en/book.xml:8965(para) 
+msgid "In other words, an update moves your working copy through time. A switch moves your working copy through time <emphasis>and</emphasis> space."
+msgstr ""
+
+#: ./build/en/book.xml:8970(para) 
+msgid "Because <command moreinfo=\"none\">svn switch</command> is essentially a variant of <command moreinfo=\"none\">svn update</command>, it shares the same behaviors; any local modifications in your working copy are preserved when new data arrives from the repository. This allows you to perform all sorts of clever tricks."
+msgstr ""
+
+#: ./build/en/book.xml:8976(para) 
+msgid "For example, suppose you have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename> and make a number of changes to it. Then you suddenly realize that you meant to make the changes to a branch instead. No problem! When you <command moreinfo=\"none\">svn switch</command> your working copy to the branch, the local changes will remain. You can then test and commit them to the branch."
+msgstr ""
+
+#: ./build/en/book.xml:8991(title) 
+msgid "Tags"
+msgstr ""
+
+#: ./build/en/book.xml:8993(para) 
+msgid "Another common version control concept is a <firstterm>tag</firstterm>. A tag is just a <quote>snapshot</quote> of a project in time. In Subversion, this idea already seems to be everywhere. Each repository revision is exactly that—a snapshot of the filesystem after each commit."
+msgstr ""
+
+#: ./build/en/book.xml:9000(para) 
+msgid "However, people often want to give more human-friendly names to tags, like <literal moreinfo=\"none\">release-1.0</literal>. And they want to make snapshots of smaller subdirectories of the filesystem. After all, it's not so easy to remember that release-1.0 of a piece of software is a particular subdirectory of revision 4822."
+msgstr ""
+
+#: ./build/en/book.xml:9009(title) 
+msgid "Creating a Simple Tag"
+msgstr ""
+
+#: ./build/en/book.xml:9011(para) 
+msgid "Once again, <command moreinfo=\"none\">svn copy</command> comes to the rescue. If you want to create a snapshot of <filename moreinfo=\"none\">/calc/trunk</filename> exactly as it looks in the <literal moreinfo=\"none\">HEAD</literal> revision, then make a copy of it:"
+msgstr ""
+
+#: ./build/en/book.xml:9016(screen) 
+#, no-wrap
+msgid "\n$ svn copy http://svn.example.com/repos/calc/trunk \\\n           http://svn.example.com/repos/calc/tags/release-1.0 \\\n      -m \"Tagging the 1.0 release of the 'calc' project.\"\n\nCommitted revision 351.\n"
+msgstr ""
+
+#: ./build/en/book.xml:9024(para) 
+msgid "This example assumes that a <filename moreinfo=\"none\">/calc/tags</filename> directory already exists. (If it doesn't, you can create it using <command moreinfo=\"none\">svn mkdir</command>.) After the copy completes, the new <filename moreinfo=\"none\">release-1.0</filename> directory is forever a snapshot of how the project looked in the <literal moreinfo=\"none\">HEAD</literal> revision at the time you made the copy. Of course you might want to be more precise about exactly which revision you copy, in case somebody else may have committed changes to the project when you weren't looking. So if you know that revision 350 of <filename moreinfo=\"none\">/calc/trunk</filename> is exactly the snapshot you want, you can specify it by passing <option>-r 350</option> to the <command moreinfo=\"none\">svn copy</command> command."
+msgstr ""
+
+#: ./build/en/book.xml:9039(para) 
+msgid "But wait a moment: isn't this tag-creation procedure the same procedure we used to create a branch? Yes, in fact, it is. In Subversion, there's no difference between a tag and a branch. Both are just ordinary directories that are created by copying. Just as with branches, the only reason a copied directory is a <quote>tag</quote> is because <emphasis>humans</emphasis> have decided to treat it that way: as long as nobody ever commits to the directory, it forever remains a snapshot. If people start committing to it, it becomes a branch."
+msgstr ""
+
+#: ./build/en/book.xml:9050(para) 
+msgid "If you are administering a repository, there are two approaches you can take to managing tags. The first approach is <quote>hands off</quote>: as a matter of project policy, decide where your tags will live, and make sure all users know how to treat the directories they copy in there. (That is, make sure they know not to commit to them.) The second approach is more paranoid: you can use one of the access-control scripts provided with Subversion to prevent anyone from doing anything but creating new copies in the tags-area (See <xref linkend=\"svn.serverconfig\"/>.) The paranoid approach, however, isn't usually necessary. If a user accidentally commits a change to a tag-directory, you can simply undo the change as discussed in the previous section. This is version control, after all."
+msgstr ""
+
+#: ./build/en/book.xml:9069(title) 
+msgid "Creating a Complex Tag"
+msgstr ""
+
+#: ./build/en/book.xml:9071(para) 
+msgid "Sometimes you may want your <quote>snapshot</quote> to be more complicated than a single directory at a single revision."
+msgstr ""
+
+#: ./build/en/book.xml:9075(para) 
+msgid "For example, pretend your project is much larger than our <filename moreinfo=\"none\">calc</filename> example: suppose it contains a number of subdirectories and many more files. In the course of your work, you may decide that you need to create a working copy that is designed to have specific features and bug fixes. You can accomplish this by selectively backdating files or directories to particular revisions (using <command moreinfo=\"none\">svn update -r</command> liberally), or by switching files and directories to particular branches (making use of <command moreinfo=\"none\">svn switch</command>). When you're done, your working copy is a hodgepodge of repository locations from different revisions. But after testing, you know it's the precise combination of data you need."
+msgstr ""
+
+#: ./build/en/book.xml:9089(para) 
+msgid "Time to make a snapshot. Copying one URL to another won't work here. In this case, you want to make a snapshot of your exact working copy arrangement and store it in the repository. Luckily, <command moreinfo=\"none\">svn copy</command> actually has four different uses (which you can read about in <xref linkend=\"svn.ref\"/>), including the ability to copy a working-copy tree to the repository:"
+msgstr ""
+
+#: ./build/en/book.xml:9096(screen) 
+#, no-wrap
+msgid "\n$ ls\nmy-working-copy/\n\n$ svn copy my-working-copy http://svn.example.com/repos/calc/tags/mytag\n\nCommitted revision 352.\n"
+msgstr ""
+
+#: ./build/en/book.xml:9105(para) 
+msgid "Now there is a new directory in the repository, <filename moreinfo=\"none\">/calc/tags/mytag</filename>, which is an exact snapshot of your working copy—mixed revisions, URLs, and all."
+msgstr ""
+
+#: ./build/en/book.xml:9110(para) 
+msgid "Other users have found interesting uses for this feature. Sometimes there are situations where you have a bunch of local changes made to your working copy, and you'd like a collaborator to see them. Instead of running <command moreinfo=\"none\">svn diff</command> and sending a patch file (which won't capture tree changes, symlink changes or changes in properties), you can instead use <command moreinfo=\"none\">svn copy</command> to <quote>upload</quote> your working copy to a private area of the repository. Your collaborator can then either checkout a verbatim copy of your working copy, or use <command moreinfo=\"none\">svn merge</command> to receive your exact changes."
+msgstr ""
+
+#: ./build/en/book.xml:9130(title) 
+msgid "Branch Maintenance"
+msgstr ""
+
+#: ./build/en/book.xml:9132(para) 
+msgid "You may have noticed by now that Subversion is extremely flexible. Because it implements branches and tags with the same underlying mechanism (directory copies), and because branches and tags appear in normal filesystem space, many people find Subversion intimidating. It's almost <emphasis>too</emphasis> flexible. In this section, we'll offer some suggestions for arranging and managing your data over time."
+msgstr ""
+
+#: ./build/en/book.xml:9142(title) 
+msgid "Repository Layout"
+msgstr ""
+
+#: ./build/en/book.xml:9144(para) 
+msgid "There are some standard, recommended ways to organize a repository. Most people create a <filename moreinfo=\"none\">trunk</filename> directory to hold the <quote>main line</quote> of development, a <filename moreinfo=\"none\">branches</filename> directory to contain branch copies, and a <filename moreinfo=\"none\">tags</filename> directory to contain tag copies. If a repository holds only one project, then often people create these top-level directories:"
+msgstr ""
+
+#: ./build/en/book.xml:9152(screen) 
+#, no-wrap
+msgid "\n/trunk\n/branches\n/tags\n"
+msgstr ""
+
+#: ./build/en/book.xml:9158(para) 
+msgid "If a repository contains multiple projects, admins typically index their layout by project (see <xref linkend=\"svn.reposadmin.projects.chooselayout\"/> to read more about <quote>project roots</quote>):"
+msgstr ""
+
+#: ./build/en/book.xml:9162(screen) 
+#, no-wrap
+msgid "\n/paint/trunk\n/paint/branches\n/paint/tags\n/calc/trunk\n/calc/branches\n/calc/tags\n"
+msgstr ""
+
+#: ./build/en/book.xml:9171(para) 
+msgid "Of course, you're free to ignore these common layouts. You can create any sort of variation, whatever works best for you or your team. Remember that whatever you choose, it's not a permanent commitment. You can reorganize your repository at any time. Because branches and tags are ordinary directories, the <command moreinfo=\"none\">svn move</command> command can move or rename them however you wish. Switching from one layout to another is just a matter of issuing a series of server-side moves; if you don't like the way things are organized in the repository, just juggle the directories around."
+msgstr ""
+
+#: ./build/en/book.xml:9182(para) 
+msgid "Remember, though, that while moving dire
