@@ -3767,4 +3767,828 @@ msgstr ""
 "  AuthUserFile /path/to/users/file\n"
 "\n"
 "  # only authenticated users may access the repository\n"
-"  
+"  Require valid-user\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14339(para)
+msgid "Sometimes you don't need to run such a tight ship. For example, Subversion's own source code repository at <ulink url=\"http://svn.collab.net/repos/svn\"/> allows anyone in the world to perform read-only repository tasks (like checking out working copies and browsing the repository with a web browser), but restricts all write operations to authenticated users. To do this type of selective restriction, you can use the <literal moreinfo=\"none\">Limit</literal> and <literal moreinfo=\"none\">LimitExcept</literal> configuration directives. Like the <literal moreinfo=\"none\">Location</literal> directive, these blocks have starting and ending tags, and you would nest them inside your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block."
+msgstr "有时候，你不需要这样严密，举个例子，Subversion自己在<ulink url=\"http://svn.collab.net/repos/svn\"/>的源代码允许全世界的人执行版本库的只读操作（例如检出我们的工作拷贝和使用浏览器浏览版本库），但是限定只有认证用户可以执行写操作。为了执行特定的限制，你可以使用<literal moreinfo=\"none\">Limit</literal>和<literal moreinfo=\"none\">LimitExcept</literal>配置指示，就像<literal moreinfo=\"none\">Location</literal>指示，这个区块有开始和结束标签，你需要在<literal moreinfo=\"none\">&lt;Location&gt;</literal>中添加这个指示。"
+
+#: build/en/book.xml:14353(para)
+msgid "The parameters present on the <literal moreinfo=\"none\">Limit</literal> and <literal moreinfo=\"none\">LimitExcept</literal> directives are HTTP request types that are affected by that block. For example, if you wanted to disallow all access to your repository except the currently supported read-only operations, you would use the <literal moreinfo=\"none\">LimitExcept</literal> directive, passing the <literal moreinfo=\"none\">GET</literal>, <literal moreinfo=\"none\">PROPFIND</literal>, <literal moreinfo=\"none\">OPTIONS</literal>, and <literal moreinfo=\"none\">REPORT</literal> request type parameters. Then the previously mentioned <literal moreinfo=\"none\">Require valid-user</literal> directive would be placed inside the <literal moreinfo=\"none\">&lt;LimitExcept&gt;</literal> block instead of just inside the <literal moreinfo=\"none\">&lt;Location&gt;</literal> block."
+msgstr "在<literal moreinfo=\"none\">Limit</literal>和<literal moreinfo=\"none\">LimitExcept</literal>中使用的参数是可以被这个区块影响的HTTP请求类型，举个例子，如果你希望禁止所有的版本库访问，只是保留当前支持的只读操作，你可以使用<literal moreinfo=\"none\">LimitExcept</literal>指示，并且使用<literal moreinfo=\"none\">GET</literal>，<literal moreinfo=\"none\">PROPFIND</literal>，<literal moreinfo=\"none\">OPTIONS</literal>和<literal moreinfo=\"none\">REPORT</literal>请求类型参数，然后前面提到过的<literal moreinfo=\"none\">Require valid-user</literal>指示将会在<literal moreinfo=\"none\">&lt;LimitExcept&gt;</literal>区块中而不是在<literal moreinfo=\"none\">&lt;Location&gt;</literal>区块。"
+
+#: build/en/book.xml:1436(para)
+#, fuzzy
+msgid "But there are some nuances in Subversion's handling of URLs that are notable. For example, URLs containing the <literal moreinfo=\"none\">file://</literal> access method (used for local repositories) must, in accordance with convention, have either a server name of <literal moreinfo=\"none\">localhost</literal> or no server name at all:"
+msgstr "但是Subversion处理URL的一些细微的不同之处需要注意，例如，使用<literal moreinfo=\"none\">file:</literal>访问方法的URL（用来访问本地版本库）必须与习惯一致，可以包括一个<literal moreinfo=\"none\">localhost</literal>服务器名或者没有服务器名："
+
+#: build/en/book.xml:14367(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"\n"
+"  # For any operations other than these, require an authenticated user.\n"
+"  &lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;\n"
+"    Require valid-user\n"
+"  &lt;/LimitExcept&gt;\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"\n"
+"  # For any operations other than these, require an authenticated user.\n"
+"  &lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;\n"
+"    Require valid-user\n"
+"  &lt;/LimitExcept&gt;\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14384(para)
+msgid "These are only a few simple examples. For more in-depth information about Apache access control and the <literal moreinfo=\"none\">Require</literal> directive, take a look at the <literal moreinfo=\"none\">Security</literal> section of the Apache documentation's tutorials collection at <ulink url=\"http://httpd.apache.org/docs-2.0/misc/tutorials.html\"/>."
+msgstr "这里只是一些简单的例子，想看关于Apache访问控制<literal moreinfo=\"none\">Require</literal>指示的更深入信息，可以查看Apache文档中的教程集<ulink url=\"http://httpd.apache.org/docs-2.0/misc/tutorials.html\"/>中的<literal moreinfo=\"none\">Security</literal>部分。"
+
+#: build/en/book.xml:14395(title)
+msgid "Per-Directory Access Control"
+msgstr "每目录访问控制"
+
+#: build/en/book.xml:14397(para)
+msgid "It's possible to set up finer-grained permissions using a second Apache httpd module, <command moreinfo=\"none\">mod_authz_svn</command>. This module grabs the various opaque URLs passing from client to server, asks <command moreinfo=\"none\">mod_dav_svn</command> to decode them, and then possibly vetoes requests based on access policies defined in a configuration file."
+msgstr "也可以使用Apache的httpd模块<command moreinfo=\"none\">mod_authz_svn</command>更加细致的设置访问权限，这个模块收集客户端传递过来的不同的晦涩的URL信息，询问<command moreinfo=\"none\">mod_dav_svn</command>来解码，然后根据在配置文件定义的访问政策来裁决请求。"
+
+#: build/en/book.xml:14405(para)
+msgid "If you've built Subversion from source code, <command moreinfo=\"none\">mod_authz_svn</command> is automatically built and installed alongside <command moreinfo=\"none\">mod_dav_svn</command>. Many binary distributions install it automatically as well. To verify that it's installed correctly, make sure it comes right after <command moreinfo=\"none\">mod_dav_svn</command>'s <literal moreinfo=\"none\">LoadModule</literal> directive in <filename moreinfo=\"none\">httpd.conf</filename>:"
+msgstr "如果你从源代码创建Subversion，<command moreinfo=\"none\">mod_authz_svn</command>会自动附加到<command moreinfo=\"none\">mod_dav_svn</command>，许多二进制分发版本也会自动安装，为了验证它是安装正确，确定它是在<filename moreinfo=\"none\">httpd.conf</filename>的<literal moreinfo=\"none\">LoadModule</literal>指示中的<command moreinfo=\"none\">mod_dav_svn</command>后面："
+
+#: build/en/book.xml:14414(screen)
+#, no-wrap
+msgid ""
+"\n"
+"LoadModule dav_module         modules/mod_dav.so\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+"LoadModule authz_svn_module   modules/mod_authz_svn.so\n"
+msgstr ""
+"\n"
+"LoadModule dav_module         modules/mod_dav.so\n"
+"LoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+"LoadModule authz_svn_module   modules/mod_authz_svn.so\n"
+
+#: build/en/book.xml:14420(para)
+msgid "To activate this module, you need to configure your <literal moreinfo=\"none\">Location</literal> block to use the <literal moreinfo=\"none\">AuthzSVNAccessFile</literal> directive, which specifies a file containing the permissions policy for paths within your repositories. (In a moment, we'll discuss the format of that file.)"
+msgstr "为了激活这个模块，你需要配置你的<literal moreinfo=\"none\">Location</literal>区块的<literal moreinfo=\"none\">AuthzSVNAccessFile</literal>指示，指定保存路径中的版本库访问政策的文件。（一会儿我们将会讨论这个文件的格式。）"
+
+#: build/en/book.xml:14427(para)
+msgid "Apache is flexible, so you have the option to configure your block in one of three general patterns. To begin, choose one of these basic configuration patterns. (The examples below are very simple; look at Apache's own documentation for much more detail on Apache authentication and authorization options.)"
+msgstr "Apache非常的灵活，你可以从三种模式里选择一种来配置你的区块，作为开始，你选择一种基本的配置模式。（下面的例子非常简单；见Apache自己的文档中的认证和授权选项来查看更多的细节。）"
+
+#: build/en/book.xml:1443(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout file:///path/to/repos\n"
+"…\n"
+"$ svn checkout file://localhost/path/to/repos\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn checkout file:///path/to/repos\n"
+"…\n"
+"$ svn checkout file://localhost/path/to/repos\n"
+"…\n"
+
+#: build/en/book.xml:14434(para)
+msgid "The simplest block is to allow open access to everyone. In this scenario, Apache never sends authentication challenges, so all users are treated as <quote>anonymous</quote>."
+msgstr "最简单的区块是允许任何人可以访问，在这个场景里，Apache决不会发送认证请求，所有的用户作为<quote>匿名</quote>对待。"
+
+#: build/en/book.xml:14440(title)
+msgid "A sample configuration for anonymous access."
+msgstr "匿名访问的配置实例。"
+
+#: build/en/book.xml:14441(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"&lt;/Location&gt;\n"
+"          "
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"&lt;/Location&gt;\n"
+"          "
+
+#: build/en/book.xml:14452(para)
+msgid "On the opposite end of the paranoia scale, you can configure your block to demand authentication from everyone. All clients must supply credentials to identify themselves. Your block unconditionally requires authentication via the <literal moreinfo=\"none\">Require valid-user</literal> directive, and defines a means to authenticate."
+msgstr "在另一个极端，你可以配置为拒绝所有人的认证，所有客户端必须提供证明自己身份的证书，你通过<literal moreinfo=\"none\">Require valid-user</literal>指示来阻止无条件的认证，并且定义一种认证的手段。"
+
+#: build/en/book.xml:14460(title)
+msgid "A sample configuration for authenticated access."
+msgstr "一个认证访问的配置实例。"
+
+#: build/en/book.xml:14461(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"\n"
+"  # only authenticated users may access the repository\n"
+"  Require valid-user\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"&lt;/Location&gt;\n"
+"          "
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"\n"
+"  # only authenticated users may access the repository\n"
+"  Require valid-user\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"&lt;/Location&gt;\n"
+"          "
+
+#: build/en/book.xml:14480(para)
+msgid "A third very popular pattern is to allow a combination of authenticated and anonymous access. For example, many administrators want to allow anonymous users to read certain repository directories, but want only authenticated users to read (or write) more sensitive areas. In this setup, all users start out accessing the repository anonymously. If your access control policy demands a real username at any point, Apache will demand authentication from the client. To do this, you use both the <literal moreinfo=\"none\">Satisfy Any</literal> and <literal moreinfo=\"none\">Require valid-user</literal> directives together."
+msgstr "第三种流行的模式是允许认证和匿名用户的组合，举个例子，许多管理员希望允许匿名用户读取特定的版本库路径，但希望只有认证用户可以读（或者写）更多敏感的区域，在这个设置里，所有的用户开始时用匿名用户访问版本库，如果你的访问控制策略在任何时候要求一个真实的用户名，Apache将会要求认证客户端，为­¤，你可以同时使用<literal moreinfo=\"none\">Satisfy Any</literal>和<literal moreinfo=\"none\">Require valid-user</literal>指示。"
+
+#: build/en/book.xml:14493(title)
+msgid "A sample configuration for mixed authenticated/anonymous access."
+msgstr "一个混合认证/匿名访问的配置实例。"
+
+#: build/en/book.xml:14495(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"\n"
+"  # try anonymous access first, resort to real\n"
+"  # authentication if necessary.\n"
+"  Satisfy Any\n"
+"  Require valid-user\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"&lt;/Location&gt;\n"
+"          "
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  # our access control policy\n"
+"  AuthzSVNAccessFile /path/to/access/file\n"
+"\n"
+"  # try anonymous access first, resort to real\n"
+"  # authentication if necessary.\n"
+"  Satisfy Any\n"
+"  Require valid-user\n"
+"\n"
+"  # how to authenticate a user\n"
+"  AuthType Basic\n"
+"  AuthName \"Subversion repository\"\n"
+"  AuthUserFile /path/to/users/file\n"
+"&lt;/Location&gt;\n"
+"          "
+
+#: build/en/book.xml:1450(para)
+#, fuzzy
+msgid "Also, users of the <literal moreinfo=\"none\">file://</literal> scheme on Windows platforms will need to use an unofficially <quote>standard</quote> syntax for accessing repositories that are on the same machine, but on a different drive than the client's current working drive. Either of the two following URL path syntaxes will work where <literal moreinfo=\"none\">X</literal> is the drive on which the repository resides:"
+msgstr "同样在Windows平台下使用<literal moreinfo=\"none\">file:</literal>模式时需要使用一个非正式的<quote>标准</quote>语法来访问本机上不在同一个磁盘分区中的版本库。下面的任意一个URL路径语法都可以工作，其中的<literal moreinfo=\"none\">X</literal>表示版本库所在的磁盘分区："
+
+#: build/en/book.xml:14516(para)
+msgid "Once you've settled on one of these three basic <filename moreinfo=\"none\">httpd.conf</filename> templates, you need to create your file containing access rules for particular paths within the repository. This is described in <xref linkend=\"svn.serverconfig.pathbasedauthz\"/>."
+msgstr ""
+
+#: build/en/book.xml:14526(title)
+msgid "Disabling Path-based Checks"
+msgstr "关闭路径为基础的检查"
+
+#: build/en/book.xml:14528(para)
+msgid "The <command moreinfo=\"none\">mod_dav_svn</command> module goes through a lot of work to make sure that data you've marked <quote>unreadable</quote> doesn't get accidentally leaked. This means that it needs to closely monitor all of the paths and file-contents returned by commands like <command moreinfo=\"none\">svn checkout</command> or <command moreinfo=\"none\">svn update</command> commands. If these commands encounter a path that isn't readable according to some authorization policy, then the path is typically omitted altogether. In the case of history or rename tracing—e.g. running a command like <command moreinfo=\"none\">svn cat -r OLD foo.c</command> on a file that was renamed long ago—the rename tracking will simply halt if one of the object's former names is determined to be read-restricted."
+msgstr "<command moreinfo=\"none\">mod_dav_svn</command>模块做了许多工作来确定你标记为<quote>不可读</quote>的数据不会因意外而泄露，这意味着需要紧密监控通过<command moreinfo=\"none\">svn checkout</command>或是<command moreinfo=\"none\">svn update</command>返回的路径和文件内容，如果这些命令遇到一些根据认证策略不是可读的路径，这个路径通常会被一起忽略，在历史或者重命名操作时—例如运行一个类似<command moreinfo=\"none\">svn cat -r OLD foo.c</command>的命令来操作一个很久以前改过名字的文件 — 如果一个对象的以前的名字检测到是只读的，重命令追踪就会终止。"
+
+#: build/en/book.xml:14543(para)
+#, fuzzy
+msgid "All of this path-checking can sometimes be quite expensive, especially in the case of <command moreinfo=\"none\">svn log</command>. When retrieving a list of revisions, the server looks at every changed path in each revision and checks it for readability. If an unreadable path is discovered, then it's omitted from the list of the revision's changed paths (normally seen with the <option>--verbose</option> option), and the whole log message is suppressed. Needless to say, this can be time-consuming on revisions that affect a large number of files. This is the cost of security: even if you haven't configured a module like <command moreinfo=\"none\">mod_authz_svn</command> at all, the <command moreinfo=\"none\">mod_dav_svn</command> module is still asking Apache <command moreinfo=\"none\">httpd</command> to run authorization checks on every path. The <command moreinfo=\"none\">mod_dav_svn</command> module has no idea what authorization modules have been installed, so all it can do is ask Apache to invoke whatever might be present."
+msgstr "所有的路径检查在有时会非常昂贵，特别是<command moreinfo=\"none\">svn log</command>的情况。当检索一列修订版本时，服务器会查看所有修订版本修改的路径，并且检查可读性，如果发现了一个不可读路径，它会从修订版本的修改路径中忽略（可以查看<option>--verbose</option>选项），并且整个的日志信息会被禁止，不必多说，这种影响大量文件修订版本的操作会非常耗时。这是安全的代价：即使你并没有配置<command moreinfo=\"none\">mod_authz_svn</command>模块，<command moreinfo=\"none\">mod_dav_svn</command>还是会询问<command moreinfo=\"none\">httpd</command>来对所有路径运行认证检查，<command moreinfo=\"none\">mod_dav_svn</command>模块没有办法知道那个认证模块被安装，所以只有询问Apache来调用所提供的模块。"
+
+#: build/en/book.xml:14562(para)
+msgid "On the other hand, there's also an escape-hatch of sorts, one which allows you to trade security features for speed. If you're not enforcing any sort of per-directory authorization (i.e. not using <command moreinfo=\"none\">mod_authz_svn</command> or similar module), then you can disable all of this path-checking. In your <filename moreinfo=\"none\">httpd.conf</filename> file, use the <literal moreinfo=\"none\">SVNPathAuthz</literal> directive:"
+msgstr "在另一方面，也有一个安全舱门允许你用安全特性来交换速度，如果你不是坚持要求有每目录授权（如不使用 <command moreinfo=\"none\">mod_authz_svn</command>和类似的模块），你就可以关闭所有的路径检查，在你的<filename moreinfo=\"none\">httpd.conf</filename>文件，使用<literal moreinfo=\"none\">SVNPathAuthz</literal>指示："
+
+#: build/en/book.xml:14572(title)
+msgid "Disabling path checks altogether"
+msgstr "关闭所有的路经检查"
+
+#: build/en/book.xml:14573(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  SVNPathAuthz off\n"
+"&lt;/Location&gt;\n"
+"          "
+msgstr ""
+"\n"
+"&lt;Location /repos&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"\n"
+"  SVNPathAuthz off\n"
+"&lt;/Location&gt;\n"
+"          "
+
+#: build/en/book.xml:14583(para)
+msgid "The <literal moreinfo=\"none\">SVNPathAuthz</literal> directive is <quote>on</quote> by default. When set <quote>off</quote>, all path-based authorization checking is disabled; <command moreinfo=\"none\">mod_dav_svn</command> stops invoking authorization checks on every path it discovers."
+msgstr "<literal moreinfo=\"none\">SVNPathAuthz</literal>指示缺省是<quote>on</quote>，当设置为<quote>off</quote>时，所有的路径为基础的授权都会关闭；<command moreinfo=\"none\">mod_dav_svn</command>停止对每个目录调用授权检查。"
+
+#: build/en/book.xml:1459(screen)
+#, no-wrap
+msgid ""
+"\n"
+"C:\\&gt; svn checkout file:///X:/path/to/repos\n"
+"…\n"
+"C:\\&gt; svn checkout \"file:///X|/path/to/repos\"\n"
+"…\n"
+msgstr ""
+"\n"
+"C:\\&gt; svn checkout file:///X:/path/to/repos\n"
+"…\n"
+"C:\\&gt; svn checkout \"file:///X|/path/to/repos\"\n"
+"…\n"
+
+#: build/en/book.xml:14595(title)
+msgid "Extra Goodies"
+msgstr "额外的糖果"
+
+#: build/en/book.xml:14597(para)
+msgid "We've covered most of the authentication and authorization options for Apache and mod_dav_svn. But there are a few other nice features that Apache provides."
+msgstr "我们已经覆盖了关于认证和授权的Apache和mod_dav_svn的大多数选项，但是Apache还提供了许多很好的特性。"
+
+#: build/en/book.xml:14603(title)
+msgid "Repository Browsing"
+msgstr "版本库浏览"
+
+#: build/en/book.xml:14605(para)
+#, fuzzy
+msgid "One of the most useful benefits of an Apache/WebDAV configuration for your Subversion repository is that the youngest revisions of your versioned files and directories are immediately available for viewing via a regular web browser. Since Subversion uses URLs to identify versioned resources, those URLs used for HTTP-based repository access can be typed directly into a Web browser. Your browser will issue an HTTP <literal moreinfo=\"none\">GET</literal> request for that URL, and based on whether that URL represents a versioned directory or file, mod_dav_svn will respond with a directory listing or with file contents."
+msgstr "一个非常有用的好处是使用Apache/WebDAV配置Subversion版本库时可以用普通的浏览器察看最新的版本库文件，因为Subversion使用URL来鉴别版本库版本化的资源，版本库使用的HTTP为基础的URL也可以直接输入到Web浏览器中，你的浏览器会发送一个<literal moreinfo=\"none\">GET</literal>请求到URL，根据访问的URL是指向一个版本化的目录还是文件，mod_dav_svn会负责列出目录列表或者是文件内容。"
+
+#: build/en/book.xml:14617(para)
+msgid "Since the URLs do not contain any information about which version of the resource you wish to see, mod_dav_svn will always answer with the youngest version. This functionality has the wonderful side-effect that you can pass around Subversion URLs to your peers as references to documents, and those URLs will always point at the latest manifestation of that document. Of course, you can even use the URLs as hyperlinks from other web sites, too."
+msgstr "因为URL不能确定你所希望看到的资源的版本，mod_dav_svn会一直返回最新的版本，这样会有一些美妙的副作用，你可以直接把Subversion的URL传递给文档作为引用，这些URL会一直指向文档最新的材料，当然，你也可以在别的网站作为超链使用这些URL。"
+
+#: build/en/book.xml:14627(title)
+msgid "Can I view older revisions?"
+msgstr "我可以看到老的修订版本吗？"
+
+#: build/en/book.xml:14629(para)
+msgid "With an ordinary web browser? In one word: nope. At least, not with <command moreinfo=\"none\">mod_dav_svn</command> as your only tool."
+msgstr "通过一个普通的浏览器？一句话：不可以，至少是当你只使用<command moreinfo=\"none\">mod_dav_svn</command>作为唯一的工具时。"
+
+#: build/en/book.xml:14633(para)
+#, fuzzy
+msgid "Your web browser only speaks ordinary HTTP. That means it only knows how to GET public URLs, which represent the latest versions of files and directories. According to the WebDAV/DeltaV specification, each server defines a private URL syntax for older versions of resources, and that syntax is opaque to clients. To find an older version of a file, a client must follow a specific procedure to <quote>discover</quote> the proper URL; the procedure involves issuing a series of WebDAV PROPFIND requests and understanding DeltaV concepts. This is something your web browser simply can't do."
+msgstr "你的Web浏览器只会说普通的HTTP，也就是说它只会GET公共的URL，这个URL代表了最新版本的文件和目录，根据WebDAV/DeltaV规范，每种服务器定义了一种私有的URL语法来代表老的资源的版本，这个语法对客户端是不透明的，为了得到老的版本，一个客户端必须通过一种规范过程来<quote>发现</quote>正确的URL；这个过程包括执行一系列WebDAV PROPFIND请求和理解DeltaV概念，这些事情一般是你的web浏览器做不了的。"
+
+#: build/en/book.xml:14645(para)
+#, fuzzy
+msgid "So to answer the question, one obvious way to see older revisions of files and directories is by passing the <option>--revision (-r)</option> argument to the <command moreinfo=\"none\">svn list</command> and <command moreinfo=\"none\">svn cat</command> commands. To browse old revisions with your web browser, however, you can use third-party software. A good example of this is ViewVC (<ulink url=\"http://viewvc.tigris.org/\"/>). ViewVC was originally written to display CVS repositories through the web, <placeholder-1/> and the latest releases are able to understand Subversion repositories as well."
+msgstr "为了回答这些问题，一个明显的看老版本文件和目录的方式是带<option>--revision</option>参数的<command moreinfo=\"none\">svn list</command>和<command moreinfo=\"none\">svn cat</command>命令，为了在浏览器里察看老版本，你可以使用第三方的软件，一个好的例子是ViewVC（<ulink url=\"http://viewvc.tigris.org/\"/>），ViewVC最初写出来是为了在web显示CVS版本库，<footnote><placeholder-1/></footnote>最新的带血的（此时正在编写）版本也已经可以理解Subversion版本库了。"
+
+#: build/en/book.xml:14656(para)
+msgid "Back then, it was called <quote>ViewCVS</quote>."
+msgstr "之前叫做<quote>ViewCVS</quote>。"
+
+#: build/en/book.xml:1466(para)
+#, fuzzy
+msgid "In the second syntax, you need to quote the URL so that the vertical bar character is not interpreted as a pipe. Also, note that a URL uses forward slashes even though the native (non-URL) form of a path on Windows uses backslashes."
+msgstr "在第二个语法，你需要使用引号包含整个URL，这样竖线字符才不会被解释为管道。当然，注意URL使用普通的斜线而不是Windows本地（不是URL）的反斜线。"
+
+#: build/en/book.xml:14663(title)
+msgid "Proper MIME Type"
+msgstr ""
+
+#: build/en/book.xml:14665(para)
+msgid "When browsing a Subversion repository, the web browser gets a clue about how to render a file's contents by looking at the <literal moreinfo=\"none\">Content-Type:</literal> header returned in Apache's response to the HTTP <literal moreinfo=\"none\">GET</literal> request. The value of this header is some sort of MIME type. By default, Apache will tell the web browsers that all repository files are of the <quote>default</quote> MIME type, typically <literal moreinfo=\"none\">text/plain</literal>. This can be frustrating, however, if a user wishes repository files to render as something more meaningful — for example, it might be nice to have a <filename moreinfo=\"none\">foo.html</filename> file in the repository actually render as HTML when browsing."
+msgstr ""
+
+#: build/en/book.xml:14680(para)
+msgid "To make this happen, you only need to make sure that your files have the proper <literal moreinfo=\"none\">svn:mime-type</literal> set. This is discussed in more detail in <xref linkend=\"svn.advanced.props.special.mime-type\"/>, and you can even configure your client to automatically attach proper <literal moreinfo=\"none\">svn:mime-type</literal> properties to files entering the repository for the first time; see <xref linkend=\"svn.advanced.props.auto\"/>."
+msgstr ""
+
+#: build/en/book.xml:14690(para)
+msgid "So in our example, if one were to set the <literal moreinfo=\"none\">svn:mime-type</literal> property to <literal moreinfo=\"none\">text/html</literal> on file <filename moreinfo=\"none\">foo.html</filename>, then Apache would properly tell your web browser to render the file as HTML. One could also attach proper <literal moreinfo=\"none\">image/*</literal> mime-type properties to images, and by doing this, ultimately get an entire web site to be viewable directly from a repository! There's generalyl no problem with doing this, as long as the website doesn't contain any dynamically-generated content."
+msgstr ""
+
+#: build/en/book.xml:14706(title)
+msgid "Customizing the Look"
+msgstr ""
+
+#: build/en/book.xml:14708(para)
+msgid "You generally will get more use out of URLs to versioned files—after all, that's where the interesting content tends to lie. But you might have occasion to browse a Subversion directory listing, where you'll quickly note that the generated HTML used to display that listing is very basic, and certainly not intended to be aesthetically pleasing (or even interesting). To enable customization of these directory displays, Subversion provides an XML index feature. A single <literal moreinfo=\"none\">SVNIndexXSLT</literal> directive in your repository's <literal moreinfo=\"none\">Location</literal> block of <filename moreinfo=\"none\">httpd.conf</filename> will instruct mod_dav_svn to generate XML output when displaying a directory listing, and to reference the XSLT stylesheet of your choice:"
+msgstr "你通常会在版本化的文件的URL之外得到更多地用处—毕竟那里是有趣的内容存在的地方，但是你会偶尔浏览一个Subversion的目录列表，你会很快发现展示列表生成的HTML非常基本，并且一定没有在外观上（或者是有趣上）下功夫，为了自定义这些目录显示，Subversion提供了一个XML目录特性，一个单独的<literal moreinfo=\"none\">SVNIndexXSLT</literal>指示在你的<filename moreinfo=\"none\">httpd.conf</filename>文件版本库的<literal moreinfo=\"none\">Location</literal>块里，它将会指导mod_dav_svn在显示目录列表的时候生成XML输出，并且引用你选择的XSLT样式表文件："
+
+#: build/en/book.xml:1472(para)
+#, fuzzy
+msgid "Subversion's <literal moreinfo=\"none\">file://</literal> URLs cannot be used in a regular web browser the way typical <literal moreinfo=\"none\">file://</literal> URLs can. When you attempt to view a <literal moreinfo=\"none\">file://</literal> URL in a regular web browser, it reads and displays the contents of the file at that location by examining the filesystem directly. However, Subversion's resources exist in a virtual filesystem (see <xref linkend=\"svn.developer.layerlib.repos\"/>), and your browser will not understand how to interact with that filesystem."
+msgstr "也必须意识到Subversion的<literal moreinfo=\"none\">file:</literal> URL不能和在普通的web服务器中的<literal moreinfo=\"none\">file:</literal> URL一样工作。当你尝试在web服务器查看一个<literal moreinfo=\"none\">file:</literal>的URL，它会通过直接检测文件系统读取和显示那个位置的文件内容，但是Subversion的资源存在于虚拟文件系统（见<xref linkend=\"svn.developer.layerlib.repos\"/>）中，你的浏览器不会理解怎样读取这个文件系统。"
+
+#: build/en/book.xml:14724(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  SVNIndexXSLT \"/svnindex.xsl\"\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  SVNIndexXSLT \"/svnindex.xsl\"\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14733(para)
+msgid "Using the <literal moreinfo=\"none\">SVNIndexXSLT</literal> directive and a creative XSLT stylesheet, you can make your directory listings match the color schemes and imagery used in other parts of your website. Or, if you'd prefer, you can use the sample stylesheets provided in the Subversion source distribution's <filename moreinfo=\"none\">tools/xslt/</filename> directory. Keep in mind that the path provided to the <literal moreinfo=\"none\">SVNIndexXSLT</literal> directory is actually a URL path—browsers need to be able to read your stylesheets in order to make use of them!"
+msgstr "使用<literal moreinfo=\"none\">SVNIndexXSLT</literal>指示和创建一个XSLT样式表，你可以让你的目录列表的颜色模式与你的网站的其它部分匹配，否则，如果你愿意，你可以使用Subversion源分发版本中的<filename moreinfo=\"none\">tools/xslt/</filename>目录下的样例样式表。记住提供给<literal moreinfo=\"none\">SVNIndexXSLT</literal> 指示的路径是一个URL路径—浏览器需要阅读你的样式表来利用它们！"
+
+#: build/en/book.xml:14747(title)
+#, fuzzy
+msgid "Listing Repositories"
+msgstr "版本库的移植"
+
+#: build/en/book.xml:14749(para)
+msgid "If you're serving a colllection of repositories from a single URL via the <literal moreinfo=\"none\">SVNParentPath</literal> directive, then it's also possible to have Apache display all available repositories to a web browser. Just activate the <literal moreinfo=\"none\">SVNListParentPath</literal> directive:"
+msgstr ""
+
+#: build/en/book.xml:14756(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  SVNListParentPath on\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  SVNParentPath /usr/local/svn\n"
+"  SVNListParentPath on\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+
+#: build/en/book.xml:14765(para)
+msgid "If a user now points her web browser to the URL <literal moreinfo=\"none\">http://host.example.com/svn/</literal>, she'll see list of all Subversion repositories sitting in <filename moreinfo=\"none\">/usr/local/svn</filename>. Obviously, this can be a security problem, so this feature is turned off by default."
+msgstr ""
+
+#: build/en/book.xml:14778(title)
+msgid "Apache Logging"
+msgstr ""
+
+#: build/en/book.xml:14780(para)
+msgid "Because Apache is an HTTP server at heart, it contains fantastically flexible logging feature. It's beyond the scope of this book to discuss all ways logging can be configured, but we should point out that even the most generic <filename moreinfo=\"none\">httpd.conf</filename> file will cause Apache to produce two logs: <filename moreinfo=\"none\">error_log</filename> and <filename moreinfo=\"none\">access_log</filename>. These logs may appear in different places, but are typically created in the logging area of your Apache installation. (On Unix, they often live in <filename moreinfo=\"none\">/usr/local/apache2/logs/</filename>.)"
+msgstr ""
+
+#: build/en/book.xml:14793(para)
+msgid "The <filename moreinfo=\"none\">error_log</filename> describes any interal errors that Apache runs into as it works. The <filename moreinfo=\"none\">access_log</filename> file records every incoming HTTP request received by Apache. This makes it easy to see, for example, which IP addresses Subversion clients are coming from, how often particular clients use the server, which users are authenticating properly, and which requests succeed or fail."
+msgstr ""
+
+#: build/en/book.xml:148(para)
+#, fuzzy
+msgid "During the entire time they wrote this book, Ben, Mike, and Brian haunted the Subversion mailing lists and chat rooms incessantly, carefully noting the problems users were having in real-life situations. Monitoring such feedback was part of their job descriptions at CollabNet anyway, and it gave them a huge advantage when they set out to document Subversion. The book they produced is grounded firmly in the bedrock of experience, not in the shifting sands of wishful thinking; it combines the best aspects of user manual and FAQ sheet. This duality might not be noticeable on a first reading. Taken in order, front to back, the book is simply a straightforward description of a piece of software. There's the overview, the obligatory guided tour, the chapter on administrative configuration, some advanced topics, and of course a command reference and troubleshooting guide. Only when you come back to it later, seeking the solution to some specific problem, does its authenticity shine out: the telling details that can only result from encounters with the unexpected, the examples honed from genuine use cases, and most of all the sensitivity to the user's needs and the user's point of view."
+msgstr "在写这本书的过程里，Ben，Mike 和 Brian一直像鬼魂一样游荡在Subversion邮件列表和聊天室中，仔细的研究用户实际遇到的问题。监视这些反馈是他们在CollabNet工作的一部分，这给他们撰写Subversion文档提供了巨大的便利。这本书建立在丰富的使用经验，而非在流沙般脆弱的想象之上，它结合了用户手册和FAQ的优点。初次阅读时，这种二元性的优势并不明显，按照顺序，从前到后，这本书只是简单的从头到尾描述了软件的细节。书中的内容包括一章概述，一章必不可少的快速指南，一章关于管理配置，一些高级主题，当然还包括命令参考手册和故障排除指南。而当你过一段时间之后，再次翻开本书查找一些特定问题的解决方案时，这种二元性才得以显现：这些生动的细节一定来自不可预测的实际用例的提炼，大多是源于用户的需要和视点。"
+
+#: build/en/book.xml:14802(para)
+msgid "Unfortunately, because HTTP is a stateless protocol, even the simplest Subversion client operation generates multiple network requests. It's very difficult to look at the <filename moreinfo=\"none\">access_log</filename> and deduce what the client was doing — most operations look like a series of cryptic <literal moreinfo=\"none\">PROPPATCH</literal>, <literal moreinfo=\"none\">GET</literal>, <literal moreinfo=\"none\">PUT</literal>, and <literal moreinfo=\"none\">REPORT</literal> requests. To make things worse, many client operations send nearly-identical series of requests, so it's even harder to tell them apart."
+msgstr ""
+
+#: build/en/book.xml:14813(para)
+msgid "<literal moreinfo=\"none\">mod_dav_svn</literal>, however, can come to your aid. By activating an <quote>operational logging</quote> feature, you can ask <literal moreinfo=\"none\">mod_dav_svn</literal> to create a separate log file describing what sort of high-level operations your clients are performing."
+msgstr ""
+
+#: build/en/book.xml:14820(para)
+msgid "To do this, you need to make use of Apache's <literal moreinfo=\"none\">CustomLog</literal> directive (which is explained in more detail in Apache's own documentation). Be sure to invoke this directive <emphasis>outside</emphasis> of your Subversion <literal moreinfo=\"none\">Location</literal> block:"
+msgstr ""
+
+#: build/en/book.xml:14827(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+"\n"
+"CustomLog logs/svn_logfile \"%t %u %{SVN-ACTION}e\" env=SVN-ACTION\n"
+msgstr ""
+"\n"
+"&lt;Location /svn&gt;\n"
+"  DAV svn\n"
+"  …\n"
+"&lt;/Location&gt;\n"
+"\n"
+"CustomLog logs/svn_logfile \"%t %u %{SVN-ACTION}e\" env=SVN-ACTION\n"
+
+#: build/en/book.xml:1483(para)
+msgid "Finally, it should be noted that the Subversion client will automatically encode URLs as necessary, just like a web browser does. For example, if a URL contains a space or upper-ASCII character:"
+msgstr "最后，必须注意Subversion的客户端会根据需要自动编码URL，这一点和一般的web浏览器一样，举个例子，如果一个URL包含了空格或是一个字符编码大于128的ASCII字符："
+
+#: build/en/book.xml:14836(para)
+msgid "In this example, we're asking Apache to create a special logfile <filename moreinfo=\"none\">svn_logfile</filename> in the standard Apache <filename moreinfo=\"none\">logs</filename> directory. The <literal moreinfo=\"none\">%t</literal> and <literal moreinfo=\"none\">%u</literal> variables are replaced by the time and username of the request, respectively. The really important part are the two instances of <literal moreinfo=\"none\">SVN-ACTION</literal>. When Apache sees that variable, it substitutes the value of the <literal moreinfo=\"none\">SVN-ACTION</literal> environment variable, which is automatically set by <literal moreinfo=\"none\">mod_dav_svn</literal> whenever it detects a high-level client action."
+msgstr ""
+
+#: build/en/book.xml:14848(para)
+#, fuzzy
+msgid "So instead of having to interpret a traditional <filename moreinfo=\"none\">access_log</filename> like this:"
+msgstr "取出一个工作拷贝到<filename moreinfo=\"none\">mine</filename>："
+
+#: build/en/book.xml:14852(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/vcc/default HTTP/1.1\" 207 398\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/bln/59 HTTP/1.1\" 207 449\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc HTTP/1.1\" 207 647\n"
+"[26/Jan/2007:22:25:29 -0600] \"REPORT /svn/calc/!svn/vcc/default HTTP/1.1\" 200 607\n"
+"[26/Jan/2007:22:25:31 -0600] \"OPTIONS /svn/calc HTTP/1.1\" 200 188\n"
+"[26/Jan/2007:22:25:31 -0600] \"MKACTIVITY /svn/calc/!svn/act/e6035ef7-5df0-4ac0-b811-4be7c823f998 HTTP/1.1\" 201 227\n"
+"…\n"
+msgstr ""
+"\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/vcc/default HTTP/1.1\" 207 398\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/bln/59 HTTP/1.1\" 207 449\n"
+"[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc HTTP/1.1\" 207 647\n"
+"[26/Jan/2007:22:25:29 -0600] \"REPORT /svn/calc/!svn/vcc/default HTTP/1.1\" 200 607\n"
+"[26/Jan/2007:22:25:31 -0600] \"OPTIONS /svn/calc HTTP/1.1\" 200 188\n"
+"[26/Jan/2007:22:25:31 -0600] \"MKACTIVITY /svn/calc/!svn/act/e6035ef7-5df0-4ac0-b811-4be7c823f998 HTTP/1.1\" 201 227\n"
+"…\n"
+
+#: build/en/book.xml:14862(para)
+#, fuzzy
+msgid "… you can instead peruse a much more intelligible <filename moreinfo=\"none\">svn_logfile</filename> like this:"
+msgstr "取出一个工作拷贝到<filename moreinfo=\"none\">mine</filename>："
+
+#: build/en/book.xml:14865(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[26/Jan/2007:22:24:20 -0600] - list-dir '/'\n"
+"[26/Jan/2007:22:24:27 -0600] - update '/'\n"
+"[26/Jan/2007:22:25:29 -0600] - remote-status '/'\n"
+"[26/Jan/2007:22:25:31 -0600] sally commit r60\n"
+msgstr ""
+"\n"
+"[26/Jan/2007:22:24:20 -0600] - list-dir '/'\n"
+"[26/Jan/2007:22:24:27 -0600] - update '/'\n"
+"[26/Jan/2007:22:25:29 -0600] - remote-status '/'\n"
+"[26/Jan/2007:22:25:31 -0600] sally commit r60\n"
+
+#: build/en/book.xml:14876(title)
+msgid "Other Features"
+msgstr "其它特性"
+
+#: build/en/book.xml:14878(para)
+#, fuzzy
+msgid "Several of the features already provided by Apache in its role as a robust Web server can be leveraged for increased functionality or security in Subversion as well. Subversion communicates with Apache using Neon, which is a generic HTTP/WebDAV library with support for such mechanisms as SSL (the Secure Socket Layer, discussed earlier). If your Subversion client is built to support SSL, then it can access your Apache server using <literal moreinfo=\"none\">https://</literal>."
+msgstr "Apache作为一个健壮的Web服务器的许多特性也可以用来增加Subversion的功能性和安全性，Subversion使用Neon与Apache通讯，这是一种一般的HTTP/WebDAV库，可以支持SSL和Deflate压缩（是<command moreinfo=\"none\">gzip</command>和<command moreinfo=\"none\">PKZIP</command>程序用来<quote>压缩</quote>文件为数据块的一样的算法）之类的机制。你只需要编译你希望Subversion和Apache需要的特性，并且正确的配置程序来使用这些特性。"
+
+#: build/en/book.xml:1488(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout \"http://host/path with space/project/españa\"\n"
+msgstr ""
+"\n"
+"$ svn checkout \"http://host/path with space/project/españa\"\n"
+
+#: build/en/book.xml:14888(para)
+#, fuzzy
+msgid "Equally useful are other features of the Apache and Subversion relationship, such as the ability to specify a custom port (instead of the default HTTP port 80) or a virtual domain name by which the Subversion repository should be accessed, or the ability to access the repository through an HTTP proxy. These things are all supported by Neon, so Subversion gets that support for free."
+msgstr "不怎么有趣，但同样重要，是Apache和Subversion关系的一些特性，像可以指定自定义的端口（而不是缺省的HTTP的80）或者是一个Subversion可以被访问的虚拟主机名，或者是通过代理服务器访问的能力，这些特性都是Neon所支持的，所以Subversion轻易得到这些支持。"
+
+#: build/en/book.xml:14896(para)
+#, fuzzy
+msgid "Finally, because <command moreinfo=\"none\">mod_dav_svn</command> is speaking a subset of the WebDAV/DeltaV protocol, it's possible to access the repository via third-party DAV clients. Most modern operating systems (Win32, OS X, and Linux) have the built-in ability to mount a DAV server as a standard network share. This is a complicated topic; for details, read <xref linkend=\"svn.webdav\"/>."
+msgstr "最后，因为<command moreinfo=\"none\">mod_dav_svn</command>是使用一个半完成的WebDAV/DeltaV方言，所以通过第三方的DAV客户端访问也是可能的，几乎所有的现代操作系统（Win32、OS X和Linux）都有把DAV服务器影射为普通的网络<quote>共享</quote>的内置能力，这是一个复杂的主题；察看<xref linkend=\"svn.webdav\"/>来得到更多细节。"
+
+#: build/en/book.xml:14915(title)
+msgid "Path-Based Authorization"
+msgstr "基于路径的授权"
+
+#: build/en/book.xml:14917(para)
+msgid "Both Apache and <command moreinfo=\"none\">svnserve</command> are capable of granting (or denying) permissions to users. Typically this is done over the entire repository: a user can read the repository (or not), and she can write to the repository (or not). It's also possible, however, to define finer-grained access rules. One set of users may have permssion to write to a certain directory in the repository, but not others; another directory might not even be readable by all but a few special people."
+msgstr ""
+
+#: build/en/book.xml:1492(para)
+msgid "…then Subversion will escape the unsafe characters and behave as if you had typed:"
+msgstr "…Subversion会回避这些不安全字符，并且会像你输入了这些字符一样工作："
+
+#: build/en/book.xml:14927(para)
+msgid "Both servers use a common file format to describe these path-based access rules. In the case of Apache, one needs to load the <command moreinfo=\"none\">mod_authz_svn</command> module and then add the <literal moreinfo=\"none\">AuthzSVNAccessFile</literal> directive (within the <filename moreinfo=\"none\">httpd.conf</filename> file) pointing to your own rules-file. (For a full explanation, see <xref linkend=\"svn.serverconfig.httpd.authz.perdir\"/>.) If you're using <command moreinfo=\"none\">svnserve</command>, then you need to make the <literal moreinfo=\"none\">authz-db</literal> variable (within <filename moreinfo=\"none\">svnserve.conf</filename>) point to your rules-file."
+msgstr ""
+
+#: build/en/book.xml:14940(title)
+msgid "Do you really need path-based access control?"
+msgstr ""
+
+#: build/en/book.xml:14942(para)
+msgid "A lot of administrators setting up Subversion for the first time tend to jump into path-based access control without giving it a lot of thought. The administrator usually knows which teams of people are working on which projects, so it's easy to jump in and grant certain teams access to certain directories and not others. It seems like a natural thing, and it appeases the administrator's desire to maintain tight control of the repository."
+msgstr ""
+
+#: build/en/book.xml:1495(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://host/path%20with%20space/project/espa%C3%B1a\n"
+msgstr ""
+"\n"
+"$ svn checkout http://host/path%20with%20space/project/espa%C3%B1a\n"
+
+#: build/en/book.xml:14951(para)
+msgid "Note, though, that there are often invisible (and visible!) costs associated with this feature. In the visible category, the server needs to do a lot more work to ensure that the user has the right to read or write each specific path; in certain situations, there's very noticeable performance loss. In the invisible category, consider the culture you're creating. Most of the time, while certain users <emphasis>shouldn't</emphasis> be committing changes to certain parts of the repository, that social contract doesn't need to be technologically enforced. Teams can sometimes spontaneously collaborate with each other; someone may want to help someone else out by committing to an area she doesn't normally work on. By preventing this sort of thing at the server level, you're setting up barriers to unexpected collaboration. You're also creating a bunch of rules that need to be maintained as projects develop, new users are added, and so on. It's a bunch of extra work to maintain."
+msgstr ""
+
+#: build/en/book.xml:14970(para)
+msgid "Remember that this is a version control system! Even if somebody accidentally commits a change to something they shouldn't, it's easy to undo the change. And if a user commits to the wrong place with deliberate malice, then it's a social problem anyway, and that the problem needs to be dealt with outside of Subversion."
+msgstr ""
+
+#: build/en/book.xml:14977(para)
+msgid "So before you begin restricting users' access rights, ask yourself if there's a real, honest need for this, or if it's just something that <quote>sounds good</quote> to an administrator. Decide whether it's worth sacrificing some server speed for, and remember that there's very little risk involved; it's bad to become dependent on technology as a crutch for social problems.<placeholder-1/>."
+msgstr ""
+
+#: build/en/book.xml:14983(para)
+msgid "A common theme in this book!"
+msgstr ""
+
+#: build/en/book.xml:14986(para)
+msgid "As an example to ponder, consider that the Subversion project itself has always had a notion of who is allowed to commit where, but it's always been enforced socially. This is a good model of community trust, especially for open-source projects. Of course, sometimes there <emphasis>are</emphasis> truly legitimate needs for path-based access control; within corporations, for example, certain types of data really can be sensitive, and access needs to be genuinely restricted to small groups of people."
+msgstr ""
+
+#: build/en/book.xml:1499(para)
+msgid "If the URL contains spaces, be sure to place it within quote marks, so that your shell treats the whole thing as a single argument to the <command moreinfo=\"none\">svn</command> program."
+msgstr "如果URL包含空格，一定要使用引号，这样你的脚本才会把它做一个单独的<command moreinfo=\"none\">svn</command>参数。"
+
+#: build/en/book.xml:14998(para)
+msgid "Once your server knows where to find your rules-file, it's time to define the rules."
+msgstr ""
+
+#: build/en/book.xml:15(isbn)
+msgid "?-?????-???-?"
+msgstr "?-?????-???-?"
+
+#: build/en/book.xml:15001(para)
+#, fuzzy
+msgid "The syntax of the file is the same familiar one used by <command moreinfo=\"none\">svnserve.conf</command> and the runtime configuration files. Lines that start with a hash (<literal moreinfo=\"none\">#</literal>) are ignored. In its simplest form, each section names a repository and path within it, and the authenticated usernames are the option names within each section. The value of each option describes the user's level of access to the repository path: either <literal moreinfo=\"none\">r</literal> (read-only) or <literal moreinfo=\"none\">rw</literal> (read-write). If the user is not mentioned at all, no access is allowed."
+msgstr "访问文件的语法与<command moreinfo=\"none\">svnserve.conf</command>和运行中配置文件非常相似，以（<literal moreinfo=\"none\">#</literal>）开头的行会被忽略，在它的简单形式里，每一小节命名一个版本库和一个里面的路径，认证用户名是在每个小节中的选项名，每个选项的值描述了用户访问版本库的级别：<literal moreinfo=\"none\">r</literal>（只读）或者<literal moreinfo=\"none\">rw</literal>（读写），如果用户没有提到，访问是不允许的。"
+
+#: build/en/book.xml:15013(para)
+msgid "To be more specific: the value of the section-names are either of the form <literal moreinfo=\"none\">[repos-name:path]</literal> or the form <literal moreinfo=\"none\">[path]</literal>. If you're using the <literal moreinfo=\"none\">SVNParentPath</literal> directive, then it's important to specify the repository names in your sections. If you omit them, then a section like <literal moreinfo=\"none\">[/some/dir]</literal> will match the path <filename moreinfo=\"none\">/some/dir</filename> in <emphasis>every</emphasis> repository. If you're using the <literal moreinfo=\"none\">SVNPath</literal> directive, however, then it's fine to only define paths in your sections—after all, there's only one repository."
+msgstr "具体一点：这个小节的名称是<literal moreinfo=\"none\">[repos-name:path]</literal>或者<literal moreinfo=\"none\">[path]</literal>的形式，如果你使用<literal moreinfo=\"none\">SVNParentPath</literal>指示，指定版本库的名字是很重要的，如果你漏掉了他们，<literal moreinfo=\"none\">[/some/dir]</literal>部分就会与<filename moreinfo=\"none\">/some/dir</filename>的所有版本库匹配，如果你使用<literal moreinfo=\"none\">SVNPath</literal>指示，因此在你的小节中只是定义路径也很好—毕竟只有一个版本库。"
+
+#: build/en/book.xml:15025(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+msgstr ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+
+#: build/en/book.xml:15031(para)
+msgid "In this first example, the user <literal moreinfo=\"none\">harry</literal> has full read and write access on the <filename moreinfo=\"none\">/branches/calc/bug-142</filename> directory in the <literal moreinfo=\"none\">calc</literal> repository, but the user <literal moreinfo=\"none\">sally</literal> has read-only access. Any other users are blocked from accessing this directory."
+msgstr "在第一个例子里，用户<literal moreinfo=\"none\">harry</literal>对<literal moreinfo=\"none\">calc</literal>版本库中<filename moreinfo=\"none\">/branches/calc/bug-142</filename>具备完全的读写权利，但是用户<literal moreinfo=\"none\">sally</literal>只有读权利，任何其他用户禁止访问这个目录。"
+
+#: build/en/book.xml:15038(para)
+msgid "Of course, permissions are inherited from parent to child directory. That means that we can specify a subdirectory with a different access policy for Sally:"
+msgstr "当然，访问控制是父目录传递给子目录的，这意味着我们可以为Sally指定一个子目录的不同访问策略："
+
+#: build/en/book.xml:15042(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+"\n"
+"# give sally write access only to the 'testing' subdir\n"
+"[calc:/branches/calc/bug-142/testing]\n"
+"sally = rw\n"
+msgstr ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+"\n"
+"# give sally write access only to the 'testing' subdir\n"
+"[calc:/branches/calc/bug-142/testing]\n"
+"sally = rw\n"
+
+#: build/en/book.xml:15052(para)
+msgid "Now Sally can write to the <filename moreinfo=\"none\">testing</filename> subdirectory of the branch, but can still only read other parts. Harry, meanwhile, continues to have complete read-write access to the whole branch."
+msgstr "现在Sally可以读取分支的<filename moreinfo=\"none\">testing</filename>子目录，但对其他部分还是只可以读，同时，Harry对整个分支还继续有完全的读写权限。"
+
+#: build/en/book.xml:15057(para)
+msgid "It's also possible to explicitly deny permission to someone via inheritance rules, by setting the username variable to nothing:"
+msgstr "也可以通过继承规则明确的的拒绝某人的访问，只需要设置用户名参数为空："
+
+#: build/en/book.xml:15061(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+"\n"
+"[calc:/branches/calc/bug-142/secret]\n"
+"harry =\n"
+msgstr ""
+"\n"
+"[calc:/branches/calc/bug-142]\n"
+"harry = rw\n"
+"sally = r\n"
+"\n"
+"[calc:/branches/calc/bug-142/secret]\n"
+"harry =\n"
+
+#: build/en/book.xml:1507(title)
+msgid "Working Copies"
+msgstr "工作拷贝"
+
+#: build/en/book.xml:15070(para)
+msgid "In this example, Harry has read-write access to the entire <filename moreinfo=\"none\">bug-142</filename> tree, but has absolutely no access at all to the <filename moreinfo=\"none\">secret</filename> subdirectory within it."
+msgstr "在这个例子里，Harry对<filename moreinfo=\"none\">bug-142</filename>目录树有完全的读写权限，但是对<filename moreinfo=\"none\">secret</filename>子目录没有任何访问权利。"
+
+#: build/en/book.xml:15075(para)
+#, fuzzy
+msgid "The thing to remember is that the most specific path always matches first. The server tries to match the path itself, and then the parent of the path, then the parent of that, and so on. The net effect is that mentioning a specific path in the accessfile will always override any permissions inherited from parent directories."
+msgstr "有一件事需要记住的是需要找到最匹配的目录，<command moreinfo=\"none\">mod_authz_svn</command>模块首先找到匹配自己的目录，然后父目录，然后父目录的父目录，就这样继续下去，更具体的路径控制会覆盖所有继承下来的访问控制。"
+
+#: build/en/book.xml:15082(para)
+msgid "By default, nobody has any access to the repository at all. That means that if you're starting with an empty file, you'll probably want to give at least read permission to all users at the root of the repository. You can do this by using the asterisk variable (<literal moreinfo=\"none\">*</literal>), which means <quote>all users</quote>:"
+msgstr "缺省情况下，没有人对版本库有任何访问，这意味着如果你已经从一个空文件开始，你会希望给所有用户对版本库根目录具备读权限，你可以使用<literal moreinfo=\"none\">*</literal>实现，用来代表<quote>所有用户</quote>："
+
+#: build/en/book.xml:15089(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[/]\n"
+"* = r\n"
+msgstr ""
+"\n"
+"[/]\n"
+"* = r\n"
+
+#: build/en/book.xml:1509(para)
+msgid "You've already read about working copies; now we'll demonstrate how the Subversion client creates and uses them."
+msgstr "你已经阅读过了关于工作拷贝的内容，现在我们要讲一讲客户端怎样建立和使用它。"
+
+#: build/en/book.xml:15094(para)
+#, fuzzy
+msgid "This is a common setup; notice that there's no repository name mentioned in the section name. This makes all repositories world readable to all users. Once all users have read-access to the repositories, you can give explicit <literal moreinfo=\"none\">rw</literal> permission to certain users on specific subdirectories within specific repositories."
+msgstr "这是一个普通的设置；注意在小节名中没有提到版本库名称，这让所有版本库对所有的用户可读，不管你是使用<literal moreinfo=\"none\">SVNPath</literal>或是<literal moreinfo=\"none\">SVNParentPath</literal>。当所有用户对版本库有了读权利，你可以赋予特定用户对特定子目录的<literal moreinfo=\"none\">rw</literal>权限。"
+
+#: build/en/book.xml:15101(para)
+#, fuzzy
+msgid "The asterisk variable (<literal moreinfo=\"none\">*</literal>) is also worth special mention here: it's the <emphasis>only</emphasis> pattern which matches an anonymous user. If you've configured your server block to allow a mixture of anonymous and authenticated access, all users start out accessing anonymously. The server looks for a <literal moreinfo=\"none\">*</literal> value defined for the path being accessed; if it can't find one, then it demands real authentication from the client."
+msgstr "星号（<literal moreinfo=\"none\">*</literal>）参数需要在这里详细强调：这是匹配匿名用户的<emphasis>唯一</emphasis>模式，如果你已经配置了你的<literal moreinfo=\"none\">Location</literal>区块允许匿名和认证用户的混合访问，所有用户作为Apache匿名用户开始访问，<command moreinfo=\"none\">mod_authz_svn</command>会在要访问路径的定义中查找<literal moreinfo=\"none\">*</literal>值；如果找不到，Apache就会要求真实的客户端认证。"
+
+#: build/en/book.xml:15111(para)
+msgid "The access file also allows you to define whole groups of users, much like the Unix <filename moreinfo=\"none\">/etc/group</filename> file:"
+msgstr "访问文件也允许你定义一组的用户，很像Unix的<filename moreinfo=\"none\">/etc/group</filename>文件："
+
+#: build/en/book.xml:15115(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[groups]\n"
+"calc-developers = harry, sally, joe\n"
+"paint-developers = frank, sally, jane\n"
+"everyone = harry, sally, joe, frank, sally, jane\n"
+msgstr ""
+"\n"
+"[groups]\n"
+"calc-developers = harry, sally, joe\n"
+"paint-developers = frank, sally, jane\n"
+"everyone = harry, sally, joe, frank, sally, jane\n"
+
+#: build/en/book.xml:15122(para)
+msgid "Groups can be granted access control just like users. Distinguish them with an <quote>at</quote> (<literal moreinfo=\"none\">@</literal>) prefix:"
+msgstr "组可以被赋予通用户一样的访问权限，使用<quote>at</quote>（<literal moreinfo=\"none\">@</literal>）前缀来加以区别："
+
+#: build/en/book.xml:15126(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[calc:/projects/calc]\n"
+"@calc-developers = rw\n"
+"\n"
+"[paint:/projects/paint]\n"
+"@paint-developers = rw\n"
+"jane = r\n"
+msgstr ""
+"\n"
+"[calc:/projects/calc]\n"
+"@calc-developers = rw\n"
+"\n"
+"[paint:/projects/paint]\n"
+"@paint-developers = rw\n"
+"jane = r\n"
+
+#: build/en/book.xml:1513(para)
+msgid "A Subversion working copy is an ordinary directory tree on your local system, containing a collection of files. You can edit these files however you wish, and if they're source code files, you can compile your program from them in the usual way. Your working copy is your own private work area: Subversion will never incorporate other people's changes, nor make your own changes available to others, until you explicitly tell it to do so. You can even have multiple working copies of the same project."
+msgstr "一个Subversion工作拷贝是你本地机器一个普通的目录，保存着一些文件，你可以任意的编辑文件，而且如果是源代码文件，你可以像平常一样编译，你的工作拷贝是你的私有工作区，在你明确的做了特定操作之前，Subversion不会把你的修改与其他人的合并，也不会把你的修改展示给别人，你甚至可以拥有同一个项目的多个工作拷贝。"
+
+#: build/en/book.xml:15135(para)
+msgid "Groups can also be defined to contain other groups:"
+msgstr "组中也可以定义为包含其它的组："
+
+#: build/en/book.xml:15137(screen)
+#, no-wrap
+msgid ""
+"\n"
+"[groups]\n"
+"calc-developers = harry, sally, joe\n"
+"paint-developers = frank, sally, jane\n"
+"everyone = @calc-developers, @paint-developers\n"
+msgstr ""
+"\n"
+"[groups]\n"
+"calc-developers = harry, sally, joe\n"
+"paint-developers = frank, sally, jane\n"
+"everyone = @calc-developers, @paint-developers\n"
+
+#: build/en/book.xml:15152(title)
+msgid "Supporting Multiple Repository Access Methods"
+msgstr "支持多种版本库访问方法"
+
+#: build/en/book.xml:15154(para)
+msgid "You've seen how a repository can be accessed in many different ways. But is it possible—or safe—for your repository to be accessed by multiple methods simultaneously? The answer is yes, provided you use a bit of foresight."
+msgstr "你已经看到了一个版本库可以用多种方式访问，但是可以—或者说安全的—用几种方式同时并行的访问你的版本库吗？回答是可以，倘若你有一些深谋远虑的使用。"
+
+#: build/en/book.xml:15159(para)
+msgid "At any given time, these processes may require read and write access to your repository:"
+msgstr "在任何给定�
