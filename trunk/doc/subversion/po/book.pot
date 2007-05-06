@@ -4790,4 +4790,1461 @@ msgid "Of course, you're free to ignore these common layouts. You can create any
 msgstr ""
 
 #: ./build/en/book.xml:9182(para) 
-msgid "Remember, though, that while moving dire
+msgid "Remember, though, that while moving directories may be easy to do, you need to be considerate of your users as well. Your juggling can be disorienting to users with existing working copies. If a user has a working copy of a particular repository directory, your <command moreinfo=\"none\">svn move</command> operation might remove the path from the latest revision. When the user next runs <command moreinfo=\"none\">svn update</command>, she will be told that her working copy represents a path that no longer exists, and the user will be forced to <command moreinfo=\"none\">svn switch</command> to the new location."
+msgstr ""
+
+#: ./build/en/book.xml:9198(title) 
+msgid "Data Lifetimes"
+msgstr ""
+
+#: ./build/en/book.xml:9200(para) 
+msgid "Another nice feature of Subversion's model is that branches and tags can have finite lifetimes, just like any other versioned item. For example, suppose you eventually finish all your work on your personal branch of the <filename moreinfo=\"none\">calc</filename> project. After merging all of your changes back into <filename moreinfo=\"none\">/calc/trunk</filename>, there's no need for your private branch directory to stick around anymore:"
+msgstr ""
+
+#: ./build/en/book.xml:9209(screen) 
+#, no-wrap
+msgid "\n$ svn delete http://svn.example.com/repos/calc/branches/my-calc-branch \\\n             -m \"Removing obsolete branch of calc project.\"\n\nCommitted revision 375.\n"
+msgstr ""
+
+#: ./build/en/book.xml:9216(para) 
+msgid "And now your branch is gone. Of course it's not really gone: the directory is simply missing from the <literal moreinfo=\"none\">HEAD</literal> revision, no longer distracting anyone. If you use <command moreinfo=\"none\">svn checkout</command>, <command moreinfo=\"none\">svn switch</command>, or <command moreinfo=\"none\">svn list</command> to examine an earlier revision, you'll still be able to see your old branch."
+msgstr ""
+
+#: ./build/en/book.xml:9224(para) 
+msgid "If browsing your deleted directory isn't enough, you can always bring it back. Resurrecting data is very easy in Subversion. If there's a deleted directory (or file) that you'd like to bring back into <literal moreinfo=\"none\">HEAD</literal>, simply use <command moreinfo=\"none\">svn copy -r</command> to copy it from the old revision:"
+msgstr ""
+
+#: ./build/en/book.xml:9231(screen) 
+#, no-wrap
+msgid "\n$ svn copy -r 374 http://svn.example.com/repos/calc/branches/my-calc-branch \\\n                  http://svn.example.com/repos/calc/branches/my-calc-branch\n\nCommitted revision 376.\n"
+msgstr ""
+
+#: ./build/en/book.xml:9238(para) 
+msgid "In our example, your personal branch had a relatively short lifetime: you may have created it to fix a bug or implement a new feature. When your task is done, so is the branch. In software development, though, it's also common to have two <quote>main</quote> branches running side-by-side for very long periods. For example, suppose it's time to release a stable version of the <filename moreinfo=\"none\">calc</filename> project to the public, and you know it's going to take a couple of months to shake bugs out of the software. You don't want people to add new features to the project, but you don't want to tell all developers to stop programming either. So instead, you create a <quote>stable</quote> branch of the software that won't change much:"
+msgstr ""
+
+#: ./build/en/book.xml:9252(screen) 
+#, no-wrap
+msgid "\n$ svn copy http://svn.example.com/repos/calc/trunk \\\n         http://svn.example.com/repos/calc/branches/stable-1.0 \\\n         -m \"Creating stable branch of calc project.\"\n\nCommitted revision 377.\n"
+msgstr ""
+
+#: ./build/en/book.xml:9260(para) 
+msgid "And now developers are free to continue adding cutting-edge (or experimental) features to <filename moreinfo=\"none\">/calc/trunk</filename>, and you can declare a project policy that only bug fixes are to be committed to <filename moreinfo=\"none\">/calc/branches/stable-1.0</filename>. That is, as people continue to work on the trunk, a human selectively ports bug fixes over to the stable branch. Even after the stable branch has shipped, you'll probably continue to maintain the branch for a long time—that is, as long as you continue to support that release for customers."
+msgstr ""
+
+#: ./build/en/book.xml:9280(title) 
+msgid "Vendor branches"
+msgstr ""
+
+#: ./build/en/book.xml:9282(para) 
+msgid "As is especially the case when developing software, the data that you maintain under version control is often closely related to, or perhaps dependent upon, someone else's data. Generally, the needs of your project will dictate that you stay as up-to-date as possible with the data provided by that external entity without sacrificing the stability of your own project. This scenario plays itself out all the time—anywhere that the information generated by one group of people has a direct effect on that which is generated by another group."
+msgstr ""
+
+#: ./build/en/book.xml:9292(para) 
+msgid "For example, software developers might be working on an application which makes use of a third-party library. Subversion has just such a relationship with the Apache Portable Runtime library (see <xref linkend=\"svn.developer.usingapi.apr\"/>). The Subversion source code depends on the APR library for all its portability needs. In earlier stages of Subversion's development, the project closely tracked APR's changing API, always sticking to the <quote>bleeding edge</quote> of the library's code churn. Now that both APR and Subversion have matured, Subversion attempts to synchronize with APR's library API only at well-tested, stable release points."
+msgstr ""
+
+#: ./build/en/book.xml:9304(para) 
+msgid "Now, if your project depends on someone else's information, there are several ways that you could attempt to synchronize that information with your own. Most painfully, you could issue oral or written instructions to all the contributors of your project, telling them to make sure that they have the specific versions of that third-party information that your project needs. If the third-party information is maintained in a Subversion repository, you could also use Subversion's externals definitions to effectively <quote>pin down</quote> specific versions of that information to some location in your own working copy directory (see <xref linkend=\"svn.advanced.externals\"/>)."
+msgstr ""
+
+#: ./build/en/book.xml:9316(para) 
+msgid "But sometimes you want to maintain custom modifications to third-party data in your own version control system. Returning to the software development example, programmers might need to make modifications to that third-party library for their own purposes. These modifications might include new functionality or bug fixes, maintained internally only until they become part of an official release of the third-party library. Or the changes might never be relayed back to the library maintainers, existing solely as custom tweaks to make the library further suit the needs of the software developers."
+msgstr ""
+
+#: ./build/en/book.xml:9327(para) 
+msgid "Now you face an interesting situation. Your project could house its custom modifications to the third-party data in some disjointed fashion, such as using patch files or full-fledged alternate versions of files and directories. But these quickly become maintenance headaches, requiring some mechanism by which to apply your custom changes to the third-party data, and necessitating regeneration of those changes with each successive version of the third-party data that you track."
+msgstr ""
+
+#: ./build/en/book.xml:9336(para) 
+msgid "The solution to this problem is to use <firstterm>vendor branches</firstterm>. A vendor branch is a directory tree in your own version control system that contains information provided by a third-party entity, or vendor. Each version of the vendor's data that you decide to absorb into your project is called a <firstterm>vendor drop</firstterm>."
+msgstr ""
+
+#: ./build/en/book.xml:9343(para) 
+msgid "Vendor branches provide two key benefits. First, by storing the currently supported vendor drop in your own version control system, the members of your project never need to question whether they have the right version of the vendor's data. They simply receive that correct version as part of their regular working copy updates. Secondly, because the data lives in your own Subversion repository, you can store your custom changes to it in-place—you have no more need of an automated (or worse, manual) method for swapping in your customizations."
+msgstr ""
+
+#: ./build/en/book.xml:9355(title) 
+msgid "General Vendor Branch Management Procedure"
+msgstr ""
+
+#: ./build/en/book.xml:9357(para) 
+msgid "Managing vendor branches generally works like this. You create a top-level directory (such as <filename moreinfo=\"none\">/vendor</filename>) to hold the vendor branches. Then you import the third party code into a subdirectory of that top-level directory. You then copy that subdirectory into your main development branch (for example, <filename moreinfo=\"none\">/trunk</filename>) at the appropriate location. You always make your local changes in the main development branch. With each new release of the code you are tracking you bring it into the vendor branch and merge the changes into <filename moreinfo=\"none\">/trunk</filename>, resolving whatever conflicts occur between your local changes and the upstream changes."
+msgstr ""
+
+#: ./build/en/book.xml:9371(para) 
+msgid "Perhaps an example will help to clarify this algorithm. We'll use a scenario where your development team is creating a calculator program that links against a third-party complex number arithmetic library, libcomplex. We'll begin with the initial creation of the vendor branch, and the import of the first vendor drop. We'll call our vendor branch directory <filename moreinfo=\"none\">libcomplex</filename>, and our code drops will go into a subdirectory of our vendor branch called <filename moreinfo=\"none\">current</filename>. And since <command moreinfo=\"none\">svn import</command> creates all the intermediate parent directories it needs, we can actually accomplish both of these steps with a single command."
+msgstr ""
+
+#: ./build/en/book.xml:9384(screen) 
+#, no-wrap
+msgid "\n$ svn import /path/to/libcomplex-1.0 \\\n             http://svn.example.com/repos/vendor/libcomplex/current \\\n             -m 'importing initial 1.0 vendor drop'\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:9391(para) 
+msgid "We now have the current version of the libcomplex source code in <filename moreinfo=\"none\">/vendor/libcomplex/current</filename>. Now, we tag that version (see <xref linkend=\"svn.branchmerge.tags\"/>) and then copy it into the main development branch. Our copy will create a new directory called <filename moreinfo=\"none\">libcomplex</filename> in our existing <filename moreinfo=\"none\">calc</filename> project directory. It is in this copied version of the vendor data that we will make our customizations."
+msgstr ""
+
+#: ./build/en/book.xml:9401(screen) 
+#, no-wrap
+msgid "\n$ svn copy http://svn.example.com/repos/vendor/libcomplex/current  \\\n           http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n           -m 'tagging libcomplex-1.0'\n…\n$ svn copy http://svn.example.com/repos/vendor/libcomplex/1.0  \\\n           http://svn.example.com/repos/calc/libcomplex        \\\n           -m 'bringing libcomplex-1.0 into the main branch'\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:9418(para) 
+msgid "And entirely bug-free, of course!"
+msgstr ""
+
+#: ./build/en/book.xml:9412(para) 
+msgid "We check out our project's main branch—which now includes a copy of the first vendor drop—and we get to work customizing the libcomplex code. Before we know it, our modified version of libcomplex is now completely integrated into our calculator program. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:9422(para) 
+msgid "A few weeks later, the developers of libcomplex release a new version of their library—version 1.1—which contains some features and functionality that we really want. We'd like to upgrade to this new version, but without losing the customizations we made to the existing version. What we essentially would like to do is to replace our current baseline version of libcomplex 1.0 with a copy of libcomplex 1.1, and then re-apply the custom modifications we previously made to that library to the new version. But we actually approach the problem from the other direction, applying the changes made to libcomplex between versions 1.0 and 1.1 to our modified copy of it."
+msgstr ""
+
+#: ./build/en/book.xml:9435(para) 
+msgid "To perform this upgrade, we checkout a copy of our vendor branch, and replace the code in the <filename moreinfo=\"none\">current</filename> directory with the new libcomplex 1.1 source code. We quite literally copy new files on top of existing files, perhaps exploding the libcomplex 1.1 release tarball atop our existing files and directories. The goal here is to make our <filename moreinfo=\"none\">current</filename> directory contain only the libcomplex 1.1 code, and to ensure that all that code is under version control. Oh, and we want to do this with as little version control history disturbance as possible."
+msgstr ""
+
+#: ./build/en/book.xml:9447(para) 
+msgid "After replacing the 1.0 code with 1.1 code, <command moreinfo=\"none\">svn status</command> will show files with local modifications as well as, perhaps, some unversioned or missing files. If we did what we were supposed to do, the unversioned files are only those new files introduced in the 1.1 release of libcomplex—we run <command moreinfo=\"none\">svn add</command> on those to get them under version control. The missing files are files that were in 1.0 but not in 1.1, and on those paths we run <command moreinfo=\"none\">svn delete</command>. Finally, once our <filename moreinfo=\"none\">current</filename> working copy contains only the libcomplex 1.1 code, we commit the changes we made to get it looking that way."
+msgstr ""
+
+#: ./build/en/book.xml:9460(para) 
+msgid "Our <filename moreinfo=\"none\">current</filename> branch now contains the new vendor drop. We tag the new version (in the same way we previously tagged the version 1.0 vendor drop), and then merge the differences between the tag of the previous version and the new current version into our main development branch."
+msgstr ""
+
+#: ./build/en/book.xml:9467(screen) 
+#, no-wrap
+msgid "\n$ cd working-copies/calc\n$ svn merge http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n            http://svn.example.com/repos/vendor/libcomplex/current  \\\n            libcomplex\n… # resolve all the conflicts between their changes and our changes\n$ svn commit -m 'merging libcomplex-1.1 into the main branch'\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:9477(para) 
+msgid "In the trivial use case, the new version of our third-party tool would look, from a files-and-directories point of view, just like the previous version. None of the libcomplex source files would have been deleted, renamed or moved to different locations—the new version would contain only textual modifications against the previous one. In a perfect world, our modifications would apply cleanly to the new version of the library, with absolutely no complications or conflicts."
+msgstr ""
+
+#: ./build/en/book.xml:9487(para) 
+msgid "But things aren't always that simple, and in fact it is quite common for source files to get moved around between releases of software. This complicates the process of ensuring that our modifications are still valid for the new version of code, and can quickly degrade into a situation where we have to manually recreate our customizations in the new version. Once Subversion knows about the history of a given source file—including all its previous locations—the process of merging in the new version of the library is pretty simple. But we are responsible for telling Subversion how the source file layout changed from vendor drop to vendor drop."
+msgstr ""
+
+#: ./build/en/book.xml:9509(command) 
+msgid "svn_load_dirs.pl"
+msgstr ""
+
+#: ./build/en/book.xml:9511(para) 
+msgid "Vendor drops that contain more than a few deletes, additions and moves complicate the process of upgrading to each successive version of the third-party data. So Subversion supplies the <command moreinfo=\"none\">svn_load_dirs.pl</command> script to assist with this process. This script automates the importing steps we mentioned in the general vendor branch management procedure to make sure that mistakes are minimized. You will still be responsible for using the merge commands to merge the new versions of the third-party data into your main development branch, but <command moreinfo=\"none\">svn_load_dirs.pl</command> can help you more quickly and easily arrive at that stage."
+msgstr ""
+
+#: ./build/en/book.xml:9524(para) 
+msgid "In short, <command moreinfo=\"none\">svn_load_dirs.pl</command> is an enhancement to <command moreinfo=\"none\">svn import</command> that has several important characteristics:"
+msgstr ""
+
+#: ./build/en/book.xml:9530(para) 
+msgid "It can be run at any point in time to bring an existing directory in the repository to exactly match an external directory, performing all the necessary adds and deletes, and optionally performing moves, too."
+msgstr ""
+
+#: ./build/en/book.xml:9536(para) 
+msgid "It takes care of complicated series of operations between which Subversion requires an intermediate commit—such as before renaming a file or directory twice."
+msgstr ""
+
+#: ./build/en/book.xml:9541(para) 
+msgid "It will optionally tag the newly imported directory."
+msgstr ""
+
+#: ./build/en/book.xml:9544(para) 
+msgid "It will optionally add arbitrary properties to files and directories that match a regular expression."
+msgstr ""
+
+#: ./build/en/book.xml:9549(para) 
+msgid "<command moreinfo=\"none\">svn_load_dirs.pl</command> takes three mandatory arguments. The first argument is the URL to the base Subversion directory to work in. This argument is followed by the URL—relative to the first argument—into which the current vendor drop will be imported. Finally, the third argument is the local directory to import. Using our previous example, a typical run of <command moreinfo=\"none\">svn_load_dirs.pl</command> might look like:"
+msgstr ""
+
+#: ./build/en/book.xml:9558(screen) 
+#, no-wrap
+msgid "\n$ svn_load_dirs.pl http://svn.example.com/repos/vendor/libcomplex \\\n                   current                                        \\\n                   /path/to/libcomplex-1.1\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:9565(para) 
+msgid "You can indicate that you'd like <command moreinfo=\"none\">svn_load_dirs.pl</command> to tag the new vendor drop by passing the <option>-t</option> command-line option and specifying a tag name. This tag is another URL relative to the first program argument."
+msgstr ""
+
+#: ./build/en/book.xml:9571(screen) 
+#, no-wrap
+msgid "\n$ svn_load_dirs.pl -t libcomplex-1.1                              \\\n                   http://svn.example.com/repos/vendor/libcomplex \\\n                   current                                        \\\n                   /path/to/libcomplex-1.1\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:9579(para) 
+msgid "When you run <command moreinfo=\"none\">svn_load_dirs.pl</command>, it examines the contents of your existing <quote>current</quote> vendor drop, and compares them with the proposed new vendor drop. In the trivial case, there will be no files that are in one version and not the other, and the script will perform the new import without incident. If, however, there are discrepancies in the file layouts between versions, <command moreinfo=\"none\">svn_load_dirs.pl</command> will prompt you for how you would like to resolve those differences. For example, you will have the opportunity to tell the script that you know that the file <filename moreinfo=\"none\">math.c</filename> in version 1.0 of libcomplex was renamed to <filename moreinfo=\"none\">arithmetic.c</filename> in libcomplex 1.1. Any discrepancies not explained by moves are treated as regular additions and deletions."
+msgstr ""
+
+#: ./build/en/book.xml:9594(para) 
+msgid "The script also accepts a separate configuration file for setting properties on files and directories matching a regular expression that are <emphasis>added</emphasis> to the repository. This configuration file is specified to <command moreinfo=\"none\">svn_load_dirs.pl</command> using the <option>-p</option> command-line option. Each line of the configuration file is a whitespace-delimited set of two or four values: a Perl-style regular expression to match the added path against, a control keyword (either <literal moreinfo=\"none\">break</literal> or <literal moreinfo=\"none\">cont</literal>), and then optionally a property name and value."
+msgstr ""
+
+#: ./build/en/book.xml:9606(screen) 
+#, no-wrap
+msgid "\n\\.png$              break   svn:mime-type   image/png\n\\.jpe?g$            break   svn:mime-type   image/jpeg\n\\.m3u$              cont    svn:mime-type   audio/x-mpegurl\n\\.m3u$              break   svn:eol-style   LF\n.*                  break   svn:eol-style   native\n"
+msgstr ""
+
+#: ./build/en/book.xml:9614(para) 
+msgid "For each added path, the configured property changes whose regular expression matches the path are applied in order, unless the control specification is <literal moreinfo=\"none\">break</literal> (which means that no more property changes should be applied to that path). If the control specification is <literal moreinfo=\"none\">cont</literal>—an abbreviation for <literal moreinfo=\"none\">continue</literal>—then matching will continue with the next line of the configuration file."
+msgstr ""
+
+#: ./build/en/book.xml:9623(para) 
+msgid "Any whitespace in the regular expression, property name, or property value must be surrounded by either single or double quote characters. You can escape quote characters that are not used for wrapping whitespace by preceding them with a backslash (<literal moreinfo=\"none\">\\</literal>) character. The backslash escapes only quotes when parsing the configuration file, so do not protect any other characters beyond what is necessary for the regular expression."
+msgstr ""
+
+#: ./build/en/book.xml:9641(para) 
+msgid "We've covered a lot of ground in this chapter. We've discussed the concepts of tags and branches, and demonstrated how Subversion implements these concepts by copying directories with the <command moreinfo=\"none\">svn copy</command> command. We've shown how to use <command moreinfo=\"none\">svn merge</command> to copy changes from one branch to another, or roll back bad changes. We've gone over the use of <command moreinfo=\"none\">svn switch</command> to create mixed-location working copies. And we've talked about how one might manage the organization and lifetimes of branches in a repository."
+msgstr ""
+
+#: ./build/en/book.xml:9652(para) 
+msgid "Remember the Subversion mantra: branches and tags are cheap. So use them liberally! At the same time, don't forget to use good merging habits. Cheap copies are only useful when you're careful about tracking your merging actions."
+msgstr ""
+
+#: ./build/en/book.xml:9670(title) 
+msgid "Repository Administration"
+msgstr ""
+
+#: ./build/en/book.xml:9672(para) 
+msgid "The Subversion repository is the central storehouse of all your versioned data. As such, it becomes an obvious candidate for all the love and attention an administrator can offer. While the repository is generally a low-maintenance item, it is important to understand how to properly configure and care for it so that potential problems are avoided, and actual problems are safely resolved."
+msgstr ""
+
+#: ./build/en/book.xml:9680(para) 
+msgid "In this chapter, we'll discuss how to create and configure a Subversion repository. We'll also talk about repository maintenance, providing examples of how and when to use the <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command> tools provided with Subversion. We'll address some common questions and mistakes, and give some suggestions on how to arrange the data in the repository."
+msgstr ""
+
+#: ./build/en/book.xml:9694(para) 
+msgid "This may sound really prestigious and lofty, but we're just talking about anyone who is interested in that mysterious realm beyond the working copy where everyone's data hangs out."
+msgstr ""
+
+#: ./build/en/book.xml:9688(para) 
+msgid "If you plan to access a Subversion repository only in the role of a user whose data is under version control (that is, via a Subversion client), you can skip this chapter altogether. However, if you are, or wish to become, a Subversion repository administrator, <placeholder-1/> this chapter is for you."
+msgstr ""
+
+#: ./build/en/book.xml:9706(title) 
+msgid "The Subversion Repository, Defined"
+msgstr ""
+
+#: ./build/en/book.xml:9708(para) 
+msgid "Before jumping into the broader topic of repository administration, let's further define what a repository is. How does it look? How does it feel? Does it take its tea hot or iced, sweetened, and with lemon? As an administrator, you'll be expected to understand the composition of a repository both from a literal, OS-level perspective—how a repository looks and acts with respect to non-Subversion tools—and from a logical perspective—dealing with how data is represented <emphasis>inside</emphasis> the repository."
+msgstr ""
+
+#: ./build/en/book.xml:9718(para) 
+msgid "Seen through the eyes of a typical file browser application (such as the Windows Explorer) or command-line based filesystem navigation tools, the Subversion repository is just another directory full of stuff. There are some subdirectories with human-readable configuration files in them, some subdirectories with some not-so-human-readable data files, and so on. As in other areas of the Subversion design, modularity is given high regard, and hierarchical organization is preferred to cluttered chaos. So a shallow glance into a typical repository from a nuts-and-bolts perspective is sufficient to reveal the basic components of the repository:"
+msgstr ""
+
+#: ./build/en/book.xml:9730(screen) 
+#, no-wrap
+msgid "\n$ ls repos\nconf/  dav/  db/  format  hooks/  locks/  README.txt\n"
+msgstr ""
+
+#: ./build/en/book.xml:9735(para) 
+msgid "Here's a quick fly-by overview of what exactly you're seeing in this directory listing. (Don't get bogged down in the terminology—detailed coverage of these components exists elsewhere in this and other chapters.)"
+msgstr ""
+
+#: ./build/en/book.xml:9742(term) 
+msgid "conf"
+msgstr ""
+
+#: ./build/en/book.xml:9744(para) 
+msgid "A directory containing repository configuration files."
+msgstr ""
+
+#: ./build/en/book.xml:9748(term) 
+msgid "dav"
+msgstr ""
+
+#: ./build/en/book.xml:9750(para) 
+msgid "A directory provided to mod_dav_svn for its private housekeeping data."
+msgstr ""
+
+#: ./build/en/book.xml:9755(term) 
+msgid "db"
+msgstr ""
+
+#: ./build/en/book.xml:9757(para) 
+msgid "The data store for all of your versioned data."
+msgstr ""
+
+#: ./build/en/book.xml:9761(term) 
+msgid "format"
+msgstr ""
+
+#: ./build/en/book.xml:9763(para) 
+msgid "A file whose contents are a single integer value that dictates the version number of the repository layout."
+msgstr ""
+
+#: ./build/en/book.xml:9768(term) ./build/en/book.xml:24506(secondary) ./build/en/book.xml:24558(secondary) ./build/en/book.xml:24613(secondary) ./build/en/book.xml:24665(secondary) ./build/en/book.xml:24733(secondary) ./build/en/book.xml:24803(secondary) ./build/en/book.xml:24860(secondary) ./build/en/book.xml:24914(secondary) ./build/en/book.xml:24973(secondary) 
+msgid "hooks"
+msgstr ""
+
+#: ./build/en/book.xml:9770(para) 
+msgid "A directory full of hook script templates (and hook scripts themselves, once you've installed some)."
+msgstr ""
+
+#: ./build/en/book.xml:9775(term) 
+msgid "locks"
+msgstr ""
+
+#: ./build/en/book.xml:9777(para) 
+msgid "A directory for Subversion's repository lock files, used for tracking accessors to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:9782(term) 
+msgid "README.txt"
+msgstr ""
+
+#: ./build/en/book.xml:9784(para) 
+msgid "A file whose contents merely inform its readers that they are looking at a Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:9790(para) 
+msgid "Of course, when accessed via the Subversion libraries, this otherwise unremarkable collection of files and directories suddenly becomes an implementation of a virtual, versioned filesystem, complete with customizable event triggers. This filesystem has its own notions of directories and files, very similar to the notions of such things held by real filesystems (such as NTFS, FAT32, ext3, and so on). But this is a special filesystem—it hangs these directories and files from revisions, keeping all the changes you've ever made to them safely stored and forever accessible. This is where the entirety of your versioned data lives."
+msgstr ""
+
+#: ./build/en/book.xml:9808(title) 
+msgid "Strategies for Repository Deployment"
+msgstr ""
+
+#: ./build/en/book.xml:9810(para) 
+msgid "Due largely to the simplicity of the overall design of the Subversion repository and the technologies on which it relies, creating and configuring a repository are fairly straightforward tasks. There are a few preliminary decisions you'll want to make, but the actual work involved in any given setup of a Subversion repository is pretty straightforward, tending towards mindless repetition if you find yourself setting up multiples of these things."
+msgstr ""
+
+#: ./build/en/book.xml:9819(para) 
+msgid "Some of things you'll want to consider up front, though, are as follows:"
+msgstr ""
+
+#: ./build/en/book.xml:9824(para) 
+msgid "What data do you expect to live in your repository (or repositories), and how will that data be organized?"
+msgstr ""
+
+#: ./build/en/book.xml:9828(para) 
+msgid "Where will your repository live, and how will it be accessed?"
+msgstr ""
+
+#: ./build/en/book.xml:9832(para) 
+msgid "What types of access control and repository event reporting do you need?"
+msgstr ""
+
+#: ./build/en/book.xml:9836(para) 
+msgid "Which of the available types of data store do you want to use?"
+msgstr ""
+
+#: ./build/en/book.xml:9841(para) 
+msgid "In this section, we'll try to help you answer those questions."
+msgstr ""
+
+#: ./build/en/book.xml:9846(title) 
+msgid "Planning Your Repository Organization"
+msgstr ""
+
+#: ./build/en/book.xml:9848(para) 
+msgid "While Subversion allows you to move around versioned files and directories without any loss of information, and even provides ways of moving whole sets of versioned history from one repository to another, doing so can greatly disrupt the workflow of those who access the repository often and come to expect things to be at certain locations. So before creating a new repository, try to peer into the future a bit; plan ahead before placing your data under version control. By conscientiously <quote>laying out</quote> your repository or repositories and their versioned contents ahead of time, you can prevent many future headaches."
+msgstr ""
+
+#: ./build/en/book.xml:9860(para) 
+msgid "Let's assume that as repository administrator, you will be responsible for supporting the version control system for several projects. Your first decision is whether to use a single repository for multiple projects, or to give each project its own repository, or some compromise of these two."
+msgstr ""
+
+#: ./build/en/book.xml:9867(para) 
+msgid "There are benefits to using a single repository for multiple projects, most obviously the lack of duplicated maintenance. A single repository means that there is one set of hook programs, one thing to routinely backup, one thing to dump and load if Subversion releases an incompatible new version, and so on. Also, you can move data between projects easily, and without losing any historical versioning information."
+msgstr ""
+
+#: ./build/en/book.xml:9893(para) 
+msgid "Whether founded in ignorance or in poorly considered concepts about how to derive legitimate software development metrics, global revision numbers are a silly thing to fear, and <emphasis>not</emphasis> the kind of thing you should weigh when deciding how to arrange your projects and repositories."
+msgstr ""
+
+#: ./build/en/book.xml:9876(para) 
+msgid "The downside of using a single repository is that different projects may have different requirements in terms of the repository event triggers, such as needing to send commit notification emails to different mailing lists, or having different definitions about what does and does not constitute a legitimate commit. These aren't insurmountable problems, of course—it just means that all of your hook scripts have to be sensitive to the layout of your repository rather than assuming that the whole repository is associated with a single group of people. Also, remember that Subversion uses repository-global revision numbers. While those numbers don't have any particular magical powers, some folks still don't like the fact that even though no changes have been made to their project lately, the youngest revision number for the repository keeps climbing because other projects are actively adding new revisions. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:9902(para) 
+msgid "A middle-ground approach can be taken, too. For example, projects can be grouped by how well they relate to each other. You might have a few repositories with a handful of projects in each repository. That way, projects that are likely to want to share data can do so easily, and as new revisions are added to the repository, at least the developers know that those new revisions are at least remotely related to everyone who uses that repository."
+msgstr ""
+
+#: ./build/en/book.xml:9929(para) 
+msgid "The <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> trio are sometimes referred to as <quote>the TTB directories</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:9911(para) 
+msgid "After deciding how to organize your projects with respect to repositories, you'll probably want to think about directory hierarchies within the repositories themselves. Because Subversion uses regular directory copies for branching and tagging (see <xref linkend=\"svn.branchmerge\"/>), the Subversion community recommends that you choose a repository location for each <firstterm>project root</firstterm>—the <quote>top-most</quote> directory which contains data related to that project—and then create three subdirectories beneath that root: <filename moreinfo=\"none\">trunk</filename>, meaning the directory under which the main project development occurs; <filename moreinfo=\"none\">branches</filename>, which is a directory in which to create various named branches of the main development line; <filename moreinfo=\"none\">tags</filename>, which is a collection of tree snapshots that are created, and perhaps destroyed, but never changed. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:9935(para) 
+msgid "For example, your repository might look like:"
+msgstr ""
+
+#: ./build/en/book.xml:9937(screen) 
+#, no-wrap
+msgid "\n/\n   calc/\n      trunk/\n      tags/\n      branches/\n   calendar/\n      trunk/\n      tags/\n      branches/\n   spreadsheet/\n      trunk/\n      tags/\n      branches/\n   …\n"
+msgstr ""
+
+#: ./build/en/book.xml:9954(para) 
+msgid "Note that it doesn't matter where in your repository each project root is. If you have only one project per repository, the logical place to put each project root is at the root of that project's respective repository. If you have multiple projects, you might want to arrange them in groups inside the repository, perhaps putting projects with similar goals or shared code in the same subdirectory, or maybe just grouping them alphabetically. Such an arrangement might look like:"
+msgstr ""
+
+#: ./build/en/book.xml:9964(screen) 
+#, no-wrap
+msgid "\n/\n   utils/\n      calc/\n         trunk/\n         tags/\n         branches/\n      calendar/\n         trunk/\n         tags/\n         branches/\n      …\n   office/\n      spreadsheet/\n         trunk/\n         tags/\n         branches/\n      …\n"
+msgstr ""
+
+#: ./build/en/book.xml:9984(para) 
+msgid "Lay out your repository in whatever way you see fit. Subversion does not expect or enforce a layout schema—in its eyes, a directory is a directory is a directory. Ultimately, you should choose the repository arrangement that meets the needs of the people who work on the projects that live there."
+msgstr ""
+
+#: ./build/en/book.xml:9991(para) 
+msgid "In the name of full disclosure, though, we'll mention another very common layout. In this layout, the <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> directories live in the root directory of your repository, and your projects are in subdirectories beneath those, like:"
+msgstr ""
+
+#: ./build/en/book.xml:9998(screen) 
+#, no-wrap
+msgid "\n/\n   trunk/\n      calc/\n      calendar/\n      spreadsheet/\n      …\n   tags/\n      calc/\n      calendar/\n      spreadsheet/\n      …\n   branches/\n      calc/\n      calendar/\n      spreadsheet/\n      …\n"
+msgstr ""
+
+#: ./build/en/book.xml:10017(para) 
+msgid "There's nothing particularly incorrect about such a layout, but it may or may not seem as intuitive for your users. Especially in large, multi-project situations with many users, those users may tend to be familiar with only one or two of the projects in the repository. But the projects-as-branch-siblings tends to de-emphasize project individuality and focus on the entire set of projects as a single entity. That's a social issue though. We like our originally suggested arrangement for purely practical reasons—it's easier to ask about (or modify, or migrate elsewhere) the entire history of a single project when there's a single repository path that holds the entire history—past, present, tagged, and branched—for that project and that project alone."
+msgstr ""
+
+#: ./build/en/book.xml:10036(title) 
+msgid "Deciding Where and How to Host Your Repository"
+msgstr ""
+
+#: ./build/en/book.xml:10038(para) 
+msgid "Before creating your Subversion repository, an obvious question you'll need to answer is where the thing is going to live. This is strongly connected to a myriad of other questions involving how the repository will be accessed (via a Subversion server or directly), by whom (users behind your corporate firewall or the whole world out on the open Internet), what other services you'll be providing around Subversion (repository browsing interfaces, e-mail based commit notification, etc.), your data backup strategy, and so on."
+msgstr ""
+
+#: ./build/en/book.xml:10049(para) 
+msgid "We cover server choice and configuration in <xref linkend=\"svn.serverconfig\"/>, but the point we'd like to briefly make here is simply that the answers to some of these other questions might have implications that force your hand when deciding where your repository will live. For example, certain deployment scenarios might require accessing the repository via a remote filesystem from multiple computers, in which case (as you'll read in the next section) your choice of a repository back-end data store turns out not to be a choice at all because only one of the available back-ends will work in this scenario."
+msgstr ""
+
+#: ./build/en/book.xml:10060(para) 
+msgid "To try to address each and every possible way to deploy Subversion is both not possible and outside the scope of this book. We simply encourage you to evaluate your options using these pages and other sources as your reference material, and plan ahead."
+msgstr ""
+
+#: ./build/en/book.xml:10070(title) 
+msgid "Choosing a Data Store"
+msgstr ""
+
+#: ./build/en/book.xml:10084(para) 
+msgid "Often pronounced <quote>fuzz-fuzz</quote>, if Jack Repenning has anything to say about it. (This book, however, assumes that the reader is thinking <quote>eff-ess-eff-ess</quote>.)"
+msgstr ""
+
+#: ./build/en/book.xml:10072(para) 
+msgid "As of version 1.1, Subversion provides two options for the type of underlying data store—often referred to as <quote>the back-end</quote> or, somewhat confusingly, <quote>the (versioned) filesystem</quote>—that each repository uses. One type of data store keeps everything in a Berkeley DB (or BDB) database environment; repositories that use this type are often referred to as being <quote>BDB-backed</quote>. The other type stores data in ordinary flat files, using a custom format. Subversion developers have adopted the habit of referring to this latter data storage mechanism as <firstterm>FSFS</firstterm><placeholder-1/> —a versioned filesystem implementation that uses the native OS filesystem to store data."
+msgstr ""
+
+#: ./build/en/book.xml:10092(para) 
+msgid "<xref linkend=\"svn.reposadmin.basics.backends.tbl-1\"/> gives a comparative overview of Berkeley DB and FSFS repositories."
+msgstr ""
+
+#: ./build/en/book.xml:10097(title) 
+msgid "Repository Data Store Comparison"
+msgstr ""
+
+#: ./build/en/book.xml:10101(entry) 
+msgid "Category"
+msgstr ""
+
+#: ./build/en/book.xml:10102(entry) ./build/en/book.xml:12670(entry) 
+msgid "Feature"
+msgstr ""
+
+#: ./build/en/book.xml:10103(entry) ./build/en/book.xml:10207(title) 
+msgid "Berkeley DB"
+msgstr ""
+
+#: ./build/en/book.xml:10104(entry) ./build/en/book.xml:10335(title) 
+msgid "FSFS"
+msgstr ""
+
+#: ./build/en/book.xml:10109(entry) 
+msgid "Reliability"
+msgstr ""
+
+#: ./build/en/book.xml:10110(entry) 
+msgid "Data integrity"
+msgstr ""
+
+#: ./build/en/book.xml:10111(entry) 
+msgid "when properly deployed, extremely reliable; Berkeley DB 4.4 brings auto-recovery"
+msgstr ""
+
+#: ./build/en/book.xml:10113(entry) 
+msgid "older versions had some rarely demonstrated, but data-destroying bugs"
+msgstr ""
+
+#: ./build/en/book.xml:10117(entry) 
+msgid "Sensitivity to interruptions"
+msgstr ""
+
+#: ./build/en/book.xml:10119(quote) 
+msgid "wedged"
+msgstr ""
+
+#: ./build/en/book.xml:10118(entry) 
+msgid "very; crashes and permission problems can leave the database <placeholder-1/>, requiring journaled recovery procedures"
+msgstr ""
+
+#: ./build/en/book.xml:10121(entry) 
+msgid "quite insensitive"
+msgstr ""
+
+#: ./build/en/book.xml:10124(entry) 
+msgid "Accessibility"
+msgstr ""
+
+#: ./build/en/book.xml:10125(entry) 
+msgid "Usable from a read-only mount"
+msgstr ""
+
+#: ./build/en/book.xml:10126(entry) ./build/en/book.xml:10131(entry) 
+msgid "no"
+msgstr ""
+
+#: ./build/en/book.xml:10127(entry) ./build/en/book.xml:10132(entry) ./build/en/book.xml:10137(entry) 
+msgid "yes"
+msgstr ""
+
+#: ./build/en/book.xml:10130(entry) 
+msgid "Platform-independent storage"
+msgstr ""
+
+#: ./build/en/book.xml:10135(entry) 
+msgid "Usable over network filesystems"
+msgstr ""
+
+#: ./build/en/book.xml:10136(entry) 
+msgid "generally, no"
+msgstr ""
+
+#: ./build/en/book.xml:10140(entry) 
+msgid "Group permissions handling"
+msgstr ""
+
+#: ./build/en/book.xml:10141(entry) 
+msgid "sensitive to user umask problems; best if accessed by only one user"
+msgstr ""
+
+#: ./build/en/book.xml:10143(entry) 
+msgid "works around umask problems"
+msgstr ""
+
+#: ./build/en/book.xml:10146(entry) 
+msgid "Scalability"
+msgstr ""
+
+#: ./build/en/book.xml:10147(entry) 
+msgid "Repository disk usage"
+msgstr ""
+
+#: ./build/en/book.xml:10148(entry) 
+msgid "larger (especially if logfiles aren't purged)"
+msgstr ""
+
+#: ./build/en/book.xml:10149(entry) 
+msgid "smaller"
+msgstr ""
+
+#: ./build/en/book.xml:10152(entry) 
+msgid "Number of revision trees"
+msgstr ""
+
+#: ./build/en/book.xml:10153(entry) 
+msgid "database; no problems"
+msgstr ""
+
+#: ./build/en/book.xml:10154(entry) 
+msgid "some older native filesystems don't scale well with thousands of entries in a single directory"
+msgstr ""
+
+#: ./build/en/book.xml:10158(entry) 
+msgid "Directories with many files"
+msgstr ""
+
+#: ./build/en/book.xml:10159(entry) 
+msgid "slower"
+msgstr ""
+
+#: ./build/en/book.xml:10160(entry) 
+msgid "faster"
+msgstr ""
+
+#: ./build/en/book.xml:10163(entry) 
+msgid "Performance"
+msgstr ""
+
+#: ./build/en/book.xml:10164(entry) 
+msgid "Checking out latest revision"
+msgstr ""
+
+#: ./build/en/book.xml:10165(entry) ./build/en/book.xml:10166(entry) 
+msgid "no meaningful difference"
+msgstr ""
+
+#: ./build/en/book.xml:10169(entry) 
+msgid "Large commits"
+msgstr ""
+
+#: ./build/en/book.xml:10170(entry) 
+msgid "slower overall, but cost is amortized across the lifetime of the commit"
+msgstr ""
+
+#: ./build/en/book.xml:10172(entry) 
+msgid "faster overall, but finalization delay may cause client timeouts"
+msgstr ""
+
+#: ./build/en/book.xml:10179(para) 
+msgid "There are advantages and disadvantages to each of these two back-end types. Neither of them is more <quote>official</quote> than the other, though the newer FSFS is the default data store as of Subversion 1.2. Both are reliable enough to trust with your versioned data. But as you can see in <xref linkend=\"svn.reposadmin.basics.backends.tbl-1\"/>, the FSFS backend provides quite a bit more flexibility in terms of its supported deployment scenarios. More flexibility means you have to work a little harder to find ways to deploy it incorrectly. Those reasons—plus the fact that not using Berkeley DB means there's one fewer component in the system—largely explain why today almost everyone uses the FSFS backend when creating new repositories."
+msgstr ""
+
+#: ./build/en/book.xml:10193(para) 
+msgid "Fortunately, most programs which access Subversion repositories are blissfully ignorant of which back-end data store is in use. And you aren't even necessarily stuck with your first choice of a data store—in the event that you change your mind later, Subversion provides ways of migrating your repository's data into another repository that uses a different back-end data store. We talk more about that later in this chapter."
+msgstr ""
+
+#: ./build/en/book.xml:10202(para) 
+msgid "The following subsections provide a more detailed look at the available data store types."
+msgstr ""
+
+#: ./build/en/book.xml:10209(para) 
+msgid "When the initial design phase of Subversion was in progress, the developers decided to use Berkeley DB for a variety of reasons, including its open-source license, transaction support, reliability, performance, API simplicity, thread-safety, support for cursors, and so on."
+msgstr ""
+
+#: ./build/en/book.xml:10216(para) 
+msgid "Berkeley DB provides real transaction support—perhaps its most powerful feature. Multiple processes accessing your Subversion repositories don't have to worry about accidentally clobbering each other's data. The isolation provided by the transaction system is such that for any given operation, the Subversion repository code sees a static view of the database—not a database that is constantly changing at the hand of some other process—and can make decisions based on that view. If the decision made happens to conflict with what another process is doing, the entire operation is rolled back as if it never happened, and Subversion gracefully retries the operation against a new, updated (and yet still static) view of the database."
+msgstr ""
+
+#: ./build/en/book.xml:10231(para) 
+msgid "Another great feature of Berkeley DB is <firstterm>hot backups</firstterm>—the ability to backup the database environment without taking it <quote>offline</quote>. We'll discuss how to backup your repository in <xref linkend=\"svn.reposadmin.maint.backup\"/>, but the benefits of being able to make fully functional copies of your repositories without any downtime should be obvious."
+msgstr ""
+
+#: ./build/en/book.xml:10238(para) 
+msgid "Berkeley DB is also a very reliable database system when properly used. Subversion uses Berkeley DB's logging facilities, which means that the database first writes to on-disk log files a description of any modifications it is about to make, and then makes the modification itself. This is to ensure that if anything goes wrong, the database system can back up to a previous <firstterm>checkpoint</firstterm>—a location in the log files known not to be corrupt—and replay transactions until the data is restored to a usable state. See <xref linkend=\"svn.reposadmin.maint.diskspace\"/> for more about Berkeley DB log files."
+msgstr ""
+
+#: ./build/en/book.xml:10251(para) 
+msgid "But every rose has its thorn, and so we must note some known limitations of Berkeley DB. First, Berkeley DB environments are not portable. You cannot simply copy a Subversion repository that was created on a Unix system onto a Windows system and expect it to work. While much of the Berkeley DB database format is architecture independent, there are other aspects of the environment that are not. Secondly, Subversion uses Berkeley DB in a way that will not operate on Windows 95/98 systems—if you need to house a BDB-backed repository on a Windows machine, stick with Windows 2000 or newer."
+msgstr ""
+
+#: ./build/en/book.xml:10266(para) 
+msgid "Berkeley DB requires that the underlying filesystem implement strict POSIX locking semantics, and more importantly, the ability to map files directly into process memory."
+msgstr ""
+
+#: ./build/en/book.xml:10263(para) 
+msgid "While Berkeley DB promises to behave correctly on network shares that meet a particular set of specifications, <placeholder-1/> most networked filesystem types and appliances do <emphasis>not</emphasis> actually meet those requirements. And in no case can you allow a BDB-backed repository that resides on a network share to be accessed by multiple clients of that share at once (which quite often is the whole point of having the repository live on a network share in the first place)."
+msgstr ""
+
+#: ./build/en/book.xml:10280(para) 
+msgid "If you attempt to use Berkeley DB on a non-compliant remote filesystem, the results are unpredictable—you may see mysterious errors right away, or it may be months before you discover that your repository database is subtly corrupted. You should strongly consider using the FSFS data store for repositories that need to live on a network share."
+msgstr ""
+
+#: ./build/en/book.xml:10289(para) 
+msgid "Finally, because Berkeley DB is a library linked directly into Subversion, it's more sensitive to interruptions than a typical relational database system. Most SQL systems, for example, have a dedicated server process that mediates all access to tables. If a program accessing the database crashes for some reason, the database daemon notices the lost connection and cleans up any mess left behind. And because the database daemon is the only process accessing the tables, applications don't need to worry about permission conflicts. These things are not the case with Berkeley DB, however. Subversion (and programs using Subversion libraries) access the database tables directly, which means that a program crash can leave the database in a temporarily inconsistent, inaccessible state. When this happens, an administrator needs to ask Berkeley DB to restore to a checkpoint, which is a bit of an annoyance. Other things can cause a repository to <quote>wedge</quote> besides crashed processes, such as programs conflicting over ownership and permissions on the database files."
+msgstr ""
+
+#: ./build/en/book.xml:10310(para) 
+msgid "Berkeley DB 4.4 brings (to Subversion 1.4 and better) the ability for Subversion to automatically and transparently recover Berkeley DB environments in need of such recovery. When a Subversion process attaches to a repository's Berkeley DB environment, it uses some process accounting mechanisms to detect any unclean disconnections by previous processes, performs any necessary recovery, and then continues on as if nothing happened. This doesn't completely eliminate instances of repository wedging, but it does drastically reduce the amount of human interaction required to recover from them."
+msgstr ""
+
+#: ./build/en/book.xml:10323(para) 
+msgid "So while a Berkeley DB repository is quite fast and scalable, it's best used by a single server process running as one user—such as Apache's <command moreinfo=\"none\">httpd</command> or <command moreinfo=\"none\">svnserve</command> (see <xref linkend=\"svn.serverconfig\"/>)—rather than accessing it as many different users via <literal moreinfo=\"none\">file://</literal> or <literal moreinfo=\"none\">svn+ssh://</literal> URLs. If using a Berkeley DB repository directly as multiple users, be sure to read <xref linkend=\"svn.serverconfig.multimethod\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:10337(para) 
+msgid "In mid-2004, a second type of repository storage system—one which doesn't use a database at all—came into being. An FSFS repository stores the changes associated with a revision in a single file, and so all of a repository's revisions can be found in a single subdirectory full of numbered files. Transactions are created in separate subdirectories as individual files. When complete, the transaction file is renamed and moved into the revisions directory, thus guaranteeing that commits are atomic. And because a revision file is permanent and unchanging, the repository also can be backed up while <quote>hot</quote>, just like a BDB-backed repository."
+msgstr ""
+
+#: ./build/en/book.xml:10351(para) 
+msgid "The FSFS revision files describe a revision's directory structure, file contents, and deltas against files in other revision trees. Unlike a Berkeley DB database, this storage format is portable across different operating systems and isn't sensitive to CPU architecture. Because there's no journaling or shared-memory files being used, the repository can be safely accessed over a network filesystem and examined in a read-only environment. The lack of database overhead also means that the overall repository size is a bit smaller."
+msgstr ""
+
+#: ./build/en/book.xml:10362(para) 
+msgid "FSFS has different performance characteristics too. When committing a directory with a huge number of files, FSFS is able to more quickly append directory entries. On the other hand, FSFS writes the latest version of a file as a delta against an earlier version, which means that checking out the latest tree is a bit slower than fetching the fulltexts stored in a Berkeley DB HEAD revision. FSFS also has a longer delay when finalizing a commit, which could in extreme cases cause clients to time out while waiting for a response."
+msgstr ""
+
+#: ./build/en/book.xml:10373(para) 
+msgid "The most important distinction, however, is FSFS's inability to be <quote>wedged</quote> when something goes wrong. If a process using a Berkeley DB database runs into a permissions problem or suddenly crashes, the database can be left in an unusable state until an administrator recovers it. If the same scenarios happen to a process using an FSFS repository, the repository isn't affected at all. At worst, some transaction data is left behind."
+msgstr ""
+
+#: ./build/en/book.xml:10387(para) 
+msgid "Oracle bought Sleepycat and its flagship software, Berkeley DB, on Valentine's Day in 2006."
+msgstr ""
+
+#: ./build/en/book.xml:10382(para) 
+msgid "The only real argument against FSFS is its relative immaturity compared to Berkeley DB. Unlike Berkeley DB, which has years of history, its own dedicated development team and, now, Oracle's mighty name attached to it, <placeholder-1/> FSFS is a much newer bit of engineering. Prior to Subversion 1.4, it was still shaking out some pretty serious data integrity bugs which, while only triggered in very rare cases, nonetheless did occur. That said, FSFS has quickly become the back-end of choice for some of the largest public and private Subversion repositories, and promises a lower barrier to entry for Subversion across the board."
+msgstr ""
+
+#: ./build/en/book.xml:10407(title) 
+msgid "Creating and Configuring Your Repository"
+msgstr ""
+
+#: ./build/en/book.xml:10409(para) 
+msgid "In <xref linkend=\"svn.reposadmin.planning\"/>, we looked at some of the important decisions that should be made before creating and configuring your Subversion repository. Now, we finally get to get our hands dirty! In this section, we'll see how to actually create a Subversion repository and configure it to perform custom actions when special repository events occur."
+msgstr ""
+
+#: ./build/en/book.xml:10419(title) 
+msgid "Creating the Repository"
+msgstr ""
+
+#: ./build/en/book.xml:10421(para) 
+msgid "Subversion repository creation is an incredibly simple task. The <command moreinfo=\"none\">svnadmin</command> utility that comes with Subversion provides a subcommand (<literal moreinfo=\"none\">create</literal>) for doing just that."
+msgstr ""
+
+#: ./build/en/book.xml:10426(screen) 
+#, no-wrap
+msgid "\n$ svnadmin create /path/to/repos\n"
+msgstr ""
+
+#: ./build/en/book.xml:10430(para) 
+msgid "This creates a new repository in the directory <filename moreinfo=\"none\">/path/to/repos</filename>, and with the default filesystem data store. Prior to Subversion 1.2, the default was to use Berkeley DB; the default is now FSFS. You can explicitly choose the filesystem type using the <option>--fs-type</option> argument, which accepts as a parameter either <literal moreinfo=\"none\">fsfs</literal> or <literal moreinfo=\"none\">bdb</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:10439(screen) 
+#, no-wrap
+msgid "\n$ # Create an FSFS-backed repository\n$ svnadmin create --fs-type fsfs /path/to/repos\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:10445(screen) 
+#, no-wrap
+msgid "\n# Create a Berkeley-DB-backed repository\n$ svnadmin create --fs-type bdb /path/to/repos\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:10451(para) 
+msgid "After running this simple command, you have a Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:10455(para) 
+msgid "The path argument to <command moreinfo=\"none\">svnadmin</command> is just a regular filesystem path and not a URL like the <command moreinfo=\"none\">svn</command> client program uses when referring to repositories. Both <command moreinfo=\"none\">svnadmin</command> and <command moreinfo=\"none\">svnlook</command> are considered server-side utilities—they are used on the machine where the repository resides to examine or modify aspects of the repository, and are in fact unable to perform tasks across a network. A common mistake made by Subversion newcomers is trying to pass URLs (even <quote>local</quote><literal moreinfo=\"none\">file://</literal> ones) to these two programs."
+msgstr ""
+
+#: ./build/en/book.xml:10468(para) 
+msgid "Present in the <filename moreinfo=\"none\">db/</filename> subdirectory of your repository is the implementation of the versioned filesystem. Your new repository's versioned filesystem begins life at revision 0, which is defined to consist of nothing but the top-level root (<filename moreinfo=\"none\">/</filename>) directory. Initially, revision 0 also has a single revision property, <literal moreinfo=\"none\">svn:date</literal>, set to the time at which the repository was created."
+msgstr ""
+
+#: ./build/en/book.xml:10477(para) 
+msgid "Now that you have a repository, it's time to customize it."
+msgstr ""
+
+#: ./build/en/book.xml:10481(para) 
+msgid "While some parts of a Subversion repository—such as the configuration files and hook scripts—are meant to be examined and modified manually, you shouldn't (and shouldn't need to) tamper with the other parts of the repository <quote>by hand</quote>. The <command moreinfo=\"none\">svnadmin</command> tool should be sufficient for any changes necessary to your repository, or you can look to third-party tools (such as Berkeley DB's tool suite) for tweaking relevant subsections of the repository. Do <emphasis>not</emphasis> attempt manual manipulation of your version control history by poking and prodding around in your repository's data store files!"
+msgstr ""
+
+#: ./build/en/book.xml:10499(title) 
+msgid "Implementing Repository Hooks"
+msgstr ""
+
+#: ./build/en/book.xml:10501(para) 
+msgid "A <firstterm>hook</firstterm> is a program triggered by some repository event, such as the creation of a new revision or the modification of an unversioned property. Some hooks (the so-called <quote>pre hooks</quote>) run in advance of a repository operation and provide a means by which to both report what is about to happen and to prevent it from happening at all. Other hooks (the <quote>post hooks</quote>) run after the completion of a repository event, and are useful for reporting purposes only. Each hook is handed enough information to tell what that event is (or was), the specific repository changes proposed (or completed), and the username of the person who triggered the event."
+msgstr ""
+
+#: ./build/en/book.xml:10514(para) 
+msgid "The <filename moreinfo=\"none\">hooks</filename> subdirectory is, by default, filled with templates for various repository hooks."
+msgstr ""
+
+#: ./build/en/book.xml:10518(screen) 
+#, no-wrap
+msgid "\n$ ls repos/hooks/\npost-commit.tmpl\t  post-unlock.tmpl  pre-revprop-change.tmpl\npost-lock.tmpl\t\t  pre-commit.tmpl   pre-unlock.tmpl\npost-revprop-change.tmpl  pre-lock.tmpl     start-commit.tmpl\n"
+msgstr ""
+
+#: ./build/en/book.xml:10525(para) 
+msgid "There is one template for each hook that the Subversion repository supports, and by examining the contents of those template scripts, you can see what triggers each script to run and what data is passed to that script. Also present in many of these templates are examples of how one might use that script, in conjunction with other Subversion-supplied programs, to perform common useful tasks. To actually install a working hook, you need only place some executable program or script into the <filename moreinfo=\"none\">repos/hooks</filename> directory which can be executed as the name (like <command moreinfo=\"none\">start-commit</command> or <command moreinfo=\"none\">post-commit</command>) of the hook."
+msgstr ""
+
+#: ./build/en/book.xml:10538(para) 
+msgid "On Unix platforms, this means supplying a script or program (which could be a shell script, a Python program, a compiled C binary, or any number of other things) named exactly like the name of the hook. Of course, the template files are present for more than just informational purposes—the easiest way to install a hook on Unix platforms is to simply copy the appropriate template file to a new file that lacks the <literal moreinfo=\"none\">.tmpl</literal> extension, customize the hook's contents, and ensure that the script is executable. Windows, however, uses file extensions to determine whether or not a program is executable, so you would need to supply a program whose basename is the name of the hook, and whose extension is one of the special extensions recognized by Windows for executable programs, such as <filename moreinfo=\"none\">.exe</filename> or <filename moreinfo=\"none\">.com</filename> for programs, and <filename moreinfo=\"none\">.bat</filename> for batch files."
+msgstr ""
+
+#: ./build/en/book.xml:10557(para) 
+msgid "For security reasons, the Subversion repository executes hook programs with an empty environment—that is, no environment variables are set at all, not even <literal moreinfo=\"none\">$PATH</literal> (or <literal moreinfo=\"none\">%PATH%</literal>, under Windows). Because of this, many administrators are baffled when their hook program runs fine by hand, but doesn't work when run by Subversion. Be sure to explicitly set any necessary environment variables in your hook program and/or use absolute paths to programs."
+msgstr ""
+
+#: ./build/en/book.xml:10568(para) 
+msgid "Subversion will attempt to execute hooks as the same user who owns the process which is accessing the Subversion repository. In most cases, the repository is being accessed via a Subversion server, so this user is the same user as which that server runs on the system. The hooks themselves will need to be configured with OS-level permissions that allow that user to execute them. Also, this means that any file or programs (including the Subversion repository itself) accessed directly or indirectly by the hook will be accessed as the same user. In other words, be alert to potential permission-related problems that could prevent the hook from performing the tasks it is designed to perform."
+msgstr ""
+
+#: ./build/en/book.xml:10581(para) 
+msgid "There are nine hooks implemented by the Subversion repository, and you can get details about each of them in <xref linkend=\"svn.ref.reposhooks\"/>. As a repository administrator, you'll need to decide which of hooks you wish to implement (by way of providing an appropriately named and permissioned hook program), and how. This decision needs to be made with the bigger picture of how repository is deployed in mind. For example, if you are using server configuration stuffs to determine which usernames are permitted to commit changes to your repository, then you don't need to do this sort of access control via the hook system."
+msgstr ""
+
+#: ./build/en/book.xml:10593(para) 
+msgid "There is no shortage of Subversion hook programs and scripts freely available either from the Subversion community itself or elsewhere. These scripts cover a wide range of utility—basic access control, policy adherence checking, issue tracker integration, email- or syndication-based commit notification, and beyond. See <xref linkend=\"svn.3rdparty\"/> for discussion of some of the most commonly used hook programs. Or, if you wish to write your own, see <xref linkend=\"svn.developer\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:10603(para) 
+msgid "While hook scripts can be leveraged to do almost anything, there is one dimension in which hook script authors should show restraint: do <emphasis>not</emphasis> modify a commit transaction using hook scripts. While it might be tempting to use hook scripts to automatically correct errors or shortcomings or policy violations present in the files being committed, doing so can cause problems. Subversion keeps client-side caches of certain bits of repository data, and if you change a commit transaction in this way, those caches become indetectably stale. This inconsistency can lead to surprising and unexpected behavior. Instead of modifying the transaction, you should simply <emphasis>validate</emphasis> the transaction in the <filename moreinfo=\"none\">pre-commit</filename> hook and reject the commit if it does not meet the desired requirements. As an added bonus, your users will learn the value of careful, compliance-minded work habits."
+msgstr ""
+
+#: ./build/en/book.xml:10626(title) 
+msgid "Berkeley DB Configuration"
+msgstr ""
+
+#: ./build/en/book.xml:10628(para) 
+msgid "A Berkeley DB environment is an encapsulation of one or more databases, log files, region files and configuration files. The Berkeley DB environment has its own set of default configuration values for things like the number of database locks allowed to be taken out at any given time, or the maximum size of the journaling log files, etc. Subversion's filesystem logic additionally chooses default values for some of the Berkeley DB configuration options. However, sometimes your particular repository, with its unique collection of data and access patterns, might require a different set of configuration option values."
+msgstr ""
+
+#: ./build/en/book.xml:10640(para) 
+msgid "The producers of Berkeley DB understand that different applications and database environments have different requirements, and so they have provided a mechanism for overriding at runtime many of the configuration values for the Berkeley DB environment. Berkeley checks for the presence of a file named <filename moreinfo=\"none\">DB_CONFIG</filename> in the environment directory, and parses the options found in that file for use with that particular Berkeley DB environment."
+msgstr ""
+
+#: ./build/en/book.xml:10649(para) 
+msgid "The Berkeley DB configuration file for a BDB-backed repository is located in the repository's <filename moreinfo=\"none\">db</filename> subdirectory, at <filename moreinfo=\"none\">db/DB_CONFIG</filename>. Subversion itself creates this file when it creates the rest of the repository. The file initially contains some default options, as well as pointers to the Berkeley DB online documentation so you can read about what those options do. Of course, you are free to add any of the supported Berkeley DB options to your <filename moreinfo=\"none\">DB_CONFIG</filename> file. Just be aware that while Subversion never attempts to read or interpret the contents of the file, and makes no direct use of the option settings in it, you'll want to avoid any configuration changes that may cause Berkeley DB to behave in a fashion that is at odds with what Subversion might expect. Also, changes made to <filename moreinfo=\"none\">DB_CONFIG</filename> won't take effect until you recover the database environment (using <command moreinfo=\"none\">svnadmin recover</command>)."
+msgstr ""
+
+#: ./build/en/book.xml:10676(title) 
+msgid "Repository Maintenance"
+msgstr ""
+
+#: ./build/en/book.xml:10678(para) 
+msgid "Maintaining a Subversion repository can be a daunting task, mostly due to the complexities inherent in systems which have a database backend. Doing the task well is all about knowing the tools—what they are, when to use them, and how to use them. This section will introduce you to the repository administration tools provided by Subversion, and how to wield them to accomplish tasks such as repository data migration, upgrades, backups and cleanups."
+msgstr ""
+
+#: ./build/en/book.xml:10689(title) 
+msgid "An Administrator's Toolkit"
+msgstr ""
+
+#: ./build/en/book.xml:10691(para) 
+msgid "Subversion provides a handful of utilities useful for creating, inspecting, modifying and repairing your repository. Let's look more closely at each of those tools. Afterward, we'll briefly examine some of the utilities included in the Berkeley DB distribution that provide functionality specific to your repository's database backend not otherwise provided by Subversion's own tools."
+msgstr ""
+
+#: ./build/en/book.xml:10703(para) 
+msgid "The <command moreinfo=\"none\">svnadmin</command> program is the repository administrator's best friend. Besides providing the ability to create Subversion repositories, this program allows you to perform several maintenance operations on those repositories. The syntax of <command moreinfo=\"none\">svnadmin</command> is similar to that of other Subversion command-line programs:"
+msgstr ""
+
+#: ./build/en/book.xml:10711(screen) 
+#, no-wrap
+msgid "\n$ svnadmin help\ngeneral usage: svnadmin SUBCOMMAND REPOS_PATH  [ARGS &amp; OPTIONS ...]\nType 'svnadmin help &lt;subcommand&gt;' for help on a specific subcommand.\nType 'svnadmin --version' to see the program version and FS modules.\n\nAvailable subcommands:\n   crashtest\n   create\n   deltify\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:10724(para) 
+msgid "We've already mentioned <command moreinfo=\"none\">svnadmin</command>'s <literal moreinfo=\"none\">create</literal> subcommand (see <xref linkend=\"svn.reposadmin.basics.creating\"/>). Most of the others we will cover as they become topically relevant later in this chapter. And you can consult <xref linkend=\"svn.ref.svnadmin\"/> for a full rundown of subcommands and what each of them offers."
+msgstr ""
+
+#: ./build/en/book.xml:10736(para) 
+msgid "<command moreinfo=\"none\">svnlook</command> is a tool provided by Subversion for examining the various revisions and transactions in a repository. No part of this program attempts to change the repository. <command moreinfo=\"none\">svnlook</command> is typically used by the repository hooks for reporting the changes that are about to be committed (in the case of the <command moreinfo=\"none\">pre-commit</command> hook) or that were just committed (in the case of the <command moreinfo=\"none\">post-commit</command> hook) to the repository. A repository administrator may use this tool for diagnostic purposes."
+msgstr ""
+
+#: ./build/en/book.xml:10747(para) 
+msgid "<command moreinfo=\"none\">svnlook</command> has a straightforward syntax:"
+msgstr ""
+
+#: ./build/en/book.xml:10750(screen) 
+#, no-wrap
+msgid "\n$ svnlook help\ngeneral usage: svnlook SUBCOMMAND REPOS_PATH [ARGS &amp; OPTIONS ...]\nNote: any subcommand which takes the '--revision' and '--transaction'\n      options will, if invoked without one of those options, act on\n      the repository's youngest revision.\nType 'svnlook help &lt;subcommand$gt;' for help on a specific subcommand.\nType 'svnlook --version' to see the program version and FS modules.\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:10761(para) 
+msgid "Nearly every one of <command moreinfo=\"none\">svnlook</command>'s subcommands can operate on either a revision or a transaction tree, printing information about the tree itself, or how it differs from the previous revision of the repository. You use the <option>--revision (-r)</option> and <option>--transaction (-t)</option> options to specify which revision or transaction, respectively, to examine. In the absence of both the <option>--revision (-r)</option> and <option>--transaction (-t)</option> options, <command moreinfo=\"none\">svnlook</command> will examine the youngest (or <quote>HEAD</quote>) revision in the repository. So the following two commands do exactly the same thing when 19 is the youngest revision in the repository located at <filename moreinfo=\"none\">/path/to/repos</filename>:"
+msgstr ""
+
+#: ./build/en/book.xml:10776(screen) 
+#, no-wrap
+msgid "\n$ svnlook info /path/to/repos\n$ svnlook info /path/to/repos -r 19\n"
+msgstr ""
+
+#: ./build/en/book.xml:10781(para) 
+msgid "The only exception to these rules about subcommands is the <command moreinfo=\"none\">svnlook youngest</command> subcommand, which takes no options, and simply prints out the repository's youngest revision number."
+msgstr ""
+
+#: ./build/en/book.xml:10786(screen) 
+#, no-wrap
+msgid "\n$ svnlook youngest /path/to/repos\n19\n"
+msgstr ""
+
+#: ./build/en/book.xml:10792(para) 
+msgid "Keep in mind that the only transactions you can browse are uncommitted ones. Most repositories will have no such transactions, because transactions are usually either committed (in which case, you should access them as revision with the <option>--revision (-r)</option> option) or aborted and removed."
+msgstr ""
+
+#: ./build/en/book.xml:10800(para) 
+msgid "Output from <command moreinfo=\"none\">svnlook</command> is designed to be both human- and machine-parsable. Take as an example the output of the <literal moreinfo=\"none\">info</literal> subcommand:"
+msgstr ""
+
+#: ./build/en/book.xml:10804(screen) 
+#, no-wrap
+msgid "\n$ svnlook info /path/to/repos\nsally\n2002-11-04 09:29:13 -0600 (Mon, 04 Nov 2002)\n27\nAdded the usual\nGreek tree.\n"
+msgstr ""
+
+#: ./build/en/book.xml:10813(para) 
+msgid "The output of the <literal moreinfo=\"none\">info</literal> subcommand is defined as:"
+msgstr ""
+
+#: ./build/en/book.xml:10818(para) 
+msgid "The author, followed by a newline."
+msgstr ""
+
+#: ./build/en/book.xml:10821(para) 
+msgid "The date, followed by a newline."
+msgstr ""
+
+#: ./build/en/book.xml:10824(para) 
+msgid "The number of characters in the log message, followed by a newline."
+msgstr ""
+
+#: ./build/en/book.xml:10828(para) 
+msgid "The log message itself, followed by a newline."
+msgstr ""
+
+#: ./build/en/book.xml:10832(para) 
+msgid "This output is human-readable, meaning items like the datestamp are displayed using a textual representation instead of something more obscure (such as the number of nanoseconds since the Tasty Freeze guy drove by). But the output is also machine-parsable—because the log message can contain multiple lines and be unbounded in length, <command moreinfo=\"none\">svnlook</command> provides the length of that message before the message itself. This allows scripts and other wrappers around this command to make intelligent decisions about the log message, such as how much memory to allocate for the message, or at least how many bytes to skip in the event that this output is not the last bit of data in the stream."
+msgstr ""
+
+#: ./build/en/book.xml:10846(para) 
+msgid "<command moreinfo=\"none\">svnlook</command> can perform a variety of other queries: displaying subsets of bits of information we've mentioned previously, recursively listing versioned directory trees, reporting which paths were modified in a given revision or transaction, showing textual and property differences made to files and directories, and so on. See <xref linkend=\"svn.ref.svnlook\"/> for a full reference of <command moreinfo=\"none\">svnlook</command>'s features."
+msgstr ""
+
+#: ./build/en/book.xml:10861(para) 
+msgid "While it won't be the most commonly used tool at the administrator's disposal, <command moreinfo=\"none\">svndumpfilter</command> provides a very particular brand of useful functionality—the ability to quickly and easily modify streams of Subversion repository history data by acting as a path-based filter."
+msgstr ""
+
+#: ./build/en/book.xml:10868(para) 
+msgid "The syntax of <command moreinfo=\"none\">svndumpfilter</command> is as follows:"
+msgstr ""
+
+#: ./build/en/book.xml:10871(screen) 
+#, no-wrap
+msgid "\n$ svndumpfilter help\ngeneral usage: svndumpfilter SUBCOMMAND [ARGS &amp; OPTIONS ...]\nType \"svndumpfilter help &lt;subcommand&gt;\" for help on a specific subcommand.\nType 'svndumpfilter --version' to see the program version.\n  \nAvailable subcommands:\n   exclude\n   include\n   help (?, h)\n"
+msgstr ""
+
+#: ./build/en/book.xml:10883(para) 
+msgid "There are only two interesting subcommands. They allow you to make the choice between explicit or implicit inclusion of paths in the stream:"
+msgstr ""
+
+#: ./build/en/book.xml:10889(literal) 
+msgid "exclude"
+msgstr ""
+
+#: ./build/en/book.xml:10891(para) 
+msgid "Filter out a set of paths from the dump data stream."
+msgstr ""
+
+#: ./build/en/book.xml:10897(literal) 
+msgid "include"
+msgstr ""
+
+#: ./build/en/book.xml:10899(para) 
+msgid "Allow only the requested set of paths to pass through the dump data stream."
+msgstr ""
+
+#: ./build/en/book.xml:10905(para) 
+msgid "You can learn more about these subcommands and <command moreinfo=\"none\">svndumpfilter</command>'s unique purpose in <xref linkend=\"svn.reposadmin.maint.filtering\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:10924(para) 
+msgid "Or is that, the <quote>sync</quote>?"
+msgstr ""
+
+#: ./build/en/book.xml:10914(para) 
+msgid "The <command moreinfo=\"none\">svnsync</command> program, which is new to the 1.4 release of Subversion, provides all the functionality required for maintaining a read-only mirror of a Subversion repository. The program really has one job—to transfer one repository's versioned history into another repository. And while there are few ways to do that, its primary strength is that it can operate remotely—the <quote>source</quote> and <quote>sink</quote><placeholder-1/> repositories may be on different computers from each other and from <command moreinfo=\"none\">svnsync</command> itself."
+msgstr ""
+
+#: ./build/en/book.xml:10929(para) 
+msgid "As you might expect, <command moreinfo=\"none\">svnsync</command> has a syntax that looks very much like every other program we've mentioned in this chapter:"
+msgstr ""
+
+#: ./build/en/book.xml:10933(screen) 
+#, no-wrap
+msgid "\n$ svnsync help\ngeneral usage: svnsync SUBCOMMAND DEST_URL  [ARGS &amp; OPTIONS ...]\nType 'svnsync help &lt;subcommand&gt;' for help on a specific subcommand.\nType 'svnsync --version' to see the program version and RA modules.\n\nAvailable subcommands:\n   initialize (init)\n   synchronize (sync)\n   copy-revprops\n   help (?, h)\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:10947(para) 
+msgid "We talk more about replication repositories with <command moreinfo=\"none\">svnsync</command> in <xref linkend=\"svn.reposadmin.maint.replication\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:10954(title) 
+msgid "Berkeley DB Utilities"
+msgstr ""
+
+#: ./build/en/book.xml:10956(para) 
+msgid "If you're using a Berkeley DB repository, then all of your versioned filesystem's structure and data live in a set of database tables within the <filename moreinfo=\"none\">db/</filename> subdirectory of your repository. This subdirectory is a regular Berkeley DB environment directory, and can therefore be used in conjunction with any of the Berkeley database tools, typically provided as part of the Berkeley DB distribution."
+msgstr ""
+
+#: ./build/en/book.xml:10965(para) 
+msgid "For day-to-day Subversion use, these tools are unnecessary. Most of the functionality typically needed for Subversion repositories has been duplicated in the <command moreinfo=\"none\">svnadmin</command> tool. For example, <command moreinfo=\"none\">svnadmin list-unused-dblogs</command> and <command moreinfo=\"none\">svnadmin list-dblogs</command> perform a subset of what is provided by the Berkeley <command moreinfo=\"none\">db_archive</command> command, and <command moreinfo=\"none\">svnadmin recover</command> reflects the common use cases of the <command moreinfo=\"none\">db_recover</command> utility."
+msgstr ""
+
+#: ./build/en/book.xml:10976(para) 
+msgid "There are still a few Berkeley DB utilities that you might find useful. The <command moreinfo=\"none\">db_dump</command> and <command moreinfo=\"none\">db_load</command> programs write and read, respectively, a custom file format which describes the keys and values in a Berkeley DB database. Since Berkeley databases are not portable across machine architectures, this format is a useful way to transfer those databases from machine to machine, irrespective of architecture or operating system. Also, the <command moreinfo=\"none\">db_stat</command> utility can provide useful information about the status of your Berkeley DB environment, including detailed statistics about the locking and storage subsystems."
+msgstr ""
+
+#: ./build/en/book.xml:10989(para) 
+msgid "For more information on the Berkeley DB tool chain, visit the documentation section of the Berkeley DB section of Oracle's website, located at <ulink url=\"http://www.oracle.com/technology/documentation/berkeley-db/db/\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:10998(title) 
+msgid "Commit Log Message Correction"
+msgstr ""
+
+#: ./build/en/book.xml:11000(para) 
+msgid "Sometimes a user will have an error in her log message (a misspelling or some misinformation, perhaps). If the repository is configured (using the <literal moreinfo=\"none\">pre-revprop-change</literal> and <literal moreinfo=\"none\">post-revprop-change</literal> hooks; see <xref linkend=\"svn.reposadmin.create.hooks\"/>) to accept changes to this log message after the commit is finished, then the user can <quote>fix</quote> her log message remotely using the <command moreinfo=\"none\">svn</command> program's <literal moreinfo=\"none\">propset</literal> command (see <xref linkend=\"svn.ref\"/>). However, because of the potential to lose information forever, Subversion repositories are not, by default, configured to allow changes to unversioned properties—except by an administrator."
+msgstr ""
+
+#: ./build/en/book.xml:11013(para) 
+msgid "If a log message needs to be changed by an administrator, this can be done using <command moreinfo=\"none\">svnadmin setlog</command>. This command changes the log message (the <literal moreinfo=\"none\">svn:log</literal> property) on a given revision of a repository, reading the new value from a provided file."
+msgstr ""
+
+#: ./build/en/book.xml:11019(screen) 
+#, no-wrap
+msgid "\n$ echo \"Here is the new, correct log message\" &gt; newlog.txt\n$ svnadmin setlog myrepos newlog.txt -r 388\n"
+msgstr ""
+
+#: ./build/en/book.xml:11024(para) 
+msgid "The <command moreinfo=\"none\">svnadmin setlog</command> command alone is still bound by the same protections against modifying unversioned properties as a remote client is—the <literal moreinfo=\"none\">pre-</literal> and <literal moreinfo=\"none\">post-revprop-change</literal> hooks are still triggered, and therefore must be setup to accept changes of this nature. But an administrator can get around these protections by passing the <option>--bypass-hooks</option> option to the <command moreinfo=\"none\">svnadmin setlog</command> command."
+msgstr ""
+
+#: ./build/en/book.xml:11035(para) 
+msgid "Remember, though, that by bypassing the hooks, you are likely avoiding such things as email notifications of property changes, backup systems which track unversioned property changes, and so on. In other words, be very careful about what you are changing, and how you change it."
+msgstr ""
+
+#: ./build/en/book.xml:11048(title) 
+msgid "Managing Disk Space"
+msgstr ""
+
+#: ./build/en/book.xml:11050(para) 
+msgid "While the cost of storage has dropped incredibly in the past few years, disk usage is still a valid concern for administrators seeking to version large amounts of data. Every bit of version history information stored in the live repository is information that needs to be backed up elsewhere, perhaps multiple times as part of rotating backup schedules. It is useful to know what pieces of Subversion's repository data need to remain on the live site, which need to be backed up, and which can be safely removed."
+msgstr ""
+
+#: ./build/en/book.xml:11062(title) 
+msgid "How Subversion saves disk space"
+msgstr ""
+
+#: ./build/en/book.xml:11064(para) 
+msgid "To keep the size of the repository as small as possible, Subversion uses <firstterm>deltification</firstterm> (or, <quote>deltified storage</quote>) within the repository itself. Deltification involves encoding the representation of a chunk of data as a collection of differences against some other chunk of data. If the two pieces of data are very similar, this deltification results in storage savings for the deltified chunk—rather than taking up space equal to the size of the original data, it takes up only enough space to say, <quote>I look just like this other piece of data over here, except for the following couple of changes</quote>. The result is that most of the repository data that tends to be sizable—namely, the contents of versioned files—is stored at a much smaller size than the original <quote>fulltext</quote> representation of that data. And for repositories created with Subversion 1.4 or later, the space saving get even better—now those fulltext representations of file contents are themselves compressed."
+msgstr ""
+
+#: ./build/en/book.xml:11085(para) 
+msgid "Because all of the data that is subject to deltification in a BDB-backed repository is stored in a single Berkeley DB database file, reducing the size of the stored values will not immediately reduce the size of the database file itself. Berkeley DB will, however, keep internal records of unused areas of the database file, and consume those areas first before growing the size of the database file. So while deltification doesn't produce immediate space savings, it can drastically slow future growth of the database."
+msgstr ""
+
+#: ./build/en/book.xml:11101(title) 
+msgid "Removing dead transactions"
+msgstr ""
+
+#: ./build/en/book.xml:11103(para) 
+msgid "Though they are uncommon, there are circumstances in which a Subversion commit process might fail, leaving behind in the repository the remnants of the revision-to-be that wasn't—an uncommitted transaction and all the file and directory changes associated with it. This could happen for several reasons: perhaps the client operation was inelegantly terminated by the user, or a network failure might have occurred in the middle of an operation, etc. Regardless of the reason, dead transactions can happen. They don't do any real harm, other than consuming disk space. A fastidious administrator may nonetheless wish to remove them."
+msgstr ""
+
+#: ./build/en/book.xml:11116(para) 
+msgid "You can use <command moreinfo=\"none\">svnadmin</command>'s <literal moreinfo=\"none\">lstxns</literal> command to list the names of the currently outstanding transactions."
+msgstr ""
+
+#: ./build/en/book.xml:11120(screen) 
+#, no-wrap
+msgid "\n$ svnadmin lstxns myrepos\n19\n3a1\na45\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11128(para) 
+msgid "Each item in the resultant output can then be used with <command moreinfo=\"none\">svnlook</command> (and its <option>--transaction (-t)</option> option) to determine who created the transaction, when it was created, what types of changes were made in the transaction—information that is helpful in determining whether or not the transaction is a safe candidate for removal! If so, the transaction's name can be passed to <command moreinfo=\"none\">svnadmin rmtxns</command>, which will perform the cleanup of the transaction. In fact, the <literal moreinfo=\"none\">rmtxns</literal> subcommand can take its input directly from the output of <literal moreinfo=\"none\">lstxns</literal>!"
+msgstr ""
+
+#: ./build/en/book.xml:11141(screen) 
+#, no-wrap
+msgid "\n$ svnadmin rmtxns myrepos `svnadmin lstxns myrepos`\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11146(para) 
+msgid "If you use these two subcommands like this, you should consider making your repository temporarily inaccessible to clients. That way, no one can begin a legitimate transaction before you start your cleanup. <xref linkend=\"svn.reposadmin.maint.diskspace.deadtxns.ex-1\"/> contains a bit of shell-scripting that can quickly generate information about each outstanding transaction in your repository."
+msgstr ""
+
+#: ./build/en/book.xml:11155(title) 
+msgid "txn-info.sh (Reporting Outstanding Transactions)"
+msgstr ""
+
+#: ./build/en/book.xml:11157(programlisting) 
+#, no-wrap
+msgid "\n#!/bin/sh\n\n### Generate informational output for all outstanding transactions in\n### a Subversion repository.\n\nREPOS=\"${1}\"\nif [ \"x$REPOS\" = x ] ; then\n  echo \"usage: $0 REPOS_PATH\"\n  exit\nfi\n\nfor TXN in `svnadmin lstxns ${REPOS}`; do \n  echo \"---[ Transaction ${TXN} ]-------------------------------------------\"\n  svnlook info \"${REPOS}\" -t \"${TXN}\"\ndone\n"
+msgstr ""
+
+#: ./build/en/book.xml:11176(para) 
+msgid "The output of the script is basically a concatenation of several chunks of <command moreinfo=\"none\">svnlook info</command> output (see <xref linkend=\"svn.reposadmin.maint.tk.svnlook\"/>), and will look something like:"
+msgstr ""
+
+#: ./build/en/book.xml:11181(screen) 
+#, no-wrap
+msgid "\n$ txn-info.sh myrepos\n---[ Transaction 19 ]-------------------------------------------\nsally\n2001-09-04 11:57:19 -0500 (Tue, 04 Sep 2001)\n0\n---[ Transaction 3a1 ]-------------------------------------------\nharry\n2001-09-10 16:50:30 -0500 (Mon, 10 Sep 2001)\n39\nTrying to commit over a faulty network.\n---[ Transaction a45 ]-------------------------------------------\nsally\n2001-09-12 11:09:28 -0500 (Wed, 12 Sep 2001)\n0\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11199(para) 
+msgid "A long-abandoned transaction usually represents some sort of failed or interrupted commit. A transaction's datestamp can provide interesting information—for example, how likely is it that an operation begun nine months ago is still active?"
+msgstr ""
+
+#: ./build/en/book.xml:11205(para) 
+msgid "In short, transaction cleanup decisions need not be made unwisely. Various sources of information—including Apache's error and access logs, Subversion's operational logs, Subversion revision history, and so on—can be employed in the decision-making process. And of course, an administrator can often simply communicate with a seemingly dead transaction's owner (via email, for example) to verify that the transaction is, in fact, in a zombie state."
+msgstr ""
+
+#: ./build/en/book.xml:11218(title) 
+msgid "Purging unused Berkeley DB logfiles"
+msgstr ""
+
+#: ./build/en/book.xml:11220(para) 
+msgid "Until recently, the largest offender of disk space usage with respect to BDB-backed Subversion repositories was the log files in which Berkeley DB performs its pre-writes before modifying the actual database files. These files capture all the actions taken along the route of changing the database from one state to another—while the database files reflect at any given time some state, the log files contain all the many changes along the way between states. As such, they can grow and accumulate quite rapidly."
+msgstr ""
+
+#: ./build/en/book.xml:11231(para) 
+msgid "Fortunately, beginning with the 4.2 release of Berkeley DB, the database environment has the ability to remove its own unused log files without any external procedures. Any repositories created using an <command moreinfo=\"none\">svnadmin</command> which is compiled against Berkeley DB version 4.2 or greater will be configured for this automatic log file removal. If you don't want this feature enabled, simply pass the <option>--bdb-log-keep</option> option to the <command moreinfo=\"none\">svnadmin create</command> command. If you forget to do this, or change your mind at a later time, simple edit the <filename moreinfo=\"none\">DB_CONFIG</filename> file found in your repository's <filename moreinfo=\"none\">db</filename> directory, comment out the line which contains the <literal moreinfo=\"none\">set_flags DB_LOG_AUTOREMOVE</literal> directive, and then run <command moreinfo=\"none\">svnadmin recover</command> on your repository to force the configuration changes to take effect. See <xref linkend=\"svn.reposadmin.create.bdb\"/> for more information about database configuration."
+msgstr ""
+
+#: ./build/en/book.xml:11249(para) 
+msgid "Without some sort of automatic log file removal in place, log files will accumulate as you use your repository. This is actually somewhat of a feature of the database system—you should be able to recreate your entire database using nothing but the log files, so these files can be useful for catastrophic database recovery. But typically, you'll want to archive the log files that are no longer in use by Berkeley DB, and then remove them from disk to conserve space. Use the <command moreinfo=\"none\">svnadmin list-unused-dblogs</command> command to list the unused log files:"
+msgstr ""
+
+#: ./build/en/book.xml:11261(screen) ./build/en/book.xml:22453(screen) 
+#, no-wrap
+msgid "\n$ svnadmin list-unused-dblogs /path/to/repos\n/path/to/repos/log.0000000031\n/path/to/repos/log.0000000032\n/path/to/repos/log.0000000033\n\n$ svnadmin list-unused-dblogs /path/to/repos | xargs rm\n## disk space reclaimed!\n"
+msgstr ""
+
+#: ./build/en/book.xml:11272(para) 
+msgid "BDB-backed repositories whose log files are used as part of a backup or disaster recovery plan should <emphasis>not</emphasis> make use of the log file autoremoval feature. Reconstruction of a repository's data from log files can only be accomplished when the log files are all available. If some of the log files are removed from disk before the backup system has a chance to copy them elsewhere, the incomplete set of backed-up log files is essentially useless."
+msgstr ""
+
+#: ./build/en/book.xml:11289(title) 
+msgid "Berkeley DB Recovery"
+msgstr ""
+
+#: ./build/en/book.xml:11291(para) 
+msgid "As mentioned in <xref linkend=\"svn.reposadmin.basics.backends.bdb\"/>, a Berkeley DB repository can sometimes be left in frozen state if not closed properly. When this happens, an administrator needs to rewind the database back into a consistent state. This is unique to BDB-backed repositories, though—if you are using FSFS-backed ones instead, this won't apply to you. And for those of you using Subversion 1.4 with Berkeley DB 4.4 or better, you should find that Subversion has become much more resilient in these types of situations. Still, wedged Berkeley DB repositories do occur, and an administrator needs to know how to safely deal with this circumstance."
+msgstr ""
+
+#: ./build/en/book.xml:11303(para) 
+msgid "In order to protect the data in your repository, Berkeley DB uses a locking mechanism. This mechanism ensures that portions of the database are not simultaneously modified by multiple database accessors, and that each process sees the data in the correct state when that data is being read from the database. When a process needs to change something in the database, it first checks for the existence of a lock on the target data. If the data is not locked, the process locks the data, makes the change it wants to make, and then unlocks the data. Other processes are forced to wait until that lock is removed before they are permitted to continue accessing that section of the database. (This has nothing to do with the locks that you, as a user, can apply to versioned files within the repository; we try to clear up the confusion caused by this terminology collision in <xref linkend=\"svn.advanced.locking.meanings\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:11319(para) 
+msgid "In the course of using your Subversion repository, fatal errors or interruptions can prevent a process from having the chance to remove the locks it has placed in the database. The result is that the back-end database system gets <quote>wedged</quote>. When this happens, any attempts to access the repository hang indefinitely (since each new accessor is waiting for a lock to go away—which isn't going to happen)."
+msgstr ""
+
+#: ./build/en/book.xml:11333(para) 
+msgid "E.g.: hard drive + huge electromagnet = disaster."
+msgstr ""
+
+#: ./build/en/book.xml:11328(para) 
+msgid "If this happens to your repository, don't panic. The Berkeley DB filesystem takes advantage of database transactions and checkpoints and pre-write journaling to ensure that only the most catastrophic of events <placeholder-1/> can permanently destroy a database environment. A sufficiently paranoid repository administrator will have made off-site backups of the repository data in some fashion, but head off to the tape backup storage closet just yet."
+msgstr ""
+
+#: ./build/en/book.xml:11340(para) 
+msgid "Instead, use the following recipe to attempt to <quote>unwedge</quote> your repository:"
+msgstr ""
+
+#: ./build/en/book.xml:11345(para) 
+msgid "Make sure that there are no processes accessing (or attempting to access) the repository. For networked repositories, this means shutting down the Apache HTTP Server or svnserve daemon, too."
+msgstr ""
+
+#: ./build/en/book.xml:11351(para) 
+msgid "Become the user who owns and manages the repository. This is important, as recovering a repository while running as the wrong user can tweak the permissions of the repository's files in such a way that your repository will still be inaccessible even after it is <quote>unwedged</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:11359(para) 
+msgid "Run the command <command moreinfo=\"none\">svnadmin recover /path/to/repos</command>. You should see output like this:"
+msgstr ""
+
+#: ./build/en/book.xml:11363(screen) 
+#, no-wrap
+msgid "\nRepository lock acquired.\nPlease wait; recovering the repository may take some time...\n\nRecovery completed.\nThe latest repos revision is 19.\n"
+msgstr ""
+
+#: ./build/en/book.xml:11370(para) 
+msgid "This command may take many minutes to complete."
+msgstr ""
+
+#: ./build/en/book.xml:11373(para) 
+msgid "Restart the server process."
+msgstr ""
+
+#: ./build/en/book.xml:11377(para) 
+msgid "This procedure fixes almost every case of repository lock-up. Make sure that you run this command as the user that owns and manages the database, not just as <literal moreinfo=\"none\">root</literal>. Part of the recovery process might involve recreating from scratch various database files (shared memory regions, for example). Recovering as <literal moreinfo=\"none\">root</literal> will create those files such that they are owned by <literal moreinfo=\"none\">root</literal>, which means that even after you restore connectivity to your repository, regular users will be unable to access it."
+msgstr ""
+
+#: ./build/en/book.xml:11388(para) 
+msgid "If the previous procedure, for some reason, does not successfully unwedge your repository, you should do two things. First, move your broken repository out of the way and restore your latest backup of it. Then, send an email to the Subversion user list (at <email>users@subversion.tigris.org</email>) describing your problem in detail. Data integrity is an extremely high priority to the Subversion developers."
+msgstr ""
+
+#: ./build/en/book.xml:11401(title) 
+msgid "Migrating Repository Data Elsewhere"
+msgstr ""
+
+#: ./build/en/book.xml:11403(para) 
+msgid "A Subversion filesystem has its data spread throughout various back-end data store files in a fashion generally understood by (and of interest to) only the Subversion developers themselves. However, circumstances may arise that call for all, or some subset, of that data to be copied or moved into another repository."
+msgstr ""
+
+#: ./build/en/book.xml:11410(para) 
+msgid "Subversion provides such functionality by way of repository dump streams. A repository dump stream (often referred to as a <quote>dumpfile</quote> when stored as a file on disk) is a portable, flat file format that describes the various revisions in your repository—what was changed, by whom, when, and so on. This dump stream is the primary mechanism used to marshal versioned history—in whole or in part, with or without modification—between repositories. And Subversion provides the tools necessary for creating and loading these dump streams—the <command moreinfo=\"none\">svnadmin dump</command> and <command moreinfo=\"none\">svnadmin load</command> subcommands, respectively."
+msgstr ""
+
+#: ./build/en/book.xml:11424(para) 
+msgid "While the Subversion repository dump format contains human-readable portions and a familiar structure (it resembles an RFC-822 format, the same type of format used for most email), it is <emphasis>not</emphasis> a plaintext file format. The format should be treated as a binary file format, highly sensitive to meddling. Many text editor tools will corrupt the file's contents, often due to automatic line ending character conversion."
+msgstr ""
+
+#: ./build/en/book.xml:11434(para) 
+msgid "There are many reasons for dumping and loading Subversion repository data. Early in Subversion's life, the most common reason was due to the evolution of Subversion itself. As Subversion matured, there were times when changes made to the back-end database schema caused compatibility issues with previous versions of the repository, so users had to dump their repository data using the previous version of Subversion, and load it into a freshly created repository with the new version of Subversion. Now, these types of schema changes haven't occured since Subversion's 1.0 release, and the Subversion developers promise not to force users to dump and load their repositories when upgrading between minor versions (such as from 1.3 to 1.4) of Subversion. But there are still other reasons for dumping and loading, including re-deploying a Berkeley DB repository on a new OS or CPU architecture, switching between the Berkeley DB and FSFS back-ends, or (as we'll cover in <xref linkend=\"svn.reposadmin.maint.filtering\"/> purging versioned data from repository history."
+msgstr ""
+
+#: ./build/en/book.xml:11453(para) 
+msgid "Whatever your reason for migration repository history, using the <command moreinfo=\"none\">svnadmin dump</command> and <command moreinfo=\"none\">svnadmin load</command> subcommands is straightforward. <command moreinfo=\"none\">svnadmin dump</command> will output a range of repository revisions that are formatted using Subversion's custom filesystem dump format. The dump format is printed to the standard output stream, while informative messages are printed to the standard error stream. This allows you to redirect the output stream to a file while watching the status output in your terminal window. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:11465(screen) 
+#, no-wrap
+msgid "\n$ svnlook youngest myrepos\n26\n$ svnadmin dump myrepos &gt; dumpfile\n* Dumped revision 0.\n* Dumped revision 1.\n* Dumped revision 2.\n…\n* Dumped revision 25.\n* Dumped revision 26.\n"
+msgstr ""
+
+#: ./build/en/book.xml:11477(para) 
+msgid "At the end of the process, you will have a single file (<filename moreinfo=\"none\">dumpfile</filename> in the previous example) that contains all the data stored in your repository in the requested range of revisions. Note that <command moreinfo=\"none\">svnadmin dump</command> is reading revision trees from the repository just like any other <quote>reader</quote> process would (<command moreinfo=\"none\">svn checkout</command>, for example). So it's safe to run this command at any time."
+msgstr ""
+
+#: ./build/en/book.xml:11486(para) 
+msgid "The other subcommand in the pair, <command moreinfo=\"none\">svnadmin load</command>, parses the standard input stream as a Subversion repository dump file, and effectively replays those dumped revisions into the target repository for that operation. It also gives informative feedback, this time using the standard output stream:"
+msgstr ""
+
+#: ./build/en/book.xml:11493(screen) 
+#, no-wrap
+msgid "\n$ svnadmin load newrepos &lt; dumpfile\n&lt;&lt;&lt; Started new txn, based on original revision 1\n     * adding path : A ... done.\n     * adding path : A/B ... done.\n     …\n------- Committed new rev 1 (loaded from original rev 1) &gt;&gt;&gt;\n\n&lt;&lt;&lt; Started new txn, based on original revision 2\n     * editing path : A/mu ... done.\n     * editing path : A/D/G/rho ... done.\n\n------- Committed new rev 2 (loaded from original rev 2) &gt;&gt;&gt;\n\n…\n\n&lt;&lt;&lt; Started new txn, based on original revision 25\n     * editing path : A/D/gamma ... done.\n\n------- Committed new rev 25 (loaded from original rev 25) &gt;&gt;&gt;\n\n&lt;&lt;&lt; Started new txn, based on original revision 26\n     * adding path : A/Z/zeta ... done.\n     * editing path : A/mu ... done.\n\n------- Committed new rev 26 (loaded from original rev 26) &gt;&gt;&gt;\n\n"
+msgstr ""
+
+#: ./build/en/book.xml:11522(para) 
+msgid "The result of a load is new revisions added to a repository—the same thing you get by making commits against that repository from a regular Subversion client. And just as in a commit, you can use hook programs to perform actions before and after each of the commits made during a load process. By passing the <option>--use-pre-commit-hook</option> and <option>--use-post-commit-hook</option> options to <command moreinfo=\"none\">svnadmin load</command>, you can instruct Subversion to execute the pre-commit and post-commit hook programs, respectively, for each loaded revision. You might use these, for example, to ensure that loaded revisions pass through the same validation steps that regular commits pass through. Of course, you should use these options with care—if your post-commit hook sends emails to a mailing list for each new commit, you might not want to spew hundreds or thousands of commit emails in rapid succession at that list for each of the loaded revisions! You can read more about the use of hook scripts in <xref linkend=\"svn.reposadmin.create.hooks\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:11542(para) 
+msgid "Note that because <command moreinfo=\"none\">svnadmin</command> uses standard input and output streams for the repository dump and load process, people who are feeling especially saucy can try things like this (perhaps even using different versions of <command moreinfo=\"none\">svnadmin</command> on each side of the pipe):"
+msgstr ""
+
+#: ./build/en/book.xml:11548(screen) 
+#, no-wrap
+msgid "\n$ svnadmin create newrepos\n$ svnadmin dump myrepos | svnadmin load newrepos\n"
+msgstr ""
+
+#: ./build/en/book.xml:11553(para) 
+msgid "By default, the dump file will be quite large—much larger than the repository itself. That's because by default every version of every file is expressed as a full text in the dump file. This is the fastest and simplest behavior, and nice if you're piping the dump data directly into some other process (such as a compression program, filtering program, or into a loading process). But if you're creating a dump file for longer-term storage, you'll likely want to save disk space by using the <option>--deltas</option> switch. With this option, successive revisions of files will be output as compressed, binary differences—just as file revisions are stored in a repository. This option is slower, but results in a dump file much closer in size to the original repository."
+msgstr ""
+
+#: ./build/en/book.xml:11568(para) 
+msgid "We mentioned previously that <command moreinfo=\"none\">svnadmin dump</command> outputs a range of revisions. Use the <option>--revision (-r)</option> option to specify a single revision to dump, or a range of revisions. If you omit this option, all the existing repository revisions will be dumped."
+msgstr ""
+
+#: ./build/en/book.xml:11575(screen) 
+#, no-wrap
+msgid "\n$ svnadmin dump myrepos -r 23 &gt; rev-23.dumpfile\n$ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile\n"
+msgstr ""
+
+#: ./build/en/book.xml:11580(para) 
+msgid "As Subversion dumps each new revision, it outputs only enough information to allow a future loader to re-create that revision based on the previous one. In other words, for any given revision in the dump file, only the items that were changed in that revision will appear in the dump. The only exception to this rule is the first revision that is dumped with the current <command moreinfo=\"none\">svnadmin dump</command> command."
+msgstr ""
+
+#: ./build/en/book.xml:11589(para) 
+msgid "By default, Subversion will not express the first dumped revision as merely differences to be applied to the previous revision. For one thing, there is no previous revision in the dump file! And secondly, Subversion cannot know the state of the repository into which the dump data will be loaded (if it ever, in fact, occurs). To ensure that the output of each execution of <command moreinfo=\"none\">svnadmin dump</command> is self-sufficient, the first dumped revision is by default a full representation of every directory, file, and property in that revision of the repository."
+msgstr ""
+
+#: ./build/en/book.xml:11600(para) 
+msgid "However, you can change this default behavior. If you add the <option>--incremental</option> option when you dump your repository, <command moreinfo=\"none\">svnadmin</command> will compare the first dumped revision against the previous revision in the repository, the same way it treats every other revision that gets dumped. It will then output the first revision exactly as it does the rest of the revisions in the dump range—mentioning only the changes that occurred in that revision. The benefit of this is that you can create several small dump files that can be loaded in succession, instead of one large one, like so:"
+msgstr ""
+
+#: ./build/en/book.xml:11612(screen) 
+#, no-wrap
+msgid "\n$ svnadmin dump myrepos -r 0:1000 &gt; dumpfile1\n$ svnadmin dump myrepos -r 1001:2000 --incremental &gt; dumpfile2\n$ svnadmin dump myrepos -r 2001:3000 --incremental &gt; dumpfile3\n"
+msgstr ""
+
+#: ./build/en/book.xml:11618(para) 
+msgid "These dump files could be loaded into a new repository with the following command sequence:"
+msgstr ""
+
+#: ./build/en/book.xml:11621(screen) 
+#, no-wrap
+msgid "\n$ svnadmin load newrepos &lt; dumpfile1\n$ svnadmin load newrepos &lt; dumpfile2\n$ svnadmin load newrepos &lt; dumpfile3\n"
+msgstr ""
+
+#: ./build/en/book.xml:11627(para) 
+msgid "Another neat trick you can perform with this <option>--incremental</option> option involves appending to an existing dump file a new range of dumped revisions. For example, you might have a <literal moreinfo=\"none\">post-commit</literal> hook that simply appends the repository dump of the single revision that triggered the hook. Or you might have a script that runs nightly to append dump file data for all the revisions that were added to the repository since the last time the script ran. Used like this, <command moreinfo=\"none\">svnadmin dump</command> can be one way to backup changes to your repository over time in case of a system crash or some other catastrophic event."
+msgstr ""
+
+#: ./build/en/book.xml:11639(para) 
+msgid "The dump format can also be used to merge the contents of several different repositories into a single repository. By using the <option>--parent-dir</option> option of <command moreinfo=\"none\">svnadmin load</command>, you can specify a new virtual root directory for the load process. That means if you have dump files for three repositories, say <filename moreinfo=\"none\">calc-dumpfile</filename>, <filename moreinfo=\"none\">cal-dumpfile</filename>, and <filename moreinfo=\"none\">ss-dumpfile</filename>, you can first create a new repository to hold them all:"
+msgstr ""
+
+#: ./build/en/book.xml:11650(screen) 
+#, no-wrap
+msgid "\n$ svnadmin create /path/to/projects\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11655(para) 
+msgid "Then, make new directories in the repository which will encapsulate the contents of each of the three previous repositories:"
+msgstr ""
+
+#: ./build/en/book.xml:11659(screen) 
+#, no-wrap
+msgid "\n$ svn mkdir -m \"Initial project roots\" \\\n      file:///path/to/projects/calc \\\n      file:///path/to/projects/calendar \\\n      file:///path/to/projects/spreadsheet\nCommitted revision 1.\n$ \n"
+msgstr ""
+
+#: ./build/en/book.xml:11668(para) 
+msgid "Lastly, load the individual dump files into their respective locations in the new repository:"
+msgstr ""
+
+#: ./build/en/book.xml:11671(screen) 
+#, no-wrap
+msgid "\n$ svnadmin load /path/to/projects --parent-dir calc &lt; calc-dumpfile\n…\n$ svnadmin load /path/to/projects --parent-dir calendar &lt; cal-dumpfile\n…\n$ svnadmin load /path/to/projects --parent-dir spreadsheet &lt; ss-dumpfile\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11681(para) 
+msgid "We'll mention one final way to use the Subversion repository dump format—conversion from a different storage mechanism or version control system altogether. Because the dump file format is, for the most part, human-readable, it should be relatively easy to describe generic sets of changes—each of which should be treated as a new revision—using this file format. In fact, the <command moreinfo=\"none\">cvs2svn</command> utility (see <xref linkend=\"svn.forcvs.convert\"/>) uses the dump format to represent the contents of a CVS repository so that those contents can be copied into a Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:11696(title) 
+msgid "Filtering Repository History"
+msgstr ""
+
+#: ./build/en/book.xml:11706(para) 
+msgid "That's rather the reason you use version control at all, right?"
+msgstr ""
+
+#: ./build/en/book.xml:11715(para) 
+msgid "Conscious, cautious removal of certain bits of versioned data is actually supported by real use-cases. That's why an <quote>obliterate</quote> feature has been one of the most highly requested Subversion features, and one which the Subversion developers hope to soon provide."
+msgstr ""
+
+#: ./build/en/book.xml:11698(para) 
+msgid "Since Subversion stores your versioned history using, at the very least, binary differencing algorithms and data compression (optionally in a completely opaque database system), attempting manual tweaks is unwise, if not quite difficult, and at any rate strongly discouraged. And once data has been stored in your repository, Subversion generally doesn't provide an easy way to remove that data. <placeholder-1/> But inevitably, there will be times when you would like to manipulate the history of your repository. You might need to strip out all instances of a file that was accidentally added to the repository (and shouldn't be there for whatever reason). <placeholder-2/> Or, perhaps you have multiple projects sharing a single repository, and you decide to split them up into their own repositories. To accomplish tasks like this, administrators need a more manageable and malleable representation of the data in their repositories—the Subversion repository dump format."
+msgstr ""
+
+#: ./build/en/book.xml:11729(para) 
+msgid "As we described in <xref linkend=\"svn.reposadmin.maint.migrate\"/>, the Subversion repository dump format is a human-readable representation of the changes that you've made to your versioned data over time. You use the <command moreinfo=\"none\">svnadmin dump</command> command to generate the dump data, and <command moreinfo=\"none\">svnadmin load</command> to populate a new repository with it (see <xref linkend=\"svn.reposadmin.maint.migrate\"/>). The great thing about the human-readability aspect of the dump format is that, if you aren't careless about it, you can manually inspect and modify it. Of course, the downside is that if you have three years' worth of repository activity encapsulated in what is likely to be a very large dump file, it could take you a long, long time to manually inspect and modify it."
+msgstr ""
+
+#: ./build/en/book.xml:11744(para) 
+msgid "That's where <command moreinfo=\"none\">svndumpfilter</command> becomes useful. This program acts as path-based filter for repository dump streams. Simply give it either a list of paths you wish to keep, or a list of paths you wish to not keep, then pipe your repository dump data through this filter. The result will be a modified stream of dump data that contains only the versioned paths you (explicitly or implicitly) requested."
+msgstr ""
+
+#: ./build/en/book.xml:11753(para) 
+msgid "Let's look a realistic example of how you might use this program. We discuss elsewhere (see <xref linkend=\"svn.reposadmin.projects.chooselayout\"/>) the process of deciding how to choose a layout for the data in your repositories—using one repository per project or combining them, arranging stuff within your repository, and so on. But sometimes after new revisions start flying in, you rethink your layout and would like to make some changes. A common change is the decision to move multiple projects which are sharing a single repository into separate repositories for each project."
+msgstr ""
+
+#: ./build/en/book.xml:11764(para) 
+msgid "Our imaginary repository contains three projects: <literal moreinfo=\"none\">calc</literal>, <literal moreinfo=\"none\">calendar</literal>, and <literal moreinfo=\"none\">spreadsheet</literal>. They have been living side-by-side in a layout like this:"
+msgstr ""
+
+#: ./build/en/book.xml:11769(screen) 
+#, no-wrap
+msgid "\n/\n   calc/\n      trunk/\n      branches/\n      tags/\n   calendar/\n      trunk/\n      branches/\n      tags/\n   spreadsheet/\n      trunk/\n      branches/\n      tags/\n"
+msgstr ""
+
+#: ./build/en/book.xml:11785(para) 
+msgid "To get these three projects into their own repositories, we first dump the whole repository:"
+msgstr ""
+
+#: ./build/en/book.xml:11788(screen) 
+#, no-wrap
+msgid "\n$ svnadmin dump /path/to/repos &gt; repos-dumpfile\n* Dumped revision 0.\n* Dumped revision 1.\n* Dumped revision 2.\n* Dumped revision 3.\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11798(para) 
+msgid "Next, run that dump file through the filter, each time including only one of our top-level directories, and resulting in three new dump files:"
+msgstr ""
+
+#: ./build/en/book.xml:11802(screen) 
+#, no-wrap
+msgid "\n$ svndumpfilter include calc &lt; repos-dumpfile &gt; calc-dumpfile\n…\n$ svndumpfilter include calendar &lt; repos-dumpfile &gt; cal-dumpfile\n…\n$ svndumpfilter include spreadsheet &lt; repos-dumpfile &gt; ss-dumpfile\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11812(para) 
+msgid "At this point, you have to make a decision. Each of your dump files will create a valid repository, but will preserve the paths exactly as they were in the original repository. This means that even though you would have a repository solely for your <literal moreinfo=\"none\">calc</literal> project, that repository would still have a top-level directory named <filename moreinfo=\"none\">calc</filename>. If you want your <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> directories to live in the root of your repository, you might wish to edit your dump files, tweaking the <literal moreinfo=\"none\">Node-path</literal> and <literal moreinfo=\"none\">Node-copyfrom-path</literal> headers to no longer have that first <filename moreinfo=\"none\">calc/</filename> path component. Also, you'll want to remove the section of dump data that creates the <filename moreinfo=\"none\">calc</filename> directory. It will look something like:"
+msgstr ""
+
+#: ./build/en/book.xml:11829(screen) 
+#, no-wrap
+msgid "\nNode-path: calc\nNode-action: add\nNode-kind: dir\nContent-length: 0\n  \n"
+msgstr ""
+
+#: ./build/en/book.xml:11838(para) 
+msgid "If you do plan on manually editing the dump file to remove a top-level directory, make sure that your editor is not set to automatically convert end-lines to the native format (e.g. \\r\\n to \\n) as the content will then not agree with the metadata. This will render the dump file useless."
+msgstr ""
+
+#: ./build/en/book.xml:11846(para) 
+msgid "All that remains now is to create your three new repositories, and load each dump file into the right repository:"
+msgstr ""
+
+#: ./build/en/book.xml:11850(screen) 
+#, no-wrap
+msgid "\n$ svnadmin create calc; svnadmin load calc &lt; calc-dumpfile\n&lt;&lt;&lt; Started new transaction, based on original revision 1\n     * adding path : Makefile ... done.\n     * adding path : button.c ... done.\n…\n$ svnadmin create calendar; svnadmin load calendar &lt; cal-dumpfile\n&lt;&lt;&lt; Started new transaction, based on original revision 1\n     * adding path : Makefile ... done.\n     * adding path : cal.c ... done.\n…\n$ svnadmin create spreadsheet; svnadmin load spreadsheet &lt; ss-dumpfile\n&lt;&lt;&lt; Started new transaction, based on original revision 1\n     * adding path : Makefile ... done.\n     * adding path : ss.c ... done.\n…\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:11869(para) 
+msgid "Both of <command moreinfo=\"none\">svndumpfilter</command>'s subcommands accept options for deciding how to deal with <quote>empty</quote> revisions. If a given revision contained only changes to paths that were filtered out, that now-empty revision could be considered uninteresting or even unwanted. So to give the user control over what to do with those revisions, <command moreinfo=\"none\">svndumpfilter</command> provides the following command-line options:"
+msgstr ""
+
+#: ./build/en/book.xml:11880(option) 
+msgid "--drop-empty-revs"
+msgstr ""
+
+#: ./build/en/book.xml:11882(para) 
+msgid "Do not generate empty revisions at all—just omit them."
+msgstr ""
+
+#: ./build/en/book.xml:11887(option) 
+msgid "--renumber-revs"
+msgstr ""
+
+#: ./build/en/book.xml:11889(para) 
+msgid "If empty revisions are dropped (using the <option>--drop-empty-revs</option> option), change the revision numbers of the remaining revisions so that there are no gaps in the numeric sequence."
+msgstr ""
+
+#: ./build/en/book.xml:11896(option) 
+msgid "--preserve-revprops"
+msgstr ""
+
+#: ./build/en/book.xml:11898(para) 
+msgid "If empty revisions are not dropped, preserve the revision properties (log message, author, date, custom properties, etc.) for those empty revisions. Otherwise, empty revisions will only contain the original datestamp, and a generated log message that indicates that this revision was emptied by <command moreinfo=\"none\">svndumpfilter</command>."
+msgstr ""
+
+#: ./build/en/book.xml:11909(para) 
+msgid "While <command moreinfo=\"none\">svndumpfilter</command> can be very useful, and a huge timesaver, there are unfortunately a couple of gotchas. First, this utility is overly sensitive to path semantics. Pay attention to whether paths in your dump file are specified with or without leading slashes. You'll want to look at the <literal moreinfo=\"none\">Node-path</literal> and <literal moreinfo=\"none\">Node-copyfrom-path</literal> headers."
+msgstr ""
+
+#: ./build/en/book.xml:11917(screen) 
+#, no-wrap
+msgid "\n…\nNode-path: spreadsheet/Makefile\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:11930(para) 
+msgid "While <command moreinfo=\"none\">svnadmin dump</command> has a consistent leading slash policy—to not include them—other programs which generate dump data might not be so consistent."
+msgstr ""
+
+#: ./build/en/book.xml:11923(para) 
+msgid "If the paths have leading slashes, you should include leading slashes in the paths you pass to <command moreinfo=\"none\">svndumpfilter include</command> and <command moreinfo=\"none\">svndumpfilter exclude</command> (and if they don't, you shouldn't). Further, if your dump file has an inconsistent usage of leading slashes for some reason, <placeholder-1/> you should probably normalize those paths so they all have, or lack, leading slashes."
+msgstr ""
+
+#: ./build/en/book.xml:11938(para) 
+msgid "Also, copied paths can give you some trouble. Subversion supports copy operations in the repository, where a new path is created by copying some already existing path. It is possible that at some point in the lifetime of your repository, you might have copied a file or directory from some location that <command moreinfo=\"none\">svndumpfilter</command> is excluding, to a location that it is including. In order to make the dump data self-sufficient, <command moreinfo=\"none\">svndumpfilter</command> needs to still show the addition of the new path—including the contents of any files created by the copy—and not represent that addition as a copy from a source that won't exist in your filtered dump data stream. But because the Subversion repository dump format only shows what was changed in each revision, the contents of the copy source might not be readily available. If you suspect that you have any copies of this sort in your repository, you might want to rethink your set of included/excluded paths."
+msgstr ""
+
+#: ./build/en/book.xml:11957(para) 
+msgid "Finally, <command moreinfo=\"none\">svndumpfilter</command> takes path filtering quite literally. If you are trying to copy the history of a project rooted at <filename moreinfo=\"none\">trunk/my-project</filename> and move it into a repository of its own, you would, of course, use the <command moreinfo=\"none\">svndumpfilter include</command> command to keep all the changes in and under <filename moreinfo=\"none\">trunk/my-project</filename>. But the resulting dump file makes no assumptions about the repository into which you plan to load this data. Specifically, the dump data might begin with the revision which added the <filename moreinfo=\"none\">trunk/my-project</filename> directory, but it will <emphasis>not</emphasis> contain directives which would create the <filename moreinfo=\"none\">trunk</filename> directory itself (because <filename moreinfo=\"none\">trunk</filename> doesn't match the include filter). You'll need to make sure that any directories which the new dump stream expect to exist actually do exist in the target repository before trying to load the stream into that repository."
+msgstr ""
+
+#: ./build/en/book.xml:11981(title) 
+msgid "Repository Replication"
+msgstr ""
+
+#: ./build/en/book.xml:11983(para) 
+msgid "There are several scenarios in which it is quite handy to have a Subversion repository whose version history is exactly the same as some other repository's. Perhaps the most obvious one is the maintenance of a simple backup repository, used when the primary repository has become inaccessible due to a hardware failure, network outage, or other such annoyance. Other scenarios include deploying mirror repositories to distribute heavy Subversion load across multiple servers, use as a soft-upgrade mechanism, and so on."
+msgstr ""
+
+#: ./build/en/book.xml:11993(para) 
+msgid "As of version 1.4, Subversion provides a program for managing scenarios like these—<command moreinfo=\"none\">svnsync</command>. <command moreinfo=\"none\">svnsync</command> works by essentially asking the Subversion server to <quote>replay</quote> revisions, one at a time. It then uses that revision information to mimic a commit of the same to another repository. Neither repository needs to be locally accessible to machine on which <command moreinfo=\"none\">svnsync</command> is running—its parameters are repository URLs, and it does all its work through Subversion's repository access (RA) interfaces. All it requires is read access to the source repository and read/write access to the destination repository."
+msgstr ""
+
+#: ./build/en/book.xml:12008(para) 
+msgid "When using <command moreinfo=\"none\">svnsync</command> against a remote source repository, the Subversion server for that repository must be running Subversion version 1.4 or better."
+msgstr ""
+
+#: ./build/en/book.xml:12026(para) 
+msgid "In fact, it can't truly be read-only, or <command moreinfo=\"none\">svnsync</command> itself would have a tough time copying revision history into it."
+msgstr ""
+
+#: ./build/en/book.xml:12013(para) 
+msgid "Assuming you already have a source repository that you'd like to mirror, the next thing you need is an empty target repository which will actually serve as that mirror. This target repository can use either of the available filesystem data-store back-ends (see <xref linkend=\"svn.reposadmin.basics.backends\"/>), but it must not yet have any version history in it. The protocol via which <command moreinfo=\"none\">svnsync</command> communicates revision information is highly sensitive to mismatches between the versioned histories contained in the source and target repositories. For this reason, while <command moreinfo=\"none\">svnsync</command> cannot <emphasis>demand</emphasis> that the target repository be read-only, <placeholder-1/> allowing the revision history in the target repository to change by any mechanism other than the mirroring process is a recipe for disaster."
+msgstr ""
+
+#: ./build/en/book.xml:12035(para) 
+msgid "Do <emphasis>not</emphasis> modify a mirror repository in such a way as to cause its version history to deviate from that of the repository it mirrors. The only commits and revision property modifications that ever occur on that mirror repository should be those performed by the <command moreinfo=\"none\">svnsync</command> tool."
+msgstr ""
+
+#: ./build/en/book.xml:12043(para) 
+msgid "Another requirement of the target repository is that the <command moreinfo=\"none\">svnsync</command> process be allowed to modify certain revision properties. <command moreinfo=\"none\">svnsync</command> stores its bookkeeping information in special revision properties on revision 0 of the destination repository. Because <command moreinfo=\"none\">svnsync</command> works within the framework of that repository's hook system, the default state of the repository (which is to disallow revision property changes; see <xref linkend=\"svn.ref.reposhooks.pre-revprop-change\"/>) is insufficient. You'll need to explicitly implement the pre-revprop-change hook, and your script must allow <command moreinfo=\"none\">svnsync</command> to set and change its special properties. With those provisions in place, you are ready to start mirroring repository revisions."
+msgstr ""
+
+#:
