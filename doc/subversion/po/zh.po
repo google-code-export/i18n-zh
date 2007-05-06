@@ -16753,4 +16753,1823 @@ msgid "This book aims to be useful to people of widely different backgrounds—f
 msgstr "本书适用于具有不同背景知识的各个层次的读者—从未使用过版本控制的新手到经验丰富的系统管理员都能够从本书中获益。根据基础的不同，某些的章节可能对某些读者更有价值。下面的内容可以看作是为不同类型的读者提供的<quote>推荐阅读清单</quote>："
 
 #: build/en/book.xml:3000(para)
-msgid "Suppose while viewing the output of <command moreinfo=\"none\">svn diff</command> you determine that all the changes you made to a particular file are mistakes. Maybe you shouldn't have changed the file at all, or perhaps it would be easier
+msgid "Suppose while viewing the output of <command moreinfo=\"none\">svn diff</command> you determine that all the changes you made to a particular file are mistakes. Maybe you shouldn't have changed the file at all, or perhaps it would be easier to make different changes starting from scratch."
+msgstr ""
+
+#: build/en/book.xml:3006(para)
+#, fuzzy
+msgid "This is a perfect opportunity to use <command moreinfo=\"none\">svn revert</command>:"
+msgstr "这是使用<command moreinfo=\"none\">svn revert</command>的好机会。"
+
+#: build/en/book.xml:3009(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn revert README\n"
+"Reverted 'README'\n"
+msgstr ""
+"\n"
+"$ svn revert README\n"
+"Reverted 'README'\n"
+
+#: build/en/book.xml:3014(para)
+msgid "Subversion reverts the file to its pre-modified state by overwriting it with the cached <quote>pristine</quote> copy from the <filename moreinfo=\"none\">.svn</filename> area. But also note that <command moreinfo=\"none\">svn revert</command> can undo <emphasis>any</emphasis> scheduled operations—for example, you might decide that you don't want to add a new file after all:"
+msgstr "Subversion把文件恢复到未修改的状态，叫做<filename moreinfo=\"none\">.svn</filename>目录的<quote>原始</quote>拷贝，应该知道<command moreinfo=\"none\">svn revert</command>可以恢复任何预定要做的操作，举个例子，你不再想添加一个文件："
+
+#: build/en/book.xml:3022(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status foo\n"
+"?      foo\n"
+"\n"
+"$ svn add foo\n"
+"A         foo\n"
+"\n"
+"$ svn revert foo\n"
+"Reverted 'foo'\n"
+"\n"
+"$ svn status foo\n"
+"?      foo\n"
+msgstr ""
+"\n"
+"$ svn status foo\n"
+"?      foo\n"
+"\n"
+"$ svn add foo\n"
+"A         foo\n"
+"\n"
+"$ svn revert foo\n"
+"Reverted 'foo'\n"
+"\n"
+"$ svn status foo\n"
+"?      foo\n"
+
+#: build/en/book.xml:3037(para)
+msgid "<command moreinfo=\"none\">svn revert</command><replaceable>ITEM</replaceable> has exactly the same effect as deleting <replaceable>ITEM</replaceable> from your working copy and then running <command moreinfo=\"none\">svn update -r BASE</command><replaceable>ITEM</replaceable>. However, if you're reverting a file, <command moreinfo=\"none\">svn revert</command> has one very noticeable difference—it doesn't have to communicate with the repository to restore your file."
+msgstr "<command moreinfo=\"none\">svn revert</command><replaceable>ITEM</replaceable>的效果与删除<replaceable>ITEM</replaceable>然后执行<command moreinfo=\"none\">svn update -r BASE</command><replaceable>ITEM</replaceable>完全一样，但是，如果你使用<command moreinfo=\"none\">svn revert</command>它不必通知版本库就可以恢复文件。"
+
+#: build/en/book.xml:3048(para)
+msgid "Or perhaps you mistakenly removed a file from version control:"
+msgstr "或许你不小心删除了一个文件："
+
+#: build/en/book.xml:3051(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status README\n"
+"       README\n"
+"\n"
+"$ svn delete README\n"
+"D         README\n"
+"\n"
+"$ svn revert README\n"
+"Reverted 'README'\n"
+"\n"
+"$ svn status README\n"
+"       README\n"
+msgstr ""
+"\n"
+"$ svn status README\n"
+"       README\n"
+"\n"
+"$ svn delete README\n"
+"D         README\n"
+"\n"
+"$ svn revert README\n"
+"Reverted 'README'\n"
+"\n"
+"$ svn status README\n"
+"       README\n"
+
+#: build/en/book.xml:3069(title)
+msgid "Resolve Conflicts (Merging Others' Changes)"
+msgstr "解决冲突（合并别人的修改）"
+
+#: build/en/book.xml:3071(para)
+msgid "We've already seen how <command moreinfo=\"none\">svn status -u</command> can predict conflicts. Suppose you run <command moreinfo=\"none\">svn update</command> and some interesting things occur:"
+msgstr "我们可以使用<command moreinfo=\"none\">svn status -u</command>来预测冲突，当你运行<command moreinfo=\"none\">svn update</command>一些有趣的事情发生了："
+
+#: build/en/book.xml:3075(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn update\n"
+"U  INSTALL\n"
+"G  README\n"
+"C  bar.c\n"
+"Updated to revision 46.\n"
+msgstr ""
+"\n"
+"$ svn update\n"
+"U  INSTALL\n"
+"G  README\n"
+"C  bar.c\n"
+"Updated to revision 46.\n"
+
+#: build/en/book.xml:3083(para)
+msgid "The <computeroutput moreinfo=\"none\">U</computeroutput> and <computeroutput moreinfo=\"none\">G</computeroutput> codes are no cause for concern; those files cleanly absorbed changes from the repository. The files marked with <computeroutput moreinfo=\"none\">U</computeroutput> contained no local changes but were <computeroutput moreinfo=\"none\">U</computeroutput>pdated with changes from the repository. The <computeroutput moreinfo=\"none\">G</computeroutput> stands for mer<computeroutput moreinfo=\"none\">G</computeroutput>ed, which means that the file had local changes to begin with, but the changes coming from the repository didn't overlap with the local changes."
+msgstr "<computeroutput moreinfo=\"none\">U</computeroutput>和<computeroutput moreinfo=\"none\">G</computeroutput>没必要关心，文件干净的接受了版本库的变化，文件标示为<computeroutput moreinfo=\"none\">U</computeroutput>表明本地没有修改，文件已经根据版本库更新。<computeroutput moreinfo=\"none\">G</computeroutput>标示合并，标示本地已经修改过，与版本库没有重迭的地方，已经合并。"
+
+#: build/en/book.xml:3095(para)
+msgid "But the <computeroutput moreinfo=\"none\">C</computeroutput> stands for conflict. This means that the changes from the server overlapped with your own, and now you have to manually choose between them."
+msgstr "但是<computeroutput moreinfo=\"none\">C</computeroutput>表示冲突，说明服务器上的改动同你的改动冲突了，你需要自己手工去解决。"
+
+#: build/en/book.xml:310(term)
+msgid "Experienced System Administrators"
+msgstr "资深系统管理员"
+
+#: build/en/book.xml:3100(para)
+msgid "Whenever a conflict occurs, three things typically occur to assist you in noticing and resolving that conflict:"
+msgstr "当冲突发生了，有三件事可以帮助你注意到这种情况和解决问题："
+
+#: build/en/book.xml:3106(para)
+msgid "Subversion prints a <computeroutput moreinfo=\"none\">C</computeroutput> during the update, and remembers that the file is in a state of conflict."
+msgstr "Subversion打印<computeroutput moreinfo=\"none\">C</computeroutput>标记，并且标记这个文件已冲突。"
+
+#: build/en/book.xml:3112(para)
+#, fuzzy
+msgid "If Subversion considers the file to be mergeable, it places <firstterm>conflict markers</firstterm>—special strings of text which delimit the <quote>sides</quote> of the conflict—into the file to visibly demonstrate the overlapping areas. (Subversion uses the <literal moreinfo=\"none\">svn:mime-type</literal> property to decide if a file is capable of contextual, line-based merging. See <xref linkend=\"svn.advanced.props.special.mime-type\"/> to learn more.)"
+msgstr "如果Subversion认为这个文件是可合并的，它会置入<firstterm>冲突标记</firstterm>—特殊的横线分开冲突的<quote>两面</quote>—在文件里可视化的描述重叠的部分（Subversion使用<literal moreinfo=\"none\">svn:mime-type</literal>属性来决定一个文件是否可以使用上下文的，以行为基础合并，更多信息可以看<xref linkend=\"svn.advanced.props.special.mime-type\"/>）。"
+
+#: build/en/book.xml:312(para)
+#, fuzzy
+msgid "The assumption here is that you've probably used version control before before, and are dying to get a Subversion server up and running ASAP. <xref linkend=\"svn.reposadmin\"/> and <xref linkend=\"svn.serverconfig\"/> will show you how to create your first repository and make it available over the network. After that's done, <xref linkend=\"svn.tour\"/> and <xref linkend=\"svn.forcvs\"/> are the fastest routes to learning the Subversion client."
+msgstr "假设你从前使用过CVS，并且迫切需要建立起Subversion服务器并尽快运行起来，<xref linkend=\"svn.reposadmin\"/>和<xref linkend=\"svn.serverconfig\"/>将会告诉你如何建立起一个版本库，并使之加入网络大家庭。此后，依靠你的CVS使用经验，<xref linkend=\"svn.tour\"/>和<xref linkend=\"svn.forcvs\"/>将向你展示怎样使用Subversion客户端软件。"
+
+#: build/en/book.xml:3124(para)
+#, fuzzy
+msgid "For every conflicted file, Subversion places three extra unversioned files in your working copy:"
+msgstr "对于每一个冲突的文件，Subversion放置三个额外的未版本化文件到你的工作拷贝："
+
+#: build/en/book.xml:3130(filename)
+msgid "filename.mine"
+msgstr "filename.mine"
+
+#: build/en/book.xml:3132(para)
+#, fuzzy
+msgid "This is your file as it existed in your working copy before you updated your working copy—that is, without conflict markers. This file has only your latest changes in it. (If Subversion considers the file to be unmergeable, then the <filename moreinfo=\"none\">.mine</filename> file isn't created, since it would be identical to the working file.)"
+msgstr "你更新前的文件，没有冲突标志，只是你最新更改的内容。（如果Subversion认为这个文件不可以合并，<filename moreinfo=\"none\">.mine</filename>文件不会创建，因为它和工作文件相同。）"
+
+#: build/en/book.xml:3143(filename)
+msgid "filename.rOLDREV"
+msgstr "filename.rOLDREV"
+
+#: build/en/book.xml:3145(para)
+msgid "This is the file that was the <literal moreinfo=\"none\">BASE</literal> revision before you updated your working copy. That is, the file that you checked out before you made your latest edits."
+msgstr "这是你的做更新操作以前的<literal moreinfo=\"none\">BASE</literal>版本文件，就是你在上次更新之后未作更改的版本。"
+
+#: build/en/book.xml:3154(filename)
+msgid "filename.rNEWREV"
+msgstr "filename.rNEWREV"
+
+#: build/en/book.xml:3156(para)
+msgid "This is the file that your Subversion client just received from the server when you updated your working copy. This file corresponds to the <literal moreinfo=\"none\">HEAD</literal> revision of the repository."
+msgstr "这是你的Subversion客户端从服务器刚刚收到的版本，这个文件对应版本库的<literal moreinfo=\"none\">HEAD</literal>版本。"
+
+#: build/en/book.xml:3166(para)
+msgid "Here <literal moreinfo=\"none\">OLDREV</literal> is the revision number of the file in your <filename moreinfo=\"none\">.svn</filename> directory and <literal moreinfo=\"none\">NEWREV</literal> is the revision number of the repository <literal moreinfo=\"none\">HEAD</literal>."
+msgstr "这里<literal moreinfo=\"none\">OLDREV</literal>是你的<filename moreinfo=\"none\">.svn</filename>目录中的修订版本号，<literal moreinfo=\"none\">NEWREV</literal>是版本库中<literal moreinfo=\"none\">HEAD</literal>的版本号。"
+
+#: build/en/book.xml:3174(para)
+msgid "For example, Sally makes changes to the file <filename moreinfo=\"none\">sandwich.txt</filename> in the repository. Harry has just changed the file in his working copy and checked it in. Sally updates her working copy before checking in and she gets a conflict:"
+msgstr "举一个例子，Sally修改了<filename moreinfo=\"none\">sandwich.txt</filename>，Harry刚刚改变了他的本地拷贝中的这个文件并且提交到服务器，Sally在提交之前更新它的工作拷贝得到了冲突："
+
+#: build/en/book.xml:3180(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn update\n"
+"C  sandwich.txt\n"
+"Updated to revision 2.\n"
+"$ ls -1\n"
+"sandwich.txt\n"
+"sandwich.txt.mine\n"
+"sandwich.txt.r1\n"
+"sandwich.txt.r2\n"
+msgstr ""
+"\n"
+"$ svn update\n"
+"C  sandwich.txt\n"
+"Updated to revision 2.\n"
+"$ ls -1\n"
+"sandwich.txt\n"
+"sandwich.txt.mine\n"
+"sandwich.txt.r1\n"
+"sandwich.txt.r2\n"
+
+#: build/en/book.xml:3191(para)
+msgid "At this point, Subversion will <emphasis>not</emphasis> allow you to commit the file <filename moreinfo=\"none\">sandwich.txt</filename> until the three temporary files are removed."
+msgstr "在这种情况下，Subversion<emphasis>不</emphasis>会允许你提交<filename moreinfo=\"none\">sandwich.txt</filename>，直到你的三个临时文件被删掉。"
+
+#: build/en/book.xml:3195(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -m \"Add a few more things\"\n"
+"svn: Commit failed (details follow):\n"
+"svn: Aborting commit: '/home/sally/svn-work/sandwich.txt' remains in conflict\n"
+msgstr ""
+"\n"
+"$ svn commit -m \"Add a few more things\"\n"
+"svn: Commit failed (details follow):\n"
+"svn: Aborting commit: '/home/sally/svn-work/sandwich.txt' remains in conflict\n"
+
+#: build/en/book.xml:3201(para)
+msgid "If you get a conflict, you need to do one of three things:"
+msgstr "如果你遇到冲突，三件事你可以选择："
+
+#: build/en/book.xml:3207(para)
+msgid "Merge the conflicted text <quote>by hand</quote> (by examining and editing the conflict markers within the file)."
+msgstr "<quote>手动</quote>合并冲突文本（检查和修改文件中的冲突标志）。"
+
+#: build/en/book.xml:3213(para)
+msgid "Copy one of the temporary files on top of your working file."
+msgstr "用某一个临时文件覆盖你的工作文件。"
+
+#: build/en/book.xml:3218(para)
+msgid "Run <command moreinfo=\"none\">svn revert &lt;filename&gt;</command> to throw away all of your local changes."
+msgstr "运行<command moreinfo=\"none\">svn revert &lt;filename&gt;</command>来放弃所有的修改。"
+
+#: build/en/book.xml:3224(para)
+#, fuzzy
+msgid "Once you've resolved the conflict, you need to let Subversion know by running <command moreinfo=\"none\">svn resolved</command>. This removes the three temporary files and Subversion no longer considers the file to be in a state of conflict.<placeholder-1/>"
+msgstr "一旦你解决了冲突，你需要通过命令<command moreinfo=\"none\">svn resolved</command>让Subversion知道，这样就会删除三个临时文件，Subversion就不会认为这个文件是在冲突状态了。<footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:3228(para)
+msgid "You can always remove the temporary files yourself, but would you really want to do that when Subversion can do it for you? We didn't think so."
+msgstr "你也可以手工的删除这三个临时文件，但是当Subversion会给你做时你会自己去做吗？我们是这样想的。"
+
+#: build/en/book.xml:3233(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn resolved sandwich.txt\n"
+"Resolved conflicted state of 'sandwich.txt'\n"
+msgstr ""
+"\n"
+"$ svn resolved sandwich.txt\n"
+"Resolved conflicted state of 'sandwich.txt'\n"
+
+#: build/en/book.xml:3240(title)
+msgid "Merging Conflicts by Hand"
+msgstr "手工合并冲突"
+
+#: build/en/book.xml:3242(para)
+msgid "Merging conflicts by hand can be quite intimidating the first time you attempt it, but with a little practice, it can become as easy as falling off a bike."
+msgstr "第一次尝试解决冲突让人感觉很害怕，但经过一点训练，它简单的像是骑着车子下坡。"
+
+#: build/en/book.xml:3246(para)
+#, fuzzy
+msgid "Here's an example. Due to a miscommunication, you and Sally, your collaborator, both edit the file <filename moreinfo=\"none\">sandwich.txt</filename> at the same time. Sally commits her changes, and when you go to update your working copy, you get a conflict and you're going to have to edit <filename moreinfo=\"none\">sandwich.txt</filename> to resolve the conflicts. First, let's take a look at the file:"
+msgstr "这里一个简单的例子，由于不良的交流，你和同事Sally，同时编辑了<filename moreinfo=\"none\">sandwich.txt</filename>。Sally提交了修改，当你准备更新你的版本，冲突发生了，我们不得不去修改<filename moreinfo=\"none\">sandwich.txt</filename>来解决这个问题。首先，看一下这个文件："
+
+#: build/en/book.xml:3254(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cat sandwich.txt\n"
+"Top piece of bread\n"
+"Mayonnaise\n"
+"Lettuce\n"
+"Tomato\n"
+"Provolone\n"
+"&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"=======\n"
+"Sauerkraut\n"
+"Grilled Chicken\n"
+"&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2\n"
+"Creole Mustard\n"
+"Bottom piece of bread\n"
+msgstr ""
+"\n"
+"$ cat sandwich.txt\n"
+"Top piece of bread\n"
+"Mayonnaise\n"
+"Lettuce\n"
+"Tomato\n"
+"Provolone\n"
+"&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"=======\n"
+"Sauerkraut\n"
+"Grilled Chicken\n"
+"&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2\n"
+"Creole Mustard\n"
+"Bottom piece of bread\n"
+
+#: build/en/book.xml:326(term)
+msgid "New users"
+msgstr "新用户"
+
+#: build/en/book.xml:3273(para)
+msgid "The strings of less-than signs, equal signs, and greater-than signs are conflict markers, and are not part of the actual data in conflict. You generally want to ensure that those are removed from the file before your next commit. The text between the first two sets of markers is composed of the changes you made in the conflicting area:"
+msgstr "小于号、等于号和大于号串是冲突标记，并不是冲突的数据，你一定要确定这些内容在下次提交之前得到删除，前两组标志中间的内容是你在冲突区所做的修改："
+
+#: build/en/book.xml:328(para)
+#, fuzzy
+msgid "Your administrator has probably set up Subversion already, and you need to learn how to use the client. If you've never used a version control system, then <xref linkend=\"svn.basic\"/> is a vital introduction to the ideas behind version control. <xref linkend=\"svn.tour\"/> is a guided tour of the Subversion client."
+msgstr "如果管理员已经为你准备好了Subversion服务，你所需要的是学习如何使用客户端。如果你没有使用版本控制系统（像CVS）的经验，那么<xref linkend=\"svn.basic\"/>和<xref linkend=\"svn.tour\"/>是重要的入门教程。如果你已经是CVS的老手，第3章和附录A将是不错的开始。"
+
+#: build/en/book.xml:3281(screen)
+#, no-wrap
+msgid ""
+"\n"
+"&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"=======\n"
+msgstr ""
+"\n"
+"&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"=======\n"
+
+#: build/en/book.xml:3289(para)
+msgid "The text between the second and third sets of conflict markers is the text from Sally's commit:"
+msgstr "后两组之间的是Sally提交的修改冲突："
+
+#: build/en/book.xml:3292(screen)
+#, no-wrap
+msgid ""
+"\n"
+"=======\n"
+"Sauerkraut\n"
+"Grilled Chicken\n"
+"&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2\n"
+msgstr ""
+"\n"
+"=======\n"
+"Sauerkraut\n"
+"Grilled Chicken\n"
+"&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2\n"
+
+#: build/en/book.xml:3299(para)
+msgid "Usually you won't want to just delete the conflict markers and Sally's changes—she's going to be awfully surprised when the sandwich arrives and it's not what she wanted. So this is where you pick up the phone or walk across the office and explain to Sally that you can't get sauerkraut from an Italian deli.<placeholder-1/> Once you've agreed on the changes you will check in, edit your file and remove the conflict markers."
+msgstr "通常你并不希望只是删除冲突标志和Sally的修改—当她收到三明治时，会非常的吃惊。所以你应该走到她的办公室或是拿起电话告诉Sally，你没办法从从意大利熟食店得到想要的泡菜。<placeholder-1/>一旦你们确认了提交内容后，修改文件并且删除冲突标志。"
+
+#: build/en/book.xml:3304(para)
+msgid "And if you ask them for it, they may very well ride you out of town on a rail."
+msgstr "如果你向他们询问，他们非常有理由把你带到城外的铁轨上。"
+
+#: build/en/book.xml:3310(screen)
+#, no-wrap
+msgid ""
+"\n"
+"Top piece of bread\n"
+"Mayonnaise\n"
+"Lettuce\n"
+"Tomato\n"
+"Provolone\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"Creole Mustard\n"
+"Bottom piece of bread\n"
+msgstr ""
+"\n"
+"Top piece of bread\n"
+"Mayonnaise\n"
+"Lettuce\n"
+"Tomato\n"
+"Provolone\n"
+"Salami\n"
+"Mortadella\n"
+"Prosciutto\n"
+"Creole Mustard\n"
+"Bottom piece of bread\n"
+
+#: build/en/book.xml:3323(para)
+msgid "Now run <command moreinfo=\"none\">svn resolved</command>, and you're ready to commit your changes:"
+msgstr "现在运行<command moreinfo=\"none\">svn resolved</command>，你已经准备好提交了："
+
+#: build/en/book.xml:3326(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn resolved sandwich.txt\n"
+"$ svn commit -m \"Go ahead and use my sandwich, discarding Sally's edits.\"\n"
+msgstr ""
+"\n"
+"$ svn resolved sandwich.txt\n"
+"$ svn commit -m \"Go ahead and use my sandwich, discarding Sally's edits.\"\n"
+
+#: build/en/book.xml:3331(para)
+#, fuzzy
+msgid "Note that <command moreinfo=\"none\">svn resolved</command>, unlike most of the other commands we deal with in this chapter, requires an argument. In any case, you want to be careful and only run <command moreinfo=\"none\">svn resolved</command> when you're certain that you've fixed the conflict in your file—once the temporary files are removed, Subversion will let you commit the file even if it still contains conflict markers."
+msgstr "现在我们准备好提交修改了，注意<command moreinfo=\"none\">svn resolved</command>不像我们本章学过的其他命令一样需要参数，在任何你认为解决了冲突的时候，只需要小心运行<command moreinfo=\"none\">svn resolved</command>，—一旦删除了临时文件，Subversion会让你提交这文件，即使文件中还存在冲突标记。"
+
+#: build/en/book.xml:3339(para)
+#, fuzzy
+msgid "If you ever get confused while editing the conflicted file, you can always consult the three files that Subversion creates for you in your working copy—including your file as it was before you updated. You can even use a third-party interactive merging tool to examine those three files."
+msgstr "记住，如果你修改冲突时感到混乱，你可以参考subversion生成的三个文件—包括你未作更新的文件。你也可以使用第三方的合并工具检验这三个文件。"
+
+#: build/en/book.xml:3350(title)
+msgid "Copying a File Onto Your Working File"
+msgstr "拷贝覆盖你的工作文件"
+
+#: build/en/book.xml:3352(para)
+msgid "If you get a conflict and decide that you want to throw out your changes, you can merely copy one of the temporary files created by Subversion over the file in your working copy:"
+msgstr "如果你只是希望取消你的修改，你可以仅仅拷贝Subversion为你生成的文件替换你的工作拷贝："
+
+#: build/en/book.xml:3357(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn update\n"
+"C  sandwich.txt\n"
+"Updated to revision 2.\n"
+"$ ls sandwich.*\n"
+"sandwich.txt  sandwich.txt.mine  sandwich.txt.r2  sandwich.txt.r1\n"
+"$ cp sandwich.txt.r2 sandwich.txt\n"
+"$ svn resolved sandwich.txt\n"
+msgstr ""
+"\n"
+"$ svn update\n"
+"C  sandwich.txt\n"
+"Updated to revision 2.\n"
+"$ ls sandwich.*\n"
+"sandwich.txt  sandwich.txt.mine  sandwich.txt.r2  sandwich.txt.r1\n"
+"$ cp sandwich.txt.r2 sandwich.txt\n"
+"$ svn resolved sandwich.txt\n"
+
+#: build/en/book.xml:3371(title)
+msgid "Punting: Using <command moreinfo=\"none\">svn revert</command>"
+msgstr "下注：使用<command moreinfo=\"none\">svn revert</command>"
+
+#: build/en/book.xml:3373(para)
+msgid "If you get a conflict, and upon examination decide that you want to throw out your changes and start your edits again, just revert your changes:"
+msgstr "如果你得到冲突，经过检查你决定取消自己的修改并且重新编辑，你可以恢复你的修改："
+
+#: build/en/book.xml:3377(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn revert sandwich.txt\n"
+"Reverted 'sandwich.txt'\n"
+"$ ls sandwich.*\n"
+"sandwich.txt\n"
+msgstr ""
+"\n"
+"$ svn revert sandwich.txt\n"
+"Reverted 'sandwich.txt'\n"
+"$ ls sandwich.*\n"
+"sandwich.txt\n"
+
+#: build/en/book.xml:338(term)
+msgid "Advanced users"
+msgstr "高级用户"
+
+#: build/en/book.xml:3384(para)
+msgid "Note that when you revert a conflicted file, you don't have to run <command moreinfo=\"none\">svn resolved</command>."
+msgstr "注意，当你恢复一个冲突的文件时，不需要再运行<command moreinfo=\"none\">svn resolved</command>。"
+
+#: build/en/book.xml:3393(title)
+msgid "Commit Your Changes"
+msgstr "提交你得修改"
+
+#: build/en/book.xml:3395(para)
+msgid "Finally! Your edits are finished, you've merged all changes from the server, and you're ready to commit your changes to the repository."
+msgstr "最后！你的修改结束了，你合并了服务器上所有的修改，你准备好提交修改到版本库。"
+
+#: build/en/book.xml:3399(para)
+#, fuzzy
+msgid "The <command moreinfo=\"none\">svn commit</command> command sends all of your changes to the repository. When you commit a change, you need to supply a <firstterm>log message</firstterm>, describing your change. Your log message will be attached to the new revision you create. If your log message is brief, you may wish to supply it on the command line using the <option>--message</option> (or <option>-m</option>) switch:"
+msgstr "<command moreinfo=\"none\">svn commit</command>命令发送所有的修改到版本库，当你提交修改时，你需要提供一些描述修改的<firstterm>日志信息</firstterm>，你的信息会附到这个修订版本上，如果信息很简短，你可以在命令行中使用<option>--message</option>（<option>-m</option>）选项："
+
+#: build/en/book.xml:340(para)
+#, fuzzy
+msgid "Whether you're a user or administrator, eventually your project will grow larger. You're going to want to learn how to do more advanced things with Subversion, such as how to use branches and perform merges (<xref linkend=\"svn.branchmerge\"/>), how to use Subversion's property support (<xref linkend=\"svn.advanced\"/>), how to configure runtime options (<xref linkend=\"svn.customization\"/>), and other things. These chapters aren't critical at first, but be sure to read them once you're comfortable with the basics."
+msgstr "无论是用户还是管理员，项目终将会壮大起来。那时，就需要学习更多Subversion的高级功能，像如何使用分支和执行合并（<xref linkend=\"svn.branchmerge\"/>）、怎样使用Subversion的属性支持、怎样配制运行参数（<xref linkend=\"svn.advanced\"/>）等等。这两章在学习的初期并不重要，但熟悉了基本操作之后还是非常有必要了解一下的。"
+
+#: build/en/book.xml:3408(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -m \"Corrected number of cheese slices.\"\n"
+"Sending        sandwich.txt\n"
+"Transmitting file data .\n"
+"Committed revision 3.\n"
+msgstr ""
+"\n"
+"$ svn commit -m \"Corrected number of cheese slices.\"\n"
+"Sending        sandwich.txt\n"
+"Transmitting file data .\n"
+"Committed revision 3.\n"
+
+#: build/en/book.xml:3415(para)
+#, fuzzy
+msgid "However, if you've been composing your log message as you work, you may want to tell Subversion to get the message from a file by passing the filename with the <option>--file (-F)</option> option:"
+msgstr "然而，如果你把写日志信息当作工作的一部分，你也许会希望通过告诉Subversion一个文件名得到日志信息，使用<option>--file</option>选项："
+
+#: build/en/book.xml:3420(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -F logmsg\n"
+"Sending        sandwich.txt\n"
+"Transmitting file data .\n"
+"Committed revision 4.\n"
+msgstr ""
+"\n"
+"$ svn commit -F logmsg\n"
+"Sending        sandwich.txt\n"
+"Transmitting file data .\n"
+"Committed revision 4.\n"
+
+#: build/en/book.xml:3427(para)
+msgid "If you fail to specify either the <option>--message</option> or <option>--file</option> switch, then Subversion will automatically launch your favorite editor (see the <literal moreinfo=\"none\">editor-cmd</literal> section in <xref linkend=\"svn.advanced.confarea.opts.config\"/>) for composing a log message."
+msgstr "如果你没有指定<option>--message</option>或者<option>--file</option>选项，Subversion会自动地启动你最喜欢的编辑器（见<xref linkend=\"svn.advanced.confarea.opts.config\"/>的<literal moreinfo=\"none\">editor-cmd</literal>部分）来编辑日志信息。"
+
+#: build/en/book.xml:3436(para)
+#, fuzzy
+msgid "If you're in your editor writing a commit message and decide that you want to cancel your commit, you can just quit your editor without saving changes. If you've already saved your commit message, simply delete the text, save again, then quit."
+msgstr "如果你使用编辑器撰写日志信息时希望取消提交，你可以直接关掉编辑器，不要保存，如果你已经做过保存，只要简单的删掉所有的文本并再次保存。"
+
+#: build/en/book.xml:3442(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit\n"
+"Waiting for Emacs...Done\n"
+"\n"
+"Log message unchanged or not specified\n"
+"a)bort, c)ontinue, e)dit\n"
+"a\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn commit\n"
+"Waiting for Emacs...Done\n"
+"\n"
+"Log message unchanged or not specified\n"
+"a)bort, c)ontinue, e)dit\n"
+"a\n"
+"$\n"
+
+#: build/en/book.xml:3453(para)
+msgid "The repository doesn't know or care if your changes make any sense as a whole; it only checks to make sure that nobody else has changed any of the same files that you did when you weren't looking. If somebody <emphasis>has</emphasis> done that, the entire commit will fail with a message informing you that one or more of your files is out-of-date:"
+msgstr "版本库不知道也不关心你的修改作为一个整体是否有意义，它只检查是否有其他人修改了同一个文件，如果别人<emphasis>已经</emphasis>这样做了，你的整个提交会失败，并且提示你一个或多个文件已经过时了："
+
+#: build/en/book.xml:3460(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn commit -m \"Add another rule\"\n"
+"Sending        rules.txt\n"
+"svn: Commit failed (details follow):\n"
+"svn: Your file or directory 'sandwich.txt' is probably out-of-date\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn commit -m \"Add another rule\"\n"
+"Sending        rules.txt\n"
+"svn: Commit failed (details follow):\n"
+"svn: Your file or directory 'sandwich.txt' is probably out-of-date\n"
+"…\n"
+
+#: build/en/book.xml:3468(para)
+msgid "At this point, you need to run <command moreinfo=\"none\">svn update</command>, deal with any merges or conflicts that result, and attempt your commit again."
+msgstr "此刻，你需要运行<command moreinfo=\"none\">svn update</command>来处理所有的合并和冲突，然后再尝试提交。"
+
+#: build/en/book.xml:3472(para)
+#, fuzzy
+msgid "That covers the basic work cycle for using Subversion. There are many other features in Subversion that you can use to manage your repository and working copy, but most of your day-to-day use of Subversion will involve only the commands that we've discussed so far in this chapter. We will, however, cover a few more commands that you'll use just fairly often."
+msgstr "我们已经覆盖了Subversion基本的工作周期，还有许多其它特性可以管理你得版本库和工作拷贝，但是只使用前面介绍的命令你就可以很轻松的工作了。"
+
+#: build/en/book.xml:3488(title)
+msgid "Examining History"
+msgstr "检验历史"
+
+#: build/en/book.xml:3490(para)
+#, fuzzy
+msgid "Your Subversion repository is like a time machine. It keeps a record of every change ever committed, and allows you to explore this history by examining previous versions of files and directories as well as the metadata that accompanies them. With a single Subversion command, you can check out the repository (or restore an existing working copy) exactly as it was at any date or revision number in the past. However, sometimes you just want to <emphasis>peer into</emphasis> the past instead of <emphasis>going into</emphasis> the past."
+msgstr "我们曾经说过，版本库就像是一台时间机器，它记录了所有提交的修改，允许你检查文件或目录以及相关元数据的历史。通过一个Subversion命令你可以根据时间或修订号取出一个过去的版本（或者恢复现在的工作拷贝），然而，有时候我们只是想<emphasis>看看</emphasis>历史而不想<emphasis>回到</emphasis>历史。"
+
+#: build/en/book.xml:3500(para)
+msgid "There are several commands that can provide you with historical data from the repository:"
+msgstr "有许多命令可以为你提供版本库历史："
+
+#: build/en/book.xml:3508(para)
+msgid "Shows you broad information: log messages with date and author information attached to revisions, and which paths changed in each revision."
+msgstr "展示给你主要信息：每个版本附加在版本上的作者与日期信息和所有路径修改。"
+
+#: build/en/book.xml:3517(para)
+msgid "Shows line-level details of a particular change."
+msgstr ""
+
+#: build/en/book.xml:352(term)
+msgid "Developers"
+msgstr "开发者"
+
+#: build/en/book.xml:3524(para)
+msgid "This is used to retrieve any file as it existed in a particular revision number and display it on your screen."
+msgstr "取得在特定版本的某一个文件显示在当前屏幕。"
+
+#: build/en/book.xml:3533(para)
+msgid "Displays the files in a directory for any given revision."
+msgstr "显示一个目录在某一版本存在的文件。"
+
+#: build/en/book.xml:354(para)
+msgid "Presumably, you're already familiar with Subversion, and now want to either extend it or build new software on top of its many APIs. <xref linkend=\"svn.developer\"/> is just for you."
+msgstr "你应该已经很熟悉Subversion了，并且想扩展它并使用它的API开发新软件。<xref linkend=\"svn.developer\"/>将最适合你。"
+
+#: build/en/book.xml:3543(title)
+msgid "Generating a list of historical changes"
+msgstr ""
+
+#: build/en/book.xml:3545(para)
+msgid "To find information about the history of a file or directory, use the <command moreinfo=\"none\">svn log</command> command. <command moreinfo=\"none\">svn log</command> will provide you with a record of who made changes to a file or directory, at what revision it changed, the time and date of that revision, and, if it was provided, the log message that accompanied the commit."
+msgstr "找出一个文件或目录的历史信息，使用<command moreinfo=\"none\">svn log</command>命令，<command moreinfo=\"none\">svn log</command>将会提供你一条记录，包括：谁对文件或目录作了修改、哪个修订版本作了修改、修订版本的日期和时间、还有如果你当时提供了日志信息，也会显示。"
+
+#: build/en/book.xml:3553(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log\n"
+"------------------------------------------------------------------------\n"
+"r3 | sally | Mon, 15 Jul 2002 18:03:46 -0500 | 1 line\n"
+"\n"
+"Added include lines and corrected # of cheese slices.\n"
+"------------------------------------------------------------------------\n"
+"r2 | harry | Mon, 15 Jul 2002 17:47:57 -0500 | 1 line\n"
+"\n"
+"Added main() methods.\n"
+"------------------------------------------------------------------------\n"
+"r1 | sally | Mon, 15 Jul 2002 17:40:08 -0500 | 1 line\n"
+"\n"
+"Initial import\n"
+"------------------------------------------------------------------------\n"
+msgstr ""
+"\n"
+"$ svn log\n"
+"------------------------------------------------------------------------\n"
+"r3 | sally | Mon, 15 Jul 2002 18:03:46 -0500 | 1 line\n"
+"\n"
+"Added include lines and corrected # of cheese slices.\n"
+"------------------------------------------------------------------------\n"
+"r2 | harry | Mon, 15 Jul 2002 17:47:57 -0500 | 1 line\n"
+"\n"
+"Added main() methods.\n"
+"------------------------------------------------------------------------\n"
+"r1 | sally | Mon, 15 Jul 2002 17:40:08 -0500 | 1 line\n"
+"\n"
+"Initial import\n"
+"------------------------------------------------------------------------\n"
+
+#: build/en/book.xml:3570(para)
+#, fuzzy
+msgid "Note that the log messages are printed in <emphasis>reverse chronological order</emphasis> by default. If you wish to see a different range of revisions in a particular order, or just a single revision, pass the <option>--revision (-r)</option> option:"
+msgstr "注意日志信息缺省根据<emphasis>时间逆序排列</emphasis>，如果希望察看特定顺序的一段修订版本或者单一版本，使用<option>--revision</option> （<option>-r</option>）选项："
+
+#: build/en/book.xml:3576(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -r 5:19    # shows logs 5 through 19 in chronological order\n"
+"\n"
+"$ svn log -r 19:5    # shows logs 5 through 19 in reverse order\n"
+"\n"
+"$ svn log -r 8       # shows log for revision 8\n"
+msgstr ""
+"\n"
+"$ svn log -r 5:19    # shows logs 5 through 19 in chronological order\n"
+"\n"
+"$ svn log -r 19:5    # shows logs 5 through 19 in reverse order\n"
+"\n"
+"$ svn log -r 8       # shows log for revision 8\n"
+
+#: build/en/book.xml:3584(para)
+msgid "You can also examine the log history of a single file or directory. For example:"
+msgstr "你也可以检查单个文件或目录的日志历史，举个例子："
+
+#: build/en/book.xml:3587(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log foo.c\n"
+"…\n"
+"$ svn log http://foo.com/svn/trunk/code/foo.c\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn log foo.c\n"
+"…\n"
+"$ svn log http://foo.com/svn/trunk/code/foo.c\n"
+"…\n"
+
+#: build/en/book.xml:3594(para)
+msgid "These will display log messages <emphasis>only</emphasis> for those revisions in which the working file (or URL) changed."
+msgstr "这样<emphasis>只会</emphasis>显示这个工作文件（或者URL）做过修订的版本的日志信息。"
+
+#: build/en/book.xml:3598(para)
+#, fuzzy
+msgid "If you want even more information about a file or directory, <command moreinfo=\"none\">svn log</command> also takes a <option>--verbose (-v)</option> option. Because Subversion allows you to move and copy files and directories, it is important to be able to track path changes in the filesystem, so in verbose mode, <command moreinfo=\"none\">svn log</command> will include a list of changed paths in a revision in its output:"
+msgstr "如果你希望得到目录和文件更多的信息，你可以对<command moreinfo=\"none\">svn log</command>命令使用<option>--verbose</option> （<option>-v</option>）开关，因为Subversion允许移动和复制文件和目录，所以跟踪路径修改非常重要，在详细模式下，<command moreinfo=\"none\">svn log</command> 输出中会包括一个路径修改的历史："
+
+#: build/en/book.xml:36(firstname)
+msgid "Tatiana"
+msgstr "Tatiana"
+
+#: build/en/book.xml:3606(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -r 8 -v\n"
+"------------------------------------------------------------------------\n"
+"r8 | sally | 2002-07-14 08:15:29 -0500 | 1 line\n"
+"Changed paths:\n"
+"M /trunk/code/foo.c\n"
+"M /trunk/code/bar.h\n"
+"A /trunk/code/doc/README\n"
+"\n"
+"Frozzled the sub-space winch.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+msgstr ""
+"\n"
+"$ svn log -r 8 -v\n"
+"------------------------------------------------------------------------\n"
+"r8 | sally | 2002-07-14 08:15:29 -0500 | 1 line\n"
+"Changed paths:\n"
+"M /trunk/code/foo.c\n"
+"M /trunk/code/bar.h\n"
+"A /trunk/code/doc/README\n"
+"\n"
+"Frozzled the sub-space winch.\n"
+"\n"
+"------------------------------------------------------------------------\n"
+
+#: build/en/book.xml:362(para)
+msgid "The book ends with reference material—<xref linkend=\"svn.ref\"/> is a reference guide for all Subversion commands, and the appendices cover a number of useful topics. These are the chapters you're mostly likely to come back to after you've finished the book."
+msgstr "本书以参考材料作为结束—<xref linkend=\"svn.ref\"/>是一部Subversion全部命令的详细指南，此外，在附录中还有许多很有意义的主题。阅读完本书后，这些章节将会是你经常查阅的内容。"
+
+#: build/en/book.xml:3620(para)
+msgid "<command moreinfo=\"none\">svn log</command> also takes a <option>--quiet</option> (<option>-q</option>) switch, which suppresses the body of the log message. When combined with <option>--verbose</option>, it gives just the names of the changed files."
+msgstr "<command moreinfo=\"none\">svn log</command>也有一个<option>--quiet</option> (<option>-q</option>)选项，会禁止日志信息的主要部分，当与<option>--verbose</option>结合使用，仅会显示修改的文件名。"
+
+#: build/en/book.xml:3627(title)
+msgid "Why Does <command moreinfo=\"none\">svn log</command> Give Me an Empty Response?"
+msgstr "为什么<command moreinfo=\"none\">svn log</command>给我一个空的回应？"
+
+#: build/en/book.xml:3630(para)
+msgid "After working with Subversion for a bit, most users will come across something like this:"
+msgstr "当使用Subversion一些时间后，许多用户会遇到这种情况："
+
+#: build/en/book.xml:3633(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -r 2\n"
+"------------------------------------------------------------------------\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn log -r 2\n"
+"------------------------------------------------------------------------\n"
+"$\n"
+
+#: build/en/book.xml:3639(para)
+msgid "At first glance, this seems like an error. But recall that while revisions are repository-wide, <command moreinfo=\"none\">svn log</command> operates on a path in the repository. If you supply no path, Subversion uses the current working directory as the default target. As a result, if you're operating in a subdirectory of your working copy and attempt to see the log of a revision in which neither that directory nor any of its children was changed, Subversion will show you an empty log. If you want to see what changed in that revision, try pointing <command moreinfo=\"none\">svn log</command> directly at the top-most URL of your repository, as in <command moreinfo=\"none\">svn log -r 2 http://svn.collab.net/repos/svn</command>."
+msgstr "乍一看，好像是一个错误，但是想一下修订版本号是作用在版本库整体之上的，如果你没有提供路径，<command moreinfo=\"none\">svn log</command>会使用当前目录作为默认的目标，所以，作为结果，如果你对一个本身和子目录在指定版本到现在没有做过修改的目录运行这个命令，你会得到空的日志。如果你希望察看某个版本做的修改的日志，只需要直接告诉<command moreinfo=\"none\">svn log</command>使用版本库顶级的目录作为参数，例如<command moreinfo=\"none\">svn log -r 2 http://svn.collab.net/repos/svn</command>。"
+
+#: build/en/book.xml:3658(title)
+#, fuzzy
+msgid "Examining the details of historical changes"
+msgstr "检查本地修改"
+
+#: build/en/book.xml:3660(para)
+msgid "We've already seen <command moreinfo=\"none\">svn diff</command> before—it displays file differences in unified diff format; it was used to show the local modifications made to our working copy before committing to the repository."
+msgstr "我们已经看过<command moreinfo=\"none\">svn diff</command>—使用标准区别文件格式显示区别，它在提交前用来显示本地工作拷贝与版本库的区别。"
+
+#: build/en/book.xml:3665(para)
+msgid "In fact, it turns out that there are <emphasis>three</emphasis> distinct uses of <command moreinfo=\"none\">svn diff</command>:"
+msgstr "事实上，<command moreinfo=\"none\">svn diff</command>有<emphasis>三</emphasis>种不同的用法："
+
+#: build/en/book.xml:3672(para)
+msgid "Examine local changes"
+msgstr "检查本地修改"
+
+#: build/en/book.xml:3676(para)
+msgid "Compare your working copy to the repository"
+msgstr "比较工作拷贝与版本库"
+
+#: build/en/book.xml:3680(para)
+msgid "Compare repository to repository"
+msgstr "比较版本库和版本库"
+
+#: build/en/book.xml:3687(title)
+msgid "Examining Local Changes"
+msgstr "比较本地修改"
+
+#: build/en/book.xml:3689(para)
+msgid "As we've seen, invoking <command moreinfo=\"none\">svn diff</command> with no switches will compare your working files to the cached <quote>pristine</quote> copies in the <filename moreinfo=\"none\">.svn</filename> area:"
+msgstr "像我们看到的，不使用任何参数调用时，<command moreinfo=\"none\">svn diff</command>将会比较你的工作文件与缓存在<filename moreinfo=\"none\">.svn</filename>的<quote>原始</quote>拷贝："
+
+#: build/en/book.xml:3694(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 3)\n"
+"+++ rules.txt\t(working copy)\n"
+"@@ -1,4 +1,5 @@\n"
+" Be kind to others\n"
+" Freedom = Responsibility\n"
+" Everything in moderation\n"
+"-Chew with your mouth open\n"
+"+Chew with your mouth closed\n"
+"+Listen when others are speaking\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn diff\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 3)\n"
+"+++ rules.txt\t(working copy)\n"
+"@@ -1,4 +1,5 @@\n"
+" Be kind to others\n"
+" Freedom = Responsibility\n"
+" Everything in moderation\n"
+"-Chew with your mouth open\n"
+"+Chew with your mouth closed\n"
+"+Listen when others are speaking\n"
+"$\n"
+
+#: build/en/book.xml:37(surname)
+msgid "Apandi"
+msgstr "Apandi"
+
+#: build/en/book.xml:3714(title)
+msgid "Comparing Working Copy to Repository"
+msgstr "比较工作拷贝和版本库"
+
+#: build/en/book.xml:3716(para)
+msgid "If a single <option>--revision</option> (<option>-r</option>) number is passed, then your working copy is compared to the specified revision in the repository."
+msgstr "如果传递一个<option>--revision</option>（<option>-r</option>）参数，你的工作拷贝会与指定的版本比较。"
+
+#: build/en/book.xml:3721(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -r 3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 3)\n"
+"+++ rules.txt\t(working copy)\n"
+"@@ -1,4 +1,5 @@\n"
+" Be kind to others\n"
+" Freedom = Responsibility\n"
+" Everything in moderation\n"
+"-Chew with your mouth open\n"
+"+Chew with your mouth closed\n"
+"+Listen when others are speaking\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn diff -r 3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 3)\n"
+"+++ rules.txt\t(working copy)\n"
+"@@ -1,4 +1,5 @@\n"
+" Be kind to others\n"
+" Freedom = Responsibility\n"
+" Everything in moderation\n"
+"-Chew with your mouth open\n"
+"+Chew with your mouth closed\n"
+"+Listen when others are speaking\n"
+"$\n"
+
+#: build/en/book.xml:373(title)
+msgid "Conventions Used in This Book"
+msgstr "本书约定"
+
+#: build/en/book.xml:3741(title)
+msgid "Comparing Repository to Repository"
+msgstr "比较版本库与版本库"
+
+#: build/en/book.xml:3743(para)
+#, fuzzy
+msgid "If two revision numbers, separated by a colon, are passed via <option>--revision (-r)</option>, then the two revisions are directly compared."
+msgstr "如果通过<option>--revision</option> （<option>-r</option>）传递两个版本号，通过冒号分开，这两个版本会进行比较。"
+
+#: build/en/book.xml:3747(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -r 2:3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 2)\n"
+"+++ rules.txt\t(revision 3)\n"
+"@@ -1,4 +1,4 @@\n"
+" Be kind to others\n"
+"-Freedom = Chocolate Ice Cream\n"
+"+Freedom = Responsibility\n"
+" Everything in moderation\n"
+" Chew with your mouth open\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn diff -r 2:3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 2)\n"
+"+++ rules.txt\t(revision 3)\n"
+"@@ -1,4 +1,4 @@\n"
+" Be kind to others\n"
+"-Freedom = Chocolate Ice Cream\n"
+"+Freedom = Responsibility\n"
+" Everything in moderation\n"
+" Chew with your mouth open\n"
+"$\n"
+
+#: build/en/book.xml:375(para)
+msgid "This section covers the various conventions used in this book."
+msgstr "本节描述了本书中使用的各种约定。"
+
+#: build/en/book.xml:3762(para)
+msgid "A more convenient way of comparing a revision to the previous revision is to use the <option>--change (-c)</option>:"
+msgstr ""
+
+#: build/en/book.xml:3766(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -c 3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 2)\n"
+"+++ rules.txt\t(revision 3)\n"
+"@@ -1,4 +1,4 @@\n"
+" Be kind to others\n"
+"-Freedom = Chocolate Ice Cream\n"
+"+Freedom = Responsibility\n"
+" Everything in moderation\n"
+" Chew with your mouth open\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn diff -c 3 rules.txt\n"
+"Index: rules.txt\n"
+"===================================================================\n"
+"--- rules.txt\t(revision 2)\n"
+"+++ rules.txt\t(revision 3)\n"
+"@@ -1,4 +1,4 @@\n"
+" Be kind to others\n"
+"-Freedom = Chocolate Ice Cream\n"
+"+Freedom = Responsibility\n"
+" Everything in moderation\n"
+" Chew with your mouth open\n"
+"$\n"
+
+#: build/en/book.xml:3781(para)
+msgid "Not only can you use <command moreinfo=\"none\">svn diff</command> to compare files in your working copy to the repository, but if you supply a URL argument, you can examine the differences between items in the repository without even having a working copy. This is especially useful if you wish to inspect changes in a file when you don't have a working copy on your local machine:"
+msgstr "你不仅可以用<command moreinfo=\"none\">svn diff</command>比较你工作拷贝中的文件，你甚至可以通过提供一个URL参数来比较版本库中两个文件的的区别，通常在本地机器没有工作拷贝时非常有用："
+
+#: build/en/book.xml:3789(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -c 5 http://svn.example.com/repos/example/trunk/text/rules.txt\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn diff -c 5 http://svn.example.com/repos/example/trunk/text/rules.txt\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:380(title)
+msgid "Typographic Conventions"
+msgstr "排版习惯"
+
+#: build/en/book.xml:3801(title)
+#, fuzzy
+msgid "Browsing the repository"
+msgstr "使用版本库层"
+
+#: build/en/book.xml:3803(para)
+msgid "Using <command moreinfo=\"none\">svn cat</command> and <command moreinfo=\"none\">svn list</command>, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one."
+msgstr ""
+
+#: build/en/book.xml:3814(para)
+msgid "If you want to examine an earlier version of a file and not necessarily the differences between two files, you can use <command moreinfo=\"none\">svn cat</command>:"
+msgstr "如果你只是希望检查一个过去的版本而不希望察看它们的区别，使用<command moreinfo=\"none\">svn cat</command>："
+
+#: build/en/book.xml:3818(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn cat -r 2 rules.txt\n"
+"Be kind to others\n"
+"Freedom = Chocolate Ice Cream\n"
+"Everything in moderation\n"
+"Chew with your mouth open\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn cat -r 2 rules.txt\n"
+"Be kind to others\n"
+"Freedom = Chocolate Ice Cream\n"
+"Everything in moderation\n"
+"Chew with your mouth open\n"
+"$\n"
+
+#: build/en/book.xml:3827(para)
+msgid "You can also redirect the output directly into a file:"
+msgstr "你可以重定向输出到一个文件："
+
+#: build/en/book.xml:3830(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn cat -r 2 rules.txt &gt; rules.txt.v2\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn cat -r 2 rules.txt &gt; rules.txt.v2\n"
+"$\n"
+
+#: build/en/book.xml:3841(para)
+msgid "The <command moreinfo=\"none\">svn list</command> command shows you what files are in a repository directory without actually downloading the files to your local machine:"
+msgstr "<command moreinfo=\"none\">svn list</command>可以在不下载文件到本地目录的情况下来察看目录中的文件："
+
+#: build/en/book.xml:3845(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn list http://svn.collab.net/repos/svn\n"
+"README\n"
+"branches/\n"
+"clients/\n"
+"tags/\n"
+"trunk/\n"
+msgstr ""
+"\n"
+"$ svn list http://svn.collab.net/repos/svn\n"
+"README\n"
+"branches/\n"
+"clients/\n"
+"tags/\n"
+"trunk/\n"
+
+#: build/en/book.xml:385(command)
+msgid "Constant width"
+msgstr "等宽字体"
+
+#: build/en/book.xml:3854(para)
+#, fuzzy
+msgid "If you want a more detailed listing, pass the <option>--verbose (-v)</option> flag to get output like this:"
+msgstr "如果你希望察看详细信息，你可以使用<option>--verbose</option> （<option>-v</option>）参数："
+
+#: build/en/book.xml:3858(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn list -v http://svn.collab.net/repos/svn\n"
+"  20620 harry            1084 Jul 13  2006 README\n"
+"  23339 harry                 Feb 04 01:40 branches/\n"
+"  21282 sally                 Aug 27 09:41 developer-resources/\n"
+"  23198 harry                 Jan 23 17:17 tags/\n"
+"  23351 sally                 Feb 05 13:26 trunk/\n"
+msgstr ""
+"\n"
+"$ svn list -v http://svn.collab.net/repos/svn\n"
+"  20620 harry            1084 Jul 13  2006 README\n"
+"  23339 harry                 Feb 04 01:40 branches/\n"
+"  21282 sally                 Aug 27 09:41 developer-resources/\n"
+"  23198 harry                 Jan 23 17:17 tags/\n"
+"  23351 sally                 Feb 05 13:26 trunk/\n"
+
+#: build/en/book.xml:3867(para)
+msgid "The columns tell you the revision at which the file or directory was last modified, the user who modified it, the size if it is a file, the date it was last modified, and the item's name."
+msgstr "这些列告诉你文件和目录最后修改的修订版本、做出修改的用户、如果是文件还会有文件的大小，最后是修改日期和项目的名字。"
+
+#: build/en/book.xml:387(para)
+msgid "Used for commands, command output, and switches"
+msgstr "用于命令，命令输出和开关"
+
+#: build/en/book.xml:3878(title)
+#, fuzzy
+msgid "Fetching older repository snapshots"
+msgstr "开始规划版本库"
+
+#: build/en/book.xml:3880(para)
+msgid "In addition to all of the above commands, you can use <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn checkout</command> with the <option>--revision</option> switch to take an entire working copy <quote>back in time</quote><placeholder-1/>:"
+msgstr "除了以上的命令，你可以使用带参数<option>--revision</option>的<command moreinfo=\"none\">svn update</command>和<command moreinfo=\"none\">svn checkout</command>来使整个工作拷贝<quote>回到过去</quote><placeholder-1/>："
+
+#: build/en/book.xml:3884(para)
+msgid "See? We told you that Subversion was a time machine."
+msgstr "看到了吧？我们说过Subversion是一个时间机器。"
+
+#: build/en/book.xml:3887(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout -r 1729 # Checks out a new working copy at r1729\n"
+"…\n"
+"$ svn update -r 1729 # Updates an existing working copy to r1729\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn checkout -r 1729 # Checks out a new working copy at r1729\n"
+"…\n"
+"$ svn update -r 1729 # Updates an existing working copy to r1729\n"
+"…\n"
+
+#: build/en/book.xml:3895(para)
+msgid "Many Subversion newcomers attempt to use the above <command moreinfo=\"none\">svn update</command> example to <quote>undo</quote> committed changes, but this won't work as you can't commit changes that you obtain from backdating a working copy if the changed files have newer revisions. See <xref linkend=\"svn.branchmerge.commonuses.resurrect\"/> for a description of how to <quote>undo</quote> a commit."
+msgstr ""
+
+#: build/en/book.xml:3903(para)
+msgid "Lastly, if you're building a release and wish to bundle up your files from Subversion but don't want those pesky .svn directories in the way, then you can use svn export to create a local copy of all or part of your repository sans .svn directories. As with <command moreinfo=\"none\">svn update</command> and <command moreinfo=\"none\">svn checkout</command>, you can also pass the <option>--revision</option> switch to <command moreinfo=\"none\">svn export</command>:"
+msgstr ""
+
+#: build/en/book.xml:3912(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn export http://svn.example.com/svn/repos1 # Exports latest revision\n"
+"…\n"
+"$ svn export http://svn.example.com/svn/repos1 -r 1729\n"
+"# Exports revision r1729\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn export http://svn.example.com/svn/repos1 # Exports latest revision\n"
+"…\n"
+"$ svn export http://svn.example.com/svn/repos1 -r 1729\n"
+"# Exports revision r1729\n"
+"…\n"
+
+#: build/en/book.xml:392(replaceable)
+msgid "Constant width italic"
+msgstr "等宽斜体"
+
+#: build/en/book.xml:3929(title)
+msgid "Sometimes You Just Need to Cleanup"
+msgstr ""
+
+#: build/en/book.xml:3931(para)
+msgid "When Subversion modifies your working copy (or any information within <filename moreinfo=\"none\">.svn</filename>), it tries to do so as safely as possible. Before changing the working copy, Subversion writes its intentions to a log file. Next it executes the commands in the log file to apply the requested change, holding a lock on the relevant part of the working copy while it works — to prevent other Subversion clients from accessing the working copy in mid-change. Finally, Subversion removes the log file. Architecturally, this is similar to a journaled filesystem. If a Subversion operation is interrupted (if the process is killed, or if the machine crashes, for example), the log files remain on disk. By re-executing the log files, Subversion can complete the previously started operation, and your working copy can get itself back into a consistent state."
+msgstr "当Subversion改变你的工作拷贝（或是<filename moreinfo=\"none\">.svn</filename>中的任何信息），它会尽可能的小心，在修改任何事情之前，它把意图写到日志文件中去，然后执行log文件中的命令，并且执行过程中在工作拷贝的相关部分保存一个锁— 防止Subversion客户端在变更过程中访问工作拷贝。然后删掉日志文件，这与记帐试的文件系统架构类似。如果Subversion的操作中断了（举个例子：进程被杀死了，机器死掉了），日志文件会保存在硬盘上，通过重新执行日志文件，Subversion可以完成上一次开始的操作，你的工作拷贝可以回到一致的状态。"
+
+#: build/en/book.xml:394(para)
+msgid "Used for replaceable items in code and text"
+msgstr "用于代码和文本中的可替换部分"
+
+#: build/en/book.xml:3947(para)
+msgid "And this is exactly what <command moreinfo=\"none\">svn cleanup</command> does: it searches your working copy and runs any leftover logs, removing working copy locks in the process. If Subversion ever tells you that some part of your working copy is <quote>locked</quote>, then this is the command that you should run. Also, <command moreinfo=\"none\">svn status</command> will display an <literal moreinfo=\"none\">L</literal> next to locked items:"
+msgstr "这就是<command moreinfo=\"none\">svn cleanup</command>所作的：它查找工作拷贝中的所有遗留的日志文件，删除进程中工作拷贝的锁。如果Subversion告诉你工作拷贝中的一部分已经<quote>锁定</quote>了，你就需要运行这个命令了。同样，<command moreinfo=\"none\">svn status</command>将会使用<literal moreinfo=\"none\">L</literal> 显示锁定的项目："
+
+#: build/en/book.xml:3955(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn status\n"
+"  L    somedir\n"
+"M      somedir/foo.c\n"
+"\n"
+"$ svn cleanup\n"
+"$ svn status\n"
+"M      somedir/foo.c\n"
+msgstr ""
+"\n"
+"$ svn status\n"
+"  L    somedir\n"
+"M      somedir/foo.c\n"
+"\n"
+"$ svn cleanup\n"
+"$ svn status\n"
+"M      somedir/foo.c\n"
+
+#: build/en/book.xml:3965(para)
+msgid "Don't confuse these working copy locks with the ordinary locks that Subversion users create when using the <quote>lock-modify-unlock</quote> model of concurrent version control; see <xref linkend=\"svn.advanced.locking.meanings\"/> for clarification."
+msgstr "Don't confuse these working copy locks with the ordinary locks that Subversion users create when using the <quote>lock-modify-unlock</quote> model of concurrent version control; see <xref linkend=\"svn.advanced.locking.meanings\"/> for clarification."
+
+#: build/en/book.xml:3980(para)
+msgid "Now we've covered most of the Subversion client commands. Notable exceptions are those dealing with branching and merging (see <xref linkend=\"svn.branchmerge\"/>) and properties (see <xref linkend=\"svn.advanced.props\"/>). However, you may want to take a moment to skim through <xref linkend=\"svn.ref\"/> to get an idea of all the many different commands that Subversion has—and how you can use them to make your work easier."
+msgstr "我们已经覆盖了大多数Subversion的客户端命令，引人注目的例外是处理分支与合并（见<xref linkend=\"svn.branchmerge\"/>）以及属性（见<xref linkend=\"svn.advanced.props\"/>）的命令，然而你也许会希望跳到<xref linkend=\"svn.ref\"/>来察看所有不同的命令—怎样利用它们使你的工作更容易。"
+
+#: build/en/book.xml:399(filename)
+msgid "Italic"
+msgstr "斜体"
+
+#: build/en/book.xml:4(title)
+msgid "Version Control with Subversion"
+msgstr "Subversion 权威指南"
+
+#: build/en/book.xml:40(pagenums)
+msgid "350 pages (est.)"
+msgstr "大约 350 页"
+
+#: build/en/book.xml:4000(title)
+msgid "Advanced Topics"
+msgstr "高级主题"
+
+#: build/en/book.xml:4002(para)
+msgid "If you've been reading this book chapter by chapter, from start to finish, you should by now have acquired enough knowledge to use the Subversion client to perform the most common version control operations. You understand how to checkout a working copy from a Subversion repository. You are comfortable with submitting and receiving changes using the <command moreinfo=\"none\">svn commit</command> and <command moreinfo=\"none\">svn update</command> functions. You've probably even developed a reflex which causes you to run the <command moreinfo=\"none\">svn status</command> command almost unconsciously. For all intents and purposes, you are ready to use Subversion in a typical environment."
+msgstr "如果你是从头到尾按章节阅读本书，你一定已经具备了使用Subversion客户端执行大多数不同的版本控制操作足够的知识，你理解了怎样从Subversion版本库取出一个工作拷贝，你已经熟悉了通过<command moreinfo=\"none\">svn commit</command>和<command moreinfo=\"none\">svn update</command>来提交和接收修改，你甚至也经常下意识的使用<command moreinfo=\"none\">svn status</command>，无论目的是什么，你已经可以正常使用Subversion了。"
+
+#: build/en/book.xml:401(para)
+msgid "Used for file and directory names"
+msgstr "用于文件和路径名"
+
+#: build/en/book.xml:4014(para)
+msgid "But the Subversion feature set doesn't stop at <quote>common version control operations</quote>. It has other bits of functionality that extend beyond just communicating file and directory changes to and from a central repository."
+msgstr ""
+
+#: build/en/book.xml:4019(para)
+#, fuzzy
+msgid "This chapter highlights some of Subversion's features that, while important, aren't part of the typical user's daily routine. It assumes that you are familiar with Subversion's basic file and directory versioning capabilities. If you aren't, you'll want to first read <xref linkend=\"svn.basic\"/> and <xref linkend=\"svn.tour\"/>. Once you've mastered those basics and consumed this chapter, you'll be a Subversion power-user!"
+msgstr "在阅读本章之前，你一定要熟悉Subversion对文件和目录的基本版本操作能力，如果你还没有阅读这些内容，或者是需要一个复习，我们建议你重读<xref linkend=\"svn.basic\"/>和<xref linkend=\"svn.tour\"/>，一旦你已经掌握了基础知识和本章的内容，你会变成Subversion的超级用户！"
+
+#: build/en/book.xml:4031(title)
+#, fuzzy
+msgid "Revision Specifiers"
+msgstr "修订版本号"
+
+#: build/en/book.xml:4033(para)
+msgid "As you saw in <xref linkend=\"svn.basic.in-action.revs\"/>, revision numbers in Subversion are pretty straightforward—integers that keep getting larger as you commit more changes to your versioned data. Still, it doesn't take long before you can no longer remember exactly what happened in each and every revision. Fortunately, the typical Subversion workflow doesn't often demand that you supply arbitrary revisions to the Subversion operations you perform. For operations that <emphasis>do</emphasis> require a revision specifier, you generally supply a revision number that you saw in a commit email, in the output of some other Subversion operation, or in some other context that would yield meaning to that particular number."
+msgstr ""
+
+#: build/en/book.xml:4047(para)
+msgid "But occasionally, you need to pinpoint a moment in time for which you don't already have a revision number memorized or handy. So besides the integer revision numbers, <command moreinfo=\"none\">svn</command> allows as input some additional forms of revision specifiers—revision keywords, and revision dates."
+msgstr ""
+
+#: build/en/book.xml:4055(para)
+msgid "The various forms of Subversion revision specifiers can be mixed and matched when used to specify revision ranges. For example, you can use <option>-r <replaceable>REV1</replaceable>:<replaceable>REV2</replaceable></option> where <replaceable>REV1</replaceable> is a revision keyword and <replaceable>REV2</replaceable> is a revision number, or where <replaceable>REV1</replaceable> is a date and <replaceable>REV2</replaceable> is a revision keyword, and so on. The individual revision specifiers are independently evaluated, so you can put whatever you want on the opposite sides of that colon."
+msgstr ""
+
+#: build/en/book.xml:4070(title)
+msgid "Revision Keywords"
+msgstr "修订版本关键字"
+
+#: build/en/book.xml:4073(primary) build/en/book.xml:4180(primary)
+#, fuzzy
+msgid "revisions"
+msgstr "修订版本"
+
+#: build/en/book.xml:4074(secondary)
+#, fuzzy
+msgid "revision keywords"
+msgstr "修订版本关键字"
+
+#: build/en/book.xml:4077(primary) build/en/book.xml:4098(term)
+msgid "HEAD"
+msgstr "HEAD"
+
+#: build/en/book.xml:4080(primary) build/en/book.xml:4106(term)
+msgid "BASE"
+msgstr "BASE"
+
+#: build/en/book.xml:4083(primary) build/en/book.xml:4116(term)
+msgid "COMMITTED"
+msgstr "COMMITTED"
+
+#: build/en/book.xml:4086(primary) build/en/book.xml:4124(term)
+msgid "PREV"
+msgstr "PREV"
+
+#: build/en/book.xml:4089(para)
+#, fuzzy
+msgid "The Subversion client understands a number of <firstterm>revision keywords</firstterm>. These keywords can be used instead of integer arguments to the <option>--revision (-r)</option> switch, and are resolved into specific revision numbers by Subversion:"
+msgstr "Subversion客户端可以理解一些<firstterm>修订版本关键字</firstterm>，这些关键字可以用来代替<option>--revision</option>的数字参数，这会被Subversion解释到特定版本："
+
+#: build/en/book.xml:41(pubdate)
+msgid "(TBA)"
+msgstr "(TBA)"
+
+#: build/en/book.xml:4100(para)
+msgid "The latest (or <quote>youngest</quote>) revision in the repository."
+msgstr "版本库中最新的（或者是<quote>最年轻的</quote>）版本。"
+
+#: build/en/book.xml:4108(para)
+msgid "The revision number of an item in a working copy. If the item has been locally modified, the <quote>BASE version</quote> refers to the way the item appears without those local modifications."
+msgstr "工作拷贝中一个条目的修订版本号，如果这个版本在本地修改了，则<quote>BASE版本</quote>就是这个条目在本地未修改的版本。"
+
+#: build/en/book.xml:411(title)
+msgid "Icons"
+msgstr "图标"
+
+#: build/en/book.xml:4118(para)
+msgid "The most recent revision prior to, or equal to, <literal moreinfo=\"none\">BASE</literal>, in which an item changed."
+msgstr "在<literal moreinfo=\"none\">BASE</literal>版本之前（或在Base）一个项目最后修改的版本。"
+
+#: build/en/book.xml:4126(para)
+#, fuzzy
+msgid "The revision immediately <emphasis>before</emphasis> the last revision in which an item changed. Technically, this boils down to <literal moreinfo=\"none\">COMMITTED</literal>-1."
+msgstr "一个项目最后修改版本<emphasis>之前</emphasis>的那个版本（技术上为COMMITTED -1）。"
+
+#: build/en/book.xml:4135(para)
+#, fuzzy
+msgid "As can be derived from their descriptions, the <literal moreinfo=\"none\">PREV</literal>, <literal moreinfo=\"none\">BASE</literal>, and <literal moreinfo=\"none\">COMMITTED</literal> revision keywords are used only when referring to a working copy path—they don't apply to repository URLs. <literal moreinfo=\"none\">HEAD</literal>, on the other hand, can be used in conjuction with both of these path types."
+msgstr "Subversion将CVS的<literal moreinfo=\"none\">P</literal>和<literal moreinfo=\"none\">U</literal>合并为<literal moreinfo=\"none\">U</literal>，当合并或冲突发生时，Subversion会简单的打印<literal moreinfo=\"none\">G</literal>或<literal moreinfo=\"none\">C</literal>，而不是大段相关内容。"
+
+#: build/en/book.xml:414(para)
+msgid "This icon designates a note relating to the surrounding text."
+msgstr "此图标表示旁边的文本内容需特别注意。"
+
+#: build/en/book.xml:4143(para)
+msgid "Here are some examples of revision keywords in action:"
+msgstr ""
+
+#: build/en/book.xml:4146(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn diff -r PREV:COMMITTED foo.c\n"
+"# shows the last change committed to foo.c\n"
+"\n"
+"$ svn log -r HEAD\n"
+"# shows log message for the latest repository commit\n"
+"\n"
+"$ svn diff -r HEAD\n"
+"# compares your working copy (with all of its local changes) to the\n"
+"# latest version of that tree in the repository\n"
+"\n"
+"$ svn diff -r BASE:HEAD foo.c\n"
+"# compares the unmodified version of foo.c with the latest version of\n"
+"# foo.c in the repository\n"
+"\n"
+"$ svn log -r BASE:HEAD\n"
+"# shows all commit logs for the current versioned directory since you\n"
+"# last updated\n"
+"\n"
+"$ svn update -r PREV foo.c\n"
+"# rewinds the last change on foo.c, decreasing foo.c's working revision\n"
+"\n"
+"$ svn diff -r BASE:14 foo.c\n"
+"# compares the unmodified version of foo.c with the way foo.c looked\n"
+"# in revision 14\n"
+msgstr ""
+"\n"
+"$ svn diff -r PREV:COMMITTED foo.c\n"
+"# shows the last change committed to foo.c\n"
+"\n"
+"$ svn log -r HEAD\n"
+"# shows log message for the latest repository commit\n"
+"\n"
+"$ svn diff -r HEAD\n"
+"# compares your working copy (with all of its local changes) to the\n"
+"# latest version of that tree in the repository\n"
+"\n"
+"$ svn diff -r BASE:HEAD foo.c\n"
+"# compares the unmodified version of foo.c with the latest version of\n"
+"# foo.c in the repository\n"
+"\n"
+"$ svn log -r BASE:HEAD\n"
+"# shows all commit logs for the current versioned directory since you\n"
+"# last updated\n"
+"\n"
+"$ svn update -r PREV foo.c\n"
+"# rewinds the last change on foo.c, decreasing foo.c's working revision\n"
+"\n"
+"$ svn diff -r BASE:14 foo.c\n"
+"# compares the unmodified version of foo.c with the way foo.c looked\n"
+"# in revision 14\n"
+
+#: build/en/book.xml:4177(title)
+msgid "Revision Dates"
+msgstr "修订版本日期"
+
+#: build/en/book.xml:4181(secondary)
+msgid "specified as dates"
+msgstr ""
+
+#: build/en/book.xml:4184(para)
+msgid "Revision numbers reveal nothing about the world outside the version control system, but sometimes you need to correlate a moment in real time with a moment in version history. To facilitate this, the <option>--revision (-r)</option> option can also accept as input date specifiers wrapped in curly braces (<literal moreinfo=\"none\">{</literal> and <literal moreinfo=\"none\">}</literal>). Subversion accepts the standard ISO-8601 date and time formats, plus a few others. Here are some examples. (Remember to use quotes around any date that contains spaces.)"
+msgstr ""
+
+#: build/en/book.xml:419(para)
+msgid "This icon designates a helpful tip relating to the surrounding text."
+msgstr "此图标表示旁边的文本描述了一个有用的小技巧。"
+
+#: build/en/book.xml:4195(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout -r {2006-02-17}\n"
+"$ svn checkout -r {15:30}\n"
+"$ svn checkout -r {15:30:00.200000}\n"
+"$ svn checkout -r {\"2006-02-17 15:30\"}\n"
+"$ svn checkout -r {\"2006-02-17 15:30 +0230\"}\n"
+"$ svn checkout -r {2006-02-17T15:30}\n"
+"$ svn checkout -r {2006-02-17T15:30Z}\n"
+"$ svn checkout -r {2006-02-17T15:30-04:00}\n"
+"$ svn checkout -r {20060217T1530}\n"
+"$ svn checkout -r {20060217T1530Z}\n"
+"$ svn checkout -r {20060217T1530-0500}\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn checkout -r {2006-02-17}\n"
+"$ svn checkout -r {15:30}\n"
+"$ svn checkout -r {15:30:00.200000}\n"
+"$ svn checkout -r {\"2006-02-17 15:30\"}\n"
+"$ svn checkout -r {\"2006-02-17 15:30 +0230\"}\n"
+"$ svn checkout -r {2006-02-17T15:30}\n"
+"$ svn checkout -r {2006-02-17T15:30Z}\n"
+"$ svn checkout -r {2006-02-17T15:30-04:00}\n"
+"$ svn checkout -r {20060217T1530}\n"
+"$ svn checkout -r {20060217T1530Z}\n"
+"$ svn checkout -r {20060217T1530-0500}\n"
+"…\n"
+
+#: build/en/book.xml:4210(para)
+#, fuzzy
+msgid "When you specify a date, Subversion resolves that date to the most recent revision of the repository as of that date, and then continues to operate against that resolved revision number:"
+msgstr "当你指定一个日期，Subversion会在版本库找到接近这个日期的最新版本："
+
+#: build/en/book.xml:4215(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -r {2006-11-28}\n"
+"------------------------------------------------------------------------\n"
+"r12 | ira | 2006-11-27 12:31:51 -0600 (Mon, 27 Nov 2006) | 6 lines\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn log -r {2006-11-28}\n"
+"------------------------------------------------------------------------\n"
+"r12 | ira | 2006-11-27 12:31:51 -0600 (Mon, 27 Nov 2006) | 6 lines\n"
+"…\n"
+
+#: build/en/book.xml:4223(title)
+msgid "Is Subversion a Day Early?"
+msgstr "Subversion会早一天吗？"
+
+#: build/en/book.xml:4225(para)
+#, fuzzy
+msgid "If you specify a single date as a revision without specifying a time of day (for example <literal moreinfo=\"none\">2006-11-27</literal>), you may think that Subversion should give you the last revision that took place on the 27th of November. Instead, you'll get back a revision from the 26th, or even earlier. Remember that Subversion will find the <emphasis>most recent revision of the repository</emphasis> as of the date you give. If you give a date without a timestamp, like <literal moreinfo=\"none\">2006-11-27</literal>, Subversion assumes a time of 00:00:00, so looking for the most recent revision won't return anything on the day of the 27th."
+msgstr "如果你只是指定了日期而没有时间（举个例子<literal moreinfo=\"none\">2002-11-27</literal>），你也许会以为Subversion会给你11-27号最后的版本，相反，你会得到一个26号版本，甚至更早。记住Subversion会根据你的日期找到<emphasis>最新的</emphasis>版本，如果你给一个日期，而没有给时间，像<literal moreinfo=\"none\">2002-11-27</literal>，Subversion会假定时间是00:00:00，所以在27号找不到任何版本。"
+
+#: build/en/book.xml:4238(para)
+#, fuzzy
+msgid "If you want to include the 27th in your search, you can either specify the 27th with the time (<literal moreinfo=\"none\">{\"2006-11-27 23:59\"}</literal>), or just specify the next day (<literal moreinfo=\"none\">{2006-11-28}</literal>)."
+msgstr "如果你希望查询包括27号，你既可以使用（<literal moreinfo=\"none\">{\"2002-11-27 23:59\"}</literal>），或是直接使用（<literal moreinfo=\"none\">{2002-11-28}</literal>）。"
+
+#: build/en/book.xml:424(para)
+msgid "This icon designates a warning relating to the surrounding text."
+msgstr "此图标表示旁边的文本是警告信息。"
+
+#: build/en/book.xml:4245(para)
+msgid "You can also use a range of dates. Subversion will find all revisions between both dates, inclusive:"
+msgstr "你可以使用时间段，Subversion会找到这段时间的所有版本："
+
+#: build/en/book.xml:4248(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn log -r {2006-11-20}:{2006-11-29}\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn log -r {2006-11-20}:{2006-11-29}\n"
+"…\n"
+
+#: build/en/book.xml:4254(para)
+#, fuzzy
+msgid "Since the timestamp of a revision is stored as an unversioned, modifiable property of the revision (see <xref linkend=\"svn.advanced.props\"/>, revision timestamps can be changed to represent complete falsifications of true chronology, or even removed altogether. This will wreak havoc on the internal date-to-revision conversion that Subversion performs."
+msgstr "用户一定要认识到这种精巧会成为处理日期的绊脚石，因为一个版本的时间戳是作为一个属性存储的—不是版本化的，而是可以编辑的属性—版本号的时间戳可以被修改，从而建立一个虚假的年代表，也可以被完全删除。这将大大破坏Subversion的这种时间—版本转化功能的表现。"
+
+#: build/en/book.xml:4270(title)
+msgid "Properties"
+msgstr "属性"
+
+#: build/en/book.xml:4272(primary)
+#, fuzzy
+msgid "properties"
+msgstr "属性"
+
+#: build/en/book.xml:4275(para)
+#, fuzzy
+msgid "We've already covered in detail how Subversion stores and retrieves various versions of files and directories in its repository. Whole chapters have been devoted to this most fundamental piece of functionality provided by the tool. And if the versioning support stopped there, Subversion would still be complete from a version control perspective."
+msgstr "我们已经详细讲述了Subversion存储和检索版本库中不同版本的文件和目录的细节，并且用了好几个章节来论述这个工具的基本功能。到此为止，Subversion还仅仅表现出一个普通的版本控制理念。但是Subversion并没有就此止步。"
+
+#: build/en/book.xml:4282(para)
+msgid "But it doesn't stop there."
+msgstr ""
+
+#: build/en/book.xml:4284(para)
+#, fuzzy
+msgid "In addition to versioning your directories and files, Subversion provides interfaces for adding, modifying, and removing versioned metadata on each of your versioned directories and files. We refer to this metadata as <firstterm>properties</firstterm>, and they can be thought of as two-column tables that map property names to arbitrary values attached to each item in your working copy. Generally speaking, the names and values of the properties can be whatever you want them to be, with the constraint that the names must be human-readable text. And the best part about these properties is that they, too, are versioned, just like the textual contents of your files. You can modify, commit, and revert property changes as easily as you can file content changes. And the sending and receiving of property changes occurs as part of your typical commit and update operations—you don't have to change your basic processes to accomodate them."
+msgstr "作为目录和文件版本化的补充，Subversion提供了对每一个版本化的目录和文件添加、修改和删除版本化的元数据的接口，我们用<firstterm>属性</firstterm>来表示这些元数据。我们可以认为它们是一个两列的表，附加到你的工作拷贝的每个条目上，映射属性名到任意的值。一般来说，属性的名称和值可以是你希望的任何值，限制就是名称必须是可读的文本，并且最好的一点是这些属性也是版本化的，就像你的文本内容文件，你可以像提交文本修改一样修改、提交和恢复属性修改，当你更新时也会接收到别人的属性修改。"
+
+#: build/en/book.xml:4301(para)
+#, fuzzy
+msgid "Properties show up elsewhere in Subversion, too. Just as files and directories may have arbitrary property names and values attached to them, each revision as a whole may have arbitrary properties attached to it. The same constraints apply—human-readable names and anything-you-want binary values. The main difference is that revision properties are not versioned. In other words, if you change the value of, or delete, a revision property, there's no way within the scope of Subversion's functionality to recover the previous value."
+msgstr "Subversion的属性也可以在别的地方出现，就像文件和目录可能附加有任意的属性名和值，每个修订版本作为一个整体也可以附加任意的属性，也有同样的限制—可读的文本名称和任何你希望的，二进制值—除了修订版本不是版本化的，参见<xref linkend=\"svn.reposadmin.basics.revprops\"/>获得版本化的属性信息。"
+
+#: build/en/book.xml:4311(para)
+msgid "Subversion has no particular policy regarding the use of properties. It asks only that you not use property names that begin with the prefix <literal moreinfo=\"none\">svn:</literal>. That's the namespace that it sets aside for its own use. And Subversion does, in fact, use properties, both the versioned and unversioned variety. Certain versioned properties have special meaning or effects when found on files and directories, or house a particular bit of information about the revisions on which they are found. Certain revision properties are automatically attached to revisions by Subversion's commit process, and carry information about the revision. Most of these properties are mentioned elsewhere in this or other chapters as part of the more general topics to which they are related. For an exhaustive list of Subversion's pre-defined properties, see <xref linkend=\"svn.ref.properties\"/>."
+msgstr ""
+
+#: build/en/book.xml:4327(para)
+msgid "In this section, we will examine the utility—both to users of Subversion, and to Subversion itself—of property support. You'll learn about the property-related <command moreinfo=\"none\">svn</command> subcommands, and how property modifications affect your normal Subversion workflow. Hopefully, you'll be convinced that Subversion properties can enhance your version control experience."
+msgstr "在本小节，我们将会检验这个工具—不仅是对Subversion的用户，也对Subversion本身—对于属性的支持。你会学到与属性相关的<command moreinfo=\"none\">svn</command>子命令，和属性怎样影响你的普通Subversion工作流，希望你会感到Subversion的属性可以提高你的版本控制体验。"
+
+#: build/en/book.xml:4337(title)
+msgid "Why Properties?"
+msgstr "为什么需要属性？"
+
+#: build/en/book.xml:4339(para)
+msgid "Just as Subversion uses properties to store extra information about the files, directories, and revisions that it contains, you might also find properties to be of similar use. Some part of the processes around Subversion's usage to which you adhere, or maybe some additional tooling around Subversion that you use, might find utility in having a place close to your versioned data to hang custom metadata about that data."
+msgstr ""
+
+#: build/en/book.xml:4348(para)
+msgid "Say you wish to design a website that houses many digital photos, and displays them with captions and a datestamp. Now, your set of photos is constantly changing, so you'd like to have as much of this site automated as possible. These photos can be quite large, so as is common with sites of this nature, you want to provide smaller thumbnail images to your site visitors."
+msgstr ""
+
+#: build/en/book.xml:435(title)
+msgid "Organization of This Book"
+msgstr "本书的组织结构"
+
+#: build/en/book.xml:4356(para)
+#, fuzzy
+msgid "Now, you can get this functionality using traditional files. That is, you can have your <filename moreinfo=\"none\">image123.jpg</filename> and an <filename moreinfo=\"none\">image123-thumbnail.jpg</filename> side-by-side in a directory. Or if you want to keep the filenames the same, you might have your thumbnails in a different directory, like <filename moreinfo=\"none\">thumbnails/image123.jpg</filename>. You can also store your captions and datestamps in a similar fashion, again separated from the original image file. But the problem here is that your collection of files grows in multiples with each new photo added to the site."
+msgstr "假定你希望设计一个网站存放许多数码图片，并且显示他们的标题和时间戳，现在你的图片集经常修改，所以你希望你的网站能够尽量的自动化，这些图片可能非常大，所以根据这个网站的特性，你希望在网站给用户提供图标图像。你可以用传统的文件做这件事，你可以有一个<filename moreinfo=\"none\">image123.jpg</filename>和一个<filename moreinfo=\"none\">image123-thumbnail.jpg</filename>对应在同一个目录，有时候你希望保持文件名相同，你可以使用不同的目录，如<filename moreinfo=\"none\">thumbnails/image123.jpg</filename>。你可以用一种相似的样式来保存你的标题和时间戳同原始图像文件分开。很快你的目录树会是一团糟，每个新图片的添加都会成倍的增加混乱。"
+
+#: build/en/book.xml:4368(para)
+#, fuzzy
+msgid "Now consider the same website deployed in a way that makes use of Subversion's file properties. Imagine having a single image file, <filename moreinfo=\"none\">image123.jpg</filename>, and then properties set on that file named <literal moreinfo=\"none\">caption</literal>, <literal moreinfo=\"none\">datestamp</literal>, and even <literal moreinfo=\"none\">thumbnail</literal>. Now your working copy directory looks much more manageable—in fact, it looks to the casual browser like there are nothing but image files in it. But your automation scripts know better. They know that they can use <command moreinfo=\"none\">svn</command> (or better yet, they can use the Subversion language bindings—see <xref linkend=\"svn.developer.usingapi.otherlangs\"/>) to dig out the extra information that your site needs to display without having to read an index file or play path manipulation games."
+msgstr "现在考虑使用Subversion文件的属性来做相同的设置，想象我们有一个单独的图像文件<filename moreinfo=\"none\">image123.jpg</filename>，然后这个文件的属性集包括<literal moreinfo=\"none\">caption</literal>、<literal moreinfo=\"none\">datestamp</literal>甚至<literal moreinfo=\"none\">thumbnail</literal>。现在你的工作拷贝目录看起来更容易管理—实际上，它看起来只有图像文件，但是你的自动化脚本知道得更多，它们知道可以用<command moreinfo=\"none\">svn</command>（更好的选择是使用Subversion的语言绑定—见<xref linkend=\"svn.developer.usingapi.otherlangs\"/>）来挖掘更多的站点显示需要的额外信息，而不必去阅读一个索引文件或者是玩一个路径处理的游戏。"
+
+#: build/en/book.xml:437(para)
+msgid "The chapters that follow and their contents are listed here:"
+msgstr "以下是各个章节的内容介绍："
+
+#: build/en/book.xml:4383(para)
+msgid "Custom revision properties are also frequently used. One common such use is a property whose value contains an issue tracker ID with which the revision is associated, perhaps because the change made in that revision fixes a bug filed in the tracker issue with that ID. Other uses include hanging more friendly names on the revision—it might be hard to remember that revision 1935 was a fully tested revision. But if there's, say, a <literal moreinfo=\"none\">test-results</literal> property on that revision with a value <literal moreinfo=\"none\">all passing</literal>, that's meaningful information to have."
+msgstr ""
+
+#: build/en/book.xml:4395(title)
+msgid "Searchability (or, Why <emphasis>Not</emphasis> Properties)"
+msgstr ""
+
+#: build/en/book.xml:4398(para)
+msgid "For all their utility, Subversion properties—or, more accurately, the available interfaces to them—have a major shortcoming which diminishes their practicality. While it is a simple matter to set a custom property, <emphasis>finding</emphasis> that property later is whole different ball of wax."
+msgstr ""
+
+#: build/en/book.xml:44(year)
+msgid "2002"
+msgstr "2002"
+
+#: build/en/book.xml:4405(para)
+msgid "Trying to locate a custom revision property generally involves performing a linear walk across all the revisions of the repository, asking of each revision, \"Do you have the property I'm looking for?\" Trying to find a custom versioned property is painful, too, and often involves a recursive <command moreinfo=\"none\">svn propget</command> across an entire working copy. In your situation, that might not be as bad as a linear walk across all revisions. But it certainly leaves much to be desired in terms of both performance and likelihood of success, especially if the scope of your search would require a working copy from the root of your repository."
+msgstr ""
+
+#: build/en/book.xml:4418(para)
+msgid "For this reason, you might choose—especially in the revision property use-case—to simply add your metadata to the revision's log message, using some policy-driven (and perhaps programmatically-enforced) formatting that is designed to be quickly parsed from the output of <command moreinfo=\"none\">svn log</command>. It is quite common to see in Subversion log messages the likes of:"
+msgstr ""
+
+#: build/en/book.xml:4426(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"Issue(s): IZ2376, IZ1919\n"
+"Reviewed by:  sally\n"
+"\n"
+"This fixes a nasty segfault in the wort frabbing process\n"
+"…\n"
+msgstr ""
+"\n"
+"Issue(s): IZ2376, IZ1919\n"
+"Reviewed by:  sally\n"
+"\n"
+"This fixes a nasty segfault in the wort frabbing process\n"
+"…\n"
+
+#: build/en/book.xml:4434(para)
+msgid "But here again lies some misfortune. Subversion doesn't yet provide a log message templating mechanism, which would go a long way toward helping users be consistent with the formatting of their log-embedded revision metadata."
+msgstr ""
+
+#: build/en/book.xml:4445(title)
+msgid "Manipulating Properties"
+msgstr "处理属性"
+
+#: build/en/book.xml:4447(para)
+msgid "The <command moreinfo=\"none\">svn</command> command affords a few ways to add or modify file and directory properties. For properties with short, human-readable values, perhaps the simplest way to add a new property is to specify the property name and value on the command-line of the <command moreinfo=\"none\">propset</command> subcommand."
+msgstr "<command moreinfo=\"none\">svn</command>命令提供一些方法来添加和修改文件或目录的属性，对于短的，可读的属性，最简单的添加方法是在<command moreinfo=\"none\">propset</command>子命令里指定正确的名称和值。"
+
+#: build/en/book.xml:445(para)
+#, fuzzy
+msgid "Covers the history of Subversion as well as its features, architecture, and components."
+msgstr "回顾了Subversion的历史，描述了Subversion的特性、架构、组件和安装方法。还包含了一个快速入门指南。"
+
+#: build/en/book.xml:4454(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propset copyright '(c) 2006 Red-Bean Software' calc/button.c\n"
+"property 'copyright' set on 'calc/button.c'\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propset copyright '(c) 2006 Red-Bean Software' calc/button.c\n"
+"property 'copyright' set on 'calc/button.c'\n"
+"$\n"
+
+#: build/en/book.xml:4460(para)
+#, fuzzy
+msgid "But we've been touting the flexibility that Subversion offers for your property values. And if you are planning to have a multi-line textual, or even binary, property value, you probably do not want to supply that value on the command-line. So the <command moreinfo=\"none\">propset</command> subcommand takes a <option>--file (-F)</option> option for specifying the name of a file which contains the new property value."
+msgstr "But we've been touting the flexibility that Subversion offers for your property values. And if you are planning to have a multi-line textual, or even binary, property value, you probably do not want to supply that value on the command-line. So the <command moreinfo=\"none\">propset</command> subcommand takes a <option>--file</option> (<option>-F</option>) option for specifying the name of a file which contains the new property value."
+
+#: build/en/book.xml:4468(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propset license -F /path/to/LICENSE calc/button.c\n"
+"property 'license' set on 'calc/button.c'\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propset license -F /path/to/LICENSE calc/button.c\n"
+"property 'license' set on 'calc/button.c'\n"
+"$\n"
+
+#: build/en/book.xml:4474(para)
+#, fuzzy
+msgid "There are some restrictions on the names you can use for properties. A property name must start with a letter, a colon (<literal moreinfo=\"none\">:</literal>), or an underscore (<literal moreinfo=\"none\">_</literal>); after that, you can also use digits, hyphens (<literal moreinfo=\"none\">-</literal>), and periods (<literal moreinfo=\"none\">.</literal>). <placeholder-1/>"
+msgstr "对于属性名称也有一些限制，属性名必须以一个字符、一个冒号(<literal moreinfo=\"none\">:</literal>)或下划线(<literal moreinfo=\"none\">_</literal>)开始，之后你可以使用数字，横线(<literal moreinfo=\"none\">-</literal>)和句号(<literal moreinfo=\"none\">.</literal>)。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:4481(para)
+msgid "If you're familiar with XML, this is pretty much the ASCII subset of the syntax for XML \"Name\"."
+msgstr "如果你熟悉XML，其实这就是XML的\"Name\"语法的ASCII子集。"
+
+#: build/en/book.xml:4486(para)
+msgid "In addition to the <command moreinfo=\"none\">propset</command> command, the <command moreinfo=\"none\">svn</command> program supplies the <command moreinfo=\"none\">propedit</command> command. This command uses the configured editor program (see <xref linkend=\"svn.advanced.confarea.opts.config\"/>) to add or modify properties. When you run the command, <command moreinfo=\"none\">svn</command> invokes your editor program on a temporary file that contains the current value of the property (or which is empty, if you are adding a new property). Then, you just modify that value in your editor program until it represents the new value you wish to store for the property, save the temporary file, and then exit the editor program. If Subversion detects that you've actually changed the existing value of the property, it will accept that as the new property value. If you exit your editor without making any changes, no property modification will occur."
+msgstr "作为<command moreinfo=\"none\">propset</command>命令的补充，<command moreinfo=\"none\">svn</command>提供了一个<command moreinfo=\"none\">propedit</command>命令，这个命令使用定制的编辑器程序（见<xref linkend=\"svn.advanced.confarea.opts.config\"/>）来添加和修改属性。当你运行这个命令，<command moreinfo=\"none\">svn</command>调用你的编辑器程序打开一个临时文件，文件中保存当前的属性值（或者是空文件，如果你正在添加新的属性）。然后你只需要修改为你想要的值，保存临时文件，然后离开编辑器程序。如果Subversion发现你已经修改了属性值，就会接受新值，如果你未作任何修改而离开，不会产生属性修改操作。"
+
+#: build/en/book.xml:45(year)
+msgid "2003"
+msgstr "2003"
+
+#: build/en/book.xml:4502(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propedit copyright calc/button.c  ### exit the editor without changes\n"
+"No changes to property 'copyright' on 'calc/button.c'\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propedit copyright calc/button.c  ### exit the editor without changes\n"
+"No changes to property 'copyright' on 'calc/button.c'\n"
+"$\n"
+
+#: build/en/book.xml:4508(para)
+msgid "We should note that, as with other <command moreinfo=\"none\">svn</command> subcommands, those related to properties can act on multiple paths at once. This enables you to modify properties on whole sets of files with a single command. For example, we could have done:"
+msgstr "我们也应该注意导，像其它<command moreinfo=\"none\">svn</command>子命令一样，这些关联的属性可以一次添加到多个路径上，这样就可以通过一个命令修改一组文件的属性。举个例子，我们可以："
+
+#: build/en/book.xml:4514(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propset copyright '(c) 2006 Red-Bean Software' calc/*\n"
+"property 'copyright' set on 'calc/Makefile'\n"
+"property 'copyright' set on 'calc/button.c'\n"
+"property 'copyright' set on 'calc/integer.c'\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propset copyright '(c) 2006 Red-Bean Software' calc/*\n"
+"property 'copyright' set on 'calc/Makefile'\n"
+"property 'copyright' set on 'calc/button.c'\n"
+"property 'copyright' set on 'calc/integer.c'\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:4523(para)
+msgid "All of this property adding and editing isn't really very useful if you can't easily get the stored property value. So the <command moreinfo=\"none\">svn</command> program supplies two subcommands for displaying the names and values of properties stored on files and directories. The <command moreinfo=\"none\">svn proplist</command> command will list the names of properties that exist on a path. Once you know the names of the properties on the node, you can request their values individually using <command moreinfo=\"none\">svn propget</command>. This command will, given a path (or set of paths) and a property name, print the value of the property to the standard output stream."
+msgstr "如果不能方便的得到存储的属性值，那么属性的添加和编辑操作也不会很容易，所以<command moreinfo=\"none\">svn</command>提供了两个子命令来显示文件和目录存储的属性名和值。<command moreinfo=\"none\">svn proplist</command>命令会列出路径上存在的所有属性名称，一旦你知道了某个节点的属性名称，你可以用<command moreinfo=\"none\">svn propget</command>获取它的值，这个命令获取给定的路径（或者是一组路径）和属性名称，打印这个属性的值到标准输出。"
+
+#: build/en/book.xml:453(para)
+msgid "Explains the basics of version control and different versioning models, along with Subversion's repository, working copies, and revisions."
+msgstr "介绍了版本控制的基础知识及不同的版本模型，同时讲述了Subversion的版本库，工作拷贝和修订版本的概念。"
+
+#: build/en/book.xml:4535(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn proplist calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright\n"
+"  license\n"
+"$ svn propget copyright calc/button.c\n"
+"(c) 2006 Red-Bean Software\n"
+msgstr ""
+"\n"
+"$ svn proplist calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright\n"
+"  license\n"
+"$ svn propget copyright calc/button.c\n"
+"(c) 2006 Red-Bean Software\n"
+
+#: build/en/book.xml:4544(para)
+msgid "There's even a variation of the <command moreinfo=\"none\">proplist</command> command that will list both the name and value of all of the properties. Simply supply the <option>--verbose</option> (<option>-v</option>) option."
+msgstr "还有一个<command moreinfo=\"none\">proplist</command>变种命令会列出所有属性的名称和值，只需要设置<option>--verbose</option>（<option>-v</option>）选项。"
+
+#: build/en/book.xml:4549(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"  license : ================================================================\n"
+"Copyright (c) 2006 Red-Bean Software.  All rights reserved.\n"
+"\n"
+"Redistribution and use in source and binary forms, with or without\n"
+"modification, are permitted provided that the following conditions \n"
+"are met:\n"
+"\n"
+"1. Redistributions of source code must retain the above copyright\n"
+"notice, this list of conditions, and the recipe for Fitz's famous\n"
+"red-beans-and-rice.\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"  license : ================================================================\n"
+"Copyright (c) 2006 Red-Bean Software.  All rights reserved.\n"
+"\n"
+"Redistribution and use in source and binary forms, with or without\n"
+"modification, are permitted provided that the following conditions \n"
+"are met:\n"
+"\n"
+"1. Redistributions of source code must retain the above copyright\n"
+"notice, this list of conditions, and the recipe for Fitz's famous\n"
+"red-beans-and-rice.\n"
+"…\n"
+
+#: build/en/book.xml:4566(para)
+msgid "The last property-related subcommand is <command moreinfo=\"none\">propdel</command>. Since Subversion allows you to store properties with empty values, you can't remove a property altogether using <command moreinfo=\"none\">propedit</command> or <command moreinfo=\"none\">propset</command>. For example, this command will <emphasis>not</emphasis> yield the desired effect:"
+msgstr "最后一个与属性相关的子命令是<command moreinfo=\"none\">propdel</command>，因为Subversion允许属性值为空，所有不能用<command moreinfo=\"none\">propedit</command>或者<command moreinfo=\"none\">propset</command>命令删除一个属性。举个例子，这个命令<emphasis>不会</emphasis>产生预期的效果："
+
+#: build/en/book.xml:4573(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propset license '' calc/button.c\n"
+"property 'license' set on 'calc/button.c'\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"  license : \n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propset license '' calc/button.c\n"
+"property 'license' set on 'calc/button.c'\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"  license : \n"
+"$\n"
+
+#: build/en/book.xml:4583(para)
+#, fuzzy
+msgid "You need to use the <command moreinfo=\"none\">propdel</command> subcommand to delete properties altogether. The syntax is similar to the other property commands:"
+msgstr "你需要用<command moreinfo=\"none\">propdel</command>来删除属性，语法与其它与属性相关命令相似："
+
+#: build/en/book.xml:4587(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn propdel license calc/button.c\n"
+"property 'license' deleted from 'calc/button.c'.\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svn propdel license calc/button.c\n"
+"property 'license' deleted from 'calc/button.c'.\n"
+"$ svn proplist -v calc/button.c\n"
+"Properties on 'calc/button.c':\n"
+"  copyright : (c) 2006 Red-Bean Software\n"
+"$\n"
+
+#: build/en/book.xml:4596(para)
+#, fuzzy
+msgid "Remember those unversioned revision properties? You can modify those, too, using the same <command moreinfo=\"none\">svn</command> subcommands t
