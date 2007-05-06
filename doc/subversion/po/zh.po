@@ -4591,4 +4591,1190 @@ msgstr "你已经看到了一个版本库可以用多种方式访问，但是可
 
 #: build/en/book.xml:15159(para)
 msgid "At any given time, these processes may require read and write access to your repository:"
-msgstr "在任何给定�
+msgstr "在任何给定的时间，这些进程会要求读或者写访问你的版本库："
+
+#: build/en/book.xml:15164(para)
+#, fuzzy
+msgid "regular system users using a Subversion client (as themselves) to access the repository directly via <literal moreinfo=\"none\">file://</literal> URLs;"
+msgstr "常规的系统用户使用Subversion客户端（客户端程序本身）通过<literal moreinfo=\"none\">file:///</literal>URL直接访问版本库；"
+
+#: build/en/book.xml:15169(para)
+msgid "regular system users connecting to SSH-spawned private <command moreinfo=\"none\">svnserve</command> processes (running as themselves) which access the repository;"
+msgstr "常规的系统用户连接使用SSH调用的访问版本库的<command moreinfo=\"none\">svnserve</command>进程（以它们自己运行）；"
+
+#: build/en/book.xml:15174(para)
+msgid "an <command moreinfo=\"none\">svnserve</command> process—either a daemon or one launched by <command moreinfo=\"none\">inetd</command>—running as a particular fixed user;"
+msgstr "一个<command moreinfo=\"none\">svnserve</command>进程—是一个守护进程或是通过<command moreinfo=\"none\">inetd</command>启动的—作为一个固定的用户运行；"
+
+#: build/en/book.xml:15180(para)
+msgid "an Apache <command moreinfo=\"none\">httpd</command> process, running as a particular fixed user."
+msgstr "一个Apache <command moreinfo=\"none\">httpd</command>进程，以一个固定用户运行。"
+
+#: build/en/book.xml:15185(para)
+msgid "The most common problem administrators run into is repository ownership and permissions. Does every process (or user) in the previous list have the rights to read and write the Berkeley DB files? Assuming you have a Unix-like operating system, a straightforward approach might be to place every potential repository user into a new <literal moreinfo=\"none\">svn</literal> group, and make the repository wholly owned by that group. But even that's not enough, because a process may write to the database files using an unfriendly umask—one that prevents access by other users."
+msgstr "最通常的一个问题是管理进入到版本库的所有权和访问许可，是前面例子的所有进程 （或者说是用户）都有读写Berkeley DB的权限？假定你有一个类Unix的操作系统，一个直接的办法是在新的<literal moreinfo=\"none\">svn</literal>组添加所有潜在的用户，然后让这个组完全拥有版本库，但这样还不足够，因为一个进程会使用不友好的umask来写数据库文件—用来防止别的用户的访问。"
+
+#: build/en/book.xml:15196(para)
+msgid "So the next step beyond setting up a common group for repository users is to force every repository-accessing process to use a sane umask. For users accessing the repository directly, you can make the <command moreinfo=\"none\">svn</command> program into a wrapper script that first sets <command moreinfo=\"none\">umask 002</command> and then runs the real <command moreinfo=\"none\">svn</command> client program. You can write a similar wrapper script for the <command moreinfo=\"none\">svnserve</command> program, and add a <command moreinfo=\"none\">umask 002</command> command to Apache's own startup script, <filename moreinfo=\"none\">apachectl</filename>. For example:"
+msgstr "所以下一步我们不选择为每个版本库用户设置一个共同的组的方法，而是强制每个版本库访问进程使用一个健全的umask。对直接访问版本库的用户，你可以使用<command moreinfo=\"none\">svn</command>的包裹脚本来首先设置<command moreinfo=\"none\">umask 002</command>，然后运行真实的<command moreinfo=\"none\">svn</command>客户端程序，你可以为<command moreinfo=\"none\">svnserve</command>写相同的脚本，并且增加<command moreinfo=\"none\">umask 002</command>命令到Apache自己的启动脚本<filename moreinfo=\"none\">apachectl</filename>中。例如："
+
+#: build/en/book.xml:15207(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cat /usr/bin/svn\n"
+"\n"
+"#!/bin/sh\n"
+"\n"
+"umask 002\n"
+"/usr/bin/svn-real \"$@\"\n"
+"\n"
+msgstr ""
+"\n"
+"$ cat /usr/bin/svn\n"
+"\n"
+"#!/bin/sh\n"
+"\n"
+"umask 002\n"
+"/usr/bin/svn-real \"$@\"\n"
+"\n"
+
+#: build/en/book.xml:15217(para)
+msgid "Another common problem is often encountered on Unix-like systems. As a repository is used, Berkeley DB occasionally creates new log files to journal its actions. Even if the repository is wholly owned by the <command moreinfo=\"none\">svn</command> group, these newly created files won't necessarily be owned by that same group, which then creates more permissions problems for your users. A good workaround is to set the group SUID bit on the repository's <filename moreinfo=\"none\">db</filename> directory. This causes all newly-created log files to have the same group owner as the parent directory."
+msgstr "另一个在类Unix系统下常见的问题是，当版本库在使用时，BerkeleyDB有时候创建一个新的日志文件来记录它的东西，即使这个版本库是完全由<command moreinfo=\"none\">svn</command>组拥有，这个新创建的文件不是必须被同一个组拥有，这给你的用户造成了更多地许可问题。一个好的工作区应该设置组的SUID字节到版本库的<filename moreinfo=\"none\">db</filename>目录，这会导致所有新创建的日志文件拥有同父目录相同的组拥有者。"
+
+#: build/en/book.xml:15228(para)
+msgid "Once you've jumped through these hoops, your repository should be accessible by all the necessary processes. It may seem a bit messy and complicated, but the problems of having multiple users sharing write-access to common files are classic ones that are not often elegantly solved."
+msgstr "一旦你跳过了这些障碍，你的版本库一定是可以通过各种可能的手段访问了，这看起来有点凌乱和复杂，但是这个让多个用户分享对一个文件的写权限的问题是一个经典问题，并且经常是没有优雅的解决。"
+
+#: build/en/book.xml:1523(para)
+msgid "After you've made some changes to the files in your working copy and verified that they work properly, Subversion provides you with commands to <quote>publish</quote> your changes to the other people working with you on your project (by writing to the repository). If other people publish their own changes, Subversion provides you with commands to merge those changes into your working directory (by reading from the repository)."
+msgstr "当你在工作拷贝作了一些修改并且确认它们工作正常之后，Subversion提供了一个命令可以<quote>发布</quote>你的修改给项目中的其他人（通过写到版本库），如果别人发布了各自的修改，Subversion提供了手段可以把这些修改与你的工作目录进行合并（通过读取版本库）。"
+
+#: build/en/book.xml:15234(para)
+msgid "Fortunately, most repository administrators will never <emphasis>need</emphasis> to have such a complex configuration. Users who wish to access repositories that live on the same machine are not limited to using <literal moreinfo=\"none\">file://</literal> access URLs—they can typically contact the Apache HTTP server or <command moreinfo=\"none\">svnserve</command> using <literal moreinfo=\"none\">localhost</literal> for the server name in their <literal moreinfo=\"none\">http://</literal> or <literal moreinfo=\"none\">svn://</literal> URLs. And to maintain multiple server processes for your Subversion repositories is likely to be more of a headache than necessary. We recommend you choose the server that best meets your needs and stick with it!"
+msgstr "幸运的是，大多数版本库管理员不<emphasis>需要</emphasis>这样复杂的配置，用户如果希望访问本机的版本库，并不是一定要通过<literal moreinfo=\"none\">file://</literal>的URL—他们可以用<literal moreinfo=\"none\">localhost</literal>机器名联系Apache的HTTP服务器或者是<command moreinfo=\"none\">svnserve</command>，协议分别是<literal moreinfo=\"none\">http://</literal>或<literal moreinfo=\"none\">svn://</literal>。为你的Subversion版本库维护多个服务器进程，版本库会变得超出需要的头痛，我们建议你选择最符合你的需要的版本库，并且坚持使用！"
+
+#: build/en/book.xml:15248(title)
+msgid "The svn+ssh:// server checklist"
+msgstr "svn+ssh://服务器检查列表"
+
+#: build/en/book.xml:15250(para)
+msgid "It can be quite tricky to get a bunch of users with existing SSH accounts to share a repository without permissions problems. If you're confused about all the things that you (as an administrator) need to do on a Unix-like system, here's a quick checklist that resummarizes some of things discussed in this section:"
+msgstr "让一些用户通过存在的SSH帐户来共享版本库而没有访问许可问题是一件很有技巧的事情，如果你为自己需要在（作为一个管理员）类Unix系统上做的事情感到迷惑，这里是一些快速的检查列表，总结了本小节讨论的事情："
+
+#: build/en/book.xml:15259(para)
+msgid "All of your SSH users need to be able to read and write to the repository. Put all the SSH users into a single group. Make the repository wholly owned by that group, and set the group permissions to read/write."
+msgstr "所有的SSH用户需要能够读写版本库，把所有的SSH用户放到同一个组里，让版本库完全属于这个组，设置组的权限是读/写。"
+
+#: build/en/book.xml:15266(para)
+msgid "Your users need to use a sane umask when accessing the repository. Make sure that <command moreinfo=\"none\">svnserve</command> (<filename moreinfo=\"none\">/usr/bin/svnserve</filename>, or wherever it lives in <literal moreinfo=\"none\">$PATH</literal>) is actually a wrapper script which sets <command moreinfo=\"none\">umask 002</command> and executes the real <command moreinfo=\"none\">svnserve</command> binary. Take similar measures when using <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command>. Either run them with a sane umask, or wrap them as described above."
+msgstr "你的用户在访问版本库时需要使用一个健全的umask，确定<command moreinfo=\"none\">svnserve</command>（<filename moreinfo=\"none\">/usr/bin/svnserve</filename>或者是任何一个<literal moreinfo=\"none\">$PATH</literal>说明的位置）是一个设置了<command moreinfo=\"none\">umask 002</command>和执行真正的<command moreinfo=\"none\">svnserve</command>程序的包裹脚本，对<command moreinfo=\"none\">svnlook</command>和<command moreinfo=\"none\">svnadmin</command>使用相同的措施，或者是使用一个健全的umask运行或者是使用上面说明的包裹。"
+
+#: build/en/book.xml:15295(title)
+msgid "Customizing Your Subversion Experience"
+msgstr ""
+
+#: build/en/book.xml:15297(para)
+msgid "### TODO: Chapter opening ###"
+msgstr ""
+
+#: build/en/book.xml:15299(para)
+msgid "### TODO: Gut the runtime config stuff like I did the property stuff, making larger topical sections to which the runtime config stuff generally refers. Like already exists for external diff/diff3, add, for example, a section on external editors. ###"
+msgstr ""
+
+#: build/en/book.xml:15309(title)
+msgid "Runtime Configuration Area"
+msgstr "运行配置区"
+
+#: build/en/book.xml:15311(para)
+msgid "Subversion provides many optional behaviors that can be controlled by the user. Many of these options are of the kind that a user would wish to apply to all Subversion operations. So, rather than forcing users to remember command-line arguments for specifying these options, and to use them for each and every operation they perform, Subversion uses configuration files, segregated into a Subversion configuration area."
+msgstr "Subversion提供了许多用户可以控制的可选行为方式，许多是用户希望添加到所有的Subversion操作中的选项，为了避免强制用户记住命令行参数并且在每个命令中使用，Subversion使用配置文件，并且将配置文件保存在独立的Subversion配置区。"
+
+#: build/en/book.xml:15319(para)
+msgid "The Subversion <firstterm>configuration area</firstterm> is a two-tiered hierarchy of option names and their values. Usually, this boils down to a special directory that contains <firstterm>configuration files</firstterm> (the first tier), which are just text files in standard INI format (with <quote>sections</quote> providing the second tier). These files can be easily edited using your favorite text editor (such as Emacs or vi), and contain directives read by the client to determine which of several optional behaviors the user prefers."
+msgstr "Subversion<firstterm>配置区</firstterm>是一个双层结构，保存了可选项的名称和值。通常，Subversion配置区是一个保存<firstterm>配置文件</firstterm>的特殊目录（第一层结构），目录中保存了一些标准INI格式的文本文件（文件中的<quote>section</quote>形成第二层结构）。这些文件可以简单用你喜欢的文本编辑器编辑（如Emacs或vi），而且保存了客户端可以读取的指示，用来指导用户的一些行为选项。"
+
+#: build/en/book.xml:1532(para)
+msgid "A working copy also contains some extra files, created and maintained by Subversion, to help it carry out these commands. In particular, each directory in your working copy contains a subdirectory named <filename moreinfo=\"none\">.svn</filename>, also known as the working copy <firstterm>administrative directory</firstterm>. The files in each administrative directory help Subversion recognize which files contain unpublished changes, and which files are out-of-date with respect to others' work."
+msgstr "一个工作拷贝也包括一些由Subversion创建并维护的额外文件，用来协助执行这些命令。通常情况下，你的工作拷贝每一个文件夹有一个以<filename moreinfo=\"none\">.svn</filename>为名的文件夹，也被叫做工作拷贝<firstterm>管理目录</firstterm>，这个目录里的文件能够帮助Subversion识别哪一个文件做过修改，哪一个文件相对于别人的工作已经过期了。"
+
+#: build/en/book.xml:15332(title)
+msgid "Configuration Area Layout"
+msgstr "配置区布局"
+
+#: build/en/book.xml:15334(para)
+#, fuzzy
+msgid "The first time that the <command moreinfo=\"none\">svn</command> command-line client is executed, it creates a per-user configuration area. On Unix-like systems, this area appears as a directory named <filename moreinfo=\"none\">.subversion</filename> in the user's home directory. On Win32 systems, Subversion creates a folder named <filename moreinfo=\"none\">Subversion</filename>, typically inside the <filename moreinfo=\"none\">Application Data</filename> area of the user's profile directory (which, by the way, is usually a hidden directory). However, on this platform the exact location differs from system to system, and is dictated by the Windows registry. <placeholder-1/> We will refer to the per-user configuration area using its Unix name, <filename moreinfo=\"none\">.subversion</filename>."
+msgstr "<command moreinfo=\"none\">svn</command>命令行客户端第一次执行时，会创建一个用户配置区，在类Unix系统中，配置区位于用户主目录中，名为<filename moreinfo=\"none\">.subversion</filename>。在Win32系统，Subversion创建一个名为<filename moreinfo=\"none\">Subversion</filename>的目录，这个目录通常位于用户配置目录（顺便说一句，通常是一个隐藏目录）的<filename moreinfo=\"none\">Application Data</filename>子目录下。然而，在Win32平台上，此目录的具体位置在不同的系统上是不一样的，由Windows注册表决定。 <footnote><placeholder-1/></footnote> 我们以Unix下的名字<filename moreinfo=\"none\">.subversion</filename>来表示用户配置区。"
+
+#: build/en/book.xml:15346(para)
+msgid "The <literal moreinfo=\"none\">APPDATA</literal> environment variable points to the <filename moreinfo=\"none\">Application Data</filename> area, so you can always refer to this folder as <filename moreinfo=\"none\">%APPDATA%\\Subversion</filename>."
+msgstr "<literal moreinfo=\"none\">APPDATA</literal>环境变量指向<filename moreinfo=\"none\">Application Data</filename>目录，所以你可以通过<filename moreinfo=\"none\">%APPDATA%\\Subversion</filename>引用用户配置区目录。"
+
+#: build/en/book.xml:15354(para)
+msgid "In addition to the per-user configuration area, Subversion also recognizes the existence of a system-wide configuration area. This gives system administrators the ability to establish defaults for all users on a given machine. Note that the system-wide configuration area does not alone dictate mandatory policy—the settings in the per-user configuration area override those in the system-wide one, and command-line arguments supplied to the <command moreinfo=\"none\">svn</command> program have the final word on behavior. On Unix-like platforms, the system-wide configuration area is expected to be the <filename moreinfo=\"none\">/etc/subversion</filename> directory; on Windows machines, it looks for a <filename moreinfo=\"none\">Subversion</filename> directory inside the common <filename moreinfo=\"none\">Application Data</filename> location (again, as specified by the Windows Registry). Unlike the per-user case, the <command moreinfo=\"none\">svn</command> program does not attempt to create the system-wide configuration area."
+msgstr "除了用户配置区，Subversion也提供了系统配置区，通过系统配置区，系统管理员可以为某个机器的所有用户建立缺省配置值。注意系统配置区不会规定强制性的策略—每个用户配置区都可以覆盖系统配置区中的配置项，而<command moreinfo=\"none\">svn</command>的命令行参数决定了最后的行为。在类Unix的平台上，系统配置区位于<filename moreinfo=\"none\">/etc/subversion</filename>目录下，在Windows平台上，系统配置区位于<filename moreinfo=\"none\">Application Data</filename>（再说一次，是由Windows注册表决定的）的<filename moreinfo=\"none\">Subversion</filename>目录中。与用户配置区不同，<command moreinfo=\"none\">svn</command>不会试图创建系统配置区。"
+
+#: build/en/book.xml:15372(para)
+#, fuzzy
+msgid "The per-user configuration area currently contains three files—two configuration files (<filename moreinfo=\"none\">config</filename> and <filename moreinfo=\"none\">servers</filename>), and a <filename moreinfo=\"none\">README.txt</filename> file which describes the INI format. At the time of their creation, the files contain default values for each of the supported Subversion options, mostly commented out and grouped with textual descriptions about how the values for the key affect Subversion's behavior. To change a certain behavior, you need only to load the appropriate configuration file into a text editor, and modify the desired option's value. If at any time you wish to have the default configuration settings restored, you can simply remove (or rename) your configuration directory and then run some innocuous <command moreinfo=\"none\">svn</command> command, such as <command moreinfo=\"none\">svn --version</command>. A new configuration directory with the default contents will be created."
+msgstr "目前，Subversion的配置区包含三个文件—两个配置文件（<filename moreinfo=\"none\">config</filename>和<filename moreinfo=\"none\">servers</filename>），和一个INI文件格式的<filename moreinfo=\"none\">README.txt</filename>描述文件。配置文件创建的时候，Subversion的选项都设置为默认值。配置文件中的选项都按功能划分成组，大多数选项还有详细的文字描述注释，说明这些选项的值对Subversion的主要影响。要修改选项，只需用文本编辑器打开并编辑配置文件。如果想要恢复缺省的配置，可以直接删除（或者重命名）配置目录，并且运行一些如<command moreinfo=\"none\">svn --version</command>之类的无关紧要的<command moreinfo=\"none\">svn</command>命令，一个包含缺省值的新配置目录就会创建起来。"
+
+#: build/en/book.xml:15389(para)
+msgid "The per-user configuration area also contains a cache of authentication data. The <filename moreinfo=\"none\">auth</filename> directory holds a set of subdirectories that contain pieces of cached information used by Subversion's various supported authentication methods. This directory is created in such a way that only the user herself has permission to read its contents."
+msgstr "用户配置区也缓存了认证信息，<filename moreinfo=\"none\">auth</filename>目录下的子目录中缓存了一些Subversion支持的各种认证方法的信息，这个目录需要相应的用户权限才可以访问。"
+
+#: build/en/book.xml:15401(title)
+msgid "Configuration and the Windows Registry"
+msgstr "配置和Windows注册表"
+
+#: build/en/book.xml:15403(para)
+msgid "In addition to the usual INI-based configuration area, Subversion clients running on Windows platforms may also use the Windows registry to hold the configuration data. The option names and their values are the same as in the INI files. The <quote>file/section</quote> hierarchy is preserved as well, though addressed in a slightly different fashion—in this schema, files and sections are just levels in the registry key tree."
+msgstr "除了基于INI文件的配置区，运行在Windows平台的Subversion客户端也可以使用Windows注册表来保存配置数据。注册表中保存的选项名称和值的含义与INI文件中相同，<quote>file/section</quote>在注册表中表现为注册表键树的层级，使得双层结构得以保留下来。"
+
+#: build/en/book.xml:15412(para)
+msgid "Subversion looks for system-wide configuration values under the <literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion</literal> key. For example, the <literal moreinfo=\"none\">global-ignores</literal> option, which is in the <literal moreinfo=\"none\">miscellany</literal> section of the <filename moreinfo=\"none\">config</filename> file, would be found at <literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Config\\Miscellany\\global-ignores</literal>. Per-user configuration values should be stored under <literal moreinfo=\"none\">HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion</literal>."
+msgstr "Subversion的系统配置值保存在键<literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion</literal>下。举个例子，<literal moreinfo=\"none\">global-ignores</literal>选项位于<filename moreinfo=\"none\">config</filename>文件的<literal moreinfo=\"none\">miscellany</literal>小节，在Windows注册表中，则位于<literal moreinfo=\"none\">HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Config\\Miscellany\\global-ignores</literal>。用户配置值存放在<literal moreinfo=\"none\">HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion</literal>下。"
+
+#: build/en/book.xml:1542(para)
+msgid "A typical Subversion repository often holds the files (or source code) for several projects; usually, each project is a subdirectory in the repository's filesystem tree. In this arrangement, a user's working copy will usually correspond to a particular subtree of the repository."
+msgstr "一个典型的Subversion的版本库经常包含许多项目的文件（或者说源代码），通常每一个项目都是版本库的子目录，在这种安排下，一个用户的工作拷贝往往对应版本库的的一个子目录。"
+
+#: build/en/book.xml:15423(para)
+msgid "Registry-based configuration options are parsed <emphasis>before</emphasis> their file-based counterparts, so are overridden by values found in the configuration files. In other words, configuration priority is granted in the following order on a Windows system:"
+msgstr "基于注册表的配置项在基于文件的配置项<emphasis>之前</emphasis>解析，所以其配置项的值会被配置文件中相同配置项的值覆盖，换句话说，在Windows系统下配置项的优先级是："
+
+#: build/en/book.xml:15431(para)
+msgid "Command-line options"
+msgstr "命令行选项"
+
+#: build/en/book.xml:15434(para)
+msgid "The per-user INI files"
+msgstr "用户INI配置文件"
+
+#: build/en/book.xml:15437(para)
+msgid "The per-user Registry values"
+msgstr "用户注册表值"
+
+#: build/en/book.xml:15440(para)
+msgid "The system-wide INI files"
+msgstr "系统INI配置文件"
+
+#: build/en/book.xml:15443(para)
+msgid "The system-wide Registry values"
+msgstr "系统注册表值"
+
+#: build/en/book.xml:15447(para)
+msgid "Also, the Windows Registry doesn't really support the notion of something being <quote>commented out</quote>. However, Subversion will ignore any option key whose name begins with a hash (<literal moreinfo=\"none\">#</literal>) character. This allows you to effectively comment out a Subversion option without deleting the entire key from the Registry, obviously simplifying the process of restoring that option."
+msgstr "此外，虽然Windows注册表不支持<quote>注释掉</quote>这种概念，但是Subversion会忽略所有以井号（<literal moreinfo=\"none\">#</literal>）开始的字符，这允许你快速的取消一个选项而不需要删除整个注册表键，明显简化了恢复选项的过程。"
+
+#: build/en/book.xml:15455(para)
+msgid "The <command moreinfo=\"none\">svn</command> command-line client never attempts to write to the Windows Registry, and will not attempt to create a default configuration area there. You can create the keys you need using the <command moreinfo=\"none\">REGEDIT</command> program. Alternatively, you can create a <filename moreinfo=\"none\">.reg</filename> file, and then double-click on that file from the Explorer shell, which will cause the data to be merged into your registry."
+msgstr "<command moreinfo=\"none\">svn</command>命令行客户端不会尝试写Windows注册表，也不会在注册表中创建默认配置区。不过可以使用<command moreinfo=\"none\">REGEDIT</command>创建所需的键。此外，还可以创建一个<filename moreinfo=\"none\">.reg</filename>文件，并在文件浏览器中双击这个文件，文件中的数据就会合并到注册表中。"
+
+#: build/en/book.xml:15465(title)
+msgid "Sample Registration Entries (.reg) File."
+msgstr "注册表条目（.reg）样本文件。"
+
+#: build/en/book.xml:15467(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"REGEDIT4\n"
+"\n"
+"[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\groups]\n"
+"\n"
+"[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\global]\n"
+"\"#http-proxy-host\"=\"\"\n"
+"\"#http-proxy-port\"=\"\"\n"
+"\"#http-proxy-username\"=\"\"\n"
+"\"#http-proxy-password\"=\"\"\n"
+"\"#http-proxy-exceptions\"=\"\"\n"
+"\"#http-timeout\"=\"0\"\n"
+"\"#http-compression\"=\"yes\"\n"
+"\"#neon-debug-mask\"=\"\"\n"
+"\"#ssl-authority-files\"=\"\"\n"
+"\"#ssl-trust-default-ca\"=\"\"\n"
+"\"#ssl-client-cert-file\"=\"\"\n"
+"\"#ssl-client-cert-password\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auth]\n"
+"\"#store-passwords\"=\"yes\"\n"
+"\"#store-auth-creds\"=\"yes\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\helpers]\n"
+"\"#editor-cmd\"=\"notepad\"\n"
+"\"#diff-cmd\"=\"\"\n"
+"\"#diff3-cmd\"=\"\"\n"
+"\"#diff3-has-program-arg\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\tunnels]\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\miscellany]\n"
+"\"#global-ignores\"=\"*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store\"\n"
+"\"#log-encoding\"=\"\"\n"
+"\"#use-commit-times\"=\"\"\n"
+"\"#no-unlock\"=\"\"\n"
+"\"#enable-auto-props\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auto-props]\n"
+"\n"
+msgstr ""
+"\n"
+"REGEDIT4\n"
+"\n"
+"[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\groups]\n"
+"\n"
+"[HKEY_LOCAL_MACHINE\\Software\\Tigris.org\\Subversion\\Servers\\global]\n"
+"\"#http-proxy-host\"=\"\"\n"
+"\"#http-proxy-port\"=\"\"\n"
+"\"#http-proxy-username\"=\"\"\n"
+"\"#http-proxy-password\"=\"\"\n"
+"\"#http-proxy-exceptions\"=\"\"\n"
+"\"#http-timeout\"=\"0\"\n"
+"\"#http-compression\"=\"yes\"\n"
+"\"#neon-debug-mask\"=\"\"\n"
+"\"#ssl-authority-files\"=\"\"\n"
+"\"#ssl-trust-default-ca\"=\"\"\n"
+"\"#ssl-client-cert-file\"=\"\"\n"
+"\"#ssl-client-cert-password\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auth]\n"
+"\"#store-passwords\"=\"yes\"\n"
+"\"#store-auth-creds\"=\"yes\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\helpers]\n"
+"\"#editor-cmd\"=\"notepad\"\n"
+"\"#diff-cmd\"=\"\"\n"
+"\"#diff3-cmd\"=\"\"\n"
+"\"#diff3-has-program-arg\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\tunnels]\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\miscellany]\n"
+"\"#global-ignores\"=\"*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store\"\n"
+"\"#log-encoding\"=\"\"\n"
+"\"#use-commit-times\"=\"\"\n"
+"\"#no-unlock\"=\"\"\n"
+"\"#enable-auto-props\"=\"\"\n"
+"\n"
+"[HKEY_CURRENT_USER\\Software\\Tigris.org\\Subversion\\Config\\auto-props]\n"
+"\n"
+
+#: build/en/book.xml:1548(para)
+msgid "For example, suppose you have a repository that contains two software projects, <literal moreinfo=\"none\">paint</literal> and <literal moreinfo=\"none\">calc</literal>. Each project lives in its own top-level subdirectory, as shown in <xref linkend=\"svn.basic.in-action.wc.dia-1\"/>."
+msgstr "举一个例子，你的版本库包含两个软件项目，<literal moreinfo=\"none\">paint</literal>和<literal moreinfo=\"none\">calc</literal>。每个项目在它们各自的顶级子目录下，见<xref linkend=\"svn.basic.in-action.wc.dia-1\"/>。"
+
+#: build/en/book.xml:15510(para)
+msgid "The previous example shows the contents of a <filename moreinfo=\"none\">.reg</filename> file which contains some of the most commonly used configuration options and their default values. Note the presence of both system-wide (for network proxy-related options) and per-user settings (editor programs and password storage, among others). Also note that all the options are effectively commented out. You need only to remove the hash (<literal moreinfo=\"none\">#</literal>) character from the beginning of the option names, and set the values as you desire."
+msgstr "上面例子里显示的<filename moreinfo=\"none\">.reg</filename>文件中，包含了一些最常用的配置选项和它们的缺省值。注意，上面的例子中不仅包含了系统设置（关于网络代理相关的选项），也包含了用户设置（指定的编辑器程序，是否保存密码，以及其它选项）。同时要注意的是，所有选项都注释掉了，要启用其中的选项，只需删除该选项名称前面的井号（<literal moreinfo=\"none\">#</literal>），然后设置相应的值就可以了。"
+
+#: build/en/book.xml:15525(title)
+msgid "Configuration Options"
+msgstr "配置选项"
+
+#: build/en/book.xml:15527(para)
+msgid "### TODO: Rework and move this section to the Reference ###"
+msgstr ""
+
+#: build/en/book.xml:15529(para)
+msgid "In this section, we will discuss the specific run-time configuration options that are currently supported by Subversion."
+msgstr "本节我们会详细讨论Subversion目前支持的运行配置选项。"
+
+#: build/en/book.xml:15535(title)
+msgid "Servers"
+msgstr "服务器"
+
+#: build/en/book.xml:15537(para)
+msgid "The <filename moreinfo=\"none\">servers</filename> file contains Subversion configuration options related to the network layers. There are two special section names in this file—<literal moreinfo=\"none\">groups</literal> and <literal moreinfo=\"none\">global</literal>. The <literal moreinfo=\"none\">groups</literal> section is essentially a cross-reference table. The keys in this section are the names of other sections in the file; their values are <firstterm>globs</firstterm>—textual tokens which possibly contain wildcard characters—that are compared against the hostnames of the machine to which Subversion requests are sent."
+msgstr "<filename moreinfo=\"none\">servers</filename>文件保存了Subversion关于网络层的配置选项，这个文件有两个特别的小节：<literal moreinfo=\"none\">groups</literal> 和<literal moreinfo=\"none\">global</literal>。<literal moreinfo=\"none\">groups</literal>小节是一个交叉引用表，其中的关键字是<filename moreinfo=\"none\">servers</filename>文件中其它小节的名字，值则是一个可以包含通配符的字符序列，对应于接收Subversion请求的主机名，称为glob。"
+
+#: build/en/book.xml:1554(title)
+msgid "The repository's filesystem"
+msgstr "版本库的文件系统"
+
+#: build/en/book.xml:15549(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"[groups]\n"
+"beanie-babies = *.red-bean.com\n"
+"collabnet = svn.collab.net\n"
+"\n"
+"[beanie-babies]\n"
+"…\n"
+"\n"
+"[collabnet]\n"
+"…\n"
+msgstr ""
+"\n"
+"[groups]\n"
+"beanie-babies = *.red-bean.com\n"
+"collabnet = svn.collab.net\n"
+"\n"
+"[beanie-babies]\n"
+"…\n"
+"\n"
+"[collabnet]\n"
+"…\n"
+
+#: build/en/book.xml:15561(para)
+msgid "When Subversion is used over a network, it attempts to match the name of the server it is trying to reach with a group name under the <literal moreinfo=\"none\">groups</literal> section. If a match is made, Subversion then looks for a section in the <filename moreinfo=\"none\">servers</filename> file whose name is the matched group's name. From that section it reads the actual network configuration settings."
+msgstr "当通过网络访问Subversion服务器时，客户端会设法匹配正在尝试连接的服务器名字和<literal moreinfo=\"none\">groups</literal>小节中的glob名称，如果发现匹配，Subversion会在<filename moreinfo=\"none\">servers</filename>文件中查找对应于这个glob名称的小节，并从该小节中去读取真实的网络配置设置。"
+
+#: build/en/book.xml:15569(para)
+msgid "The <literal moreinfo=\"none\">global</literal> section contains the settings that are meant for all of the servers not matched by one of the globs under the <literal moreinfo=\"none\">groups</literal> section. The options available in this section are exactly the same as those valid for the other server sections in the file (except, of course, the special <literal moreinfo=\"none\">groups</literal> section), and are as follows:"
+msgstr "如果没有能够匹配到<literal moreinfo=\"none\">groups</literal>中的glob名称，<literal moreinfo=\"none\">global</literal>小节中的选项就会发生作用。<literal moreinfo=\"none\">global</literal>小节中的选项与其他小节一样（当然是除了<literal moreinfo=\"none\">groups</literal>小节），这些选项是："
+
+#: build/en/book.xml:1558(para)
+msgid "To get a working copy, you must <firstterm>check out</firstterm> some subtree of the repository. (The term <quote>check out</quote> may sound like it has something to do with locking or reserving resources, but it doesn't; it simply creates a private copy of the project for you.) For example, if you check out <filename moreinfo=\"none\">/calc</filename>, you will get a working copy like this:"
+msgstr "为了得到一个工作拷贝，你必须<firstterm>检出</firstterm>（<firstterm>check out</firstterm>）版本库的一个子树，（术语<quote>check out</quote>听起来像是锁定或者保存资源，实际上不是，只是简单的得到一个项目的私有拷贝），举个例子，你检出 <filename moreinfo=\"none\">/calc</filename>，你可以得到这样的工作拷贝："
+
+#: build/en/book.xml:15580(literal)
+msgid "http-proxy-host"
+msgstr "http-proxy-host"
+
+#: build/en/book.xml:15582(para)
+msgid "This specifies the hostname of the proxy computer through which your HTTP-based Subversion requests must pass. It defaults to an empty value, which means that Subversion will not attempt to route HTTP requests through a proxy computer, and will instead attempt to contact the destination machine directly."
+msgstr "代理服务器的详细主机名，是HTTP为基础的Subversion请求必须通过的，缺省值为空，意味着Subversion不会尝试通过代理服务器进行HTTP请求，而会尝试直接连接目标机器。"
+
+#: build/en/book.xml:15591(literal)
+msgid "http-proxy-port"
+msgstr "http-proxy-port"
+
+#: build/en/book.xml:15593(para)
+msgid "This specifies the port number on the proxy host to use. It defaults to an empty value."
+msgstr "代理服务器的详细端口，缺省值为空。"
+
+#: build/en/book.xml:15598(literal)
+msgid "http-proxy-username"
+msgstr "http-proxy-username"
+
+#: build/en/book.xml:15600(para)
+msgid "This specifies the username to supply to the proxy machine. It defaults to an empty value."
+msgstr "代理服务器的用户名，缺省值为空。"
+
+#: build/en/book.xml:15605(literal)
+msgid "http-proxy-password"
+msgstr "http-proxy-password"
+
+#: build/en/book.xml:15607(para)
+msgid "This specifies the password to supply to the proxy machine. It defaults to an empty value."
+msgstr "代理服务器的密码，缺省为空。"
+
+#: build/en/book.xml:15612(literal)
+msgid "http-timeout"
+msgstr "http-timeout"
+
+#: build/en/book.xml:15614(para)
+msgid "This specifies the amount of time, in seconds, to wait for a server response. If you experience problems with a slow network connection causing Subversion operations to timeout, you should increase the value of this option. The default value is <literal moreinfo=\"none\">0</literal>, which instructs the underlying HTTP library, Neon, to use its default timeout setting."
+msgstr "等待服务器响应的时间，以秒为单位，如果你的网络速度较慢，导致Subversion的操作超时，你可以加大这个数值，缺省值是<literal moreinfo=\"none\">0</literal>，意思是让HTTP库Neon使用自己的缺省值。"
+
+#: build/en/book.xml:15625(literal)
+msgid "http-compression"
+msgstr "http-compression"
+
+#: build/en/book.xml:15627(para)
+msgid "This specifies whether or not Subversion should attempt to compress network requests made to DAV-ready servers. The default value is <literal moreinfo=\"none\">yes</literal> (though compression will only occur if that capability is compiled into the network layer). Set this to <literal moreinfo=\"none\">no</literal> to disable compression, such as when debugging network transmissions."
+msgstr "这说明是否在与设置好DAV的服务器通讯时使用网络压缩请求，缺省值是<literal moreinfo=\"none\">yes</literal>（尽管只有在这个功能编译到网络层时压缩才会有效），设置<literal moreinfo=\"none\">no</literal>来关闭压缩，如调试网络传输时。"
+
+#: build/en/book.xml:15637(literal)
+msgid "neon-debug-mask"
+msgstr "neon-debug-mask"
+
+#: build/en/book.xml:15639(para)
+msgid "This is an integer mask that the underlying HTTP library, Neon, uses for choosing what type of debugging output to yield. The default value is <literal moreinfo=\"none\">0</literal>, which will silence all debugging output. For more information about how Subversion makes use of Neon, see <xref linkend=\"svn.developer\"/>."
+msgstr "只是一个整形的掩码，底层的HTTP库Neon用来选择产生调试的输出，缺省值是<literal moreinfo=\"none\">0</literal>，意思是关闭所有的调试输出，关于Subversion使用Neon的详细信息，见<xref linkend=\"svn.developer\"/>。"
+
+#: build/en/book.xml:15648(literal)
+msgid "ssl-authority-files"
+msgstr "ssl-authority-files"
+
+#: build/en/book.xml:15650(para)
+msgid "This is a semicolon-delimited list of paths to files containing certificates of the certificate authorities (or CAs) that are accepted by the Subversion client when accessing the repository over HTTPS."
+msgstr "这是一个分号分割的路径和文件列表，这些文件包含了Subversion客户端在用HTTPS访问时可以接受的认证授权（或者CA）证书。"
+
+#: build/en/book.xml:15658(literal)
+msgid "ssl-trust-default-ca"
+msgstr "ssl-trust-default-ca"
+
+#: build/en/book.xml:1566(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc\n"
+"A    calc/Makefile\n"
+"A    calc/integer.c\n"
+"A    calc/button.c\n"
+"Checked out revision 56.\n"
+"\n"
+"$ ls -A calc\n"
+"Makefile  integer.c  button.c  .svn/\n"
+msgstr ""
+"\n"
+"$ svn checkout http://svn.example.com/repos/calc\n"
+"A    calc/Makefile\n"
+"A    calc/integer.c\n"
+"A    calc/button.c\n"
+"Checked out revision 56.\n"
+"\n"
+"$ ls -A calc\n"
+"Makefile  integer.c  button.c  .svn/\n"
+
+#: build/en/book.xml:15660(para)
+msgid "Set this variable to <literal moreinfo=\"none\">yes</literal> if you want Subversion to automatically trust the set of default CAs that ship with OpenSSL."
+msgstr "如果你希望Subversion可以自动相信OpenSSL携带的缺省的CA，可以设置为<literal moreinfo=\"none\">yes</literal>。"
+
+#: build/en/book.xml:15666(literal)
+msgid "ssl-client-cert-file"
+msgstr "ssl-client-cert-file"
+
+#: build/en/book.xml:15668(para)
+msgid "If a host (or set of hosts) requires an SSL client certificate, you'll normally be prompted for a path to your certificate. By setting this variable to that same path, Subversion will be able to find your client certificate automatically without prompting you. There's no standard place to store your certificate on disk; Subversion will grab it from any path you specify."
+msgstr "如果一个主机（或是一些主机）需要一个SSL客户端证书，你会收到一个提示说需要证书的路径。通过设置这个路径你的Subversion客户端可以自动找到你的证书而不会打扰你。没有标准的存放位置；Subversion会从任何你指定的路径得到这个文件。"
+
+#: build/en/book.xml:15679(literal)
+msgid "ssl-client-cert-password"
+msgstr "ssl-client-cert-password"
+
+#: build/en/book.xml:15681(para)
+msgid "If your SSL client certificate file is encrypted by a passphrase, Subversion will prompt you for the passphrase whenever the certificate is used. If you find this annoying (and don't mind storing the password in the <filename moreinfo=\"none\">servers</filename> file), then you can set this variable to the certificate's passphrase. You won't be prompted anymore."
+msgstr "如果你的SSL客户端证书文件是用密码加密的，Subversion会在每次使用证书时请你输入密码，如果你发现这很讨厌（并且不介意把密码存放在<filename moreinfo=\"none\">servers</filename>文件中），你可以设置这个参数为证书的密码，这样就不会再收到密码输入提示了。"
+
+#: build/en/book.xml:15696(title)
+msgid "Config"
+msgstr "config"
+
+#: build/en/book.xml:15698(para)
+msgid "The <filename moreinfo=\"none\">config</filename> file contains the rest of the currently available Subversion run-time options, those not related to networking. There are only a few options in use at this time, but they are again grouped into sections in expectation of future additions."
+msgstr "其它的Subversion运行选项保存在<filename moreinfo=\"none\">config</filename>文件中，这些运行选项与网络连接无关，只是一些正在使用的选项，但是为了应对未来的扩展，也按小节划分成组。"
+
+#: build/en/book.xml:15704(para)
+msgid "The <literal moreinfo=\"none\">auth</literal> section contains settings related to Subversion's authentication and authorization against the repository. It contains:"
+msgstr "<literal moreinfo=\"none\">auth</literal>小节保存了Subversion相关的认证和授权的设置，它包括："
+
+#: build/en/book.xml:15710(literal)
+msgid "store-passwords"
+msgstr "store-passwords"
+
+#: build/en/book.xml:15712(para)
+msgid "This instructs Subversion to cache, or not to cache, passwords that are supplied by the user in response to server authentication challenges. The default value is <literal moreinfo=\"none\">yes</literal>. Set this to <literal moreinfo=\"none\">no</literal> to disable this on-disk password caching. You can override this option for a single instance of the <command moreinfo=\"none\">svn</command> command using the <option>--no-auth-cache</option> command-line parameter (for those subcommands that support it). For more information, see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>."
+msgstr "这告诉Subversion是否缓存服务器认证要求时用户提供的密码，缺省值是<literal moreinfo=\"none\">yes</literal>。设置为<literal moreinfo=\"none\">no</literal>可以关闭在存盘的密码缓存，你可以通过<command moreinfo=\"none\">svn</command>的<option>--no-auth-cache</option>命令行参数（那些支持这个参数的子命令）来覆盖这个设置，详细信息请见<xref linkend=\"svn.serverconfig.netmodel.credcache\"/>。"
+
+#: build/en/book.xml:15725(literal)
+msgid "store-auth-creds"
+msgstr "store-auth-creds"
+
+#: build/en/book.xml:15727(para)
+msgid "This setting is the same as <literal moreinfo=\"none\">store-passwords</literal>, except that it enables or disables disk-caching of <emphasis>all</emphasis> authentication information: usernames, passwords, server certificates, and any other types of cacheable credentials."
+msgstr "这个设置与<literal moreinfo=\"none\">store-passwords</literal>相似，不过设置了这个选项将会保存<emphasis>所有</emphasis>认证信息，如用户名、密码、服务器证书，以及其他任何类型的可以缓存的凭证。"
+
+#: build/en/book.xml:15737(para)
+msgid "The <literal moreinfo=\"none\">helpers</literal> section controls which external applications Subversion uses to accomplish its tasks. Valid options in this section are:"
+msgstr "<literal moreinfo=\"none\">helpers</literal>小节控制完成Subversion任务的外部程序，正确的选项包括："
+
+#: build/en/book.xml:15743(literal)
+msgid "editor-cmd"
+msgstr "editor-cmd"
+
+#: build/en/book.xml:15745(para)
+msgid "This specifies the program Subversion will use to query the user for a log message during a commit operation, such as when using <command moreinfo=\"none\">svn commit</command> without either the <option>--message</option> (<option>-m</option>) or <option>--file</option> (<option>-F</option>) options. This program is also used with the <command moreinfo=\"none\">svn propedit</command> command—a temporary file is populated with the current value of the property the user wishes to edit, and the edits take place right in the editor program (see <xref linkend=\"svn.advanced.props\"/>). This option's default value is empty. The order of priority for determining the editor command is:"
+msgstr "Subversion在提交操作时用来询问用户日志信息的程序，例如使用<command moreinfo=\"none\">svn commit</command>而没有指定<option>--message</option>（<option>-m</option>）或者<option>--file</option>（<option>-F</option>）选项。这个程序也会与<command moreinfo=\"none\">svn propedit</command>一起使用—一个临时文件跳出来包含已经存在的用户希望编辑的属性，然后用户可以对这个属性进行编辑（见<xref linkend=\"svn.advanced.props\"/>），这个选项的缺省值为空，检测编辑器的顺序如下："
+
+#: build/en/book.xml:15760(para)
+msgid "Command-line option <literal moreinfo=\"none\">--editor-cmd</literal>"
+msgstr "命令行选项<literal moreinfo=\"none\">--editor-cmd</literal>"
+
+#: build/en/book.xml:15763(para)
+msgid "Environment variable <literal moreinfo=\"none\">SVN_EDITOR</literal>"
+msgstr "环境变量<literal moreinfo=\"none\">SVN_EDITOR</literal>"
+
+#: build/en/book.xml:15766(para)
+msgid "Configuration option <literal moreinfo=\"none\">editor-cmd</literal>"
+msgstr "配置选项<literal moreinfo=\"none\">editor-cmd</literal>"
+
+#: build/en/book.xml:15769(para)
+msgid "Environment variable <literal moreinfo=\"none\">VISUAL</literal>"
+msgstr "环境变量<literal moreinfo=\"none\">VISUAL</literal>"
+
+#: build/en/book.xml:1577(para)
+msgid "The list of letter A's indicates that Subversion is adding a number of items to your working copy. You now have a personal copy of the repository's <filename moreinfo=\"none\">/calc</filename> directory, with one additional entry—<filename moreinfo=\"none\">.svn</filename>—which holds the extra information needed by Subversion, as mentioned earlier."
+msgstr "列表中的A表示Subversion增加了一些条目到工作拷贝，你现在有了一个<filename moreinfo=\"none\">/calc</filename>的个人拷贝，有一个附加的目录—<filename moreinfo=\"none\">.svn</filename>—保存着前面提及的Subversion需要的额外信息。"
+
+#: build/en/book.xml:15772(para)
+msgid "Environment variable <literal moreinfo=\"none\">EDITOR</literal>"
+msgstr "环境变量<literal moreinfo=\"none\">EDITOR</literal>"
+
+#: build/en/book.xml:15775(para)
+msgid "Possibly, a default value built in to Subversion (not present in the official builds)"
+msgstr "也有可能Subversion会有一个内置的缺省值（官方编译版本不是如此）"
+
+#: build/en/book.xml:15779(para)
+msgid "The value of any of these options or variables is (unlike <literal moreinfo=\"none\">diff-cmd</literal>) the beginning of a command line to be executed by the shell. Subversion appends a space and the pathname of the temporary file to be edited. The editor should modify the temporary file and return a zero exit code to indicate success."
+msgstr "所有这些选项和变量（不像<literal moreinfo=\"none\">diff-cmd</literal>）的值的开头都是shell中要执行的命令行，Subversion会追加一个空格和一个需要编辑的临时文件，编辑器必须修改临时文件，并且返回一个0来表明成功。"
+
+#: build/en/book.xml:15788(literal)
+msgid "diff-cmd"
+msgstr "diff-cmd"
+
+#: build/en/book.xml:15790(para)
+msgid "This specifies the absolute path of a differencing program, used when Subversion generates <quote>diff</quote> output (such as when using the <command moreinfo=\"none\">svn diff</command> command). By default Subversion uses an internal differencing library—setting this option will cause it to perform this task using an external program. See <xref linkend=\"svn.advanced.externaldifftools\"/> for more details on using such programs."
+msgstr "这个命令是比较程序的绝对路径，当Subversion生成了<quote>diff</quote>输出时（例如当使用<command moreinfo=\"none\">svn diff</command>命令）就会使用，缺省Subversion会使用一个内置的比较库—设置这个参数会强制它使用外部程序执行这个任务，此类程序的更多信息见<xref linkend=\"svn.advanced.externaldifftools\"/>。"
+
+#: build/en/book.xml:15802(literal)
+msgid "diff3-cmd"
+msgstr "diff3-cmd"
+
+#: build/en/book.xml:15804(para)
+msgid "This specifies the absolute path of a three-way differencing program. Subversion uses this program to merge changes made by the user with those received from the repository. By default Subversion uses an internal differencing library—setting this option will cause it to perform this task using an external program. See <xref linkend=\"svn.advanced.externaldifftools\"/> for more details on using such programs."
+msgstr "这指定了一个三向的比较程序，Subversion使用这个程序来合并用户和从版本库接受的修改，缺省Subversion会使用一个内置的比较库—设置这个参数会导致它会使用外部程序执行这个任务，此类程序的更多信息见<xref linkend=\"svn.advanced.externaldifftools\"/>。"
+
+#: build/en/book.xml:15815(literal)
+msgid "diff3-has-program-arg"
+msgstr "diff3-has-program-arg"
+
+#: build/en/book.xml:15817(para)
+msgid "This flag should be set to <literal moreinfo=\"none\">true</literal> if the program specified by the <literal moreinfo=\"none\">diff3-cmd</literal> option accepts a <option>--diff-program</option> command-line parameter."
+msgstr "如果<literal moreinfo=\"none\">diff3-cmd</literal>选项设置的程序接受一个<option>--diff-program</option>命令行参数，这个标记必须设置为<literal moreinfo=\"none\">true</literal>。"
+
+#: build/en/book.xml:15826(para)
+msgid "The <literal moreinfo=\"none\">tunnels</literal> section allows you to define new tunnel schemes for use with <command moreinfo=\"none\">svnserve</command> and <literal moreinfo=\"none\">svn://</literal> client connections. For more details, see <xref linkend=\"svn.serverconfig.svnserve.sshauth\"/>."
+msgstr "<literal moreinfo=\"none\">tunnels</literal>小节允许你定义一个<command moreinfo=\"none\">svnserve</command>和<literal moreinfo=\"none\">svn://</literal>客户端连接使用的管道模式，更多细节见<xref linkend=\"svn.serverconfig.svnserve.sshauth\"/>。"
+
+#: build/en/book.xml:15831(para)
+#, fuzzy
+msgid "The <literal moreinfo=\"none\">miscellany</literal> section is where everything that doesn't belong elsewhere winds up. <placeholder-1/> In this section, you can find:"
+msgstr "<literal moreinfo=\"none\">miscellany</literal>小节是一些没法归到别处的选项。 <footnote><placeholder-1/></footnote> 在本小节，你会找到："
+
+#: build/en/book.xml:15834(para)
+msgid "Anyone for potluck dinner?"
+msgstr "就是一个大杂烩？"
+
+#: build/en/book.xml:15840(literal)
+msgid "global-ignores"
+msgstr "global-ignores"
+
+#: build/en/book.xml:15842(para)
+msgid "When running the <command moreinfo=\"none\">svn status</command> command, Subversion lists unversioned files and directories along with the versioned ones, annotating them with a <literal moreinfo=\"none\">?</literal> character (see <xref linkend=\"svn.tour.cycle.examine.status\"/>). Sometimes, it can be annoying to see uninteresting, unversioned items—for example, object files that result from a program's compilation—in this display. The <literal moreinfo=\"none\">global-ignores</literal> option is a list of whitespace-delimited globs which describe the names of files and directories that Subversion should not display unless they are versioned. The default value is <literal moreinfo=\"none\">*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store</literal>."
+msgstr "当运行<command moreinfo=\"none\">svn status</command>命令时，Subversion会和版本化的文件一样列出未版本化的文件和目录，并使用<literal moreinfo=\"none\">?</literal>字符（见see <xref linkend=\"svn.tour.cycle.examine.status\"/>）标记，有时候察看无关的未版本化文件会很讨厌—比如程序编译产生的对象文件—的显示出来。<literal moreinfo=\"none\">global-ignores</literal>选项是一个空格分隔的列表，用来描述Subversion在它们版本化之前不想显示的文件和目录，缺省值是<literal moreinfo=\"none\">*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store</literal>。"
+
+#: build/en/book.xml:15856(para)
+msgid "As well as <command moreinfo=\"none\">svn status</command>, the <command moreinfo=\"none\">svn add</command> and <command moreinfo=\"none\">svn import</command> commands also ignore files that match the list when they are scanning a directory. You can override this behaviour for a single instance of any of these commands by explicitly specifying the file name, or by using the <option>--no-ignore</option> command-line flag."
+msgstr "就像<command moreinfo=\"none\">svn status</command>，<command moreinfo=\"none\">svn add</command>和<command moreinfo=\"none\">svn import</command>命令也会忽略匹配这个列表的文件，你可以用单个的<option>--no-ignore</option>命令行参数来覆盖这个选项，关于更加细致的控制忽略的项目，见<xref linkend=\"svn.advanced.props.special.ignore\"/>。"
+
+#: build/en/book.xml:1586(title)
+msgid "Repository URLs"
+msgstr "版本库的URL"
+
+#: build/en/book.xml:15864(para)
+msgid "For information on more fine-grained control of ignored items, see <xref linkend=\"svn.advanced.props.special.ignore\"/>."
+msgstr "For information on more fine-grained control of ignored items, see <xref linkend=\"svn.advanced.props.special.ignore\"/>."
+
+#: build/en/book.xml:15870(literal)
+msgid "enable-auto-props"
+msgstr "enable-auto-props"
+
+#: build/en/book.xml:15872(para)
+msgid "This instructs Subversion to automatically set properties on newly added or imported files. The default value is <literal moreinfo=\"none\">no</literal>, so set this to <literal moreinfo=\"none\">yes</literal> to enable Auto-props. The <literal moreinfo=\"none\">auto-props</literal> section of this file specifies which properties are to be set on which files."
+msgstr "这里指示Subversion自动对新加的或者导入的文件设置属性，缺省值是<literal moreinfo=\"none\">no</literal>，可以设置为<literal moreinfo=\"none\">yes</literal>来开启自动添加属性，这个文件的<literal moreinfo=\"none\">auto-props</literal>小节会说明哪些属性会被设置到哪些文件。"
+
+#: build/en/book.xml:1588(para)
+#, fuzzy
+msgid "Subversion repositories can be accessed through many different methods—on local disk, or through various network protocols, depending on how your administrator has set things up for you. A repository location, however, is always a URL. <xref linkend=\"svn.basic.in-action.wc.tbl-1\"/> describes how different URL schemas map to the available access methods."
+msgstr "Subversion可以通过多种方式访问—本地磁盘访问，或各种各样不同的网络协议，但一个版本库地址永远都是一个URL，<xref linkend=\"svn.basic.in-action.wc.tbl-1\"/>描述了不同的URL模式对应的访问方法。"
+
+#: build/en/book.xml:15882(literal)
+msgid "log-encoding"
+msgstr "log-encoding"
+
+#: build/en/book.xml:15884(para)
+msgid "This variable sets the default character set encoding for commit log messages. It's a permanent form of the <option>--encoding</option> option (see <xref linkend=\"svn.ref.svn.sw\"/>). The Subversion repository stores log messages in UTF-8, and assumes that your log message is written using your operating system's native locale. You should specify a different encoding if your commit messages are written in any other encoding."
+msgstr "这个变量设置提交日志缺省的字符集，是<option>--encoding</option>选项（见<xref linkend=\"svn.ref.svn.sw\"/>）的永久形式，Subversion版本库保存了一些UTF-8的日志信息，并且假定你的日志信息是用操作系统的本地编码，如果你提交的信息使用别的编码方式，你一定要指定不同的编码。"
+
+#: build/en/book.xml:15897(literal)
+msgid "use-commit-times"
+msgstr "use-commit-times"
+
+#: build/en/book.xml:15899(para)
+msgid "Normally your working copy files have timestamps that reflect the last time they were touched by any process, whether that be your own editor or by some <command moreinfo=\"none\">svn</command> subcommand. This is generally convenient for people developing software, because build systems often look at timestamps as a way of deciding which files need to be recompiled."
+msgstr "通常你的工作拷贝文件会有最后一次被进程访问的时间戳，不管是你自己的编辑器还是用<command moreinfo=\"none\">svn</command>子命令。这通常对人们开发软件提供了便利，因为编译系统通常会通过查看时间戳来决定那些文件需要重新编译。"
+
+#: build/en/book.xml:15907(para)
+msgid "In other situations, however, it's sometimes nice for the working copy files to have timestamps that reflect the last time they were changed in the repository. The <command moreinfo=\"none\">svn export</command> command always places these <quote>last-commit timestamps</quote> on trees that it produces. By setting this config variable to <literal moreinfo=\"none\">yes</literal>, the <command moreinfo=\"none\">svn checkout</command>, <command moreinfo=\"none\">svn update</command>, <command moreinfo=\"none\">svn switch</command>, and <command moreinfo=\"none\">svn revert</command> commands will also set last-commit timestamps on files that they touch."
+msgstr "在其他情形，有时候如果工作拷贝的文件时间戳反映了上一次在版本库中更改的时间会非常好，<command moreinfo=\"none\">svn export</command>命令会一直放置这些<quote>上次提交的时间戳</quote>放到它创建的目录树。通过设置这个config参数为<literal moreinfo=\"none\">yes</literal>，<command moreinfo=\"none\">svn checkout</command>、<command moreinfo=\"none\">svn update</command>、 <command moreinfo=\"none\">svn switch</command>和<command moreinfo=\"none\">svn revert</command>命令也会为它们操作的文件设置上次提交的时间戳。"
+
+#: build/en/book.xml:15926(para)
+msgid "The <literal moreinfo=\"none\">auto-props</literal> section controls the Subversion client's ability to automatically set properties on files when they are added or imported. It contains any number of key-value pairs in the format <literal moreinfo=\"none\">PATTERN = PROPNAME=PROPVALUE</literal> where <literal moreinfo=\"none\">PATTERN</literal> is a file pattern that matches a set of filenames and the rest of the line is the property and its value. Multiple matches on a file will result in multiple propsets for that file; however, there is no guarantee that auto-props will be applied in the order in which they are listed in the config file, so you can't have one rule <quote>override</quote> another. You can find several examples of auto-props usage in the <filename moreinfo=\"none\">config</filename> file. Lastly, don't forget to set <literal moreinfo=\"none\">enable-auto-props</literal> to <literal moreinfo=\"none\">yes</literal> in the <literal moreinfo=\"none\">miscellany</literal> section if you want to enable auto-props."
+msgstr "<literal moreinfo=\"none\">auto-props</literal>小节控制Subversion客户端自动设置提交和导入的文件的属性的能力，它可以包含任意数量的键-值对，格式是<literal moreinfo=\"none\">PATTERN = PROPNAME=PROPVALUE</literal>，其中<literal moreinfo=\"none\">PATTERN</literal>是一个文件模式，匹配一系列文件名，此行其它两项为属性和值。如果一个文件匹配多次，会导致有多个属性集；然而，没有手段保障自动属性不会按照配置文件中的顺序应用，所以你可以一个规则<quote>覆盖</quote>另一个。你可以在<filename moreinfo=\"none\">config</filename>文件找到许多自动属性的用法实例。最后，如果你希望开启自动属性，不要忘了设置<literal moreinfo=\"none\">miscellany</literal>小节的<literal moreinfo=\"none\">enable-auto-props</literal>为<literal moreinfo=\"none\">yes</literal>。"
+
+#: build/en/book.xml:15954(title)
+msgid "Localization"
+msgstr "本地化"
+
+#: build/en/book.xml:15956(para)
+msgid "<firstterm>Localization</firstterm> is the act of making programs behave in a region-specific way. When a program formats numbers or dates in a way specific to your part of the world, or prints messages (or accepts input) in your native language, the program is said to be <firstterm>localized</firstterm>. This section describes steps Subversion has made towards localization."
+msgstr "<firstterm>本地化</firstterm>是让程序按照地区特定方式运行的行为，如果一个程序的格式、数字或者是日期是你的本地方式，或者是打印的信息（或者是接受的输入）是你本地的语言，这个程序被叫做已经<firstterm>本地化了</firstterm>，这部分描述了针对本地化的Subversion的步骤。"
+
+#: build/en/book.xml:15966(title)
+msgid "Understanding locales"
+msgstr "理解地区"
+
+#: build/en/book.xml:15968(para)
+msgid "Most modern operating systems have a notion of the <quote>current locale</quote>—that is, the region or country whose localization conventions are honored. These conventions—typically chosen by some runtime configuration mechanism on the computer—affect the way in which programs present data to the user, as well as the way in which they accept user input."
+msgstr "许多现代操作系统都有一个<quote>当前地区</quote>的概念—也就是本地化习惯服务的国家和地区。这些习惯—通常是被一些运行配置机制选择—影响程序展现数据的方式，也有接受用户输入的方式。"
+
+#: build/en/book.xml:15976(para)
+msgid "On Unix-like systems, you can check the values of the locale-related runtime configuration options by running the <command moreinfo=\"none\">locale</command> command:"
+msgstr "在类Unix的系统，你可以运行<command moreinfo=\"none\">locale</command>命令来检查本地关联的运行配置的选项值："
+
+#: build/en/book.xml:1598(title)
+msgid "Repository Access URLs"
+msgstr "版本库访问URL"
+
+#: build/en/book.xml:15980(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ locale\n"
+"LANG=\n"
+"LC_COLLATE=\"C\"\n"
+"LC_CTYPE=\"C\"\n"
+"LC_MESSAGES=\"C\"\n"
+"LC_MONETARY=\"C\"\n"
+"LC_NUMERIC=\"C\"\n"
+"LC_TIME=\"C\"\n"
+"LC_ALL=\"C\"\n"
+msgstr ""
+"\n"
+"$ locale\n"
+"LANG=\n"
+"LC_COLLATE=\"C\"\n"
+"LC_CTYPE=\"C\"\n"
+"LC_MESSAGES=\"C\"\n"
+"LC_MONETARY=\"C\"\n"
+"LC_NUMERIC=\"C\"\n"
+"LC_TIME=\"C\"\n"
+"LC_ALL=\"C\"\n"
+
+#: build/en/book.xml:15992(para)
+msgid "The output is a list of locale-related environment variables and their current values. In this example, the variables are all set to the default <literal moreinfo=\"none\">C</literal> locale, but users can set these variables to specific country/language code combinations. For example, if one were to set the <literal moreinfo=\"none\">LC_TIME</literal> variable to <literal moreinfo=\"none\">fr_CA</literal>, then programs would know to present time and date information formatted according a French-speaking Canadian's expectations. And if one were to set the <literal moreinfo=\"none\">LC_MESSAGES</literal> variable to <literal moreinfo=\"none\">zh_TW</literal>, then programs would know to present human-readable messages in Traditional Chinese. Setting the <literal moreinfo=\"none\">LC_ALL</literal> variable has the effect of changing every locale variable to the same value. The value of <literal moreinfo=\"none\">LANG</literal> is used as a default value for any locale variable that is unset. To see the list of available locales on a Unix system, run the command <command moreinfo=\"none\">locale -a</command>."
+msgstr "输出是一个本地相关的环境变量和它们的值，在这个例子里，所有的变量设置为缺省的<literal moreinfo=\"none\">C</literal>地区，但是用户可以设置这些变量为特定的国家/语言代码组合。举个例子，如果有人设置<literal moreinfo=\"none\">LC_TIME</literal>变量为<literal moreinfo=\"none\">fr_CA</literal>，然后程序会知道使用讲法语的加拿大期望的格式来显示时间和日期信息。如果一个人会设置<literal moreinfo=\"none\">LC_MESSAGES</literal>变量为<literal moreinfo=\"none\">zh_TW</literal>，程序会知道使用繁体中文显示可读信息。如果设置<literal moreinfo=\"none\">LC_ALL</literal>的效果同分别设置所有的位置变量为同一个值有相同的效果。<literal moreinfo=\"none\">LANG</literal>用来作为没有设置地区变量的缺省值，为了查看Unix系统所有的地区列表，运行<command moreinfo=\"none\">locale -a</command>命令。"
+
+#: build/en/book.xml:16011(para)
+msgid "On Windows, locale configuration is done via the <quote>Regional and Language Options</quote> control panel item. There you can view and select the values of individual settings from the available locales, and even customize (at a sickening level of detail) several of the display formatting conventions."
+msgstr "在Windows，地区配置是通过<quote>地区和语言选项</quote>控制面板管理的，可以从已存在的地区查看选择，甚至可以自定义（会是个很讨厌的复杂事情）许多显示格式习惯。"
+
+#: build/en/book.xml:1602(entry)
+msgid "Schema"
+msgstr "模式"
+
+#: build/en/book.xml:16022(title)
+msgid "Subversion's use of locales"
+msgstr "Subversion对地区的支持"
+
+#: build/en/book.xml:16024(para)
+msgid "The Subversion client, <command moreinfo=\"none\">svn</command>, honors the current locale configuration in two ways. First, it notices the value of the <literal moreinfo=\"none\">LC_MESSAGES</literal> variable and attempts to print all messages in the specified language. For example:"
+msgstr "Subversion客户端，<command moreinfo=\"none\">svn</command>通过两种方式支持当前的地区配置。首先，它会注意<literal moreinfo=\"none\">LC_MESSAGES</literal>的值，然后尝试使用特定的语言打印所有的信息，例如："
+
+#: build/en/book.xml:1603(entry)
+msgid "Access Method"
+msgstr "访问方法"
+
+#: build/en/book.xml:16030(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ export LC_MESSAGES=de_DE\n"
+"$ svn help cat\n"
+"cat: Gibt den Inhalt der angegebenen Dateien oder URLs aus.\n"
+"Aufruf: cat ZIEL[@REV]...\n"
+"…\n"
+msgstr ""
+"\n"
+"$ export LC_MESSAGES=de_DE\n"
+"$ svn help cat\n"
+"cat: Gibt den Inhalt der angegebenen Dateien oder URLs aus.\n"
+"Aufruf: cat ZIEL[@REV]...\n"
+"…\n"
+
+#: build/en/book.xml:16038(para)
+msgid "This behavior works identically on both Unix and Windows systems. Note, though, that while your operating system might have support for a certain locale, the Subversion client still may not be able to speak the particular language. In order to produce localized messages, human volunteers must provide translations for each language. The translations are written using the GNU gettext package, which results in translation modules that end with the <filename moreinfo=\"none\">.mo</filename> filename extension. For example, the German translation file is named <filename moreinfo=\"none\">de.mo</filename>. These translation files are installed somewhere on your system. On Unix, they typically live in <filename moreinfo=\"none\">/usr/share/locale/</filename>, while on Windows they're often found in the <filename moreinfo=\"none\">\\share\\locale\\</filename> folder in Subversion's installation area. Once installed, a module is named after the program it provides translations for. For example, the <filename moreinfo=\"none\">de.mo</filename> file may ultimately end up installed as <filename moreinfo=\"none\">/usr/share/locale/de/LC_MESSAGES/subversion.mo</filename>. By browsing the installed <filename moreinfo=\"none\">.mo</filename> files, you can see which languages the Subversion client is able to speak."
+msgstr "这个行为在Unix和Windows上同样工作，注意，尽管有时你的操作系统支持某个地区，Subversion客户端可能不能讲特定的语言。为了制作本地化信息，志愿者可以提供各种语言的翻译。翻译使用GNU gettext包编写，相关的翻译模块使用<filename moreinfo=\"none\">.mo</filename>作为后缀名。举个例子，德国翻译文件为<filename moreinfo=\"none\">de.mo</filename>。翻译文件安装到你的系统的某个位置，在Unix它们会在<filename moreinfo=\"none\">/usr/share/locale/</filename>，而在Windows它们通常会在Subversion安装的<filename moreinfo=\"none\">\\share\\locale\\</filename>目录。一旦安装，一个命名在程序后面的模块会为此提供翻译。举个例子，<filename moreinfo=\"none\">de.mo</filename>会最终安装到<filename moreinfo=\"none\">/usr/share/locale/de/LC_MESSAGES/subversion.mo</filename>，通过查看安装的<filename moreinfo=\"none\">.mo</filename>文件，我们可以看到Subversion支持的语言。"
+
+#: build/en/book.xml:16061(para)
+msgid "The second way in which the locale is honored involves how <command moreinfo=\"none\">svn</command> interprets your input. The repository stores all paths, filenames, and log messages in Unicode, encoded as UTF-8. In that sense, the repository is <firstterm>internationalized</firstterm>—that is, the repository is ready to accept input in any human language. This means, however, that the Subversion client is responsible for sending only UTF-8 filenames and log messages into the repository. In order to do this, it must convert the data from the native locale into UTF-8."
+msgstr "第二种支持地区设置的方式包括<command moreinfo=\"none\">svn</command>怎样解释你的输入，版本库使用UTF-8保存了所有的路径，文件名和日志信息。在这种情况下，版本库是<firstterm>国际化的</firstterm>—也就是版本库准备接受任何人类的语言。这意味着，无论如何Subversion客户端要负责发送UTF-8的文件名和日志信息到版本库，为此，必须将数据从本地位置转化为UTF-8。"
+
+#: build/en/book.xml:16072(para)
+#, fuzzy
+msgid "For example, suppose you create a file named <filename moreinfo=\"none\">caffè.txt</filename>, and then when committing the file, you write the log message as <quote>Adesso il caffè è più forte</quote>. Both the filename and log message contain non-ASCII characters, but because your locale is set to <literal moreinfo=\"none\">it_IT</literal>, the Subversion client knows to interpret them as Italian. It uses an Italian character set to convert the data to UTF-8 before sending them off to the repository."
+msgstr "举个例子，你创建了一个文件叫做<filename moreinfo=\"none\">caffè.txt</filename>，然后提交了这个文件，你写的日志信息是<quote>Adesso il caffè è più forte</quote>，文件名和日志信息都包含非ASCII字符，但是因为你的位置设置为<literal moreinfo=\"none\">it_IT</literal>，Subversion知道把它们作为意大利语解释，在发送到版本库之前，它用一个意大利字符集转化数据为UTF-8。"
+
+#: build/en/book.xml:1608(literal)
+msgid "file:///"
+msgstr "file:///"
+
+#: build/en/book.xml:16082(para)
+msgid "Note that while the repository demands UTF-8 filenames and log messages, it <emphasis>does not</emphasis> pay attention to file contents. Subversion treats file contents as opaque strings of bytes, and neither client nor server makes an attempt to understand the character set or encoding of the contents."
+msgstr "注意当版本库要求UTF-8文件名和日志信息时，它<emphasis>不会</emphasis>注意到文件的内容，Subversion会把文件内容看作字节串，没有任何客户端和服务器会尝试理解或是编码这些内容。"
+
+#: build/en/book.xml:1609(entry)
+msgid "direct repository access (on local disk)"
+msgstr "直接版本库访问（本地磁盘）。"
+
+#: build/en/book.xml:16090(title)
+msgid "Character set conversion errors"
+msgstr "字符集转换错误"
+
+#: build/en/book.xml:16092(para)
+msgid "While using Subversion, you might get hit with an error related to character set conversions:"
+msgstr "当使用Subversion，你或许会碰到一个字符集转化关联的错误："
+
+#: build/en/book.xml:16095(screen)
+#, no-wrap
+msgid ""
+"\n"
+"svn: Can't convert string from native encoding to 'UTF-8':\n"
+"…\n"
+"svn: Can't convert string from 'UTF-8' to native encoding:\n"
+"…\n"
+msgstr ""
+"\n"
+"svn: Can't convert string from native encoding to 'UTF-8':\n"
+"…\n"
+"svn: Can't convert string from 'UTF-8' to native encoding:\n"
+"…\n"
+
+#: build/en/book.xml:16102(para)
+msgid "Errors like this typically occur when the Subversion client has received a UTF-8 string from the repository, but not all of the characters in that string can be represented using the encoding of the current locale. For example, if your locale is <literal moreinfo=\"none\">en_US</literal> but a collaborator has committed a Japanese filename, you're likely to see this error when you receive the file during an <command moreinfo=\"none\">svn update</command>."
+msgstr "这个错误信息通常会发生在Subversion客户端从版本库接收到一个UTF-8串，但字符不能转化为当前的地区文字时，举个例子，如果你的地区设置是<literal moreinfo=\"none\">en_US</literal>，但是一个写作者使用日本文件名提交，你会在<command moreinfo=\"none\">svn update</command>接受文件时会看到这个错误。"
+
+#: build/en/book.xml:16111(para)
+msgid "The solution is either to set your locale to something which <emphasis>can</emphasis> represent the incoming UTF-8 data, or to change the filename or log message in the repository. (And don't forget to slap your collaborator's hand—projects should decide on common languages ahead of time, so that all participants are using the same locale.)"
+msgstr "解决方案或者是设置你的地区为<emphasis>可以</emphasis>表示即将到来的UTF-8数据，或者是修改版本库的文件名或信息。（不要忘记和你的合作者拍拍手—项目必须首先决定通用的语言，这样所有的参与者会使用相同的地区设置。）"
+
+#: build/en/book.xml:1612(literal) build/en/book.xml:1618(literal)
+msgid "http://"
+msgstr "http://"
+
+#: build/en/book.xml:16128(title)
+msgid "Using External Differencing Tools"
+msgstr "使用外置区别工具"
+
+#: build/en/book.xml:1613(entry)
+msgid "access via WebDAV protocol to Subversion-aware Apache server"
+msgstr "通过配置Subversion的Apache服务器的WebDAV协议。"
+
+#: build/en/book.xml:16130(para)
+msgid "The presence of <option>--diff-cmd</option> and <option>--diff3-cmd</option> options, and similarly named runtime configuration parameters (see <xref linkend=\"svn.advanced.confarea.opts.config\"/>), can lead to a false notion of how easy it is to use external differencing (or <quote>diff</quote>) and merge tools with Subversion. While Subversion can use most of popular such tools available, the effort invested in setting this up often turns out to be non-trivial."
+msgstr "选项<option>--diff-cmd</option>和<option>--diff3-cmd</option>的形式相似，也有类似名称的运行配置参数（见<xref linkend=\"svn.advanced.confarea.opts.config\"/>），这会导致一个错误的观念，也就是在Subversion中使用外置的比较（或<quote>diff</quote>）和合并工具会非常的容易，虽然Subversion可以使用大多数类似的工具，但是设置这些工具绝非易事。"
+
+#: build/en/book.xml:16139(para)
+#, fuzzy
+msgid "The interface between Subversion and external diff and merge tools harkens back to a time when Subversion's only contextual differencing capabilities were built around invocations of the GNU diffutils toolchain, specifically the <command moreinfo=\"none\">diff</command> and <command moreinfo=\"none\">diff3</command> utilities. To get the kind of behavior Subversion needed, it called these utilities with more than a handful of options and parameters, most of which were quite specific to the utilities. Some time later, Subversion grew its own internal differencing library, and as a failover mechanism, <placeholder-1/> the <option>--diff-cmd</option> and <option>--diff3-cmd</option> options were added to the Subversion command-line client so users could more easily indicate that they preferred to use the GNU diff and diff3 utilities instead of the newfangled internal diff library. If those options were used, Subversion would simply ignore the internal diff library, and fall back to running those external programs, lengthy argument lists and all. And that's where things remain today."
+msgstr "Subversion和外置比较和合并工具的接口可以追溯到很久以前，当时Subversion的唯一文本比较能力是建立在GNU的工具链之上，特别是<command moreinfo=\"none\">diff</command>和<command moreinfo=\"none\">diff3</command>工具，为了得到Subversion需要的方式，它使用非常复杂的选项和参数调用这些工具，而这些选项和参数都是工具特定的，渐渐的，Subversion发展了自己的比较区别库作为备份机制。<placeholder-1/><option>--diff-cmd</option>和<option>--diff3-cmd</option>选项是添加到Subversion的命令行客户端，所以用户可以更加容易的指明他们最喜欢的使用的GNU diff和diff3工具，而不是新奇的内置比较库，如果使用了这些选项，Subversion会忽略内置的比较库，转而使用外置程序，使用冗长的参数列表。现在还是这样。"
+
+#: build/en/book.xml:16150(para)
+msgid "Subversion developers are good, but even the best make mistakes."
+msgstr "Subversion的开发者很好，但最好的也会发生错误。"
+
+#: build/en/book.xml:16162(para)
+msgid "It didn't take long for folks to realize that having such easy configuration mechanisms for specifying that Subversion should use the external GNU diff and diff3 utilities located at a particular place on the system could be applied toward the use of other diff and merge tools, too. After all, Subversion didn't actually verify that the things it was being told to run were members of the GNU diffutils toolchain. But the only configurable aspect of using those external tools is their location on the system—not the option set, parameter order, etc. Subversion continues throwing all those GNU utility options at your external diff tool regardless of whether or not that program can understand those options. And that's where things get unintuitive for most users."
+msgstr "人们很快意识到使用简单的配置机制必须使Subversion使用位于特定位置的GNU diff和diff3工具，毕竟，Subversion并不验证其被告之要执行的程序是否是GNU的工具链的比较工具。唯一可以配置的方面是外置工具在系统的位置—而不是选项集，参数顺序等等。Subversion一直将这些GNU工具选项发给你的外置比较工具，而不管程序是否可以理解那些选项，那不是所有用户直觉的方式。"
+
+#: build/en/book.xml:1617(literal)
+msgid "https://"
+msgstr "https://"
+
+#: build/en/book.xml:16176(para)
+msgid "The key to using external diff and merge tools (other than GNU diff and diff3, of course) with Subversion is to use wrapper scripts which convert the input from Subversion into something that your differencing tool can understand, and then to convert the output of your tool back into a format which Subversion expects—the format that the GNU tools would have used. The following sections cover the specifics of those expectations."
+msgstr "使用外置比较和合并工具的关键是使用包裹脚本将Subversion的输出转化为你的脚本程序可以理解的形式，然后将这些比较工具的输出转化为你的Subversion期望的格式—GNU工具可能使用的格式，下面的小节覆盖了那些期望格式的细节。"
+
+#: build/en/book.xml:1618(entry)
+msgid "same as <placeholder-1/>, but with SSL encryption."
+msgstr "与<placeholder-1/>相似，但是包括SSL加密。"
+
+#: build/en/book.xml:16186(para)
+msgid "The decision on when to fire off a contextual diff or merge as part of a larger Subversion operation is made entirely by Subversion, and is affected by, among other things, whether or not the files being operated on are human-readable as determined by their <literal moreinfo=\"none\">svn:mime-type</literal> property. This means, for example, that even if you had the niftiest Microsoft Word-aware differencing or merging tool in the Universe, it would never be invoked by Subversion so long as your versioned Word documents had a configured MIME type that denoted that they were not human-readable (such as <literal moreinfo=\"none\">application/msword</literal>). For more about MIME type settings, see <xref linkend=\"svn.advanced.props.special.mime-type\"/>"
+msgstr "何时启动文本比较或合并的决定完全是Subversion的决定，而这个决定是根据文件的<literal moreinfo=\"none\">svn:mime-type</literal>属性作出的，这意味着，例如，即使你有一个可以识别Microsoft Word格式的比较或合并工具，当你对一个Word文件设置为非人工可读（例如<literal moreinfo=\"none\">application/msword</literal>）时，依然不会调用这个识别Word的工具。关于MIME type的设定，可以见<xref linkend=\"svn.advanced.props.special.mime-type\"/>。"
+
+#: build/en/book.xml:16203(title)
+msgid "External diff"
+msgstr "外置diff"
+
+#: build/en/book.xml:16205(para)
+#, fuzzy
+msgid "Subversion calls external diff programs with parameters suitable for the GNU diff utility, and expects only that the external program return with a successful error code. For most alternative diff program, only the sixth and seventh arguments, the paths of the files which represent the left and right sides of the diff, respectively, are of interest. Note that Subversion runs the diff program once per modified file covered by the Subversion operation, so if your program runs in an asynchronous fashion (or <quote>backgrounded</quote>), you might have several instances of it all running simultaneously. Finally, Subversion expects that your program return an errorcode of 1 if your program detected differences, or 0 if it did not—any other errorcode is considered a fatal error. <placeholder-1/>"
+msgstr "Subversion可以调用适合GNU参数的diff工具，并期望外置程序能够返回成功的错误代码。对于大多数可用的diff程序，只有第6、7参数，diff两边文件的路径。需要注意Subversion对于每个修改的文件都要以异步方式（或<quote>后台</quote>）运行diff程序，你会得到许多并行的实例。最后，Subversion期望你的程序在发现区别时返回错误代码0，没有区别则返回1—任何其他的返回值都被认为是严重错误。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:1622(literal) build/en/book.xml:1628(literal)
+msgid "svn://"
+msgstr "svn://"
+
+#: build/en/book.xml:16220(para)
+msgid "The GNU diff manual page puts it this way: <quote>An exit status of 0 means no differences were found, 1 means some differences were found, and 2 means trouble.</quote>"
+msgstr "GNU的diff手册这样说的：<quote>返回0意味着没有区别，1是有有区别，其它值意味着出现问题。</quote>"
+
+#: build/en/book.xml:16226(para)
+msgid "<xref linkend=\"svn.advanced.externaldifftools.diff.ex-1\"/> and <xref linkend=\"svn.advanced.externaldifftools.diff.ex-2\"/> are templates for external diff tool wrappers in the Bourne shell and Windows batch scripting languages, respectively."
+msgstr "<xref linkend=\"svn.advanced.externaldifftools.diff.ex-1\"/>和<xref linkend=\"svn.advanced.externaldifftools.diff.ex-2\"/>分别是Bourne shell和Windows批处理外置diff工具的包裹器模版。"
+
+#: build/en/book.xml:1623(entry)
+msgid "access via custom protocol to an <placeholder-1/> server"
+msgstr "通过<placeholder-1/>服务自定义的协议。"
+
+#: build/en/book.xml:16233(title)
+msgid "diffwrap.sh"
+msgstr "diffwrap.sh"
+
+#: build/en/book.xml:16234(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/bin/sh\n"
+"\n"
+"# Configure your favorite diff program here.\n"
+"DIFF=\"/usr/local/bin/my-diff-tool\"\n"
+"\n"
+"# Subversion provides the paths we need as the sixth and seventh \n"
+"# parameters.\n"
+"LEFT=${6}\n"
+"RIGHT=${7}\n"
+"\n"
+"# Call the diff command (change the following line to make sense for\n"
+"# your merge program).\n"
+"$DIFF --left $LEFT --right $RIGHT\n"
+"\n"
+"# Return an errorcode of 0 if no differences were detected, 1 if some were.\n"
+"# Any other errorcode will be treated as fatal.\n"
+msgstr ""
+"\n"
+"#!/bin/sh\n"
+"\n"
+"# Configure your favorite diff program here.\n"
+"DIFF=\"/usr/local/bin/my-diff-tool\"\n"
+"\n"
+"# Subversion provides the paths we need as the sixth and seventh \n"
+"# parameters.\n"
+"LEFT=${6}\n"
+"RIGHT=${7}\n"
+"\n"
+"# Call the diff command (change the following line to make sense for\n"
+"# your merge program).\n"
+"$DIFF --left $LEFT --right $RIGHT\n"
+"\n"
+"# Return an errorcode of 0 if no differences were detected, 1 if some were.\n"
+"# Any other errorcode will be treated as fatal.\n"
+
+#: build/en/book.xml:16255(title)
+msgid "diffwrap.bat"
+msgstr "diffwrap.bat"
+
+#: build/en/book.xml:16256(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"@ECHO OFF\n"
+"\n"
+"REM Configure your favorite diff program here.\n"
+"SET DIFF=\"C:\\Program Files\\Funky Stuff\\My Diff Tool.exe\"\n"
+"\n"
+"REM Subversion provides the paths we need as the sixth and seventh \n"
+"REM parameters.\n"
+"SET LEFT=%6\n"
+"SET RIGHT=%7\n"
+"\n"
+"REM Call the diff command (change the following line to make sense for\n"
+"REM your merge program).\n"
+"%DIFF% --left %LEFT% --right %RIGHT%\n"
+"\n"
+"REM Return an errorcode of 0 if no differences were detected, 1 if some were.\n"
+"REM Any other errorcode will be treated as fatal.\n"
+msgstr ""
+"\n"
+"@ECHO OFF\n"
+"\n"
+"REM Configure your favorite diff program here.\n"
+"SET DIFF=\"C:\\Program Files\\Funky Stuff\\My Diff Tool.exe\"\n"
+"\n"
+"REM Subversion provides the paths we need as the sixth and seventh \n"
+"REM parameters.\n"
+"SET LEFT=%6\n"
+"SET RIGHT=%7\n"
+"\n"
+"REM Call the diff command (change the following line to make sense for\n"
+"REM your merge program).\n"
+"%DIFF% --left %LEFT% --right %RIGHT%\n"
+"\n"
+"REM Return an errorcode of 0 if no differences were detected, 1 if some were.\n"
+"REM Any other errorcode will be treated as fatal.\n"
+
+#: build/en/book.xml:1627(literal)
+msgid "svn+ssh://"
+msgstr "svn+ssh://"
+
+#: build/en/book.xml:16279(title)
+msgid "External diff3"
+msgstr "外置diff3"
+
+#: build/en/book.xml:1628(entry)
+msgid "same as <placeholder-1/>, but through an SSH tunnel."
+msgstr "与<placeholder-1/>相似，但通过SSH封装。"
+
+#: build/en/book.xml:16281(para)
+msgid "Subversion calls external merge programs with parameters suitable for the GNU diff3 utility, expecting that the external program return with a successful error code and that the full file contents which result from the completed merge operation are printed on the standard output stream (so that Subversion can redirect them into the appropriate version controlled file). For most alternative merge programs, only the ninth, tenth, and eleventh arguments, the paths of the files which represent the <quote>mine</quote>, <quote>older</quote>, and <quote>yours</quote> inputs, respectively, are of interest. Note that because Subversion depends on the output of your merge program, you wrapper script must not exit before that output has been delivered to Subversion. When it finally does exit, it should return an errorcode of 0 if the merge was successful, or 1 if unresolved conflicts remain in the output—any other errorcode is considered a fatal error."
+msgstr "Subversion按照符合GNU的diff3的参数调用合并程序，期望外置程序会返回成功的错误代码，并且完整合并的文件结果打印到标准输出（这样Subversion可以重定向这些东西到适当的版本控制下的文件）。对于大多数可选的合并程序，只有第9、10和11参数，分别代表<quote>mine</quote>、<quote>older</quote>和<quote>yours</quote>的路径。需要注意，因为Subversion依赖于你的合并程序的输出，你的包裹脚本在输出发送到Subversion之前不要退出。当最终退出，如果合并成功返回0，如果有为解决的冲突则返回1—其它返回值都是严重错误。"
+
+#: build/en/book.xml:16299(para)
+msgid "<xref linkend=\"svn.advanced.externaldifftools.diff3.ex-1\"/> and <xref linkend=\"svn.advanced.externaldifftools.diff3.ex-2\"/> are templates for external merge tool wrappers in the Bourne shell and Windows batch scripting languages, respectively."
+msgstr "<xref linkend=\"svn.advanced.externaldifftools.diff3.ex-1\"/>和<xref linkend=\"svn.advanced.externaldifftools.diff3.ex-2\"/>分别是Bourne shell和Windows批处理外置diff工具的包裹器模版。"
+
+#: build/en/book.xml:16305(title)
+msgid "diff3wrap.sh"
+msgstr "diff3wrap.sh"
+
+#: build/en/book.xml:16306(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/bin/sh\n"
+"\n"
+"# Configure your favorite diff3/merge program here.\n"
+"DIFF3=\"/usr/local/bin/my-merge-tool\"\n"
+"\n"
+"# Subversion provides the paths we need as the ninth, tenth, and eleventh \n"
+"# parameters.\n"
+"MINE=${9}\n"
+"OLDER=${10}\n"
+"YOURS=${11}\n"
+"\n"
+"# Call the merge command (change the following line to make sense for\n"
+"# your merge program).\n"
+"$DIFF3 --older $OLDER --mine $MINE --yours $YOURS\n"
+"\n"
+"# After performing the merge, this script needs to print the contents\n"
+"# of the merged file to stdout.  Do that in whatever way you see fit.\n"
+"# Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\n"
+"# remain in the result.  Any other errorcode will be treated as fatal.\n"
+msgstr ""
+"\n"
+"#!/bin/sh\n"
+"\n"
+"# Configure your favorite diff3/merge program here.\n"
+"DIFF3=\"/usr/local/bin/my-merge-tool\"\n"
+"\n"
+"# Subversion provides the paths we need as the ninth, tenth, and eleventh \n"
+"# parameters.\n"
+"MINE=${9}\n"
+"OLDER=${10}\n"
+"YOURS=${11}\n"
+"\n"
+"# Call the merge command (change the following line to make sense for\n"
+"# your merge program).\n"
+"$DIFF3 --older $OLDER --mine $MINE --yours $YOURS\n"
+"\n"
+"# After performing the merge, this script needs to print the contents\n"
+"# of the merged file to stdout.  Do that in whatever way you see fit.\n"
+"# Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\n"
+"# remain in the result.  Any other errorcode will be treated as fatal.\n"
+
+#: build/en/book.xml:16330(title)
+msgid "diff3wrap.bat"
+msgstr "diff3wrap.bat"
+
+#: build/en/book.xml:16331(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"@ECHO OFF\n"
+"\n"
+"REM Configure your favorite diff3/merge program here.\n"
+"SET DIFF3=\"C:\\Program Files\\Funky Stuff\\My Merge Tool.exe\"\n"
+"\n"
+"REM Subversion provides the paths we need as the ninth, tenth, and eleventh \n"
+"REM parameters.  But we only have access to nine parameters at a time, so we\n"
+"REM shift our nine-parameter window twice to let us get to what we need.\n"
+"SHIFT\n"
+"SHIFT\n"
+"SET MINE=%7\n"
+"SET OLDER=%8\n"
+"SET YOURS=%9\n"
+"\n"
+"REM Call the merge command (change the following line to make sense for\n"
+"REM your merge program).\n"
+"%DIFF3% --older %OLDER% --mine %MINE% --yours %YOURS%\n"
+"\n"
+"REM After performing the merge, this script needs to print the contents\n"
+"REM of the merged file to stdout.  Do that in whatever way you see fit.\n"
+"REM Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\n"
+"REM remain in the result.  Any other errorcode will be treated as fatal.\n"
+msgstr ""
+"\n"
+"@ECHO OFF\n"
+"\n"
+"REM Configure your favorite diff3/merge program here.\n"
+"SET DIFF3=\"C:\\Program Files\\Funky Stuff\\My Merge Tool.exe\"\n"
+"\n"
+"REM Subversion provides the paths we need as the ninth, tenth, and eleventh \n"
+"REM parameters.  But we only have access to nine parameters at a time, so we\n"
+"REM shift our nine-parameter window twice to let us get to what we need.\n"
+"SHIFT\n"
+"SHIFT\n"
+"SET MINE=%7\n"
+"SET OLDER=%8\n"
+"SET YOURS=%9\n"
+"\n"
+"REM Call the merge command (change the following line to make sense for\n"
+"REM your merge program).\n"
+"%DIFF3% --older %OLDER% --mine %MINE% --yours %YOURS%\n"
+"\n"
+"REM After performing the merge, this script needs to print the contents\n"
+"REM of the merged file to stdout.  Do that in whatever way you see fit.\n"
+"REM Return an errorcode of 0 on successful merge, 1 if unresolved conflicts\n"
+"REM remain in the result.  Any other errorcode will be treated as fatal.\n"
+
+#: build/en/book.xml:1635(para)
+#, fuzzy
+msgid "For more information on how Subversion parses URLs, see <xref linkend=\"svn.advanced.reposurls\"/>. For more information on the different types of network servers available for Subversion, see <xref linkend=\"svn.serverconfig\"/>."
+msgstr "关于Subversion解析URL的更多信息，见<xref linkend=\"svn.advanced.reposurls\"/>。"
+
+#: build/en/book.xml:16369(title)
+#, fuzzy
+msgid "Embedding Subversion"
+msgstr "安装Subversion"
+
+#: build/en/book.xml:16371(para)
+msgid "Subversion has a modular design, written in C and implemented as a collection of libraries. Each library has a well-defined purpose and Application Programming Interface (API), and that interface is available not only for Subversion itself to use, but for any software that wishes to embed or otherwise programmatically control Subversion. Additionally, Subversion's API is available not only to other C programs, but also to programs written in higher-level languages such as Python, Perl, Java, or Ruby."
+msgstr ""
+
+#: build/en/book.xml:16381(para)
+#, fuzzy
+msgid "This chapter is for those who wish to interact with Subversion through its public API or its various language bindings. If you wish to write robust wrapper scripts around Subversion functionality to simplify your own life, are trying to develop more complex integrations between Subversion and other pieces of software, or just have an interest in Subversion's various library modules and what they offer, this chapter is for you. If, however, you don't foresee yourself participating with Subversion at such a level, feel free to skip this chapter with the confidence that your experience as a Subversion user will not be affected."
+msgstr "本章是为那些希望实际参与源代码编写来帮助Subversion不断进步的人们准备的。我们要知道，在这里我们会涉及到许多软件内在的细节，在开发Subversion本身—或利用Subversion库开发全新工具时—所用到的许多核心技术。如果你无法预测你是否会以这种层级参与到这个软件中来，那么也可以随意跳过这一章，而你作为一个Subversion用户的体验不会受到任何影响。"
+
+#: build/en/book.xml:16397(title)
+msgid "Layered Library Design"
+msgstr "分层的库设计"
+
+#: build/en/book.xml:16399(para)
+#, fuzzy
+msgid "Each of Subversion's core libraries can be said to exist in one of three main layers—the Repository Layer, the Repository Access (RA) Layer, or the Client Layer. We will examine these layers shortly, but first, let's briefly summarize Subversion's various libraries. For the sake of consistency, we will refer to the libraries by their extensionless Unix library names (libsvn_fs, libsvn_wc, mod_dav_svn, etc.)."
+msgstr "Subversion有一个模块化的设计，通过一套C库来实现。每一个库都有一套定义良好的目标与接口，据称，大部分模块都属于三层中的某一层—版本库层、版本库访问（RA）层或是客户端层。我们很快就会考察这些层，但首先让我们看一下<xref linkend=\"svn.developer.layerlib.tbl-1\"/>中的有关于Subversion库的摘要目录，为了一致性，我们将通过它们的无扩展Unix库名（例如libsvn_fs、libsvn_wc和mod_dav_svn）来引用它们。"
+
+#: build/en/book.xml:16409(term)
+msgid "libsvn_client"
+msgstr "libsvn_client"
+
+#: build/en/book.xml:16410(para)
+msgid "Primary interface for client programs"
+msgstr "客户端程序的主要接口"
+
+#: build/en/book.xml:16414(term)
+msgid "libsvn_delta"
+msgstr "libsvn_delta"
+
+#: build/en/book.xml:16415(para)
+msgid "Tree and byte-stream differencing routines"
+msgstr "目录树和文本区别程序"
+
+#: build/en/book.xml:16419(term)
+msgid "libsvn_diff"
+msgstr "libsvn_diff"
+
+#: build/en/book.xml:16420(para)
+msgid "Contextual differencing and merging routines"
+msgstr "上下文区别和合并例程"
+
+#: build/en/book.xml:16424(term)
+msgid "libsvn_fs"
+msgstr "libsvn_fs"
+
+#: build/en/book.xml:16425(para)
+msgid "Filesystem commons and module loader"
+msgstr "Subversion文件系统库和模块加载器"
+
+#: build/en/book.xml:16429(term)
+msgid "libsvn_fs_base"
+msgstr "libsvn_fs_base"
+
+#: build/en/book.xml:1643(para)
+msgid "Suppose you make changes to <filename moreinfo=\"none\">button.c</filename>. Since the <filename moreinfo=\"none\">.svn</filename> directory remembers the file's modification date and original contents, Subversion can tell that you've changed the file. However, Subversion does not make your changes public until you explicitly tell it to. The act of publishing your changes is more commonly known as <firstterm>committing</firstterm> (or <firstterm>checking in</firstterm>) changes to the repository."
+msgstr "假定你修改了<filename moreinfo=\"none\">button.c</filename>，因为<filename moreinfo=\"none\">.svn</filename>目录记录着文件的修改日期和原始内容，Subversion可以告诉你已经修改了文件，然而，在你明确告诉它之前，Subversion不会将你的改变公开。将改变公开的操作被叫做提交（<firstterm>committing</firstterm>，或者是<firstterm>checking in</firstterm>）修改到版本库。"
+
+#: build/en/book.xml:16430(para)
+msgid "The Berkeley DB filesystem back-end"
+msgstr "Berkeley DB文件系统后端"
+
+#: build/en/book.xml:16434(term)
+msgid "libsvn_fs_fs"
+msgstr "libsvn_fs_fs"
+
+#: build/en/book.xml:16435(para)
+msgid "The native filesystem (FSFS) back-end"
+msgstr "本地文件系统（FSFS）后端"
+
+#: build/en/book.xml:16439(term)
+msgid "libsvn_ra"
+msgstr "libsvn_ra"
+
+#: build/en/book.xml:16440(para)
+msgid "Repository Access commons and module loader"
+msgstr "版本库访问通用组件和模块装载器"
+
+#: build/en/book.xml:16444(term)
+msgid "libsvn_ra_dav"
+msgstr "libsvn_ra_dav"
+
+#: build/en/book.xml:16445(para)
+msgid "The WebDAV Repository Access module"
+msgstr "WebDAV版本库访问模块"
+
+#: build/en/book.xml:16449(term)
+msgid "libsvn_ra_local"
+msgstr "libsvn_ra_local"
+
+#: build/en/book.xml:16450(para)
+msgid "The local Repository Access module"
+msgstr "本地版本库访问模块"
+
+#: build/en/book.xml:16454(term)
+msgid "libsvn_ra_serf"
+msgstr "libsvn_ra_serf"
+
+#: build/en/book.xml:16455(para)
+#, fuzzy
+msgid "Another (experimental) WebDAV Repository Access module"
+msgstr "WebDAV版本库访问模块"
+
+#: build/en/book.xml:16459(term)
+msgid "libsvn_ra_svn"
+msgstr "libsvn_ra_svn"
+
+#: build/en/book.xml:16460(para)
+msgid "The custom protocol Repository Access module"
+msgstr "一个自定义版本库访问模块"
+
+#: build/en/book.xml:16464(term)
+msgid "libsvn_repos"
+msgstr "libsvn_repos"
+
+#: build/en/book.xml:16465(para)
+msgid "Repository interface"
+msgstr "版本库接口"
+
+#: build/en/book.xml:16468(term)
+msgid "libsvn_subr"
+msgstr "libsvn_subr"
+
+#: build/en/book.xml:16469(para)
+msgid "Miscellaneous helpful subroutines"
+msgstr "各色各样的有用的子程序"
+
+#: build/en/book.xml:16473(term)
+msgid "libsvn_wc"
+msgstr "libsvn_wc"
+
+#: build/en/book.xml:16474(para)
+msgid "The working copy management library"
+msgstr "工作拷贝管理库"
