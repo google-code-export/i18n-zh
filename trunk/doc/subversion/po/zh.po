@@ -22745,4 +22745,452 @@ msgid "svn_load_dirs.pl"
 msgstr "svn_load_dirs.pl"
 
 #: build/en/book.xml:951(para)
-msgid "Subversion has an abstracted notion of repository access, making it easy for people to implement new network mechanisms. Subversion can plug into the Ap
+msgid "Subversion has an abstracted notion of repository access, making it easy for people to implement new network mechanisms. Subversion can plug into the Apache HTTP Server as an extension module. This gives Subversion a big advantage in stability and interoperability, and instant access to existing features provided by that server—authentication, authorization, wire compression, and so on. A more lightweight, standalone Subversion server process is also available. This server speaks a custom protocol which can be easily tunneled over SSH."
+msgstr "Subversion在版本库访问的实现上具有较高的抽象程度，利于人们实现新的网络访问机制。Subversion可以作为一个扩展模块嵌入到Apache之中。这种方式在稳定性和交互性方面有很大的优势，可以直接使用服务器的成熟技术—认证、授权和传输压缩等等。此外，Subversion自身也实现了一个轻型的，可独立运行的服务器软件。这个服务器使用了一个特定的协议，这个协议可以轻松的用SSH封装。"
+
+#: build/en/book.xml:9511(para)
+msgid "Vendor drops that contain more than a few deletes, additions and moves complicate the process of upgrading to each successive version of the third-party data. So Subversion supplies the <command moreinfo=\"none\">svn_load_dirs.pl</command> script to assist with this process. This script automates the importing steps we mentioned in the general vendor branch management procedure to make sure that mistakes are minimized. You will still be responsible for using the merge commands to merge the new versions of the third-party data into your main development branch, but <command moreinfo=\"none\">svn_load_dirs.pl</command> can help you more quickly and easily arrive at that stage."
+msgstr "不仅仅包含一些删除、添加和移动的卖主drops使得升级第三方数据后续版本的过程变得复杂，所以Subversion提供了一个<command moreinfo=\"none\">svn_load_dirs.pl</command>脚本来辅助这个过程，这个脚本自动进行我们前面提到的常规卖主分支管理过程的导入步骤，从而使得错误最小化。你仍要负责使用合并命令合并第三方的新 版本数据合并到主要开发分支，但是<command moreinfo=\"none\">svn_load_dirs.pl</command>帮助你快速到达这一步骤。"
+
+#: build/en/book.xml:9524(para)
+msgid "In short, <command moreinfo=\"none\">svn_load_dirs.pl</command> is an enhancement to <command moreinfo=\"none\">svn import</command> that has several important characteristics:"
+msgstr "一句话，<command moreinfo=\"none\">svn_load_dirs.pl</command>是一个增强的<command moreinfo=\"none\">svn import</command>，具备了许多重要的特性："
+
+#: build/en/book.xml:9530(para)
+msgid "It can be run at any point in time to bring an existing directory in the repository to exactly match an external directory, performing all the necessary adds and deletes, and optionally performing moves, too."
+msgstr "它可以在任何有一个存在的版本库目录与一个外部的目录匹配时执行，会执行所有必要的添加和删除并且可以选则执行移动。"
+
+#: build/en/book.xml:9536(para)
+msgid "It takes care of complicated series of operations between which Subversion requires an intermediate commit—such as before renaming a file or directory twice."
+msgstr "它可以用来操作一系列复杂的操作，如那些需要一个中间媒介的提交—如在操作之前重命名一个文件或者目录两次。"
+
+#: build/en/book.xml:9541(para)
+msgid "It will optionally tag the newly imported directory."
+msgstr "它可以随意的为新导入目录打上标签。"
+
+#: build/en/book.xml:9544(para)
+msgid "It will optionally add arbitrary properties to files and directories that match a regular expression."
+msgstr "它可以随意为符合正则表达式的文件和目录添加任意的属性。"
+
+#: build/en/book.xml:9549(para)
+msgid "<command moreinfo=\"none\">svn_load_dirs.pl</command> takes three mandatory arguments. The first argument is the URL to the base Subversion directory to work in. This argument is followed by the URL—relative to the first argument—into which the current vendor drop will be imported. Finally, the third argument is the local directory to import. Using our previous example, a typical run of <command moreinfo=\"none\">svn_load_dirs.pl</command> might look like:"
+msgstr "<command moreinfo=\"none\">svn_load_dirs.pl</command>利用三个强制的参数，第一个参数是Subversion工作的基本目录URL，第二个参数在URL之后—相对于第一个参数—指向当前的卖主分支将会导入的目录，最后，第三个参数是一个需要导入的本地目录，使用前面的例子，一个典型的<command moreinfo=\"none\">svn_load_dirs.pl</command>调用看起来如下："
+
+#: build/en/book.xml:9558(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn_load_dirs.pl http://svn.example.com/repos/vendor/libcomplex \\\n"
+"                   current                                        \\\n"
+"                   /path/to/libcomplex-1.1\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn_load_dirs.pl http://svn.example.com/repos/vendor/libcomplex \\\n"
+"                   current                                        \\\n"
+"                   /path/to/libcomplex-1.1\n"
+"…\n"
+
+#: build/en/book.xml:9565(para)
+msgid "You can indicate that you'd like <command moreinfo=\"none\">svn_load_dirs.pl</command> to tag the new vendor drop by passing the <option>-t</option> command-line option and specifying a tag name. This tag is another URL relative to the first program argument."
+msgstr "你可以说明你会希望<command moreinfo=\"none\">svn_load_dirs.pl</command>同时打上标签，这使用<option>-t</option>命令行选项，需要制定一个标签名。这个标签是第一个参数的一个相对URL。"
+
+#: build/en/book.xml:9571(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn_load_dirs.pl -t libcomplex-1.1                              \\\n"
+"                   http://svn.example.com/repos/vendor/libcomplex \\\n"
+"                   current                                        \\\n"
+"                   /path/to/libcomplex-1.1\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn_load_dirs.pl -t libcomplex-1.1                              \\\n"
+"                   http://svn.example.com/repos/vendor/libcomplex \\\n"
+"                   current                                        \\\n"
+"                   /path/to/libcomplex-1.1\n"
+"…\n"
+
+#: build/en/book.xml:9579(para)
+msgid "When you run <command moreinfo=\"none\">svn_load_dirs.pl</command>, it examines the contents of your existing <quote>current</quote> vendor drop, and compares them with the proposed new vendor drop. In the trivial case, there will be no files that are in one version and not the other, and the script will perform the new import without incident. If, however, there are discrepancies in the file layouts between versions, <command moreinfo=\"none\">svn_load_dirs.pl</command> will prompt you for how you would like to resolve those differences. For example, you will have the opportunity to tell the script that you know that the file <filename moreinfo=\"none\">math.c</filename> in version 1.0 of libcomplex was renamed to <filename moreinfo=\"none\">arithmetic.c</filename> in libcomplex 1.1. Any discrepancies not explained by moves are treated as regular additions and deletions."
+msgstr "当你运行<command moreinfo=\"none\">svn_load_dirs.pl</command>，它会检验你的存在的<quote>current</quote>卖主drop，并且与提议的新卖主drop比较，在这个琐碎的例子里，没有文件只出现在一个版本里，脚本执行新的导入而不会发生意外。然而如果版本之间有了文件布局的区别，<command moreinfo=\"none\">svn_load_dirs.pl</command>会询问你如何解决这个区别，例如你会有机会告诉脚本libcomplex版本1.0的<filename moreinfo=\"none\">math.c</filename>文件在1.1已经重命名为<filename moreinfo=\"none\">arithmetic.c</filename>，任何没有解释为移动的差异都会被看作是常规的添加和删除。"
+
+#: build/en/book.xml:9594(para)
+msgid "The script also accepts a separate configuration file for setting properties on files and directories matching a regular expression that are <emphasis>added</emphasis> to the repository. This configuration file is specified to <command moreinfo=\"none\">svn_load_dirs.pl</command> using the <option>-p</option> command-line option. Each line of the configuration file is a whitespace-delimited set of two or four values: a Perl-style regular expression to match the added path against, a control keyword (either <literal moreinfo=\"none\">break</literal> or <literal moreinfo=\"none\">cont</literal>), and then optionally a property name and value."
+msgstr "这个脚本也接受单独配置文件用来为<emphasis>添加到</emphasis>版本库的文件和目录设置匹配正则表达式的属性。配置文件通过<command moreinfo=\"none\">svn_load_dirs.pl</command>的<option>-p</option>命令行选项指定，这个配置文件的每一行都是一个空白分割的两列或者四列值：一个Perl样式的正则表达式来匹配添加的路径、一个控制关键字（<literal moreinfo=\"none\">break</literal>或者是<literal moreinfo=\"none\">cont</literal>）和可选的属性名和值。"
+
+#: build/en/book.xml:9606(screen)
+#, no-wrap
+msgid ""
+"\n"
+"\\.png$              break   svn:mime-type   image/png\n"
+"\\.jpe?g$            break   svn:mime-type   image/jpeg\n"
+"\\.m3u$              cont    svn:mime-type   audio/x-mpegurl\n"
+"\\.m3u$              break   svn:eol-style   LF\n"
+".*                  break   svn:eol-style   native\n"
+msgstr ""
+"\n"
+"\\.png$              break   svn:mime-type   image/png\n"
+"\\.jpe?g$            break   svn:mime-type   image/jpeg\n"
+"\\.m3u$              cont    svn:mime-type   audio/x-mpegurl\n"
+"\\.m3u$              break   svn:eol-style   LF\n"
+".*                  break   svn:eol-style   native\n"
+
+#: build/en/book.xml:9614(para)
+msgid "For each added path, the configured property changes whose regular expression matches the path are applied in order, unless the control specification is <literal moreinfo=\"none\">break</literal> (which means that no more property changes should be applied to that path). If the control specification is <literal moreinfo=\"none\">cont</literal>—an abbreviation for <literal moreinfo=\"none\">continue</literal>—then matching will continue with the next line of the configuration file."
+msgstr "对每一个添加的路径，会按照顺序为匹配正则表达式的文件配置属性，除非控制标志是<literal moreinfo=\"none\">break</literal>（意味着不需要更多的路径匹配应用到这个路径）。如果控制说明是<literal moreinfo=\"none\">cont</literal>—<literal moreinfo=\"none\">continue</literal>的缩写—然后匹配工作会继续到配置文件的下一行。"
+
+#: build/en/book.xml:9623(para)
+msgid "Any whitespace in the regular expression, property name, or property value must be surrounded by either single or double quote characters. You can escape quote characters that are not used for wrapping whitespace by preceding them with a backslash (<literal moreinfo=\"none\">\\</literal>) character. The backslash escapes only quotes when parsing the configuration file, so do not protect any other characters beyond what is necessary for the regular expression."
+msgstr "任何正则表达式，属性名或者属性值的空格必须使用单引号或者双银行环绕，你可以使用反斜杠（<literal moreinfo=\"none\">\\</literal>）换码符来回避引号，反斜杠只会在解析配置文件时回避引号，所以不要保护对正则表达式不需要的其它字符。"
+
+#: build/en/book.xml:9641(para)
+msgid "We've covered a lot of ground in this chapter. We've discussed the concepts of tags and branches, and demonstrated how Subversion implements these concepts by copying directories with the <command moreinfo=\"none\">svn copy</command> command. We've shown how to use <command moreinfo=\"none\">svn merge</command> to copy changes from one branch to another, or roll back bad changes. We've gone over the use of <command moreinfo=\"none\">svn switch</command> to create mixed-location working copies. And we've talked about how one might manage the organization and lifetimes of branches in a repository."
+msgstr "我们已经在本章覆盖了许多基础知识，我们讨论了标签和分支的概念，然后描述了Subversion怎样用<command moreinfo=\"none\">svn copy</command>命令拷贝目录实现了这些概念，我们也已经展示了怎样使用<command moreinfo=\"none\">svn merge</command>命令来在分支之间拷贝修改，或是撤销错误的修改。我们仔细研究了使用<command moreinfo=\"none\">svn switch</command>来创建混合位置的工作拷贝，然后我们也讨论了怎样管理和组织版本库中分支的生命周期。"
+
+#: build/en/book.xml:9652(para)
+msgid "Remember the Subversion mantra: branches and tags are cheap. So use them liberally! At the same time, don't forget to use good merging habits. Cheap copies are only useful when you're careful about tracking your merging actions."
+msgstr ""
+
+#: build/en/book.xml:966(term)
+msgid "Consistent data handling"
+msgstr "一致的数据操作"
+
+#: build/en/book.xml:9670(title)
+msgid "Repository Administration"
+msgstr "版本库管理"
+
+#: build/en/book.xml:9672(para)
+#, fuzzy
+msgid "The Subversion repository is the central storehouse of all your versioned data. As such, it becomes an obvious candidate for all the love and attention an administrator can offer. While the repository is generally a low-maintenance item, it is important to understand how to properly configure and care for it so that potential problems are avoided, and actual problems are safely resolved."
+msgstr "Subversion版本库是保存任意数量项目版本化数据的中央仓库，因此，版本库成为管理员关注的对象。版本库的维护一般并不需要太多的关注，但为了避免一些潜在的问题和解决一些实际问题，理解怎样适当的配置和维护还是非常重要的。"
+
+#: build/en/book.xml:968(para)
+msgid "Subversion expresses file differences using a binary differencing algorithm, which works identically on both text (human-readable) and binary (human-unreadable) files. Both types of files are stored equally compressed in the repository, and differences are transmitted in both directions across the network."
+msgstr "Subversion用一个二进制差异算法描述文件的变化，对于文本（可读）和二进制（不可读）文件其操作方式是一致的。这两种类型的文件压缩存储在版本库中，而差异信息则在网络上双向传递。"
+
+#: build/en/book.xml:9680(para)
+#, fuzzy
+msgid "In this chapter, we'll discuss how to create and configure a Subversion repository. We'll also talk about repository maintenance, providing examples of how and when to use the <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command> tools provided with Subversion. We'll address some common questions and mistakes, and give some suggestions on how to arrange the data in the repository."
+msgstr "在这一章里，我们将讨论如何建立和配置一个Subversion版本库，还会讨论版本库的维护，包括<command moreinfo=\"none\">svnlook</command>和<command moreinfo=\"none\">svnadmin</command>工具的使用（它们都包含在Subversion中）。我们将说明一些常见的问题和错误，并提供一些安排版本库数据的建议。"
+
+#: build/en/book.xml:9688(para)
+#, fuzzy
+msgid "If you plan to access a Subversion repository only in the role of a user whose data is under version control (that is, via a Subversion client), you can skip this chapter altogether. However, if you are, or wish to become, a Subversion repository administrator, <placeholder-1/> this chapter is for you."
+msgstr "如果您只是以普通用户的身份访问版本库对数据进行版本控制（就是说通过Subversion客户端），您完全可以跳过本章。但是如果您已经是或打算成为Subversion版本库的管理员，<footnote><placeholder-1/></footnote>您一定要关注一下本章的内容。"
+
+#: build/en/book.xml:9694(para)
+msgid "This may sound really prestigious and lofty, but we're just talking about anyone who is interested in that mysterious realm beyond the working copy where everyone's data hangs out."
+msgstr "这可能听起来很崇高， 但我们所指的只是那些对管理别人工作拷贝数据之外的神秘领域感兴趣的人。"
+
+#: build/en/book.xml:9706(title)
+#, fuzzy
+msgid "The Subversion Repository, Defined"
+msgstr "Subversion版本库URL"
+
+#: build/en/book.xml:9708(para)
+#, fuzzy
+msgid "Before jumping into the broader topic of repository administration, let's further define what a repository is. How does it look? How does it feel? Does it take its tea hot or iced, sweetened, and with lemon? As an administrator, you'll be expected to understand the composition of a repository both from a literal, OS-level perspective—how a repository looks and acts with respect to non-Subversion tools—and from a logical perspective—dealing with how data is represented <emphasis>inside</emphasis> the repository."
+msgstr "在进入版本库管理这块宽广的主题之前，让我们进一步确定一下版本库的定义，它是怎样工作的？让人有什么感觉？它希望茶是热的还是冰的，加糖或柠檬吗？作为一名管理员，你应该既从逻辑视角－数据在版本库中如何展示，又能从物理具体细节的视角－版本库如何响应一个非Subversion的工具，来理解版本库的组成。下面的小节从一个比较高的层面覆盖了这些基本概念。"
+
+#: build/en/book.xml:9718(para)
+msgid "Seen through the eyes of a typical file browser application (such as the Windows Explorer) or command-line based filesystem navigation tools, the Subversion repository is just another directory full of stuff. There are some subdirectories with human-readable configuration files in them, some subdirectories with some not-so-human-readable data files, and so on. As in other areas of the Subversion design, modularity is given high regard, and hierarchical organization is preferred to cluttered chaos. So a shallow glance into a typical repository from a nuts-and-bolts perspective is sufficient to reveal the basic components of the repository:"
+msgstr ""
+
+#: build/en/book.xml:9730(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ ls repos\n"
+"conf/  dav/  db/  format  hooks/  locks/  README.txt\n"
+msgstr ""
+"\n"
+"$ ls repos\n"
+"conf/  dav/  db/  format  hooks/  locks/  README.txt\n"
+
+#: build/en/book.xml:9735(para)
+msgid "Here's a quick fly-by overview of what exactly you're seeing in this directory listing. (Don't get bogged down in the terminology—detailed coverage of these components exists elsewhere in this and other chapters.)"
+msgstr ""
+
+#: build/en/book.xml:9742(term)
+msgid "conf"
+msgstr "conf"
+
+#: build/en/book.xml:9744(para)
+msgid "A directory containing repository configuration files."
+msgstr "一个存储版本库配置文件的目录。"
+
+#: build/en/book.xml:9748(term)
+msgid "dav"
+msgstr "dav"
+
+#: build/en/book.xml:9750(para)
+#, fuzzy
+msgid "A directory provided to mod_dav_svn for its private housekeeping data."
+msgstr "提供给Apache和mod_dav_svn的目录，让它们存储自己的数据。"
+
+#: build/en/book.xml:9755(term)
+msgid "db"
+msgstr "db"
+
+#: build/en/book.xml:9757(para)
+msgid "The data store for all of your versioned data."
+msgstr ""
+
+#: build/en/book.xml:9761(term)
+msgid "format"
+msgstr "format"
+
+#: build/en/book.xml:9763(para)
+msgid "A file whose contents are a single integer value that dictates the version number of the repository layout."
+msgstr "包含了用来表示版本库布局版本号的整数。"
+
+#: build/en/book.xml:9770(para)
+msgid "A directory full of hook script templates (and hook scripts themselves, once you've installed some)."
+msgstr "一个存储钩子脚本模版的目录（还有钩子脚本本身， 如果你安装了的话）。"
+
+#: build/en/book.xml:9775(term)
+msgid "locks"
+msgstr "locks"
+
+#: build/en/book.xml:9777(para)
+#, fuzzy
+msgid "A directory for Subversion's repository lock files, used for tracking accessors to the repository."
+msgstr "一个存储Subversion版本库锁定数据的目录，被用来追踪对版本库的访问。"
+
+#: build/en/book.xml:978(term)
+msgid "Efficient branching and tagging"
+msgstr "高效的分支和标签操作"
+
+#: build/en/book.xml:9782(term)
+msgid "README.txt"
+msgstr "README.txt"
+
+#: build/en/book.xml:9784(para)
+#, fuzzy
+msgid "A file whose contents merely inform its readers that they are looking at a Subversion repository."
+msgstr "这个文件只是用来告诉它的阅读者，他现在看的是 Subversion 的版本库。"
+
+#: build/en/book.xml:9790(para)
+msgid "Of course, when accessed via the Subversion libraries, this otherwise unremarkable collection of files and directories suddenly becomes an implementation of a virtual, versioned filesystem, complete with customizable event triggers. This filesystem has its own notions of directories and files, very similar to the notions of such things held by real filesystems (such as NTFS, FAT32, ext3, and so on). But this is a special filesystem—it hangs these directories and files from revisions, keeping all the changes you've ever made to them safely stored and forever accessible. This is where the entirety of your versioned data lives."
+msgstr ""
+
+#: build/en/book.xml:980(para)
+msgid "The cost of branching and tagging need not be proportional to the project size. Subversion creates branches and tags by simply copying the project, using a mechanism similar to a hard-link. Thus these operations take only a very small, constant amount of time."
+msgstr "在Subversion中，分支与标签操作的开销与工程的大小无关。Subversion的分支和标签操作用只是一种类似于硬链接的机制拷贝整个工程。因而这些操作通常只会花费很少且相对固定的时间。"
+
+#: build/en/book.xml:9808(title)
+#, fuzzy
+msgid "Strategies for Repository Deployment"
+msgstr "开始规划版本库"
+
+#: build/en/book.xml:9810(para)
+msgid "Due largely to the simplicity of the overall design of the Subversion repository and the technologies on which it relies, creating and configuring a repository are fairly straightforward tasks. There are a few preliminary decisions you'll want to make, but the actual work involved in any given setup of a Subversion repository is pretty straightforward, tending towards mindless repetition if you find yourself setting up multiples of these things."
+msgstr ""
+
+#: build/en/book.xml:9819(para)
+msgid "Some of things you'll want to consider up front, though, are as follows:"
+msgstr ""
+
+#: build/en/book.xml:9824(para)
+msgid "What data do you expect to live in your repository (or repositories), and how will that data be organized?"
+msgstr ""
+
+#: build/en/book.xml:9828(para)
+msgid "Where will your repository live, and how will it be accessed?"
+msgstr ""
+
+#: build/en/book.xml:9832(para)
+msgid "What types of access control and repository event reporting do you need?"
+msgstr ""
+
+#: build/en/book.xml:9836(para)
+msgid "Which of the available types of data store do you want to use?"
+msgstr ""
+
+#: build/en/book.xml:9841(para)
+#, fuzzy
+msgid "In this section, we'll try to help you answer those questions."
+msgstr "在下一小节，我们要展示一些这种技巧的例子。"
+
+#: build/en/book.xml:9846(title)
+msgid "Planning Your Repository Organization"
+msgstr ""
+
+#: build/en/book.xml:9848(para)
+#, fuzzy
+msgid "While Subversion allows you to move around versioned files and directories without any loss of information, and even provides ways of moving whole sets of versioned history from one repository to another, doing so can greatly disrupt the workflow of those who access the repository often and come to expect things to be at certain locations. So before creating a new repository, try to peer into the future a bit; plan ahead before placing your data under version control. By conscientiously <quote>laying out</quote> your repository or repositories and their versioned contents ahead of time, you can prevent many future headaches."
+msgstr "在Subversion版本库中，移动版本化的文件和目录不会损失任何信息，但是这样一来那些经常访问版本库并且以为文件总是在同一个路径的用户可能会受到干扰。为将来着想，最好预先对你的版本库布局进行规划。以一种高效的<quote>布局</quote>开始项目，可以减少将来很多不必要的麻烦。"
+
+#: build/en/book.xml:9860(para)
+#, fuzzy
+msgid "Let's assume that as repository administrator, you will be responsible for supporting the version control system for several projects. Your first decision is whether to use a single repository for multiple projects, or to give each project its own repository, or some compromise of these two."
+msgstr "在建立Subversion版本库之前，有很多事情需要考虑。假如你是一个版本库管理员，需要向多个项目提供版本控制支持。那么，你首先要决定的是，用一个版本库支持多个项目，还是为每个项目建立一个版本库，还是为其中的某些项目提供独立的版本库支持，而将另外一些项目分布在几个版本库中。"
+
+#: build/en/book.xml:9867(para)
+#, fuzzy
+msgid "There are benefits to using a single repository for multiple projects, most obviously the lack of duplicated maintenance. A single repository means that there is one set of hook programs, one thing to routinely backup, one thing to dump and load if Subversion releases an incompatible new version, and so on. Also, you can move data between projects easily, and without losing any historical versioning information."
+msgstr "使用一个版本库支持多个项目有很多好处，最明显的无过于不需要维护好几个版本库。单一版本库就意味着只有一个钩子集，只需要备份一个数据库，当Subversion进行不兼容升级时，只需要一次转储和装载操作，等等。还有，你可以轻易的在项目之间移动数据，还不会损失任何历史版本信息。"
+
+#: build/en/book.xml:9876(para)
+#, fuzzy
+msgid "The downside of using a single repository is that different projects may have different requirements in terms of the repository event triggers, such as needing to send commit notification emails to different mailing lists, or having different definitions about what does and does not constitute a legitimate commit. These aren't insurmountable problems, of course—it just means that all of your hook scripts have to be sensitive to the layout of your repository rather than assuming that the whole repository is associated with a single group of people. Also, remember that Subversion uses repository-global revision numbers. While those numbers don't have any particular magical powers, some folks still don't like the fact that even though no changes have been made to their project lately, the youngest revision number for the repository keeps climbing because other projects are actively adding new revisions. <placeholder-1/>"
+msgstr "单一版本库的缺点是，不同的项目通常都有不同的提交邮件列表或者不同的权限认证和权限要求。还有，别忘了Subversion的修订版本号是针对整个版本库的。即使最近没有对某个项目作出修改，版本库的修订版本号还是会因为其它项目的修改而不停的提升，许多人并不喜欢这样的事实。"
+
+#: build/en/book.xml:9893(para)
+msgid "Whether founded in ignorance or in poorly considered concepts about how to derive legitimate software development metrics, global revision numbers are a silly thing to fear, and <emphasis>not</emphasis> the kind of thing you should weigh when deciding how to arrange your projects and repositories."
+msgstr ""
+
+#: build/en/book.xml:990(term)
+msgid "Hackability"
+msgstr "可修改性"
+
+#: build/en/book.xml:9902(para)
+msgid "A middle-ground approach can be taken, too. For example, projects can be grouped by how well they relate to each other. You might have a few repositories with a handful of projects in each repository. That way, projects that are likely to want to share data can do so easily, and as new revisions are added to the repository, at least the developers know that those new revisions are at least remotely related to everyone who uses that repository."
+msgstr "可以采用折中的办法。比如，可以把许多项目按照彼此之间的关联程度划分为几个组合，然后为每一个项目组合建立一个版本库。这样，在相关项目之间共享数据依旧很简单，而如果修订版本号有了变化，至少开发人员知道，改变的东西多少和他们有些关系。"
+
+#: build/en/book.xml:9911(para)
+#, fuzzy
+msgid "After deciding how to organize your projects with respect to repositories, you'll probably want to think about directory hierarchies within the repositories themselves. Because Subversion uses regular directory copies for branching and tagging (see <xref linkend=\"svn.branchmerge\"/>), the Subversion community recommends that you choose a repository location for each <firstterm>project root</firstterm>—the <quote>top-most</quote> directory which contains data related to that project—and then create three subdirectories beneath that root: <filename moreinfo=\"none\">trunk</filename>, meaning the directory under which the main project development occurs; <filename moreinfo=\"none\">branches</filename>, which is a directory in which to create various named branches of the main development line; <filename moreinfo=\"none\">tags</filename>, which is a collection of tree snapshots that are created, and perhaps destroyed, but never changed. <placeholder-1/>"
+msgstr "在决定了如何用版本库组织项目以后，就该决定如何设置版本库的目录层次了。由于Subversion按普通的目录复制方式完成分支和标签操作（参见<xref linkend=\"svn.branchmerge\"/>），Subversion社区建议为每一个项目建立一个<firstterm>项目根目录</firstterm>—项目的<quote>顶级</quote>目录—然后在根目录下建立三个子目录：<filename moreinfo=\"none\">trunk</filename>，保存项目的开发主线；<filename moreinfo=\"none\">branches</filename>，保存项目的各种开发分支；<filename moreinfo=\"none\">tags</filename>，保存项目的标签，也就是创建后永远不会修改的分支（可能会删除）。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:992(para)
+msgid "Subversion has no historical baggage; it is implemented as a collection of shared C libraries with well-defined APIs. This makes Subversion extremely maintainable and usable by other applications and languages."
+msgstr "Subversion没有历史负担，它以一系列优质的共享C程序库的方式实现，具有定义良好的API。这使得Subversion非常容易维护，和其它语言的互操作性很强。"
+
+#: build/en/book.xml:9929(para)
+msgid "The <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> trio are sometimes referred to as <quote>the TTB directories</quote>."
+msgstr "<filename moreinfo=\"none\">trunk</filename>、<filename moreinfo=\"none\">tags</filename>和<filename moreinfo=\"none\">branches</filename>可以使用<quote>TTB目录</quote>来表示。"
+
+#: build/en/book.xml:9935(para)
+msgid "For example, your repository might look like:"
+msgstr "举个例子，一个版本库可能会有如下的布局："
+
+#: build/en/book.xml:9937(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/\n"
+"   calc/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   calendar/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   spreadsheet/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   …\n"
+msgstr ""
+"\n"
+"/\n"
+"   calc/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   calendar/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   spreadsheet/\n"
+"      trunk/\n"
+"      tags/\n"
+"      branches/\n"
+"   …\n"
+
+#: build/en/book.xml:9954(para)
+msgid "Note that it doesn't matter where in your repository each project root is. If you have only one project per repository, the logical place to put each project root is at the root of that project's respective repository. If you have multiple projects, you might want to arrange them in groups inside the repository, perhaps putting projects with similar goals or shared code in the same subdirectory, or maybe just grouping them alphabetically. Such an arrangement might look like:"
+msgstr "项目在版本库中的根目录地址并不重要。如果每个版本库中只有一个项目，那么就可以认为项目的根目录就是版本库的根目录。如果版本库中包含多个项目，那么可以将这些项目划分成不同的组合（按照项目的目标或者是否需要共享代码甚至是字母顺序）保存在不同子目录中，下面的例子给出了一个类似的布局："
+
+#: build/en/book.xml:9964(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/\n"
+"   utils/\n"
+"      calc/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      calendar/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      …\n"
+"   office/\n"
+"      spreadsheet/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      …\n"
+msgstr ""
+"\n"
+"/\n"
+"   utils/\n"
+"      calc/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      calendar/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      …\n"
+"   office/\n"
+"      spreadsheet/\n"
+"         trunk/\n"
+"         tags/\n"
+"         branches/\n"
+"      …\n"
+
+#: build/en/book.xml:9984(para)
+msgid "Lay out your repository in whatever way you see fit. Subversion does not expect or enforce a layout schema—in its eyes, a directory is a directory is a directory. Ultimately, you should choose the repository arrangement that meets the needs of the people who work on the projects that live there."
+msgstr "按照你因为合适方式安排版本库的布局。Subversion自身并不强制或者偏好某一种布局形式，对于Subversion来说，目录就是目录。最后，在设计版本库布局的时候，不要忘了考虑一下项目参与者们的意见。"
+
+#: build/en/book.xml:9991(para)
+#, fuzzy
+msgid "In the name of full disclosure, though, we'll mention another very common layout. In this layout, the <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> directories live in the root directory of your repository, and your projects are in subdirectories beneath those, like:"
+msgstr "<filename moreinfo=\"none\">trunk</filename>、<filename moreinfo=\"none\">tags</filename>和<filename moreinfo=\"none\">branches</filename>可以使用<quote>TTB目录</quote>来表示。"
+
+#: build/en/book.xml:9998(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/\n"
+"   trunk/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
+"   tags/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
+"   branches/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
+msgstr ""
+"\n"
+"/\n"
+"   trunk/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
+"   tags/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
+"   branches/\n"
+"      calc/\n"
+"      calendar/\n"
+"      spreadsheet/\n"
+"      …\n"
