@@ -6247,4 +6247,1584 @@ msgstr ""
 msgid "Another requirement of the target repository is that the <command moreinfo=\"none\">svnsync</command> process be allowed to modify certain revision properties. <command moreinfo=\"none\">svnsync</command> stores its bookkeeping information in special revision properties on revision 0 of the destination repository. Because <command moreinfo=\"none\">svnsync</command> works within the framework of that repository's hook system, the default state of the repository (which is to disallow revision property changes; see <xref linkend=\"svn.ref.reposhooks.pre-revprop-change\"/>) is insufficient. You'll need to explicitly implement the pre-revprop-change hook, and your script must allow <command moreinfo=\"none\">svnsync</command> to set and change its special properties. With those provisions in place, you are ready to start mirroring repository revisions."
 msgstr ""
 
-#:
+#: ./build/en/book.xml:12059(para) 
+msgid "It's a good idea to implement authorization measures which allow your repository replication process to perform its tasks while preventing other users from modifying the contents of your mirror repository at all."
+msgstr ""
+
+#: ./build/en/book.xml:12065(para) 
+msgid "Let's walk through the use of <command moreinfo=\"none\">svnsync</command> in a somewhat typical mirroring scenario. We'll pepper this discourse with practical recommendations which you are free to disregard if they aren't required by or suitable for your environment."
+msgstr ""
+
+#: ./build/en/book.xml:12071(para) 
+msgid "As a service to the fine developers of our favorite version control system, we will be mirroring the public Subversion source code repository and exposing that mirror publicly on the Internet, hosted on a different machine than the one on which the original Subversion source code repository lives. This remote host has a global configuration which permits anonymous users to read the contents of repositories on the host, but requires users to authenticate in order to modify those repositories. (Please forgive us for glossing over the details of Subversion server configuration for the moment—those are covered thoroughly in <xref linkend=\"svn.serverconfig\"/>.) And for no other reason than that it makes for a more interesting example, we'll be driving the replication process from a third machine, the one which we currently find ourselves using."
+msgstr ""
+
+#: ./build/en/book.xml:12086(para) 
+msgid "First, we'll create the repository which will be our mirror. This and the next couple of steps do require shell access to the machine on which the mirror repository will live. Once the repository is all configured, though, we shouldn't need to touch it directly again."
+msgstr ""
+
+#: ./build/en/book.xml:12092(screen) 
+#, no-wrap
+msgid "\n$ ssh admin@svn.example.com \\\n      \"svnadmin create /path/to/repositories/svn-mirror\"\nadmin@svn.example.com's password: ********\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:12099(para) 
+msgid "At this point, we have our repository, and due to our server's configuration, that repository is now <quote>live</quote> on the Internet. Now, because we don't want anything modifying the repository except our replication process, we need a way to distinguish that process from other would-be committers. To do so, we use a dedicated username for our process. Only commits and revision property modifications performed by the special username <literal moreinfo=\"none\">syncuser</literal> will be allowed."
+msgstr ""
+
+#: ./build/en/book.xml:12109(para) 
+msgid "We'll use the repository's hook system both to allow the replication process to do what it needs to do, and to enforce that only it is doing those things. We accomplish this by implementing two of the repository event hooks—pre-revprop-change and start-commit. Our <filename moreinfo=\"none\">pre-revprop-change</filename> hook script is found in <xref linkend=\"svn.reposadmin.maint.replication.pre-revprop-change\"/>, and basically verifies that the user attempting the property changes is our <literal moreinfo=\"none\">syncuser</literal> user. If so, the change is allowed; otherwise, it is denied."
+msgstr ""
+
+#: ./build/en/book.xml:12120(title) 
+msgid "Mirror repository's pre-revprop-change hook script"
+msgstr ""
+
+#: ./build/en/book.xml:12122(programlisting) 
+#, no-wrap
+msgid "\n#!/bin/sh \n\nUSER=\"$3\"\n\nif [ \"$USER\" = \"syncuser\" ]; then exit 0; fi\n\necho \"Only the syncuser user may change revision properties\" &gt;&amp;2\nexit 1\n"
+msgstr ""
+
+#: ./build/en/book.xml:12134(para) 
+msgid "That covers revision property changes. Now we need to ensure that only the <literal moreinfo=\"none\">syncuser</literal> user is permitted to commit new revisions to the repository. We do this using a <filename moreinfo=\"none\">start-commit</filename> hook scripts like the one in <xref linkend=\"svn.reposadmin.maint.replication.start-commit\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:12141(title) 
+msgid "Mirror repository's start-commit hook script"
+msgstr ""
+
+#: ./build/en/book.xml:12143(programlisting) 
+#, no-wrap
+msgid "\n#!/bin/sh \n\nUSER=\"$2\"\n\nif [ \"$USER\" = \"syncuser\" ]; then exit 0; fi\n\necho \"Only the syncuser user may commit new revisions\" &gt;&amp;2\nexit 1\n"
+msgstr ""
+
+#: ./build/en/book.xml:12155(para) 
+msgid "After installing our hook scripts and ensuring that they are executable by the Subversion server, we're finished with the setup of the mirror repository. Now, we get to actually do the mirroring."
+msgstr ""
+
+#: ./build/en/book.xml:12160(para) 
+msgid "The first thing we need to do with <command moreinfo=\"none\">svnsync</command> is to register in our target repository the fact that it will be a mirror of the source repository. We do this using the <command moreinfo=\"none\">svnsync initialize</command> subcommand. Note that the various <command moreinfo=\"none\">svnsync</command> subcommands provide several of the same authentication-related options that <command moreinfo=\"none\">svn</command> does: <option>--username</option>, <option>--password</option>, <option>--non-interactive</option>, <option>--config-dir</option>, and <option>--no-auth-cache</option>."
+msgstr ""
+
+#: ./build/en/book.xml:12173(screen) 
+#, no-wrap
+msgid "\n$ svnsync help init\ninitialize (init): usage: svnsync initialize DEST_URL SOURCE_URL\n\nInitialize a destination repository for synchronization from\nanother repository.\n\nThe destination URL must point to the root of a repository with\nno committed revisions.  The destination repository must allow\nrevision property changes.\n\nYou should not commit to, or make revision property changes in,\nthe destination repository by any method other than 'svnsync'.\nIn other words, the destination repository should be a read-only\nmirror of the source repository.\n\nValid options:\n  --non-interactive        : do no interactive prompting\n  --no-auth-cache          : do not cache authentication tokens\n  --username arg           : specify a username ARG\n  --password arg           : specify a password ARG\n  --config-dir arg         : read user configuration files from directory ARG\n\n$ svnsync initialize http://svn.example.com/svn-mirror \\\n                     http://svn.collab.net/repos/svn \\\n                     --username syncuser --password syncpass\nCopied properties for revision 0.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:12203(para) 
+msgid "Our target repository will now remember that it is a mirror of the public Subversion source code repository. Notice that we provided a username and password as arguments to <command moreinfo=\"none\">svnsync</command>—that was required by the pre-revprop-change hook on our mirror repository."
+msgstr ""
+
+#: ./build/en/book.xml:12210(para) 
+msgid "The URLs provided to <command moreinfo=\"none\">svnsync</command> must point to the root directories of the target and source repositories, respectively. The tool does not handle mirroring of repository subtrees."
+msgstr ""
+
+#: ./build/en/book.xml:12217(para) 
+msgid "The initial release of <command moreinfo=\"none\">svnsync</command> (in Subversion 1.4) has a small shortcoming—the values given to the <option>--username</option> and <option>--password</option> command-line options get used for authentication against both the source and destination repositories. Obviously, there's no guarantee that the synchronizing user's credentials are the same in both places. In the event that they are not the same, users trying to run <command moreinfo=\"none\">svnsync</command> in non-interactive mode (with the <option>--non-interactive</option> option) might experience problems."
+msgstr ""
+
+#: ./build/en/book.xml:12235(para) 
+msgid "Be forewarned that while it will take only a few seconds for the average reader to parse this paragraph and the sample output which follows it, the actual time required to complete such a mirroring operation is, shall we say, quite a bit longer."
+msgstr ""
+
+#: ./build/en/book.xml:12230(para) 
+msgid "And now comes the fun part. With a single subcommand, we can tell <command moreinfo=\"none\">svnsync</command> to copy all the as-yet-unmirrored revisions from the source repository to the target. <placeholder-1/> The <command moreinfo=\"none\">svnsync synchronize</command> subcommand will peek into the special revision properties previously stored on the target repository, and determine what repository it is mirroring and that the most recently mirrored revision was revision 0. Then it will query the source repository and determine what the latest revision in that repository is. Finally, it asks the source repository's server to start replaying all the revisions between 0 and that latest revision. As <command moreinfo=\"none\">svnsync</command> get the resulting response from the source repository's server, it begins forwarding those revisions to the target repository's server as new commits."
+msgstr ""
+
+#: ./build/en/book.xml:12254(screen) 
+#, no-wrap
+msgid "\n$ svnsync help synchronize\nsynchronize (sync): usage: svnsync synchronize DEST_URL\n\nTransfer all pending revisions from source to destination.\n…\n$ svnsync synchronize http://svn.example.com/svn-mirror \\\n                      --username syncuser --password syncpass\nCommitted revision 1.\nCopied properties for revision 1.\nCommitted revision 2.\nCopied properties for revision 2.\nCommitted revision 3.\nCopied properties for revision 3.\n…\nCommitted revision 23406.\nCopied properties for revision 23406.\nCommitted revision 23407.\nCopied properties for revision 23407.\nCommitted revision 23408.\nCopied properties for revision 23408.\n"
+msgstr ""
+
+#: ./build/en/book.xml:12277(para) 
+msgid "Of particular interest here is that for each mirrored revision, there is first a commit of that revision to the target repository, and then property changes follow. This is because the initial commit is performed by (and attributed to) the user <literal moreinfo=\"none\">syncuser</literal>, and datestamped with the time as of that revision's creation. Also, Subversion's underlying repository access interfaces don't provide a mechanism for setting arbitary revision properties as part of a commit. So <command moreinfo=\"none\">svnsync</command> follows up with an immediate series of property modifications which copy all the revision properties found for that revision in the source repository into the target repository. This also has the effect of fixing the author and datestamp of the revision to match that of the source repository."
+msgstr ""
+
+#: ./build/en/book.xml:12292(para) 
+msgid "Also noteworthy is that <command moreinfo=\"none\">svnsync</command> performs careful bookkeeping that allows it to be safely interrupted and restarted without ruining the integrity of the mirrored data. If a network glitch occurs while mirroring a repository, simply repeat the <command moreinfo=\"none\">svnsync synchronize</command> command and it will happily pick up right where it left off. In fact, as new revisions appear in the source repository, this is exactly what you to do in order to keep your mirror up-to-date."
+msgstr ""
+
+#: ./build/en/book.xml:12302(para) 
+msgid "There is, however, one bit of inelegance in the process. Because Subversion revision properties can be changed at any time throughout the lifetime of the repository, and don't leave an audit trail that indicates when they were changed, replication processes have to pay special attention to them. If you've already mirror the first 15 revisions of a repository and someone then changes a revision property on revision 12, <command moreinfo=\"none\">svnsync</command> won't know to go back and patch up its copy of revision 12. You'll need to tell it to do so manually by using (or with some additionally tooling around) the <command moreinfo=\"none\">svnsync copy-revprops</command> subcommand, which simply re-replicates all the revision properties for a particular revision."
+msgstr ""
+
+#: ./build/en/book.xml:12316(screen) 
+#, no-wrap
+msgid "\n$ svnsync help copy-revprops\ncopy-revprops: usage: svnsync copy-revprops DEST_URL REV\n\nCopy all revision properties for revision REV from source to\ndestination.\n…\n$ svnsync copy-revprops http://svn.example.com/svn-mirror 12 \\\n                        --username syncuser --password syncpass\nCopied properties for revision 12.\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:12329(para) 
+msgid "That's repository replication in a nutshell. You'll likely want some automation around such a process. For example, while our example was a pull-and-push setup, you might wish to have your primary repository push changes to one or more blessed mirrors as part of its post-commit and post-revprop-change hook implementations. This would enable the mirror to be up-to-date in as near to realtime as is likely possible."
+msgstr ""
+
+#: ./build/en/book.xml:12338(para) 
+msgid "Also, while it isn't very commonplace to do so, <command moreinfo=\"none\">svnsync</command> does gracefully mirror repositories in which the user as whom it authenticates only has partial read access. It simply copies only the bits of the repository that it is permitted to see. Obviously such a mirror is not useful as a backup solution."
+msgstr ""
+
+#: ./build/en/book.xml:12345(para) 
+msgid "As far as user interaction with repositories and mirrors goes, it <emphasis>is</emphasis> possible to have a single working copy that interacts with both, but you'll have to jump through some hoops to make it happen. First, you need to ensure that both the primary and mirror repositories have the same repository UUID (which is not the case by default). You can set the mirror repository's UUID by loading a dump file stub into it which contains the UUID of the primary repository, like so:"
+msgstr ""
+
+#: ./build/en/book.xml:12355(screen) 
+#, no-wrap
+msgid "\n$ cat - &lt;&lt;EOF | svnadmin load --force-uuid dest\nSVN-fs-dump-format-version: 2\n\nUUID: 65390229-12b7-0310-b90b-f21a5aa7ec8e\nEOF\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:12364(para) 
+msgid "Now that the two repositories have the same UUID, you can use <command moreinfo=\"none\">svn switch --relocate</command> to point your working copy to whichever of the repositories you wish to operate against, a process which is described in <xref linkend=\"svn.ref.svn.c.switch\"/>. There is a possible danger here, though, in that if the primary and mirror repositories aren't in close synchronization, a working copy up-to-date with and pointing to the primary repository will, if relocated to point to an out-of-date mirror, become confused about the apparent sudden loss of revisions it fully expects to be present."
+msgstr ""
+
+#: ./build/en/book.xml:12375(para) 
+msgid "Finally, be aware that the revision-based replication provided by <command moreinfo=\"none\">svnsync</command> is only that—replication of revisions. It does not include such things as the hook implementations, repository or server configuration data, uncommitted transactions, or information about user locks on repository paths. Only information carried by the Subversion repository dump file format is available for replication."
+msgstr ""
+
+#: ./build/en/book.xml:12388(title) 
+msgid "Repository Backup"
+msgstr ""
+
+#: ./build/en/book.xml:12390(para) 
+msgid "Despite numerous advances in technology since the birth of the modern computer, one thing unfortunately rings true with crystalline clarity—sometimes, things go very, very awry. Power outages, network connectivity dropouts, corrupt RAM and crashed hard drives are but a taste of the evil that Fate is poised to unleash on even the most conscientious administrator. And so we arrive at a very important topic—how to make backup copies of your repository data."
+msgstr ""
+
+#: ./build/en/book.xml:12400(para) 
+msgid "There are two types of backup methods available for Subversion repository administrators—full and incremental. A full backup of the repository involves squirreling away in one sweeping action all the information required to fully reconstruct that repository in the event of a catastrophe. Usually, it means quite literally the duplication of the entire repository directory (which includes either a Berkeley DB or FSFS environment). Incremental backups are lesser things, backups of only the portion of the repository data that has changed since the previous backup."
+msgstr ""
+
+#: ./build/en/book.xml:12412(para) 
+msgid "As far as full backups go, the naive approach might seem like a sane one, but unless you temporarily disable all other access to your repository, simply doing a recursive directory copy runs the risk of generating a faulty backup. In the case of Berkeley DB, the documentation describes a certain order in which database files can be copied that will guarantee a valid backup copy. A similar ordering exists for FSFS data. But you don't have to implement these algorithms yourself, because the Subversion development team has already done so. The <command moreinfo=\"none\">svnadmin hotcopy</command> command takes care of the minutia involved in making a hot backup of your repository. And its invocation is as trivial as Unix's <command moreinfo=\"none\">cp</command> or Windows' <command moreinfo=\"none\">copy</command> operations:"
+msgstr ""
+
+#: ./build/en/book.xml:12427(screen) 
+#, no-wrap
+msgid "\n$ svnadmin hotcopy /path/to/repos /path/to/repos-backup\n"
+msgstr ""
+
+#: ./build/en/book.xml:12431(para) 
+msgid "The resulting backup is a fully functional Subversion repository, able to be dropped in as a replacement for your live repository should something go horribly wrong."
+msgstr ""
+
+#: ./build/en/book.xml:12435(para) 
+msgid "When making copies of a Berkeley DB repository, you can even instruct <command moreinfo=\"none\">svnadmin hotcopy</command> to purge any unused Berkeley DB logfiles (see <xref linkend=\"svn.reposadmin.maint.diskspace.bdblogs\"/>) from the original repository upon completion of the copy. Simply provide the <option>--clean-logs</option> option on the command-line."
+msgstr ""
+
+#: ./build/en/book.xml:12442(screen) 
+#, no-wrap
+msgid "\n$ svnadmin hotcopy --clean-logs /path/to/bdb-repos /path/to/bdb-repos-backup\n"
+msgstr ""
+
+#: ./build/en/book.xml:12446(para) 
+msgid "Additional tooling around this command is available, too. The <filename moreinfo=\"none\">tools/backup/</filename> directory of the Subversion source distribution holds the <command moreinfo=\"none\">hot-backup.py</command> script. This script adds a bit of backup management atop <command moreinfo=\"none\">svnadmin hotcopy</command>, allowing you to keep only the most recent configured number of backups of each repository. It will automatically manage the names of the backed-up repository directories to avoid collisions with previous backups, and will <quote>rotate off</quote> older backups, deleting them so only the most recent ones remain. Even if you also have an incremental backup, you might want to run this program on a regular basis. For example, you might consider using <command moreinfo=\"none\">hot-backup.py</command> from a program scheduler (such as <command moreinfo=\"none\">cron</command> on Unix systems) which will cause it to run nightly (or at whatever granularity of Time you deem safe enough for you)."
+msgstr ""
+
+#: ./build/en/book.xml:12464(para) 
+msgid "Some administrators use a different backup mechanism built around generating and storing repository dump data. We described in <xref linkend=\"svn.reposadmin.maint.migrate\"/> how to use <command moreinfo=\"none\">svnadmin dump --incremental</command> to perform an incremental backup of a given revision or range of revisions. And of course, there is a full backup variation of this achieved by omitting the <option>--incremental</option> option to that command. There is some value in these methods in that the format of your backed-up information is flexible—it's not tied to a particular platform, versioned filesystem type, or release of Subversion or Berkeley DB. But that flexibility comes at a cost, namely that restoring that data can take a long time—longer with each new revision committed to your repository. Also, as is the case with so many of the various backup methods, revision property changes made to already-backed-up revisions won't get picked up by a non-overlapping, incremental dump generation. For these reasons, we recommend against relying solely on dump-based backup approaches."
+msgstr ""
+
+#: ./build/en/book.xml:12484(para) 
+msgid "As you can see, each of the various backup types and methods has its advantages and disadvantages. The easiest is by far the full hot backup, which will always result in a perfect working replica of your repository. Should something bad happen to your live repository, you can restore from the backup with a simple recursive directory copy. Unfortunately, if you are maintaining multiple backups of your repository, these full copies will each eat up just as much disk space as your live repository. Incremental backups, by contrast, tend to be quicker to generate and smaller to store. But the restoration process can be a pain, often involving applying multiple incremental backups. And other methods have their own peculiarities. Administators need to find the balance between the cost of making the backup and the cost of restoring it."
+msgstr ""
+
+#: ./build/en/book.xml:12500(para) 
+msgid "The <command moreinfo=\"none\">svnsync</command> program (see <xref linkend=\"svn.reposadmin.maint.replication\"/>) actually provides a rather handy middle-ground approach. If you are regularly synchronizing a read-only mirror with your main repository, then in a pinch, your read-only mirror is probably a good candidate for replacing that main repository if it falls over. The primary disadvantage of this method is that only the versioned repository data gets synchronized—repository configuration files, user-specified repository path locks, and other items which might live in the physical repository directory but not <emphasis>inside</emphasis> the repository's virtual versioned filesystem are not handled by svnsync."
+msgstr ""
+
+#: ./build/en/book.xml:12520(para) 
+msgid "<command moreinfo=\"none\">svnadmin setlog</command> can be called in a way that bypasses the hook interface altogether."
+msgstr ""
+
+#: ./build/en/book.xml:12513(para) 
+msgid "In any backup scenario, repository administrators need to be aware of how modifications to unversioned revision properties affect their backups. Since these changes do not themselves generate new revisions, they will not trigger post-commit hooks, and may not even trigger the pre-revprop-change and post-revprop-change hooks. <placeholder-1/> And since you can change revision properties without respect to chronological order—you can change any revision's properties at any time—an incremental backup of the latest few revisions might not catch a property modification to a revision that was included as part of a previous backup."
+msgstr ""
+
+#: ./build/en/book.xml:12530(para) 
+msgid "Generally speaking, only the truly paranoid would need to backup their entire repository, say, every time a commit occurred. However, assuming that a given repository has some other redundancy mechanism in place with relatively fine granularity (like per-commit emails or incremental dumps), a hot backup of the database might be something that a repository administrator would want to include as part of a system-wide nightly backup. It's your data—protect it as much as you'd like."
+msgstr ""
+
+#: ./build/en/book.xml:12555(para) 
+msgid "You know—the collective term for all of her <quote>fickle fingers</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:12540(para) 
+msgid "Often, the best approach to repository backups is a diversified one which leverages combinations of the methods described here. The Subversion developers, for example, back up the Subversion source code repository nightly using <command moreinfo=\"none\">hot-backup.py</command> and an offsite <command moreinfo=\"none\">rsync</command> of those full backups; keep multiple archives of all the commit and property change notification emails; and have repository mirrors maintained by various volunteers using <command moreinfo=\"none\">svnsync</command>. Your solution might be similar, but should be catered to your needs and that delicate balance of convenience with paranoia. And whatever you do, validate your backups from time to time—what good is a spare tire that has a hole in it? While all of this might not save your hardware from the iron fist of Fate, <placeholder-1/> it should certainly help you recover from those trying times."
+msgstr ""
+
+#: ./build/en/book.xml:12571(para) 
+msgid "By now you should have a basic understanding of how to create, configure, and maintain Subversion repositories. We've introduced you to the various tools that will assist you with this task. Throughout the chapter, we've noted common administration pitfalls, and suggestions for avoiding them."
+msgstr ""
+
+#: ./build/en/book.xml:12578(para) 
+msgid "All that remains is for you to decide what exciting data to store in your repository, and finally, how to make it available over a network. The next chapter is all about networking."
+msgstr ""
+
+#: ./build/en/book.xml:12592(title) 
+msgid "Server Configuration"
+msgstr ""
+
+#: ./build/en/book.xml:12594(para) 
+msgid "A Subversion repository can be accessed simultaneously by clients running on the same machine on which the repository resides using the <literal moreinfo=\"none\">file://</literal> method. But the typical Subversion setup involves a single server machine being accessed from clients on computers all over the office—or, perhaps, all over the world."
+msgstr ""
+
+#: ./build/en/book.xml:12601(para) 
+msgid "This chapter describes how to get your Subversion repository exposed outside its host machine for use by remote clients. We will cover Subversion's currently available server mechanisms, discussing the configuration and use of each. After reading this section, you should be able to decide which networking setup is right for your needs, and understand how to enable such a setup on your host computer."
+msgstr ""
+
+#: ./build/en/book.xml:12615(title) 
+msgid "Overview"
+msgstr ""
+
+#: ./build/en/book.xml:12617(para) 
+msgid "Subversion was designed with an abstract network layer. This means that a repository can be programmatically accessed by any sort of server process, and the client <quote>repository access</quote> API allows programmers to write plugins that speak relevant network protocols. In theory, Subversion can use an infinite number of network implementations. In practice, there are only two servers at the time of this writing."
+msgstr ""
+
+#: ./build/en/book.xml:12625(para) 
+msgid "Apache is an extremely popular webserver; using the <command moreinfo=\"none\">mod_dav_svn</command> module, Apache can access a repository and make it available to clients via the WebDAV/DeltaV protocol, which is an extension of HTTP. Because Apache is an extremely extensible web server, it provides a number of features <quote>for free</quote>, such as encrypted SSL communication, logging, integration with a number of third-party authentication systems, and limited built-in web browsing of repositories."
+msgstr ""
+
+#: ./build/en/book.xml:12635(para) 
+msgid "In the other corner is <command moreinfo=\"none\">svnserve</command>: a small, lightweight server program that speaks a custom protocol with clients. Because its protocol is explicitly designed for Subversion and is stateful (unlike HTTP), it provides significantly faster network operations—but at the cost of some features as well. It only understands CRAM-MD5 authentication, has no logging, no web-browsing, and no option to encrypt network traffic. It is, however, extremely easy to set up and is often the best option for small teams just starting out with Subversion."
+msgstr ""
+
+#: ./build/en/book.xml:12646(para) 
+msgid "A third option is to use <command moreinfo=\"none\">svnserve</command> tunneled over an SSH connection. Even though this scenario still uses <command moreinfo=\"none\">svnserve</command>, it differs quite a bit in features from a traditional <command moreinfo=\"none\">svnserve</command> deployment. SSH is used to encrypt all communication. SSH is also used exclusively to authenticate, so real system accounts are required on the server host (unlike vanilla <command moreinfo=\"none\">svnserve</command>, which has its own private user accounts.) Finally, because this setup requires that each user spawn a private, temporary <command moreinfo=\"none\">svnserve</command> process, it's equivalent (from a permissions point of view) to allowing a group of local users to all access the repository via <literal moreinfo=\"none\">file://</literal> URLs. Path-based access control has no meaning, since each user is accessing the repository database files directly."
+msgstr ""
+
+#: ./build/en/book.xml:12662(para) 
+msgid "Here's a quick summary of the three typical server deployments."
+msgstr ""
+
+#: ./build/en/book.xml:12666(title) 
+msgid "Comparison of Subversion Server Options"
+msgstr ""
+
+#: ./build/en/book.xml:12671(entry) 
+msgid "Apache + mod_dav_svn"
+msgstr ""
+
+#: ./build/en/book.xml:12673(entry) 
+msgid "svnserve over SSH"
+msgstr ""
+
+#: ./build/en/book.xml:12678(entry) 
+msgid "Authentication options"
+msgstr ""
+
+#: ./build/en/book.xml:12679(entry) 
+msgid "HTTP(S) basic auth, X.509 certificates, LDAP, NTLM, or any other mechanism available to Apache httpd"
+msgstr ""
+
+#: ./build/en/book.xml:12681(entry) 
+msgid "CRAM-MD5"
+msgstr ""
+
+#: ./build/en/book.xml:12682(entry) 
+msgid "SSH"
+msgstr ""
+
+#: ./build/en/book.xml:12686(entry) 
+msgid "User account options"
+msgstr ""
+
+#: ./build/en/book.xml:12687(entry) ./build/en/book.xml:12688(entry) 
+msgid "private 'users' file"
+msgstr ""
+
+#: ./build/en/book.xml:12689(entry) 
+msgid "system accounts"
+msgstr ""
+
+#: ./build/en/book.xml:12693(entry) 
+msgid "Authorization options"
+msgstr ""
+
+#: ./build/en/book.xml:12694(entry) ./build/en/book.xml:12696(entry) 
+msgid "read/write access can be granted over whole repository, or specified per-path."
+msgstr ""
+
+#: ./build/en/book.xml:12698(entry) 
+msgid "read/write access only grantable over whole repository"
+msgstr ""
+
+#: ./build/en/book.xml:12703(entry) 
+msgid "Encryption"
+msgstr ""
+
+#: ./build/en/book.xml:12704(entry) 
+msgid "via optional SSL"
+msgstr ""
+
+#: ./build/en/book.xml:12705(entry) 
+msgid "none"
+msgstr ""
+
+#: ./build/en/book.xml:12706(entry) 
+msgid "SSH tunneled"
+msgstr ""
+
+#: ./build/en/book.xml:12710(entry) 
+msgid "Logging"
+msgstr ""
+
+#: ./build/en/book.xml:12712(quote) 
+msgid "high-level"
+msgstr ""
+
+#: ./build/en/book.xml:12711(entry) 
+msgid "full Apache logs of each HTTP request, with optional <placeholder-1/> logging of general client operations"
+msgstr ""
+
+#: ./build/en/book.xml:12714(entry) ./build/en/book.xml:12715(entry) 
+msgid "no logging"
+msgstr ""
+
+#: ./build/en/book.xml:12719(entry) 
+msgid "Interoperability"
+msgstr ""
+
+#: ./build/en/book.xml:12720(entry) 
+msgid "partially usable by other WebDAV clients"
+msgstr ""
+
+#: ./build/en/book.xml:12721(entry) ./build/en/book.xml:12722(entry) 
+msgid "only talks to svn clients"
+msgstr ""
+
+#: ./build/en/book.xml:12726(entry) 
+msgid "Web viewing"
+msgstr ""
+
+#: ./build/en/book.xml:12727(entry) 
+msgid "limited built-in support, or via 3rd-party tools such as ViewVC"
+msgstr ""
+
+#: ./build/en/book.xml:12729(entry) ./build/en/book.xml:12730(entry) 
+msgid "only via 3rd-party tools such as ViewVC"
+msgstr ""
+
+#: ./build/en/book.xml:12734(entry) 
+msgid "Speed"
+msgstr ""
+
+#: ./build/en/book.xml:12735(entry) 
+msgid "somewhat slower"
+msgstr ""
+
+#: ./build/en/book.xml:12736(entry) ./build/en/book.xml:12737(entry) 
+msgid "somewhat faster"
+msgstr ""
+
+#: ./build/en/book.xml:12741(entry) ./build/en/book.xml:13603(title) 
+msgid "Initial setup"
+msgstr ""
+
+#: ./build/en/book.xml:12742(entry) 
+msgid "somewhat complex"
+msgstr ""
+
+#: ./build/en/book.xml:12743(entry) 
+msgid "extremely simple"
+msgstr ""
+
+#: ./build/en/book.xml:12744(entry) 
+msgid "moderately simple"
+msgstr ""
+
+#: ./build/en/book.xml:12755(title) 
+msgid "Choosing a Server Configuration"
+msgstr ""
+
+#: ./build/en/book.xml:12757(para) 
+msgid "So, which server should you use? Which is best?"
+msgstr ""
+
+#: ./build/en/book.xml:12759(para) 
+msgid "Obviously, there's no right answer to that question. Every team has different needs, and the different servers all represent different sets of tradeoffs. The Subversion project itself doesn't endorse one server or another, or consider either server more <quote>official</quote> than another."
+msgstr ""
+
+#: ./build/en/book.xml:12765(para) 
+msgid "Here are some reasons why you might choose one deployment over another, as well as reasons you might <emphasis>not</emphasis> choose one."
+msgstr ""
+
+#: ./build/en/book.xml:12771(title) 
+msgid "The <command moreinfo=\"none\">svnserve</command> Server"
+msgstr ""
+
+#: ./build/en/book.xml:12775(term) ./build/en/book.xml:12826(term) ./build/en/book.xml:12874(term) 
+msgid "Why you might want to use it:"
+msgstr ""
+
+#: ./build/en/book.xml:12779(para) 
+msgid "Quick and easy to set up."
+msgstr ""
+
+#: ./build/en/book.xml:12782(para) ./build/en/book.xml:12830(para) 
+msgid "Network protocol is stateful and noticeably faster than WebDAV."
+msgstr ""
+
+#: ./build/en/book.xml:12785(para) ./build/en/book.xml:12882(para) 
+msgid "No need to create system accounts on server."
+msgstr ""
+
+#: ./build/en/book.xml:12788(para) 
+msgid "Password is not passed over the network."
+msgstr ""
+
+#: ./build/en/book.xml:12796(term) ./build/en/book.xml:12844(term) ./build/en/book.xml:12905(term) 
+msgid "Why you might want to avoid it:"
+msgstr ""
+
+#: ./build/en/book.xml:12800(para) 
+msgid "Network protocol is not encrypted."
+msgstr ""
+
+#: ./build/en/book.xml:12803(para) ./build/en/book.xml:12848(para) 
+msgid "Only one choice of authentication method."
+msgstr ""
+
+#: ./build/en/book.xml:12806(para) 
+msgid "Password is stored in the clear on the server."
+msgstr ""
+
+#: ./build/en/book.xml:12809(para) ./build/en/book.xml:12851(para) 
+msgid "No logging of any kind, not even errors."
+msgstr ""
+
+#: ./build/en/book.xml:12822(title) 
+msgid "<command moreinfo=\"none\">svnserve</command> over SSH"
+msgstr ""
+
+#: ./build/en/book.xml:12833(para) 
+msgid "You can take advantage of existing ssh accounts and user infrastructure."
+msgstr ""
+
+#: ./build/en/book.xml:12836(para) 
+msgid "All network traffic is encrypted."
+msgstr ""
+
+#: ./build/en/book.xml:12854(para) 
+msgid "Requires users to be in same system group, or use a shared ssh key."
+msgstr ""
+
+#: ./build/en/book.xml:12857(para) 
+msgid "Can lead to file permissions problems."
+msgstr ""
+
+#: ./build/en/book.xml:12870(title) 
+msgid "The Apache HTTP Server"
+msgstr ""
+
+#: ./build/en/book.xml:12878(para) 
+msgid "Allows Subversion to use any of the numerous authentication systems already integrated with Apache."
+msgstr ""
+
+#: ./build/en/book.xml:12885(para) 
+msgid "Full Apache logging."
+msgstr ""
+
+#: ./build/en/book.xml:12887(para) 
+msgid "Network traffic can be encrypted via SSL."
+msgstr ""
+
+#: ./build/en/book.xml:12890(para) 
+msgid "HTTP(S) can usually go through corporate firewalls."
+msgstr ""
+
+#: ./build/en/book.xml:12893(para) 
+msgid "Built-in repository browsing via web browser."
+msgstr ""
+
+#: ./build/en/book.xml:12896(para) 
+msgid "Repository can be mounted as a network drive for transparent version control. (See <xref linkend=\"svn.webdav.autoversioning\"/>.)"
+msgstr ""
+
+#: ./build/en/book.xml:12909(para) 
+msgid "Noticeably slower than svnserve, because HTTP is a stateless protocol and requires more turnarounds."
+msgstr ""
+
+#: ./build/en/book.xml:12913(para) 
+msgid "Initial setup can be complex."
+msgstr ""
+
+#: ./build/en/book.xml:12925(title) 
+msgid "Recommendations"
+msgstr ""
+
+#: ./build/en/book.xml:12927(para) 
+msgid "In general, the authors of this book recommend a vanilla <command moreinfo=\"none\">svnserve</command> installation for small teams just trying to get started with a Subversion server; it's the simplest to set up, and has the fewest maintenance issues. Remember, you can always switch to a more complex server deployment as your needs change."
+msgstr ""
+
+#: ./build/en/book.xml:12934(para) 
+msgid "Here are some general recommendations and tips, based on years of supporting users:"
+msgstr ""
+
+#: ./build/en/book.xml:12939(para) 
+msgid "If you're trying to set up the simplest possible server for your group, then a vanilla <command moreinfo=\"none\">svnserve</command> installation is the easiest, fastest route. Note, however, that your repository data will be transmitted in the clear over the network. If your deployment is entirely within your company's LAN or VPN, this isn't an issue. If the repository is exposed to the wide-open internet, then you might want to make sure the repository's contents aren't sensitive (e.g. it contains only open-source code.)"
+msgstr ""
+
+#: ./build/en/book.xml:12952(para) 
+msgid "If you need to integrate with existing identity systems (LDAP, Active Directory, NTLM, X.509, etc.), then an Apache-based server is your only real option. Similarly, if you absolutely need server-side logs of either server errors or client activities, then an Apache-based server is required."
+msgstr ""
+
+#: ./build/en/book.xml:12961(para) 
+msgid "If you've decided to use either Apache or stock <command moreinfo=\"none\">svnserve</command>, create a single <literal moreinfo=\"none\">svn</literal> user on your system and run the server process as that user. Be sure to make the repository directory wholly owned by the <literal moreinfo=\"none\">svn</literal> user as well. From a security point of view, this keeps the repository data nicely siloed and protected by operating system filesystem permissions, changeable by only the Subversion server process itself."
+msgstr ""
+
+#: ./build/en/book.xml:12974(para) 
+msgid "If you have an existing infrastructure heavily based on SSH accounts, and if your users already have system accounts on your server machine, then it makes sense to deploy an svnserve-over-ssh solution. Otherwise, we don't widely recommend this option to the public. It's generally considered safer to have your users access the repository via (imaginary) accounts managed by <command moreinfo=\"none\">svnserve</command> or Apache, rather than by full-blown system accounts. If your deep desire for encrypted communication still draws you to this option, we recommend using Apache with SSL instead."
+msgstr ""
+
+#: ./build/en/book.xml:12988(para) 
+msgid "Do <emphasis>not</emphasis> be seduced by the simple idea of having all of your users access a repository directly via <literal moreinfo=\"none\">file://</literal> URLs. Even if the repository is readily available to everyone via network share, this is a bad idea. It removes any layers of protection between the users and the repository: users can accidentally (or intentionally) corrupt the repository database, it becomes hard to take the repository offline for inspection or upgrade, and it can lead to a mess of file-permissions problems (see <xref linkend=\"svn.serverconfig.multimethod\"/>.) Note that this is also one of the reasons we warn against accessing repositories via <literal moreinfo=\"none\">svn+ssh://</literal> URLs — from a security standpoint, it's effectively the same as local users accessing via <literal moreinfo=\"none\">file://</literal>, and can entail all the same problems if the administrator isn't careful."
+msgstr ""
+
+#: ./build/en/book.xml:13017(title) 
+msgid "svnserve, a custom server"
+msgstr ""
+
+#: ./build/en/book.xml:13019(para) 
+msgid "The <command moreinfo=\"none\">svnserve</command> program is a lightweight server, capable of speaking to clients over TCP/IP using a custom, stateful protocol. Clients contact an <command moreinfo=\"none\">svnserve</command> server by using URLs that begin with the <literal moreinfo=\"none\">svn://</literal> or <literal moreinfo=\"none\">svn+ssh://</literal> schema. This section will explain the different ways of running <command moreinfo=\"none\">svnserve</command>, how clients authenticate themselves to the server, and how to configure appropriate access control to your repositories."
+msgstr ""
+
+#: ./build/en/book.xml:13031(title) 
+msgid "Invoking the Server"
+msgstr ""
+
+#: ./build/en/book.xml:13033(para) 
+msgid "There are a few different ways to run the <command moreinfo=\"none\">svnserve</command> program:"
+msgstr ""
+
+#: ./build/en/book.xml:13037(para) 
+msgid "Run <command moreinfo=\"none\">svnserve</command> as a standalone daemon, listening for requests."
+msgstr ""
+
+#: ./build/en/book.xml:13040(para) 
+msgid "Have the Unix <command moreinfo=\"none\">inetd</command> daemon temporarily spawn <command moreinfo=\"none\">svnserve</command> whenever a request comes in on a certain port."
+msgstr ""
+
+#: ./build/en/book.xml:13043(para) 
+msgid "Have SSH invoke a temporary <command moreinfo=\"none\">svnserve</command> over an encrypted tunnel."
+msgstr ""
+
+#: ./build/en/book.xml:13046(para) 
+msgid "Run <command moreinfo=\"none\">svnserve</command> as a Windows service."
+msgstr ""
+
+#: ./build/en/book.xml:13052(title) 
+msgid "<command moreinfo=\"none\">svnserve</command> as Daemon"
+msgstr ""
+
+#: ./build/en/book.xml:13054(para) 
+msgid "The easiest option is to run <command moreinfo=\"none\">svnserve</command> as a standalone <quote>daemon</quote> process. Use the <option>-d</option> option for this:"
+msgstr ""
+
+#: ./build/en/book.xml:13058(screen) 
+#, no-wrap
+msgid "\n$ svnserve -d\n$               # svnserve is now running, listening on port 3690\n"
+msgstr ""
+
+#: ./build/en/book.xml:13063(para) 
+msgid "When running <command moreinfo=\"none\">svnserve</command> in daemon mode, you can use the <option>--listen-port=</option> and <option>--listen-host=</option> options to customize the exact port and hostname to <quote>bind</quote> to."
+msgstr ""
+
+#: ./build/en/book.xml:13068(para) 
+msgid "Once the <command moreinfo=\"none\">svnserve</command> program is running, it makes every repository on your system available to the network. A client needs to specify an <emphasis>absolute</emphasis> path in the repository URL. For example, if a repository is located at <filename moreinfo=\"none\">/usr/local/repositories/project1</filename>, then a client would reach it via <uri>svn://host.example.com/usr/local/repositories/project1</uri>. To increase security, you can pass the <option>-r</option> option to <command moreinfo=\"none\">svnserve</command>, which restricts it to exporting only repositories below that path. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:13080(screen) 
+#, no-wrap
+msgid "\n$ svnserve -d -r /usr/local/repositories\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:13085(para) 
+msgid "Using the <option>-r</option> option effectively modifies the location that the program treats as the root of the remote filesystem space. Clients then use URLs that have that path portion removed from them, leaving much shorter (and much less revealing) URLs:"
+msgstr ""
+
+#: ./build/en/book.xml:13091(screen) 
+#, no-wrap
+msgid "\n$ svn checkout svn://host.example.com/project1\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:13100(title) 
+msgid "<command moreinfo=\"none\">svnserve</command> via <command moreinfo=\"none\">inetd</command>"
+msgstr ""
+
+#: ./build/en/book.xml:13102(para) 
+msgid "If you want <command moreinfo=\"none\">inetd</command> launch the process, then you can pass the <option>-i</option> (<option>--inetd</option>) option:"
+msgstr ""
+
+#: ./build/en/book.xml:13106(screen) 
+#, no-wrap
+msgid "\n$ svnserve -i\n( success ( 1 2 ( ANONYMOUS ) ( edit-pipeline ) ) )\n"
+msgstr ""
+
+#: ./build/en/book.xml:13111(para) 
+msgid "When invoked with the <option>--inetd</option> option, <command moreinfo=\"none\">svnserve</command> attempts to speak with a Subversion client via <emphasis>stdin</emphasis> and <emphasis>stdout</emphasis> using a custom protocol. This is the standard behavior for a program being run via <command moreinfo=\"none\">inetd</command>. The IANA has reserved port 3690 for the Subversion protocol, so on a Unix-like system you can add lines to <filename moreinfo=\"none\">/etc/services</filename> like these (if they don't already exist):"
+msgstr ""
+
+#: ./build/en/book.xml:13121(screen) 
+#, no-wrap
+msgid "\nsvn           3690/tcp   # Subversion\nsvn           3690/udp   # Subversion\n"
+msgstr ""
+
+#: ./build/en/book.xml:13126(para) 
+msgid "And if your system is using a classic Unix-like <command moreinfo=\"none\">inetd</command> daemon, you can add this line to <filename moreinfo=\"none\">/etc/inetd.conf</filename>:"
+msgstr ""
+
+#: ./build/en/book.xml:13130(screen) 
+#, no-wrap
+msgid "\nsvn stream tcp nowait svnowner /usr/bin/svnserve svnserve -i\n"
+msgstr ""
+
+#: ./build/en/book.xml:13134(para) 
+msgid "Make sure <quote>svnowner</quote> is a user which has appropriate permissions to access your repositories. Now, when a client connection comes into your server on port 3690, <command moreinfo=\"none\">inetd</command> will spawn an <command moreinfo=\"none\">svnserve</command> process to service it. Of course, you may also want to add <option>-r</option> to the configuration line as well, to restrict which repositories are exported."
+msgstr ""
+
+#: ./build/en/book.xml:13147(title) 
+msgid "<command moreinfo=\"none\">svnserve</command> over a Tunnel"
+msgstr ""
+
+#: ./build/en/book.xml:13149(para) 
+msgid "A third way to invoke <command moreinfo=\"none\">svnserve</command> is in <quote>tunnel mode</quote>, with the <option>-t</option> option. This mode assumes that a remote-service program such as <command moreinfo=\"none\">RSH</command> or <command moreinfo=\"none\">SSH</command> has successfully authenticated a user and is now invoking a private <command moreinfo=\"none\">svnserve</command> process <emphasis>as that user</emphasis>. The <command moreinfo=\"none\">svnserve</command> program behaves normally (communicating via <emphasis>stdin</emphasis> and <emphasis>stdout</emphasis>), and assumes that the traffic is being automatically redirected over some sort of tunnel back to the client. When <command moreinfo=\"none\">svnserve</command> is invoked by a tunnel agent like this, be sure that the authenticated user has full read and write access to the repository database files. It's essentially the same as a local user accessing the repository via <literal moreinfo=\"none\">file://</literal> URLs."
+msgstr ""
+
+#: ./build/en/book.xml:13166(para) 
+msgid "This option is described in much more detail in <xref linkend=\"svn.serverconfig.svnserve.sshauth\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:13173(title) 
+msgid "<command moreinfo=\"none\">svnserve</command> as Windows Service"
+msgstr ""
+
+#: ./build/en/book.xml:13175(para) 
+msgid "If your Windows system is a descendant of Windows NT (2000, 2003, XP, Vista), then you can run <command moreinfo=\"none\">svnserve</command> as a standard Windows service. This is typically a much nicer experience than running it as a standalone daemon with the <option>--daemon (-d)</option> option. Using daemon-mode requires launching a console, typing a command, and then leaving the console window running indefinitely. A Windows service, however, runs in the background, can start at boot time automatically, and can be started and stopped using the same consistent administration interface as other Windows services."
+msgstr ""
+
+#: ./build/en/book.xml:13188(para) 
+msgid "You'll need to define the new service using the command-line tool <command moreinfo=\"none\">SC.EXE</command>. Much like the <command moreinfo=\"none\">inetd</command> configuration line, you must specify an exact invocation of <command moreinfo=\"none\">svnserve</command> for Windows to run at start-up time:"
+msgstr ""
+
+#: ./build/en/book.xml:13194(screen) 
+#, no-wrap
+msgid "\nC:\\&gt; sc create svn\n        binpath= \"C:\\svn\\bin\\svnserve.exe --service -r C:\\repos\"\n        displayname= \"Subversion Server\"\n        depend= Tcpip\n        start= auto\n"
+msgstr ""
+
+#: ./build/en/book.xml:13202(para) 
+msgid "This defines a new Windows service named <quote>svn</quote>, and which executes a particular <command moreinfo=\"none\">svnserve.exe</command> command when started (in this case, rooted at <filename moreinfo=\"none\">C:\\repos</filename>.) There are a number of caveats in the prior example, however."
+msgstr ""
+
+#: ./build/en/book.xml:13209(para) 
+msgid "First, notice that the <command moreinfo=\"none\">svnserve.exe</command> program must always be invoked with the <option>--service</option> option. Any other options to <command moreinfo=\"none\">svnserve</command> must then be specified on the same line, but you cannot add conflicting options such as <option>--daemon (-d)</option>, <option>--tunnel</option>, or <option>--inetd (-i)</option>. Options such as <option>-r</option> or <option>--listen-port</option> are fine, though. Second, be careful about spaces when invoking the <command moreinfo=\"none\">SC.EXE</command> command: the <literal moreinfo=\"none\">key= value</literal> patterns must have no spaces between <literal moreinfo=\"none\">key=</literal> and exactly one space before the <literal moreinfo=\"none\">value</literal>. Lastly, be careful about spaces in your command-line to be invoked. If a directory name contains spaces (or other characters that need escaping), place the entire inner value of <literal moreinfo=\"none\">binpath</literal> in double-quotes, by escaping them:"
+msgstr ""
+
+#: ./build/en/book.xml:13229(screen) 
+#, no-wrap
+msgid "\nC:\\&gt; sc create svn\n        binpath= \"\\\"C:\\program files\\svn\\bin\\svnserve.exe\\\" --service -r C:\\repos\"\n        displayname= \"Subversion Server\"\n        depend= Tcpip\n        start= auto\n"
+msgstr ""
+
+#: ./build/en/book.xml:13237(para) 
+msgid "Once the service is defined, it can stopped, started, or queried using standard GUI tools (The Services administrative control panel), or at the command line as well:"
+msgstr ""
+
+#: ./build/en/book.xml:13242(screen) 
+#, no-wrap
+msgid "\nC:\\&gt; net stop svn\nC:\\&gt; net start svn\n"
+msgstr ""
+
+#: ./build/en/book.xml:13247(para) 
+msgid "The service can also be uninstalled (i.e. undefined) by deleting its definition: <literal moreinfo=\"none\">sc delete svn</literal>. Just be sure to stop the service first! The <command moreinfo=\"none\">SC.EXE</command> program has many other subcommands and options, run <literal moreinfo=\"none\">sc /?</literal> to learn more about it."
+msgstr ""
+
+#: ./build/en/book.xml:13260(title) 
+msgid "Built-in authentication and authorization"
+msgstr ""
+
+#: ./build/en/book.xml:13262(para) 
+msgid "When a client connects to an <command moreinfo=\"none\">svnserve</command> process, the following things happen:"
+msgstr ""
+
+#: ./build/en/book.xml:13266(para) 
+msgid "The client selects a specific repository."
+msgstr ""
+
+#: ./build/en/book.xml:13269(para) 
+msgid "The server processes the repository's <filename moreinfo=\"none\">conf/svnserve.conf</filename> file, and begins to enforce any authentication and authorization policies defined therein."
+msgstr ""
+
+#: ./build/en/book.xml:13274(para) 
+msgid "Depending on the situation and authorization policies,"
+msgstr ""
+
+#: ./build/en/book.xml:13278(para) 
+msgid "the client may be allowed to make requests anonymously, without ever receiving an authentication challenge, OR"
+msgstr ""
+
+#: ./build/en/book.xml:13282(para) 
+msgid "the client may be challenged for authentication at any time, OR"
+msgstr ""
+
+#: ./build/en/book.xml:13285(para) 
+msgid "if operating in <quote>tunnel mode</quote>, the client will declare itself to be already externally authenticated."
+msgstr ""
+
+#: ./build/en/book.xml:13294(para) 
+msgid "See RFC 2195."
+msgstr ""
+
+#: ./build/en/book.xml:13293(para) 
+msgid "At the time of writing, the server only knows how to send a CRAM-MD5 <placeholder-1/> authentication challenge. In essence, the server sends a small amount of data to the client. The client uses the MD5 hash algorithm to create a fingerprint of the data and password combined, then sends the fingerprint as a response. The server performs the same computation with the stored password to verify that the result is identical. <emphasis>At no point does the actual password travel over the network.</emphasis>"
+msgstr ""
+
+#: ./build/en/book.xml:13304(para) 
+msgid "It's also possible, of course, for the client to be externally authenticated via a tunnel agent, such as <command moreinfo=\"none\">SSH</command>. In that case, the server simply examines the user it's running as, and uses it as the authenticated username. For more on this, see <xref linkend=\"svn.serverconfig.svnserve.sshauth\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:13310(para) 
+msgid "As you've already guessed, a repository's <filename moreinfo=\"none\">svnserve.conf</filename> file is the central mechanism for controlling authentication and authorization policies. The file has the same format as other configuration files (see <xref linkend=\"svn.advanced.confarea\"/>): section names are marked by square brackets (<literal moreinfo=\"none\">[</literal> and <literal moreinfo=\"none\">]</literal>), comments begin with hashes (<literal moreinfo=\"none\">#</literal>), and each section contains specific variables that can be set (<literal moreinfo=\"none\">variable = value</literal>). Let's walk through this file and learn how to use them."
+msgstr ""
+
+#: ./build/en/book.xml:13324(title) 
+msgid "Create a 'users' file and realm"
+msgstr ""
+
+#: ./build/en/book.xml:13326(para) 
+msgid "For now, the <literal moreinfo=\"none\">[general]</literal> section of the <filename moreinfo=\"none\">svnserve.conf</filename> has all the variables you need. Begin by defining a file which contains usernames and passwords, and an authentication realm:"
+msgstr ""
+
+#: ./build/en/book.xml:13331(screen) 
+#, no-wrap
+msgid "\n[general]\npassword-db = userfile\nrealm = example realm\n"
+msgstr ""
+
+#: ./build/en/book.xml:13337(para) 
+msgid "The <literal moreinfo=\"none\">realm</literal> is a name that you define. It tells clients which sort of <quote>authentication namespace</quote> they're connecting to; the Subversion client displays it in the authentication prompt, and uses it as a key (along with the server's hostname and port) for caching credentials on disk (see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>). The <literal moreinfo=\"none\">password-db</literal> variable points to a separate file that contains a list of usernames and passwords, using the same familiar format. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:13347(screen) 
+#, no-wrap
+msgid "\n[users]\nharry = foopassword\nsally = barpassword\n"
+msgstr ""
+
+#: ./build/en/book.xml:13353(para) 
+msgid "The value of <literal moreinfo=\"none\">password-db</literal> can be an absolute or relative path to the users file. For many admins, it's easy to keep the file right in the <filename moreinfo=\"none\">conf/</filename> area of the repository, alongside <filename moreinfo=\"none\">svnserve.conf</filename>. On the other hand, it's possible you may want to have two or more repositories share the same users file; in that case, the file should probably live in a more public place. The repositories sharing the users file should also be configured to have the same realm, since the list of users essentially defines an authentication realm. Wherever the file lives, be sure to set the file's read and write permissions appropriately. If you know which user(s) <command moreinfo=\"none\">svnserve</command> will run as, restrict read access to the user file as necessary."
+msgstr ""
+
+#: ./build/en/book.xml:13372(title) 
+msgid "Set access controls"
+msgstr ""
+
+#: ./build/en/book.xml:13374(para) 
+msgid "There are two more variables to set in the <filename moreinfo=\"none\">svnserve.conf</filename> file: they determine what unauthenticated (anonymous) and authenticated users are allowed to do. The variables <literal moreinfo=\"none\">anon-access</literal> and <literal moreinfo=\"none\">auth-access</literal> can be set to the values <literal moreinfo=\"none\">none</literal>, <literal moreinfo=\"none\">read</literal>, or <literal moreinfo=\"none\">write</literal>. Setting the value to <literal moreinfo=\"none\">none</literal> restricts all access of any kind; <literal moreinfo=\"none\">read</literal> allows read-only access to the repository, and <literal moreinfo=\"none\">write</literal> allows complete read/write access to the repository. For example:"
+msgstr ""
+
+#: ./build/en/book.xml:13386(screen) 
+#, no-wrap
+msgid "\n[general]\npassword-db = userfile\nrealm = example realm\n\n# anonymous users can only read the repository\nanon-access = read\n\n# authenticated users can both read and write\nauth-access = write\n"
+msgstr ""
+
+#: ./build/en/book.xml:13398(para) 
+msgid "The example settings are, in fact, the default values of the variables, should you forget to define them. If you want to be even more conservative, you can block anonymous access completely:"
+msgstr ""
+
+#: ./build/en/book.xml:13403(screen) 
+#, no-wrap
+msgid "\n[general]\npassword-db = userfile\nrealm = example realm\n\n# anonymous users aren't allowed\nanon-access = none\n\n# authenticated users can both read and write\nauth-access = write\n"
+msgstr ""
+
+#: ./build/en/book.xml:13415(para) 
+msgid "The server process not only understands these <quote>blanket</quote> access controls to the repository, but also finer-grained access restrictions placed on specific files and directories within the repository. To make use of this feature, you need to define a file containing more detailed rules, and then set the <literal moreinfo=\"none\">authz-db</literal> variable to point to it:"
+msgstr ""
+
+#: ./build/en/book.xml:13423(screen) 
+#, no-wrap
+msgid "\n[general]\npassword-db = userfile\nrealm = example realm\n\n# Specific access rules for specific locations\nauthz-db = authzfile\n"
+msgstr ""
+
+#: ./build/en/book.xml:13432(para) 
+msgid "The syntax of the <filename moreinfo=\"none\">authzfile</filename> file is discussed in detail in <xref linkend=\"svn.serverconfig.pathbasedauthz\"/>. Note that the <literal moreinfo=\"none\">authz-db</literal> variable isn't mutually exclusive with the <literal moreinfo=\"none\">anon-access</literal> and <literal moreinfo=\"none\">auth-access</literal> variables; if all the variables are defined at once, then <emphasis>all</emphasis> of the rules must be satisfied before access is allowed."
+msgstr ""
+
+#: ./build/en/book.xml:13446(title) 
+msgid "Tunneling over SSH"
+msgstr ""
+
+#: ./build/en/book.xml:13448(para) 
+msgid "<command moreinfo=\"none\">svnserve</command>'s built-in authentication can be very handy, because it avoids the need to create real system accounts. On the other hand, some administrators already have well-established SSH authentication frameworks in place. In these situations, all of the project's users already have system accounts and the ability to <quote>SSH into</quote> the server machine."
+msgstr ""
+
+#: ./build/en/book.xml:13456(para) 
+msgid "It's easy to use SSH in conjunction with <command moreinfo=\"none\">svnserve</command>. The client simply uses the <literal moreinfo=\"none\">svn+ssh://</literal> URL schema to connect:"
+msgstr ""
+
+#: ./build/en/book.xml:13460(screen) 
+#, no-wrap
+msgid "\n$ whoami\nharry\n\n$ svn list svn+ssh://host.example.com/repos/project\nharry@host.example.com's password:  *****\n\nfoo\nbar\nbaz\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:13473(para) 
+msgid "In this example, the Subversion client is invoking a local <command moreinfo=\"none\">ssh</command> process, connecting to <literal moreinfo=\"none\">host.example.com</literal>, authenticating as the user <literal moreinfo=\"none\">harry</literal>, then spawning a private <command moreinfo=\"none\">svnserve</command> process on the remote machine running as the user <literal moreinfo=\"none\">harry</literal>. The <command moreinfo=\"none\">svnserve</command> command is being invoked in tunnel mode (<option>-t</option>) and its network protocol is being <quote>tunneled</quote> over the encrypted connection by <command moreinfo=\"none\">ssh</command>, the tunnel-agent. <command moreinfo=\"none\">svnserve</command> is aware that it's running as the user <literal moreinfo=\"none\">harry</literal>, and if the client performs a commit, the authenticated username will be attributed as the author of the new revision."
+msgstr ""
+
+#: ./build/en/book.xml:13488(para) 
+msgid "The important thing to understand here is that the Subversion client is <emphasis>not</emphasis> connecting to a running <command moreinfo=\"none\">svnserve</command> daemon. This method of access doesn't require a daemon, nor does it notice one if present. It relies wholly on the ability of <command moreinfo=\"none\">ssh</command> to spawn a temporary <command moreinfo=\"none\">svnserve</command> process, which then terminates when the network connection is closed."
+msgstr ""
+
+#: ./build/en/book.xml:13497(para) 
+msgid "When using <literal moreinfo=\"none\">svn+ssh://</literal> URLs to access a repository, remember that it's the <command moreinfo=\"none\">ssh</command> program prompting for authentication, and <emphasis>not</emphasis> the <command moreinfo=\"none\">svn</command> client program. That means there's no automatic password caching going on (see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>). The Subversion client often makes multiple connections to the repository, though users don't normally notice this due to the password caching feature. When using <literal moreinfo=\"none\">svn+ssh://</literal> URLs, however, users may be annoyed by <command moreinfo=\"none\">ssh</command> repeatedly asking for a password for every outbound connection. The solution is to use a separate SSH password-caching tool like <command moreinfo=\"none\">ssh-agent</command> on a Unix-like system, or <command moreinfo=\"none\">pageant</command> on Windows."
+msgstr ""
+
+#: ./build/en/book.xml:13526(para) 
+msgid "Note that using any sort of <command moreinfo=\"none\">svnserve</command>-enforced access control at all is a bit pointless; the user already has direct access to the repository database."
+msgstr ""
+
+#: ./build/en/book.xml:13513(para) 
+msgid "When running over a tunnel, authorization is primarily controlled by operating system permissions to the repository's database files; it's very much the same as if Harry were accessing the repository directly via a <literal moreinfo=\"none\">file://</literal> URL. If multiple system users are going to be accessing the repository directly, you may want to place them into a common group, and you'll need to be careful about umasks. (Be sure to read <xref linkend=\"svn.serverconfig.multimethod\"/>.) But even in the case of tunneling, the <filename moreinfo=\"none\">svnserve.conf</filename> file can still be used to block access, by simply setting <literal moreinfo=\"none\">auth-access = read</literal> or <literal moreinfo=\"none\">auth-access = none</literal>. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:13533(para) 
+msgid "You'd think that the story of SSH tunneling would end here, but it doesn't. Subversion allows you to create custom tunnel behaviors in your run-time <filename moreinfo=\"none\">config</filename> file (see <xref linkend=\"svn.advanced.confarea\"/>). For example, suppose you want to use RSH instead of SSH. In the <literal moreinfo=\"none\">[tunnels]</literal> section of your <filename moreinfo=\"none\">config</filename> file, simply define it like this:"
+msgstr ""
+
+#: ./build/en/book.xml:13542(screen) 
+#, no-wrap
+msgid "\n[tunnels]\nrsh = rsh\n"
+msgstr ""
+
+#: ./build/en/book.xml:13547(para) 
+msgid "And now, you can use this new tunnel definition by using a URL schema that matches the name of your new variable: <literal moreinfo=\"none\">svn+rsh://host/path</literal>. When using the new URL schema, the Subversion client will actually be running the command <command moreinfo=\"none\">rsh host svnserve -t</command> behind the scenes. If you include a username in the URL (for example, <literal moreinfo=\"none\">svn+rsh://username@host/path</literal>) the client will also include that in its command (<command moreinfo=\"none\">rsh username@host svnserve -t</command>). But you can define new tunneling schemes to be much more clever than that:"
+msgstr ""
+
+#: ./build/en/book.xml:13558(screen) 
+#, no-wrap
+msgid "\n[tunnels]\njoessh = $JOESSH /opt/alternate/ssh -p 29934\n"
+msgstr ""
+
+#: ./build/en/book.xml:13563(para) 
+msgid "This example demonstrates a couple of things. First, it shows how to make the Subversion client launch a very specific tunneling binary (the one located at <filename moreinfo=\"none\">/opt/alternate/ssh</filename>) with specific options. In this case, accessing a <literal moreinfo=\"none\">svn+joessh://</literal> URL would invoke the particular SSH binary with <option>-p 29934</option> as arguments—useful if you want the tunnel program to connect to a non-standard port."
+msgstr ""
+
+#: ./build/en/book.xml:13573(para) 
+msgid "Second, it shows how to define a custom environment variable that can override the name of the tunneling program. Setting the <literal moreinfo=\"none\">SVN_SSH</literal> environment variable is a convenient way to override the default SSH tunnel agent. But if you need to have several different overrides for different servers, each perhaps contacting a different port or passing a different set of options to SSH, you can use the mechanism demonstrated in this example. Now if we were to set the <literal moreinfo=\"none\">JOESSH</literal> environment variable, its value would override the entire value of the tunnel variable—<command moreinfo=\"none\">$JOESSH</command> would be executed instead of <command moreinfo=\"none\">/opt/alternate/ssh -p 29934</command>."
+msgstr ""
+
+#: ./build/en/book.xml:13591(title) 
+msgid "SSH configuration tricks"
+msgstr ""
+
+#: ./build/en/book.xml:13593(para) 
+msgid "It's not only possible to control the way in which the client invokes <command moreinfo=\"none\">ssh</command>, but also to control the behavior of <command moreinfo=\"none\">sshd</command> on your server machine. In this section, we'll show how to control the exact <command moreinfo=\"none\">svnserve</command> command executed by <command moreinfo=\"none\">sshd</command>, as well as how to have multiple users share a single system account."
+msgstr ""
+
+#: ./build/en/book.xml:13605(para) 
+msgid "To begin, locate the home directory of the account you'll be using to launch <command moreinfo=\"none\">svnserve</command>. Make sure the account has an SSH public/private keypair installed, and that the user can log in via public-key authentication. Password authentication will not work, since all of the following SSH tricks revolve around using the SSH <filename moreinfo=\"none\">authorized_keys</filename> file."
+msgstr ""
+
+#: ./build/en/book.xml:13613(para) 
+msgid "If it doesn't already exist, create the <filename moreinfo=\"none\">authorized_keys</filename> file (on Unix, typically <filename moreinfo=\"none\">~/.ssh/authorized_keys</filename>). Each line in this file describes a public key that is allowed to connect. The lines are typically of the form:"
+msgstr ""
+
+#: ./build/en/book.xml:13620(screen) 
+#, no-wrap
+msgid "\n  ssh-dsa AAAABtce9euch… user@example.com\n"
+msgstr ""
+
+#: ./build/en/book.xml:13624(para) 
+msgid "The first field describes the type of key, the second field is the uuencoded key itself, and the third field is a comment. However, it's a lesser known fact that the entire line can be preceded by a <literal moreinfo=\"none\">command</literal> field:"
+msgstr ""
+
+#: ./build/en/book.xml:13630(screen) 
+#, no-wrap
+msgid "\n  command=\"program\" ssh-dsa AAAABtce9euch… user@example.com\n"
+msgstr ""
+
+#: ./build/en/book.xml:13634(para) 
+msgid "When the <literal moreinfo=\"none\">command</literal> field is set, the SSH daemon will run the named program instead of the typical <command moreinfo=\"none\">svnserve -t</command> invocation that the Subversion client asks for. This opens the door to a number of server-side tricks. In the following examples, we abbreviate the lines of the file as:"
+msgstr ""
+
+#: ./build/en/book.xml:13641(screen) 
+#, no-wrap
+msgid "\n  command=\"program\" TYPE KEY COMMENT\n"
+msgstr ""
+
+#: ./build/en/book.xml:13649(title) 
+msgid "Controlling the invoked command"
+msgstr ""
+
+#: ./build/en/book.xml:13651(para) 
+msgid "Because we can specify the executed server-side command, it's easy to name a specific <command moreinfo=\"none\">svnserve</command> binary to run and to pass it extra arguments:"
+msgstr ""
+
+#: ./build/en/book.xml:13655(screen) 
+#, no-wrap
+msgid "\n  command=\"/path/to/svnserve -t -r /virtual/root\" TYPE KEY COMMENT\n"
+msgstr ""
+
+#: ./build/en/book.xml:13659(para) 
+msgid "In this example, <filename moreinfo=\"none\">/path/to/svnserve</filename> might be a custom wrapper script around <command moreinfo=\"none\">svnserve</command> which sets the umask (see <xref linkend=\"svn.serverconfig.multimethod\"/>). It also shows how to anchor <command moreinfo=\"none\">svnserve</command> in a virtual root directory, just as one often does when running <command moreinfo=\"none\">svnserve</command> as a daemon process. This might be done either to restrict access to parts of the system, or simply to relieve the user of having to type an absolute path in the <literal moreinfo=\"none\">svn+ssh://</literal> URL."
+msgstr ""
+
+#: ./build/en/book.xml:13671(para) 
+msgid "It's also possible to have multiple users share a single account. Instead of creating a separate system account for each user, generate a public/private keypair for each person. Then place each public key into the <filename moreinfo=\"none\">authorized_users</filename> file, one per line, and use the <option>--tunnel-user</option> option:"
+msgstr ""
+
+#: ./build/en/book.xml:13679(screen) 
+#, no-wrap
+msgid "\n  command=\"svnserve -t --tunnel-user=harry\" TYPE1 KEY1 harry@example.com\n  command=\"svnserve -t --tunnel-user=sally\" TYPE2 KEY2 sally@example.com\n"
+msgstr ""
+
+#: ./build/en/book.xml:13684(para) 
+msgid "This example allows both Harry and Sally to connect to the same account via public-key authentication. Each of them has a custom command that will be executed; the <option>--tunnel-user</option> option tells <command moreinfo=\"none\">svnserve -t</command> to assume that the named argument is the authenticated user. Without <option>--tunnel-user</option>, it would appear as though all commits were coming from the one shared system account."
+msgstr ""
+
+#: ./build/en/book.xml:13694(para) 
+msgid "A final word of caution: giving a user access to the server via public-key in a shared account might still allow other forms of SSH access, even if you've set the <literal moreinfo=\"none\">command</literal> value in <filename moreinfo=\"none\">authorized_keys</filename>. For example, the user may still get shell access through SSH, or be able to perform X11 or general port-forwarding through your server. To give the user as little permission as possible, you may want to specify a number of restrictive options immediately after the <literal moreinfo=\"none\">command</literal>:"
+msgstr ""
+
+#: ./build/en/book.xml:13705(screen) 
+#, no-wrap
+msgid "\n  command=\"svnserve -t --tunnel-user=harry\",no-port-forwarding,\\\n           no-agent-forwarding,no-X11-forwarding,no-pty \\\n           TYPE1 KEY1 harry@example.com\n"
+msgstr ""
+
+#: ./build/en/book.xml:13723(title) 
+msgid "httpd, the Apache HTTP server"
+msgstr ""
+
+#: ./build/en/book.xml:13739(para) 
+msgid "They really hate doing that."
+msgstr ""
+
+#: ./build/en/book.xml:13725(para) 
+msgid "The Apache HTTP Server is a <quote>heavy duty</quote> network server that Subversion can leverage. Via a custom module, <command moreinfo=\"none\">httpd</command> makes Subversion repositories available to clients via the WebDAV/DeltaV protocol, which is an extension to HTTP 1.1 (see <ulink url=\"http://www.webdav.org/\"/> for more information). This protocol takes the ubiquitous HTTP protocol that is the core of the World Wide Web, and adds writing—specifically, versioned writing—capabilities. The result is a standardized, robust system that is conveniently packaged as part of the Apache 2.0 software, is supported by numerous operating systems and third-party products, and doesn't require network administrators to open up yet another custom port. <placeholder-1/> While an Apache-Subversion server has more features than <command moreinfo=\"none\">svnserve</command>, it's also a bit more difficult to set up. With flexibility often comes more complexity."
+msgstr ""
+
+#: ./build/en/book.xml:13745(para) 
+msgid "Much of the following discussion includes references to Apache configuration directives. While some examples are given of the use of these directives, describing them in full is outside the scope of this chapter. The Apache team maintains excellent documentation, publicly available on their website at <ulink url=\"http://httpd.apache.org\"/>. For example, a general reference for the configuration directives is located at <ulink url=\"       http://httpd.apache.org/docs-2.0/mod/directives.html\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:13753(para) 
+msgid "Also, as you make changes to your Apache setup, it is likely that somewhere along the way a mistake will be made. If you are not already familiar with Apache's logging subsystem, you should become aware of it. In your <filename moreinfo=\"none\">httpd.conf</filename> file are directives that specify the on-disk locations of the access and error logs generated by Apache (the <literal moreinfo=\"none\">CustomLog</literal> and <literal moreinfo=\"none\">ErrorLog</literal> directives, respectively). Subversion's mod_dav_svn uses Apache's error logging interface as well. You can always browse the contents of those files for information that might reveal the source of a problem that is not clearly noticeable otherwise."
+msgstr ""
+
+#: ./build/en/book.xml:13767(title) 
+msgid "Why Apache 2?"
+msgstr ""
+
+#: ./build/en/book.xml:13769(para) 
+msgid "If you're a system administrator, it's very likely that you're already running the Apache web server and have some prior experience with it. At the time of writing, Apache 1.3 is by far the most popular version of Apache. The world has been somewhat slow to upgrade to the Apache 2.X series for various reasons: some people fear change, especially changing something as critical as a web server. Other people depend on plug-in modules that only work against the Apache 1.3 API, and are waiting for a 2.X port. Whatever the reason, many people begin to worry when they first discover that Subversion's Apache module is written specifically for the Apache 2 API."
+msgstr ""
+
+#: ./build/en/book.xml:13781(para) 
+msgid "The proper response to this problem is: don't worry about it. It's easy to run Apache 1.3 and Apache 2 side-by-side; simply install them to separate places, and use Apache 2 as a dedicated Subversion server that runs on a port other than 80. Clients can access the repository by placing the port number into the URL:"
+msgstr ""
+
+#: ./build/en/book.xml:13788(screen) 
+#, no-wrap
+msgid "\n$ svn checkout http://host.example.com:7382/repos/project\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:13797(title) 
+msgid "Prerequisites"
+msgstr ""
+
+#: ./build/en/book.xml:13799(para) 
+msgid "To network your repository over HTTP, you basically need four components, available in two packages. You'll need Apache <command moreinfo=\"none\">httpd</command> 2.0, the <command moreinfo=\"none\">mod_dav</command> DAV module that comes with it, Subversion, and the <command moreinfo=\"none\">mod_dav_svn</command> filesystem provider module distributed with Subversion. Once you have all of those components, the process of networking your repository is as simple as:"
+msgstr ""
+
+#: ./build/en/book.xml:13810(para) 
+msgid "getting httpd 2.0 up and running with the mod_dav module,"
+msgstr ""
+
+#: ./build/en/book.xml:13814(para) 
+msgid "installing the mod_dav_svn plugin to mod_dav, which uses Subversion's libraries to access the repository, and"
+msgstr ""
+
+#: ./build/en/book.xml:13819(para) 
+msgid "configuring your <filename moreinfo=\"none\">httpd.conf</filename> file to export (or expose) the repository."
+msgstr ""
+
+#: ./build/en/book.xml:13824(para) 
+msgid "You can accomplish the first two items either by compiling <command moreinfo=\"none\">httpd</command> and Subversion from source code, or by installing pre-built binary packages of them on your system. For the most up-to-date information on how to compile Subversion for use with the Apache HTTP Server, as well as how to compile and configure Apache itself for this purpose, see the <filename moreinfo=\"none\">INSTALL</filename> file in the top level of the Subversion source code tree."
+msgstr ""
+
+#: ./build/en/book.xml:13837(title) 
+msgid "Basic Apache Configuration"
+msgstr ""
+
+#: ./build/en/book.xml:13839(para) 
+msgid "Once you have all the necessary components installed on your system, all that remains is the configuration of Apache via its <filename moreinfo=\"none\">httpd.conf</filename> file. Instruct Apache to load the mod_dav_svn module using the <literal moreinfo=\"none\">LoadModule</literal> directive. This directive must precede any other Subversion-related configuration items. If your Apache was installed using the default layout, your <command moreinfo=\"none\">mod_dav_svn</command> module should have been installed in the <filename moreinfo=\"none\">modules</filename> subdirectory of the Apache install location (often <filename moreinfo=\"none\">/usr/local/apache2</filename>). The <literal moreinfo=\"none\">LoadModule</literal> directive has a simple syntax, mapping a named module to the location of a shared library on disk:"
+msgstr ""
+
+#: ./build/en/book.xml:13854(screen) 
+#, no-wrap
+msgid "\nLoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+msgstr ""
+
+#: ./build/en/book.xml:13858(para) 
+msgid "Note that if <command moreinfo=\"none\">mod_dav</command> was compiled as a shared object (instead of statically linked directly to the <command moreinfo=\"none\">httpd</command> binary), you'll need a similar <literal moreinfo=\"none\">LoadModule</literal> statement for it, too. Be sure that it comes before the <command moreinfo=\"none\">mod_dav_svn</command> line:"
+msgstr ""
+
+#: ./build/en/book.xml:13864(screen) 
+#, no-wrap
+msgid "\nLoadModule dav_module         modules/mod_dav.so\nLoadModule dav_svn_module     modules/mod_dav_svn.so\n"
+msgstr ""
+
+#: ./build/en/book.xml:13870(para) 
+msgid "At a later location in your configuration file, you now need to tell Apache where you keep your Subversion repository (or repositories). The <literal moreinfo=\"none\">Location</literal> directive has an XML-like notation, starting with an opening tag, and ending with a closing tag, with various other configuration directives in the middle. The purpose of the <literal moreinfo=\"none\">Location</literal> directive is to instruct Apache to do something special when handling requests that are directed at a given URL or one of its children. In the case of Subversion, you want Apache to simply hand off support for URLs that point at versioned resources to the DAV layer. You can instruct Apache to delegate the handling of all URLs whose path portions (the part of the URL that follows the server's name and the optional port number) begin with <filename moreinfo=\"none\">/repos/</filename> to a DAV provider whose repository is located at <filename moreinfo=\"none\">/absolute/path/to/repository</filename> using the following <filename moreinfo=\"none\">httpd.conf</filename> syntax:"
+msgstr ""
+
+#: ./build/en/book.xml:13889(screen) 
+#, no-wrap
+msgid "\n&lt;Location /repos&gt;\n  DAV svn\n  SVNPath /absolute/path/to/repository\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:13896(para) 
+msgid "If you plan to support multiple Subversion repositories that will reside in the same parent directory on your local disk, you can use an alternative directive, the <literal moreinfo=\"none\">SVNParentPath</literal> directive, to indicate that common parent directory. For example, if you know you will be creating multiple Subversion repositories in a directory <filename moreinfo=\"none\">/usr/local/svn</filename> that would be accessed via URLs like <uri>http://my.server.com/svn/repos1</uri>, <uri>http://my.server.com/svn/repos2</uri>, and so on, you could use the <filename moreinfo=\"none\">httpd.conf</filename> configuration syntax in the following example:"
+msgstr ""
+
+#: ./build/en/book.xml:13908(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n\n  # any \"/svn/foo\" URL will map to a repository /usr/local/svn/foo\n  SVNParentPath /usr/local/svn\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:13917(para) 
+msgid "Using the previous syntax, Apache will delegate the handling of all URLs whose path portions begin with <filename moreinfo=\"none\">/svn/</filename> to the Subversion DAV provider, which will then assume that any items in the directory specified by the <literal moreinfo=\"none\">SVNParentPath</literal> directive are actually Subversion repositories. This is a particularly convenient syntax in that, unlike the use of the <literal moreinfo=\"none\">SVNPath</literal> directive, you don't have to restart Apache in order to create and network new repositories."
+msgstr ""
+
+#: ./build/en/book.xml:13928(para) 
+msgid "Be sure that when you define your new <literal moreinfo=\"none\">Location</literal>, it doesn't overlap with other exported Locations. For example, if your main <literal moreinfo=\"none\">DocumentRoot</literal> is exported to <filename moreinfo=\"none\">/www</filename>, do not export a Subversion repository in <literal moreinfo=\"none\">&lt;Location /www/repos&gt;</literal>. If a request comes in for the URI <filename moreinfo=\"none\">/www/repos/foo.c</filename>, Apache won't know whether to look for a file <filename moreinfo=\"none\">repos/foo.c</filename> in the <literal moreinfo=\"none\">DocumentRoot</literal>, or whether to delegate <command moreinfo=\"none\">mod_dav_svn</command> to return <filename moreinfo=\"none\">foo.c</filename> from the Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:13943(title) 
+msgid "Server Names and the COPY Request"
+msgstr ""
+
+#: ./build/en/book.xml:13945(para) 
+msgid "Subversion makes use of the <literal moreinfo=\"none\">COPY</literal> request type to perform server-side copies of files and directories. As part of the sanity checking done by the Apache modules, the source of the copy is expected to be located on the same machine as the destination of the copy. To satisfy this requirement, you might need to tell mod_dav the name you use as the hostname of your server. Generally, you can use the <literal moreinfo=\"none\">ServerName</literal> directive in <filename moreinfo=\"none\">httpd.conf</filename> to accomplish this."
+msgstr ""
+
+#: ./build/en/book.xml:13955(screen) 
+#, no-wrap
+msgid "\nServerName svn.example.com\n"
+msgstr ""
+
+#: ./build/en/book.xml:13959(para) 
+msgid "If you are using Apache's virtual hosting support via the <literal moreinfo=\"none\">NameVirtualHost</literal> directive, you may need to use the <literal moreinfo=\"none\">ServerAlias</literal> directive to specify additional names that your server is known by. Again, refer to the Apache documentation for full details."
+msgstr ""
+
+#: ./build/en/book.xml:13967(para) 
+msgid "At this stage, you should strongly consider the question of permissions. If you've been running Apache for some time now as your regular web server, you probably already have a collection of content—web pages, scripts and such. These items have already been configured with a set of permissions that allows them to work with Apache, or more appropriately, that allows Apache to work with those files. Apache, when used as a Subversion server, will also need the correct permissions to read and write to your Subversion repository."
+msgstr ""
+
+#: ./build/en/book.xml:13978(para) 
+msgid "You will need to determine a permission system setup that satisfies Subversion's requirements without messing up any previously existing web page or script installations. This might mean changing the permissions on your Subversion repository to match those in use by other things that Apache serves for you, or it could mean using the <literal moreinfo=\"none\">User</literal> and <literal moreinfo=\"none\">Group</literal> directives in <filename moreinfo=\"none\">httpd.conf</filename> to specify that Apache should run as the user and group that owns your Subversion repository. There is no single correct way to set up your permissions, and each administrator will have different reasons for doing things a certain way. Just be aware that permission-related problems are perhaps the most common oversight when configuring a Subversion repository for use with Apache."
+msgstr ""
+
+#: ./build/en/book.xml:13998(title) 
+msgid "Authentication Options"
+msgstr ""
+
+#: ./build/en/book.xml:14000(para) 
+msgid "At this point, if you configured <filename moreinfo=\"none\">httpd.conf</filename> to contain something like"
+msgstr ""
+
+#: ./build/en/book.xml:14003(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14010(para) 
+msgid "…then your repository is <quote>anonymously</quote> accessible to the world. Until you configure some authentication and authorization policies, the Subversion repositories you make available via the <literal moreinfo=\"none\">Location</literal> directive will be generally accessible to everyone. In other words,"
+msgstr ""
+
+#: ./build/en/book.xml:14019(para) 
+msgid "anyone can use their Subversion client to checkout a working copy of a repository URL (or any of its subdirectories),"
+msgstr ""
+
+#: ./build/en/book.xml:14024(para) 
+msgid "anyone can interactively browse the repository's latest revision simply by pointing their web browser to the repository URL, and"
+msgstr ""
+
+#: ./build/en/book.xml:14029(para) 
+msgid "anyone can commit to the repository."
+msgstr ""
+
+#: ./build/en/book.xml:14033(para) 
+msgid "Of course, you might have already set up a <filename moreinfo=\"none\">pre-commit</filename> hook script to prevent commits (see <xref linkend=\"svn.reposadmin.create.hooks\"/>). But as you read on, you'll see that it's also possible use Apache's built-in methods to restrict access in specific ways."
+msgstr ""
+
+#: ./build/en/book.xml:14042(title) 
+msgid "Basic HTTP Authentication"
+msgstr ""
+
+#: ./build/en/book.xml:14044(para) 
+msgid "The easiest way to authenticate a client is via the HTTP Basic authentication mechanism, which simply uses a username and password to verify that a user is who she says she is. Apache provides an <command moreinfo=\"none\">htpasswd</command> utility for managing the list of acceptable usernames and passwords, those to whom you wish to grant special access to your Subversion repository. Let's grant commit access to Sally and Harry. First, we need to add them to the password file."
+msgstr ""
+
+#: ./build/en/book.xml:14054(screen) 
+#, no-wrap
+msgid "\n$ ### First time: use -c to create the file\n$ ### Use -m to use MD5 encryption of the password, which is more secure\n$ htpasswd -cm /etc/svn-auth-file harry\nNew password: *****\nRe-type new password: *****\nAdding password for user harry\n$ htpasswd -m /etc/svn-auth-file sally\nNew password: *******\nRe-type new password: *******\nAdding password for user sally\n$\n"
+msgstr ""
+
+#: ./build/en/book.xml:14068(para) 
+msgid "Next, you need to add some more <filename moreinfo=\"none\">httpd.conf</filename> directives inside your <literal moreinfo=\"none\">Location</literal> block to tell Apache what to do with your new password file. The <literal moreinfo=\"none\">AuthType</literal> directive specifies the type of authentication system to use. In this case, we want to specify the <literal moreinfo=\"none\">Basic</literal> authentication system. <literal moreinfo=\"none\">AuthName</literal> is an arbitrary name that you give for the authentication domain. Most browsers will display this name in the pop-up dialog box when the browser is querying the user for his name and password. Finally, use the <literal moreinfo=\"none\">AuthUserFile</literal> directive to specify the location of the password file you created using <command moreinfo=\"none\">htpasswd</command>."
+msgstr ""
+
+#: ./build/en/book.xml:14083(para) 
+msgid "After adding these three directives, your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block should look something like this:"
+msgstr ""
+
+#: ./build/en/book.xml:14087(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /etc/svn-auth-file\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14097(para) 
+msgid "This <literal moreinfo=\"none\">&lt;Location&gt;</literal> block is not yet complete, and will not do anything useful. It's merely telling Apache that whenever authorization is required, Apache should harvest a username and password from the Subversion client. What's missing here, however, are directives that tell Apache <emphasis>which</emphasis> sorts of client requests require authorization. Wherever authorization is required, Apache will demand authentication as well. The simplest thing to do is protect all requests. Adding <literal moreinfo=\"none\">Require valid-user</literal> tells Apache that all requests require an authenticated user:"
+msgstr ""
+
+#: ./build/en/book.xml:14110(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /etc/svn-auth-file\n  Require valid-user\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14121(para) 
+msgid "Be sure to read the next section (<xref linkend=\"svn.serverconfig.httpd.authz\"/>) for more detail on the <literal moreinfo=\"none\">Require</literal> directive and other ways to set authorization policies."
+msgstr ""
+
+#: ./build/en/book.xml:14134(para) 
+msgid "While self-signed server certificates are still vulnerable to a <quote>man in the middle</quote> attack, such an attack is still much more difficult for a casual observer to pull off, compared to sniffing unprotected passwords."
+msgstr ""
+
+#: ./build/en/book.xml:14125(para) 
+msgid "One word of warning: HTTP Basic Auth passwords pass in very nearly plain-text over the network, and thus are extremely insecure. If you're worried about password snooping, it may be best to use some sort of SSL encryption, so that clients authenticate via <literal moreinfo=\"none\">https://</literal> instead of <literal moreinfo=\"none\">http://</literal>; at a bare minimum, you can configure Apache to use a self-signed server certificate. <placeholder-1/> Consult Apache's documentation (and OpenSSL documentation) about how to do that."
+msgstr ""
+
+#: ./build/en/book.xml:14148(title) 
+msgid "SSL Certificate Management"
+msgstr ""
+
+#: ./build/en/book.xml:14150(para) 
+msgid "Businesses that need to expose their repositories for access outside the company firewall should be conscious of the possibility that unauthorized parties could be <quote>sniffing</quote> their network traffic. SSL makes that kind of unwanted attention less likely to result in sensitive data leaks."
+msgstr ""
+
+#: ./build/en/book.xml:14157(para) 
+msgid "If a Subversion client is compiled to use OpenSSL, then it gains the ability to speak to an Apache server via <literal moreinfo=\"none\">https://</literal> URLs. The Neon library used by the Subversion client is not only able to verify server certificates, but can also supply client certificates when challenged. When the client and server have exchanged SSL certificates and successfully authenticated one another, all further communication is encrypted via a session key."
+msgstr ""
+
+#: ./build/en/book.xml:14166(para) 
+msgid "It's beyond the scope of this book to describe how to generate client and server certificates, and how to configure Apache to use them. Many other books, including Apache's own documentation, describe this task. But what <emphasis>can</emphasis> be covered here is how to manage server and client certificates from an ordinary Subversion client."
+msgstr ""
+
+#: ./build/en/book.xml:14174(para) 
+msgid "When speaking to Apache via <literal moreinfo=\"none\">https://</literal>, a Subversion client can receive two different types of information:"
+msgstr ""
+
+#: ./build/en/book.xml:14179(para) 
+msgid "a server certificate"
+msgstr ""
+
+#: ./build/en/book.xml:14180(para) 
+msgid "a demand for a client certificate"
+msgstr ""
+
+#: ./build/en/book.xml:14183(para) 
+msgid "If the client receives a server certificate, it needs to verify that it trusts the certificate: is the server really who it claims to be? The OpenSSL library does this by examining the signer of the server certificate, or <firstterm>certifying authority</firstterm> (CA). If OpenSSL is unable to automatically trust the CA, or if some other problem occurs (such as an expired certificate or hostname mismatch), the Subversion command-line client will ask you whether you want to trust the server certificate anyway:"
+msgstr ""
+
+#: ./build/en/book.xml:14194(screen) 
+#, no-wrap
+msgid "\n$ svn list https://host.example.com/repos/project\n\nError validating server certificate for 'https://host.example.com:443':\n - The certificate is not issued by a trusted authority. Use the\n   fingerprint to validate the certificate manually!\nCertificate information:\n - Hostname: host.example.com\n - Valid: from Jan 30 19:23:56 2004 GMT until Jan 30 19:23:56 2006 GMT\n - Issuer: CA, example.com, Sometown, California, US\n - Fingerprint: 7d:e1:a9:34:33:39:ba:6a:e9:a5:c4:22:98:7b:76:5c:92:a0:9c:7b\n\n(R)eject, accept (t)emporarily or accept (p)ermanently?\n"
+msgstr ""
+
+#: ./build/en/book.xml:14209(para) 
+msgid "This dialogue should look familiar; it's essentially the same question you've probably seen coming from your web browser (which is just another HTTP client like Subversion!). If you choose the (p)ermanent option, the server certificate will be cached in your private run-time <filename moreinfo=\"none\">auth/</filename> area in just the same way your username and password are cached (see <xref linkend=\"svn.serverconfig.netmodel.credcache\"/>). If cached, Subversion will automatically remember to trust this certificate in future negotiations."
+msgstr ""
+
+#: ./build/en/book.xml:14219(para) 
+msgid "Your run-time <filename moreinfo=\"none\">servers</filename> file also gives you the ability to make your Subversion client automatically trust specific CAs, either globally or on a per-host basis. Simply set the <literal moreinfo=\"none\">ssl-authority-files</literal> variable to a semicolon-separated list of PEM-encoded CA certificates:"
+msgstr ""
+
+#: ./build/en/book.xml:14226(screen) 
+#, no-wrap
+msgid "\n[global]\nssl-authority-files = /path/to/CAcert1.pem;/path/to/CAcert2.pem\n"
+msgstr ""
+
+#: ./build/en/book.xml:14231(para) 
+msgid "Many OpenSSL installations also have a pre-defined set of <quote>default</quote> CAs that are nearly universally trusted. To make the Subversion client automatically trust these standard authorities, set the <literal moreinfo=\"none\">ssl-trust-default-ca</literal> variable to <literal moreinfo=\"none\">true</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:14238(para) 
+msgid "When talking to Apache, a Subversion client might also receive a challenge for a client certificate. Apache is asking the client to identify itself: is the client really who it says it is? If all goes correctly, the Subversion client sends back a private certificate signed by a CA that Apache trusts. A client certificate is usually stored on disk in encrypted format, protected by a local password. When Subversion receives this challenge, it will ask you for both a path to the certificate and the password which protects it:"
+msgstr ""
+
+#: ./build/en/book.xml:14249(screen) 
+#, no-wrap
+msgid "\n$ svn list https://host.example.com/repos/project\n\nAuthentication realm: https://host.example.com:443\nClient certificate filename: /path/to/my/cert.p12\nPassphrase for '/path/to/my/cert.p12':  ********\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:14258(para) 
+msgid "Notice that the client certificate is a <quote>p12</quote> file. To use a client certificate with Subversion, it must be in PKCS#12 format, which is a portable standard. Most web browsers are already able to import and export certificates in that format. Another option is to use the OpenSSL command-line tools to convert existing certificates into PKCS#12."
+msgstr ""
+
+#: ./build/en/book.xml:14266(para) 
+msgid "Again, the runtime <filename moreinfo=\"none\">servers</filename> file allows you to automate this challenge on a per-host basis. Either or both pieces of information can be described in runtime variables:"
+msgstr ""
+
+#: ./build/en/book.xml:14271(screen) 
+#, no-wrap
+msgid "\n[groups]\nexamplehost = host.example.com\n\n[examplehost]\nssl-client-cert-file = /path/to/my/cert.p12\nssl-client-cert-password = somepassword\n"
+msgstr ""
+
+#: ./build/en/book.xml:14286(para) 
+msgid "More security-conscious folk might not want to store the client certificate password in the runtime <filename moreinfo=\"none\">servers</filename> file."
+msgstr ""
+
+#: ./build/en/book.xml:14280(para) 
+msgid "Once you've set the <literal moreinfo=\"none\">ssl-client-cert-file</literal> and <literal moreinfo=\"none\">ssl-client-cert-password</literal> variables, the Subversion client can automatically respond to a client certificate challenge without prompting you. <placeholder-1/>"
+msgstr ""
+
+#: ./build/en/book.xml:14298(title) 
+msgid "Authorization Options"
+msgstr ""
+
+#: ./build/en/book.xml:14300(para) 
+msgid "At this point, you've configured authentication, but not authorization. Apache is able to challenge clients and confirm identities, but it has not been told how to allow or restrict access to the clients bearing those identities. This section describes two strategies for controlling access to your repositories."
+msgstr ""
+
+#: ./build/en/book.xml:14309(title) 
+msgid "Blanket Access Control"
+msgstr ""
+
+#: ./build/en/book.xml:14311(para) 
+msgid "The simplest form of access control is to authorize certain users for either read-only access to a repository, or read/write access to a repository."
+msgstr ""
+
+#: ./build/en/book.xml:14315(para) 
+msgid "You can restrict access on all repository operations by adding the <literal moreinfo=\"none\">Require valid-user</literal> directive to your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block. Using our previous example, this would mean that only clients that claimed to be either <literal moreinfo=\"none\">harry</literal> or <literal moreinfo=\"none\">sally</literal>, and provided the correct password for their respective username, would be allowed to do anything with the Subversion repository:"
+msgstr ""
+
+#: ./build/en/book.xml:14324(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  # how to authenticate a user\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /path/to/users/file\n\n  # only authenticated users may access the repository\n  Require valid-user\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14339(para) 
+msgid "Sometimes you don't need to run such a tight ship. For example, Subversion's own source code repository at <ulink url=\"http://svn.collab.net/repos/svn\"/> allows anyone in the world to perform read-only repository tasks (like checking out working copies and browsing the repository with a web browser), but restricts all write operations to authenticated users. To do this type of selective restriction, you can use the <literal moreinfo=\"none\">Limit</literal> and <literal moreinfo=\"none\">LimitExcept</literal> configuration directives. Like the <literal moreinfo=\"none\">Location</literal> directive, these blocks have starting and ending tags, and you would nest them inside your <literal moreinfo=\"none\">&lt;Location&gt;</literal> block."
+msgstr ""
+
+#: ./build/en/book.xml:14353(para) 
+msgid "The parameters present on the <literal moreinfo=\"none\">Limit</literal> and <literal moreinfo=\"none\">LimitExcept</literal> directives are HTTP request types that are affected by that block. For example, if you wanted to disallow all access to your repository except the currently supported read-only operations, you would use the <literal moreinfo=\"none\">LimitExcept</literal> directive, passing the <literal moreinfo=\"none\">GET</literal>, <literal moreinfo=\"none\">PROPFIND</literal>, <literal moreinfo=\"none\">OPTIONS</literal>, and <literal moreinfo=\"none\">REPORT</literal> request type parameters. Then the previously mentioned <literal moreinfo=\"none\">Require valid-user</literal> directive would be placed inside the <literal moreinfo=\"none\">&lt;LimitExcept&gt;</literal> block instead of just inside the <literal moreinfo=\"none\">&lt;Location&gt;</literal> block."
+msgstr ""
+
+#: ./build/en/book.xml:14367(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  # how to authenticate a user\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /path/to/users/file\n\n  # For any operations other than these, require an authenticated user.\n  &lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;\n    Require valid-user\n  &lt;/LimitExcept&gt;\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14384(para) 
+msgid "These are only a few simple examples. For more in-depth information about Apache access control and the <literal moreinfo=\"none\">Require</literal> directive, take a look at the <literal moreinfo=\"none\">Security</literal> section of the Apache documentation's tutorials collection at <ulink url=\"http://httpd.apache.org/docs-2.0/misc/tutorials.html\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:14395(title) 
+msgid "Per-Directory Access Control"
+msgstr ""
+
+#: ./build/en/book.xml:14397(para) 
+msgid "It's possible to set up finer-grained permissions using a second Apache httpd module, <command moreinfo=\"none\">mod_authz_svn</command>. This module grabs the various opaque URLs passing from client to server, asks <command moreinfo=\"none\">mod_dav_svn</command> to decode them, and then possibly vetoes requests based on access policies defined in a configuration file."
+msgstr ""
+
+#: ./build/en/book.xml:14405(para) 
+msgid "If you've built Subversion from source code, <command moreinfo=\"none\">mod_authz_svn</command> is automatically built and installed alongside <command moreinfo=\"none\">mod_dav_svn</command>. Many binary distributions install it automatically as well. To verify that it's installed correctly, make sure it comes right after <command moreinfo=\"none\">mod_dav_svn</command>'s <literal moreinfo=\"none\">LoadModule</literal> directive in <filename moreinfo=\"none\">httpd.conf</filename>:"
+msgstr ""
+
+#: ./build/en/book.xml:14414(screen) 
+#, no-wrap
+msgid "\nLoadModule dav_module         modules/mod_dav.so\nLoadModule dav_svn_module     modules/mod_dav_svn.so\nLoadModule authz_svn_module   modules/mod_authz_svn.so\n"
+msgstr ""
+
+#: ./build/en/book.xml:14420(para) 
+msgid "To activate this module, you need to configure your <literal moreinfo=\"none\">Location</literal> block to use the <literal moreinfo=\"none\">AuthzSVNAccessFile</literal> directive, which specifies a file containing the permissions policy for paths within your repositories. (In a moment, we'll discuss the format of that file.)"
+msgstr ""
+
+#: ./build/en/book.xml:14427(para) 
+msgid "Apache is flexible, so you have the option to configure your block in one of three general patterns. To begin, choose one of these basic configuration patterns. (The examples below are very simple; look at Apache's own documentation for much more detail on Apache authentication and authorization options.)"
+msgstr ""
+
+#: ./build/en/book.xml:14434(para) 
+msgid "The simplest block is to allow open access to everyone. In this scenario, Apache never sends authentication challenges, so all users are treated as <quote>anonymous</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:14440(title) 
+msgid "A sample configuration for anonymous access."
+msgstr ""
+
+#: ./build/en/book.xml:14441(programlisting) 
+#, no-wrap
+msgid "\n&lt;Location /repos&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  # our access control policy\n  AuthzSVNAccessFile /path/to/access/file\n&lt;/Location&gt;\n          "
+msgstr ""
+
+#: ./build/en/book.xml:14452(para) 
+msgid "On the opposite end of the paranoia scale, you can configure your block to demand authentication from everyone. All clients must supply credentials to identify themselves. Your block unconditionally requires authentication via the <literal moreinfo=\"none\">Require valid-user</literal> directive, and defines a means to authenticate."
+msgstr ""
+
+#: ./build/en/book.xml:14460(title) 
+msgid "A sample configuration for authenticated access."
+msgstr ""
+
+#: ./build/en/book.xml:14461(programlisting) 
+#, no-wrap
+msgid "\n&lt;Location /repos&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  # our access control policy\n  AuthzSVNAccessFile /path/to/access/file\n\n  # only authenticated users may access the repository\n  Require valid-user\n\n  # how to authenticate a user\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /path/to/users/file\n&lt;/Location&gt;\n          "
+msgstr ""
+
+#: ./build/en/book.xml:14480(para) 
+msgid "A third very popular pattern is to allow a combination of authenticated and anonymous access. For example, many administrators want to allow anonymous users to read certain repository directories, but want only authenticated users to read (or write) more sensitive areas. In this setup, all users start out accessing the repository anonymously. If your access control policy demands a real username at any point, Apache will demand authentication from the client. To do this, you use both the <literal moreinfo=\"none\">Satisfy Any</literal> and <literal moreinfo=\"none\">Require valid-user</literal> directives together."
+msgstr ""
+
+#: ./build/en/book.xml:14493(title) 
+msgid "A sample configuration for mixed authenticated/anonymous access."
+msgstr ""
+
+#: ./build/en/book.xml:14495(programlisting) 
+#, no-wrap
+msgid "\n&lt;Location /repos&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  # our access control policy\n  AuthzSVNAccessFile /path/to/access/file\n\n  # try anonymous access first, resort to real\n  # authentication if necessary.\n  Satisfy Any\n  Require valid-user\n\n  # how to authenticate a user\n  AuthType Basic\n  AuthName \"Subversion repository\"\n  AuthUserFile /path/to/users/file\n&lt;/Location&gt;\n          "
+msgstr ""
+
+#: ./build/en/book.xml:14516(para) 
+msgid "Once you've settled on one of these three basic <filename moreinfo=\"none\">httpd.conf</filename> templates, you need to create your file containing access rules for particular paths within the repository. This is described in <xref linkend=\"svn.serverconfig.pathbasedauthz\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:14526(title) 
+msgid "Disabling Path-based Checks"
+msgstr ""
+
+#: ./build/en/book.xml:14528(para) 
+msgid "The <command moreinfo=\"none\">mod_dav_svn</command> module goes through a lot of work to make sure that data you've marked <quote>unreadable</quote> doesn't get accidentally leaked. This means that it needs to closely monitor all of the paths and file-contents returned by commands like <command moreinfo=\"none\">svn checkout</command> or <command moreinfo=\"none\">svn update</command> commands. If these commands encounter a path that isn't readable according to some authorization policy, then the path is typically omitted altogether. In the case of history or rename tracing—e.g. running a command like <command moreinfo=\"none\">svn cat -r OLD foo.c</command> on a file that was renamed long ago—the rename tracking will simply halt if one of the object's former names is determined to be read-restricted."
+msgstr ""
+
+#: ./build/en/book.xml:14543(para) 
+msgid "All of this path-checking can sometimes be quite expensive, especially in the case of <command moreinfo=\"none\">svn log</command>. When retrieving a list of revisions, the server looks at every changed path in each revision and checks it for readability. If an unreadable path is discovered, then it's omitted from the list of the revision's changed paths (normally seen with the <option>--verbose</option> option), and the whole log message is suppressed. Needless to say, this can be time-consuming on revisions that affect a large number of files. This is the cost of security: even if you haven't configured a module like <command moreinfo=\"none\">mod_authz_svn</command> at all, the <command moreinfo=\"none\">mod_dav_svn</command> module is still asking Apache <command moreinfo=\"none\">httpd</command> to run authorization checks on every path. The <command moreinfo=\"none\">mod_dav_svn</command> module has no idea what authorization modules have been installed, so all it can do is ask Apache to invoke whatever might be present."
+msgstr ""
+
+#: ./build/en/book.xml:14562(para) 
+msgid "On the other hand, there's also an escape-hatch of sorts, one which allows you to trade security features for speed. If you're not enforcing any sort of per-directory authorization (i.e. not using <command moreinfo=\"none\">mod_authz_svn</command> or similar module), then you can disable all of this path-checking. In your <filename moreinfo=\"none\">httpd.conf</filename> file, use the <literal moreinfo=\"none\">SVNPathAuthz</literal> directive:"
+msgstr ""
+
+#: ./build/en/book.xml:14572(title) 
+msgid "Disabling path checks altogether"
+msgstr ""
+
+#: ./build/en/book.xml:14573(programlisting) 
+#, no-wrap
+msgid "\n&lt;Location /repos&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n\n  SVNPathAuthz off\n&lt;/Location&gt;\n          "
+msgstr ""
+
+#: ./build/en/book.xml:14583(para) 
+msgid "The <literal moreinfo=\"none\">SVNPathAuthz</literal> directive is <quote>on</quote> by default. When set <quote>off</quote>, all path-based authorization checking is disabled; <command moreinfo=\"none\">mod_dav_svn</command> stops invoking authorization checks on every path it discovers."
+msgstr ""
+
+#: ./build/en/book.xml:14595(title) 
+msgid "Extra Goodies"
+msgstr ""
+
+#: ./build/en/book.xml:14597(para) 
+msgid "We've covered most of the authentication and authorization options for Apache and mod_dav_svn. But there are a few other nice features that Apache provides."
+msgstr ""
+
+#: ./build/en/book.xml:14603(title) 
+msgid "Repository Browsing"
+msgstr ""
+
+#: ./build/en/book.xml:14605(para) 
+msgid "One of the most useful benefits of an Apache/WebDAV configuration for your Subversion repository is that the youngest revisions of your versioned files and directories are immediately available for viewing via a regular web browser. Since Subversion uses URLs to identify versioned resources, those URLs used for HTTP-based repository access can be typed directly into a Web browser. Your browser will issue an HTTP <literal moreinfo=\"none\">GET</literal> request for that URL, and based on whether that URL represents a versioned directory or file, mod_dav_svn will respond with a directory listing or with file contents."
+msgstr ""
+
+#: ./build/en/book.xml:14617(para) 
+msgid "Since the URLs do not contain any information about which version of the resource you wish to see, mod_dav_svn will always answer with the youngest version. This functionality has the wonderful side-effect that you can pass around Subversion URLs to your peers as references to documents, and those URLs will always point at the latest manifestation of that document. Of course, you can even use the URLs as hyperlinks from other web sites, too."
+msgstr ""
+
+#: ./build/en/book.xml:14627(title) 
+msgid "Can I view older revisions?"
+msgstr ""
+
+#: ./build/en/book.xml:14629(para) 
+msgid "With an ordinary web browser? In one word: nope. At least, not with <command moreinfo=\"none\">mod_dav_svn</command> as your only tool."
+msgstr ""
+
+#: ./build/en/book.xml:14633(para) 
+msgid "Your web browser only speaks ordinary HTTP. That means it only knows how to GET public URLs, which represent the latest versions of files and directories. According to the WebDAV/DeltaV specification, each server defines a private URL syntax for older versions of resources, and that syntax is opaque to clients. To find an older version of a file, a client must follow a specific procedure to <quote>discover</quote> the proper URL; the procedure involves issuing a series of WebDAV PROPFIND requests and understanding DeltaV concepts. This is something your web browser simply can't do."
+msgstr ""
+
+#: ./build/en/book.xml:14656(para) 
+msgid "Back then, it was called <quote>ViewCVS</quote>."
+msgstr ""
+
+#: ./build/en/book.xml:14645(para) 
+msgid "So to answer the question, one obvious way to see older revisions of files and directories is by passing the <option>--revision (-r)</option> argument to the <command moreinfo=\"none\">svn list</command> and <command moreinfo=\"none\">svn cat</command> commands. To browse old revisions with your web browser, however, you can use third-party software. A good example of this is ViewVC (<ulink url=\"http://viewvc.tigris.org/\"/>). ViewVC was originally written to display CVS repositories through the web, <placeholder-1/> and the latest releases are able to understand Subversion repositories as well."
+msgstr ""
+
+#: ./build/en/book.xml:14663(title) 
+msgid "Proper MIME Type"
+msgstr ""
+
+#: ./build/en/book.xml:14665(para) 
+msgid "When browsing a Subversion repository, the web browser gets a clue about how to render a file's contents by looking at the <literal moreinfo=\"none\">Content-Type:</literal> header returned in Apache's response to the HTTP <literal moreinfo=\"none\">GET</literal> request. The value of this header is some sort of MIME type. By default, Apache will tell the web browsers that all repository files are of the <quote>default</quote> MIME type, typically <literal moreinfo=\"none\">text/plain</literal>. This can be frustrating, however, if a user wishes repository files to render as something more meaningful — for example, it might be nice to have a <filename moreinfo=\"none\">foo.html</filename> file in the repository actually render as HTML when browsing."
+msgstr ""
+
+#: ./build/en/book.xml:14680(para) 
+msgid "To make this happen, you only need to make sure that your files have the proper <literal moreinfo=\"none\">svn:mime-type</literal> set. This is discussed in more detail in <xref linkend=\"svn.advanced.props.special.mime-type\"/>, and you can even configure your client to automatically attach proper <literal moreinfo=\"none\">svn:mime-type</literal> properties to files entering the repository for the first time; see <xref linkend=\"svn.advanced.props.auto\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:14690(para) 
+msgid "So in our example, if one were to set the <literal moreinfo=\"none\">svn:mime-type</literal> property to <literal moreinfo=\"none\">text/html</literal> on file <filename moreinfo=\"none\">foo.html</filename>, then Apache would properly tell your web browser to render the file as HTML. One could also attach proper <literal moreinfo=\"none\">image/*</literal> mime-type properties to images, and by doing this, ultimately get an entire web site to be viewable directly from a repository! There's generalyl no problem with doing this, as long as the website doesn't contain any dynamically-generated content."
+msgstr ""
+
+#: ./build/en/book.xml:14706(title) 
+msgid "Customizing the Look"
+msgstr ""
+
+#: ./build/en/book.xml:14708(para) 
+msgid "You generally will get more use out of URLs to versioned files—after all, that's where the interesting content tends to lie. But you might have occasion to browse a Subversion directory listing, where you'll quickly note that the generated HTML used to display that listing is very basic, and certainly not intended to be aesthetically pleasing (or even interesting). To enable customization of these directory displays, Subversion provides an XML index feature. A single <literal moreinfo=\"none\">SVNIndexXSLT</literal> directive in your repository's <literal moreinfo=\"none\">Location</literal> block of <filename moreinfo=\"none\">httpd.conf</filename> will instruct mod_dav_svn to generate XML output when displaying a directory listing, and to reference the XSLT stylesheet of your choice:"
+msgstr ""
+
+#: ./build/en/book.xml:14724(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n  SVNIndexXSLT \"/svnindex.xsl\"\n  …\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14733(para) 
+msgid "Using the <literal moreinfo=\"none\">SVNIndexXSLT</literal> directive and a creative XSLT stylesheet, you can make your directory listings match the color schemes and imagery used in other parts of your website. Or, if you'd prefer, you can use the sample stylesheets provided in the Subversion source distribution's <filename moreinfo=\"none\">tools/xslt/</filename> directory. Keep in mind that the path provided to the <literal moreinfo=\"none\">SVNIndexXSLT</literal> directory is actually a URL path—browsers need to be able to read your stylesheets in order to make use of them!"
+msgstr ""
+
+#: ./build/en/book.xml:14747(title) 
+msgid "Listing Repositories"
+msgstr ""
+
+#: ./build/en/book.xml:14749(para) 
+msgid "If you're serving a colllection of repositories from a single URL via the <literal moreinfo=\"none\">SVNParentPath</literal> directive, then it's also possible to have Apache display all available repositories to a web browser. Just activate the <literal moreinfo=\"none\">SVNListParentPath</literal> directive:"
+msgstr ""
+
+#: ./build/en/book.xml:14756(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  SVNParentPath /usr/local/svn\n  SVNListParentPath on\n  …\n&lt;/Location&gt;\n"
+msgstr ""
+
+#: ./build/en/book.xml:14765(para) 
+msgid "If a user now points her web browser to the URL <literal moreinfo=\"none\">http://host.example.com/svn/</literal>, she'll see list of all Subversion repositories sitting in <filename moreinfo=\"none\">/usr/local/svn</filename>. Obviously, this can be a security problem, so this feature is turned off by default."
+msgstr ""
+
+#: ./build/en/book.xml:14778(title) 
+msgid "Apache Logging"
+msgstr ""
+
+#: ./build/en/book.xml:14780(para) 
+msgid "Because Apache is an HTTP server at heart, it contains fantastically flexible logging feature. It's beyond the scope of this book to discuss all ways logging can be configured, but we should point out that even the most generic <filename moreinfo=\"none\">httpd.conf</filename> file will cause Apache to produce two logs: <filename moreinfo=\"none\">error_log</filename> and <filename moreinfo=\"none\">access_log</filename>. These logs may appear in different places, but are typically created in the logging area of your Apache installation. (On Unix, they often live in <filename moreinfo=\"none\">/usr/local/apache2/logs/</filename>.)"
+msgstr ""
+
+#: ./build/en/book.xml:14793(para) 
+msgid "The <filename moreinfo=\"none\">error_log</filename> describes any interal errors that Apache runs into as it works. The <filename moreinfo=\"none\">access_log</filename> file records every incoming HTTP request received by Apache. This makes it easy to see, for example, which IP addresses Subversion clients are coming from, how often particular clients use the server, which users are authenticating properly, and which requests succeed or fail."
+msgstr ""
+
+#: ./build/en/book.xml:14802(para) 
+msgid "Unfortunately, because HTTP is a stateless protocol, even the simplest Subversion client operation generates multiple network requests. It's very difficult to look at the <filename moreinfo=\"none\">access_log</filename> and deduce what the client was doing — most operations look like a series of cryptic <literal moreinfo=\"none\">PROPPATCH</literal>, <literal moreinfo=\"none\">GET</literal>, <literal moreinfo=\"none\">PUT</literal>, and <literal moreinfo=\"none\">REPORT</literal> requests. To make things worse, many client operations send nearly-identical series of requests, so it's even harder to tell them apart."
+msgstr ""
+
+#: ./build/en/book.xml:14813(para) 
+msgid "<literal moreinfo=\"none\">mod_dav_svn</literal>, however, can come to your aid. By activating an <quote>operational logging</quote> feature, you can ask <literal moreinfo=\"none\">mod_dav_svn</literal> to create a separate log file describing what sort of high-level operations your clients are performing."
+msgstr ""
+
+#: ./build/en/book.xml:14820(para) 
+msgid "To do this, you need to make use of Apache's <literal moreinfo=\"none\">CustomLog</literal> directive (which is explained in more detail in Apache's own documentation). Be sure to invoke this directive <emphasis>outside</emphasis> of your Subversion <literal moreinfo=\"none\">Location</literal> block:"
+msgstr ""
+
+#: ./build/en/book.xml:14827(screen) 
+#, no-wrap
+msgid "\n&lt;Location /svn&gt;\n  DAV svn\n  …\n&lt;/Location&gt;\n\nCustomLog logs/svn_logfile \"%t %u %{SVN-ACTION}e\" env=SVN-ACTION\n"
+msgstr ""
+
+#: ./build/en/book.xml:14836(para) 
+msgid "In this example, we're asking Apache to create a special logfile <filename moreinfo=\"none\">svn_logfile</filename> in the standard Apache <filename moreinfo=\"none\">logs</filename> directory. The <literal moreinfo=\"none\">%t</literal> and <literal moreinfo=\"none\">%u</literal> variables are replaced by the time and username of the request, respectively. The really important part are the two instances of <literal moreinfo=\"none\">SVN-ACTION</literal>. When Apache sees that variable, it substitutes the value of the <literal moreinfo=\"none\">SVN-ACTION</literal> environment variable, which is automatically set by <literal moreinfo=\"none\">mod_dav_svn</literal> whenever it detects a high-level client action."
+msgstr ""
+
+#: ./build/en/book.xml:14848(para) 
+msgid "So instead of having to interpret a traditional <filename moreinfo=\"none\">access_log</filename> like this:"
+msgstr ""
+
+#: ./build/en/book.xml:14852(screen) 
+#, no-wrap
+msgid "\n[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/vcc/default HTTP/1.1\" 207 398\n[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc/!svn/bln/59 HTTP/1.1\" 207 449\n[26/Jan/2007:22:25:29 -0600] \"PROPFIND /svn/calc HTTP/1.1\" 207 647\n[26/Jan/2007:22:25:29 -0600] \"REPORT /svn/calc/!svn/vcc/default HTTP/1.1\" 200 607\n[26/Jan/2007:22:25:31 -0600] \"OPTIONS /svn/calc HTTP/1.1\" 200 188\n[26/Jan/2007:22:25:31 -0600] \"MKACTIVITY /svn/calc/!svn/act/e6035ef7-5df0-4ac0-b811-4be7c823f998 HTTP/1.1\" 201 227\n…\n"
+msgstr ""
+
+#: ./build/en/book.xml:14862(para) 
+msgid "… you can instead peruse a much more intelligible <filename moreinfo=\"none\">svn_logfile</filename> like this:"
+msgstr ""
+
+#: ./build/en/book.xml:14865(screen) 
+#, no-wrap
+msgid "\n[26/Jan/2007:22:24:20 -0600] - list-dir '/'\n[26/Jan/2007:22:24:27 -0600] - update '/'\n[26/Jan/2007:22:25:29 -0600] - remote-status '/'\n[26/Jan/2007:22:25:31 -0600] sally commit r60\n"
+msgstr ""
+
+#: ./build/en/book.xml:14876(title) 
+msgid "Other Features"
+msgstr ""
+
+#: ./build/en/book.xml:14878(para) 
+msgid "Several of the features already provided by Apache in its role as a robust Web server can be leveraged for increased functionality or security in Subversion as well. Subversion communicates with Apache using Neon, which is a generic HTTP/WebDAV library with support for such mechanisms as SSL (the Secure Socket Layer, discussed earlier). If your Subversion client is built to support SSL, then it can access your Apache server using <literal moreinfo=\"none\">https://</literal>."
+msgstr ""
+
+#: ./build/en/book.xml:14888(para) 
+msgid "Equally useful are other features of the Apache and Subversion relationship, such as the ability to specify a custom port (instead of the default HTTP port 80) or a virtual domain name by which the Subversion repository should be accessed, or the ability to access the repository through an HTTP proxy. These things are all supported by Neon, so Subversion gets that support for free."
+msgstr ""
+
+#: ./build/en/book.xml:14896(para) 
+msgid "Finally, because <command moreinfo=\"none\">mod_dav_svn</command> is speaking a subset of the WebDAV/DeltaV protocol, it's possible to access the repository via third-party DAV clients. Most modern operating systems (Win32, OS X, and Linux) have the built-in ability to mount a DAV server as a standard network share. This is a complicated topic; for details, read <xref linkend=\"svn.webdav\"/>."
+msgstr ""
+
+#: ./build/en/book.xml:14915(title) 
+msgid "Path-Based Authorization"
+msgstr ""
+
+#: ./build/en/book.xml:14917(para) 
+msgid "Both Apache and <command moreinfo=\"none\">svnserve</command> are capable of granting (or denying) permissions to users. Typically this is done over the entire repository: a user can read the repository (or not), and she can write to the repository (or not). It's also possible, however, to define finer-grained access rules. One set of users may have permssion to write to a certain directory in the repository, but not others; another directory might not even be readable by all but a few special people."
+msgstr ""
+
+#: ./build/en/book.xml:14927(para) 
+msgid "Both servers use a common file format to describe these path-based access rules. In the case of Apache, one needs to load the <command moreinfo=\"none\">mod_authz_svn</command> module and then add the <literal moreinfo=\"none\">AuthzSVNAccessFile</literal> directive (within the <filename moreinfo=\"none\">httpd.conf</filename> file) pointing to your own rules-file. (For a full explanation, see <xref linkend=\"svn.serverconfig.httpd.authz.perdir\"/>.) If you're using <command moreinfo=\"none\">svnserve</command>, then you need to make the <literal moreinfo=\"none\">authz-db</literal> variable (within <filename moreinfo=\"none\">svnserve.conf</filename>) point to your rules-file."
+msgstr ""
+
+#: ./build/en/book.xml:14940(title) 
+msgid "Do you really need path-based access control?"
+msgstr ""
+
+#: ./build/en/book.xml:14942(para) 
+msgid "A lot of administrators setting up Subversion for the first time tend to jump into path-based access control without giving it a lot of thought. The administrator usually knows which teams of people are working on which projects, so it's easy to jump in and grant certain teams access to certain directories and not others. It seems like a natural thing, and it appeases the administrator's desire to maintain tight control of the repository."
+msgstr ""
+
+#: ./build/en/book.xml:14951(para) 
+msgid "Note, though, that there are often invisible (and visible!) costs associated with this feature. In the visible category, the server needs to do a lot more work to ensure that the user has the right to read or write each specific path; in certain situations, there's very noticeable performance loss. In the invisible category, consider the culture you're creating. Most of the time, while certain users <emphasis>shouldn't</emphasis> be committing changes to certain parts of the repository, that social contract doesn't need to be technologically enforced. Teams can sometimes spontaneously collaborate with each other; someone may want to help someone else out by committing to an area she doesn't normally work on. By preventing this sort of thing at the server level, you're setting up barriers to unexpected collaboration. You're also creating a bunch of rules that need to be maintained as projects develop, new users are added, and so on. It's a bunch of extra work to maintain."
+msgstr ""
+
+#: ./build/en/book.xml:14970(para) 
+msgid "Remember that this is a version control system! Even if somebody accidentally commits a change to something they shouldn't, it's easy to undo the change. And if a user commits to the wrong place with deliberate malice, then it's a social problem anyway, and that the problem needs to be dealt with outside of Subversion."
+msgstr ""
+
+#: ./build/en/book.xml:14983(para) 
+msgid "A common theme in this book!"
+msgstr ""
+
+#: ./build/en/book.xml:14977(para) 
+msgid "So before you begin restricting users' access rights, ask yourself if there's a real, honest need for this, or if it's just something that <quote>sounds good</quote> to an administrator. Decide whether it's worth sacrificing some server speed for, and remember that there's very little risk involved; it's bad to become dependent on technology as a crutch for social problems.<placeholder-1/>."
+msgstr ""
+
+#: ./build/en/book.xml:14986(para) 
+msgid "As an example to ponder, consider that the Subversion project itself has always had a notion of who is allowed to commit where, but it's always been enforced socially. This is a good model of community trust, especially for open-source projects. Of course, sometimes there <emphasis>are</emphasis> truly legitimate needs for path-based access control; within corporations, for example, certain types of data really can be sensitive, and access needs to be genuinely restricted to small groups of people."
+msgstr ""
+
+#: ./build/en/book.xml:14998(para) 
+msgid "Once your server knows where to find your rules-file, it's time to define the rules."
+msgstr ""
+
+#: ./build/en/book.xml:15001(para) 
+msgid "The syntax of the file is the same familiar one used by <command moreinfo=\"none\">svnserve.conf</command> and the runtime configuration files. Lines that start with a hash (<literal moreinfo=\"none\">#</literal>) are ignored. In its simplest form, each section names a repository and path within it, and the authenticated usernames are the option names within each section. The value of each option describes the user's level of access to the repository path: either <literal moreinfo=\"none\">r</literal> (read-only) or <literal moreinfo=\"none\">rw</literal> (read-write). If the user is not mentioned at all, no access is allowed."
+msgstr ""
+
+#: ./build/en/book.xml:15013(para) 
+msgid "To be more specific: the value of the section-names are either of the form <literal moreinfo=\"none\">[repos-name:path]</literal> or the form <literal moreinfo=\"none\">[path]</literal>. If you're using the <literal moreinfo=\"none\">SVNParentPath</literal> directive, then it's important to specify the repository names in your sections. If you omit them, then a section like <literal moreinfo=\"none\">[/some/dir]</literal> will match the path <filename moreinfo=\"none\">/some/dir</filename> in <emphasis>every</emphasis> repository. If you're using the <literal moreinfo=\"none\">SVNPath</literal> directive, however, then it's fine to only define paths in your sections—after all, there's only one repository."
+msgs
