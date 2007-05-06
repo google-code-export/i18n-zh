@@ -1460,4 +1460,748 @@ msgid "Another neat trick you can perform with this <option>--incremental</optio
 msgstr "另一个有关的技巧是，可以使用<option>--incremental</option>选项在一个转储文件中增加新的转储修订版本。举个例子，可以使用<literal moreinfo=\"none\">post-commit</literal>钩子在每次新的修订版本提交后将其转储到文件中。或者，可以编写一个脚本，在每天夜里将所有新增的修订版本转储到文件中。这样，<command moreinfo=\"none\">svnadmin</command>的<literal moreinfo=\"none\">dump</literal>和<literal moreinfo=\"none\">load</literal>命令就变成了很好的版本库备份工具，万一出现系统崩溃或其它灾难性事件，它的价值就体现出来了。"
 
 #: build/en/book.xml:11639(para)
-msgid "The dump format can also be used to merge the contents of several different repositories into a single repository. By using the <option>--parent-dir</o
+msgid "The dump format can also be used to merge the contents of several different repositories into a single repository. By using the <option>--parent-dir</option> option of <command moreinfo=\"none\">svnadmin load</command>, you can specify a new virtual root directory for the load process. That means if you have dump files for three repositories, say <filename moreinfo=\"none\">calc-dumpfile</filename>, <filename moreinfo=\"none\">cal-dumpfile</filename>, and <filename moreinfo=\"none\">ss-dumpfile</filename>, you can first create a new repository to hold them all:"
+msgstr "转储还可以用来将几个独立的版本库合并为一个版本库。使用<command moreinfo=\"none\">svnadmin load</command>的<option>--parent-dir</option>选项，可以在装载的时候指定根目录。也就是说，如果有三个不同版本库的转储文件，比如<filename moreinfo=\"none\">calc-dumpfile</filename>，<filename moreinfo=\"none\">cal-dumpfile</filename>，和<filename moreinfo=\"none\">ss-dumpfile</filename>，可以在一个新的版本库中保存所有三个转储文件中的数据："
+
+#: build/en/book.xml:11650(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin create /path/to/projects\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svnadmin create /path/to/projects\n"
+"$\n"
+
+#: build/en/book.xml:11655(para)
+msgid "Then, make new directories in the repository which will encapsulate the contents of each of the three previous repositories:"
+msgstr "然后在版本库中创建三个目录分别保存来自三个不同版本库的数据："
+
+#: build/en/book.xml:11659(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn mkdir -m \"Initial project roots\" \\\n"
+"      file:///path/to/projects/calc \\\n"
+"      file:///path/to/projects/calendar \\\n"
+"      file:///path/to/projects/spreadsheet\n"
+"Committed revision 1.\n"
+"$ \n"
+msgstr ""
+"\n"
+"$ svn mkdir -m \"Initial project roots\" \\\n"
+"      file:///path/to/projects/calc \\\n"
+"      file:///path/to/projects/calendar \\\n"
+"      file:///path/to/projects/spreadsheet\n"
+"Committed revision 1.\n"
+"$ \n"
+
+#: build/en/book.xml:11668(para)
+msgid "Lastly, load the individual dump files into their respective locations in the new repository:"
+msgstr "最后，将转储文件分别装载到各自的目录中："
+
+#: build/en/book.xml:11671(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin load /path/to/projects --parent-dir calc &lt; calc-dumpfile\n"
+"…\n"
+"$ svnadmin load /path/to/projects --parent-dir calendar &lt; cal-dumpfile\n"
+"…\n"
+"$ svnadmin load /path/to/projects --parent-dir spreadsheet &lt; ss-dumpfile\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svnadmin load /path/to/projects --parent-dir calc &lt; calc-dumpfile\n"
+"…\n"
+"$ svnadmin load /path/to/projects --parent-dir calendar &lt; cal-dumpfile\n"
+"…\n"
+"$ svnadmin load /path/to/projects --parent-dir spreadsheet &lt; ss-dumpfile\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:11681(para)
+#, fuzzy
+msgid "We'll mention one final way to use the Subversion repository dump format—conversion from a different storage mechanism or version control system altogether. Because the dump file format is, for the most part, human-readable, it should be relatively easy to describe generic sets of changes—each of which should be treated as a new revision—using this file format. In fact, the <command moreinfo=\"none\">cvs2svn</command> utility (see <xref linkend=\"svn.forcvs.convert\"/>) uses the dump format to represent the contents of a CVS repository so that those contents can be copied into a Subversion repository."
+msgstr "我们再介绍一下Subversion版本库转储数据的最后一种用途——在不同的存储机制或版本控制系统之间转换。因为转储数据的格式的大部分是可以阅读的，<footnote><placeholder-1/></footnote>所以使用这种格式描述变更集（每个变更集对应一个新的修订版本）会相对容易一些。事实上，<command moreinfo=\"none\">cvs2svn</command>工具（参见 <xref linkend=\"svn.forcvs.convert\"/>）正是将CVS版本库的内容转换为转储数据格式，如此才能将CVS版本库的数据导入Subversion版本库之中。"
+
+#: build/en/book.xml:11696(title)
+#, fuzzy
+msgid "Filtering Repository History"
+msgstr "比较版本库与版本库"
+
+#: build/en/book.xml:11698(para)
+#, fuzzy
+msgid "Since Subversion stores your versioned history using, at the very least, binary differencing algorithms and data compression (optionally in a completely opaque database system), attempting manual tweaks is unwise, if not quite difficult, and at any rate strongly discouraged. And once data has been stored in your repository, Subversion generally doesn't provide an easy way to remove that data. <placeholder-1/> But inevitably, there will be times when you would like to manipulate the history of your repository. You might need to strip out all instances of a file that was accidentally added to the repository (and shouldn't be there for whatever reason). <placeholder-2/> Or, perhaps you have multiple projects sharing a single repository, and you decide to split them up into their own repositories. To accomplish tasks like this, administrators need a more manageable and malleable representation of the data in their repositories—the Subversion repository dump format."
+msgstr "因为Subversion使用底层的数据库储存各类数据，手工调整是不明智的，即使这样做并不困难。何况，一旦你的数据存进了版本库，通常很难再将它们从版本库中删除。<footnote><placeholder-1/></footnote>但是不可避免的，总会有些时候你需要处理版本库的历史数据。你也许想把一个不应该出现的文件从版本库中彻底清除。或者，你曾经用一个版本库管理多个工程，现在又想把它们分开。要完成这样的工作，管理员们需要更易于管理和扩展的方法表示版本库中的数据，Subversion版本库转储文件格式就是一个很好的选择。"
+
+#: build/en/book.xml:11706(para)
+msgid "That's rather the reason you use version control at all, right?"
+msgstr ""
+
+#: build/en/book.xml:1171(para)
+msgid "When a client reads data from the repository, it normally sees only the latest version of the filesystem tree. But the client also has the ability to view <emphasis>previous</emphasis> states of the filesystem. For example, a client can ask historical questions like, <quote>What did this directory contain last Wednesday?</quote> or <quote>Who was the last person to change this file, and what changes did he make?</quote> These are the sorts of questions that are at the heart of any <firstterm>version control system</firstterm>: systems that are designed to record and track changes to data over time."
+msgstr "一般情况下，客户端从版本库中获取的数据是文件系统树中的最新数据。但是客户端也具备查看文件系统树<emphasis>以前</emphasis>任何一个状态的能力。举个例子，客户端有时会对一些历史性问题感兴趣，比如<quote>上星期三时的目录结构是什么样的？</quote>或者<quote>谁最后一个修改了这个文件，都修改了什么？</quote>为了回答类似的问题，<firstterm>版本控制系统</firstterm>产生了。它的主要设计目的即是记录和跟踪数据的变化。"
+
+#: build/en/book.xml:11715(para)
+msgid "Conscious, cautious removal of certain bits of versioned data is actually supported by real use-cases. That's why an <quote>obliterate</quote> feature has been one of the most highly requested Subversion features, and one which the Subversion developers hope to soon provide."
+msgstr ""
+
+#: build/en/book.xml:11729(para)
+#, fuzzy
+msgid "As we described in <xref linkend=\"svn.reposadmin.maint.migrate\"/>, the Subversion repository dump format is a human-readable representation of the changes that you've made to your versioned data over time. You use the <command moreinfo=\"none\">svnadmin dump</command> command to generate the dump data, and <command moreinfo=\"none\">svnadmin load</command> to populate a new repository with it (see <xref linkend=\"svn.reposadmin.maint.migrate\"/>). The great thing about the human-readability aspect of the dump format is that, if you aren't careless about it, you can manually inspect and modify it. Of course, the downside is that if you have three years' worth of repository activity encapsulated in what is likely to be a very large dump file, it could take you a long, long time to manually inspect and modify it."
+msgstr "Subversion版本库转储文件记录了所有版本数据的变更信息，而且以易于阅读的格式保存。可以使用<command moreinfo=\"none\">svnadmin dump</command>命令生成转储文件，然后用<command moreinfo=\"none\">svnadmin load</command>命令生成一个新的版本库。（参见 <xref linkend=\"svn.reposadmin.maint.migrate\"/>）。转储文件易于阅读意味着你可以小心翼翼的查看和修改它。当然，问题是如果你有一个运行了两年的版本库，那么生成的转储文件会很庞大，阅读和手工修改起来都会花费很多时间。"
+
+#: build/en/book.xml:11744(para)
+#, fuzzy
+msgid "That's where <command moreinfo=\"none\">svndumpfilter</command> becomes useful. This program acts as path-based filter for repository dump streams. Simply give it either a list of paths you wish to keep, or a list of paths you wish to not keep, then pipe your repository dump data through this filter. The result will be a modified stream of dump data that contains only the versioned paths you (explicitly or implicitly) requested."
+msgstr "虽然在管理员的日常工作中并不会经常使用，不过<command moreinfo=\"none\">svndumpfilter</command>可以对特定的路径进行过滤。这是一个独特而很有意义的用法，可以帮助你快速方便的修改转储的数据。使用时，只需提供一个你想要保留的（或者不想保留的）路径列表，然后把你的版本库转储文件送进这个过滤器。最后你就可以得到一个仅包含你想保留的路径的转储数据流。"
+
+#: build/en/book.xml:11753(para)
+msgid "Let's look a realistic example of how you might use this program. We discuss elsewhere (see <xref linkend=\"svn.reposadmin.projects.chooselayout\"/>) the process of deciding how to choose a layout for the data in your repositories—using one repository per project or combining them, arranging stuff within your repository, and so on. But sometimes after new revisions start flying in, you rethink your layout and would like to make some changes. A common change is the decision to move multiple projects which are sharing a single repository into separate repositories for each project."
+msgstr "现在我来演示如何使用这个命令。我们会在其它章节（参见 <xref linkend=\"svn.reposadmin.projects.chooselayout\"/>）讨论关于如何选择设定版本库布局的问题，比如应该使用一个版本库管理多个项目还是使用一个版本库管理一个项目，或者如何在版本库中安排数据等等。不过，有些时候，即使在项目已经展开以后，你还是希望对版本库的布局做一些调整。最常见的情况是，把原来存放在同一个版本库中的几个项目分开，各自成家。"
+
+#: build/en/book.xml:11764(para)
+msgid "Our imaginary repository contains three projects: <literal moreinfo=\"none\">calc</literal>, <literal moreinfo=\"none\">calendar</literal>, and <literal moreinfo=\"none\">spreadsheet</literal>. They have been living side-by-side in a layout like this:"
+msgstr "假设有一个包含三个项目的版本库： <literal moreinfo=\"none\">calc</literal>，<literal moreinfo=\"none\">calendar</literal>，和 <literal moreinfo=\"none\">spreadsheet</literal>。它们在版本库中的布局如下："
+
+#: build/en/book.xml:11769(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/\n"
+"   calc/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+"   calendar/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+"   spreadsheet/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+msgstr ""
+"\n"
+"/\n"
+"   calc/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+"   calendar/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+"   spreadsheet/\n"
+"      trunk/\n"
+"      branches/\n"
+"      tags/\n"
+
+#: build/en/book.xml:11785(para)
+msgid "To get these three projects into their own repositories, we first dump the whole repository:"
+msgstr "现在要把这三个项目转移到三个独立的版本库中。首先，转储整个版本库："
+
+#: build/en/book.xml:11788(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin dump /path/to/repos &gt; repos-dumpfile\n"
+"* Dumped revision 0.\n"
+"* Dumped revision 1.\n"
+"* Dumped revision 2.\n"
+"* Dumped revision 3.\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svnadmin dump /path/to/repos &gt; repos-dumpfile\n"
+"* Dumped revision 0.\n"
+"* Dumped revision 1.\n"
+"* Dumped revision 2.\n"
+"* Dumped revision 3.\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:11798(para)
+msgid "Next, run that dump file through the filter, each time including only one of our top-level directories, and resulting in three new dump files:"
+msgstr "然后，将转储文件三次送入过滤器，每次仅保留一个顶级目录，就可以得到三个转储文件："
+
+#: build/en/book.xml:118(para)
+msgid "What I love about this book is that it grew out of just such a process, and shows it on every page. It is the direct result of the authors' encounters with users. It began with Ben Collins-Sussman's observation that people were asking the same basic questions over and over on the Subversion mailing lists: What are the standard workflows to use with Subversion? Do branches and tags work the same way as in other version control systems? How can I find out who made a particular change?"
+msgstr "我很喜欢这本书，因为它正是按照这种精神建立起来的，这种精神体现在本书的每一页中。这是作者与用户直接交流的结果。而这一切是源于Ben Collins-Sussman's对于Subversion常见问题邮件列表的研究。他发现人们总是在邮件列表中重复询问一些基本问题：使用subversion的一般程序是怎样的？分支与标签同其它版本控制系统的工作方式一样吗？我怎样知道某一处修改是谁做的？"
+
+#: build/en/book.xml:11802(screen)
+#, fuzzy, no-wrap
+msgid ""
+"\n"
+"$ svndumpfilter include calc &lt; repos-dumpfile &gt; calc-dumpfile\n"
+"…\n"
+"$ svndumpfilter include calendar &lt; repos-dumpfile &gt; cal-dumpfile\n"
+"…\n"
+"$ svndumpfilter include spreadsheet &lt; repos-dumpfile &gt; ss-dumpfile\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svndumpfilter include calc &lt; repos-dumpfile &gt; calc-dumpfile\n"
+"…\n"
+"$ svndumpfilter include calendar &lt; repos-dumpfile &gt; cal-dumpfile\n"
+"…\n"
+"$ svndumpfilter include spreadsheet &lt; repos-dumpfile &gt; ss-dumpfile\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:11812(para)
+msgid "At this point, you have to make a decision. Each of your dump files will create a valid repository, but will preserve the paths exactly as they were in the original repository. This means that even though you would have a repository solely for your <literal moreinfo=\"none\">calc</literal> project, that repository would still have a top-level directory named <filename moreinfo=\"none\">calc</filename>. If you want your <filename moreinfo=\"none\">trunk</filename>, <filename moreinfo=\"none\">tags</filename>, and <filename moreinfo=\"none\">branches</filename> directories to live in the root of your repository, you might wish to edit your dump files, tweaking the <literal moreinfo=\"none\">Node-path</literal> and <literal moreinfo=\"none\">Node-copyfrom-path</literal> headers to no longer have that first <filename moreinfo=\"none\">calc/</filename> path component. Also, you'll want to remove the section of dump data that creates the <filename moreinfo=\"none\">calc</filename> directory. It will look something like:"
+msgstr "现在你必须要作出一个决定了。这三个转储文件中，每个都可以用来创建一个可用的版本库，不过它们保留了原版本库的精确路径结构。也就是说，虽然项目<literal moreinfo=\"none\">calc</literal>现在独占了一个版本库，但版本库中还保留着名为<filename moreinfo=\"none\">calc</filename>的顶级目录。如果希望<filename moreinfo=\"none\">trunk</filename>、<filename moreinfo=\"none\">tags</filename>和<filename moreinfo=\"none\">branches</filename>这三个目录直接位于版本库的根路径下，你可能需要编辑转储文件，调整<literal moreinfo=\"none\">Node-path</literal>和<literal moreinfo=\"none\">Copyfrom-path</literal>头参数，将路径<filename moreinfo=\"none\">calc/</filename>删除。同时，你还要删除转储数据中创建<filename moreinfo=\"none\">calc</filename>目录的部分。一般来说，就是如下的一些内容："
+
+#: build/en/book.xml:11829(screen)
+#, fuzzy, no-wrap
+msgid ""
+"\n"
+"Node-path: calc\n"
+"Node-action: add\n"
+"Node-kind: dir\n"
+"Content-length: 0\n"
+"  \n"
+msgstr ""
+"\n"
+"Node-path: calc\n"
+"Node-action: add\n"
+"Node-kind: dir\n"
+"Content-length: 0\n"
+"\n"
+
+#: build/en/book.xml:11838(para)
+#, fuzzy
+msgid "If you do plan on manually editing the dump file to remove a top-level directory, make sure that your editor is not set to automatically convert end-lines to the native format (e.g. \\r\\n to \\n) as the content will then not agree with the metadata. This will render the dump file useless."
+msgstr "如果你打算通过手工编辑转储文件来移除一个顶级目录，注意不要让你的编辑器将换行符转换为本地格式（比如将\\r\\n转换为\\n）。否则文件的内容就与所需的格式不相符，这个转储文件也就失效了。"
+
+#: build/en/book.xml:11846(para)
+msgid "All that remains now is to create your three new repositories, and load each dump file into the right repository:"
+msgstr "剩下的工作就是创建三个新的版本库，然后将三个转储文件分别导入："
+
+#: build/en/book.xml:11850(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin create calc; svnadmin load calc &lt; calc-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction, based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : button.c ... done.\n"
+"…\n"
+"$ svnadmin create calendar; svnadmin load calendar &lt; cal-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction, based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : cal.c ... done.\n"
+"…\n"
+"$ svnadmin create spreadsheet; svnadmin load spreadsheet &lt; ss-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction, based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : ss.c ... done.\n"
+"…\n"
+"$\n"
+msgstr ""
+"\n"
+"$ svnadmin create calc; svnadmin load calc &lt; calc-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction， based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : button.c ... done.\n"
+"…\n"
+"$ svnadmin create calendar; svnadmin load calendar &lt; cal-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction， based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : cal.c ... done.\n"
+"…\n"
+"$ svnadmin create spreadsheet; svnadmin load spreadsheet &lt; ss-dumpfile\n"
+"&lt;&lt;&lt; Started new transaction， based on original revision 1\n"
+"     * adding path : Makefile ... done.\n"
+"     * adding path : ss.c ... done.\n"
+"…\n"
+"$\n"
+
+#: build/en/book.xml:11869(para)
+msgid "Both of <command moreinfo=\"none\">svndumpfilter</command>'s subcommands accept options for deciding how to deal with <quote>empty</quote> revisions. If a given revision contained only changes to paths that were filtered out, that now-empty revision could be considered uninteresting or even unwanted. So to give the user control over what to do with those revisions, <command moreinfo=\"none\">svndumpfilter</command> provides the following command-line options:"
+msgstr "<command moreinfo=\"none\">svndumpfilter</command>的两个子命令都可以通过选项设定如何处理<quote>空</quote>修订版本。如果某个指定的修订版本仅包含路径的更改，过滤器就会将它删除，因为当前为空的修订版本通常是无用的甚至是让人讨厌的。为了让用户有选择的处理这些修订版本，<command moreinfo=\"none\">svndumpfilter</command>提供了以下命令行选项："
+
+#: build/en/book.xml:11880(option)
+msgid "--drop-empty-revs"
+msgstr "--drop-empty-revs"
+
+#: build/en/book.xml:11882(para)
+msgid "Do not generate empty revisions at all—just omit them."
+msgstr "不生成任何空修订版本，忽略它们。"
+
+#: build/en/book.xml:11887(option)
+msgid "--renumber-revs"
+msgstr "--renumber-revs"
+
+#: build/en/book.xml:11889(para)
+msgid "If empty revisions are dropped (using the <option>--drop-empty-revs</option> option), change the revision numbers of the remaining revisions so that there are no gaps in the numeric sequence."
+msgstr "如果空修订版本被剔除（通过使用<option>--drop-empty-revs</option>选项），依次修改其它修订版本的编号，确保编号序列是连续的。"
+
+#: build/en/book.xml:1189(title)
+msgid "Versioning Models"
+msgstr "版本模型"
+
+#: build/en/book.xml:11896(option)
+msgid "--preserve-revprops"
+msgstr "--preserve-revprops"
+
+#: build/en/book.xml:11898(para)
+msgid "If empty revisions are not dropped, preserve the revision properties (log message, author, date, custom properties, etc.) for those empty revisions. Otherwise, empty revisions will only contain the original datestamp, and a generated log message that indicates that this revision was emptied by <command moreinfo=\"none\">svndumpfilter</command>."
+msgstr "如果空修订版本被保留，保持这些空修订版本的属性（日志信息，作者，日期，自定义属性，等等）。如果不设定这个选项，空修订版本将仅保留初始时间戳，以及一个自动生成的日志信息，表明此修订版本由<command moreinfo=\"none\">svndumpfilter</command>处理过。"
+
+#: build/en/book.xml:11909(para)
+msgid "While <command moreinfo=\"none\">svndumpfilter</command> can be very useful, and a huge timesaver, there are unfortunately a couple of gotchas. First, this utility is overly sensitive to path semantics. Pay attention to whether paths in your dump file are specified with or without leading slashes. You'll want to look at the <literal moreinfo=\"none\">Node-path</literal> and <literal moreinfo=\"none\">Node-copyfrom-path</literal> headers."
+msgstr "尽管<command moreinfo=\"none\">svndumpfilter</command>十分有用，能节省大量的时间，但它却是把不折不扣的双刃剑。首先，这个工具对路径语义极为敏感。仔细检查转储文件中的路径是不是以斜线开头。也许<literal moreinfo=\"none\">Node-path</literal>和<literal moreinfo=\"none\">Copyfrom-path</literal>这两个头参数对你有些帮助。"
+
+#: build/en/book.xml:1191(para)
+msgid "The core mission of a version control system is to enable collaborative editing and sharing of data. But different systems use different strategies to achieve this. It's important to understand these different strategies for a couple of reasons. First, it will help you compare and contrast existing version control systems, in case you encounter other systems similar to Subversion. Beyond that, it will also help you make more effective use of Subversion, since Subversion itself supports a couple of different ways of working."
+msgstr ""
+
+#: build/en/book.xml:11917(screen)
+#, no-wrap
+msgid ""
+"\n"
+"…\n"
+"Node-path: spreadsheet/Makefile\n"
+"…\n"
+msgstr ""
+"\n"
+"…\n"
+"Node-path: spreadsheet/Makefile\n"
+"…\n"
+
+#: build/en/book.xml:11923(para)
+#, fuzzy
+msgid "If the paths have leading slashes, you should include leading slashes in the paths you pass to <command moreinfo=\"none\">svndumpfilter include</command> and <command moreinfo=\"none\">svndumpfilter exclude</command> (and if they don't, you shouldn't). Further, if your dump file has an inconsistent usage of leading slashes for some reason, <placeholder-1/> you should probably normalize those paths so they all have, or lack, leading slashes."
+msgstr "如果这些路径以斜线开头，那么你传递给<command moreinfo=\"none\">svndumpfilter include</command>和<command moreinfo=\"none\">svndumpfilter exclude</command>的路径也必须以斜线开头（反之亦然）。如果因为某些原因转储文件中的路径没有统一使用或不使用斜线开头，<footnote><placeholder-1/></footnote>也许需要修正这些路径，统一使用斜线开头或不使用斜线开头。"
+
+#: build/en/book.xml:11930(para)
+msgid "While <command moreinfo=\"none\">svnadmin dump</command> has a consistent leading slash policy—to not include them—other programs which generate dump data might not be so consistent."
+msgstr "尽管<command moreinfo=\"none\">svnadmin dump</command>对是否以斜线作为路径的开头有统一的规定——这个规定就是不以斜线作为路径的开头——其它生成转储文件的程序不一定会遵守这个规定。"
+
+#: build/en/book.xml:11938(para)
+msgid "Also, copied paths can give you some trouble. Subversion supports copy operations in the repository, where a new path is created by copying some already existing path. It is possible that at some point in the lifetime of your repository, you might have copied a file or directory from some location that <command moreinfo=\"none\">svndumpfilter</command> is excluding, to a location that it is including. In order to make the dump data self-sufficient, <command moreinfo=\"none\">svndumpfilter</command> needs to still show the addition of the new path—including the contents of any files created by the copy—and not represent that addition as a copy from a source that won't exist in your filtered dump data stream. But because the Subversion repository dump format only shows what was changed in each revision, the contents of the copy source might not be readily available. If you suspect that you have any copies of this sort in your repository, you might want to rethink your set of included/excluded paths."
+msgstr "此外，复制操作生成的路径也会带来麻烦。Subversion支持在版本库中进行复制操作，也就是复制一个存在的路径，生成一个新的路径。问题是，<command moreinfo=\"none\">svndumpfilter</command>保留的某个文件或目录可能是由某个<command moreinfo=\"none\">svndumpfilter</command>排除的文件或目录复制而来的。也就是说，为了确保转储数据的完整性，<command moreinfo=\"none\">svndumpfilter</command>需要切断这些复制自被排除路径的文件与源文件的关系，还要将这些文件的内容以新建的方式添加到转储数据中。但是由于Subversion版本库转储文件格式中仅包含了修订版本的更改信息，因此源文件的内容基本上无法获得。如果你不能确定版本库中是否存在类似的情况，最好重新考虑一下到底保留/排除哪些路径。"
+
+#: build/en/book.xml:11957(para)
+msgid "Finally, <command moreinfo=\"none\">svndumpfilter</command> takes path filtering quite literally. If you are trying to copy the history of a project rooted at <filename moreinfo=\"none\">trunk/my-project</filename> and move it into a repository of its own, you would, of course, use the <command moreinfo=\"none\">svndumpfilter include</command> command to keep all the changes in and under <filename moreinfo=\"none\">trunk/my-project</filename>. But the resulting dump file makes no assumptions about the repository into which you plan to load this data. Specifically, the dump data might begin with the revision which added the <filename moreinfo=\"none\">trunk/my-project</filename> directory, but it will <emphasis>not</emphasis> contain directives which would create the <filename moreinfo=\"none\">trunk</filename> directory itself (because <filename moreinfo=\"none\">trunk</filename> doesn't match the include filter). You'll need to make sure that any directories which the new dump stream expect to exist actually do exist in the target repository before trying to load the stream into that repository."
+msgstr ""
+
+#: build/en/book.xml:11981(title)
+#, fuzzy
+msgid "Repository Replication"
+msgstr "版本库的恢复"
+
+#: build/en/book.xml:11983(para)
+msgid "There are several scenarios in which it is quite handy to have a Subversion repository whose version history is exactly the same as some other repository's. Perhaps the most obvious one is the maintenance of a simple backup repository, used when the primary repository has become inaccessible due to a hardware failure, network outage, or other such annoyance. Other scenarios include deploying mirror repositories to distribute heavy Subversion load across multiple servers, use as a soft-upgrade mechanism, and so on."
+msgstr ""
+
+#: build/en/book.xml:11993(para)
+msgid "As of version 1.4, Subversion provides a program for managing scenarios like these—<command moreinfo=\"none\">svnsync</command>. <command moreinfo=\"none\">svnsync</command> works by essentially asking the Subversion server to <quote>replay</quote> revisions, one at a time. It then uses that revision information to mimic a commit of the same to another repository. Neither repository needs to be locally accessible to machine on which <command moreinfo=\"none\">svnsync</command> is running—its parameters are repository URLs, and it does all its work through Subversion's repository access (RA) interfaces. All it requires is read access to the source repository and read/write access to the destination repository."
+msgstr ""
+
+#. don't seem to render it.
+#: build/en/book.xml:12(subtitle)
+#, fuzzy
+msgid "(Compiled from r2789)"
+msgstr "(本书由 r2788 版本构建)"
+
+#: build/en/book.xml:12008(para)
+msgid "When using <command moreinfo=\"none\">svnsync</command> against a remote source repository, the Subversion server for that repository must be running Subversion version 1.4 or better."
+msgstr ""
+
+#: build/en/book.xml:12013(para)
+msgid "Assuming you already have a source repository that you'd like to mirror, the next thing you need is an empty target repository which will actually serve as that mirror. This target repository can use either of the available filesystem data-store back-ends (see <xref linkend=\"svn.reposadmin.basics.backends\"/>), but it must not yet have any version history in it. The protocol via which <command moreinfo=\"none\">svnsync</command> communicates revision information is highly sensitive to mismatches between the versioned histories contained in the source and target repositories. For this reason, while <command moreinfo=\"none\">svnsync</command> cannot <emphasis>demand</emphasis> that the target repository be read-only, <placeholder-1/> allowing the revision history in the target repository to change by any mechanism other than the mirroring process is a recipe for disaster."
+msgstr ""
+
+#: build/en/book.xml:12026(para)
+msgid "In fact, it can't truly be read-only, or <command moreinfo=\"none\">svnsync</command> itself would have a tough time copying revision history into it."
+msgstr ""
+
+#: build/en/book.xml:1203(title)
+msgid "The Problem of File-Sharing"
+msgstr "文件共享的问题"
+
+#: build/en/book.xml:12035(para)
+msgid "Do <emphasis>not</emphasis> modify a mirror repository in such a way as to cause its version history to deviate from that of the repository it mirrors. The only commits and revision property modifications that ever occur on that mirror repository should be those performed by the <command moreinfo=\"none\">svnsync</command> tool."
+msgstr ""
+
+#: build/en/book.xml:12043(para)
+msgid "Another requirement of the target repository is that the <command moreinfo=\"none\">svnsync</command> process be allowed to modify certain revision properties. <command moreinfo=\"none\">svnsync</command> stores its bookkeeping information in special revision properties on revision 0 of the destination repository. Because <command moreinfo=\"none\">svnsync</command> works within the framework of that repository's hook system, the default state of the repository (which is to disallow revision property changes; see <xref linkend=\"svn.ref.reposhooks.pre-revprop-change\"/>) is insufficient. You'll need to explicitly implement the pre-revprop-change hook, and your script must allow <command moreinfo=\"none\">svnsync</command> to set and change its special properties. With those provisions in place, you are ready to start mirroring repository revisions."
+msgstr ""
+
+#: build/en/book.xml:1205(para)
+msgid "All version control systems have to solve the same fundamental problem: how will the system allow users to share information, but prevent them from accidentally stepping on each other's feet? It's all too easy for users to accidentally overwrite each other's changes in the repository."
+msgstr "所有的版本控制系统都需要解决这样一个基础问题：怎样让系统允许用户共享信息，而不会让他们因意外而互相干扰？版本库里意外覆盖别人的更改非常的容易。"
+
+#: build/en/book.xml:12059(para)
+msgid "It's a good idea to implement authorization measures which allow your repository replication process to perform its tasks while preventing other users from modifying the contents of your mirror repository at all."
+msgstr ""
+
+#: build/en/book.xml:12065(para)
+msgid "Let's walk through the use of <command moreinfo=\"none\">svnsync</command> in a somewhat typical mirroring scenario. We'll pepper this discourse with practical recommendations which you are free to disregard if they aren't required by or suitable for your environment."
+msgstr ""
+
+#: build/en/book.xml:12071(para)
+msgid "As a service to the fine developers of our favorite version control system, we will be mirroring the public Subversion source code repository and exposing that mirror publicly on the Internet, hosted on a different machine than the one on which the original Subversion source code repository lives. This remote host has a global configuration which permits anonymous users to read the contents of repositories on the host, but requires users to authenticate in order to modify those repositories. (Please forgive us for glossing over the details of Subversion server configuration for the moment—those are covered thoroughly in <xref linkend=\"svn.serverconfig\"/>.) And for no other reason than that it makes for a more interesting example, we'll be driving the replication process from a third machine, the one which we currently find ourselves using."
+msgstr ""
+
+#: build/en/book.xml:12086(para)
+msgid "First, we'll create the repository which will be our mirror. This and the next couple of steps do require shell access to the machine on which the mirror repository will live. Once the repository is all configured, though, we shouldn't need to touch it directly again."
+msgstr ""
+
+#: build/en/book.xml:12092(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ ssh admin@svn.example.com \\\n"
+"      \"svnadmin create /path/to/repositories/svn-mirror\"\n"
+"admin@svn.example.com's password: ********\n"
+"$\n"
+msgstr ""
+
+#: build/en/book.xml:12099(para)
+msgid "At this point, we have our repository, and due to our server's configuration, that repository is now <quote>live</quote> on the Internet. Now, because we don't want anything modifying the repository except our replication process, we need a way to distinguish that process from other would-be committers. To do so, we use a dedicated username for our process. Only commits and revision property modifications performed by the special username <literal moreinfo=\"none\">syncuser</literal> will be allowed."
+msgstr ""
+
+#: build/en/book.xml:12109(para)
+msgid "We'll use the repository's hook system both to allow the replication process to do what it needs to do, and to enforce that only it is doing those things. We accomplish this by implementing two of the repository event hooks—pre-revprop-change and start-commit. Our <filename moreinfo=\"none\">pre-revprop-change</filename> hook script is found in <xref linkend=\"svn.reposadmin.maint.replication.pre-revprop-change\"/>, and basically verifies that the user attempting the property changes is our <literal moreinfo=\"none\">syncuser</literal> user. If so, the change is allowed; otherwise, it is denied."
+msgstr ""
+
+#: build/en/book.xml:1212(para)
+msgid "Consider the scenario shown in <xref linkend=\"svn.basic.vsn-models.problem-sharing.dia-1\"/>. Suppose we have two co-workers, Harry and Sally. They each decide to edit the same repository file at the same time. If Harry saves his changes to the repository first, then it's possible that (a few moments later) Sally could accidentally overwrite them with her own new version of the file. While Harry's version of the file won't be lost forever (because the system remembers every change), any changes Harry made <emphasis>won't</emphasis> be present in Sally's newer version of the file, because she never saw Harry's changes to begin with. Harry's work is still effectively lost—or at least missing from the latest version of the file—and probably by accident. This is definitely a situation we want to avoid!"
+msgstr "考虑<xref linkend=\"svn.basic.vsn-models.problem-sharing.dia-1\"/>的情景，我们有两个共同工作者，Harry和Sally，他们想同时编辑版本库里的同一个文件，如果首先Harry保存它的修改，过了一会，Sally可能凑巧用自己的版本覆盖了这些文件，Harry的更改不会永远消失（因为系统记录了每次修改），Harry所有的修改<emphasis>不会</emphasis>出现在Sally的文件中，所以Harry的工作还是丢失了—至少是从最新的版本中丢失了—而且是意外的，这就是我们要明确避免的情况！"
+
+#: build/en/book.xml:12120(title)
+msgid "Mirror repository's pre-revprop-change hook script"
+msgstr ""
+
+#: build/en/book.xml:12122(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/bin/sh \n"
+"\n"
+"USER=\"$3\"\n"
+"\n"
+"if [ \"$USER\" = \"syncuser\" ]; then exit 0; fi\n"
+"\n"
+"echo \"Only the syncuser user may change revision properties\" &gt;&amp;2\n"
+"exit 1\n"
+msgstr ""
+
+#: build/en/book.xml:12134(para)
+msgid "That covers revision property changes. Now we need to ensure that only the <literal moreinfo=\"none\">syncuser</literal> user is permitted to commit new revisions to the repository. We do this using a <filename moreinfo=\"none\">start-commit</filename> hook scripts like the one in <xref linkend=\"svn.reposadmin.maint.replication.start-commit\"/>."
+msgstr ""
+
+#: build/en/book.xml:12141(title)
+msgid "Mirror repository's start-commit hook script"
+msgstr ""
+
+#: build/en/book.xml:12143(programlisting)
+#, no-wrap
+msgid ""
+"\n"
+"#!/bin/sh \n"
+"\n"
+"USER=\"$2\"\n"
+"\n"
+"if [ \"$USER\" = \"syncuser\" ]; then exit 0; fi\n"
+"\n"
+"echo \"Only the syncuser user may commit new revisions\" &gt;&amp;2\n"
+"exit 1\n"
+msgstr ""
+
+#: build/en/book.xml:12155(para)
+msgid "After installing our hook scripts and ensuring that they are executable by the Subversion server, we're finished with the setup of the mirror repository. Now, we get to actually do the mirroring."
+msgstr ""
+
+#: build/en/book.xml:12160(para)
+msgid "The first thing we need to do with <command moreinfo=\"none\">svnsync</command> is to register in our target repository the fact that it will be a mirror of the source repository. We do this using the <command moreinfo=\"none\">svnsync initialize</command> subcommand. Note that the various <command moreinfo=\"none\">svnsync</command> subcommands provide several of the same authentication-related options that <command moreinfo=\"none\">svn</command> does: <option>--username</option>, <option>--password</option>, <option>--non-interactive</option>, <option>--config-dir</option>, and <option>--no-auth-cache</option>."
+msgstr ""
+
+#: build/en/book.xml:12173(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnsync help init\n"
+"initialize (init): usage: svnsync initialize DEST_URL SOURCE_URL\n"
+"\n"
+"Initialize a destination repository for synchronization from\n"
+"another repository.\n"
+"\n"
+"The destination URL must point to the root of a repository with\n"
+"no committed revisions.  The destination repository must allow\n"
+"revision property changes.\n"
+"\n"
+"You should not commit to, or make revision property changes in,\n"
+"the destination repository by any method other than 'svnsync'.\n"
+"In other words, the destination repository should be a read-only\n"
+"mirror of the source repository.\n"
+"\n"
+"Valid options:\n"
+"  --non-interactive        : do no interactive prompting\n"
+"  --no-auth-cache          : do not cache authentication tokens\n"
+"  --username arg           : specify a username ARG\n"
+"  --password arg           : specify a password ARG\n"
+"  --config-dir arg         : read user configuration files from directory ARG\n"
+"\n"
+"$ svnsync initialize http://svn.example.com/svn-mirror \\\n"
+"                     http://svn.collab.net/repos/svn \\\n"
+"                     --username syncuser --password syncpass\n"
+"Copied properties for revision 0.\n"
+"$\n"
+msgstr ""
+
+#: build/en/book.xml:12203(para)
+msgid "Our target repository will now remember that it is a mirror of the public Subversion source code repository. Notice that we provided a username and password as arguments to <command moreinfo=\"none\">svnsync</command>—that was required by the pre-revprop-change hook on our mirror repository."
+msgstr ""
+
+#: build/en/book.xml:12210(para)
+msgid "The URLs provided to <command moreinfo=\"none\">svnsync</command> must point to the root directories of the target and source repositories, respectively. The tool does not handle mirroring of repository subtrees."
+msgstr ""
+
+#: build/en/book.xml:12217(para)
+msgid "The initial release of <command moreinfo=\"none\">svnsync</command> (in Subversion 1.4) has a small shortcoming—the values given to the <option>--username</option> and <option>--password</option> command-line options get used for authentication against both the source and destination repositories. Obviously, there's no guarantee that the synchronizing user's credentials are the same in both places. In the event that they are not the same, users trying to run <command moreinfo=\"none\">svnsync</command> in non-interactive mode (with the <option>--non-interactive</option> option) might experience problems."
+msgstr ""
+
+#: build/en/book.xml:12230(para)
+msgid "And now comes the fun part. With a single subcommand, we can tell <command moreinfo=\"none\">svnsync</command> to copy all the as-yet-unmirrored revisions from the source repository to the target. <placeholder-1/> The <command moreinfo=\"none\">svnsync synchronize</command> subcommand will peek into the special revision properties previously stored on the target repository, and determine what repository it is mirroring and that the most recently mirrored revision was revision 0. Then it will query the source repository and determine what the latest revision in that repository is. Finally, it asks the source repository's server to start replaying all the revisions between 0 and that latest revision. As <command moreinfo=\"none\">svnsync</command> get the resulting response from the source repository's server, it begins forwarding those revisions to the target repository's server as new commits."
+msgstr ""
+
+#: build/en/book.xml:12235(para)
+msgid "Be forewarned that while it will take only a few seconds for the average reader to parse this paragraph and the sample output which follows it, the actual time required to complete such a mirroring operation is, shall we say, quite a bit longer."
+msgstr ""
+
+#: build/en/book.xml:12254(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnsync help synchronize\n"
+"synchronize (sync): usage: svnsync synchronize DEST_URL\n"
+"\n"
+"Transfer all pending revisions from source to destination.\n"
+"…\n"
+"$ svnsync synchronize http://svn.example.com/svn-mirror \\\n"
+"                      --username syncuser --password syncpass\n"
+"Committed revision 1.\n"
+"Copied properties for revision 1.\n"
+"Committed revision 2.\n"
+"Copied properties for revision 2.\n"
+"Committed revision 3.\n"
+"Copied properties for revision 3.\n"
+"…\n"
+"Committed revision 23406.\n"
+"Copied properties for revision 23406.\n"
+"Committed revision 23407.\n"
+"Copied properties for revision 23407.\n"
+"Committed revision 23408.\n"
+"Copied properties for revision 23408.\n"
+msgstr ""
+
+#: build/en/book.xml:12277(para)
+msgid "Of particular interest here is that for each mirrored revision, there is first a commit of that revision to the target repository, and then property changes follow. This is because the initial commit is performed by (and attributed to) the user <literal moreinfo=\"none\">syncuser</literal>, and datestamped with the time as of that revision's creation. Also, Subversion's underlying repository access interfaces don't provide a mechanism for setting arbitary revision properties as part of a commit. So <command moreinfo=\"none\">svnsync</command> follows up with an immediate series of property modifications which copy all the revision properties found for that revision in the source repository into the target repository. This also has the effect of fixing the author and datestamp of the revision to match that of the source repository."
+msgstr ""
+
+#: build/en/book.xml:1228(title)
+msgid "The problem to avoid"
+msgstr "需要避免的问题"
+
+#: build/en/book.xml:12292(para)
+msgid "Also noteworthy is that <command moreinfo=\"none\">svnsync</command> performs careful bookkeeping that allows it to be safely interrupted and restarted without ruining the integrity of the mirrored data. If a network glitch occurs while mirroring a repository, simply repeat the <command moreinfo=\"none\">svnsync synchronize</command> command and it will happily pick up right where it left off. In fact, as new revisions appear in the source repository, this is exactly what you to do in order to keep your mirror up-to-date."
+msgstr ""
+
+#: build/en/book.xml:12302(para)
+msgid "There is, however, one bit of inelegance in the process. Because Subversion revision properties can be changed at any time throughout the lifetime of the repository, and don't leave an audit trail that indicates when they were changed, replication processes have to pay special attention to them. If you've already mirror the first 15 revisions of a repository and someone then changes a revision property on revision 12, <command moreinfo=\"none\">svnsync</command> won't know to go back and patch up its copy of revision 12. You'll need to tell it to do so manually by using (or with some additionally tooling around) the <command moreinfo=\"none\">svnsync copy-revprops</command> subcommand, which simply re-replicates all the revision properties for a particular revision."
+msgstr ""
+
+#: build/en/book.xml:12316(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnsync help copy-revprops\n"
+"copy-revprops: usage: svnsync copy-revprops DEST_URL REV\n"
+"\n"
+"Copy all revision properties for revision REV from source to\n"
+"destination.\n"
+"…\n"
+"$ svnsync copy-revprops http://svn.example.com/svn-mirror 12 \\\n"
+"                        --username syncuser --password syncpass\n"
+"Copied properties for revision 12.\n"
+"$\n"
+msgstr ""
+
+#: build/en/book.xml:12329(para)
+msgid "That's repository replication in a nutshell. You'll likely want some automation around such a process. For example, while our example was a pull-and-push setup, you might wish to have your primary repository push changes to one or more blessed mirrors as part of its post-commit and post-revprop-change hook implementations. This would enable the mirror to be up-to-date in as near to realtime as is likely possible."
+msgstr ""
+
+#: build/en/book.xml:12338(para)
+msgid "Also, while it isn't very commonplace to do so, <command moreinfo=\"none\">svnsync</command> does gracefully mirror repositories in which the user as whom it authenticates only has partial read access. It simply copies only the bits of the repository that it is permitted to see. Obviously such a mirror is not useful as a backup solution."
+msgstr ""
+
+#: build/en/book.xml:12345(para)
+msgid "As far as user interaction with repositories and mirrors goes, it <emphasis>is</emphasis> possible to have a single working copy that interacts with both, but you'll have to jump through some hoops to make it happen. First, you need to ensure that both the primary and mirror repositories have the same repository UUID (which is not the case by default). You can set the mirror repository's UUID by loading a dump file stub into it which contains the UUID of the primary repository, like so:"
+msgstr ""
+
+#: build/en/book.xml:12355(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cat - &lt;&lt;EOF | svnadmin load --force-uuid dest\n"
+"SVN-fs-dump-format-version: 2\n"
+"\n"
+"UUID: 65390229-12b7-0310-b90b-f21a5aa7ec8e\n"
+"EOF\n"
+"$\n"
+msgstr ""
+
+#: build/en/book.xml:1236(title)
+msgid "The Lock-Modify-Unlock Solution"
+msgstr "锁定-修改-解锁 方案"
+
+#: build/en/book.xml:12364(para)
+msgid "Now that the two repositories have the same UUID, you can use <command moreinfo=\"none\">svn switch --relocate</command> to point your working copy to whichever of the repositories you wish to operate against, a process which is described in <xref linkend=\"svn.ref.svn.c.switch\"/>. There is a possible danger here, though, in that if the primary and mirror repositories aren't in close synchronization, a working copy up-to-date with and pointing to the primary repository will, if relocated to point to an out-of-date mirror, become confused about the apparent sudden loss of revisions it fully expects to be present."
+msgstr ""
+
+#: build/en/book.xml:12375(para)
+msgid "Finally, be aware that the revision-based replication provided by <command moreinfo=\"none\">svnsync</command> is only that—replication of revisions. It does not include such things as the hook implementations, repository or server configuration data, uncommitted transactions, or information about user locks on repository paths. Only information carried by the Subversion repository dump file format is available for replication."
+msgstr ""
+
+#: build/en/book.xml:1238(para)
+msgid "Many version control systems use a <firstterm>lock-modify-unlock</firstterm> model to address the problem of many authors clobbering each other's work. In this model, the repository allows only one person to change a file at a time. This exclusivity policy is managed using locks. Harry must <quote>lock</quote> a file before he can begin making changes to it. If Harry has locked a file, then Sally cannot also lock it, and therefore cannot make any changes to that file. All she can do is read the file, and wait for Harry to finish his changes and release his lock. After Harry unlocks the file, Sally can take her turn by locking and editing the file. <xref linkend=\"svn.basic.vsn-models.lock-unlock.dia-1\"/> demonstrates this simple solution."
+msgstr "许多版本控制系统使用<firstterm>锁定-修改-解锁</firstterm>这种机制解决这种问题，在这样的模型里，在一个时间段里版本库的一个文件只允许被一个人修改。首先在修改之前，Harry要<quote>锁定</quote>住这个文件，锁定很像是从图书馆借一本书，如果Harry锁住这个文件，Sally不能做任何修改，如果Sally想请求得到一个锁，版本库会拒绝这个请求。在Harry结束编辑并且放开这个锁之前，她只可以阅读文件。Harry解锁后，就要换班了，Sally得到自己的轮换位置，锁定并且开始编辑这个文件。<xref linkend=\"svn.basic.vsn-models.lock-unlock.dia-1\"/>描述了这样的解决方案。"
+
+#: build/en/book.xml:12388(title)
+msgid "Repository Backup"
+msgstr "版本库备份"
+
+#: build/en/book.xml:12390(para)
+msgid "Despite numerous advances in technology since the birth of the modern computer, one thing unfortunately rings true with crystalline clarity—sometimes, things go very, very awry. Power outages, network connectivity dropouts, corrupt RAM and crashed hard drives are but a taste of the evil that Fate is poised to unleash on even the most conscientious administrator. And so we arrive at a very important topic—how to make backup copies of your repository data."
+msgstr "尽管现代计算机的诞生带来了许多便利，但有一件事听起来是完全正确的—有时候，事情变的糟糕，很糟糕，动力损耗、网络中断、坏掉的内存和损坏的硬盘都是对魔鬼的一种体验，即使对于最尽职的管理员，命运也早已注定。所以我们来到了这个最重要的主题—怎样备份你的版本库数据。"
+
+#: build/en/book.xml:12400(para)
+msgid "There are two types of backup methods available for Subversion repository administrators—full and incremental. A full backup of the repository involves squirreling away in one sweeping action all the information required to fully reconstruct that repository in the event of a catastrophe. Usually, it means quite literally the duplication of the entire repository directory (which includes either a Berkeley DB or FSFS environment). Incremental backups are lesser things, backups of only the portion of the repository data that has changed since the previous backup."
+msgstr ""
+
+#: build/en/book.xml:12412(para)
+msgid "As far as full backups go, the naive approach might seem like a sane one, but unless you temporarily disable all other access to your repository, simply doing a recursive directory copy runs the risk of generating a faulty backup. In the case of Berkeley DB, the documentation describes a certain order in which database files can be copied that will guarantee a valid backup copy. A similar ordering exists for FSFS data. But you don't have to implement these algorithms yourself, because the Subversion development team has already done so. The <command moreinfo=\"none\">svnadmin hotcopy</command> command takes care of the minutia involved in making a hot backup of your repository. And its invocation is as trivial as Unix's <command moreinfo=\"none\">cp</command> or Windows' <command moreinfo=\"none\">copy</command> operations:"
+msgstr ""
+
+#: build/en/book.xml:12427(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin hotcopy /path/to/repos /path/to/repos-backup\n"
+msgstr ""
+"\n"
+"$ svnadmin hotcopy /path/to/repos /path/to/repos-backup\n"
+
+#: build/en/book.xml:12431(para)
+msgid "The resulting backup is a fully functional Subversion repository, able to be dropped in as a replacement for your live repository should something go horribly wrong."
+msgstr "作为结果的备份是一个完全功能的版本库，当发生严重错误时可以作为你的活动版本库的替换。"
+
+#: build/en/book.xml:12435(para)
+msgid "When making copies of a Berkeley DB repository, you can even instruct <command moreinfo=\"none\">svnadmin hotcopy</command> to purge any unused Berkeley DB logfiles (see <xref linkend=\"svn.reposadmin.maint.diskspace.bdblogs\"/>) from the original repository upon completion of the copy. Simply provide the <option>--clean-logs</option> option on the command-line."
+msgstr ""
+
+#: build/en/book.xml:12442(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svnadmin hotcopy --clean-logs /path/to/bdb-repos /path/to/bdb-repos-backup\n"
+msgstr ""
+
+#: build/en/book.xml:12446(para)
+msgid "Additional tooling around this command is available, too. The <filename moreinfo=\"none\">tools/backup/</filename> directory of the Subversion source distribution holds the <command moreinfo=\"none\">hot-backup.py</command> script. This script adds a bit of backup management atop <command moreinfo=\"none\">svnadmin hotcopy</command>, allowing you to keep only the most recent configured number of backups of each repository. It will automatically manage the names of the backed-up repository directories to avoid collisions with previous backups, and will <quote>rotate off</quote> older backups, deleting them so only the most recent ones remain. Even if you also have an incremental backup, you might want to run this program on a regular basis. For example, you might consider using <command moreinfo=\"none\">hot-backup.py</command> from a program scheduler (such as <command moreinfo=\"none\">cron</command> on Unix systems) which will cause it to run nightly (or at whatever granularity of Time you deem safe enough for you)."
+msgstr ""
+
+#: build/en/book.xml:12464(para)
+msgid "Some administrators use a different backup mechanism built around generating and storing repository dump data. We described in <xref linkend=\"svn.reposadmin.maint.migrate\"/> how to use <command moreinfo=\"none\">svnadmin dump --incremental</command> to perform an incremental backup of a given revision or range of revisions. And of course, there is a full backup variation of this achieved by omitting the <option>--incremental</option> option to that command. There is some value in these methods in that the format of your backed-up information is flexible—it's not tied to a particular platform, versioned filesystem type, or release of Subversion or Berkeley DB. But that flexibility comes at a cost, namely that restoring that data can take a long time—longer with each new revision committed to your repository. Also, as is the case with so many of the various backup methods, revision property changes made to already-backed-up revisions won't get picked up by a non-overlapping, incremental dump generation. For these reasons, we recommend against relying solely on dump-based backup approaches."
+msgstr ""
+
+#: build/en/book.xml:12484(para)
+#, fuzzy
+msgid "As you can see, each of the various backup types and methods has its advantages and disadvantages. The easiest is by far the full hot backup, which will always result in a perfect working replica of your repository. Should something bad happen to your live repository, you can restore from the backup with a simple recursive directory copy. Unfortunately, if you are maintaining multiple backups of your repository, these full copies will each eat up just as much disk space as your live repository. Incremental backups, by contrast, tend to be quicker to generate and smaller to store. But the restoration process can be a pain, often involving applying multiple incremental backups. And other methods have their own peculiarities. Administators need to find the balance between the cost of making the backup and the cost of restoring it."
+msgstr "两种备份方式都有各自的优点，最简单的方式是完全备份，将会每次建立版本库的完美复制品，这意味着如果当你的活动版本库发生了什么事情，你可以用备份恢复。但不幸的是，如果你维护多个备份，每个完全的备份会吞噬掉和你的活动版本库同样的空间。"
+
+#: build/en/book.xml:12500(para)
+msgid "The <command moreinfo=\"none\">svnsync</command> program (see <xref linkend=\"svn.reposadmin.maint.replication\"/>) actually provides a rather handy middle-ground approach. If you are regularly synchronizing a read-only mirror with your main repository, then in a pinch, your read-only mirror is probably a good candidate for replacing that main repository if it falls over. The primary disadvantage of this method is that only the versioned repository data gets synchronized—repository configuration files, user-specified repository path locks, and other items which might live in the physical repository directory but not <emphasis>inside</emphasis> the repository's virtual versioned filesystem are not handled by svnsync."
+msgstr ""
+
+#: build/en/book.xml:12513(para)
+#, fuzzy
+msgid "In any backup scenario, repository administrators need to be aware of how modifications to unversioned revision properties affect their backups. Since these changes do not themselves generate new revisions, they will not trigger post-commit hooks, and may not even trigger the pre-revprop-change and post-revprop-change hooks. <placeholder-1/> And since you can change revision properties without respect to chronological order—you can change any revision's properties at any time—an incremental backup of the latest few revisions might not catch a property modification to a revision that was included as part of a previous backup."
+msgstr "在每一种备份情境下，版本库管理员需要意识到对未版本化的修订版本属性的修改对备份的影响，因为这些修改本身不会产生新的修订版本，所以不会触发post-commit的钩子程序，也不会触发pre-revprop-change和post-revprop-change的钩子。 <footnote><placeholder-1/></footnote> 而且因为你可以改变修订版本的属性，而不需要遵照时间顺序—你可在任何时刻修改任何修订版本的属性—因此最新版本的增量备份不会捕捉到以前特定修订版本的属性修改。"
+
+#: build/en/book.xml:12520(para)
+msgid "<command moreinfo=\"none\">svnadmin setlog</command> can be called in a way that bypasses the hook interface altogether."
+msgstr "<command moreinfo=\"none\">svnadmin setlog</command>可以被绕过钩子程序被调用。"
+
+#: build/en/book.xml:1253(title)
+msgid "The lock-modify-unlock solution"
+msgstr "锁定-修改-解锁 方案2"
+
+#: build/en/book.xml:12530(para)
+#, fuzzy
+msgid "Generally speaking, only the truly paranoid would need to backup their entire repository, say, every time a commit occurred. However, assuming that a given repository has some other redundancy mechanism in place with relatively fine granularity (like per-commit emails or incremental dumps), a hot backup of the database might be something that a repository administrator would want to include as part of a system-wide nightly backup. It's your data—protect it as much as you'd like."
+msgstr "通常说来，在每次提交时，只有妄想狂才会备份整个版本库，然而，假设一个给定的版本库拥有一些恰当粒度的冗余机制（如每次提交的邮件）。版本库管理员也许会希望将版本库的热备份引入到系统级的每夜备份，对大多数版本库，归档的提交邮件为保存资源提供了足够的冗余措施，至少对于最近的提交。但是它是你的数据—你喜欢怎样保护都可以。"
+
+#: build/en/book.xml:12540(para)
+#, fuzzy
+msgid "Often, the best approach to repository backups is a diversified one which leverages combinations of the methods described here. The Subversion developers, for example, back up the Subversion source code repository nightly using <command moreinfo=\"none\">hot-backup.py</command> and an offsite <command moreinfo=\"none\">rsync</command> of those full backups; keep multiple archives of all the commit and property change notification emails; and have repository mirrors maintained by various volunteers using <command moreinfo=\"none\">svnsync</command>. Your solution might be similar, but should be catered to your needs and that delicate balance of convenience with paranoia. And whatever you do, validate your backups from time to time—what good is a spare tire that has a hole in it? While all of this might not save your hardware from the iron fist of Fate, <placeholder-1/> it should certainly help you recover from those trying times."
+msgstr "通常情况下，最好的版本库备份方式是混合的，你可以平衡完全和增量备份，另外配合提交邮件的归档，Subversion开发者，举个例子，在每个新的修订版本建立时备份Subversion的源代码版本库，并且保留所有的提交和属性修改通知文件。你的解决方案类似，必须迎合你的需要，平衡便利和你的偏执。然而这些不会改变你的硬件来自钢铁的命运。<footnote><placeholder-1/></footnote> 这一定会帮助你减少尝试的时间。"
+
+#: build/en/book.xml:12555(para)
+msgid "You know—the collective term for all of her <quote>fickle fingers</quote>."
+msgstr "你知道的—只是对各种变化莫测的问题的统称。"
+
+#: build/en/book.xml:12569(title) build/en/book.xml:2047(title)
+#: build/en/book.xml:3978(title) build/en/book.xml:9639(title)
+msgid "Summary"
+msgstr "概要"
+
+#: build/en/book.xml:1257(para)
+msgid "The problem with the lock-modify-unlock model is that it's a bit restrictive, and often becomes a roadblock for users:"
+msgstr "锁定-修改-解锁模型有一点问题就是限制太多，经常会成为用户的障碍："
+
+#: build/en/book.xml:12571(para)
+msgid "By now you should have a basic understanding of how to create, configure, and maintain Subversion repositories. We've introduced you to the various tools that will assist you with this task. Throughout the chapter, we've noted common administration pitfalls, and suggestions for avoiding them."
+msgstr "现在，你应该已经对如何创建、配置以及维护Subversion版本库有了个基本的认识。我们向您介绍了几个可以帮助您工作的工具。通过这一章，我们说明了一些常见的管理误区，并提出了避免陷入误区的建议。"
+
+#: build/en/book.xml:12578(para)
+msgid "All that remains is for you to decide what exciting data to store in your repository, and finally, how to make it available over a network. The next chapter is all about networking."
+msgstr "剩下的，就是由你决定在你的版本库中存放一些什么有趣的资料，并最终通过网络获得这些资料。下一章是关于网络的内容。"
+
+#: build/en/book.xml:12592(title)
+msgid "Server Configuration"
+msgstr "配置服务器"
+
+#: build/en/book.xml:12594(para)
+#, fuzzy
+msgid "A Subversion repository can be accessed simultaneously by clients running on the same machine on which the repository resides using the <literal moreinfo=\"none\">file://</literal> method. But the typical Subversion setup involves a single server machine being accessed from clients on computers all over the office—or, perhaps, all over the world."
+msgstr "一个Subversion的版本库可以和客户端同时运行在同一个机器上，使用<literal moreinfo=\"none\">file:///</literal>访问，但是一个典型的Subversion设置应该包括一个单独的服务器，可以被办公室的所有客户端访问—或者有可能是整个世界。"
+
+#: build/en/book.xml:12601(para)
+#, fuzzy
+msgid "This chapter describes how to get your Subversion repository exposed outside its host machine for use by remote clients. We will cover Subversion's currently available server mechanisms, discussing the configuration and use of each. After reading this section, you should be able to decide which networking setup is right for your needs, and understand how to enable such a setup on your host computer."
+msgstr "本小节描述了怎样将一个Subversion的版本库暴露给远程客户端，我们会覆盖Subversion已存在的服务器机制，讨论各种方式的配置和使用。经过阅读本小节，你可以决定你需要哪种网络设置，并且明白怎样在你的主机上进行配置。"
+
+#: build/en/book.xml:12615(title)
+msgid "Overview"
+msgstr "概述"
+
+#: build/en/book.xml:12617(para)
+#, fuzzy
+msgid "Subversion was designed with an abstract network layer. This means that a repository can be programmatically accessed by any sort of server process, and the client <quote>repository access</quote> API allows programmers to write plugins that speak relevant network protocols. In theory, Subversion can use an infinite number of network implementations. In practice, there are only two servers at the time of this writing."
+msgstr "Subversion的设计包括一个抽象的网络层，这意味着版本库可以通过各种服务器进程访问，而且客户端<quote>版本库访问</quote>的API允许程序员写出相关协议的插件，理论上讲，Subversion可以使用无限数量的网络协议实现，目前实践中存在着两种服务器。"
+
+#: build/en/book.xml:12625(para)
+#, fuzzy
+msgid "Apache is an extremely popular webserver; using the <command moreinfo=\"none\">mod_dav_svn</command> module, Apache can access a repository and make it available to clients via the WebDAV/DeltaV protocol, which is an extension of HTTP. Because Apache is an extremely extensible web server, it provides a number of features <quote>for free</quote>, such as encrypted SSL communication, logging, integration with a number of third-party authentication systems, and limited built-in web browsing of repositories."
+msgstr "Apache是最流行的web服务器，通过使用<command moreinfo=\"none\">mod_dav_svn</command
