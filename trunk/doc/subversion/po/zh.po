@@ -21821,4 +21821,928 @@ msgid "Again, notice that the commit log message very specifically mentions the 
 msgstr "再次说明，日志信息中详细描述了合并到主干的的修改范围，记住一定要这么做，这是你以后需要的重要信息。"
 
 #: build/en/book.xml:8331(para)
-msgid "For example, suppose you decide to keep working on your branch for another week, in order to complete an enhancement to your original feature or bug fix. The repository's <literal moreinfo=\"none\">HEAD</literal> revision is now 480, and you're ready to do another merge from yo
+msgid "For example, suppose you decide to keep working on your branch for another week, in order to complete an enhancement to your original feature or bug fix. The repository's <literal moreinfo=\"none\">HEAD</literal> revision is now 480, and you're ready to do another merge from your private branch to the trunk. But as discussed in <xref linkend=\"svn.branchmerge.copychanges.bestprac\"/>, you don't want to merge the changes you've already merged before; you only want to merge everything <quote>new</quote> on your branch since the last time you merged. The trick is to figure out what's new."
+msgstr "举个例子，你希望在分支上继续工作一周，来进一步加强你的修正，这时版本库的<literal moreinfo=\"none\">HEAD</literal>版本是480，你准备好了另一次合并，但是我们在<xref linkend=\"svn.branchmerge.copychanges.bestprac\"/>提到过，你不想合并已经合并的内容，你只想合并新的东西，技巧就是指出什么是<quote>新</quote>的。"
+
+#: build/en/book.xml:8342(para)
+msgid "The first step is to run <command moreinfo=\"none\">svn log</command> on the trunk, and look for a log message about the last time you merged from the branch:"
+msgstr "第一步是在主干上运行<command moreinfo=\"none\">svn log</command>察看最后一次与分支合并的日志信息："
+
+#: build/en/book.xml:8346(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn log\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r406 | user | 2004-02-08 11:17:26 -0600 (Sun, 08 Feb 2004) | 1 line\n"
+"\n"
+"Merged my-calc-branch changes r341:405 into the trunk.\n"
+"------------------------------------------------------------------------\n"
+"…\n"
+msgstr ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn log\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r406 | user | 2004-02-08 11:17:26 -0600 (Sun, 08 Feb 2004) | 1 line\n"
+"\n"
+"Merged my-calc-branch changes r341:405 into the trunk.\n"
+"------------------------------------------------------------------------\n"
+"…\n"
+
+#: build/en/book.xml:8358(para)
+msgid "Aha! Since all branch-changes that happened between revisions 341 and 405 were previously merged to the trunk as revision 406, you now know that you want to merge only the branch changes after that—by comparing revisions 406 and <literal moreinfo=\"none\">HEAD</literal>."
+msgstr "阿哈！因为分支上341到405之间的所有修改已经在版本406合并了，现在你只需要合并分支在此之后的修改—通过比较406和<literal moreinfo=\"none\">HEAD</literal>。"
+
+#: build/en/book.xml:8364(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn update\n"
+"At revision 480.\n"
+"\n"
+"# We notice that HEAD is currently 480, so we use it to do the merge:\n"
+"\n"
+"$ svn merge -r 406:480 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"\n"
+"$ svn commit -m \"Merged my-calc-branch changes r406:480 into the trunk.\"\n"
+"Sending        integer.c\n"
+"Sending        button.c\n"
+"Sending        Makefile\n"
+"Transmitting file data ...\n"
+"Committed revision 481.\n"
+msgstr ""
+"\n"
+"$ cd calc/trunk\n"
+"$ svn update\n"
+"At revision 480.\n"
+"\n"
+"# We notice that HEAD is currently 480, so we use it to do the merge:\n"
+"\n"
+"$ svn merge -r 406:480 http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"\n"
+"$ svn commit -m \"Merged my-calc-branch changes r406:480 into the trunk.\"\n"
+"Sending        integer.c\n"
+"Sending        button.c\n"
+"Sending        Makefile\n"
+"Transmitting file data ...\n"
+"Committed revision 481.\n"
+
+#: build/en/book.xml:8384(para)
+msgid "Now the trunk contains the complete second wave of changes made to the branch. At this point, you can either delete your branch (we'll discuss this later on), or continue working on your branch and repeat this procedure for subsequent merges."
+msgstr "现在主干有了分支上第二波修改的完全结果，此刻，你可以删除你的分支（我们会在以后讨论），或是继续在你分支上工作，重复这个步骤。"
+
+#: build/en/book.xml:8394(title)
+msgid "Undoing Changes"
+msgstr "取消修改"
+
+#: build/en/book.xml:8396(para)
+#, fuzzy
+msgid "Another common use for <command moreinfo=\"none\">svn merge</command> is to roll back a change that has already been committed. Suppose you're working away happily on a working copy of <filename moreinfo=\"none\">/calc/trunk</filename>, and you discover that the change made way back in revision 303, which changed <filename moreinfo=\"none\">integer.c</filename>, is completely wrong. It never should have been committed. You can use <command moreinfo=\"none\">svn merge</command> to <quote>undo</quote> the change in your working copy, and then commit the local modification to the repository. All you need to do is to specify a <emphasis>reverse</emphasis> difference. (You can do this by specifying <option>--revision 303:302</option>, or by an equivalent <option>--change -303</option>.)"
+msgstr "<command moreinfo=\"none\">svn merge</command>另一个常用的做法是取消已经做得提交，假设你愉快的在<filename moreinfo=\"none\">/calc/trunk</filename>工作，你发现303版本对<filename moreinfo=\"none\">integer.c</filename>的修改完全错了，它不应该被提交，你可以使用<command moreinfo=\"none\">svn merge</command>来<quote>取消</quote>这个工作拷贝上所作的操作，然后提交本地修改到版本库，你要做得只是指定一个相反的区别："
+
+#: build/en/book.xml:8411(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn merge -c -303 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"M  integer.c\n"
+"\n"
+"$ svn diff\n"
+"…\n"
+"# verify that the change is removed\n"
+"…\n"
+"\n"
+"$ svn commit -m \"Undoing change committed in r303.\"\n"
+"Sending        integer.c\n"
+"Transmitting file data .\n"
+"Committed revision 350.\n"
+msgstr ""
+"\n"
+"$ svn merge -c -303 http://svn.example.com/repos/calc/trunk\n"
+"U  integer.c\n"
+"\n"
+"$ svn status\n"
+"M  integer.c\n"
+"\n"
+"$ svn diff\n"
+"…\n"
+"# verify that the change is removed\n"
+"…\n"
+"\n"
+"$ svn commit -m \"Undoing change committed in r303.\"\n"
+"Sending        integer.c\n"
+"Transmitting file data .\n"
+"Committed revision 350.\n"
+
+#: build/en/book.xml:8429(para)
+msgid "One way to think about a repository revision is as a specific group of changes (some version control systems call these <firstterm>changesets</firstterm>). By using the <option>-r</option> switch, you can ask <command moreinfo=\"none\">svn merge</command> to apply a changeset, or whole range of changesets, to your working copy. In our case of undoing a change, we're asking <command moreinfo=\"none\">svn merge</command> to apply changeset #303 to our working copy <emphasis>backwards</emphasis>."
+msgstr "我们可以把版本库修订版本想象成一组修改（一些版本控制系统叫做<firstterm>修改集</firstterm>），通过<option>-r</option>选项，你可以告诉<command moreinfo=\"none\">svn merge</command>来应用修改集或是一个修改集范围到你的工作拷贝，在我们的情况例子里，我们使用<command moreinfo=\"none\">svn merge</command>合并修改集#303到工作拷贝。"
+
+#: build/en/book.xml:8440(title)
+msgid "Subversion and Changesets"
+msgstr "Subversion与修改集"
+
+#: build/en/book.xml:8442(para)
+msgid "Everyone seems to have a slightly different definition of <quote>changeset</quote>, or at least a different expectation of what it means for a version control system to have <quote>changeset features</quote>. For our purpose, let's say that a changeset is just a collection of changes with a unique name. The changes might include textual edits to file contents, modifications to tree structure, or tweaks to metadata. In more common speak, a changeset is just a patch with a name you can refer to."
+msgstr "每一个人对于<quote>修改集</quote>的概念都有些不一样，至少对于版本控制系统的<quote>修改集特性</quote>这一概念有着不同的期望，根据我们的用途，可以说修改集只是一个有唯一名字的一系列修改集合，修改也许包括文件内容的修改，目录树结构的修改，或是元数据的调整，更通常的说法，一个修改集就是我们可以引用的有名字的补丁。"
+
+#: build/en/book.xml:8452(para)
+#, fuzzy
+msgid "In Subversion, a global revision number N names a tree in the repository: it's the way the repository looked after the Nth commit. It's also the name of an implicit changeset: if you compare tree N with tree N-1, you can derive the exact patch that was committed. For this reason, it's easy to think of <quote>revision N</quote> as not just a tree, but a changeset as well. If you use an issue tracker to manage bugs, you can use the revision numbers to refer to particular patches that fix bugs—for example, <quote>this issue was fixed by revision 9238.</quote>. Somebody can then run <command moreinfo=\"none\">svn log -r9238</command> to read about the exact changeset which fixed the bug, and run <command moreinfo=\"none\">svn diff -c 9238</command> to see the patch itself. And Subversion's <literal moreinfo=\"none\">merge</literal> command also uses revision numbers. You can merge specific changesets from one branch to another by naming them in the merge arguments: <command moreinfo=\"none\">svn merge -r9237:9238</command> would merge changeset #9238 into your working copy."
+msgstr "在Subversion里，一个全局的修订版本号N标示一个版本库中的树：它代表版本库在N次提交后的样子，它也是一个修改集的隐含名称：如果你比较树N与树N-1，你可以得到你提交的补丁。出于这个原因，想象<quote>版本N</quote>并不只是一棵树，也是一个修改集。如果你使用一个问题追踪工具来管理bug，你可以使用版本号来表示特定的补丁修正了bug—举个例子，<quote>这个问题是在版本9238修正的</quote>，然后其他人可以运行<command moreinfo=\"none\">svn log -r9238</command>来查看修正这个bug的修改集，或者使用<command moreinfo=\"none\">svn diff -r9237:9238</command>来看补丁本身。Subversion的<literal moreinfo=\"none\">合并</literal>命令也使用版本号作为参数，可以将特定修改集从一个分支合到另一个分支：<command moreinfo=\"none\">svn merge -r9237:9238</command>将会合并修改集#9238到本地拷贝。"
+
+#: build/en/book.xml:8472(para)
+msgid "Keep in mind that rolling back a change like this is just like any other <command moreinfo=\"none\">svn merge</command> operation, so you should use <command moreinfo=\"none\">svn status</command> and <command moreinfo=\"none\">svn diff</command> to confirm that your work is in the state you want it to be in, and then use <command moreinfo=\"none\">svn commit</command> to send the final version to the repository. After committing, this particular changeset is no longer reflected in the <literal moreinfo=\"none\">HEAD</literal> revision."
+msgstr "记住回滚修改和任何一个<command moreinfo=\"none\">svn merge</command>命令都一样，所以你应该使用<command moreinfo=\"none\">svn status</command>或是<command moreinfo=\"none\">svn diff</command>来确定你的工作处于期望的状态中，然后使用<command moreinfo=\"none\">svn commit</command>来提交，提交之后，这个特定修改集不会反映到<literal moreinfo=\"none\">HEAD</literal>版本了。"
+
+#: build/en/book.xml:8481(para)
+msgid "Again, you may be thinking: well, that really didn't undo the commit, did it? The change still exists in revision 303. If somebody checks out a version of the <filename moreinfo=\"none\">calc</filename> project between revisions 303 and 349, they'll still see the bad change, right?"
+msgstr "继续，你也许会想：好吧，这不是真的取消提交吧！是吧？版本303还依然存在着修改，如果任何人取出<filename moreinfo=\"none\">calc</filename>的303-349版本，他还会得到错误的修改，对吧？"
+
+#: build/en/book.xml:8487(para)
+#, fuzzy
+msgid "Yes, that's true. When we talk about <quote>removing</quote> a change, we're really talking about removing it from <literal moreinfo=\"none\">HEAD</literal>. The original change still exists in the repository's history. For most situations, this is good enough. Most people are only interested in tracking the <literal moreinfo=\"none\">HEAD</literal> of a project anyway. There are special cases, however, where you really might want to destroy all evidence of the commit. (Perhaps somebody accidentally committed a confidential document.) This isn't so easy, it turns out, because Subversion was deliberately designed to never lose information. Revisions are immutable trees which build upon one another. Removing a revision from history would cause a domino effect, creating chaos in all subsequent revisions and possibly invalidating all working copies. <placeholder-1/>"
+msgstr "是的，这是对的。当我们说<quote>删除</quote>一个修改时，我们只是说从<literal moreinfo=\"none\">HEAD</literal>删除，原始的修改还保存在版本库历史中，在多数情况下，这是足够好的。大多数人只是对追踪<literal moreinfo=\"none\">HEAD</literal>版本感兴趣，在一些特定情况下，你也许希望毁掉所有提交的证据（或许某个人提交了一个秘密文件），这不是很容易的，因为Subversion设计用来不丢失任何信息，每个修订版本都是不可变的目录树 ，从历史删除一个版本会导致多米诺效应，会在后面的版本导致混乱甚至会影响所有的工作拷贝。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:8503(para)
+#, fuzzy
+msgid "The Subversion project has plans, however, to someday implement a command that would accomplish the task of permanently deleting information. In the meantime, see <xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/> for a possible workaround."
+msgstr "Subversion项目有计划，不管用什么方式，总有一天要实现<command moreinfo=\"none\">svnadmin obliterate</command>命令来进行永久删除操作，而此时可以看<xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/>。"
+
+#: build/en/book.xml:8515(title)
+msgid "Resurrecting Deleted Items"
+msgstr "找回删除的项目"
+
+#: build/en/book.xml:8517(para)
+msgid "The great thing about version control systems is that information is never lost. Even when you delete a file or directory, it may be gone from the <literal moreinfo=\"none\">HEAD</literal> revision, but the object still exists in earlier revisions. One of the most common questions new users ask is, <quote>How do I get my old file or directory back?</quote>."
+msgstr "版本控制系统非常重要的一个特性就是它的信息从不丢失，即使当你删除了文件或目录，它也许从HEAD版本消失了 ，但这个对象依然存在于历史的早期版本 ，一个新手经常问到的问题是<quote>怎样找回我的文件和目录？</quote>"
+
+#: build/en/book.xml:8524(para)
+#, fuzzy
+msgid "The first step is to define exactly <emphasis role=\"bold\">which</emphasis> item you're trying to resurrect. Here's a useful metaphor: you can think of every object in the repository as existing in a sort of two-dimensional coordinate system. The first coordinate is a particular revision tree, and the second coordinate is a path within that tree. So every version of your file or directory can be defined by a specific coordinate pair. (Remember the familiar <quote>peg revision</quote> syntax — foo.c@224 — mentioned back in <xref linkend=\"svn.advanced.pegrevs\"/>.)"
+msgstr "第一步首先要知道需要拯救的项目是<emphasis role=\"bold\">什么</emphasis>，这里有个很有用的比喻：你可以认为任何存在于版本库的对象生活在一个二维的坐标系统里，第一维是一个特定的版本树，第二维是在树中的路径，所以你的文件或目录的任何版本可以有这样一对坐标定义。"
+
+#: build/en/book.xml:8536(para)
+#, fuzzy
+msgid "First, you might need to use <command moreinfo=\"none\">svn log</command> to discover the exact coordinate pair you wish to resurrect. A good strategy is to run <command moreinfo=\"none\">svn log --verbose</command> in a directory which used to contain your deleted item. The <option>--verbose (-v)</option> option shows a list of all changed items in each revision; all you need to do is find the revision in which you deleted the file or directory. You can do this visually, or by using another tool to examine the log output (via <command moreinfo=\"none\">grep</command>, or perhaps via an incremental search in an editor)."
+msgstr "Subversion没有向CVS一样的<filename moreinfo=\"none\">古典</filename>目录， <footnote><placeholder-1/></footnote> 所以你需要<command moreinfo=\"none\">svn log</command>来察看你需要找回的坐标对，一个好的策略是使用<command moreinfo=\"none\">svn log --verbose</command>来察看你删除的项目，--verbose选项显示所有改变的项目的每一个版本 ，你只需要找出你删除文件或目录的那一个版本。你可以通过目测找出这个版本，也可以使用另一种工具来检查日志的输出 （通过<command moreinfo=\"none\">grep</command>或是在编辑器里增量查找）。"
+
+#: build/en/book.xml:8547(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd parent-dir\n"
+"$ svn log -v\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r808 | joe | 2003-12-26 14:29:40 -0600 (Fri, 26 Dec 2003) | 3 lines\n"
+"Changed paths:\n"
+"   D /calc/trunk/real.c\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"Added fast fourier transform functions to integer.c.\n"
+"Removed real.c because code now in double.c.\n"
+"…\n"
+msgstr ""
+"\n"
+"$ cd parent-dir\n"
+"$ svn log -v\n"
+"…\n"
+"------------------------------------------------------------------------\n"
+"r808 | joe | 2003-12-26 14:29:40 -0600 (Fri, 26 Dec 2003) | 3 lines\n"
+"Changed paths:\n"
+"   D /calc/trunk/real.c\n"
+"   M /calc/trunk/integer.c\n"
+"\n"
+"Added fast fourier transform functions to integer.c.\n"
+"Removed real.c because code now in double.c.\n"
+"…\n"
+
+#: build/en/book.xml:855(para)
+msgid "The original design team settled on some simple goals. They didn't want to break new ground in version control methodology, they just wanted to fix CVS. They decided that Subversion would match CVS's features, and preserve the same development model, but not duplicate CVS's most obvious flaws. And although it did not need to be a drop-in replacement for CVS, it should be similar enough that any CVS user could make the switch with little effort."
+msgstr "最初，设计小组设定了一些简单的开发目标。他们不想在版本控制方法学中开垦处女地，他们只是希望修正CVS。他们决定Subversion应符合CVS的特性，并保留相同的开发模型，但不再重复CVS的一些显著缺陷。尽管Subversion并不需要成为CVS的完全替代品，但它应该与CVS保持足够的相似性，以使CVS用户可以轻松的转移到Subversion上。"
+
+#: build/en/book.xml:8562(para)
+msgid "In the example, we're assuming that you're looking for a deleted file <filename moreinfo=\"none\">real.c</filename>. By looking through the logs of a parent directory, you've spotted that this file was deleted in revision 808. Therefore, the last version of the file to exist was in the revision right before that. Conclusion: you want to resurrect the path <filename moreinfo=\"none\">/calc/trunk/real.c</filename> from revision 807."
+msgstr "在这个例子里，你可以假定你正在找已经删除了的文件<filename moreinfo=\"none\">real.c</filename>，通过查找父目录的历史 ，你知道这个文件在808版本被删除，所以存在这个对象的版本在此之前 。结论：你想从版本807找回<filename moreinfo=\"none\">/calc/trunk/real.c</filename>。"
+
+#: build/en/book.xml:8571(para)
+msgid "That was the hard part—the research. Now that you know what you want to restore, you have two different choices."
+msgstr "以上是最重要的部分—重新找到你需要恢复的对象。现在你已经知道该恢复的文件，而你有两种选择。"
+
+#: build/en/book.xml:8575(para)
+msgid "One option is to use <command moreinfo=\"none\">svn merge</command> to apply revision 808 <quote>in reverse</quote>. (We've already discussed how to undo changes, see <xref linkend=\"svn.branchmerge.commonuses.undo\"/>.) This would have the effect of re-adding <filename moreinfo=\"none\">real.c</filename> as a local modification. The file would be scheduled for addition, and after a commit, the file would again exist in <literal moreinfo=\"none\">HEAD</literal>."
+msgstr "一种是对版本反向使用<command moreinfo=\"none\">svn merge</command>到808（我们已经学会了如何取消修改，见<xref linkend=\"svn.branchmerge.commonuses.undo\"/>），这样会重新添加<filename moreinfo=\"none\">real.c</filename>，这个文件会列入增加的计划，经过一次提交，这个文件重新回到<literal moreinfo=\"none\">HEAD</literal>。"
+
+#: build/en/book.xml:8584(para)
+msgid "In this particular example, however, this is probably not the best strategy. Reverse-applying revision 808 would not only schedule <filename moreinfo=\"none\">real.c</filename> for addition, but the log message indicates that it would also undo certain changes to <filename moreinfo=\"none\">integer.c</filename>, which you don't want. Certainly, you could reverse-merge revision 808 and then <command moreinfo=\"none\">svn revert</command> the local modifications to <filename moreinfo=\"none\">integer.c</filename>, but this technique doesn't scale well. What if there were 90 files changed in revision 808?"
+msgstr "在这个例子里，这不是一个好的策略，这样做不仅把<filename moreinfo=\"none\">real.c</filename>加入添加到计划，也取消了对<filename moreinfo=\"none\">integer.c</filename>的修改，而这不是你期望的。确实，你可以恢复到版本808，然后对<filename moreinfo=\"none\">integer.c</filename>执行取消<command moreinfo=\"none\">svn revert</command>操作，但这样的操作无法扩大使用，因为如果从版本808修改了90个文件怎么办？"
+
+#: build/en/book.xml:8595(para)
+msgid "A second, more targeted strategy is not to use <command moreinfo=\"none\">svn merge</command> at all, but rather the <command moreinfo=\"none\">svn copy</command> command. Simply copy the exact revision and path <quote>coordinate pair</quote> from the repository to your working copy:"
+msgstr "所以第二个方法不是使用<command moreinfo=\"none\">svn merge</command>，而是使用<command moreinfo=\"none\">svn copy</command>命令，精确的拷贝版本和路径<quote>坐标对</quote>到你的工作拷贝："
+
+#: build/en/book.xml:8601(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy -r 807 \\\n"
+"           http://svn.example.com/repos/calc/trunk/real.c ./real.c\n"
+"\n"
+"$ svn status\n"
+"A  +   real.c\n"
+"\n"
+"$ svn commit -m \"Resurrected real.c from revision 807, /calc/trunk/real.c.\"\n"
+"Adding         real.c\n"
+"Transmitting file data .\n"
+"Committed revision 1390.\n"
+msgstr ""
+"\n"
+"$ svn copy -r 807 \\\n"
+"           http://svn.example.com/repos/calc/trunk/real.c ./real.c\n"
+"\n"
+"$ svn status\n"
+"A  +   real.c\n"
+"\n"
+"$ svn commit -m \"Resurrected real.c from revision 807, /calc/trunk/real.c.\"\n"
+"Adding         real.c\n"
+"Transmitting file data .\n"
+"Committed revision 1390.\n"
+
+#: build/en/book.xml:8614(para)
+msgid "The plus sign in the status output indicates that the item isn't merely scheduled for addition, but scheduled for addition <quote>with history</quote>. Subversion remembers where it was copied from. In the future, running <command moreinfo=\"none\">svn log</command> on this file will traverse back through the file's resurrection and through all the history it had prior to revision 807. In other words, this new <filename moreinfo=\"none\">real.c</filename> isn't really new; it's a direct descendant of the original, deleted file."
+msgstr "加号标志表明这个项目不仅仅是计划增加中，而且还包含了历史，Subversion记住了它是从哪个拷贝过来的。在将来，对这个文件运行<command moreinfo=\"none\">svn log</command>会看到这个文件在版本807之前的历史，换句话说，<filename moreinfo=\"none\">real.c</filename>不是新的，而是原先删除的那一个的后代。"
+
+#: build/en/book.xml:8624(para)
+msgid "Although our example shows us resurrecting a file, note that these same techniques work just as well for resurrecting deleted directories."
+msgstr "尽管我们的例子告诉我们如何找回文件，对于恢复删除的目录也是一样的。"
+
+#: build/en/book.xml:8632(title)
+msgid "Common Branching Patterns"
+msgstr "常用分支模式"
+
+#: build/en/book.xml:8634(para)
+msgid "Version control is most often used for software development, so here's a quick peek at two of the most common branching/merging patterns used by teams of programmers. If you're not using Subversion for software development, feel free to skip this section. If you're a software developer using version control for the first time, pay close attention, as these patterns are often considered best practices by experienced folk. These processes aren't specific to Subversion; they're applicable to any version control system. Still, it may help to see them described in Subversion terms."
+msgstr "版本控制在软件开发中广泛使用，这里是团队里程序员最常用的两种分支/合并模式的介绍，如果你不是使用Subversion软件开发，可随意跳过本小节，如果你是第一次使用版本控制的软件开发者，请更加注意，以下模式被许多老兵当作最佳实践，这个过程并不只是针对Subversion，在任何版本控制系统中都一样，但是在这里使用Subversion术语会感觉更方便一点。"
+
+#: build/en/book.xml:864(para)
+msgid "After fourteen months of coding, Subversion became <quote>self-hosting</quote> on August 31, 2001. That is, Subversion developers stopped using CVS to manage Subversion's own source code, and started using Subversion instead."
+msgstr "经过14个月的编码，2001年8月31日，Subversion能够<quote>自己管理自己</quote>了，开发者停止使用CVS保存Subversion的代码，而使用Subversion本身。"
+
+#: build/en/book.xml:8648(title)
+msgid "Release Branches"
+msgstr "发布分支"
+
+#: build/en/book.xml:8650(para)
+msgid "Most software has a typical lifecycle: code, test, release, repeat. There are two problems with this process. First, developers need to keep writing new features while quality-assurance teams take time to test supposedly-stable versions of the software. New work cannot halt while the software is tested. Second, the team almost always needs to support older, released versions of software; if a bug is discovered in the latest code, it most likely exists in released versions as well, and customers will want to get that bugfix without having to wait for a major new release."
+msgstr "大多数软件存在这样一个生命周期：编码、测试、发布，然后重复。这样有两个问题，第一，开发者需要在质量保证小组测试假定稳定版本时继续开发新特性，新工作在软件测试时不可以中断，第二，小组必须一直支持老的发布版本和软件；如果一个bug在最新的代码中发现，它一定也存在已发布的版本中，客户希望立刻得到错误修正而不必等到新版本发布。"
+
+#: build/en/book.xml:8662(para)
+msgid "Here's where version control can help. The typical procedure looks like this:"
+msgstr "这是版本控制可以做的帮助，典型的过程如下："
+
+#: build/en/book.xml:8668(para)
+msgid "<emphasis>Developers commit all new work to the trunk.</emphasis> Day-to-day changes are committed to <filename moreinfo=\"none\">/trunk</filename>: new features, bugfixes, and so on."
+msgstr "<emphasis>开发者提交所有的新特性到主干。</emphasis> 每日的修改提交到<filename moreinfo=\"none\">/trunk</filename>：新特性，bug修正和其他。"
+
+#: build/en/book.xml:8677(para)
+msgid "<emphasis>The trunk is copied to a <quote>release</quote> branch.</emphasis> When the team thinks the software is ready for release (say, a 1.0 release), then <filename moreinfo=\"none\">/trunk</filename> might be copied to <filename moreinfo=\"none\">/branches/1.0</filename>."
+msgstr "<emphasis>这个主干被拷贝到<quote>发布</quote>分支。</emphasis> 当小组认为软件已经做好发布的准备（如，版本1.0）然后<filename moreinfo=\"none\">/trunk</filename>会被拷贝到<filename moreinfo=\"none\">/branches/1.0</filename>。"
+
+#: build/en/book.xml:8687(para)
+msgid "<emphasis>Teams continue to work in parallel.</emphasis> One team begins rigorous testing of the release branch, while another team continues new work (say, for version 2.0) on <filename moreinfo=\"none\">/trunk</filename>. If bugs are discovered in either location, fixes are ported back and forth as necessary. At some point, however, even that process stops. The branch is <quote>frozen</quote> for final testing right before a release."
+msgstr "<emphasis>项目组继续并行工作，</emphasis>一个小组开始对分支进行严酷的测试，同时另一个小组在<filename moreinfo=\"none\">/trunk</filename>继续新的工作（如，准备2.0），如果一个bug在任何一个位置被发现，错误修正需要来回运送。然而这个过程有时候也会结束，例如分支已经为发布前的最终测试<quote>停滞</quote>了。"
+
+#: build/en/book.xml:869(para)
+msgid "While CollabNet started the project, and still funds a large chunk of the work (it pays the salaries of a few full-time Subversion developers), Subversion is run like most open-source projects, governed by a loose, transparent set of rules that encourage meritocracy. CollabNet's copyright license is fully compliant with the Debian Free Software Guidelines. In other words, anyone is free to download, modify, and redistribute Subversion as he pleases; no permission from CollabNet or anyone else is required."
+msgstr "当CollabNet启动了这个项目，并且一直提供了大量的工作支持（它为一些全职的Subversion开发者提供薪水），Subversion像其它许多开源项目一样，被松散的、透明的规则管理着，这样的规则激励着知识界的精英们。CollabNet的版权许可证完全符合Debian的自由软件方针。也就是说，任何人都可以根据自己的意愿自由的下载、修改和重新发布Subversion，不需要CollabNet或其他人的授权。"
+
+#: build/en/book.xml:8699(para)
+msgid "<emphasis>The branch is tagged and released.</emphasis> When testing is complete, <filename moreinfo=\"none\">/branches/1.0</filename> is copied to <filename moreinfo=\"none\">/tags/1.0.0</filename> as a reference snapshot. The tag is packaged and released to customers."
+msgstr "<emphasis>分支已经作了标签并且发布，</emphasis>当测试结束，<filename moreinfo=\"none\">/branches/1.0</filename>作为引用快照已经拷贝到<filename moreinfo=\"none\">/tags/1.0.0</filename>，这个标签被打包发布给客户。"
+
+#: build/en/book.xml:8709(para)
+msgid "<emphasis>The branch is maintained over time.</emphasis> While work continues on <filename moreinfo=\"none\">/trunk</filename> for version 2.0, bugfixes continue to be ported from <filename moreinfo=\"none\">/trunk</filename> to <filename moreinfo=\"none\">/branches/1.0</filename>. When enough bugfixes have accumulated, management may decide to do a 1.0.1 release: <filename moreinfo=\"none\">/branches/1.0</filename> is copied to <filename moreinfo=\"none\">/tags/1.0.1</filename>, and the tag is packaged and released."
+msgstr "<emphasis>分支多次维护。</emphasis>当继续在<filename moreinfo=\"none\">/trunk</filename>上为版本2.0工作，bug修正继续从<filename moreinfo=\"none\">/trunk</filename>运送到<filename moreinfo=\"none\">/branches/1.0</filename>，如果积累了足够的bug修正，管理部门决定发布1.0.1版本：拷贝<filename moreinfo=\"none\">/branches/1.0</filename>到<filename moreinfo=\"none\">/tags/1.0.1</filename>，标签被打包发布。"
+
+#: build/en/book.xml:8723(para)
+msgid "This entire process repeats as the software matures: when the 2.0 work is complete, a new 2.0 release branch is created, tested, tagged, and eventually released. After some years, the repository ends up with a number of release branches in <quote>maintenance</quote> mode, and a number of tags representing final shipped versions."
+msgstr "整个过程随着软件的成熟不断重复：当2.0完成，一个新的2.0分支被创建，测试、打标签和最终发布，经过许多年，版本库结束了许多版本发布，进入了<quote>维护</quote>模式，许多标签代表了最终的发布版本。"
+
+#: build/en/book.xml:8734(title)
+msgid "Feature Branches"
+msgstr "特性分支"
+
+#: build/en/book.xml:8736(para)
+msgid "A <firstterm>feature branch</firstterm> is the sort of branch that's been the dominant example in this chapter, the one you've been working on while Sally continues to work on <filename moreinfo=\"none\">/trunk</filename>. It's a temporary branch created to work on a complex change without interfering with the stability of <filename moreinfo=\"none\">/trunk</filename>. Unlike release branches (which may need to be supported forever), feature branches are born, used for a while, merged back to the trunk, then ultimately deleted. They have a finite span of usefulness."
+msgstr "一个<firstterm>特性分支</firstterm>是本章中那个重要例子中的分支，你正在那个分支上工作，而Sally还在<filename moreinfo=\"none\">/trunk</filename>继续工作，这是一个临时分支，用来作复杂的修改而不会干扰<filename moreinfo=\"none\">/trunk</filename>的稳定性，不象发布分支（也许要永远支持），特性分支出生，使用了一段时间，合并到主干，然后最终被删除掉，它们在有限的时间里有用。"
+
+#: build/en/book.xml:8747(para)
+msgid "Again, project policies vary widely concerning exactly when it's appropriate to create a feature branch. Some projects never use feature branches at all: commits to <filename moreinfo=\"none\">/trunk</filename> are a free-for-all. The advantage to this system is that it's simple—nobody needs to learn about branching or merging. The disadvantage is that the trunk code is often unstable or unusable. Other projects use branches to an extreme: no change is <emphasis>ever</emphasis> committed to the trunk directly. Even the most trivial changes are created on a short-lived branch, carefully reviewed and merged to the trunk. Then the branch is deleted. This system guarantees an exceptionally stable and usable trunk at all times, but at the cost of tremendous process overhead."
+msgstr "还有，关于是否创建特性分支的项目政策也变化广泛，一些项目永远不使用特性分支：大家都可以提交到<filename moreinfo=\"none\">/trunk</filename>，好处是系统的简单—没有人需要知道分支和合并，坏处是主干会经常不稳定或者不可用，另外一些项目使用分支达到极限：没有修改<emphasis>曾经</emphasis>直接提交到主干，即使最细小的修改都要创建短暂的分支，然后小心的审核合并到主干，然后删除分支，这样系统保持主干一直稳定和可用，但是造成了巨大的负担。"
+
+#: build/en/book.xml:8762(para)
+msgid "Most projects take a middle-of-the-road approach. They commonly insist that <filename moreinfo=\"none\">/trunk</filename> compile and pass regression tests at all times. A feature branch is only required when a change requires a large number of destabilizing commits. A good rule of thumb is to ask this question: if the developer worked for days in isolation and then committed the large change all at once (so that <filename moreinfo=\"none\">/trunk</filename> were never destabilized), would it be too large a change to review? If the answer to that question is <quote>yes</quote>, then the change should be developed on a feature branch. As the developer commits incremental changes to the branch, they can be easily reviewed by peers."
+msgstr "许多项目采用折中的方式，坚持每次编译<filename moreinfo=\"none\">/trunk</filename>并进行回归测试，只有需要多次不稳定提交时才需要一个特性分支，这个规则可以用这样一个问题检验：如果开发者在好几天里独立工作，一次提交大量修改（这样<filename moreinfo=\"none\">/trunk</filename>就不会不稳定。），是否会有太多的修改要来回顾？如果答案是<quote>是</quote>，这些修改应该在特性分支上进行，因为开发者增量的提交修改，你可以容易的回头检查。"
+
+#: build/en/book.xml:8776(para)
+msgid "Finally, there's the issue of how to best keep a feature branch in <quote>sync</quote> with the trunk as work progresses. As we mentioned earlier, there's a great risk to working on a branch for weeks or months; trunk changes may continue to pour in, to the point where the two lines of development differ so greatly that it may become a nightmare trying to merge the branch back to the trunk."
+msgstr "最终，有一个问题就是怎样保持一个特性分支<quote>同步</quote>于工作中的主干，在前面提到过，在一个分支上工作数周或几个月是很有风险的，主干的修改也许会持续涌入，因为这一点，两条线的开发会区别巨大，合并分支回到主干会成为一个噩梦。"
+
+#: build/en/book.xml:8784(para)
+msgid "This situation is best avoided by regularly merging trunk changes to the branch. Make up a policy: once a week, merge the last week's worth of trunk changes to the branch. Take care when doing this; the merging needs to be hand-tracked to avoid the problem of repeated merges (as described in <xref linkend=\"svn.branchmerge.copychanges.bestprac.track\"/>). You'll need to write careful log messages detailing exactly which revision ranges have been merged already (as demonstrated in <xref linkend=\"svn.branchmerge.commonuses.wholebr\"/>). It may sound intimidating, but it's actually pretty easy to do."
+msgstr "这种情况最好通过有规律的将主干合并到分支来避免，制定这样一个政策：每周将上周的修改合并到分支，注意这样做时需要小心，需要手工记录合并的过程，以避免重复的合并（在<xref linkend=\"svn.branchmerge.copychanges.bestprac.track\"/>描述过），你需要小心的撰写合并的日志信息，精确的描述合并包括的范围（在<xref linkend=\"svn.branchmerge.commonuses.wholebr\"/>中描述过），这看起来像是胁迫，可是实际上是容易做到的。"
+
+#: build/en/book.xml:8798(para)
+msgid "At some point, you'll be ready to merge the <quote>synchronized</quote> feature branch back to the trunk. To do this, begin by doing a final merge of the latest trunk changes to the branch. When that's done, the latest versions of branch and trunk will be absolutely identical except for your branch changes. So in this special case, you would merge by comparing the branch with the trunk:"
+msgstr "在一些时候，你已经准备好了将<quote>同步的</quote>特性分支合并回到主干，为此，开始做一次将主干最新修改和分支的最终合并，这样以后，除了你的分支修改的部分，最新的分支和主干将会绝对一致，所以在这个特别的例子里，你会通过直接比较分支和主干来进行合并："
+
+#: build/en/book.xml:88(para)
+msgid "Q: How can I use Glorbosoft XYZ to maximize team productivity?"
+msgstr "Q：怎样使用Glorbosoft XYZ最大程度的提高团队生产率？"
+
+#: build/en/book.xml:8807(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd trunk-working-copy\n"
+"\n"
+"$ svn update\n"
+"At revision 1910.\n"
+"\n"
+"$ svn merge http://svn.example.com/repos/calc/trunk@1910 \\\n"
+"            http://svn.example.com/repos/calc/branches/mybranch@1910\n"
+"U  real.c\n"
+"U  integer.c\n"
+"A  newdirectory\n"
+"A  newdirectory/newfile\n"
+"…\n"
+msgstr ""
+"\n"
+"$ cd trunk-working-copy\n"
+"\n"
+"$ svn update\n"
+"At revision 1910.\n"
+"\n"
+"$ svn merge http://svn.example.com/repos/calc/trunk@1910 \\\n"
+"            http://svn.example.com/repos/calc/branches/mybranch@1910\n"
+"U  real.c\n"
+"U  integer.c\n"
+"A  newdirectory\n"
+"A  newdirectory/newfile\n"
+"…\n"
+
+#: build/en/book.xml:8822(para)
+msgid "By comparing the <literal moreinfo=\"none\">HEAD</literal> revision of the trunk with the <literal moreinfo=\"none\">HEAD</literal> revision of the branch, you're defining a delta that describes only the changes you made to the branch; both lines of development already have all of the trunk changes."
+msgstr "通过比较<literal moreinfo=\"none\">HEAD</literal>修订版本的主干和<literal moreinfo=\"none\">HEAD</literal>修订版本的分支，你确定了只在分支上的增量信息，两条开发线都有了分枝的修改。"
+
+#: build/en/book.xml:8828(para)
+msgid "Another way of thinking about this pattern is that your weekly sync of trunk to branch is analogous to running <command moreinfo=\"none\">svn update</command> in a working copy, while the final merge step is analogous to running <command moreinfo=\"none\">svn commit</command> from a working copy. After all, what else <emphasis>is</emphasis> a working copy but a very shallow private branch? It's a branch that's only capable of storing one change at a time."
+msgstr "可以用另一种考虑这种模式，你每周按时同步分支到主干，类似于在工作拷贝执行<command moreinfo=\"none\">svn update</command>的命令，最终的合并操作类似于在工作拷贝运行<command moreinfo=\"none\">svn commit</command>，毕竟，工作拷贝不就是一个非常浅的分支吗？只是它一次只可以保存一个修改。"
+
+#: build/en/book.xml:884(title)
+msgid "Subversion's Features"
+msgstr "Subversion的特性"
+
+#: build/en/book.xml:8847(title)
+#, fuzzy
+msgid "Traversing Branches"
+msgstr "使用分支"
+
+#: build/en/book.xml:8849(para)
+#, fuzzy
+msgid "The <command moreinfo=\"none\">svn switch</command> command transforms an existing working copy to reflect a different branch. While this command isn't strictly necessary for working with branches, it provides a nice shortcut to users. In our earlier example, after creating your private branch, you checked out a fresh working copy of the new repository directory. Instead, you can simply ask Subversion to change your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to mirror the new branch location:"
+msgstr "<command moreinfo=\"none\">svn switch</command>命令改变存在的工作拷贝到另一个分支，然而这个命令在分支上工作时不是严格必要的，它只是提供了一个快捷方式。在前面的例子里，完成了私有分支的建立，你取出了新目录的工作拷贝，相反，你可以简单的告诉Subversion改变你的<filename moreinfo=\"none\">/calc/trunk</filename>的工作拷贝到分支的路径："
+
+#: build/en/book.xml:8859(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd calc\n"
+"\n"
+"$ svn info | grep URL\n"
+"URL: http://svn.example.com/repos/calc/trunk\n"
+"\n"
+"$ svn switch http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"Updated to revision 341.\n"
+"\n"
+"$ svn info | grep URL\n"
+"URL: http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+msgstr ""
+"\n"
+"$ cd calc\n"
+"\n"
+"$ svn info | grep URL\n"
+"URL: http://svn.example.com/repos/calc/trunk\n"
+"\n"
+"$ svn switch http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"U   integer.c\n"
+"U   button.c\n"
+"U   Makefile\n"
+"Updated to revision 341.\n"
+"\n"
+"$ svn info | grep URL\n"
+"URL: http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+
+#: build/en/book.xml:886(para)
+#, fuzzy
+msgid "When discussing the features that Subversion brings to the version control table, it is often helpful to speak of them in terms of how they improve upon CVS's design. If you're not familiar with CVS, you may not understand all of these features. And if you're not familiar with version control at all, your eyes may glaze over unless you first read <xref linkend=\"svn.basic\"/>, in which we provide a gentle introduction to version control."
+msgstr "Subversion将很多新特性引入版本控制领域。在讲解这些特性时，我们会经常性的与CVS进行对比，以说明Subversion比CVS高明在哪里。如果不熟悉CVS，了解所有Subversion的特性会有一定的困难。而如果根本就不熟悉版本控制，你就只有干瞪眼的份儿了。因此，最好首先阅读一下<xref linkend=\"svn.basic\"/>，这一章简单介绍了一些版本控制的基本思想和概念。"
+
+#: build/en/book.xml:8875(para)
+msgid "After <quote>switching</quote> to the branch, your working copy is no different than what you would get from doing a fresh checkout of the directory. And it's usually more efficient to use this command, because often branches only differ by a small degree. The server sends only the minimal set of changes necessary to make your working copy reflect the branch directory."
+msgstr "完成了到分支的<quote>跳转</quote>，你的目录与直接取出一个干净的版本没有什么不同。这样会更有效率，因为分支只有很小的区别，服务器只是发送修改的部分来使你的工作拷贝反映分支。"
+
+#: build/en/book.xml:8883(para)
+msgid "The <command moreinfo=\"none\">svn switch</command> command also takes a <option>--revision</option> (<option>-r</option>) option, so you need not always move your working copy to the <quote>tip</quote> of the branch."
+msgstr "<command moreinfo=\"none\">svn switch</command>命令也可以带<option>--revision</option>（<option>-r</option>）参数，所以你不需要一直移动你的工作拷贝到最新版本。"
+
+#: build/en/book.xml:8888(para)
+msgid "Of course, most projects are more complicated than our <filename moreinfo=\"none\">calc</filename> example, containing multiple subdirectories. Subversion users often follow a specific algorithm when using branches:"
+msgstr "当然，许多项目比我们的<filename moreinfo=\"none\">calc</filename>要复杂的多，有更多的子目录，Subversion用户通常用如下的法则使用分支："
+
+#: build/en/book.xml:8895(para)
+msgid "Copy the project's entire <quote>trunk</quote> to a new branch directory."
+msgstr "拷贝整个项目的<quote>trunk</quote>目录到一个新的分支目录。"
+
+#: build/en/book.xml:8899(para)
+msgid "Switch only <emphasis>part</emphasis> of the trunk working copy to mirror the branch."
+msgstr "只是转换工作拷贝的<emphasis>部分</emphasis>目录到分支。"
+
+#: build/en/book.xml:8904(para)
+msgid "In other words, if a user knows that the branch-work only needs to happen on a specific subdirectory, they use <command moreinfo=\"none\">svn switch</command> to move only that subdirectory to the branch. (Or sometimes users will switch just a single working file to the branch!) That way, they can continue to receive normal <quote>trunk</quote> updates to most of their working copy, but the switched portions will remain immune (unless someone commits a change to their branch). This feature adds a whole new dimension to the concept of a <quote>mixed working copy</quote>—not only can working copies contain a mixture of working revisions, but a mixture of repository locations as well."
+msgstr "换句话说，如果一个用户知道分支工作只发生在部分子目录，我们使用<command moreinfo=\"none\">svn switch</command>来跳转部分目录（有时候只是单个文件），这样的话，他们依然可以继续得到普通的<quote>trunk</quote>主干的更新，但是已经跳转的部分则被免去了更新（除非分支上有更新）。这个特性给<quote>混合工作拷贝</quote>概念添加了新的维度—不仅工作拷贝的版本可以混合，在版本库中的位置也可以混合。"
+
+#: build/en/book.xml:8917(para)
+msgid "If your working copy contains a number of switched subtrees from different repository locations, it continues to function as normal. When you update, you'll receive patches to each subtree as appropriate. When you commit, your local changes will still be applied as a single, atomic change to the repository."
+msgstr "如果你的工作拷贝包含许多来自不同版本库目录跳转的子树，它会工作如常。当你更新时，你会得到每一个目录适当的补丁，当你提交时，你的本地修改会一直作为一个单独的原子修改提交到版本库。"
+
+#: build/en/book.xml:8923(para)
+#, fuzzy
+msgid "Note that while it's okay for your working copy to reflect a mixture of repository locations, these locations must all be within the <emphasis>same</emphasis> repository. Subversion repositories aren't yet able to communicate with one another; that's a feature planned for the future. <placeholder-1/>"
+msgstr "注意，因为你的工作拷贝可以在混合位置的情况下工作正常，但是所有的位置必须在同一个版本库，Subversion的版本库不能互相通信，这个特性还不在Subversion 1.0的计划里。<footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:8930(para)
+#, fuzzy
+msgid "You <emphasis>can</emphasis>, however, use <command moreinfo=\"none\">svn switch</command> with the <option>--relocate</option> switch if the URL of your server changes and you don't want to abandon an existing working copy. See <xref linkend=\"svn.ref.svn.c.switch\"/> for more information and an example."
+msgstr "当你的服务器位置改变，而你不想放弃存在的本地拷贝，你<emphasis>可以</emphasis>使用带选项<option>--relocate</option>的<command moreinfo=\"none\">svn switch</command>命令转换URL，见<xref linkend=\"svn.ref\"/>的<command moreinfo=\"none\">svn switch</command>查看更多信息和例子。"
+
+#: build/en/book.xml:8938(title)
+msgid "Switches and Updates"
+msgstr "跳转和更新"
+
+#: build/en/book.xml:894(para)
+msgid "Subversion provides:"
+msgstr "Subversion支持："
+
+#: build/en/book.xml:8940(para)
+msgid "Have you noticed that the output of <command moreinfo=\"none\">svn switch</command> and <command moreinfo=\"none\">svn update</command> look the same? The <literal moreinfo=\"none\">switch</literal> command is actually a superset of the update command."
+msgstr "你注意到<command moreinfo=\"none\">svn switch</command>和<command moreinfo=\"none\">svn update</command>的输出很像？<literal moreinfo=\"none\">switch</literal>命令只是update命令的一个超集。"
+
+#: build/en/book.xml:8945(para)
+msgid "When you run <command moreinfo=\"none\">svn update</command>, you're asking the repository to compare two trees. The repository does so, and then sends a description of the differences back to the client. The only difference between <command moreinfo=\"none\">svn switch</command> and <command moreinfo=\"none\">svn update</command> is that the <literal moreinfo=\"none\">update</literal> command always compares two identical paths."
+msgstr "当你运行<command moreinfo=\"none\">svn update</command>时，你会告诉版本库比较两个目录树，版本库这样做，并且返回给客户区别的描述，<command moreinfo=\"none\">svn switch</command>和<command moreinfo=\"none\">svn update</command>两个命令唯一区别就是<command moreinfo=\"none\">svn update</command>会一直比较同一路径。"
+
+#: build/en/book.xml:8953(para)
+msgid "That is, if your working copy is a mirror of <filename moreinfo=\"none\">/calc/trunk</filename>, then <command moreinfo=\"none\">svn update</command> will automatically compare your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to <filename moreinfo=\"none\">/calc/trunk</filename> in the <literal moreinfo=\"none\">HEAD</literal> revision. If you're switching your working copy to a branch, then <command moreinfo=\"none\">svn switch</command> will compare your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to some <emphasis>other</emphasis> branch-directory in the <literal moreinfo=\"none\">HEAD</literal> revision."
+msgstr "也就是了，如果你的工作拷贝是<filename moreinfo=\"none\">/calc/trunk</filename>的一个镜像，当运行<command moreinfo=\"none\">svn update</command>时会自动地比较你的工作拷贝的<filename moreinfo=\"none\">/calc/trunk</filename>与HEAD版本的<filename moreinfo=\"none\">/calc/trunk</filename>。如果你使用<command moreinfo=\"none\">svn switch</command>跳转工作拷贝到分支，则会比较你的工作拷贝的<filename moreinfo=\"none\">/calc/trunk</filename>与相应分支目录的HEAD版本。"
+
+#: build/en/book.xml:8965(para)
+msgid "In other words, an update moves your working copy through time. A switch moves your working copy through time <emphasis>and</emphasis> space."
+msgstr "换句话说，一个更新通过时间移动你的工作拷贝，一个转换通过时间和空间移动工作拷贝。"
+
+#: build/en/book.xml:8970(para)
+msgid "Because <command moreinfo=\"none\">svn switch</command> is essentially a variant of <command moreinfo=\"none\">svn update</command>, it shares the same behaviors; any local modifications in your working copy are preserved when new data arrives from the repository. This allows you to perform all sorts of clever tricks."
+msgstr "因为<command moreinfo=\"none\">svn switch</command>是<command moreinfo=\"none\">svn update</command>的一个变种，具有相同的行为，当新的数据到达时，任何工作拷贝的已经完成的本地修改会被保存，这里允许你作各种聪明的把戏。"
+
+#: build/en/book.xml:8976(para)
+msgid "For example, suppose you have a working copy of <filename moreinfo=\"none\">/calc/trunk</filename> and make a number of changes to it. Then you suddenly realize that you meant to make the changes to a branch instead. No problem! When you <command moreinfo=\"none\">svn switch</command> your working copy to the branch, the local changes will remain. You can then test and commit them to the branch."
+msgstr "举个例子，你的工作拷贝目录是<filename moreinfo=\"none\">/calc/trunk</filename>，你已经做了很多修改，然后你突然发现应该在分支上修改更好，没问题！你可以使用<command moreinfo=\"none\">svn switch</command>，而你本地修改还会保留，你可以测试并提交它们到分支。"
+
+#: build/en/book.xml:898(term)
+msgid "Directory versioning"
+msgstr "版本化的目录"
+
+#: build/en/book.xml:8991(title)
+msgid "Tags"
+msgstr "标签"
+
+#: build/en/book.xml:8993(para)
+msgid "Another common version control concept is a <firstterm>tag</firstterm>. A tag is just a <quote>snapshot</quote> of a project in time. In Subversion, this idea already seems to be everywhere. Each repository revision is exactly that—a snapshot of the filesystem after each commit."
+msgstr "另一个常见的版本控制系统概念是标­¾（<firstterm>tag</firstterm>），一个标签只是一个项目某一时间的<quote>快照</quote>，在Subversion里这个概念无处不在—每一次提交的修订版本都是一个精确的快照。"
+
+#: build/en/book.xml:900(para)
+msgid "CVS only tracks the history of individual files, but Subversion implements a <quote>virtual</quote> versioned filesystem that tracks changes to whole directory trees over time. Files <emphasis>and</emphasis> directories are versioned."
+msgstr "CVS只能跟踪单个文件的变更历史，但是Subversion实现的<quote>虚拟</quote>版本化文件系统则可以跟踪目录树的变更。在Subversion中，文件<emphasis>和</emphasis>目录都是版本化的。"
+
+#: build/en/book.xml:9000(para)
+msgid "However, people often want to give more human-friendly names to tags, like <literal moreinfo=\"none\">release-1.0</literal>. And they want to make snapshots of smaller subdirectories of the filesystem. After all, it's not so easy to remember that release-1.0 of a piece of software is a particular subdirectory of revision 4822."
+msgstr "然而人们希望更人性化的标签名称，像<literal moreinfo=\"none\">release-1.0</literal>。他们也希望可以对一个子目录快照，毕竟，记住release-1.0是修订版本4822的某一小部分不是件很容易的事。"
+
+#: build/en/book.xml:9009(title)
+msgid "Creating a Simple Tag"
+msgstr "建立最简单的标签"
+
+#: build/en/book.xml:9011(para)
+msgid "Once again, <command moreinfo=\"none\">svn copy</command> comes to the rescue. If you want to create a snapshot of <filename moreinfo=\"none\">/calc/trunk</filename> exactly as it looks in the <literal moreinfo=\"none\">HEAD</literal> revision, then make a copy of it:"
+msgstr "<command moreinfo=\"none\">svn copy</command>再次登场，你希望建立一个<filename moreinfo=\"none\">/calc/trunk</filename>的一个快照，就像<literal moreinfo=\"none\">HEAD</literal>修订版本，建立这样一个拷贝："
+
+#: build/en/book.xml:9016(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"           http://svn.example.com/repos/calc/tags/release-1.0 \\\n"
+"      -m \"Tagging the 1.0 release of the 'calc' project.\"\n"
+"\n"
+"Committed revision 351.\n"
+msgstr ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"           http://svn.example.com/repos/calc/tags/release-1.0 \\\n"
+"      -m \"Tagging the 1.0 release of the 'calc' project.\"\n"
+"\n"
+"Committed revision 351.\n"
+
+#: build/en/book.xml:9024(para)
+#, fuzzy
+msgid "This example assumes that a <filename moreinfo=\"none\">/calc/tags</filename> directory already exists. (If it doesn't, you can create it using <command moreinfo=\"none\">svn mkdir</command>.) After the copy completes, the new <filename moreinfo=\"none\">release-1.0</filename> directory is forever a snapshot of how the project looked in the <literal moreinfo=\"none\">HEAD</literal> revision at the time you made the copy. Of course you might want to be more precise about exactly which revision you copy, in case somebody else may have committed changes to the project when you weren't looking. So if you know that revision 350 of <filename moreinfo=\"none\">/calc/trunk</filename> is exactly the snapshot you want, you can specify it by passing <option>-r 350</option> to the <command moreinfo=\"none\">svn copy</command> command."
+msgstr "这个例子假定<filename moreinfo=\"none\">/calc/tags</filename>目录已经存在（如果不是，见<xref linkend=\"svn.ref.svn.c.mkdir\"/>），拷贝完成之后，一个表示当时<literal moreinfo=\"none\">HEAD</literal>版本的/calc/trunk目录的镜像已经永久的拷贝到<filename moreinfo=\"none\">release-1.0</filename>目录。当然，你会希望更精确一点，以防其他人在你不注意的时候提交修改，所以，如果你知道<filename moreinfo=\"none\">/calc/trunk</filename>的版本350是你想要的快照，你可以使用<command moreinfo=\"none\">svn copy</command>加参数 <option>-r 350</option>。"
+
+#: build/en/book.xml:9039(para)
+msgid "But wait a moment: isn't this tag-creation procedure the same procedure we used to create a branch? Yes, in fact, it is. In Subversion, there's no difference between a tag and a branch. Both are just ordinary directories that are created by copying. Just as with branches, the only reason a copied directory is a <quote>tag</quote> is because <emphasis>humans</emphasis> have decided to treat it that way: as long as nobody ever commits to the directory, it forever remains a snapshot. If people start committing to it, it becomes a branch."
+msgstr "但是等一下：标签的产生过程与建立分支是一样的？是的，实际上在Subversion中标签与分支没有区别，都是普通的目录，通过copy命令得到，与分支一样，一个目录之所以是标签只是<emphasis>人们</emphasis>决定这样使用它，只要没有人提交这个目录，它永远是一个快照，但如果人们开始提交，它就变成了分支。"
+
+#: build/en/book.xml:9050(para)
+msgid "If you are administering a repository, there are two approaches you can take to managing tags. The first approach is <quote>hands off</quote>: as a matter of project policy, decide where your tags will live, and make sure all users know how to treat the directories they copy in there. (That is, make sure they know not to commit to them.) The second approach is more paranoid: you can use one of the access-control scripts provided with Subversion to prevent anyone from doing anything but creating new copies in the tags-area (See <xref linkend=\"svn.serverconfig\"/>.) The paranoid approach, however, isn't usually necessary. If a user accidentally commits a change to a tag-directory, you can simply undo the change as discussed in the previous section. This is version control, after all."
+msgstr "如果你管理一个版本库，你有两种方式管理标签，第一种方法是禁止命令：作为项目的政策，我们要决定标签所在的位置，确定所有用户知道如何处理拷贝的目录（也就是确保他们不会提交他们），第二种方法看来很过分：使用访问控制脚本来阻止任何想对标签目录做的非拷贝的操作（见<xref linkend=\"svn.serverconfig\"/>）这种方法通常是不必要的，如果一个人不小心提交了到标签目录一个修改，你可以简单的取消，毕竟这是版本控制啊。"
+
+#: build/en/book.xml:9069(title)
+msgid "Creating a Complex Tag"
+msgstr "建立复杂的标签"
+
+#: build/en/book.xml:9071(para)
+msgid "Sometimes you may want your <quote>snapshot</quote> to be more complicated than a single directory at a single revision."
+msgstr "有时候你希望你的<quote>快照</quote>能够很复杂，而不只是一个单独修订版本的一个单独目录。"
+
+#: build/en/book.xml:9075(para)
+msgid "For example, pretend your project is much larger than our <filename moreinfo=\"none\">calc</filename> example: suppose it contains a number of subdirectories and many more files. In the course of your work, you may decide that you need to create a working copy that is designed to have specific features and bug fixes. You can accomplish this by selectively backdating files or directories to particular revisions (using <command moreinfo=\"none\">svn update -r</command> liberally), or by switching files and directories to particular branches (making use of <command moreinfo=\"none\">svn switch</command>). When you're done, your working copy is a hodgepodge of repository locations from different revisions. But after testing, you know it's the precise combination of data you need."
+msgstr "举个例子，假定你的项目比我们的的例子<filename moreinfo=\"none\">calc</filename>大的多：假设它保存了一组子目录和许多文件，在你工作时，你或许决定创建一个包括特定特性和Bug修正的工作拷贝，你可以通过选择性的回溯文件和目录到特定修订版本（使用<command moreinfo=\"none\">svn update -r</command>）来实现，或者转换文件和目录到特定分支（使用<command moreinfo=\"none\">svn switch</command>），这样做之后，你的工作拷贝成为版本库不同版本和分支的司令部，但是经过测试，你会知道这是你需要的一种精确数据组合。"
+
+#: build/en/book.xml:9089(para)
+msgid "Time to make a snapshot. Copying one URL to another won't work here. In this case, you want to make a snapshot of your exact working copy arrangement and store it in the repository. Luckily, <command moreinfo=\"none\">svn copy</command> actually has four different uses (which you can read about in <xref linkend=\"svn.ref\"/>), including the ability to copy a working-copy tree to the repository:"
+msgstr "是时候进行快照了，拷贝URL在这里不能工作，在这个例子里，你希望把本地拷贝的布局做镜像并且保存到版本库中，幸运的是，<command moreinfo=\"none\">svn copy</command>包括四种不同的使用方式（在第9章可以详细阅读），包括拷贝工作拷贝到版本库："
+
+#: build/en/book.xml:909(term)
+msgid "True version history"
+msgstr "真实的版本历史"
+
+#: build/en/book.xml:9096(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ ls\n"
+"my-working-copy/\n"
+"\n"
+"$ svn copy my-working-copy http://svn.example.com/repos/calc/tags/mytag\n"
+"\n"
+"Committed revision 352.\n"
+msgstr ""
+"\n"
+"$ ls\n"
+"my-working-copy/\n"
+"\n"
+"$ svn copy my-working-copy http://svn.example.com/repos/calc/tags/mytag\n"
+"\n"
+"Committed revision 352.\n"
+
+#: build/en/book.xml:9105(para)
+msgid "Now there is a new directory in the repository, <filename moreinfo=\"none\">/calc/tags/mytag</filename>, which is an exact snapshot of your working copy—mixed revisions, URLs, and all."
+msgstr "现在在版本库有一个新的目录<filename moreinfo=\"none\">/calc/tags/mytag</filename>，这是你的本地拷贝的一个快照—混合了修订版本，URL等等。"
+
+#: build/en/book.xml:911(para)
+msgid "Since CVS is limited to file versioning, operations such as copies and renames—which might happen to files, but which are really changes to the contents of some containing directory—aren't supported in CVS. Additionally, in CVS you cannot replace a versioned file with some new thing of the same name without the new item inheriting the history of the old—perhaps completely unrelated—file. With Subversion, you can add, delete, copy, and rename both files and directories. And every newly added file begins with a fresh, clean history all its own."
+msgstr "由于只能跟踪单个文件的变更，CVS无法支持如文件拷贝和改名这些常见的操作—这些操作改变了目录的内容。同样，在CVS中，目录下的文件只要名字相同即拥有相同的历史，即使这些同名文件在历史上毫无关系。而在Subversion中，可以对文件或目录进行增加、拷贝和改名操作，也解决了同名而无关的文件之间的历史联系问题。"
+
+#: build/en/book.xml:9110(para)
+msgid "Other users have found interesting uses for this feature. Sometimes there are situations where you have a bunch of local changes made to your working copy, and you'd like a collaborator to see them. Instead of running <command moreinfo=\"none\">svn diff</command> and sending a patch file (which won't capture tree changes, symlink changes or changes in properties), you can instead use <command moreinfo=\"none\">svn copy</command> to <quote>upload</quote> your working copy to a private area of the repository. Your collaborator can then either checkout a verbatim copy of your working copy, or use <command moreinfo=\"none\">svn merge</command> to receive your exact changes."
+msgstr "一些人也发现这一特性一些有趣的使用方式，有些时候本地拷贝有一组本地修改，你希望你的协作者看到这些，不使用<command moreinfo=\"none\">svn diff</command>并发送一个补定文件（不会捕捉到目录、符号链和属性的修改），而是使用<command moreinfo=\"none\">svn copy</command>来<quote>上传</quote>你的工作拷贝到一个版本库的私有区域，你的协作者可以选择完整的取出你的工作拷贝，或使用<command moreinfo=\"none\">svn merge</command>来接受你的精确修改。"
+
+#: build/en/book.xml:9130(title)
+msgid "Branch Maintenance"
+msgstr "分支维护"
+
+#: build/en/book.xml:9132(para)
+msgid "You may have noticed by now that Subversion is extremely flexible. Because it implements branches and tags with the same underlying mechanism (directory copies), and because branches and tags appear in normal filesystem space, many people find Subversion intimidating. It's almost <emphasis>too</emphasis> flexible. In this section, we'll offer some suggestions for arranging and managing your data over time."
+msgstr "你一定注意到了Subversion极度的灵活性，因为它用相同的底层机制（目录拷贝）实现了分支和标签，因为分支和标签是作为普通的文件系统出现，会让人们感到害怕，因为它<emphasis>太</emphasis>灵活了，在这个小节里，我们会提供安排和管理数据的一些建议。"
+
+#: build/en/book.xml:9142(title)
+msgid "Repository Layout"
+msgstr "版本库布局"
+
+#: build/en/book.xml:9144(para)
+msgid "There are some standard, recommended ways to organize a repository. Most people create a <filename moreinfo=\"none\">trunk</filename> directory to hold the <quote>main line</quote> of development, a <filename moreinfo=\"none\">branches</filename> directory to contain branch copies, and a <filename moreinfo=\"none\">tags</filename> directory to contain tag copies. If a repository holds only one project, then often people create these top-level directories:"
+msgstr "有一些标准的，推荐的组织版本库的方式，许多人创建一个<filename moreinfo=\"none\">trunk</filename>目录来保存开发的<quote>主线</quote>，一个<filename moreinfo=\"none\">branches</filename>目录存放分支拷贝，一个目录保存标签拷贝，如果一个版本库只是存放一个项目，人们会在顶级目录创建这些目录："
+
+#: build/en/book.xml:9152(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/trunk\n"
+"/branches\n"
+"/tags\n"
+msgstr ""
+"\n"
+"/trunk\n"
+"/branches\n"
+"/tags\n"
+
+#: build/en/book.xml:9158(para)
+msgid "If a repository contains multiple projects, admins typically index their layout by project (see <xref linkend=\"svn.reposadmin.projects.chooselayout\"/> to read more about <quote>project roots</quote>):"
+msgstr "如果一个版本库保存了多个项目，管理员会通过项目来布局（见<xref linkend=\"svn.reposadmin.projects.chooselayout\"/>关于<quote>项目根目录</quote>）："
+
+#: build/en/book.xml:9162(screen)
+#, no-wrap
+msgid ""
+"\n"
+"/paint/trunk\n"
+"/paint/branches\n"
+"/paint/tags\n"
+"/calc/trunk\n"
+"/calc/branches\n"
+"/calc/tags\n"
+msgstr ""
+"\n"
+"/paint/trunk\n"
+"/paint/branches\n"
+"/paint/tags\n"
+"/calc/trunk\n"
+"/calc/branches\n"
+"/calc/tags\n"
+
+#: build/en/book.xml:9171(para)
+msgid "Of course, you're free to ignore these common layouts. You can create any sort of variation, whatever works best for you or your team. Remember that whatever you choose, it's not a permanent commitment. You can reorganize your repository at any time. Because branches and tags are ordinary directories, the <command moreinfo=\"none\">svn move</command> command can move or rename them however you wish. Switching from one layout to another is just a matter of issuing a series of server-side moves; if you don't like the way things are organized in the repository, just juggle the directories around."
+msgstr "当然，你可以自由的忽略这些通常的布局方式，你可以创建任意的变化，只要是对你和你的项目有益，记住无论你选择什么，这不会是一种永久的承诺，你可以随时重新组织你的版本库。因为分支和标签都是普通的目录，<command moreinfo=\"none\">svn move</command>命令可以任意的改名和移动它们，从一种布局到另一种大概只是一系列服务器端的移动，如果你不喜欢版本库的组织方式，你可以任意修改目录结构。"
+
+#: build/en/book.xml:9182(para)
+msgid "Remember, though, that while moving directories may be easy to do, you need to be considerate of your users as well. Your juggling can be disorienting to users with existing working copies. If a user has a working copy of a particular repository directory, your <command moreinfo=\"none\">svn move</command> operation might remove the path from the latest revision. When the user next runs <command moreinfo=\"none\">svn update</command>, she will be told that her working copy represents a path that no longer exists, and the user will be forced to <command moreinfo=\"none\">svn switch</command> to the new location."
+msgstr "记住，尽管移动目录非常容易，你必须体谅你的用户，你的修改会让你的用户感到迷惑，如果一个用户的拥有一个版本库目录的工作拷贝，你的<command moreinfo=\"none\">svn move</command>命令也许会删除最新的版本的这个路径，当用户运行<command moreinfo=\"none\">svn update</command>，会被告知这个工作拷贝引用的路径已经不再存在，用户需要强制使用<command moreinfo=\"none\">svn switch</command>转到新的位置。"
+
+#: build/en/book.xml:9198(title)
+msgid "Data Lifetimes"
+msgstr "数据的生命周期"
+
+#: build/en/book.xml:9200(para)
+msgid "Another nice feature of Subversion's model is that branches and tags can have finite lifetimes, just like any other versioned item. For example, suppose you eventually finish all your work on your personal branch of the <filename moreinfo=\"none\">calc</filename> project. After merging all of your changes back into <filename moreinfo=\"none\">/calc/trunk</filename>, there's no need for your private branch directory to stick around anymore:"
+msgstr "另一个Subversion模型的可爱特性是分支和标签可以有有限的生命周期，就像其它的版本化的项目，举个例子，假定你最终完成了<filename moreinfo=\"none\">calc</filename>项目你的个人分支上的所有工作，在合并了你的所有修改到<filename moreinfo=\"none\">/calc/trunk</filename>后，没有必要继续保留你的私有分支目录："
+
+#: build/en/book.xml:9209(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn delete http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"             -m \"Removing obsolete branch of calc project.\"\n"
+"\n"
+"Committed revision 375.\n"
+msgstr ""
+"\n"
+"$ svn delete http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"             -m \"Removing obsolete branch of calc project.\"\n"
+"\n"
+"Committed revision 375.\n"
+
+#: build/en/book.xml:9216(para)
+msgid "And now your branch is gone. Of course it's not really gone: the directory is simply missing from the <literal moreinfo=\"none\">HEAD</literal> revision, no longer distracting anyone. If you use <command moreinfo=\"none\">svn checkout</command>, <command moreinfo=\"none\">svn switch</command>, or <command moreinfo=\"none\">svn list</command> to examine an earlier revision, you'll still be able to see your old branch."
+msgstr "你的分支已经消失了，当然不是真的消失了：这个目录只是在<literal moreinfo=\"none\">HEAD</literal>修订版本里消失了，如果你使用<command moreinfo=\"none\">svn checkout</command>、<command moreinfo=\"none\">svn switch</command>或者<command moreinfo=\"none\">svn list</command>来检查一个旧的版本，你仍会见到这个旧的分支。"
+
+#: build/en/book.xml:9224(para)
+msgid "If browsing your deleted directory isn't enough, you can always bring it back. Resurrecting data is very easy in Subversion. If there's a deleted directory (or file) that you'd like to bring back into <literal moreinfo=\"none\">HEAD</literal>, simply use <command moreinfo=\"none\">svn copy -r</command> to copy it from the old revision:"
+msgstr "如果浏览你删除的目录还不足够，你可以把它找回来，恢复数据对Subversion来说很简单，如果你希望恢复一个已经删除的目录（或文件）到<literal moreinfo=\"none\">HEAD</literal>，仅需要使用<command moreinfo=\"none\">svn copy -r</command>来从旧的版本拷贝出来："
+
+#: build/en/book.xml:9231(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy -r 374 http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"                  http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"\n"
+"Committed revision 376.\n"
+msgstr ""
+"\n"
+"$ svn copy -r 374 http://svn.example.com/repos/calc/branches/my-calc-branch \\\n"
+"                  http://svn.example.com/repos/calc/branches/my-calc-branch\n"
+"\n"
+"Committed revision 376.\n"
+
+#: build/en/book.xml:9238(para)
+msgid "In our example, your personal branch had a relatively short lifetime: you may have created it to fix a bug or implement a new feature. When your task is done, so is the branch. In software development, though, it's also common to have two <quote>main</quote> branches running side-by-side for very long periods. For example, suppose it's time to release a stable version of the <filename moreinfo=\"none\">calc</filename> project to the public, and you know it's going to take a couple of months to shake bugs out of the software. You don't want people to add new features to the project, but you don't want to tell all developers to stop programming either. So instead, you create a <quote>stable</quote> branch of the software that won't change much:"
+msgstr "在我们的例子里，你的个人分支只有一个相对短的生命周期：你会为修复一个Bug或实现一个小的特性来创建它，当任务完成，分支也该结束了。在软件开发过程中，有两个<quote>主要的</quote>分支一直存在很长的时间也是很常见的情况，举个例子，假定我们是发布一个稳定的<filename moreinfo=\"none\">calc</filename>项目的时候了，但我们仍会需要几个月的时间来修复Bug，你不希望添加新的特性，但你不希望告诉开发者停止开发，所以作为替代，你为软件创建了一个<quote>分支</quote>，这个分支更改不会很多："
+
+#: build/en/book.xml:9252(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"         http://svn.example.com/repos/calc/branches/stable-1.0 \\\n"
+"         -m \"Creating stable branch of calc project.\"\n"
+"\n"
+"Committed revision 377.\n"
+msgstr ""
+"\n"
+"$ svn copy http://svn.example.com/repos/calc/trunk \\\n"
+"         http://svn.example.com/repos/calc/branches/stable-1.0 \\\n"
+"         -m \"Creating stable branch of calc project.\"\n"
+"\n"
+"Committed revision 377.\n"
+
+#: build/en/book.xml:926(term)
+msgid "Atomic commits"
+msgstr "原子提交"
+
+#: build/en/book.xml:9260(para)
+msgid "And now developers are free to continue adding cutting-edge (or experimental) features to <filename moreinfo=\"none\">/calc/trunk</filename>, and you can declare a project policy that only bug fixes are to be committed to <filename moreinfo=\"none\">/calc/branches/stable-1.0</filename>. That is, as people continue to work on the trunk, a human selectively ports bug fixes over to the stable branch. Even after the stable branch has shipped, you'll probably continue to maintain the branch for a long time—that is, as long as you continue to support that release for customers."
+msgstr "而且开发者可以自由的继续添加新的（试验的）特性到<filename moreinfo=\"none\">/calc/trunk</filename>，你可以宣布这样一种政策，只有bug修正提交到<filename moreinfo=\"none\">/calc/branches/stable-1.0</filename>，这样的话，人们继续在主干上工作，某个人会选择在稳定分支上做出一些Bug修正，甚至在稳定版本发布之后。你或许会在这个维护分支上工作很长时间—也就是说，你会一直继续为客户提供这个版本的支持。"
+
+#: build/en/book.xml:928(para)
+msgid "A collection of modifications either goes into the repository completely, or not at all. This allows developers to construct and commit changes as logical chunks, and prevents problems that can occur when only a portion of a set of changes is successfully sent to the repository."
+msgstr "一系列相关的更改，要么全部提交到版本库，要么一个也不提交。这样用户就可以将相关的更改组成一个逻辑整体，防止出现部分修改而另一部分未修改的情况提交到版本库中。"
+
+#: build/en/book.xml:9280(title)
+msgid "Vendor branches"
+msgstr "卖主分支"
+
+#: build/en/book.xml:9282(para)
+msgid "As is especially the case when developing software, the data that you maintain under version control is often closely related to, or perhaps dependent upon, someone else's data. Generally, the needs of your project will dictate that you stay as up-to-date as possible with the data provided by that external entity without sacrificing the stability of your own project. This scenario plays itself out all the time—anywhere that the information generated by one group of people has a direct effect on that which is generated by another group."
+msgstr "当开发软件时有这样一个情况，你版本控制的数据可能关联于或者是依赖于其他人的数据，通常来讲，你的项目的需要会要求你自己的项目对外部实体提供的数据保持尽可能最新的版本，同时不会牺牲稳定性，这种情况总是会出现—只要某个小组的信息对另一个小组的信息有直接的影响。"
+
+#: build/en/book.xml:9292(para)
+msgid "For example, software developers might be working on an application which makes use of a third-party library. Subversion has just such a relationship with the Apache Portable Runtime library (see <xref linkend=\"svn.developer.usingapi.apr\"/>). The Subversion source code depends on the APR library for all its portability needs. In earlier stages of Subversion's development, the project closely tracked APR's changing API, always sticking to the <quote>bleeding edge</quote> of the library's code churn. Now that both APR and Subversion have matured, Subversion attempts to synchronize with APR's library API only at well-tested, stable release points."
+msgstr "举个例子，软件开发者会工作在一个使用第三方库的应用，Subversion恰好是和Apache的Portable Runtime library（见<xref linkend=\"svn.developer.usingapi.apr\"/>）有这样一个关系。Subversion源代码依赖于APR库来实现可移植需求。在Subversion的早期开发阶段，项目紧密地追踪APR的API修改，经常在库代码的<quote>流血的边缘</quote>粘住，现在APR和Subversion都已经成熟了，Subversion只尝试同步APR的经过良好测试的，稳定的API库。"
+
+#: build/en/book.xml:93(para)
+msgid "A: Many of our customers want to know how they can maximize productivity through our patented office groupware innovations. The answer is simple: first, click on the <quote><literal moreinfo=\"none\">File</literal></quote> menu, scroll down to <quote><literal moreinfo=\"none\">Increase Productivity</literal></quote>, then…"
+msgstr "A：许多客户希望知道怎样利用我们革命性的独创的办公套件最大程度的提高生产率。答案非常简单：首先，点击<quote><literal moreinfo=\"none\">文件</literal></quote> 菜单，找到<quote><literal moreinfo=\"none\">提高生产率</literal></quote>菜单项，然后…"
+
+#: build/en/book.xml:9304(para)
+msgid "Now, if your project depends on someone else's information, there are several ways that you could attempt to synchronize that information with your own. Most painfully, you could issue oral or written instructions to all the contributors of your project, telling them to make sure that they have the specific versions of that third-party information that your project needs. If the third-party information is maintained in a Subversion repository, you could also use Subversion's externals definitions to effectively <quote>pin down</quote> specific versions of that information to some location in your own working copy directory (see <xref linkend=\"svn.advanced.externals\"/>)."
+msgstr "现在，如果你的项目依赖于其他人的信息，有许多方法可以用来尝试同步你的信息，最痛苦的，你可以为项目所有的贡献者发布口头或书写的指导，告诉他们确信他们拥有你们的项目需要的特定版本的第三方信息。如果第三方信息是用Subversion版本库维护，你可以使用Subversion的外部定义来有效的<quote>强制</quote>特定的版本的信息在你的工作拷贝的的位置（见<xref linkend=\"svn.advanced.externals\"/>）。"
+
+#: build/en/book.xml:9316(para)
+msgid "But sometimes you want to maintain custom modifications to third-party data in your own version control system. Returning to the software development example, programmers might need to make modifications to that third-party library for their own purposes. These modifications might include new functionality or bug fixes, maintained internally only until they become part of an official release of the third-party library. Or the changes might never be relayed back to the library maintainers, existing solely as custom tweaks to make the library further suit the needs of the software developers."
+msgstr "但是有时候，你希望在你自己的版本控制系统维护一个针对第三方数据的自定义修改，回到软件开发的例子，程序员为了他们自己的目的会需要修改第三方库，这些修改会包括新的功能和bug修正，在成为第三方工具官方发布之前，只是内部维护。或者这些修改永远不会传给库的维护者，只是作为满足软件开发需要的单独的自定义修改存在。"
+
+#: build/en/book.xml:9327(para)
+msgid "Now you face an interesting situation. Your project could house its custom modifications to the third-party data in some disjointed fashion, such as using patch files or full-fledged alternate versions of files and directories. But these quickly become maintenance headaches, requiring some mechanism by which to apply your custom changes to the third-party data, and necessitating regeneration of those changes with each successive version of the third-party data that you track."
+msgstr "现在你会面对一个有趣的情形，你的项目可以用某种脱节的样式保持它关于第三方数据自己的修改，如使用补丁文件或者是完全的可选版本的文件和目录。但是这很快会成为维护的头痛的事情，需要一种机制来应用你对第三方数据的自定义修改，并且迫使在第三方数据的后续版本重建这些修改。"
+
+#: build/en/book.xml:9336(para)
+msgid "The solution to this problem is to use <firstterm>vendor branches</firstterm>. A vendor branch is a directory tree in your own version control system that contains information provided by a third-party entity, or vendor. Each version of the vendor's data that you decide to absorb into your project is called a <firstterm>vendor drop</firstterm>."
+msgstr "这个问题的解决方案是使用<firstterm>卖主分支</firstterm>，一个卖主分支是一个目录树保存了第三方实体或卖主的信息，每一个卖主数据的版本吸收到你的项目叫做<firstterm>卖主drop</firstterm>。"
+
+#: build/en/book.xml:9343(para)
+msgid "Vendor branches provide two key benefits. First, by storing the currently supported vendor drop in your own version control system, the members of your project never need to question whether they have the right version of the vendor's data. They simply receive that correct version as part of their regular working copy updates. Secondly, because the data lives in your own Subversion repository, you can store your custom changes to it in-place—you have no more need of an automated (or worse, manual) method for swapping in your customizations."
+msgstr "卖主分支提供了两个关键的益处，第一，通过在我们的版本控制系统保存现在支持的卖主drop，你项目的成员不需要指导他们是否有了正确版本的卖主数据，他们只需要作为不同工作拷贝更新的一部份，简单的接受正确的版本就可以了。第二，因为数据存在于你自己的Subversion版本库，你可以在恰当的位置保存你的自定义修改—你不需要一个自动的（或者是更坏，手工的）方法来交换你的自定义行为。"
+
+#: build/en/book.xml:9355(title)
+msgid "General Vendor Branch Management Procedure"
+msgstr "常规的卖主分支管理过程"
+
+#: build/en/book.xml:9357(para)
+msgid "Managing vendor branches generally works like this. You create a top-level directory (such as <filename moreinfo=\"none\">/vendor</filename>) to hold the vendor branches. Then you import the third party code into a subdirectory of that top-level directory. You then copy that subdirectory into your main development branch (for example, <filename moreinfo=\"none\">/trunk</filename>) at the appropriate location. You always make your local changes in the main development branch. With each new release of the code you are tracking you bring it into the vendor branch and merge the changes into <filename moreinfo=\"none\">/trunk</filename>, resolving whatever conflicts occur between your local changes and the upstream changes."
+msgstr "管理卖主分支通常会像这个样子，你创建一个顶级的目录（如<filename moreinfo=\"none\">/vendor</filename>）来保存卖主分支，然后你导入第三方的代码到你的子目录。然后你将拷贝这个子目录到主要的开发分支（例如<filename moreinfo=\"none\">/trunk</filename>）的适当位置。你一直在你的主要开发分支上做本地修改，当你的追踪的代码有了新版本，你会把带到卖主分支并且把它合并到你的<filename moreinfo=\"none\">/trunk</filename>，解决任何你的本地修改和他们的修改的冲突。"
+
+#: build/en/book.xml:9371(para)
+msgid "Perhaps an example will help to clarify this algorithm. We'll use a scenario where your development team is creating a calculator program that links against a third-party complex number arithmetic library, libcomplex. We'll begin with the initial creation of the vendor branch, and the import of the first vendor drop. We'll call our vendor branch directory <filename moreinfo=\"none\">libcomplex</filename>, and our code drops will go into a subdirectory of our vendor branch called <filename moreinfo=\"none\">current</filename>. And since <command moreinfo=\"none\">svn import</command> creates all the intermediate parent directories it needs, we can actually accomplish both of these steps with a single command."
+msgstr "也许一个例子有助于我们阐述这个算法，我们会使用这样一个场景，我们的开发团队正在开发一个计算器程序，与一个第三方的复杂数字运算库libcomplex关联。我们从卖主分支的初始创建开始，并且导入卖主drop，我们会把每株分支目录叫做<filename moreinfo=\"none\">libcomplex</filename>，我们的代码drop会进入到卖主分支的子目录<filename moreinfo=\"none\">current</filename>，并且因为<command moreinfo=\"none\">svn import</command>创建所有的需要的中间父目录，我们可以使用一个命令完成这一步。"
+
+#: build/en/book.xml:938(term)
+msgid "Versioned metadata"
+msgstr "版本化的元数据"
+
+#: build/en/book.xml:9384(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn import /path/to/libcomplex-1.0 \\\n"
+"             http://svn.example.com/repos/vendor/libcomplex/current \\\n"
+"             -m 'importing initial 1.0 vendor drop'\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn import /path/to/libcomplex-1.0 \\\n"
+"             http://svn.example.com/repos/vendor/libcomplex/current \\\n"
+"             -m 'importing initial 1.0 vendor drop'\n"
+"…\n"
+
+#: build/en/book.xml:9391(para)
+msgid "We now have the current version of the libcomplex source code in <filename moreinfo=\"none\">/vendor/libcomplex/current</filename>. Now, we tag that version (see <xref linkend=\"svn.branchmerge.tags\"/>) and then copy it into the main development branch. Our copy will create a new directory called <filename moreinfo=\"none\">libcomplex</filename> in our existing <filename moreinfo=\"none\">calc</filename> project directory. It is in this copied version of the vendor data that we will make our customizations."
+msgstr "我们现在在<filename moreinfo=\"none\">/vendor/libcomplex/current</filename>有了libcomplex当前版本的代码，现在我们为那个版本作标签（见<xref linkend=\"svn.branchmerge.tags\"/>），然后拷贝它到主要开发分支，我们的拷贝会在<filename moreinfo=\"none\">calc</filename>项目目录创建一个新的目录<filename moreinfo=\"none\">libcomplex</filename>，它是这个我们将要进行自定义的卖主数据的拷贝版本。"
+
+#: build/en/book.xml:940(para)
+msgid "Each file and directory has a set of properties—keys and their values—associated with it. You can create and store any arbitrary key/value pairs you wish. Properties are versioned over time, just like file contents."
+msgstr "每一个文件和目录都有自己的一组属性—键和它们的值。可以根据需要建立并存储任何键/值对。和文件本身的内容一样，属性也在版本控制之下。"
+
+#: build/en/book.xml:9401(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ svn copy http://svn.example.com/repos/vendor/libcomplex/current  \\\n"
+"           http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n"
+"           -m 'tagging libcomplex-1.0'\n"
+"…\n"
+"$ svn copy http://svn.example.com/repos/vendor/libcomplex/1.0  \\\n"
+"           http://svn.example.com/repos/calc/libcomplex        \\\n"
+"           -m 'bringing libcomplex-1.0 into the main branch'\n"
+"…\n"
+msgstr ""
+"\n"
+"$ svn copy http://svn.example.com/repos/vendor/libcomplex/current  \\\n"
+"           http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n"
+"           -m 'tagging libcomplex-1.0'\n"
+"…\n"
+"$ svn copy http://svn.example.com/repos/vendor/libcomplex/1.0  \\\n"
+"           http://svn.example.com/repos/calc/libcomplex        \\\n"
+"           -m 'bringing libcomplex-1.0 into the main branch'\n"
+"…\n"
+
+#: build/en/book.xml:9412(para)
+#, fuzzy
+msgid "We check out our project's main branch—which now includes a copy of the first vendor drop—and we get to work customizing the libcomplex code. Before we know it, our modified version of libcomplex is now completely integrated into our calculator program. <placeholder-1/>"
+msgstr "我们取出我们项目的主分支—现在包括了第一个卖主drop的拷贝—我们开始自定义libcomplex的代码，我们知道，我们的libcomplex修改版本是已经与我们的计算器程序完全集成。 <footnote><placeholder-1/></footnote>"
+
+#: build/en/book.xml:9418(para)
+msgid "And entirely bug-free, of course!"
+msgstr "而且完全没有bug，当然！"
+
+#: build/en/book.xml:9422(para)
+msgid "A few weeks later, the developers of libcomplex release a new version of their library—version 1.1—which contains some features and functionality that we really want. We'd like to upgrade to this new version, but without losing the customizations we made to the existing version. What we essentially would like to do is to replace our current baseline version of libcomplex 1.0 with a copy of libcomplex 1.1, and then re-apply the custom modifications we previously made to that library to the new version. But we actually approach the problem from the other direction, applying the changes made to libcomplex between versions 1.0 and 1.1 to our modified copy of it."
+msgstr "几周之后，libcomplex得开发者发布了一个新的版本—版本1.1—包括了我们很需要的一些特性和功能。我们很希望升级到这个版本，但不希望失去在当前版本所作的修改。我们本质上会希望把我们当前基线版本是的libcomplex1.0的拷贝替换为libcomplex 1.1，然后把前面自定义的修改应用到新的版本。但是实际上我们通过一个相反的方向解决这个问题，应用libcomplex从版本1.0到1.1的修改到我们修改的拷贝。"
+
+#: build/en/book.xml:9435(para)
+msgid "To perform this upgrade, we checkout a copy of our vendor branch, and replace the code in the <filename moreinfo=\"none\">current</filename> directory with the new libcomplex 1.1 source code. We quite literally copy new files on top of existing files, perhaps exploding the libcomplex 1.1 release tarball atop our existing files and directories. The goal here is to make our <filename moreinfo=\"none\">current</filename> directory contain only the libcomplex 1.1 code, and to ensure that all that code is under version control. Oh, and we want to do this with as little version control history disturbance as possible."
+msgstr "为了执行这个升级，我们取出一个我们卖主分支的拷贝，替换<filename moreinfo=\"none\">current</filename>目录为新的libcomplex 1.1的代码，我们只是拷贝新文件到存在的文件上，或者是解压缩libcomplex 1.1的打包文件到我们存在的文件和目录。此时的目标是让我们的<filename moreinfo=\"none\">current</filename>目录只保留libcomplex 1.1的代码，并且保证所有的代码在版本控制之下，哦，我们希望在最小的版本控制历史扰动下完成这件事。"
+
+#: build/en/book.xml:9447(para)
+msgid "After replacing the 1.0 code with 1.1 code, <command moreinfo=\"none\">svn status</command> will show files with local modifications as well as, perhaps, some unversioned or missing files. If we did what we were supposed to do, the unversioned files are only those new files introduced in the 1.1 release of libcomplex—we run <command moreinfo=\"none\">svn add</command> on those to get them under version control. The missing files are files that were in 1.0 but not in 1.1, and on those paths we run <command moreinfo=\"none\">svn delete</command>. Finally, once our <filename moreinfo=\"none\">current</filename> working copy contains only the libcomplex 1.1 code, we commit the changes we made to get it looking that way."
+msgstr "完成了这个从1.0到1.1的代码替换，<command moreinfo=\"none\">svn status</command>会显示文件的本地修改，或许也包括了一些未版本化或者丢失的文件，如果我们做了我们应该做的事情，未版本化的文件应该都是libcomplex在1.1新引入的文件—我们运行<command moreinfo=\"none\">svn add</command>来将它们加入到版本控制。丢失的文件是存在于1.1但是不是在1.1，在这些路径我们运行<command moreinfo=\"none\">svn delete</command>。最终一旦我们的<filename moreinfo=\"none\">current</filename>工作拷贝只是包括了libcomplex1.1的代码，我们可以提交这些改变目录和文件的修改。"
+
+#: build/en/book.xml:9460(para)
+msgid "Our <filename moreinfo=\"none\">current</filename> branch now contains the new vendor drop. We tag the new version (in the same way we previously tagged the version 1.0 vendor drop), and then merge the differences between the tag of the previous version and the new current version into our main development branch."
+msgstr "我们的<filename moreinfo=\"none\">current</filename>分支现在保存了新的卖主drop，我们为这个新的版本创建一个新的标签（就像我们为1.0版本drop所作的），然后合并这从个标签前一个版本的区别到主要开发分支。"
+
+#: build/en/book.xml:9467(screen)
+#, no-wrap
+msgid ""
+"\n"
+"$ cd working-copies/calc\n"
+"$ svn merge http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n"
+"            http://svn.example.com/repos/vendor/libcomplex/current  \\\n"
+"            libcomplex\n"
+"… # resolve all the conflicts between their changes and our changes\n"
+"$ svn commit -m 'merging libcomplex-1.1 into the main branch'\n"
+"…\n"
+msgstr ""
+"\n"
+"$ cd working-copies/calc\n"
+"$ svn merge http://svn.example.com/repos/vendor/libcomplex/1.0      \\\n"
+"            http://svn.example.com/repos/vendor/libcomplex/current  \\\n"
+"            libcomplex\n"
+"… # resolve all the conflicts between their changes and our changes\n"
+"$ svn commit -m 'merging libcomplex-1.1 into the main branch'\n"
+"…\n"
+
+#: build/en/book.xml:9477(para)
+msgid "In the trivial use case, the new version of our third-party tool would look, from a files-and-directories point of view, just like the previous version. None of the libcomplex source files would have been deleted, renamed or moved to different locations—the new version would contain only textual modifications against the previous one. In a perfect world, our modifications would apply cleanly to the new version of the library, with absolutely no complications or conflicts."
+msgstr "在这个琐碎的用例里，第三方工具的新版本会从一个文件和目录的角度来看，就像前一个版本。没有任何libcomplex源文件会被删除、被改名或是移动到别的位置—新的版本只会保存针对上一个版本的文本修改。在完美世界，我们对呢修改会干净得应用到库的新版本，不会产生任何并发和冲突。"
+
+#: build/en/book.xml:9487(para)
+msgid "But things aren't always that simple, and in fact it is quite common for source files to get moved around between releases of software. This complicates the process of ensuring that our modifications are still valid for the new version of code, and can quickly degrade into a situation where we have to manually recreate our customizations in the new version. Once Subversion knows about the history of a given source file—including all its previous locations—the process of merging in the new version of the library is pretty simple. But we are responsible for telling Subversion how the source file layout changed from vendor drop to vendor drop."
+msgstr "但是事情总不是这样简单，实际上源文件在不同的版本间的移动是很常见的，这种过程复杂性可以确保我们的修改会一直对新的版本代码有效，可以很快使形势退化到我们需要在新版本手工的重新创建我们的自定义修改。一旦Subversion知道了给定文件的历史—包括了所有以前的位置—合并到新版本的进程就会很简单，但是我们需要负责告诉Subversion卖主drop之间源文件布局的改变。"
+
+#: build/en/book.xml:949(term)
+msgid "Choice of network layers"
+msgstr "可选的网络层"
+
+#: build/en/book.xml:9509(command)
+msgid "svn_load_dirs.pl"
+msgstr "svn_load_dirs.pl"
+
+#: build/en/book.xml:951(para)
+msgid "Subversion has an abstracted notion of repository access, making it easy for people to implement new network mechanisms. Subversion can plug into the Ap
