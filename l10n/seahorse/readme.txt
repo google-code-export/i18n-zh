@@ -38,3 +38,8 @@
     msgmerge --no-wrap -F -o zh_CN-2.18.po.new zh_CN-2.18.po seahorse-2.18.pot
     diff zh_CN-2.18.po zh_CN-2.18.po.new
     mv -f zh_CN-2.18.po.new zh_CN-2.18.po
+
+
+*) 从开发版本合并：
+      msgmerge -o zh_CN-2.18-new.po zh_CN.po zh_CN-2.18.po
+      mv -f zh_CN-2.18-new.po zh_CN-2.18.po
