@@ -5,9 +5,8 @@
 <xsl:include href="profile-mode.xsl"/>
 
 <!-- Generate DocBook instance with correct DOCTYPE -->
-<xsl:output method="xml" 
-            encoding="utf-8"
-            doctype-system="../tools/dtd/dblite.dtd"/>
+<xsl:output method="xml"
+            encoding="utf-8"/>
 
 <!-- Profiling parameters -->
 <xsl:param name="profile.arch" select="''"/>
