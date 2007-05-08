@@ -1,7 +1,7 @@
 规范 po 文件格式：
     msgmerge --no-wrap -F -o zh.po.new zh.po book.pot
     diff zh.po.new zh.po
-    mv zh.po.new zh.po
+    mv -f zh.po.new zh.po
 
 查阅上下文：
     如果翻译时不能确定语义环境，那么请运行 ant pot，则对应的条目有其在 build\en\book.xml 中的位置，例如：
