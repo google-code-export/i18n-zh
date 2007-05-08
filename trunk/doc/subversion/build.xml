@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-用法：
-    生成 html 输出格式：ant html
-    生成 pdf  输出格式：ant pdf
-    生成 所有 输出格式：ant all
+Usage:
+    build html(zh) output: ant html
+    build pdf(zh) output:  ant pdf
 
-依赖：
+    build html(en) output: ant html.en
+    build pdf(en) output:  ant pdf.en
+
+    build all output: ant all
+
+Dependency:
     *) python 2.4+
     *) python-libxml2 2.6.27+
     *) xsltproc 1.1.20+
     *) gettext 0.16+
     *) jdk 1.4.2+
 
-说明：
-    *) 安装依赖软件包
-    *) 根据本机配置修改 build.tmpl.properties，生成 build.properties
-    *) 开始构建 ...
+description:
+    *) add dependency software
+    *) copy build.tmpl.properties to build.properties, and adjust build.properties
+    *) start building ...
 
-计划：
-    *) 增加多语言支持
-    *) 增加 chm 输出支持，它只能在 Windows 中构建，是否必要？
+TODO:
+    *) Add Multi-Language support
+    *) Add chm output
     *) ...
 
-作者：
+Author：
     *) Dongsheng Song <dongsheng.song@gmail.com>, 2007
 
 -->
@@ -47,6 +51,8 @@
 
     <!-- 生成所有文档格式 -->
     <target name="all" depends="clean">
+        <antcall target="html.en"/>
+        <antcall target="pdf.en"/>
         <antcall target="html"/>
         <antcall target="pdf"/>
     </target>
