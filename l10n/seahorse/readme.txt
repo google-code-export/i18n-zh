@@ -1,22 +1,29 @@
 *) 简体中文翻译信息
   http://l10n.gnome.org/languages/zh_CN
+  http://l10n.gnome.org/module/seahorse
 
 
 *) seahorse 开发信息
   http://www.gnome.org/projects/seahorse/development.html
 
+  http://svn.gnome.org/viewcvs/seahorse/trunk/
+  http://svn.gnome.org/viewcvs/seahorse/trunk/help/
+
   svn://svn.gnome.org/svn/seahorse
 
 
 *) seahorse 翻译信息
-  svn://svn.gnome.org/svn/seahorse/trunk/po/zh_CN.po
-  svn://svn.gnome.org/svn/seahorse/branches/gnome-2-18/po/zh_CN.po
-
   http://svn.gnome.org/viewcvs/seahorse/trunk/po/zh_CN.po
   http://svn.gnome.org/viewcvs/seahorse/branches/gnome-2-18/po/zh_CN.po
+  
+  svn cat svn://svn.gnome.org/svn/seahorse/trunk/po/zh_CN.po > zh_CN.po
+  svn cat svn://svn.gnome.org/svn/seahorse/branches/gnome-2-18/po/zh_CN.po > zh_CN-2.18.po
 
-  http://l10n.gnome.org/POT/seahorse.HEAD/docs/help.HEAD.pot
-  http://l10n.gnome.org/POT/seahorse.gnome-2-18/docs/help.gnome-2-18.pot
+  wget -O docs.pot      http://l10n.gnome.org/POT/seahorse.HEAD/docs/help.HEAD.pot
+  wget -O docs-2.18.pot http://l10n.gnome.org/POT/seahorse.gnome-2-18/docs/help.gnome-2-18.pot
+
+  wget -O seahorse.pot      http://l10n.gnome.org/POT/seahorse.HEAD/seahorse.HEAD.pot
+  wget -O seahorse-2.18.pot http://l10n.gnome.org/POT/seahorse.gnome-2-18/seahorse.gnome-2-18.pot
 
 
 *) seahorse 翻译格式
