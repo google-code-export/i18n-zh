@@ -13,7 +13,7 @@
     gettext 的 Windows 平台二进制包可以从 i18n-zh 下载。
 
 1. 检查翻译
-    msgfmt -c zh_CN.po
+    msgfmt --statistics -c zh_CN.po
 
 2. 格式化
     msgmerge --no-wrap -o zh_CN.po.new zh_CN.po defguide5.pot
