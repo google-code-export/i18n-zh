@@ -34,14 +34,14 @@
 
 1. 开发版本
 
-    msgfmt --check-accelerators -c zh_CN.po
+    msgfmt --check-accelerators --statistics -c zh_CN.po
     msgmerge --no-wrap -F -o zh_CN.po.new zh_CN.po seahorse.pot
     diff zh_CN.po zh_CN.po.new
     mv -f zh_CN.po.new zh_CN.po
 
 2. 最新稳定版本
 
-    msgfmt --check-accelerators -c zh_CN-2.18.po
+    msgfmt --check-accelerators --statistics -c zh_CN-2.18.po
     msgmerge --no-wrap -F -o zh_CN-2.18.po.new zh_CN-2.18.po seahorse-2.18.pot
     diff zh_CN-2.18.po zh_CN-2.18.po.new
     mv -f zh_CN-2.18.po.new zh_CN-2.18.po
