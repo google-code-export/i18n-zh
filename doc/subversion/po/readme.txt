@@ -5,7 +5,7 @@
     gettext 的 Windows 平台二进制包可以从 i18n-zh 下载。
 
 1. 检查翻译
-    msgfmt -c zh.po
+    msgfmt --statistics -c zh.po
 
 2. 格式化
     msgmerge --no-wrap -o zh.po.new zh.po book.pot
