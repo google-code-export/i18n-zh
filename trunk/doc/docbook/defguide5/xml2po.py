@@ -83,7 +83,7 @@ class MessageOutput:
             if self.output_msgstr:
                 self.translations.append(t)
                 return
-            
+
             if self.do_translations or (not t in self.messages):
                 self.messages.append(t)
                 if spacepreserve:
