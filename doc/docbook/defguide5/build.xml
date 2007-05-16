@@ -170,6 +170,10 @@ Author：
     <target name="pdf" depends="translate">
         <copy todir="${base.dir}/build/zh/pdf">
             <fileset dir="${fonts.dir}">
+                <include name="*.ttf"/>
+                <include name="*.ttc"/>
+            </fileset>
+            <fileset dir="${fop.dir}/conf">
                 <include name="*"/>
             </fileset>
         </copy>
@@ -183,12 +187,12 @@ Author：
             <arg value="${db.xsl.fopdf.zh_CN}"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}" maxmemory="512m" >
+        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}/build/zh/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
-            <arg value="${fonts.dir}/userconfig.xml"/>
-            <arg value="${base.dir}/build/zh/pdf/${doc.name}.fo"/>
-            <arg value="${base.dir}/build/zh/pdf/${doc.name}.pdf"/>
+            <arg value="userconfig.xml"/>
+            <arg value="${doc.name}.fo"/>
+            <arg value="${doc.name}.pdf"/>
         </java>
 
         <delete>
