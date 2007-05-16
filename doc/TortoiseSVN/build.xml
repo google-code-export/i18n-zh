@@ -14,6 +14,9 @@ Usage:
     <property file="build.properties"/>
 
     <path id="lib.classpath">
+        <fileset dir="${fop.dir}/build">
+            <include name="**/*.jar"/>
+        </fileset>
         <fileset dir="${fop.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -139,6 +142,10 @@ Usage:
 
         <copy todir="${base.dir}/build/zh/${doc.name}/pdf">
             <fileset dir="${fonts.dir}">
+                <include name="*.ttf"/>
+                <include name="*.ttc"/>
+            </fileset>
+            <fileset dir="${fop.dir}/conf">
                 <include name="*"/>
             </fileset>
         </copy>
@@ -151,13 +158,12 @@ Usage:
             <arg value="style/zh_CN/fo.xsl"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}" maxmemory="512m" >
-            <classpath refid="lib.classpath"/>
+        <java classname="org.apache.fop.cli.Main" fork="true" dir="${base.dir}/build/zh/${doc.name}/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
-            <arg value="${fonts.dir}/userconfig.xml"/>
-            <arg value="${base.dir}/build/zh/${doc.name}/pdf/${doc.name}.fo"/>
-            <arg value="${base.dir}/build/zh/${doc.name}/pdf/${doc.name}.pdf"/>
+            <arg value="userconfig.xml"/>
+            <arg value="${doc.name}.fo"/>
+            <arg value="${doc.name}.pdf"/>
         </java>
 
         <delete>
@@ -185,7 +191,7 @@ Usage:
             <arg value="style/fo.xsl"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}" maxmemory="512m" >
+        <java classname="org.apache.fop.cli.Main" fork="true" dir="${base.dir}" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="${base.dir}/build/en/${doc.name}/pdf/${doc.name}.fo"/>
             <arg value="${base.dir}/build/en/${doc.name}/pdf/${doc.name}.pdf"/>
