@@ -10,6 +10,7 @@
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="tablecolumns.extension">0</xsl:param>
   <xsl:param name="fop.extensions">0</xsl:param>
+  <xsl:param name="fop1.extensions">1</xsl:param>
 
   <xsl:param name="draft.mode" select="no"/>
 

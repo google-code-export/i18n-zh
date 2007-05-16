@@ -44,6 +44,9 @@ Author：
 
     <!-- 配置 fop 的类路径 -->
     <path id="lib.classpath">
+        <fileset dir="${fop.dir}/build">
+            <include name="**/*.jar"/>
+        </fileset>
         <fileset dir="${fop.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -174,7 +177,7 @@ Author：
                 <include name="*.ttc"/>
             </fileset>
             <fileset dir="${fop.dir}/conf">
-                <include name="*"/>
+                <include name="*.xml"/>
             </fileset>
         </copy>
 
@@ -187,7 +190,7 @@ Author：
             <arg value="${db.xsl.fopdf.zh_CN}"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}/build/zh/pdf" maxmemory="512m" >
+        <java classname="org.apache.fop.cli.Main" fork="true" dir="${base.dir}/build/zh/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
             <arg value="userconfig.xml"/>
@@ -226,7 +229,7 @@ Author：
             <arg value="${db.xsl.fopdf}"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true"
+        <java classname="org.apache.fop.cli.Main" fork="true"
                 dir="${base.dir}" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="${base.dir}/build/en/pdf/${doc.name}.fo"/>
