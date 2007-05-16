@@ -43,17 +43,20 @@
         <!-- Copy all fonts to the output location, will be removed later. -->
         <copy todir="${build.dir}/pdf">
             <fileset dir="${fonts.dir}">
-                <include name="*"/>
+                <include name="*.ttf"/>
+            </fileset>
+            <fileset dir="${fop.dir}/conf">
+                <include name="*.xml"/>
             </fileset>
         </copy>
 
         <!-- Create a PDF from the XSL/FO, using customized fop userconfig.xml -->
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${base.dir}" maxmemory="512m" >
+        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${build.dir}/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
-            <arg value="${fonts.dir}/userconfig.xml"/>
-            <arg value="${build.dir}/pdf/${doc.name}.fo"/>
-            <arg value="${build.dir}/pdf/${doc.name}.pdf"/>
+            <arg value="userconfig.xml"/>
+            <arg value="${doc.name}.fo"/>
+            <arg value="${doc.name}.pdf"/>
         </java>
 
         <!-- House keeping, delete temporary files. -->

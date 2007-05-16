@@ -12,6 +12,9 @@
 
     <!-- Classpath for the build tools. -->
     <path id="lib.classpath">
+        <fileset dir="${fop.dir}/build">
+            <include name="**/*.jar"/>
+        </fileset>
         <fileset dir="${fop.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -44,14 +47,15 @@
         <copy todir="${build.dir}/pdf">
             <fileset dir="${fonts.dir}">
                 <include name="*.ttf"/>
+                <include name="*.ttc"/>
             </fileset>
             <fileset dir="${fop.dir}/conf">
-                <include name="*.xml"/>
+                <include name="*"/>
             </fileset>
         </copy>
 
         <!-- Create a PDF from the XSL/FO, using customized fop userconfig.xml -->
-        <java classname="org.apache.fop.apps.Fop" fork="true" dir="${build.dir}/pdf" maxmemory="512m" >
+        <java classname="org.apache.fop.cli.Main" fork="true" dir="${build.dir}/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
             <arg value="userconfig.xml"/>
@@ -69,11 +73,13 @@
     <target name="html">
 
         <!-- Make the output dir. -->
-        <mkdir dir="${build.dir}/html/"/>
+        <mkdir dir="${build.dir}/html"/>
 
         <!-- Create html files -->
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${build.dir}/html" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="index.html"/>
             <arg value="../../book.xml"/>
             <arg value="../../xsl/html.xsl"/>
         </java>
