@@ -1,6 +1,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-  <xsl:import href="../../../../lib/docbook/docbook5-xsl/fo/docbook.xsl"/>
+  <xsl:import href="../../../../lib/docbook/docbook4-xsl/fo/docbook.xsl"/>
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
 
@@ -10,6 +10,7 @@
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="tablecolumns.extension">0</xsl:param>
   <xsl:param name="fop.extensions">0</xsl:param>
+  <xsl:param name="fop1.extensions">1</xsl:param>
 
   <xsl:param name="draft.mode" select="no"/>
 
