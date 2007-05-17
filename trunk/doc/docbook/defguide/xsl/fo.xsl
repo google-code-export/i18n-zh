@@ -7,11 +7,11 @@
   <xsl:param name="paper.type" select="'A4'"></xsl:param>
 
   <!-- These extensions are required for table printing and other stuff -->
-  <xsl:param name="use.extensions">1</xsl:param>
-  <xsl:param name="tablecolumns.extension">0</xsl:param>
+  <!-- If enabled, the pdf is invalid ! -->
+  <xsl:param name="use.extensions">0</xsl:param>
   <xsl:param name="fop.extensions">0</xsl:param>
   <xsl:param name="fop1.extensions">1</xsl:param>
-  
+
   <!-- Don't know how to do callouts with libxslt -->
   <xsl:param name="callouts.extension">1</xsl:param>
 
