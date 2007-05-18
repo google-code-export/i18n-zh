@@ -67,9 +67,13 @@ Author：
     </target>
 
     <target name="profile" depends="profile.init" unless="profile.isUpToDate" >
-        <mkdir dir="build/en"/>
+        <copy todir="build/en/schema">
+            <fileset dir="en/schema"  excludes="**/.svn"/>
+        </copy>
+
         <copy todir="build/en/figures">
             <fileset dir="en/figures" includes="*.png"/>
+            <fileset dir="en/figures/300dpi" excludes="**/.svn"/>
         </copy>
 
         <exec dir="." executable="xsltproc">
