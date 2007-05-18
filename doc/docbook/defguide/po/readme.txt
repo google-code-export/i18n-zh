@@ -16,9 +16,9 @@
     msgfmt --statistics -c zh_CN.po
 
 2. 格式化
-    msgmerge --no-wrap -o zh_CN.po.new zh_CN.po defguide5.pot
-    diff zh_CN.po zh_CN.po.new
-    mv -f zh_CN.po.new zh_CN.po
+    msgmerge --no-wrap -o zh_CN-new.po zh_CN.po defguide.pot
+    diff zh_CN.po zh_CN-new.po
+    mv -f zh_CN-new.po zh_CN.po
 
 3. 以它人的翻译为准合并
       msgmerge -o zh_CN-new.po zh_CN-other.po zh_CN.po
@@ -26,10 +26,10 @@
 
 
 *) 查阅上下文：
-    如果翻译时不能确定语义环境，那么请运行 ant pot，则对应的条目有其在 build/en/defguide5.xml 中的位置，例如：
+    如果翻译时不能确定语义环境，那么请运行 ant pot，则对应的条目有其在 build/en/defguide.xml 中的位置，例如：
 
-    #: build/en/defguide5.xml:4110(para)
+    #: build/en/defguide.xml:4110(para)
     msgid "Add new elements"
     msgstr ""
 
-    打开 build/en/defguide5.xml，定位到 4110 行即可。
+    打开 build/en/defguide.xml，定位到 4110 行即可。
