@@ -15,7 +15,7 @@
 *) seahorse 翻译信息
   http://svn.gnome.org/viewcvs/seahorse/trunk/po/zh_CN.po
   http://svn.gnome.org/viewcvs/seahorse/branches/gnome-2-18/po/zh_CN.po
-  
+
   svn cat svn://svn.gnome.org/svn/seahorse/trunk/po/zh_CN.po > zh_CN.po
   svn cat svn://svn.gnome.org/svn/seahorse/branches/gnome-2-18/po/zh_CN.po > zh_CN-2.18.po
 
@@ -35,9 +35,9 @@
 1. 开发版本
 
     msgfmt --check-accelerators --statistics -c zh_CN.po
-    msgmerge --no-wrap -F -o zh_CN.po.new zh_CN.po seahorse.pot
-    diff zh_CN.po zh_CN.po.new
-    mv -f zh_CN.po.new zh_CN.po
+    msgmerge --no-wrap -F -o zh_CN-new.po zh_CN.po seahorse.pot
+    diff zh_CN.po zh_CN-new.po
+    mv -f zh_CN-new.po zh_CN.po
 
 2. 最新稳定版本
 
@@ -45,7 +45,6 @@
     msgmerge --no-wrap -F -o zh_CN-2.18.po.new zh_CN-2.18.po seahorse-2.18.pot
     diff zh_CN-2.18.po zh_CN-2.18.po.new
     mv -f zh_CN-2.18.po.new zh_CN-2.18.po
-
 
 *) 从开发版本合并：
       msgmerge -o zh_CN-2.18-new.po zh_CN.po zh_CN-2.18.po
