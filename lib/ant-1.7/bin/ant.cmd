@@ -1,17 +1,14 @@
+@ECHO OFF
+
 @set ANT_HOME=%~dp0..
 
-@if exist "%ANT_HOME%\lib\ant.jar" goto okAH
-@echo The ANT_HOME environment variable is not defined correctly
-@goto end
+if "%JAVA_HOME%" == "" goto noJavaHome
+if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
+if "%JAVACMD%" == "" set JAVACMD=%JAVA_HOME%\bin\java
+goto runAnt
 
-:okAH
+:noJavaHome
+if "%JAVACMD%" == "" set JAVACMD=java
 
-@if exist "%JAVA_HOME%\lib\tools.jar" goto okJH
-@echo The JAVA_HOME environment variable is not defined correctly
-@goto end
-
-:okJH
-
-@"%JAVA_HOME%\bin\java.exe" -Xmx512m -cp %ANT_HOME%\lib\ant-launcher.jar "-Dant.home=%ANT_HOME%" org.apache.tools.ant.launch.Launcher -lib %ANT_HOME%\lib %*
-
-:end
+:runAnt
+@"%JAVACMD%" -Xmx512m -cp %ANT_HOME%\lib\ant-launcher.jar "-Dant.home=%ANT_HOME%" org.apache.tools.ant.launch.Launcher -lib %ANT_HOME%\lib %*
