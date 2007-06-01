@@ -111,6 +111,7 @@ Author：
         </uptodate>
     </target>
 
+    <!-- For some xml2po bugs, this target should NOT run in Windows !-->
     <target name="pot" depends="pot.init,profile" unless="pot.isUpToDate" >
         <exec dir="." executable="python">
             <arg value="xml2po.py"/>
@@ -129,7 +130,9 @@ Author：
         <move file="po/zh_CN.po.new" tofile="po/zh_CN.po"/>
     </target>
 
-    <target name="translate.init" depends="pot">
+    <!-- For some xml2po bugs, pot target should NOT run in Windows !-->
+    <!-- target name="translate.init" depends="pot" -->
+    <target name="translate.init" depends="profile">
         <uptodate property="translate.isUpToDate" targetfile="build/zh/${doc.name}.xml">
             <srcfiles dir="en" includes="*.xml" excludes="bookinfo.xml"/>
             <srcfiles dir="en/stylesheets" includes="identity.xsl"/>

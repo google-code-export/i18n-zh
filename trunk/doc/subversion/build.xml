@@ -97,6 +97,7 @@ Author：
 
     <!-- 根据英文源文件生成 pot 文件，合并中文翻译 -->
     <!-- 此任务在我的 PM-1.73 上耗时 6 分钟 -->
+    <!-- For some xml2po bugs, this target should NOT run in Windows !-->
     <target name="pot" depends="pot.init,profile" unless="pot.isUpToDate" >
         <exec dir="${base.dir}" executable="python">
             <arg value="xml2po.py"/>
@@ -116,7 +117,9 @@ Author：
     </target>
 
     <!-- 检查中文 DocBook 文件是否过时 -->
-    <target name="translate.init" depends="pot">
+    <!-- For some xml2po bugs, pot target should NOT run in Windows !-->
+    <!-- target name="translate.init" depends="pot" -->
+    <target name="translate.init" depends="profile">
         <uptodate property="translate.isUpToDate" srcfile="${base.dir}/po/zh_CN.po" targetfile="${base.dir}/build/zh/${doc.name}.xml"/>
     </target>
 
