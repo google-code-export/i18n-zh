@@ -1,6 +1,5 @@
 #!/usr/bin/python -u
-# -*- encoding: utf-8 -*-
-# Copyright (c) 2004, 2005, 2006 Danilo Šegan <danilo@gnome.org>.
+# Copyright (c) 2004 Danilo Segan <danilo@kvota.net>.
 #
 # This file is part of xml2po.
 #
@@ -19,6 +18,8 @@
 # 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+# slightly modified to work on Windows for TortoiseSVN.
+
 # xml2po -- translate XML documents
 VERSION = "1.0.5"
 
@@ -36,27 +37,6 @@ import libxml2
 import gettext
 import os
 import re
-
-class NoneTranslations:
-    def gettext(self, message):
-        return None
-
-    def lgettext(self, message):
-        return None
-
-    def ngettext(self, msgid1, msgid2, n):
-        return None
-
-    def lngettext(self, msgid1, msgid2, n):
-        return None
-
-    def ugettext(self, message):
-        return None
-
-    def ungettext(self, msgid1, msgid2, n):
-        return None
-
-
 
 class MessageOutput:
     def __init__(self, with_translations = 0):
@@ -83,7 +63,7 @@ class MessageOutput:
             if self.output_msgstr:
                 self.translations.append(t)
                 return
-
+            
             if self.do_translations or (not t in self.messages):
                 self.messages.append(t)
                 if spacepreserve:
@@ -103,8 +83,9 @@ class MessageOutput:
                     self.comments[t] = comment
 
     def outputHeader(self, out):
-        import time
-        out.write("""msgid ""
+        from time import gmtime, strftime
+        tstamp = strftime("%Y-%m-%d %H:%M +0000", gmtime())
+        tmp = """msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\\n"
 "POT-Creation-Date: %s\\n"
@@ -115,11 +96,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 
-""" % (time.strftime("%Y-%m-%d %H:%M%z")))
+""" % (tstamp)
+
+        out.write(tmp.encode('utf-8'))
 
     def outputAll(self, out):
         self.outputHeader(out)
-
+        
         for k in self.messages:
             if k in self.comments:
                 out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
@@ -134,23 +117,17 @@ msgstr ""
             if self.do_translations:
                 if len(self.translations)>0:
                     translation = self.translations.pop(0)
-            if translation == k:
-                translation = ""
             out.write("msgstr \"%s\"\n\n" % (translation))
 
 
 def normalizeNode(node):
-    #print >>sys.stderr, "<%s> (%s) [%s]" % (node.name, node.type, node.serialize('utf-8'))
     if not node:
         return
     elif isSpacePreserveNode(node):
         return
     elif node.isText():
         if node.isBlankNode():
-            if expand_entities or ( not (node.prev and not node.prev.isBlankNode()
-                                         and node.next and not node.next.isBlankNode()) ):
-                #print >>sys.stderr, "BLANK"
-                node.setContent('')
+            node.setContent('')
         else:
             node.setContent(re.sub('\s+',' ', node.content))
 
@@ -195,7 +172,7 @@ def normalizeString(text, ignorewhitespace = 1):
 
     result = re.sub('^ ','', result)
     result = re.sub(' $','', result)
-
+    
     return result
 
 def stringForEntity(node):
@@ -241,35 +218,15 @@ def getTranslation(text, spacepreserve = 0):
     text should be a string to look for, spacepreserve set to 1
     when spaces should be preserved.
     """
-    #print >>sys.stderr,"getTranslation('%s')" % (text.encode('utf-8'))
     text = normalizeString(text, not spacepreserve)
     if (text.strip() == ''):
         return text
-    global gt
-    if gt:
-        res = gt.ugettext(text.decode('utf-8'))
-        return res
-
+    file = open(mofile, "rb")
+    if file:
+        gt = gettext.GNUTranslations(file)
+        if gt:
+            return gt.ugettext(text.decode('utf-8'))
     return text
-
-def myAttributeSerialize(node):
-    result = ''
-    if node.children:
-        child = node.children
-        while child:
-            if child.type=='text':
-                result += doc.encodeEntitiesReentrant(child.content)
-            elif child.type=='entity_ref':
-                if not expand_entities:
-                    result += '&' + child.name + ';'
-                else:
-                    result += child.content.decode('utf-8')
-            else:
-                result += myAttributeSerialize(child)
-            child = child.next
-    else:
-        result = node.serialize('utf-8')
-    return result
 
 def startTagForNode(node):
     if not node:
@@ -280,20 +237,17 @@ def startTagForNode(node):
     if node.properties:
         for p in node.properties:
             if p.type == 'attribute':
-                try:
-                    nsprop = p.ns().name + ":" + p.name
-                except:
-                    nsprop = p.name
-                params += " %s=\"%s\"" % (nsprop, myAttributeSerialize(p))
+                # FIXME: This part sucks
+                params += p.serialize('utf-8')
     return result+params
-
+        
 def endTagForNode(node):
     if not node:
         return 0
 
     result = node.name
     return result
-
+        
 def isFinalNode(node):
     if automatic:
         auto = autoNodeIsFinal(node)
@@ -311,7 +265,7 @@ def isFinalNode(node):
         final_children = 1
         child = node.children
         while child and final_children:
-            if not child.isBlankNode() and child.type != 'comment' and not isFinalNode(child):
+            if not isFinalNode(child):
                 final_children = 0
             child = child.next
         if final_children:
@@ -353,42 +307,32 @@ def getCommentForNode(node):
     else:
         return None
 
-def replaceAttributeContentsWithText(node,text):
-    node.setContent(text)
 
 def replaceNodeContentsWithText(node,text):
     """Replaces all subnodes of a node with contents of text treated as XML."""
-
     if node.children:
-        starttag = startTagForNode(node)
+        starttag = node.name #startTagForNode(node)
         endtag = endTagForNode(node)
-
-        # Lets add document DTD so entities are resolved
-        tmp = '<?xml version="1.0" encoding="utf-8" ?>'
         try:
+            # Lets add document DTD so entities are resolved
             dtd = doc.intSubset()
-            tmp = tmp + dtd.serialize('utf-8')
-        except libxml2.treeError:
-            pass
+            tmp = ''
+            if expand_entities: # FIXME: we get a "Segmentation fault" in libxml2.parseMemory() when we include DTD otherwise
+                tmp = dtd.serialize('utf-8')
+            tmp = tmp + '<%s>%s</%s>' % (starttag, text, endtag)
+        except:
+            tmp = '<%s>%s</%s>' % (starttag, text, endtag)
 
-        content = '<%s>%s</%s>' % (starttag, text, endtag)
-        tmp = tmp + content.encode('utf-8')
-
-        newnode = None
         try:
-            ctxt = libxml2.createDocParserCtxt(tmp)
+            ctxt = libxml2.createDocParserCtxt(tmp.encode('utf-8'))
             ctxt.replaceEntities(0)
             ctxt.parseDocument()
             newnode = ctxt.doc()
         except:
-            pass
-
-        if not newnode:
             print >> sys.stderr, """Error while parsing translation as XML:\n"%s"\n""" % (text.encode('utf-8'))
             return
 
         newelem = newnode.getRootElement()
-
         if newelem and newelem.children:
             free = node.children
             while free:
@@ -396,12 +340,7 @@ def replaceNodeContentsWithText(node,text):
                 free.unlinkNode()
                 free = next
 
-            if node:
-                copy = newelem.copyNodeList()
-                next = node.next
-                node.replaceNode(newelem.copyNodeList())
-                node.next = next
-
+            node.addChildList(newelem.children)
         else:
             # In practice, this happens with tags such as "<para>    </para>" (only whitespace in between)
             pass
@@ -410,15 +349,9 @@ def replaceNodeContentsWithText(node,text):
 
 def autoNodeIsFinal(node):
     """Returns 1 if node is text node, contains non-whitespace text nodes or entities."""
-    if hasattr(node, '__autofinal__'):
-        return node.__autofinal__
-    if node.name in ignored_tags:
-        node.__autofinal__ = 0
-        return 0
-    if node.isText() and node.content.strip()!='':
-        node.__autofinal__ = 1
-        return 1
     final = 0
+    if node.isText() and node.content.strip()!='':
+        return 1
     child = node.children
     while child:
         if child.type in ['text'] and  child.content.strip()!='':
@@ -426,20 +359,15 @@ def autoNodeIsFinal(node):
             break
         child = child.next
 
-    node.__autofinal__ = final
     return final
 
 
-def worthOutputting(node, noauto = 0):
+def worthOutputting(node):
     """Returns 1 if node is "worth outputting", otherwise 0.
 
     Node is "worth outputting", if none of the parents
     isFinalNode, and it contains non-blank text and entities.
     """
-    if noauto and hasattr(node, '__worth__'):
-        return node.__worth__
-    elif not noauto and hasattr(node, '__autoworth__'):
-        return node.__autoworth__
     worth = 1
     parent = node.parent
     final = isFinalNode(node) and node.name not in ignored_tags
@@ -451,37 +379,13 @@ def worthOutputting(node, noauto = 0):
             break
         parent = parent.parent
     if not worth:
-        node.__worth__ = 0
         return 0
 
-    if noauto:
-        node.__worth__ = worth
-        return worth
-    else:
-        node.__autoworth__ = autoNodeIsFinal(node)
-        return node.__autoworth__
-
-def processAttribute(node, attr):
-    if not node or not attr or not worthOutputting(node=node, noauto=1):
-        return
-
-    outtxt = attr.content
-    if mode=='merge':
-        translation = getTranslation(outtxt, 0)
-        replaceAttributeContentsWithText(attr, translation.encode('utf-8'))
-    else:
-        msg.outputMessage(outtxt, node.lineNo(),  "", 0,
-                          node.name + ":" + attr.name)
-
+    return autoNodeIsFinal(node)
+    
 def processElementTag(node, replacements, restart = 0):
     """Process node with node.type == 'element'."""
     if node.type == 'element':
-        # Translate attributes if needed
-        if node.properties and len(treated_attributes):
-            for p in node.properties:
-                if p.name in treated_attributes:
-                    processAttribute(node, p)
-
         outtxt = ''
         if restart:
             myrepl = []
@@ -507,24 +411,18 @@ def processElementTag(node, replacements, restart = 0):
         if mode == 'merge':
             translation = getTranslation(outtxt, isSpacePreserveNode(node))
         else:
-            translation = outtxt.decode('utf-8')
-
+            translation = outtxt
         starttag = startTagForNode(node)
         endtag = endTagForNode(node)
 
-        worth = worthOutputting(node)
-        if not translation:
-            translation = outtxt.decode('utf-8')
-            if worth and mark_untranslated: node.setLang('C')
-
-        if restart or worth:
+        if restart or worthOutputting(node):
             i = 0
             while i < len(myrepl):
                 replacement = '<%s>%s</%s>' % (myrepl[i][0], myrepl[i][3], myrepl[i][2])
                 i += 1
                 translation = translation.replace('<placeholder-%d/>' % (i), replacement)
 
-            if worth:
+            if worthOutputting(node):
                 if mode == 'merge':
                     replaceNodeContentsWithText(node, translation)
                 else:
@@ -590,7 +488,7 @@ def doSerialize(node):
             child = child.next
         return outtxt
 
-
+    
 def read_finaltags(filelist):
     if CurrentXmlMode:
         return CurrentXmlMode.getFinalTags()
@@ -608,19 +506,11 @@ def read_ignoredtags(filelist):
                     'varlistentry' ]
         return defaults
 
-def read_treatedattributes(filelist):
-    if CurrentXmlMode:
-        return CurrentXmlMode.getTreatedAttributes()
-    else:
-        return []
-
-
 def tryToUpdate(allargs, lang):
     # Remove "-u" and "--update-translation"
-    print >>sys.stderr, "OVDI!"
     command = allargs[0]
     args = allargs[1:]
-    opts, args = getopt.getopt(args, 'avhm:ket:o:p:u:',
+    opts, args = getopt.getopt(args, 'avhmket:o:p:u:',
                                ['automatic-tags','version', 'help', 'keep-entities', 'extract-all-entities', 'merge', 'translation=',
                                 'output=', 'po-file=', 'update-translation=' ])
     for opt, arg in opts:
@@ -662,7 +552,7 @@ def tryToUpdate(allargs, lang):
             sys.stderr.write("Error: cannot rename file.\n")
             sys.exit(11)
         else:
-            os.system("msgfmt -cv -o %s %s" % (NULL_STRING, file))
+            os.system("msgfmt -cv -o NUL %s" % (file))
             sys.exit(0)
 
 def load_mode(modename):
@@ -693,22 +583,16 @@ default_mode = 'docbook'
 filename = ''
 origxml = ''
 mofile = ''
-gt = None
 ultimate = [ ]
 ignored = [ ]
 filenames = [ ]
-translationlanguage = ''
 
 mode = 'pot' # 'pot' or 'merge'
 automatic = 0
 expand_entities = 1
-mark_untranslated = 0
 expand_all_entities = 0
 
 output  = '-' # this means to stdout
-
-NULL_STRING = '/dev/null'
-if not os.path.exists('/dev/null'): NULL_STRING = 'NUL'
 
 import getopt, fileinput
 
@@ -728,10 +612,6 @@ OPTIONS may be some of:
     -r    --reuse=FILE         Specify translated XML file with the same structure
     -t    --translation=FILE   Specify MO file containing translation, and merge
     -u    --update-translation=LANG.po   Updates a PO file using msgmerge program
-
-    -l    --language=LANG      Set language of the translation to LANG
-          --mark-untranslated  Set 'xml:lang="C"' on untranslated tags
-
     -v    --version            Output version of the xml2po program
 
     -h    --help               Output this message
@@ -751,9 +631,9 @@ EXAMPLES:
 if len(sys.argv) < 2: usage()
 
 args = sys.argv[1:]
-try: opts, args = getopt.getopt(args, 'avhkem:t:o:p:u:r:l:',
+try: opts, args = getopt.getopt(args, 'avhkem:t:o:p:u:r:',
                            ['automatic-tags','version', 'help', 'keep-entities', 'expand-all-entities', 'mode=', 'translation=',
-                            'output=', 'po-file=', 'update-translation=', 'reuse=', 'language=', 'mark-untranslated' ])
+                            'output=', 'po-file=', 'update-translation=', 'reuse=' ])
 except getopt.GetoptError: usage(True)
 
 for opt, arg in opts:
@@ -763,16 +643,12 @@ for opt, arg in opts:
         automatic = 1
     elif opt in ('-k', '--keep-entities'):
         expand_entities = 0
-    elif opt in ('--mark-untranslated',):
-        mark_untranslated = 1
     elif opt in ('-e', '--expand-all-entities'):
         expand_all_entities = 1
-    elif opt in ('-l', '--language'):
-        translationlanguage = arg
     elif opt in ('-t', '--translation'):
         mofile = arg
         mode = 'merge'
-        if translationlanguage == '': translationlanguage = os.path.split(os.path.splitext(mofile)[0])[1]
+        translationlanguage = os.path.splitext(mofile)[0]
     elif opt in ('-r', '--reuse'):
         origxml = arg
     elif opt in ('-u', '--update-translation'):
@@ -780,8 +656,8 @@ for opt, arg in opts:
     elif opt in ('-p', '--po-file'):
         mofile = ".xml2po.mo"
         pofile = arg
-        if translationlanguage == '': translationlanguage = os.path.split(os.path.splitext(pofile)[0])[1]
-        os.system("msgfmt -o %s %s >%s" % (mofile, pofile, NULL_STRING)) and sys.exit(7)
+        translationlanguage = os.path.splitext(pofile)[0]
+        os.system("msgfmt -o %s %s >NUL" % (mofile, pofile)) and sys.exit(7)
         mode = 'merge'
     elif opt in ('-o', '--output'):
         output = arg
@@ -810,18 +686,8 @@ if mode=='merge' and mofile=='':
     print >> sys.stderr, "Error: You must specify MO file when merging translations."
     sys.exit(3)
 
-if mofile:
-    try:
-        mfile = open(mofile, "rb")
-
-        gt = gettext.GNUTranslations(mfile)
-        gt.add_fallback(NoneTranslations())
-    except:
-        print >> sys.stderr, "Can't open MO file '%s'." % (mofile)
-
 ultimate_tags = read_finaltags(ultimate)
 ignored_tags = read_ignoredtags(ignored)
-treated_attributes = read_treatedattributes(ignored)
 
 # I'm not particularly happy about making any of these global,
 # but I don't want to bother too much with it right now
@@ -843,9 +709,6 @@ for filename in filenames:
             ctxt.replaceEntities(1)
         ctxt.parseDocument()
         doc = ctxt.doc()
-        if doc.name != filename:
-            print >> sys.stderr, "Error: I tried to open '%s' but got '%s' -- how did that happen?" % (filename, doc.name)
-            sys.exit(4)
     except:
         print >> sys.stderr, "Error: cannot open file '%s'." % (filename)
         sys.exit(1)
@@ -870,14 +733,25 @@ if mode != 'merge':
         tccom = CurrentXmlMode.getCommentForTranslators()
         if tcmsg:
             msg.outputMessage(tcmsg, 0, tccom)
+    if CurrentXmlMode:
+        tcmsg = CurrentXmlMode.getStringForTranslation()
+        tccom = CurrentXmlMode.getCommentForTranslation()
+        if tcmsg:
+            msg.outputMessage(tcmsg, 0, tccom)
 
     msg.outputAll(out)
 else:
     if CurrentXmlMode:
         tcmsg = CurrentXmlMode.getStringForTranslators()
         if tcmsg:
-            outtxt = getTranslation(tcmsg)
+            tnames = getTranslation(tcmsg)
         else:
-            outtxt = ''
-        CurrentXmlMode.postProcessXmlTranslation(doc, translationlanguage, outtxt)
+            tnames = ''
+        tcmsg = CurrentXmlMode.getStringForTranslation()
+        if tcmsg:
+            tstring = getTranslation(tcmsg)
+        else:
+            tstring = ''
+
+        CurrentXmlMode.postProcessXmlTranslation(doc, translationlanguage, tnames, tstring)
     out.write(doc.serialize('utf-8', 1))

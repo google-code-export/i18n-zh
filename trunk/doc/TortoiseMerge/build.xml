@@ -52,14 +52,14 @@ Usage:
             <arg value="-o"/>
             <arg value="${base.dir}/build/en/${doc.name}/${doc.name}.xml"/>
             <arg value="${source.dir}/en/TortoiseMerge/tortoisemerge.xml"/>
-            <arg value="${base.dir}/xsl/profile.xsl"/>
+            <arg value="${base.dir}/style/profile.xsl"/>
         </java -->
         <exec dir="${base.dir}" executable="xsltproc">
             <arg value="--nonet"/>
             <arg value="--xinclude"/>
             <arg value="--output"/>
             <arg value="${base.dir}/build/en/${doc.name}/${doc.name}.xml"/>
-            <arg value="${base.dir}/xsl/profile.xsl"/>
+            <arg value="${base.dir}/style/profile.xsl"/>
             <arg value="${source.dir}/en/TortoiseMerge/tortoisemerge.xml"/>
         </exec>
     </target>
@@ -105,8 +105,6 @@ Usage:
         </exec>
         <exec dir="${base.dir}" executable="python">
             <arg value="xml2po.py"/>
-            <arg value="-l"/>
-            <arg value="zh-cn"/>
             <arg value="-t"/>
             <arg value="${base.dir}/po/${doc.name}-zh_CN.mo"/>
             <arg value="-o"/>
@@ -122,11 +120,11 @@ Usage:
 
         <exec dir="${base.dir}/build/zh/${doc.name}/html" executable="xsltproc">
             <arg value="--nonet"/>
-            <arg value="../../../../xsl/html.xsl"/>
+            <arg value="../../../../style/html.xsl"/>
             <arg value="../${doc.name}.xml"/>
         </exec>
 
-        <copy file="xsl/styles.css" todir="${base.dir}/build/zh/${doc.name}/html"/>
+        <copy file="style/styles.css" todir="${base.dir}/build/zh/${doc.name}/html"/>
 
         <copy todir="${base.dir}/build/zh/${doc.name}/html/images">
             <fileset dir="${source.dir}/../images/en" includes="**/*.png,**/*.svg,**/*.gif"/>
@@ -158,7 +156,7 @@ Usage:
             <arg value="-o"/>
             <arg value="${base.dir}/build/zh/${doc.name}/pdf/${doc.name}.fo"/>
             <arg value="${base.dir}/build/zh/${doc.name}/${doc.name}.xml"/>
-            <arg value="xsl/zh_CN/fo.xsl"/>
+            <arg value="style/zh_CN/fo.xsl"/>
         </java>
 
         <java classname="org.apache.fop.cli.Main" fork="true"
@@ -192,7 +190,7 @@ Usage:
             <arg value="-o"/>
             <arg value="${base.dir}/build/en/${doc.name}/pdf/${doc.name}.fo"/>
             <arg value="${base.dir}/build/en/${doc.name}/${doc.name}.xml"/>
-            <arg value="xsl/fo.xsl"/>
+            <arg value="style/fo.xsl"/>
         </java>
 
         <java classname="org.apache.fop.cli.Main" fork="true" dir="${base.dir}" maxmemory="512m" >
@@ -214,11 +212,11 @@ Usage:
 
         <exec dir="${base.dir}/build/en/${doc.name}/html" executable="xsltproc">
             <arg value="--nonet"/>
-            <arg value="../../../../xsl/html.xsl"/>
+            <arg value="../../../../style/html.xsl"/>
             <arg value="../${doc.name}.xml"/>
         </exec>
 
-        <copy file="xsl/styles.css" todir="${base.dir}/build/en/${doc.name}/html"/>
+        <copy file="style/styles.css" todir="${base.dir}/build/en/${doc.name}/html"/>
 
         <copy todir="${base.dir}/build/en/${doc.name}/html/images">
             <fileset dir="${source.dir}/../images/en" includes="**/*.png,**/*.svg,**/*.gif"/>
