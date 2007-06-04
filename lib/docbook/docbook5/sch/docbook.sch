@@ -34,7 +34,7 @@
    </s:pattern>
    <s:pattern name="Glossary term definition constraint">
       <s:rule context="db:termdef">
-         <s:assert test="count(db:firstterm) = 1">A termdef must contain exactly one glossterm</s:assert>
+         <s:assert test="count(db:firstterm) = 1">A termdef must contain exactly one firstterm</s:assert>
       </s:rule>
    </s:pattern>
    <s:pattern name="Cardinality of segments and titles">

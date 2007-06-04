@@ -11,7 +11,7 @@
   <s:ns prefix="svg" uri="http://www.w3.org/2000/svg"/>
   <s:ns prefix="xi" uri="http://www.w3.org/2001/XInclude"/>
   <s:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
-<!-- DocBook V5.0CR3-->
+<!-- DocBook V5.0CR4-->
 <!-- See http://docbook.org/ns/docbook -->
   <start>
     <choice>
@@ -241,7 +241,7 @@
       <ref name="db.xlink.actuate.enumeration"/>
     </attribute>
   </define>
-  <define name="db.href.attribute">
+  <define name="db.href.attributes">
     <interleave>
       <ref name="db.xlink.href.attribute"/>
       <optional>
@@ -403,14 +403,14 @@
     <optional>
       <choice>
         <ref name="db.linkend.attribute"/>
-        <ref name="db.href.attribute"/>
+        <ref name="db.href.attributes"/>
       </choice>
     </optional>
   </define>
   <define name="db.common.req.linking.attributes">
     <choice>
       <ref name="db.linkend.attribute"/>
-      <ref name="db.href.attribute"/>
+      <ref name="db.href.attributes"/>
     </choice>
   </define>
   <define name="db.common.data.attributes">
@@ -7438,7 +7438,12 @@
       <element name="code">
         <a:documentation>An inline code fragment</a:documentation>
         <ref name="db.code.attlist"/>
-        <ref name="db._text"/>
+        <zeroOrMore>
+          <choice>
+            <ref name="db.programming.inlines"/>
+            <ref name="db._text"/>
+          </choice>
+        </zeroOrMore>
       </element>
     </define>
   </div>
@@ -11040,6 +11045,9 @@ O, the molecular formula for water)</a:documentation>
         <optional>
           <ref name="db.termdef.role.attribute"/>
         </optional>
+        <optional>
+          <ref name="db.glossentry.sortas.attribute"/>
+        </optional>
         <ref name="db.common.attributes"/>
         <ref name="db.common.linking.attributes"/>
         <ref name="db.baseform.attribute"/>
@@ -11050,7 +11058,7 @@ O, the molecular formula for water)</a:documentation>
         <a:documentation>An inline definition of a term</a:documentation>
         <s:pattern name="Glossary term definition constraint">
           <s:rule context="db:termdef">
-            <s:assert test="count(db:firstterm) = 1">A termdef must contain exactly one glossterm</s:assert>
+            <s:assert test="count(db:firstterm) = 1">A termdef must contain exactly one firstterm</s:assert>
           </s:rule>
         </s:pattern>
         <ref name="db.termdef.attlist"/>
@@ -12498,7 +12506,7 @@ s which refer to this area. (This provides bidirectional linking which may be us
         <optional>
           <choice>
             <ref name="db.area.linkends.attribute"/>
-            <ref name="db.href.attribute"/>
+            <ref name="db.href.attributes"/>
           </choice>
         </optional>
         <optional>
@@ -12529,7 +12537,7 @@ s which refer to this area. (This provides bidirectional linking which may be us
         <optional>
           <choice>
             <ref name="db.area.linkends.attribute"/>
-            <ref name="db.href.attribute"/>
+            <ref name="db.href.attributes"/>
           </choice>
         </optional>
         <optional>
@@ -12568,7 +12576,7 @@ s which refer to this area. (This provides bidirectional linking which may be us
         <optional>
           <choice>
             <ref name="db.areaset.linkends.attribute"/>
-            <ref name="db.href.attribute"/>
+            <ref name="db.href.attributes"/>
           </choice>
         </optional>
         <optional>
