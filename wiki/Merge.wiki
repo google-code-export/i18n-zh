@@ -16,10 +16,10 @@
  这种情况应该禁止，大家要采用一致的翻译格式。
  合并方法很简单，假设有 foo.pot，zh_CN-A.po，zh_CN-B.po 三个文件，合并方法如下：
   # msgmerge --no-wrap -o zh_CN-A2.po zh_CN-A.po foo.pot
-  # msgmerge --no-wrap -o zh_CN-B2.po zh_CN-B.po foo.pot
-  # python po-merge.py<zh_CN-A2.po zh_CN-B2.po >zh_CN.po
+  # msgmerge --no-wrap -o zh_CN.po zh_CN-B.po foo.pot
+  # python po-merge.py<zh_CN-A2.po zh_CN.po
 
- 产生的结果是文件 zh_CN.po，它以 A 的翻译为准，如果 A 和 B 翻译了相同的条目，那么采用 A 的翻译。如果要以 B 的翻译为准，最后一步应该执行“python po-merge.py<zh_CN-B2.po zh_CN-A2.po >zh_CN.po”。
+ 产生的结果是文件 zh_CN.po，它以 A 的翻译为准，如果 A 和 B 翻译了相同的条目，那么采用 A 的翻译。如果要以 B 的翻译为准，将命令中的 A 和 B 互换即可。
 
  其中 po-merge.py 位于 trunk/lib/tools，它是从官方 Subversion 版本库复制而来，即 trunk/tools/dev/po-merge.py。
 
