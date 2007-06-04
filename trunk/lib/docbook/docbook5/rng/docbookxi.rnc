@@ -27,7 +27,7 @@ s:ns [ prefix = "s" uri = "http://www.ascc.net/xml/schematron" ]
 s:ns [ prefix = "svg" uri = "http://www.w3.org/2000/svg" ]
 s:ns [ prefix = "xi" uri = "http://www.w3.org/2001/XInclude" ]
 s:ns [ prefix = "xlink" uri = "http://www.w3.org/1999/xlink" ]
-#  DocBook V5.0CR3
+#  DocBook V5.0CR4
 
 # See http://docbook.org/ns/docbook
 start =
@@ -178,7 +178,7 @@ db.xlink.actuate.attribute =
   
   ## Identifies the XLink actuate behavior of the link
   attribute xlink:actuate { db.xlink.actuate.enumeration }
-db.href.attribute =
+db.href.attributes =
   db.xlink.href.attribute
   & db.xlink.type.attribute?
   & db.xlink.role.attribute?
@@ -271,9 +271,9 @@ db.common.idreq.attributes =
   & db.effectivity.attributes
   & db.annotations.attribute?
 db.common.linking.attributes =
-  (db.linkend.attribute | db.href.attribute)?
+  (db.linkend.attribute | db.href.attributes)?
 db.common.req.linking.attributes =
-  db.linkend.attribute | db.href.attribute
+  db.linkend.attribute | db.href.attributes
 db.common.data.attributes =
   
   ## Specifies the format of the data
@@ -5306,7 +5306,9 @@ div {
   db.code =
     
     ## An inline code fragment
-    element code { db.code.attlist, db._text }
+    element code {
+      db.code.attlist, (db.programming.inlines | db._text)*
+    }
 }
 div {
   db.constant.class.attribute =
@@ -7644,6 +7646,7 @@ div {
   db.termdef.role.attribute = attribute role { text }
   db.termdef.attlist =
     db.termdef.role.attribute?
+    & db.glossentry.sortas.attribute?
     & db.common.attributes
     & db.common.linking.attributes
     & db.baseform.attribute
@@ -7661,7 +7664,7 @@ div {
           "            "
           s:assert [
             test = "count(db:firstterm) = 1"
-            "A termdef must contain exactly one glossterm"
+            "A termdef must contain exactly one firstterm"
           ]
           "\x{a}" ~
           "          "
@@ -8490,7 +8493,7 @@ div {
     db.area.role.attribute?
     & db.common.idreq.attributes
     & db.area.units.attribute
-    & (db.area.linkends.attribute | db.href.attribute)?
+    & (db.area.linkends.attribute | db.href.attributes)?
     & db.area.label.attribute?
     & db.area.coords.attribute
   db.area =
@@ -8504,7 +8507,7 @@ div {
     db.area.role.attribute?
     & db.common.attributes
     & db.area.units.attribute
-    & (db.area.linkends.attribute | db.href.attribute)?
+    & (db.area.linkends.attribute | db.href.attributes)?
     & db.area.label.attribute?
     & db.area.coords.attribute
   db.area.inareaset =
@@ -8520,7 +8523,7 @@ div {
     db.areaset.role.attribute?
     & db.common.idreq.attributes
     & db.area.units.attribute
-    & (db.areaset.linkends.attribute | db.href.attribute)?
+    & (db.areaset.linkends.attribute | db.href.attributes)?
     & db.areaset.label.attribute?
   db.areaset =
     

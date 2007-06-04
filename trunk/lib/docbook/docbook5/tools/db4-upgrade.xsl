@@ -8,13 +8,13 @@
 
 <!--
 # ======================================================================
-# This file is part of DocBook V5.0CR3
+# This file is part of DocBook V5.0CR4
 #
 # Copyright 2005 Norman Walsh, Sun Microsystems, Inc., and the
 # Organization for the Advancement of Structured Information
 # Standards (OASIS).
 #
-# Release: $Id: db4-upgrade.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+# Release: $Id: db4-upgrade.xsl 6746 2007-03-22 17:08:24Z nwalsh $
 #
 # Permission to use, copy, modify and distribute this stylesheet
 # and its accompanying documentation for any purpose and without fee
