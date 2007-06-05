@@ -12,8 +12,8 @@
   <xsl:param name="footers.on.blank.pages">0</xsl:param>
 
   <!-- Space between paper border and content (chaotic stuff, don't touch) -->
-  <xsl:param name="page.margin.top">5mm</xsl:param>
-  <xsl:param name="page.margin.bottom">0mm</xsl:param>
+  <xsl:param name="page.margin.top">10mm</xsl:param>
+  <xsl:param name="page.margin.bottom">10mm</xsl:param>
   <xsl:param name="page.margin.outer">10mm</xsl:param>
   <xsl:param name="page.margin.inner">10mm</xsl:param>
 
@@ -49,5 +49,14 @@
   </xsl:attribute-set>
 
   <xsl:param name="variablelist.as.blocks" select="1" />
+
+  <xsl:attribute-set name="xref.properties">
+    <xsl:attribute name="color">
+      <xsl:choose>
+        <xsl:when test="self::ulink">blue</xsl:when>
+        <xsl:otherwise>red</xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:attribute-set>
 
 </xsl:stylesheet>
