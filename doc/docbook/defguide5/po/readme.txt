@@ -16,9 +16,9 @@
     msgfmt --statistics -c zh_CN.po
 
 2. 格式化
-    msgmerge --no-wrap -o zh_CN.po.new zh_CN.po defguide5.pot
-    diff zh_CN.po zh_CN.po.new
-    mv -f zh_CN.po.new zh_CN.po
+    msgmerge --no-wrap -o zh_CN-new.po zh_CN.po defguide5.pot
+    diff zh_CN.po zh_CN-new.po
+    mv -f zh_CN-new.po zh_CN.po
 
 3. 以它人的翻译为准合并
       msgmerge -o zh_CN-new.po zh_CN-other.po zh_CN.po
