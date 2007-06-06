@@ -34,12 +34,6 @@
   <xsl:param name="monospace.font.family">monospace</xsl:param>
   <xsl:param name="title.font.family">sans-serif</xsl:param>
 
-  <!-- Default Font size -->
-  <xsl:param name="body.font.master">11</xsl:param>
-
-  <!-- Line height in body text -->
-  <xsl:param name="line-height">1.4</xsl:param>
-
   <!-- Monospaced fonts are smaller than regular text -->
   <xsl:attribute-set name="monospace.properties">
       <xsl:attribute name="font-family">
