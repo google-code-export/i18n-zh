@@ -85,7 +85,8 @@ Author：
         </exec>
 
         <!-- omit elements reference for a while -->
-        <copy overwrite="true" file="references.xml" tofile="en/refpages/references.xml"/>
+        <copy file="en/refpages/references.xml" tofile="en/refpages/references-svn.xml" overwrite="true"/>
+        <copy file="references.xml" tofile="en/refpages/references.xml" overwrite="true"/>
 
         <exec dir="." executable="xsltproc">
             <arg value="--nonet"/>
@@ -96,10 +97,7 @@ Author：
             <arg value="en/book.xml"/>
         </exec>
 
-        <exec dir="." executable="svn">
-            <arg value="revert"/>
-            <arg value="en/refpages/references.xml"/>
-        </exec>
+        <move overwrite="true" file="en/refpages/references-svn.xml" tofile="en/refpages/references.xml"/>
     </target>
 
     <target name="pot.init">
@@ -173,6 +171,9 @@ Author：
     </target>
 
     <target name="pdf" depends="translate">
+        <copy todir="build/zh/schema">
+            <fileset dir="en/schema"  excludes="**/.svn"/>
+        </copy>
         <copy todir="build/zh/pdf">
             <fileset dir="${fonts.dir}">
                 <include name="*.ttf"/>
