@@ -69,8 +69,8 @@ Author：
         <tstamp>
             <format property="build.time" pattern="yyyy-MM-dd HH:mm:ss Z"/>
         </tstamp>
-        <exec dir="en" executable="svnversion" outputproperty="build.version"/>
-        <filter token="build.version" value="${build.version}"/>
+        <!-- exec dir="en" executable="svnversion" outputproperty="build.version"/ -->
+        <!-- filter token="build.version" value="${build.version}"/ -->
         <filter token="build.time" value="${build.time}"/>
         <copy file="version.tmpl.xml" tofile="en/book/version.xml" filtering="true" overwrite="true"/>
     </target>
@@ -78,6 +78,8 @@ Author：
     <!-- 将英文源文件合并，产生一个独立的源文件 -->
     <target name="profile" depends="version">
         <mkdir dir="build/en"/>
+        <copy file="en/book/book.xml" tofile="en/book/book-svn.xml" overwrite="true"/>
+        <copy file="book.xml" tofile="en/book/book.xml" overwrite="true"/>
         <exec dir="." executable="xsltproc">
             <arg value="--nonet"/>
             <arg value="--xinclude"/>
@@ -86,12 +88,13 @@ Author：
             <arg value="style/profile.xsl"/>
             <arg value="en/book/book.xml"/>
         </exec>
+        <move file="en/book/book-svn.xml" tofile="en/book/book.xml" overwrite="true"/>
     </target>
 
     <!-- 检查 pot 文件是否过时 -->
     <target name="pot.init" unless="pot.isUpToDate" >
         <uptodate property="pot.isUpToDate" targetfile="po/${doc.name}.pot">
-            <srcfiles dir="en/book" includes="*.xml" excludes="version.xml"/>
+            <srcfiles dir="en/book" includes="*.xml" excludes="book.xml, version.xml"/>
         </uptodate>
     </target>
 
@@ -134,6 +137,8 @@ Author：
         </exec>
         <exec dir="." executable="python">
             <arg value="xml2po.py"/>
+            <arg value="-l"/>
+            <arg value="zh-cn"/>
             <arg value="-t"/>
             <arg value="po/zh_CN.mo"/>
             <arg value="-o"/>
