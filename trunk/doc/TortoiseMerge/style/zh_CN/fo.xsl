@@ -9,7 +9,7 @@
   <!-- Font related Settings -->
   <xsl:param name="body.font.family">simsun</xsl:param>
   <xsl:param name="dingbat.font.family">simhei</xsl:param>
-  <xsl:param name="monospace.font.family">simsun</xsl:param>
+  <xsl:param name="monospace.font.family">Courier</xsl:param>
   <xsl:param name="title.font.family">simhei</xsl:param>
 
 </xsl:stylesheet>
