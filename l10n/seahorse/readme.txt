@@ -47,5 +47,5 @@
     mv -f zh_CN-2.18.po.new zh_CN-2.18.po
 
 *) 从开发版本合并：
-      msgmerge -o zh_CN-2.18-new.po zh_CN.po zh_CN-2.18.po
-      mv -f zh_CN-2.18-new.po zh_CN-2.18.po
+    pomerge --mergeblanks=no -t zh_CN-2.18.po -i zh_CN.po -o zh_CN-2.18-new.po
+    mv -f zh_CN-2.18-new.po zh_CN-2.18.po
