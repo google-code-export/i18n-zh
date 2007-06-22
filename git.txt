@@ -1,0 +1,126 @@
+If you are commit to the i18n-zh project repository, please read this first.
+
+                ============================================
+                    Guide to i18n-zh project repository
+                ============================================
+
+* Introduction
+* Software version requirements
+* Configuration
+* Repository on repo.or.cz
+* Repository maintenance
+* Common git operation
+* Diff & Patch
+
+Introduction
+============
+[TBD]
+
+
+Software version requirements
+=============================
+[TBD]
+
+
+Configuration
+=============
+The flowwing is the sample configuration, please modify some fields.
+
+*) ~/.gitconfig
+    [core]
+        compression = 9
+
+    [diff]
+        color = auto
+
+    [pack]
+        window = 64
+
+    [user]
+        email = cauchy.song@gmail.com
+        name = Cauchy Song
+
+*) ~/.ssh/config
+    Host repo.or.cz
+        HostName 152.69.94.80
+        Port 2222
+        User cauchy
+
+
+Repository on repo.or.cz
+========================
+*) gitweb
+    http://repo.or.cz/w/i18n-zh.git
+
+*) clone
+    git://repo.or.cz/i18n-zh.git
+    http://repo.or.cz/r/i18n-zh.git
+
+    # cat .git/branches/origin
+    git://repo.or.cz/i18n-zh.git
+
+*) push
+    git+ssh://repo.or.cz/srv/git/i18n-zh.git
+
+
+Repository maintenance
+=====================
+*) pack
+    git-repack -a -d -f --window=64 --depth=64
+
+*) fsck
+    git-fsck --unreachable --strict HEAD $(cat .git/refs/heads/*)
+    git-prune
+
+
+Common git operation
+==================
+*) clone
+    cg-clone git://repo.or.cz/i18n-zh.git
+
+*) update
+    cg-update -v
+
+*) restore
+    cg-restore -f filename
+
+*) commit
+    cg-commit -m "your log messages"
+
+    if you commit patch by someone, use option "--author":
+
+    cg-commit --author someone -m "your log messages"
+
+*) reset
+    git reset --soft HEAD^
+
+*) push
+    git-push git+ssh://repo.or.cz/srv/git/i18n-zh.git master:master
+
+Diff & Patch
+============
+*) diff
+    diff -wBNr -x .git . i18n-zh.origin
+
+*) patch
+    patch -p0 < zh_CN.patch
+
+git-svn
+============
+# Clone a repo (like git clone):
+git-svn clone http://svn.foo.org/project -T trunk -b branches -t tags
+
+# Reset your master to trunk (or any other branch, replacing 'trunk'
+# with the appropriate name):
+git reset --hard remotes/trunk
+
+# Do some work and commit locally to git:
+git commit ...
+
+# Something is committed to SVN, rebase your local changes against the
+# latest changes in SVN:
+git-svn rebase
+
+# Now commit your changes (that were committed previously using git) to SVN,
+# as well as automatically updating your working HEAD:
+git-svn dcommit
