@@ -1,0 +1,23 @@
+#!/bin/sh
+# like the addremove command in mercurial
+
+if test "x$1" = "x-h"
+then
+    echo "Usage: git-addrm [<path>]"
+    exit 0
+fi
+SUBDIRECTORY_OK=1
+. git-sh-setup || die "Not a git archive"
+
+EXCLUDE_ARGS=--exclude-per-directory=.gitignore
+
+if test -f "$GIT_DIR/info/exclude"
+then
+    EXCLUDE_ARGS="$EXCLUDE_ARGS --exclude-from=$GIT_DIR/info/exclude"
+fi
+
+set -e
+git-ls-files -z --deleted $EXCLUDE_ARGS "$@"| \
+    git-update-index --remove -z --stdin
+git-ls-files -z --others $EXCLUDE_ARGS "$@" | \
+    git-update-index --add -z --stdin
