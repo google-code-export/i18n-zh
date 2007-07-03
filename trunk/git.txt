@@ -10,16 +10,31 @@ If you are commit to the i18n-zh project repository, please read this first.
 * Repository on repo.or.cz
 * Repository maintenance
 * Common git operation
+* Getting the latest upstream code
+* Using git-svn
 * Diff & Patch
+* File permission & encoding
+* Verifying your po file
+* Formating your po file
 
 Introduction
 ============
-[TBD]
+*) l10n
+
+*) doc
+
+    1. Translation
+
+    2. Write document
+
+*) i18n
 
 
 Software version requirements
 =============================
-[TBD]
+*) GNU gettext 0.16.1
+*) Python 2.4.4
+*) translate-toolkit(pomerge & pofilter) 1.0.1
 
 
 Configuration
@@ -28,74 +43,149 @@ The flowwing is the sample configuration, please modify some fields.
 
 *) ~/.gitconfig
     [core]
-        compression = 9
+            compression = 9
 
     [diff]
         color = auto
 
     [pack]
-        window = 64
+            window = 128
+            depth = 64
+
+    [color]
+            branch = auto
+            diff = auto
+            status = auto
 
     [user]
-        email = cauchy.song@gmail.com
-        name = Cauchy Song
+        # email = dongsheng.song@gmail.com
+        # name = Dongsheng Song
 
 *) ~/.ssh/config
-    Host repo.or.cz
-        HostName 152.69.94.80
-        Port 2222
-        User cauchy
+    # Host repo.or.cz
+    #     HostName 152.69.94.80
+    #     Port 2222
+    #     User cauchy
 
 
 Repository on repo.or.cz
 ========================
 *) gitweb
+
     http://repo.or.cz/w/i18n-zh.git
 
 *) clone
+
+    # cat .git/branches/origin
+
     git://repo.or.cz/i18n-zh.git
     http://repo.or.cz/r/i18n-zh.git
 
-    # cat .git/branches/origin
-    git://repo.or.cz/i18n-zh.git
-
 *) push
+
     git+ssh://repo.or.cz/srv/git/i18n-zh.git
 
 
 Repository maintenance
 =====================
 *) pack
-    git-repack -a -d -f --window=64 --depth=64
+
+    git-repack -a -d -f --window=128 --depth=64
 
 *) fsck
+
     git-fsck --unreachable --strict HEAD $(cat .git/refs/heads/*)
     git-prune
 
 
 Common git operation
-==================
+====================
 *) clone
-    cg-clone git://repo.or.cz/i18n-zh.git
+    git-clone git://repo.or.cz/i18n-zh.git
 
 *) update
-    cg-update -v
+
+    "git-pull -v" or "git fetch", See section "Getting the latest upstream code".
 
 *) restore
-    cg-restore -f filename
+    git-checkout -f filename
 
 *) commit
-    cg-commit -m "your log messages"
+
+    git-commit -a -m "your log messages"
 
     if you commit patch by someone, use option "--author":
 
-    cg-commit --author someone -m "your log messages"
+    git-commit -a --author someone -m "your log messages"
 
 *) reset
+
     git reset --soft HEAD^
 
 *) push
+
     git-push git+ssh://repo.or.cz/srv/git/i18n-zh.git master:master
+
+
+Getting the latest upstream code
+================================
+There are two ways to update your local repository. Which one to use depends on
+whether you have committed changes in the meantime.
+
+*) No changes: pull
+
+    The command to update your local repository is:
+
+    git pull
+
+    It will pull down the latest repository information from the origin remote
+    file (which points at where you initially cloned the repository from), then
+    merge. If the new changes don't conflict with anything locally, the merge
+    will "fast-forward" your branch reference to the new head. If new changes
+    do conflict, it will try to do an automatic merge using a couple of
+    different schemes, and then automatically commits the merge if it's
+    satisfied. If you notice that your pull resulted in a merge (in the output
+    of pull), you might want to use gitk to see if the merge did what you
+    expected it to. If it isn't satisfied, then you have to resolve the
+    conflict manually.
+
+*) You've made changes: fetch and rebase
+
+    If you have committed local changes, then git-pull will create a spurious
+    "Merge" commit, which will pollute the change list when you later push
+    upstream. To avoid this, do these two commands:
+
+    git fetch
+    git rebase origin
+
+    Instead of merging, this attempts to insert the changes you pull from the
+    origin repository before your local changes, avoiding the merge message.
+
+
+Using git-svn
+=============
+*) Clone a repo (like git clone)
+
+    git-svn clone -T trunk -b branches -t tags https://i18n-zh.googlecode.com/svn/trunk
+
+*) Reset your master to trunk (or any other branch)
+
+    git reset --hard remotes/trunk
+
+*) Do some work and commit locally to git
+
+    git commit ...
+
+*) Something is committed to SVN, rebase your local changes against the latest
+changes in SVN
+
+    git-svn rebase
+
+*) Now commit your changes (that were committed previously using git) to SVN,
+as well as automatically updating your working HEAD:
+
+    git-svn dcommit
+
 
 Diff & Patch
 ============
@@ -105,22 +195,34 @@ Diff & Patch
 *) patch
     patch -p0 < zh_CN.patch
 
-git-svn
-============
-# Clone a repo (like git clone):
-git-svn clone http://svn.foo.org/project -T trunk -b branches -t tags
 
-# Reset your master to trunk (or any other branch, replacing 'trunk'
-# with the appropriate name):
-git reset --hard remotes/trunk
+File permission & encoding
+==========================
+*) permission
 
-# Do some work and commit locally to git:
-git commit ...
+    set umask to 002, i.e.
 
-# Something is committed to SVN, rebase your local changes against the
-# latest changes in SVN:
-git-svn rebase
+        set directory to 0775
+        set common file to 0664
+        set execute file to 0775
 
-# Now commit your changes (that were committed previously using git) to SVN,
-# as well as automatically updating your working HEAD:
-git-svn dcommit
+*) encoding
+    using utf-8 without signature(no BOM)
+
+
+Verifying your po file
+======================
+Please verify your po file is valid:
+
+    msgfmt --check-accelerators -c zh_CN.po
+
+
+Formating your po file
+======================
+Please format your translation before send po to the mailing list,
+or commit to the repository.
+
+    msgmerge --no-wrap -F -o zh_CN-new.po zh_CN.po example.pot
+    mv -f zh_CN-new.po zh_CN.po
+
+This can minimize the diff output, review your translation is easy.
