@@ -32,7 +32,6 @@ def parse_translation(f):
 
     # Parse msgstr
     if line[:8] != 'msgstr "' or line[-2] != '"':
-        print line
         raise RuntimeError("parse error")
     msgstr = line[7:-1]
     while 1:
