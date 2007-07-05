@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Subversion Book\n"
 "POT-Creation-Date: 2007-06-29 10:38+0800\n"
-"PO-Revision-Date: 2007-05-23 12:00+0800\n"
+"PO-Revision-Date: 2007-06-07 16:15+0800\n"
 "Last-Translator: Rock Sun <daijun@gmail.com>\n"
 "Language-Team: Subversion Book team <svnbook-dev@red-bean.com>\n"
 "MIME-Version: 1.0\n"
@@ -4628,9 +4628,8 @@ msgid "In the Subversion repository, a <firstterm>lock</firstterm> is a piece of
 msgstr "在Subversion的版本库，一个<firstterm>锁</firstterm>是一份元数据，可以排它赋予某个用户修改权，这个用户被称作<firstterm>锁的拥有者</firstterm>。每个锁都有一个唯一标识，通常是一长串字符，叫做<firstterm>锁令牌</firstterm>。版本库管理锁，控制着锁的创建，权限控制和删除。如果提交包含了修改或者删除锁"
 
 #: build/en/svnbook.xml:5819(para)
-#, fuzzy
 msgid "To demonstrate lock creation, let's refer back to our example of multiple graphic designers working with on the same binary image files. Harry has decided to change a JPEG image. To prevent other people from committing changes to the file while he is modifying it (as well as alerting them that he is about to change it), he locks the file in the repository using the <command moreinfo=\"none\">svn lock</command> command."
-msgstr "一个例子是按照顺序。为了描述方便，假定Harry决定修改一个JPEG图像，为了防止其他用户提交这个文件的修改，他使用<command moreinfo=\"none\">svn lock</command>命令锁定了版本库的这个文件："
+msgstr "为了描述锁的产生，我们回到前面那个关于多个图形设计师共同工作的例子，Harry决定修改一个JPEG图像，为了防止其他用户此时提交这个文件的修改，他使用<command moreinfo=\"none\">svn lock</command>命令锁定了版本库中的这个文件："
 
 #: build/en/svnbook.xml:5827(screen)
 #, no-wrap
@@ -4646,14 +4645,12 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:5833(para)
-#, fuzzy
 msgid "There are a number of new things demonstrated in the previous example. First, notice that Harry passed the <option>--message (-m)</option> option to <command moreinfo=\"none\">svn lock</command>. Similar to <command moreinfo=\"none\">svn commit</command>, the <command moreinfo=\"none\">svn lock</command> command can take comments (either via <option>--message (-m)</option> or <option>--file (-F)</option>) to describe the reason for locking the file. Unlike <command moreinfo=\"none\">svn commit</command>, however, <command moreinfo=\"none\">svn lock</command> will not demand a message by launching your preferred text editor. Lock comments are optional, but still recommended to aid communication."
-msgstr "前一个例子描述了许多新事物，第一，注意Harry在<command moreinfo=\"none\">svn lock</command>中使用了<option>--message</option>选项，类似于<command moreinfo=\"none\">svn commit</command>，<command moreinfo=\"none\">svn lock</command>命令可以有描述锁定原因的注释（通过<option>--message (-m)</option>或<option>--file (-F)</option>）。然而不像<command moreinfo=\"none\">svn commit</command>，<command moreinfo=\"none\">svn lock</command>不会自动强制启动你喜欢的编辑器，锁定注释是可选的，但是为了方便交流我们还是推荐使用。"
+msgstr "前一个例子描述了许多新事物，第一，注意Harry在<command moreinfo=\"none\">svn lock</command>中使用了<option>--message (-m)</option>选项，类似于<command moreinfo=\"none\">svn commit</command>，<command moreinfo=\"none\">svn lock</command>命令可以有描述锁定原因的注释（通过<option>--message (-m)</option>或<option>--file (-F)</option>）。然而不像<command moreinfo=\"none\">svn commit</command>，<command moreinfo=\"none\">svn lock</command>不会自动强制启动你喜欢的编辑器，锁定注释是可选的，但是为了方便交流我们还是推荐使用。"
 
 #: build/en/svnbook.xml:5845(para)
-#, fuzzy
 msgid "Secondly, the lock attempt succeeded. This means that the file wasn't already locked, and that Harry had the latest version of the file. If Harry's working copy of the file had been out-of-date, the repository would have rejected the request, forcing Harry to <command moreinfo=\"none\">svn update</command> and reattempt the locking command. The locking command would also have failed if the file already been locked by someone else."
-msgstr "第二，锁定成功了。这意味着文件已经锁定了，Harry有了文件最新的版本，如果Harry的工作拷贝文件不是最新的，版本库会拒绝请求，强制Harry执行<command moreinfo=\"none\">svn update</command>并重新运行锁定命令。"
+msgstr "第二，锁定成功了，这意味着文件没有被别人锁定，Harry的文件是最新的版本。如果Harry的工作拷贝文件不是最新的，版本库会拒绝请求，强制Harry执行<command moreinfo=\"none\">svn update</command>并重新运行锁定命令，同样，如果此文件已经被别的用户锁定了，锁定命令也会失败。"
 
 #: build/en/svnbook.xml:5854(para)
 msgid "As you can see, the <command moreinfo=\"none\">svn lock</command> command prints confirmation of the successful lock. At this point, the fact that the file is locked becomes apparent in the output of the <command moreinfo=\"none\">svn status</command> and <command moreinfo=\"none\">svn info</command> reporting subcommands."
@@ -4715,23 +4712,20 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:5887(para)
-#, fuzzy
 msgid "That the <command moreinfo=\"none\">svn info</command> command, which does not contact the repository when run against working copy paths, can display the lock token reveals an important fact about lock tokens—that they are cached in the working copy. The presence of the lock token is critical. It gives the working copy authorization to make use of the lock later on. Also, the <command moreinfo=\"none\">svn status</command> command shows a <literal moreinfo=\"none\">K</literal> next to the file (short for locKed), indicating that the lock token is present."
-msgstr "也要注意到在创建版本库的锁定之后，工作拷贝也缓存了锁定的信息—最重要的是锁定令牌。有锁定令牌是非常重要的，这给了工作拷贝权利利用这个锁的能力。<command moreinfo=\"none\">svn status</command>会在文件后面显示一个<literal moreinfo=\"none\">K</literal>（locKed的缩写），表明了拥有锁定令牌。"
+msgstr "当对工作拷贝路径应用<command moreinfo=\"none\">svn info</command>命令时，可以显示锁定令牌信息。有锁定令牌是非常重要的，这给了工作拷贝权利利用这个锁的能力。<command moreinfo=\"none\">svn status</command>会在文件后面显示一个<literal moreinfo=\"none\">K</literal>（locKed的缩写），表明了拥有锁定令牌。"
 
 #: build/en/svnbook.xml:5898(title)
 msgid "Regarding lock tokens"
 msgstr "关于锁定令牌"
 
 #: build/en/svnbook.xml:5900(para)
-#, fuzzy
 msgid "A lock token isn't an authentication token, so much as an <emphasis>authorization</emphasis> token. The token isn't a protected secret. In fact, a lock's unique token is discoverable by anyone who runs <command moreinfo=\"none\">svn info URL</command>. A lock token is special only when it lives inside a working copy. It's proof that the lock was created in that particular working copy, and not somewhere else by some other client. Merely authenticating as the lock owner isn't enough to prevent accidents."
-msgstr "一个锁定令牌只有在工作拷贝中才有特别的意义，它是锁定建立在这个工作拷贝的证据，而不是其它用户在其他地方。仅仅检验锁定拥有者还不能防止事故。"
+msgstr "一个锁不是一个认证令牌，而是一个<emphasis>授权</emphasis>令牌，这个令牌不是一个受保护的秘密，事实上，任何人都可以通过<command moreinfo=\"none\">svn info URL</command>发现这个唯一令牌。一个锁定令牌只有在工作拷贝中才有特别的意义，它是锁定建立在这个工作拷贝的证据，而不是其它用户在其他地方，仅仅检验锁定拥有者还不能防止出现意外。"
 
 #: build/en/svnbook.xml:5910(para)
-#, fuzzy
 msgid "For example, suppose you lock a file using a computer at your office, but leave work for the day before you finish your changes to that file. It should not be possible to accidentally commit changes to that same file from your home computer later that evening simply because you've authenticated as the lock's owner. In other words, the lock token prevents one piece of Subversion-related software from undermining the work of another. (In our example, if you really need to change the file from an alternate working copy, you would need to break the lock and re-lock the file.)"
-msgstr "例如：你在办公室电脑上锁定了一个文件，或许修改正在进行中。很有可能在你的家用计算机上的一个工作拷贝（或别的Subversion客户端）里你又不小心修改了同一个文件，仅仅因为检验了你就是锁定的拥有者。换句话说，锁定令牌防止你通过一个Subversion相关软件的工作破坏另一个。（在我们的例子里，如果你真的需要在另一个工作拷贝修改这个文件，你必须打破锁定再重新锁定文件。）"
+msgstr "例如，你在办公室电脑上锁定了一个文件，或许修改正在进行中。很有可能在你的家用计算机上的一个工作拷贝（或别的Subversion客户端）里你又不小心修改了同一个文件，仅仅因为检验了你就是锁定的拥有者。换句话说，锁定令牌防止你通过一个Subversion相关软件的工作破坏另一个的工作。（在我们的例子里，如果你真的需要在另一个工作拷贝修改这个文件，你必须打破锁定再重新锁定文件。）"
 
 #: build/en/svnbook.xml:5924(para)
 msgid "Now that Harry has locked <filename moreinfo=\"none\">banana.jpg</filename>, Sally is unable to change or delete that file:"
@@ -4790,12 +4784,10 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:5955(para)
-#, fuzzy
 msgid "Notice that after the commit is finished, <command moreinfo=\"none\">svn status</command> shows that the lock token is no longer present in working copy. This is the standard behavior of <command moreinfo=\"none\">svn commit</command>—it searches the working copy (or list of targets, if you provide such a list) for local modifications, and sends all the lock tokens it encounters during this walk to the server as part of the commit transaction. After the commit completes successfully, all of the repository locks that were mentioned are released—<emphasis>even on files that weren't committed</emphasis>. This is meant to discourage users from being sloppy about locking, or from holding locks for too long. If Harry haphazardly locks thirty files in a directory named <filename moreinfo=\"none\">images</filename> because he's unsure of which files he needs to change, yet only only changes four of those file, when he runs <command moreinfo=\"none\">svn commit images</command>, the process will still release all thirty locks."
-msgstr "需要注意到提交之后，<command moreinfo=\"none\">svn status</command>显示工作拷贝已经没有锁定令牌了，这是<command moreinfo=\"none\">svn commit</command>的标准行为方式：它会遍历工作拷贝（或者从目标列表，如果有列表的话），并且作为提交的一部分发送所有遇到的锁定令牌到服务器。当提交完全成功，前面用到的所有版本库锁定都会被释放—<emphasis>即使是没有提交的文件。</emphasis>这样的原因是不鼓励用户滥用锁定，或者是长时间的保持锁定。例如，假定Harry不小心锁定了<filename moreinfo=\"none\">images</filename>目录的30个文件，因为他不确定要修改什么文件，他最后只修改了四个文件，当他运行<command moreinfo=\"none\">svn commit images</command>，会释放所有的30个锁定。"
+msgstr "需要注意到提交之后，<command moreinfo=\"none\">svn status</command>显示工作拷贝已经没有锁定令牌了，这是<command moreinfo=\"none\">svn commit</command>的标准行为方式—它会遍历工作拷贝（或者从目标列表，如果有列表的话），并且作为提交的一部分发送所有遇到的锁定令牌到服务器。当提交完全成功，前面用到的所有版本库锁定都会被释放—<emphasis>即使是没有提交的文件。</emphasis>这样的原因是不鼓励用户滥用锁定，或者是长时间的保持锁定。例如，假定Harry不小心锁定了<filename moreinfo=\"none\">images</filename>目录的30个文件，因为他不确定要修改什么文件，他最后只修改了四个文件，当他运行<command moreinfo=\"none\">svn commit images</command>，会释放所有的30个锁定。"
 
 #: build/en/svnbook.xml:5973(para)
-#, fuzzy
 msgid "This behavior of automatically releasing locks can be overridden with the <option>--no-unlock</option> option to <command moreinfo=\"none\">svn commit</command>. This is best used for those times when you want to commit changes, but still plan to make more changes and thus need to retain existing locks. You can also make this your default behavior by setting the <literal moreinfo=\"none\">no-unlock</literal> runtime configuration option (see <xref linkend=\"svn.advanced.confarea\"/>)."
 msgstr "自动释放锁定的特性可以通过<command moreinfo=\"none\">svn commit</command>的<option>--no-unlock</option>选项关闭，当你要提交文件，同时期望继续修改而必须保留锁定时非常有用。这个特性也可以半永久性的设定，方法是设置运行中<filename moreinfo=\"none\">config</filename>文件（见<xref linkend=\"svn.advanced.confarea\"/>）的<literal moreinfo=\"none\">no-unlock = yes</literal>。"
 
@@ -4885,9 +4877,8 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:6040(para)
-#, fuzzy
 msgid "Just as <command moreinfo=\"none\">svn info</command> can be used to examine objects in the working copy, it can also be used to examine objects in the repository. If the main argument to <command moreinfo=\"none\">svn info</command> is a working copy path, then all of the working copy's cached information is displayed; any mention of a lock means that the working copy is holding a lock token (if a file is locked by another user or in another working copy, <command moreinfo=\"none\">svn info</command> on a working copy path will show no lock information at all). If the main argument to <command moreinfo=\"none\">svn info</command> is a URL, then the information reflects the latest version of an object in the repository, and any mention of a lock describes the current lock on the object."
-msgstr "就像<command moreinfo=\"none\">svn info</command>可以检验工作拷贝的对象，它也可以检验版本库的对象，如果<command moreinfo=\"none\">svn info</command>的主要参数工作拷贝路径，所有工作拷贝的缓存信息都会显示，发现了锁定就意味着工作拷贝拥有锁定令牌（如果一个文件被另一个用户在另一个工作拷贝锁定，工作拷贝路径上运行<command moreinfo=\"none\">svn info</command>不会显示锁定信息）。如果<command moreinfo=\"none\">svn info</command>的主参数是URL，就会反映版本库中最新版本的对象信息，任何对锁定的提及描述了当前对象的锁定。"
+msgstr "就像<command moreinfo=\"none\">svn info</command>可以检验工作拷贝的对象，它也可以检验版本库的对象，如果<command moreinfo=\"none\">svn info</command>的主要参数是工作拷贝路径，所有工作拷贝的缓存信息都会显示，发现了锁定就意味着工作拷贝拥有锁定令牌（如果一个文件被另一个用户在另一个工作拷贝锁定，工作拷贝路径上运行<command moreinfo=\"none\">svn info</command>不会显示锁定信息）。如果<command moreinfo=\"none\">svn info</command>的主参数是URL，就会反映版本库中最新版本的对象信息，任何对锁定的提及描述了当前对象的锁定。"
 
 #: build/en/svnbook.xml:6054(para)
 msgid "So in this particular example, Sally can see that Harry locked the file on February 16th to <quote>make a quick tweak</quote>. It being June, she suspects that he probably forgot all about the lock. She might phone Harry to complain and ask him to release the lock. If he's unavailable, she might try to forcibly break the lock herself or ask an administrator to do so."
@@ -4898,9 +4889,8 @@ msgid "Breaking and stealing locks"
 msgstr "解除和偷窃锁定"
 
 #: build/en/svnbook.xml:6068(para)
-#, fuzzy
 msgid "A repository lock isn't sacred—in Subversion's default configuration state, locks can be released not only by the person who created them, but by anyone at all. When somebody other than the original lock creator destroys a lock, we refer to this as <firstterm>breaking</firstterm> the lock."
-msgstr "版本库锁定并不是神圣不可侵犯的，不只是创建者可以释放锁定，任何人都可以。当有其他人期望消灭锁定时，我们称之为<firstterm>打破</firstterm>锁定。"
+msgstr "版本库锁定并不是神圣不可侵犯的，在Subversion的缺省配置状态，不只是创建者可以释放锁定，任何人都可以。当有其他人期望消灭锁定时，我们称之为<firstterm>打破</firstterm>锁定。"
 
 #: build/en/svnbook.xml:6075(para)
 msgid "From the administrator's chair, it's simple to break locks. The <command moreinfo=\"none\">svnlook</command> and <command moreinfo=\"none\">svnadmin</command> programs have the ability to display and remove locks directly from the repository. (For more information about these tools, see <xref linkend=\"svn.reposadmin.maint.tk\"/>.)"
@@ -4954,9 +4944,8 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:6105(para)
-#, fuzzy
 msgid "The more interesting option is allowing users to break each other's locks over the network. To do this, Sally simply needs to pass the <option>--force</option> to the unlock command:"
-msgstr "更有趣的选项是允许用户互相打破锁定，为此只需要使用unlock命令的<option>--force</option>选项："
+msgstr "更有趣的选项是允许用户互相打破锁定，为此，Sally只需要使用unlock命令的<option>--force</option>选项："
 
 #: build/en/svnbook.xml:6110(screen)
 #, no-wrap
@@ -4994,12 +4983,10 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:6127(para)
-#, fuzzy
 msgid "Now, Sally's initial attempt to unlock failed because she ran <command moreinfo=\"none\">svn unlock</command> directly on her working copy of the file, and no lock token was present. To remove the lock directly from the repository, she needs to pass a URL to <command moreinfo=\"none\">svn unlock</command>. Her first attempt to unlock the URL fails, because she can't authenticate as the lock owner (nor does she have the lock token). But when she passes <option>--force</option>, the authentication and authorization requirements are ignored, and the remote lock is broken."
 msgstr "Sally初始的unlock命令失败了，因为她直接在自己的工作拷贝上运行了<command moreinfo=\"none\">svn unlock</command>，而这里没有锁定令牌。为了直接从版本库删除锁定，她需要给<command moreinfo=\"none\">svn unlock</command>传递URL参数，她的这一次尝试又失败了，因为她不是锁定的拥有者（也没有锁定令牌）。当她使用了<option>--force</option>选项后，认证和授权的要求被忽略了，远程的锁定被打破了。"
 
 #: build/en/svnbook.xml:6138(para)
-#, fuzzy
 msgid "Of course, simply breaking a lock may not be enough. In the running example, Sally may not only want to break Harry's long-forgotten lock, but re-lock the file for her own use. She can accomplish this by running <command moreinfo=\"none\">svn unlock --force</command> and then <command moreinfo=\"none\">svn lock</command> back-to-back, but there's a small chance that somebody else might lock the file between the two commands. The simpler thing to is <firstterm>steal</firstterm> the lock, which involves breaking and re-locking the file all in one atomic step. To do this, Sally passes the <option>--force</option> option to <command moreinfo=\"none\">svn lock</command>:"
 msgstr "当然，简单的打破锁定也许还不够，在这个例子里，Sally不仅想要打破Harry遗忘的锁定，她也希望自己重新锁定。她可以通过运行<command moreinfo=\"none\">svn unlock --force</command>紧接着<command moreinfo=\"none\">svn lock</command>，但是有可能有人在这两次命令之间锁定了文件，最简单的方式是<firstterm>窃取</firstterm>这个锁定，将打破和重新锁定变成一种原子操作，为此需要运行<command moreinfo=\"none\">svn lock</command>加<option>--force</option>选项："
 
@@ -5056,14 +5043,12 @@ msgid "Locking Policies"
 msgstr "锁定策略"
 
 #: build/en/svnbook.xml:6190(para)
-#, fuzzy
 msgid "Different systems have different notions of how strict a lock should be. Some folks argue that locks must be strictly enforced at all costs, releasable only by the original creator or administrator. They argue that if anyone can break a lock, then chaos runs rampant and the whole point of locking is defeated. The other side argues that locks are first and foremost a communication tool. If users are constantly breaking each others' locks, then it represents a cultural failure within the team and the problem falls outside the scope of software enforcement."
-msgstr "不同的系统有不同的锁定限制程度的观念。有些人认为锁定必须不顾任何代价的严格执行，只有原始的创建者和管理员可以释放。他们认为如果有人打破了锁定，混乱就会放任，锁定就完全失去了意义。这些人认为锁定是第一个和最首要的交流工具，如果用户经常的打破别人的锁定，代表了团队的文化失败和软件之外的问题。"
+msgstr "不同的系统有不同的锁定限制程度的观念。有些人认为锁定必须不顾任何代价的严格执行，只有原始的创建者和管理员可以释放。他们认为如果有人打破了锁定，混乱就会放任，锁定就完全失去了意义。另外一些人认为锁定是第一个和最首要的交流工具，如果用户经常的打破别人的锁定，代表了团队的文化失败和软件之外的问题。"
 
 #: build/en/svnbook.xml:6201(para)
-#, fuzzy
 msgid "Subversion defaults to the <quote>softer</quote> approach, but still allows administrators to create stricter enforcement policies through the use of hook scripts. In particular, the <filename moreinfo=\"none\">pre-lock</filename> and <filename moreinfo=\"none\">pre-unlock</filename> hooks allow administrators to decide when lock creation and lock releases are allowed to happen. Depending on whether or not a lock already exists, these two hooks can decide whether or not to allow a certain user to break or steal a lock. The <filename moreinfo=\"none\">post-lock</filename> and <filename moreinfo=\"none\">post-unlock</filename> hooks are also available, and can be used to send email after locking actions. To learn more about repository hooks, see <xref linkend=\"svn.reposadmin.create.hooks\"/>."
-msgstr "Subversion缺省是比较<quote>宽松的</quote>方式，但也允许管理员创建钩子脚本来建立严格的控制策略。具体来说，<filename moreinfo=\"none\">pre-lock</filename>和<filename moreinfo=\"none\">pre-unlock</filename>钩子允许管理员决定什么时候创建和释放锁定。根据锁定是否已经存在，这两个钩子脚本可以决定是否允许特定用户打破或窃取锁定。也有<filename moreinfo=\"none\">post-lock</filename>和<filename moreinfo=\"none\">post-unlock</filename>钩子，可以用来发送锁定动作的通知邮件。"
+msgstr "Subversion缺省是比较<quote>宽松的</quote>方式，但也允许管理员创建钩子脚本来建立严格的控制策略。具体来说，<filename moreinfo=\"none\">pre-lock</filename>和<filename moreinfo=\"none\">pre-unlock</filename>钩子允许管理员决定什么时候创建和释放锁定。根据锁定是否已经存在，这两个钩子脚本可以决定是否允许特定用户打破或窃取锁定。也有<filename moreinfo=\"none\">post-lock</filename>和<filename moreinfo=\"none\">post-unlock</filename>钩子，可以用来发送锁定动作的通知邮件。关于版本库钩子的更多信息可以看<xref linkend=\"svn.reposadmin.create.hooks\"/>。"
 
 #: build/en/svnbook.xml:6221(title)
 msgid "Lock Communication"
@@ -5078,14 +5063,12 @@ msgid "For example, suppose Harry locks an image file and then begins editing it
 msgstr "例如，假定Harry锁定了一个图片，并开始编辑。同时，几英里之外的Sally希望做同样的工作，她没想到运行<command moreinfo=\"none\">svn status --show-updates</command>，她不知道Harry已经锁定了文件。她花费了数小时来修改文件，当她真被提交时发现文件已经被锁定或者是她的文件已经过期了。她的修改不能和Harry的合并，他们中的一人需要抛弃自己的工作，许多时间被浪费了。"
 
 #: build/en/svnbook.xml:6240(para)
-#, fuzzy
 msgid "Subversion's solution to this problem is to provide a mechanism to remind users that a file ought to be locked <emphasis>before</emphasis> the editing begins. The mechanism is a special property, <literal moreinfo=\"none\">svn:needs-lock</literal>. If that property is attached to a file (regardless of its value, which is irrelevant), then Subversion will try to use filesystem-level permissions to make the file read-only, unless, of course, the user has explicitly locked the file. When a lock-token is present (as a result of running <command moreinfo=\"none\">svn lock</command>), the file becomes read-write. When the lock is released, the file becomes read-only again."
-msgstr "这个属性用来标示这个文件在编辑之前需要锁定，属性值无所谓，Subversion会规格化为<literal moreinfo=\"none\">*</literal>。当有这个值时，<emphasis>除非</emphasis>用户锁定这个文件，否则文件一直是只读的。当得到一个锁定令牌（运行<command moreinfo=\"none\">svn lock</command>的结果），文件变成可读写，当释放这个锁后，文件又变成只读。"
+msgstr "Subversion针对此问题的解决方案是提供一种机制，提醒用户在开始编辑<emphasis>以前</emphasis>必须锁定这个文件,这个机制就是提供一种特别的属性--<literal moreinfo=\"none\">svn:needs-lock</literal>。当有这个值时，<emphasis>除非</emphasis>用户锁定这个文件，否则文件一直是只读的。当得到一个锁定令牌（运行<command moreinfo=\"none\">svn lock</command>的结果），文件变成可读写，当释放这个锁后，文件又变成只读。"
 
 #: build/en/svnbook.xml:6253(para)
-#, fuzzy
 msgid "The theory, then, is that if the image file has this property attached, then Sally would immediately notice something is strange when she opens the file for editing. Many applications alert users immediately when a read-only file is opened for editing. And nearly all applications would at least prevent her from saving changes to the file. This reminds her to lock the file before editing, whereby she discovers the pre-existing lock:"
-msgstr "根据这个原理，如果一个图像文件有这个属性，Sally就会立刻注意到打开的文件有些特别，她的程序将不能保存修改，或者（更好的情况）是告诉她文件只读，这提醒了她编辑之前需要锁定文件，这样她就发现了原来存在的锁定："
+msgstr "根据这个原理，如果一个图像文件有这个属性，Sally打开编辑文件就会立刻注意到有些特别，大多数程序会在打开只读文件时立刻警告，至少所有的程序会防止她保存修改，这提醒了她编辑之前需要锁定文件，这样她就发现了原来存在的锁定："
 
 #: build/en/svnbook.xml:6262(screen)
 #, no-wrap
@@ -5121,9 +5104,8 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:6279(para)
-#, fuzzy
 msgid "Users and administrators alike are encouraged to attach the <literal moreinfo=\"none\">svn:needs-lock</literal> property to any file which cannot be contextually merged. This is the primary technique for encouraging good locking habits and preventing wasted effort."
-msgstr "作为一个<quote>最佳实践</quote>，用户和管理员都应该给不能根据上下文的文件添加<literal moreinfo=\"none\">svn:needs-lock</literal>属性，这是鼓励好的锁定习惯和防止浪费的主要技术手段。"
+msgstr "我们鼓励用户和管理员都应该给不能根据上下文的文件添加<literal moreinfo=\"none\">svn:needs-lock</literal>属性，这是鼓励好的锁定习惯和防止浪费的主要技术手段。"
 
 #: build/en/svnbook.xml:6286(para)
 msgid "Note that this property is a communication tool which works independently from the locking system. In other words, any file can be locked, whether or not this property is present. And conversely, the presence of this property doesn't make the repository require a lock when committing."
@@ -5134,9 +5116,8 @@ msgid "Except, perhaps, a classic Vulcan mind-meld."
 msgstr ""
 
 #: build/en/svnbook.xml:6293(para)
-#, fuzzy
 msgid "Unfortunately, the system isn't flawless. It's possible that even when a file has the property, the read-only reminder won't always work. Sometimes applications misbehave and <quote>hijack</quote> the read-only file, silently allowing users to edit and save the file anyway. There's not much that Subversion can do in this situation—at the end of the day, there's simply no substitution for good interpersonal communication. <placeholder-1/>"
-msgstr "这个系统并不是毫无瑕疵，即使有这个属性，只读提醒也有可能失效。有些程序<quote>偷偷的篡改了</quote>文件的只读属性，悄无声息的允许用户编辑和保存文件，不幸的是，Subversion对此无能为力。"
+msgstr "这个系统并不是毫无瑕疵，即使有这个属性，只读提醒也有可能失效。有些程序<quote>偷偷的篡改了</quote>文件的只读属性，悄无声息的允许用户编辑和保存文件，不幸的是，Subversion对此无能为力—即时到了现今，还是没有任何工具能够代替人与人的良好交流。<placeholder-1/>"
 
 #: build/en/svnbook.xml:6314(title)
 msgid "Externals Definitions"
@@ -5147,9 +5128,8 @@ msgid "Sometimes it is useful to construct a working copy that is made out of a 
 msgstr "有时候创建一个由多个不同检出得到的工作拷贝是非常有用的，举个例子，你或许希望不同的子目录来自不同的版本库位置，或者是不同的版本库。你可以手工设置这样一个工作拷贝—使用<command moreinfo=\"none\">svn checkout</command>来创建这种你需要的嵌套的工作拷贝结构。但是如果这个结构对所有的用户是很重要的，每个用户需要执行同样的检出操作。"
 
 #: build/en/svnbook.xml:6327(para)
-#, fuzzy
 msgid "Fortunately, Subversion provides support for <firstterm>externals definitions</firstterm>. An externals definition is a mapping of a local directory to the URL—and possibly a particular revision—of a versioned directory. In Subversion, you declare externals definitions in groups using the <literal moreinfo=\"none\">svn:externals</literal> property. You can create or modify this property using <command moreinfo=\"none\">svn propset</command> or <command moreinfo=\"none\">svn propedit</command> (see <xref linkend=\"svn.advanced.props.manip\"/>). It can be set on any versioned directory, and its value is a multi-line table of subdirectories (relative to the versioned directory on which the property is set), optional revision flags, and a fully qualified, absolute Subversion repository URLs."
-msgstr "很幸运，Subversion提供了<firstterm>外部定义</firstterm>的支持，一个外部定义是一个本地路经到URL的影射—也有可能一个特定的修订版本—一些版本化的资源。在Subversion你可以使用<literal moreinfo=\"none\">svn:externals</literal>属性来定义外部定义，你可以用<command moreinfo=\"none\">svn propset</command>或<command moreinfo=\"none\">svn propedit</command>（见<xref linkend=\"svn.advanced.props.why\"/>）创建和修改这个属性。它可以设置到任何版本化的路经，它的值是一个多行的子目录和完全有效的Subversion版本库URL的列表（相对于设置属性的版本化目录）。"
+msgstr "很幸运，Subversion提供了<firstterm>外部定义</firstterm>的支持，一个外部定义是一个本地路经到URL的影射—也有可能一个特定的修订版本—一些版本化的资源。在Subversion你可以使用<literal moreinfo=\"none\">svn:externals</literal>属性来定义外部定义，你可以用<command moreinfo=\"none\">svn propset</command>或<command moreinfo=\"none\">svn propedit</command>（见<xref linkend=\"svn.advanced.props.manip\"/>）创建和修改这个属性。它可以设置到任何版本化的路经，它的值是一个多行的子目录，可选的修订版本标记和完全有效的Subversion版本库URL的列表（相对于设置属性的版本化目录）。"
 
 #: build/en/svnbook.xml:6341(screen)
 #, no-wrap
@@ -5226,12 +5206,10 @@ msgid "If you need to change the externals definition, you can do so using the r
 msgstr "如果你希望修改外部定义，你可以使用普通的属性修改子命令，当你提交一个<literal moreinfo=\"none\">svn:externals</literal>属性修改后，当你运行<command moreinfo=\"none\">svn update</command>时，Subversion会根据修改的外部定义同步检出的项目，同样的事情也会发生在别人更新他们的工作拷贝接受你的外部定义修改时。"
 
 #: build/en/svnbook.xml:6403(para)
-#, fuzzy
 msgid "Because the <literal moreinfo=\"none\">svn:externals</literal> property has a multiline value, we strongly recommend that you use <command moreinfo=\"none\">svn propedit</command> instead of <command moreinfo=\"none\">svn propset</command>."
-msgstr "为了设置或得到一个属性名称，使用<command moreinfo=\"none\">svn propset</command>和<command moreinfo=\"none\">svn propget</command>子命令，列出对象所有的属性，使用<command moreinfo=\"none\">svn proplist</command>。"
+msgstr "因为<literal moreinfo=\"none\">svn:externals</literal>的值是多行的，所以我们强烈建议使用<command moreinfo=\"none\">svn propedit</command>，而不是使用<command moreinfo=\"none\">svn propset</command>。"
 
 #: build/en/svnbook.xml:6410(para)
-#, fuzzy
 msgid "You should strongly consider using explicit revision numbers in all of your externals definitions. Doing so means that you get to decide when to pull down a different snapshot of external information, and exactly which snapshot to pull. Besides avoiding the surprise of getting changes to third-party repositories that you might not have any control over, using explicit revision numbers also means that as you backdate your working copy to a previous revision, your externals definitions will also revert to the way they looked in that previous revision, which in turn means that the external working copies will be updated to match they way <emphasis>they</emphasis> looked back when your repository was at that previous revision. For software projects, this could be the difference between a successful and a failed build of an older snapshot of your complex codebase."
 msgstr "你一定要要考虑在所有的外部定义中使用明确的修订版本，这样做意味着你已经决定了何时拖出外部信息不同的快照，和精确的拖出哪个快照。除了不会受到第三方版本库的意外修改的影响以外，当你的工作拷贝回溯到以前的版本库时，使用明确的修订版本号会让外部定义回到以前的那个修订版本，也意味着外部定义的工作拷贝更新会匹配以前修订版本的样子。对于软件项目，这可能是编译复杂代码基的老快照成功和失败的区别。"
 
@@ -5244,9 +5222,8 @@ msgid "The support that exists for externals definitions in Subversion today can
 msgstr "Subversion目前对外部定义的支持可能会引起误导，首先，一个外部定义只可以指向目录，而不是文件。第二，外部定义不可以指向相对路径（如<filename moreinfo=\"none\">../../skins/myskin</filename>）。第三，通过外部定义创建的工作拷贝与主工作拷贝没有连接，所以举个例子，如果你希望提交一个或多个外部定义的拷贝，你必须在这些工作拷贝显示的运行<command moreinfo=\"none\">svn commit</command>—对主工作拷贝的提交不会迭代到外部定义的部分。"
 
 #: build/en/svnbook.xml:6450(para)
-#, fuzzy
 msgid "Also, since the definitions themselves use absolute URLs, moving or copying a directory to which they are attached will not affect what gets checked out as an external (though the relative local target subdirectory will, of course, move with renamed directory). This can be confusing—even frustrating—in certain situations. For example, say you have a top-level directory named <filename moreinfo=\"none\">my-project</filename>, and you've created an externals definition on one of its subdirectories (<filename moreinfo=\"none\">my-project/some-dir</filename>) which tracks the latest revision of another of its subdirectories (<filename moreinfo=\"none\">my-project/external-dir</filename>)."
-msgstr "另外，因为定义本身使用绝对路径，移动和拷贝路径他们附着的路径不会影响他们作为外部的检出（尽管相对的本地目标子目录会这样，当然，根据重命名的目录）。这看起来有些迷惑—甚至让人沮丧—在特定情形。举个例子，如果你在<filename moreinfo=\"none\">/trunk</filename>开发线对一个目录使用外部定义，指向同一条线上的其他区域，然后使用<command moreinfo=\"none\">svn copy</command>把分支开发线拷贝到<filename moreinfo=\"none\">/branches/my-branch</filename>这个新位置，这个项目新分支的外部定义仍然指向<filename moreinfo=\"none\">/trunk</filename>版本化资源。另外，需要意识到如果你需要一个重新规划你的工作拷贝的父目录（使用<command moreinfo=\"none\">svn switch --relocate</command>），外部定义<emphasis>不</emphasis>会重新选择父目录。"
+msgstr "另外，因为定义本身使用绝对路径，移动和拷贝路径他们附着的路径不会影响他们作为外部的检出（尽管相对的本地目标子目录会这样，当然，根据重命名的目录）。在特定情形下这看起来有些迷惑—甚至让人沮丧。举个例子，你的顶级目录叫作<filename moreinfo=\"none\">my-project</filename>，你在它的子目录（filename moreinfo=\"none\">my-project/some-dir</filename>）创建了一个外部定义，而这个外部定义指向的是另一个子目录（<filename moreinfo=\"none\">my-project/external-dir</filename>）的最新版本。"
 
 #: build/en/svnbook.xml:6463(screen)
 #, no-wrap
@@ -5327,28 +5304,24 @@ msgid "Peg and Operative Revisions"
 msgstr "Peg 算法和版本"
 
 #: build/en/svnbook.xml:6532(para)
-#, fuzzy
 msgid "We make use of the ability to copy, move, rename, and completely replace files and directories on our computers all the time. And your version control system shouldn't get in the way of your doing these things with your version-controlled files and directories, either. Subversion's file management support is quite liberating, affording almost as much flexibility for versioned files as you'd expect when manipulating your unversioned ones. But that flexibility means that across the lifetime of your repository, a given versioned object might have many paths, and a given path might represent several entirely different versioned objects. And this introduces a certain level of complexity to your interactions with those paths and objects."
-msgstr "文件和目录的拷贝、改名和移动能力使你可以创建一个项目，然后删除它，然后在同一个位置添加一个新的—这是在我们的计算机中经常发生的操作，我们认为这些功能都是必然有的，Subversion很高兴你也是这么认为的，Subversion的文件管理操作是这样的开放，提供了几乎和普通文件一样的操作版本化文件的灵活性，但是灵活意味着在整个版本库的生命周期中，一个给定的版本化的资源可能会出现在许多不同的路径，一个给定的路径会展示给我们许多完全不同的版本化资源。当然这些功能也增加了你与这些路径和资源交互的难度。"
+msgstr "文件和目录的拷贝、改名和移动能力使你可以创建一个项目，然后删除它，然后在同一个位置添加一个新的—这是在我们的计算机中经常发生的操作，而你的版本控制系统不应该成为你这样操作的障碍。Subversion的文件管理操作是这样的开放，提供了几乎和普通文件一样的操作版本化文件的灵活性，但是灵活意味着在整个版本库的生命周期中，一个给定的版本化的资源可能会出现在许多不同的路径，一个给定的路径会展示给我们许多完全不同的版本化资源。当然这些功能也增加了你与这些路径和资源交互的难度。"
 
 #: build/en/svnbook.xml:6546(para)
-#, fuzzy
 msgid "Subversion is pretty smart about noticing when an object's version history includes such <quote>changes of address</quote>. For example, if you ask for the revision history log of a particular file that was renamed last week, Subversion happily provides all those logs—the revision in which the rename itself happened, plus the logs of relevant revisions both before and after that rename. So, most of the time, you don't even have to think about such things. But occasionally, Subversion needs your help to clear up ambiguities."
-msgstr "Subversion可以非常聪明的注意到一个对象的版本历史变化包括一个<quote>地址改变</quote>，举个例子，如果你询问一个曾经上周改过名的文件的所有的日志信息，Subversion会很高兴提供所有的日志—重命名发生的修订版本，外加相关版本之前和之后的修订版本日志，所以大多数时间里，你不需要考虑这些事情，但是偶尔，Subversion会需要你的帮助来清除混淆。"
+msgstr "Subversion可以非常聪明的注意到一个对象的包括一个<quote>地址改变</quote>历史变化，举个例子，如果你询问一个曾经上周改过名的文件的所有的日志信息，Subversion会很高兴提供所有的日志—重命名发生的修订版本，外加相关版本之前和之后的修订版本日志，所以大多数时间里，你不需要考虑这些事情，但是偶尔，Subversion会需要你的帮助来清除混淆。"
 
 #: build/en/svnbook.xml:6556(para)
-#, fuzzy
 msgid "The simplest example of this occurs when a directory or file is deleted from version control, and then a new directory or file is created with the same name and added to version control. Clearly the thing you deleted and the thing you later added aren't the same thing. They merely happen to have had the same path, <filename moreinfo=\"none\">/trunk/object</filename> for example. What, then, does it mean to ask Subversion about the history of <filename moreinfo=\"none\">/trunk/object</filename>? Are you asking about the thing currently at that location, or the old thing you deleted from that location? Are you asking about the operations that have happened to <emphasis>all</emphasis> the objects that have ever lived at that path? Clearly, Subversion needs a hint about what you really want."
-msgstr "这个最简单的例子发生在当一个目录或者文件从版本控制中删除时，然后一个新的同样名字目录或者文件添加到版本控制，清除了你删除的东西，然后你添加的不是同样的东西，它们仅仅是有同样的路径，我们会把它叫做<filename moreinfo=\"none\">/trunk/object</filename>。什么，这意味着询问Subversion来查看<filename moreinfo=\"none\">/trunk/object</filename>的历史？你是询问当前这个位置的东西还是你在这个位置删除的那个对象？你是希望询问对这个对象的所有操作还是这个路径的所有对象？很明显，Subversion需要线索知道你真实的想法。"
+msgstr "这个最简单的例子发生在当一个目录或者文件从版本控制中删除时，然后一个新的同样名字目录或者文件添加到版本控制，显然你删除的和你后来添加的不是同样的东西，它们仅仅是有同样的路径，例如<filename moreinfo=\"none\">/trunk/object</filename>。什么，这意味着询问Subversion来查看<filename moreinfo=\"none\">/trunk/object</filename>的历史？你是询问当前这个位置的东西还是你在这个位置删除的那个对象？你是希望询问对这个对象的所有操作还是这个路径的所有对象？很明显，Subversion需要线索知道你真实的想法。"
 
 #: build/en/svnbook.xml:6578(para)
 msgid "<quote>You're not supposed to name it. Once you name it, you start getting attached to it.</quote> — Mike Wazowski"
 msgstr "<quote>你不是被期望去命名它，一旦你取了名字，你开始与之联系在一起。</quote> — Mike Wazowski"
 
 #: build/en/svnbook.xml:6570(para)
-#, fuzzy
 msgid "And thanks to moves, versioned object history can get far more twisted than that, even. For example, you might have a directory named <filename moreinfo=\"none\">concept</filename>, containing some nascent software project you've been toying with. Eventually, though, that project matures to the point that the idea seems to actually have some wings, so you do the unthinkable and decide to give the project a name. <placeholder-1/> Let's say you called your software Frabnaggilywort. At this point, it makes sense to rename the directory to reflect the project's new name, so <filename moreinfo=\"none\">concept</filename> is renamed to <filename moreinfo=\"none\">frabnaggilywort</filename>. Life goes on, Frabnaggilywort releases a 1.0 version, and is downloaded and used daily by hordes of people aiming to improve their lives."
-msgstr "由于移动，版本化资源历史会变得非常扭曲。举个例子，你会有一个目录叫做<filename moreinfo=\"none\">concept</filename>，保存了一些你用来试验的初生的软件项目，最终，这个项目变得足够成熟，说明这个注意确实需要一些翅膀了，所以你决定给这个项目一个名字。 <footnote><placeholder-1/></footnote> 假定你叫你的软件为Frabnaggilywort，此刻，有必要把你的目录命名为反映项目名称的名字，所以<filename moreinfo=\"none\">concept</filename>改名为<filename moreinfo=\"none\">frabnaggilywort</filename>。生活还在继续，Frabnaggilywort发布了1.0版本，并且被许多希望改进他们生活的分散用户天天使用。"
+msgstr "由于移动，版本化对象的历史会变得非常扭曲。举个例子，你会有一个目录叫做<filename moreinfo=\"none\">concept</filename>，保存了一些你用来试验的初生的软件项目，最终，这个项目变得足够成熟，说明这个注意确实需要一些翅膀了，所以你决定给这个项目一个名字。 <placeholder-1/>假定你叫你的软件为Frabnaggilywort，此刻，把你的目录命名为反映项目名称的名字是有意义的，所以<filename moreinfo=\"none\">concept</filename>改名为<filename moreinfo=\"none\">frabnaggilywort</filename>。生活还在继续，Frabnaggilywort发布了1.0版本，并且被许多希望改进他们生活的分散用户天天使用。"
 
 #: build/en/svnbook.xml:6590(para)
 msgid "It's a nice story, really, but it doesn't end there. Entrepreneur that you are, you've already got another think in the tank. So you make a new directory, <filename moreinfo=\"none\">concept</filename>, and the cycle begins again. In fact, the cycle begins again many times over the years, each time starting with that old <filename moreinfo=\"none\">concept</filename> directory, then sometimes seeing that directory renamed as the idea cures, sometimes seeing it deleted when you scrap the idea. Or, to get really sick, maybe you rename <filename moreinfo=\"none\">concept</filename> to something else for a while, but later rename the thing back to <filename moreinfo=\"none\">concept</filename> for some reason."
@@ -5359,18 +5332,16 @@ msgid "When scenarios like these occur, attempting to instruct Subversion to wor
 msgstr "当这样的情景发生时，指导Subversion工作在重新使用的路径上的尝试就像指导一个芝加哥西郊的乘客驾车到东面的罗斯福路并且左转到主大道。仅仅20分钟，你可以穿过惠顿、格伦埃林何朗伯德的<quote>主大道</quote>，但是它们不是一样的街道，我们的乘客—和我们的Subversion—需要更多的细节来做正确的事情。"
 
 #: build/en/svnbook.xml:6612(para)
-#, fuzzy
 msgid "In version 1.1, Subversion introduced a way for you to tell it exactly which Main Street you meant. It's called the <firstterm>peg revision</firstterm>, and it is a revision provided to Subversion for the sole purpose of identifying a unique line of history. Because at most one versioned object may occupy a path at any given time—or, more precisely, in any one revision—the combination of a path and a peg revision is all that is needed to refer to a specific line of history. Peg revisions are specified to the Subversion command-line client using <firstterm>at syntax</firstterm>, so called because the syntax involves appending an <quote>at sign</quote> (<literal moreinfo=\"none\">@</literal>) and the peg revision to the end of the path with which the revision is associated."
-msgstr "在1.1版本，Subversion提供了一种方法来说明你所指是哪一个街道，叫做<firstterm>peg修订版本</firstterm>，这是一个提供给Subversion的一个区别一个独立历史线路的单独目的修订版本，因为一个版本化的文件会在任何时间占用某个路径—路径和peg修订版本的合并是可以指定一个历史的特定线路。Peg修订版本可以在Subversion命令行客户端中用<firstterm>at语法</firstterm>指定，之所以使用这个名称是因为会在关联的修订版本的路径后面追加一个<quote>at符号</quote>（<literal moreinfo=\"none\">@</literal>）。"
+msgstr "在1.1版本，Subversion提供了一种方法来说明你所指是哪一个街道，叫做<firstterm>peg修订版本</firstterm>，通过这个修订版本我们可以为以确定一条历史线路，因为一个版本化的文件会在任何时间占用某个路径—路径和peg修订版本的合并是可以指定一个历史的特定线路。Peg修订版本可以在Subversion命令行客户端中用<firstterm>at语法</firstterm>指定，之所以使用这个名称是因为会在关联的修订版本的路径后面追加一个<quote>at符号</quote>（<literal moreinfo=\"none\">@</literal>）。"
 
 #: build/en/svnbook.xml:6636(para)
 msgid "606 N. Main Street, Wheaton, Illinois, is the home of the Wheaton History Center. Get it—<quote>History Center</quote>? It seemed appropriate…."
 msgstr "伊利诺伊州惠顿主大道606号市惠顿离市中心，让它作为—<quote>历史中心</quote>？看起来是恰当的…。"
 
 #: build/en/svnbook.xml:6626(para)
-#, fuzzy
 msgid "But what of the <option>--revision (-r)</option> of which we've spoken so much in this book? That revision (or set of revisions) is called the <firstterm>operative revision</firstterm> (or <firstterm>operative revision range</firstterm>). Once a particular line of history has been identified using a path and peg revision, Subversion performs the requested operation using the operative revision(s). To map this to our Chicagoland streets analogy, if we are told to go to 606 N. Main Street in Wheaton, <placeholder-1/> we can think of <quote>Main Street</quote> as our path and <quote>Wheaton</quote> as our peg revision. These two pieces of information identify a unique path which can travelled (north or south on Main Street), and will keep us from travelling up and down the wrong Main Street in search of our destination. Now we throw in <quote>606 N.</quote> as our operative revision, of sorts, and we know <emphasis>exactly</emphasis> where to go."
-msgstr "但是我们在本书多次提到的<option>--revision (-r)</option>到底是什么？修订版本（或者是修订版本集）叫做<firstterm>实施的修订版本</firstterm>（或者叫做<firstterm>实施的修订版本范围</firstterm>），一旦一个特定历史线路通过一个路径和peg修订版本指定，Subversion会使用实施的修订版本执行要求的操作。类似的，为了指出这个到我们芝加哥的道路，如果我们被告知到惠顿主大道606号， <footnote><placeholder-1/></footnote> 我们可以把<quote>主大道</quote>看作路径，把<quote>惠顿</quote>当作我们的peg修订版本。这两段信息确认了我们可以旅行（主大道的北方或南方）的唯一路径，也会保持我们不会在前前后后寻找目标时走到错误的主大道。现在我们把<quote>606 N.</quote>作为我们实施的修订版本，我们<emphasis>精确的</emphasis>知道到哪里。"
+msgstr "但是我们在本书多次提到的<option>--revision (-r)</option>到底是什么？修订版本（或者是修订版本集）叫做<firstterm>实施的修订版本</firstterm>（或者叫做<firstterm>实施的修订版本范围</firstterm>），一旦一个特定历史线路通过一个路径和peg修订版本指定，Subversion会使用实施的修订版本执行要求的操作。类似的，为了指出这个到我们芝加哥的道路，如果我们被告知到惠顿主大道606号， <placeholder-1/> 我们可以把<quote>主大道</quote>看作路径，把<quote>惠顿</quote>当作我们的peg修订版本。这两段信息确认了我们可以旅行（主大道的北方或南方）的唯一路径，也会保持我们不会在前前后后寻找目标时走到错误的主大道。现在我们把<quote>606 N.</quote>作为我们实施的修订版本，我们<emphasis>精确的</emphasis>知道到哪里。"
 
 #: build/en/svnbook.xml:6650(title)
 msgid "The peg revision algorithm"
@@ -5406,19 +5377,16 @@ msgid "The algorithm has three simple steps:"
 msgstr "此算法有三个简单步骤："
 
 #: build/en/svnbook.xml:6667(para)
-#, fuzzy
 msgid "Locate <replaceable>item</replaceable> in the revision identified by <replaceable>PEG-REV</replaceable>. There can be only one such object."
 msgstr "来到修订版本<replaceable>PEG-REV</replaceable>，找到<replaceable>item</replaceable>，在版本库定位到一个唯一的对象。"
 
 #: build/en/svnbook.xml:6673(para)
-#, fuzzy
 msgid "Trace the object's history backwards (through any possible renames) to its ancestor in the revision <replaceable>OPERATIVE-REV</replaceable>."
 msgstr "追踪对象的历史背景（通过任何可能的改名）来到修订版本<replaceable>OPERATIVE-REV</replaceable>的祖先。"
 
 #: build/en/svnbook.xml:6679(para)
-#, fuzzy
 msgid "Perform the requested action on that ancestor, wherever it is located, or whatever its name might be or have been at that time."
-msgstr "对那个祖先执行请求的动作，无论它的位置，无论它是什么名字。"
+msgstr "对那个祖先执行请求的动作，无论它的位置，无论它是什么名字，无论当时是否存在。"
 
 #: build/en/svnbook.xml:6686(para)
 msgid "Note that even when you don't explicitly supply a peg revision or operative revision, they are still present. For your convenience, the default peg revision is <literal moreinfo=\"none\">BASE</literal> for working copy items and <literal moreinfo=\"none\">HEAD</literal> for repository URLs. And when no operative revision is provided, it defaults to being the same revision as the peg revision."
@@ -5494,9 +5462,8 @@ msgid "Notice that we didn't provide an operative revision this time. That's bec
 msgstr ""
 
 #: build/en/svnbook.xml:6776(para)
-#, fuzzy
 msgid "As you can see, the output from our operation appears to be correct. The text even mentions frabbing naggily worts, so this is almost certainly the file which describes the software now called Frabnaggilywort. In fact, we can verify this using the combination of an explicit peg revision and explicit operative revision. We know that in <literal moreinfo=\"none\">HEAD</literal>, the Frabnaggilywort project is located in the <filename moreinfo=\"none\">frabnaggilywort</filename> directory. So we specify that we want to see how the line of history identified in <literal moreinfo=\"none\">HEAD</literal> as the path <filename moreinfo=\"none\">frabnaggilywort/IDEA</filename> looked in revision 1."
-msgstr "这看起来是正确的输出，这些文本甚至提到“frabbing naggily worts”，所以这就是现在叫做Frabnaggilywort项目的那个文件，实际上，我们可以使用显示的peg修订版本和实施修订版本的组合核实这一点。我们知道在<literal moreinfo=\"none\">HEAD</literal>，Frabnaggilywort项目坐落在<filename moreinfo=\"none\">frabnaggilywort</filename>目录，所以我们指定我们希望看到<literal moreinfo=\"none\">HEAD</literal>的<filename moreinfo=\"none\">frabnaggilywort/IDEA</filename>路经在历史上的修订版本1的内容。"
+msgstr "正像你看到的，这看起来是正确的输出，这些文本甚至提到“frabbing naggily worts”，所以这就是现在叫做Frabnaggilywort项目的那个文件，实际上，我们可以使用显示的peg修订版本和实施修订版本的组合核实这一点。我们知道在<literal moreinfo=\"none\">HEAD</literal>，Frabnaggilywort项目坐落在<filename moreinfo=\"none\">frabnaggilywort</filename>目录，所以我们指定我们希望看到<literal moreinfo=\"none\">HEAD</literal>的<filename moreinfo=\"none\">frabnaggilywort/IDEA</filename>路经在历史上的修订版本1的内容。"
 
 #: build/en/svnbook.xml:6789(screen)
 #, no-wrap
@@ -5577,54 +5544,46 @@ msgid "Requests and Responses"
 msgstr "请求和响应"
 
 #: build/en/svnbook.xml:6857(para)
-#, fuzzy
 msgid "The Subversion client spends most of its time managing working copies. When it needs information from a remote repository, however, it makes a network request, and the server responds with an appropriate answer. The details of the network protocol are hidden from the user—the client attempts to access a URL, and depending on the URL schema, a particular protocol is used to contact the server (see <xref linkend=\"svn.basic.in-action.wc.sb-1\"/>)."
-msgstr "Subversion客户端花费大量的时间来管理工作拷贝，当它需要版本库信息，它会做一个网络请求，然后服务器给一个恰当的回答，具体的网络协议细节对用户不可见，客户端尝试去访问一个URL，根据URL模式的不同，会使用特定的协议与服务器联系（见<xref linkend=\"svn.basic.in-action.wc.sb-1\"/>），用户可以运行<command moreinfo=\"none\">svn --version</command>来查看客户端可以使用的URL模式和协议。"
+msgstr "Subversion客户端花费大量的时间来管理工作拷贝，当它需要版本库信息，它会做一个网络请求，然后服务器给一个恰当的回答，具体的网络协议细节对用户不可见，客户端尝试去访问一个URL，根据URL模式的不同，会使用特定的协议与服务器联系（见<xref linkend=\"svn.basic.in-action.wc.sb-1\"/>）。"
 
 #: build/en/svnbook.xml:6865(para)
-#, fuzzy
 msgid "Users can run <command moreinfo=\"none\">svn --version</command> to see which URL schemas and protocols the client knows how to use."
-msgstr "打印<command moreinfo=\"none\">svnversion</command>，如果没有错误退出。"
+msgstr "用户可以运行<command moreinfo=\"none\">svn --version</command>来查看客户端可以使用的URL模式和协议。"
 
 #: build/en/svnbook.xml:6870(para)
-#, fuzzy
 msgid "When the server process receives a client request, it often demands that the client identify itself. It issues an authentication challenge to the client, and the client responds by providing <firstterm>credentials</firstterm> back to the server. Once authentication is complete, the server responds with the original information the client asked for. Notice that this system is different from systems like CVS, where the client pre-emptively offers credentials (<quote>logs in</quote>) to the server before ever making a request. In Subversion, the server <quote>pulls</quote> credentials by challenging the client at the appropriate moment, rather than the client <quote>pushing</quote> them. This makes certain operations more elegant. For example, if a server is configured to allow anyone in the world to read a repository, then the server will never issue an authentication challenge when a client attempts to <command moreinfo=\"none\">svn checkout</command>."
-msgstr "当服务器处理一个客户端请求，它通常会要求客户端确定它自己的身份，它会发出一个认证请求给客户端，而客户端通过提供<firstterm>凭证</firstterm>给服务器作为响应，一旦认证结束，服务器会响应客户端最初请求的信息。注意这个系统与CVS之类的系统不一样，它们会在请求之前，预先提供凭证（<quote>logs in</quote>）给服务器，在Subversion里，服务器通过请求客户端适时地<quote>拖入</quote>凭证，而不是客户端<quote>推</quote>出。这使得这种操作更加的优雅，例如，如果一个服务器配置为世界上的任何人都可以读取版本库，在客户使用<command moreinfo=\"none\">svn checkout</command>时，服务器永远不会发起一个认证请求。"
+msgstr "当服务器处理一个客户端请求，它通常会要求客户端确定它自己的身份，它会发出一个认证请求给客户端，而客户端通过提供<firstterm>凭证</firstterm>给服务器作为响应，一旦认证结束，服务器会响应客户端最初请求的信息。注意这个系统与CVS之类的系统不一样，它们会在请求之前，预先提供凭证（<quote>logs in</quote>）给服务器，在Subversion里，服务器通过请求客户端适时地<quote>拖入</quote>凭证，而不是客户端<quote>推</quote>出，这使得这种操作更加的优雅。例如，如果一个服务器配置为世界上的任何人都可以读取版本库，在客户使用<command moreinfo=\"none\">svn checkout</command>时，服务器永远不会发起一个认证请求。"
 
 #: build/en/svnbook.xml:6899(para)
 msgid "This problem is actually a FAQ, resulting from a misconfigured server setup."
 msgstr "这个问题实际上是一个FAQ，源自错误的服务器配置。"
 
 #: build/en/svnbook.xml:6887(para)
-#, fuzzy
 msgid "If the particular network requests issued by the client result in a new revision being created in the repository, (e.g. <command moreinfo=\"none\">svn commit</command>), then Subversion uses the authenticated username associated with those requests as the author of the revision. That is, the authenticated user's name is stored as the value of the <literal moreinfo=\"none\">svn:author</literal> property on the new revision (see <xref linkend=\"svn.ref.properties\"/>). If the client was not authenticated (in other words, the server never issued an authentication challenge), then the revision's <literal moreinfo=\"none\">svn:author</literal> property is empty. <placeholder-1/>"
-msgstr "如果客户端请求往版本库写入新的数据（例如<command moreinfo=\"none\">svn commit</command>），这会建立新的修订版本树，如果客户端的请求是经过认证的，认证过的用户的用户名就会作为<literal moreinfo=\"none\">svn:author</literal>属性的值保存到新的修订本里（见<xref linkend=\"svn.reposadmin.basics.revprops\"/>）。如果客户端没有经过认证（换句话说，服务器没有发起过认证请求），这时修订本的<literal moreinfo=\"none\">svn:author</literal>的值是空的。<placeholder-1/>"
+msgstr "如果客户端的请求会在版本库创建新的修订版本（例如<command moreinfo=\"none\">svn commit</command>），Subversion就会使用认证过的用户名作为此次提交的作者。也就是说经过认证的用户名作为<literal moreinfo=\"none\">svn:author</literal>属性的值保存到新的修订本里（见<xref linkend=\"svn.ref.properties\"/>）。如果客户端没有经过认证（换句话说，服务器没有发起过认证请求），这时修订本的<literal moreinfo=\"none\">svn:author</literal>的值是空的。<placeholder-1/>"
 
 #: build/en/svnbook.xml:6908(title)
 msgid "Client Credentials Caching"
 msgstr "客户端凭证缓存"
 
 #: build/en/svnbook.xml:6910(para)
-#, fuzzy
 msgid "Many servers are configured to require authentication on every request. This can become a big annoyance to users, who are forced to type their passwords over and over again. Fortunately, the Subversion client has a remedy for this—a built-in system for caching authentication credentials on disk. By default, whenever the command-line client successfully responds to a server's authentication challenge, it saves the credentials in the user's private runtime configuration area (<filename moreinfo=\"none\">~/.subversion/auth/</filename> on Unix-like systems or <filename moreinfo=\"none\">%APPDATA%/Subversion/auth/</filename> on Windows; see <xref linkend=\"svn.advanced.confarea\"/> for more details about the runtime configuration system). Successful credentials are cached on disk, keyed on a combination of the server's hostname, port, and authentication realm."
-msgstr "令人高兴的是，Subversion客户端对此有一个修补：存在一个在磁盘上保存认证凭证缓存的系统，缺省情况下，当一个命令行客户端成功的响应了服务器的认证请求，它会保存一个认证文件到用户的私有运行配置区—类Unix系统下会在<filename moreinfo=\"none\">~/.subversion/auth/</filename>，Windows下在<filename moreinfo=\"none\">%APPDATA%/Subversion/auth/</filename>（运行区在<xref linkend=\"svn.advanced.confarea\"/>会有更多细节描述）。成功的凭证会缓存在磁盘，以主机名、端口和认证域的组合作为唯一性区别。"
+msgstr "许多服务器配置为每次请求要求认证，对被强制每次输入用户名密码，许多用户会感到很讨厌。幸运的是，Subversion客户端对此有一个修补：存在一个在磁盘上保存认证凭证缓存的系统，缺省情况下，当一个命令行客户端成功的响应了服务器的认证请求，它会保存一个认证文件到用户的私有运行配置区—类Unix系统下会在<filename moreinfo=\"none\">~/.subversion/auth/</filename>，Windows下在<filename moreinfo=\"none\">%APPDATA%/Subversion/auth/</filename>（运行区在<xref linkend=\"svn.advanced.confarea\"/>会有更多细节描述）。成功的凭证会缓存在磁盘，以主机名、端口和认证域的组合作为唯一性区别。"
 
 #: build/en/svnbook.xml:6926(para)
-#, fuzzy
 msgid "When the client receives an authentication challenge, it first looks for the appropriate credentials in the user's disk cache. If seemingly suitable credentials are not present, or if the cached credentials ultimately fail to authenticate, then the client will, by default, fall back to prompting the user for the necessary information."
-msgstr "当客户端接收到一个认证请求，它会首先查找用户磁盘中的认证凭证缓存，如果没有发现，或者是缓存的凭证认证失败，客户端会提示用户需要这些信息。"
+msgstr "当客户端接收到一个认证请求，它会首先查找用户磁盘中的认证凭证缓存，如果没有发现，或者是缓存的凭证认证失败，客户端会提示用户提供需要的信息。"
 
 #: build/en/svnbook.xml:6933(para)
-#, fuzzy
 msgid "The security-conscious reader will suspect immediately that there is reason for concern here. <quote>Caching passwords on disk? That's terrible! You should never do that!</quote>"
-msgstr "十分关心安全的人们一定会想<quote>把密码缓存在磁盘？太可怕了，永远不要这样做！</quote>但是请保持冷静，并没有你想象得那么可怕。"
+msgstr "十分关心安全的人们一定会想<quote>把密码缓存在磁盘？太可怕了，永远不要这样做！</quote>"
 
 #: build/en/svnbook.xml:6938(para)
 msgid "The Subversion developers recognize the legitimacy of such concerns, and so Subversion works with available mechanisms provided by the operating system and environment to try to minimize the risk of leaking this information. Here's a breakdown of what this means on for users on the most common platforms:"
 msgstr ""
 
 #: build/en/svnbook.xml:6948(para)
-#, fuzzy
 msgid "On Windows 2000 and later, the Subversion client uses standard Windows cryptography services to encrypt the password on disk. Because the encryption key is managed by Windows and is tied to the user's own login credentials, only the user can decrypt the cached password. (Note that if the user's Windows account password is reset by an administrator, all of the cached passwords become undecipherable. The Subversion client will behave as if they don't exist, prompting for passwords when required.)"
 msgstr "在Windows 2000或更新的系统上，Subversion客户端使用标准Windows加密服务来加密磁盘上的密码。因为加密密钥是Windows管理的，与用户的登陆凭证相关，只有用户可以解密密码。（注意：如果用户的Windows账户密码被管理员重置，所有的缓存密码就不可以解密了，此时Subversion客户端就会当它们根本不存在，在需要时继续询问密码。）"
 
@@ -5633,9 +5592,8 @@ msgid "Similarly, on Mac OS X, the Subversion client stores all repository passw
 msgstr ""
 
 #: build/en/svnbook.xml:6971(para)
-#, fuzzy
 msgid "For other Unix-like operating systems, no standard <quote>keychain</quote> services exist. However, the <filename moreinfo=\"none\">auth/</filename> caching area is still permission-protected so that only the user (owner) can read data from it, not the world at large. The operating system's own file permissions protect the passwords."
-msgstr "<filename moreinfo=\"none\">auth/</filename>缓存区只有用户（拥有者）可以访问，而不是全世界都可以，操作系统的访问许可可以保护密码文件。"
+msgstr "对于其他类Unix系统，没有标准的加密服务。然而<filename moreinfo=\"none\">auth/</filename>缓存区只有用户（拥有者）可以访问，而不是全世界都可以，操作系统的访问许可可以保护密码文件。"
 
 #: build/en/svnbook.xml:6981(para)
 msgid "Of course, for the truly paranoid, none of these mechanisms meets the test of perfection. So for those folks willing to sacrifice convenience for the ultimate security, Subversion provides various ways of disabling its credentials caching system altogether."
@@ -5685,9 +5643,8 @@ msgstr ""
 "…\n"
 
 #: build/en/svnbook.xml:7009(para)
-#, fuzzy
 msgid "Or, if you want to disable credential caching permanently, you can edit the <filename moreinfo=\"none\">config</filename> file in your runtime configuration area, and set the <option>store-auth-creds</option> option to <literal moreinfo=\"none\">no</literal>. This will prevent the storing of credentials used in any Subversion interactions you perform on the affected computer. This can be extended to cover all users on the computer, too, by modifying the system-wide runtime configuration area."
-msgstr "或许，你希望永远关闭凭证缓存，你可以编辑你的运行<filename moreinfo=\"none\">配置</filename>文件（坐落在<filename moreinfo=\"none\">auth/</filename>目录），只需要把<literal moreinfo=\"none\">store-auth-creds</literal>设置为<literal moreinfo=\"none\">no</literal>，这样就不会有凭证缓存在磁盘。"
+msgstr "或许，你希望永远关闭凭证缓存，你可以编辑你的运行运行配置区的<filename moreinfo=\"none\">config</filename>文件，只需要把<literal moreinfo=\"none\">store-auth-creds</literal>设置为<literal moreinfo=\"none\">no</literal>，这样在影响的主机上的Subversion操作就不会有凭证缓存在磁盘。通过修改系统级的运行配置区，这个功能也会影响到本机的所有用户。"
 
 #: build/en/svnbook.xml:7019(screen)
 #, no-wrap
@@ -5760,24 +5717,20 @@ msgid "Again, a common mistake is to misconfigure a server so that it never issu
 msgstr "再次重申，一个常见的错误是把服务器配置为从不会请求认证，当用户传递<option>--username</option>和<option>--password</option>给客户端时，他们惊奇的发现它们没有被使用，如新的修订版本看起来始终是由匿名用户提交的！"
 
 #: build/en/svnbook.xml:7059(para)
-#, fuzzy
 msgid "One last word about <command moreinfo=\"none\">svn</command>'s authentication behavior, specifically regarding the <option>--username</option> and <option>--password</option> options. Many client subcommands accept these options, but it is important to understand using these options does <emphasis>not</emphasis> automatically send credentials to the server. As discussed earlier, the server <quote>pulls</quote> credentials from the client when it deems necessary; the client cannot <quote>push</quote> them at will. If a username and/or password are passed as options, they will only be presented to the server if the server requests them. <placeholder-1/> These options are typically used to authenticate as a different user than Subversion would have chosen by default (such as your system login name), or when trying to avoid interactive prompting (such as when calling <command moreinfo=\"none\">svn</command> from a script)."
-msgstr "客户端认证的行为的最后一点：对使用<option>--username</option>和<option>--password</option>选项的一点说明，许多客户端和子命令接受这个选项，但是要明白使用这个选项<emphasis>不会</emphasis>主动地发送凭证信息到服务器，就像前面讨论过的，服务器会在需要的时候才会从客户端<quote>拖</quote>入凭证，客户端不会随意<quote>推</quote>出。如果一个用户名和/或者密码作为选项传入，它们<emphasis>只会</emphasis>在服务器需要时展现给服务器。<placeholder-1/>通常，只有在如下情况下才会使用这些选项："
+msgstr "客户端认证的行为的最后一点：对使用<option>--username</option>和<option>--password</option>选项的一点说明，许多客户端和子命令接受这个选项，但是要明白使用这个选项<emphasis>不会</emphasis>主动地发送凭证信息到服务器，就像前面讨论过的，服务器会在需要的时候才会从客户端<quote>拖</quote>入凭证，客户端不会随意<quote>推</quote>出。如果一个用户名和/或者密码作为选项传入，它们<emphasis>只会</emphasis>在服务器需要时展现给服务器。<placeholder-1/>通常，只有在如下情况下才会使用这些选项：例如使用非缺省用户（例如系统登陆名）进行认证，或者是为了防止交互式输入（例如执行<command moreinfo=\"none\">svn</command>）。"
 
 #: build/en/svnbook.xml:7086(para)
-#, fuzzy
 msgid "Here is a final summary that describes how a Subversion client behaves when it receives an authentication challenge."
-msgstr "这里是Subversion客户端在收到认证请求的时候的行为方式："
+msgstr "这里是Subversion客户端在收到认证请求的时候的行为方式最终总结："
 
 #: build/en/svnbook.xml:7092(para)
-#, fuzzy
 msgid "First, the client checks whether the user specified any credentials as command-line options (<option>--username</option> and/or <option>--password</option>). If not, or if these options fail to authenticate successfully, then"
-msgstr "检查用户是否通过<option>--username</option>和/或<option>--password</option>命令选项指定了任何凭证信息，如果没有，或者这些选项没有认证成功，然后"
+msgstr "首先，检查用户是否通过命令选项（<option>--username</option>和/或<option>--password</option>）指定了任何凭证信息，如果没有，或者这些选项没有认证成功，然后"
 
 #: build/en/svnbook.xml:7100(para)
-#, fuzzy
 msgid "the client looks up the server's hostname, port, and realm in the runtime <filename moreinfo=\"none\">auth/</filename> area, to see if the user already has the appropriate credentials cached. If not, or if the cached credentials fail to authenticate, then"
-msgstr "查找运行中的<filename moreinfo=\"none\">auth/</filename>区域保存的服务器域信息，来确定用户是否已经有了恰当的认证缓存，如果没有，或者缓存凭证认证失败，然后"
+msgstr "查找运行中的<filename moreinfo=\"none\">auth/</filename>区域保存的服务器名，端口和认证域信息，来确定用户是否已经有了恰当的认证缓存，如果没有，或者缓存凭证认证失败，然后"
 
 #: build/en/svnbook.xml:7108(para)
 msgid "finally, the client resorts to prompting the user (unless instructed not to do so via the <option>--non-interactive</option> option or its client-specific equivalents)."
@@ -5937,7 +5890,6 @@ msgstr ""
 "Committed revision 341.\n"
 
 #: build/en/svnbook.xml:7345(para)
-#, fuzzy
 msgid "And now here's the easier method of creating a branch, which we should have told you about in the first place: <command moreinfo=\"none\">svn copy</command> is able to operate directly on two URLs."
 msgstr "现在，我们必须告诉你建立分支最简单的方法：<command moreinfo=\"none\">svn copy</command>可以直接对两个URL操作。"
 
@@ -5959,14 +5911,12 @@ msgstr ""
 "Committed revision 341.\n"
 
 #: build/en/svnbook.xml:7366(para)
-#, fuzzy
 msgid "Subversion does not support copying between different repositories. When using URLs with <command moreinfo=\"none\">svn copy</command> or <command moreinfo=\"none\">svn move</command>, you can only copy items within the same repository."
 msgstr "Subversion不支持跨版本库的拷贝，当使用<command moreinfo=\"none\">svn copy</command>或者<command moreinfo=\"none\">svn move</command>直接操作URL时你只能在同一个版本库内操作。"
 
 #: build/en/svnbook.xml:7358(para)
-#, fuzzy
 msgid "There's really no difference between these two methods. Both procedures create a new directory in revision 341, and the new directory is a copy of <filename moreinfo=\"none\">/calc/trunk</filename>. This is shown in <xref linkend=\"svn.branchmerge.using.create.dia-1\"/>. Notice that the second method, however, performs an <emphasis>immediate</emphasis> commit. <placeholder-1/> It's an easier procedure, because it doesn't require you to check out a large portion of the repository. In fact, this technique doesn't even require you to have a working copy at all. This is the way most users create branches."
-msgstr "其实这两种方法没有什么区别，两个过程都在版本341建立了一个新目录作为<filename moreinfo=\"none\">/calc/trunk</filename>的一个备份，这些可以在<xref linkend=\"svn.branchmerge.using.create.dia-1\"/>看到，注意第二种方法，只是执行了一个<emphasis>立即</emphasis>提交。 <footnote><placeholder-1/></footnote>这是一个简单的过程，因为你不需要取出版本库一个庞大的镜像，事实上，这个技术不需要你有工作拷贝。"
+msgstr "其实这两种方法没有什么区别，两个过程都在版本341建立了一个新目录作为<filename moreinfo=\"none\">/calc/trunk</filename>的一个备份，这些可以在<xref linkend=\"svn.branchmerge.using.create.dia-1\"/>看到，注意第二种方法，只是执行了一个<emphasis>立即</emphasis>提交。 <placeholder-1/>这是一个简单的过程，因为你不需要取出版本库一个庞大的镜像，事实上，这个技术不需要你有工作拷贝。这是大多数用户创建分支的方式。"
 
 #: build/en/svnbook.xml:7377(title)
 msgid "Repository with new copy"
@@ -5977,18 +5927,16 @@ msgid "Cheap Copies"
 msgstr "廉价复制"
 
 #: build/en/svnbook.xml:7384(para)
-#, fuzzy
 msgid "Subversion's repository has a special design. When you copy a directory, you don't need to worry about the repository growing huge—Subversion doesn't actually duplicate any data. Instead, it creates a new directory entry that points to an <emphasis>existing</emphasis> tree. If you're a Unix user, this is the same concept as a hard-link. As further changes are made to files and directories beneath the copied directory, Subversion continues to employ this hard-link concept where it can. It only duplicates data when it is necessary to disambiguate different versions of objects."
-msgstr "Subversion的版本库有特殊的设计，当你复制一个目录，你不需要担心版本库会变得十分巨大—Subversion并不是拷贝所有的数据，相反，它建立了一个<emphasis>已存在</emphasis>目录树的入口，如果你是Unix用户，可以把它理解成硬链接，在这里，这个拷贝被可以被认为是<quote>懒的</quote>，如果你提交一个文件的修改，只有这个文件改变了—余下的文件还是作为原来文件的链接存在。"
+msgstr "Subversion的版本库有特殊的设计，当你复制一个目录，你不需要担心版本库会变得十分巨大—Subversion并不是拷贝所有的数据，相反，它建立了一个<emphasis>已存在</emphasis>目录树的入口，如果你是Unix用户，可以把它理解成硬链接，在对拷贝的文件和目录操作之前，Subversion还仅仅把它当作硬链接，只有为了区分不同版本的对象时才会复制数据。"
 
 #: build/en/svnbook.xml:7396(para)
 msgid "This is why you'll often hear Subversion users talk about <quote>cheap copies</quote>. It doesn't matter how large the directory is—it takes a very tiny, constant amount of time to make a copy of it. In fact, this feature is the basis of how commits work in Subversion: each revision is a <quote>cheap copy</quote> of the previous revision, with a few items lazily changed within. (To read more about this, visit Subversion's website and read about the <quote>bubble up</quote> method in Subversion's design documents.)"
 msgstr "这就是为什么经常听到Subversion用户谈论<quote>廉价的拷贝</quote>，与目录的大小无关—这个操作会使用很少的时间，事实上，这个特性是Subversion提交工作的基础：每一次版本都是前一个版本的一个<quote>廉价的拷贝</quote>，只有少数项目修改了。（要阅读更多关于这部分的内容，访问Subversion网站并且阅读设计文档中的<quote>bubble up</quote>方法）。"
 
 #: build/en/svnbook.xml:7407(para)
-#, fuzzy
 msgid "Of course, these internal mechanics of copying and sharing data are hidden from the user, who simply sees copies of trees. The main point here is that copies are cheap, both in time and space. If you create a branch entirely within the repository (by running <command moreinfo=\"none\">svn copy URL1 URL2</command>), it's a quick, constant-time operation. Make branches as often as you want."
-msgstr "当然，拷贝与分享的内部机制对用户来讲是不可见的，用户只是看到拷贝树，这里的要点是拷贝的时间与空间代价很小，所以你可以随意做想要的分支。"
+msgstr "当然，拷贝与分享的内部机制对用户来讲是不可见的，用户只是看到拷贝树，这里的要点是拷贝的时间与空间代价很小。如果你完全在版本库里创建分支（通过运行<command moreinfo=\"none\">svn copy URL1 URL2</command>），这是一个快速的，时间基本固定的操作，只要你希望，可以随意创建分支。"
 
 #: build/en/svnbook.xml:7420(title)
 msgid "Working with Your Branch"
@@ -6192,9 +6140,8 @@ msgid "The Key Concepts Behind Branches"
 msgstr "分支背后的关键概念"
 
 #: build/en/svnbook.xml:7566(para)
-#, fuzzy
 msgid "There are two important lessons that you should remember from this section. First, Subversion has no internal concept of a branch—it only knows how to make copies. When you copy a directory, the resulting directory is only a <quote>branch</quote> because <emphasis>you</emphasis> attach that meaning to it. You may think of the directory differently, or treat it differently, but to Subversion it's just an ordinary directory that happens to carry some extra historical information. Second, because of this copy mechanism, Subversion's branches exist as <emphasis>normal filesystem directories</emphasis> in the repository. This is different from other version control systems, where branches are typically defined by adding extra-dimensional <quote>labels</quote> to collections of files."
-msgstr "Subversion并没有内在的分支概念—只有拷贝，当你拷贝一个目录，这个结果目录就是一个<quote>分支</quote>，只是因为你给了它这样一个含义而已。你可以换一种角度考虑，或者特别处理，但是对于Subversion它只是一个普通的拷贝的结果。"
+msgstr "在本节，你需要记住两件重要的课程。首先，Subversion并没有内在的分支概念—只有拷贝，当你拷贝一个目录，这个结果目录就是一个<quote>分支</quote>，只是因为你给了它这样一个含义而已。你可以换一种角度考虑，或者特别对待，但是对于Subversion它只是一个普通的拷贝，只不过碰巧包含了一些额外的历史信息。第二，因为拷贝机制，Subversion的分支是以<emphasis>普通文件系统目录</emphasis>存在的，这与其他版本控制系统不同，它们都为分支定义了另一维度的<quote>标签</quote>。"
 
 #: build/en/svnbook.xml:7590(title)
 msgid "Copying Changes Between Branches"
@@ -6407,9 +6354,8 @@ msgstr ""
 "done\n"
 
 #: build/en/svnbook.xml:7760(para)
-#, fuzzy
 msgid "In this particular case, yes, there really is no difference. But <command moreinfo=\"none\">svn merge</command> has special abilities that surpass the <command moreinfo=\"none\">patch</command> program. The file format used by <command moreinfo=\"none\">patch</command> is quite limited; it's only able to tweak file contents. There's no way to represent changes to <emphasis>trees</emphasis>, such as the addition, removal, or renaming of files and directories. Nor can the <command moreinfo=\"none\">patch</command> program notice changes to property changes. If Sally's change had, say, added a new directory, the output of <command moreinfo=\"none\">svn diff</command> wouldn't have mentioned it at all. <command moreinfo=\"none\">svn diff</command> only outputs the limited patch-format, so there are some ideas it simply can't express. The <command moreinfo=\"none\">svn merge</command> command, however, can express changes in tree structure and properties by directly applying them to your working copy."
-msgstr "在这种情况下，确实没有区别，但是<command moreinfo=\"none\">svn merge</command>有超越<command moreinfo=\"none\">patch</command>的特别能力，使用<command moreinfo=\"none\">patch</command>对文件格式有一定的限制，它只能针对文件内容，没有方法表现<emphasis>目录树</emphasis>的修改，例如添加、删除或是改名。如果Sally的修改包括增加一个新的目录，<command moreinfo=\"none\">svn diff</command>不会注意到这些，<command moreinfo=\"none\">svn diff</command>只会输出有限的补丁格式，所以有些问题无法表达。<footnote><placeholder-1/></footnote> 但是<command moreinfo=\"none\">svn merge</command>命令会通过直接作用你的工作拷贝来表示目录树的结构和属性变化。"
+msgstr "在这种情况下，确实没有区别，但是<command moreinfo=\"none\">svn merge</command>有超越<command moreinfo=\"none\">patch</command>的特别能力，使用<command moreinfo=\"none\">patch</command>对文件格式有一定的限制，它只能针对文件内容，没有方法表现<emphasis>目录树</emphasis>的修改，例如添加、删除或是改名。如果Sally的修改包括增加一个新的目录，<command moreinfo=\"none\">svn diff</command>不会注意到这些，<command moreinfo=\"none\">svn diff</command>只会输出有限的补丁格式，所以有些问题无法表达。 但是<command moreinfo=\"none\">svn merge</command>命令会通过直接作用你的工作拷贝来表示目录树的结构和属性变化。"
 
 #: build/en/svnbook.xml:7779(para)
 msgid "A word of warning: while <command moreinfo=\"none\">svn diff</command> and <command moreinfo=\"none\">svn merge</command> are very similar in concept, they do have different syntax in many cases. Be sure to read about them in <xref linkend=\"svn.ref\"/> for details, or ask <command moreinfo=\"none\">svn help</command>. For example, <command moreinfo=\"none\">svn merge</command> requires a working-copy path as a target, i.e. a place where it should apply the tree-changes. If the target isn't specified, it assumes you are trying to perform one of the following common operations:"
@@ -6524,9 +6470,8 @@ msgid "However, at the time of writing, this feature is being worked on!"
 msgstr ""
 
 #: build/en/svnbook.xml:7924(para)
-#, fuzzy
 msgid "Unfortunately, Subversion is not such a system; it does not yet record any information about merge operations. <placeholder-1/> When you commit local modifications, the repository has no idea whether those changes came from running <command moreinfo=\"none\">svn merge</command>, or from just hand-editing the files."
-msgstr "不幸的是，Subversion不是这样一个系统，类似于CVS，Subversion并不记录任何合并操作，当你提交本地修改，版本库并不能判断出你是通过<command moreinfo=\"none\">svn merge</command>还是手工修改得到这些文件。"
+msgstr "不幸的是，Subversion不是这样一个系统，类似于CVS，Subversion并不记录任何合并操作，<placeholder-1/>当你提交本地修改，版本库并不能判断出你是通过<command moreinfo=\"none\">svn merge</command>还是手工修改得到这些文件。"
 
 #: build/en/svnbook.xml:7932(para)
 msgid "What does this mean to you, the user? It means that until the day Subversion grows this feature, you'll have to track merge information yourself. The best place to do this is in the commit log-message. As demonstrated in the earlier example, it's recommended that your log-message mention a specific revision number (or range of revisions) that are being merged into your branch. Later on, you can run <command moreinfo=\"none\">svn log</command> to review which changes your branch already contains. This will allow you to carefully construct a subsequent <command moreinfo=\"none\">svn merge</command> command that won't be redundant with previously ported changes."
@@ -6613,9 +6558,8 @@ msgstr ""
 "$\n"
 
 #: build/en/svnbook.xml:8038(para)
-#, fuzzy
 msgid "In the previous example it might be the case that <filename moreinfo=\"none\">baz.c</filename> exists in both snapshots of the branch being compared, and the resulting delta wants to change the file's contents, but the file doesn't exist in the working copy. Whatever the case, the <quote>skipped</quote> message means that the user is most likely comparing the wrong two trees; they're the classic sign of user error. When this happens, it's easy to recursively revert all the changes created by the merge (<command moreinfo=\"none\">svn revert --recursive</command>), delete any unversioned files or directories left behind after the revert, and re-run <command moreinfo=\"none\">svn merge</command> with different arguments."
-msgstr "在前一个例子中，<filename moreinfo=\"none\">baz.c</filename>也许会存在于比较的两个分支快照里，但工作拷贝里不存在，比较的增量数据要应用到这个文件，这种情况下会发生什么？<quote>skipped</quote>信息意味着用户可能是在比较错误的两棵树，这是经典的驱动器错误，当发生这种情况，可以使用迭代恢复（<command moreinfo=\"none\">svn revert --recursive</command>）合并所作的修改，删除恢复后留下的所有未版本化的文件和目录，并且使用另外的参数运行<command moreinfo=\"none\">svn merge</command>。"
+msgstr "在前一个例子中，<filename moreinfo=\"none\">baz.c</filename>也许会存在于比较的两个分支快照里，但工作拷贝里不存在，比较的增量数据要应用到这个文件，这种情况下会发生什么？<quote>skipped</quote>信息意味着用户可能是在比较错误的两棵树，这是经典的用户错误，当发生这种情况，可以使用迭代恢复（<command moreinfo=\"none\">svn revert --recursive</command>）合并所作的修改，删除恢复后留下的所有未版本化的文件和目录，并且使用另外的参数运行<command moreinfo=\"none\">svn merge</command>。"
 
 #: build/en/svnbook.xml:8052(para)
 msgid "Also notice that the previous example shows a conflict happening on <filename moreinfo=\"none\">glorb.h</filename>. We already stated that the working copy has no local edits: how can a conflict possibly happen? Again, because the user can use <command moreinfo=\"none\">svn merge</command> to define and apply any old delta to the working copy, that delta may contain textual changes that don't cleanly apply to a working file, even if the file has no local modifications."
@@ -6916,9 +6860,8 @@ msgid "Undoing Changes"
 msgstr "取消修改"
 
 #: build/en/svnbook.xml:8402(para)
-#, fuzzy
 msgid "Another common use for <command moreinfo=\"none\">svn merge</command> is to roll back a change that has already been committed. Suppose you're working away happily on a working copy of <filename moreinfo=\"none\">/calc/trunk</filename>, and you discover that the change made way back in revision 303, which changed <filename moreinfo=\"none\">integer.c</filename>, is completely wrong. It never should have been committed. You can use <command moreinfo=\"none\">svn merge</command> to <quote>undo</quote> the change in your working copy, and then commit the local modification to the repository. All you need to do is to specify a <emphasis>reverse</emphasis> difference. (You can do this by specifying <option>--revision 303:302</option>, or by an equivalent <option>--change -303</option>.)"
-msgstr "<command moreinfo=\"none\">svn merge</command>另一个常用的做法是取消已经做得提交，假设你愉快的在<filename moreinfo=\"none\">/calc/trunk</filename>工作，你发现303版本对<filename moreinfo=\"none\">integer.c</filename>的修改完全错了，它不应该被提交，你可以使用<command moreinfo=\"none\">svn merge</command>来<quote>取消</quote>这个工作拷贝上所作的操作，然后提交本地修改到版本库，你要做得只是指定一个相反的区别："
+msgstr "<command moreinfo=\"none\">svn merge</command>另一个常用的做法是取消已经做得提交，假设你愉快的在<filename moreinfo=\"none\">/calc/trunk</filename>工作，你发现303版本对<filename moreinfo=\"none\">integer.c</filename>的修改完全错了，它不应该被提交，你可以使用<command moreinfo=\"none\">svn merge</command>来<quote>取消</quote>这个工作拷贝上所作的操作，然后提交本地修改到版本库，你要做得只是指定一个相反的区别。（你可以通过指定<option>--revision 303:302</option，或等价的<option>--change -303</option>完成。）"
 
 #: build/en/svnbook.xml:8417(screen)
 #, no-wrap
@@ -6970,7 +6913,6 @@ msgid "Everyone seems to have a slightly different definition of <quote>changese
 msgstr "每一个人对于<quote>修改集</quote>的概念都有些不一样，至少对于版本控制系统的<quote>修改集特性</quote>这一概念有着不同的期望，根据我们的用途，可以说修改集只是一个有唯一名字的一系列修改集合，修改也许包括文件内容的修改，目录树结构的修改，或是元数据的调整，更通常的说法，一个修改集就是我们可以引用的有名字的补丁。"
 
 #: build/en/svnbook.xml:8458(para)
-#, fuzzy
 msgid "In Subversion, a global revision number N names a tree in the repository: it's the way the repository looked after the Nth commit. It's also the name of an implicit changeset: if you compare tree N with tree N-1, you can derive the exact patch that was committed. For this reason, it's easy to think of <quote>revision N</quote> as not just a tree, but a changeset as well. If you use an issue tracker to manage bugs, you can use the revision numbers to refer to particular patches that fix bugs—for example, <quote>this issue was fixed by revision 9238.</quote>. Somebody can then run <command moreinfo=\"none\">svn log -r9238</command> to read about the exact changeset which fixed the bug, and run <command moreinfo=\"none\">svn diff -c 9238</command> to see the patch itself. And Subversion's <literal moreinfo=\"none\">merge</literal> command also uses revision numbers. You can merge specific changesets from one branch to another by naming them in the merge arguments: <command moreinfo=\"none\">svn merge -r9237:9238</command> would merge changeset #9238 into your working copy."
 msgstr "在Subversion里，一个全局的修订版本号N标示一个版本库中的树：它代表版本库在N次提交后的样子，它也是一个修改集的隐含名称：如果你比较树N与树N-1，你可以得到你提交的补丁。出于这个原因，想象<quote>版本N</quote>并不只是一棵树，也是一个修改集。如果你使用一个问题追踪工具来管理bug，你可以使用版本号来表示特定的补丁修正了bug—举个例子，<quote>这个问题是在版本9238修正的</quote>，然后其他人可以运行<command moreinfo=\"none\">svn log -r9238</command>来查看修正这个bug的修改集，或者使用<command moreinfo=\"none\">svn diff -r9237:9238</command>来看补丁本身。Subversion的<literal moreinfo=\"none\">合并</literal>命令也使用版本号作为参数，可以将特定修改集从一个分支合到另一个分支：<command moreinfo=\"none\">svn merge -r9237:9238</command>将会合并修改集#9238到本地拷贝。"
 
@@ -6983,14 +6925,12 @@ msgid "Again, you may be thinking: well, that really didn't undo the commit, did
 msgstr "继续，你也许会想：好吧，这不是真的取消提交吧！是吧？版本303还依然存在着修改，如果任何人取出<filename moreinfo=\"none\">calc</filename>的303-349版本，他还会得到错误的修改，对吧？"
 
 #: build/en/svnbook.xml:8509(para)
-#, fuzzy
 msgid "The Subversion project has plans, however, to someday implement a command that would accomplish the task of permanently deleting information. In the meantime, see <xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/> for a possible workaround."
-msgstr "Subversion项目有计划，不管用什么方式，总有一天要实现<command moreinfo=\"none\">svnadmin obliterate</command>命令来进行永久删除操作，而此时可以看<xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/>。"
+msgstr "Subversion项目有计划，不管用什么方式，会有一天要实现<command moreinfo=\"none\">svnadmin obliterate</command>命令来进行永久删除操作，而此时可以看<xref linkend=\"svn.reposadmin.maint.tk.svndumpfilter\"/>找到可行的方案。"
 
 #: build/en/svnbook.xml:8493(para)
-#, fuzzy
 msgid "Yes, that's true. When we talk about <quote>removing</quote> a change, we're really talking about removing it from <literal moreinfo=\"none\">HEAD</literal>. The original change still exists in the repository's history. For most situations, this is good enough. Most people are only interested in tracking the <literal moreinfo=\"none\">HEAD</literal> of a project anyway. There are special cases, however, where you really might want to destroy all evidence of the commit. (Perhaps somebody accidentally committed a confidential document.) This isn't so easy, it turns out, because Subversion was deliberately designed to never lose information. Revisions are immutable trees which build upon one another. Removing a revision from history would cause a domino effect, creating chaos in all subsequent revisions and possibly invalidating all working copies. <placeholder-1/>"
-msgstr "是的，这是对的。当我们说<quote>删除</quote>一个修改时，我们只是说从<literal moreinfo=\"none\">HEAD</literal>删除，原始的修改还保存在版本库历史中，在多数情况下，这是足够好的。大多数人只是对追踪<literal moreinfo=\"none\">HEAD</literal>版本感兴趣，在一些特定情况下，你也许希望毁掉所有提交的证据（或许某个人提交了一个秘密文件），这不是很容易的，因为Subversion设计用来不丢失任何信息，每个修订版本都是不可变的目录树 ，从历史删除一个版本会导致多米诺效应，会在后面的版本导致混乱甚至会影响所有的工作拷贝。 <footnote><placeholder-1/></footnote>"
+msgstr "是的，这是对的。当我们说<quote>删除</quote>一个修改时，我们只是说从<literal moreinfo=\"none\">HEAD</literal>删除，原始的修改还保存在版本库历史中，在多数情况下，这是足够好的。大多数人只是对追踪<literal moreinfo=\"none\">HEAD</literal>版本感兴趣，在一些特定情况下，你也许希望毁掉所有提交的证据（或许某个人提交了一个秘密文件），这不是很容易的，因为Subversion设计用来不丢失任何信息，每个修订版本都是依赖其它修订版本的不可变目录树 ，从历史删除一个版本会导致多米诺效应，会在后面的版本导致混乱甚至会影响所有的工作拷贝。 <placeholder-1/>"
 
 #: build/en/svnbook.xml:8521(title)
 msgid "Resurrecting Deleted Items"
@@ -7001,14 +6941,12 @@ msgid "The great thing about version control systems is that information is neve
 msgstr "版本控制系统非常重要的一个特性就是它的信息从不丢失，即使当你删除了文件或目录，它也许从HEAD版本消失了 ，但这个对象依然存在于历史的早期版本 ，一个新手经常问到的问题是<quote>怎样找回我的文件和目录？</quote>"
 
 #: build/en/svnbook.xml:8530(para)
-#, fuzzy
 msgid "The first step is to define exactly <emphasis role=\"bold\">which</emphasis> item you're trying to resurrect. Here's a useful metaphor: you can think of every object in the repository as existing in a sort of two-dimensional coordinate system. The first coordinate is a particular revision tree, and the second coordinate is a path within that tree. So every version of your file or directory can be defined by a specific coordinate pair. (Remember the familiar <quote>peg revision</quote> syntax — foo.c@224 — mentioned back in <xref linkend=\"svn.advanced.pegrevs\"/>.)"
-msgstr "第一步首先要知道需要拯救的项目是<emphasis role=\"bold\">什么</emphasis>，这里有个很有用的比喻：你可以认为任何存在于版本库的对象生活在一个二维的坐标系统里，第一维是一个特定的版本树，第二维是在树中的路径，所以你的文件或目录的任何版本可以有这样一对坐标定义。"
+msgstr "第一步首先要知道需要拯救的项目是<emphasis role=\"bold\">什么</emphasis>，这里有个很有用的比喻：你可以认为任何存在于版本库的对象生活在一个二维的坐标系统里，第一维是一个特定的版本树，第二维是在树中的路径，所以你的文件或目录的任何版本可以通过这样一对坐标定义。（记住常见的<quote>peg修订版本</quote>语法— foo.c@224 — 在前面的<xref linkend=\"svn.advanced.pegrevs\"/>提到过。 ）"
 
 #: build/en/svnbook.xml:8542(para)
-#, fuzzy
 msgid "First, you might need to use <command moreinfo=\"none\">svn log</command> to discover the exact coordinate pair you wish to resurrect. A good strategy is to run <command moreinfo=\"none\">svn log --verbose</command> in a directory which used to contain your deleted item. The <option>--verbose (-v)</option> option shows a list of all changed items in each revision; all you need to do is find the revision in which you deleted the file or directory. You can do this visually, or by using another tool to examine the log output (via <command moreinfo=\"none\">grep</command>, or perhaps via an incremental search in an editor)."
-msgstr "Subversion没有向CVS一样的<filename moreinfo=\"none\">古典</filename>目录， <footnote><placeholder-1/></footnote> 所以你需要<command moreinfo=\"none\">svn log</command>来察看你需要找回的坐标对，一个好的策略是使用<command moreinfo=\"none\">svn log --verbose</command>来察看你删除的项目，--verbose选项显示所有改变的项目的每一个版本 ，你只需要找出你删除文件或目录的那一个版本。你可以通过目测找出这个版本，也可以使用另一种工具来检查日志的输出 （通过<command moreinfo=\"none\">grep</command>或是在编辑器里增量查找）。"
+msgstr "首先，你需要<command moreinfo=\"none\">svn log</command>来察看你需要找回的坐标对，一个好的策略是使用<command moreinfo=\"none\">svn log --verbose</command>来察看包含删除项目的目录，--verbose选项显示所有改变的项目的每一个版本 ，你只需要找出你删除文件或目录的那一个版本。你可以通过目测找出这个版本，也可以使用另一种工具来检查日志的输出 （通过<command moreinfo=\"none\">grep</command>或是在编辑器里增量查找）。"
 
 #: build/en/svnbook.xml:8553(screen)
 #, no-wrap
@@ -7212,7 +7150,6 @@ msgid "Traversing Branches"
 msgstr "使用分支"
 
 #: build/en/svnbook.xml:8855(para)
-#, fuzzy
 msgid "The <command moreinfo=\"none\">svn switch</command> command transforms an existing working copy to reflect a different branch. While this command isn't strictly necessary for working with branches, it provides a nice shortcut to users. In our earlier example, after creating your private branch, you checked out a fresh working copy of the new repository directory. Instead, you can simply ask Subversion to change your working copy of <filename moreinfo=\"none\">/calc/trunk</filename> to mirror the new branch location:"
 msgstr "<command moreinfo=\"none\">svn switch</command>命令改变存在的工作拷贝到另一个分支，然而这个命令在分支上工作时不是严格必要的，它只是提供了一个快捷方式。在前面的例子里，完成了私有分支的建立，你取出了新目录的工作拷贝，相反，你可以简单的告诉Subversion改变你的<filename moreinfo=\"none\">/calc/trunk</filename>的工作拷贝到分支的路径："
 
@@ -7278,14 +7215,12 @@ msgid "If your working copy contains a number of switched subtrees from differen
 msgstr "如果你的工作拷贝包含许多来自不同版本库目录跳转的子树，它会工作如常。当你更新时，你会得到每一个目录适当的补丁，当你提交时，你的本地修改会一直作为一个单独的原子修改提交到版本库。"
 
 #: build/en/svnbook.xml:8936(para)
-#, fuzzy
 msgid "You <emphasis>can</emphasis>, however, use <command moreinfo=\"none\">svn switch</command> with the <option>--relocate</option> switch if the URL of your server changes and you don't want to abandon an existing working copy. See <xref linkend=\"svn.ref.svn.c.switch\"/> for more information and an example."
-msgstr "当你的服务器位置改变，而你不想放弃存在的本地拷贝，你<emphasis>可以</emphasis>使用带选项<option>--relocate</option>的<command moreinfo=\"none\">svn switch</command>命令转换URL，见<xref linkend=\"svn.ref\"/>的<command moreinfo=\"none\">svn switch</command>查看更多信息和例子。"
+msgstr "如果你不希望抛弃已存在的工作拷贝，你<emphasis>可以</emphasis>使用带<option>--relocate</option>选项的<command moreinfo=\"none\">svn switch</command>命令转换URL，更多信息和例子可以看<xref linkend=\"svn.ref.svn.c.switch\"/。"
 
 #: build/en/svnbook.xml:8929(para)
-#, fuzzy
 msgid "Note that while it's okay for your working copy to reflect a mixture of repository locations, these locations must all be within the <emphasis>same</emphasis> repository. Subversion repositories aren't yet able to communicate with one another; that's a feature planned for the future. <placeholder-1/>"
-msgstr "注意，因为你的工作拷贝可以在混合位置的情况下工作正常，但是所有的位置必须在同一个版本库，Subversion的版本库不能互相通信，这个特性还不在Subversion 1.0的计划里。<footnote><placeholder-1/></footnote>"
+msgstr "注意，因为你的工作拷贝可以在混合位置的情况下工作正常，但是所有的位置必须在同一个版本库，Subversion的版本库不能互相通信，这个特性还不在Subversion未来的计划里。"
 
 #: build/en/svnbook.xml:8944(title)
 msgid "Switches and Updates"
@@ -7353,9 +7288,8 @@ msgstr ""
 "Committed revision 351.\n"
 
 #: build/en/svnbook.xml:9030(para)
-#, fuzzy
 msgid "This example assumes that a <filename moreinfo=\"none\">/calc/tags</filename> directory already exists. (If it doesn't, you can create it using <command moreinfo=\"none\">svn mkdir</command>.) After the copy completes, the new <filename moreinfo=\"none\">release-1.0</filename> directory is forever a snapshot of how the project looked in the <literal moreinfo=\"none\">HEAD</literal> revision at the time you made the copy. Of course you might want to be more precise about exactly which revision you copy, in case somebody else may have committed changes to the project when you weren't looking. So if you know that revision 350 of <filename moreinfo=\"none\">/calc/trunk</filename> is exactly the snapshot you want, you can specify it by passing <option>-r 350</option> to the <command moreinfo=\"none\">svn copy</command> command."
-msgstr "这个例子假定<filename moreinfo=\"none\">/calc/tags</filename>目录已经存在（如果不是，见<xref linkend=\"svn.ref.svn.c.mkdir\"/>），拷贝完成之后，一个表示当时<literal moreinfo=\"none\">HEAD</literal>版本的/calc/trunk目录的镜像已经永久的拷贝到<filename moreinfo=\"none\">release-1.0</filename>目录。当然，你会希望更精确一点，以防其他人在你不注意的时候提交修改，所以，如果你知道<filename moreinfo=\"none\">/calc/trunk</filename>的版本350是你想要的快照，你可以使用<command moreinfo=\"none\">svn copy</command>加参数 <option>-r 350</option>。"
+msgstr "这个例子假定<filename moreinfo=\"none\">/calc/tags</filename>目录已经存在（如果不是，可以使用<command moreinfo=\"none\">svn mkdir</command>创建。），拷贝完成之后，一个表示当时<literal moreinfo=\"none\">HEAD</literal>版本的/calc/trunk目录的镜像已经永久的拷贝到<filename moreinfo=\"none\">release-1.0</filename>目录。当然，你会希望更精确一点，以防其他人在你不注意的时候提交修改，所以，如果你知道<filename moreinfo=\"none\">/calc/trunk</filename>的版本350是你想要的快照，你可以使用<command moreinfo=\"none\">svn copy</command>加参数 <option>-r 350</option>。"
 
 #: build/en/svnbook.xml:9045(para)
 msgid "But wait a moment: isn't this tag-creation procedure the same procedure we used to create a branch? Yes, in fact, it is. In Subversion, there's no difference between a tag and a branch. Both are just ordinary directories that are created by copying. Just as with branches, the only reason a copied directory is a <quote>tag</quote> is because <emphasis>humans</emphasis> have decided to treat it that way: as long as nobody ever commits to the directory, it forever remains a snapshot. If people start committing to it, it becomes a branch."
@@ -7630,9 +7564,8 @@ msgid "And entirely bug-free, of course!"
 msgstr "而且完全没有bug，当然！"
 
 #: build/en/svnbook.xml:9418(para)
-#, fuzzy
 msgid "We check out our project's main branch—which now includes a copy of the first vendor drop—and we get to work customizing the libcomplex code. Before we know it, our modified version of libcomplex is now completely integrated into our calculator program. <placeholder-1/>"
-msgstr "我们取出我们项目的主分支—现在包括了第一个卖主drop的拷贝—我们开始自定义libcomplex的代码，我们知道，我们的libcomplex修改版本是已经与我们的计算器程序完全集成。 <footnote><placeholder-1/></footnote>"
+msgstr "我们取出我们项目的主分支—现在包括了第一个卖主释放的拷贝—我们开始自定义libcomplex的代码，在我们知道之前，我们的libcomplex修改版本是已经与我们的计算器程序完全集成了。 <placeholder-1/>"
 
 #: build/en/svnbook.xml:9428(para)
 msgid "A few weeks later, the developers of libcomplex release a new version of their library—version 1.1—which contains some features and functionality that we really want. We'd like to upgrade to this new version, but without losing the customizations we made to the existing version. What we essentially would like to do is to replace our current baseline version of libcomplex 1.0 with a copy of libcomplex 1.1, and then re-apply the custom modifications we previously made to that library to the new version. But we actually approach the problem from the other direction, applying the changes made to libcomplex between versions 1.0 and 1.1 to our modified copy of it."
