@@ -1,0 +1,49 @@
+install
+-------
+apt-get install texlive-xetex dvipdfmx
+
+Description: TeX Live: XeTeX macros
+ Macro files for XeTeX, Unicode-enabled TeX by Jonathan Kew.
+ .
+ This package includes the following CTAN packages:
+  euenc -- The euenc package.
+  fontspec -- An automatic interface to feature-rich fonts in XeLaTeX.
+  ifxetex -- The ifxetex package.
+  philokalia -- The philokalia package.
+  xetex -- The xetex package.
+  xetexconfig -- non-graphics .cfg file overrides for XeTeX
+  xetexurl -- url.sty patched for XeTeX
+  xltxtra -- The xltxtra package.
+  xunicode -- The xunicode package.
+  bin-xetex -- Unicode-enabled TeX.
+
+
+svn ls
+------
+*) svn ls http://scripts.sil.org/svn-public/xetex
+    BRANCHES/
+    TAGS/
+    TRUNK/
+    kew-papers/
+
+*) svn ls http://scripts.sil.org/svn-public/xdvipdfmx
+    BRANCHES/
+    TAGS/
+    TRUNK/
+
+
+git init
+--------
+git-svn init --trunk=TRUNK --tags=TAGS --branches=BRANCHES http://scripts.sil.org/svn-public/xetex
+
+vi .git/config
+    fetch = kew-papers:refs/remotes/papers
+
+git-svn init --trunk=TRUNK --tags=TAGS --branches=BRANCHES http://scripts.sil.org/svn-public/xetex
+
+
+git fetch
+---------
+for i in xdvipdfmx xetex; do
+    (cd $i; git-svn fetch &)
+done
