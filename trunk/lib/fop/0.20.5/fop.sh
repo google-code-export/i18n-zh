@@ -1,10 +1,15 @@
 #!/bin/sh
 
-[ -z "$JAVA_HOME" ] && JAVA_HOME=`which java;`/..
-if [ ! -e "$JAVA_HOME/lib/tools.jar" ]
-then
-    echo The JAVA_HOME environment variable is not defined correctly
-    exit 1
+if [ -z "$JAVACMD" ]; then
+    if [ ! -z "$JAVA_HOME" ]; then
+        if [ ! -e "$JAVA_HOME/bin/java" ]; then
+            JAVACMD=java
+        else
+            JAVACMD=$JAVA_HOME/bin/java
+        fi
+    else
+        JAVACMD=java
+    fi
 fi
 
 [ -z "$FOP_HOME" ] && FOP_HOME=`dirname $0`
@@ -23,4 +28,4 @@ do
     fi
 done
 
-$JAVA_HOME/bin/java -Xmx512m -classpath \"$LOCALCLASSPATH\" org.apache.fop.apps.Fop "$@"
+$JAVACMD -Xmx512m -classpath \"$LOCALCLASSPATH\" org.apache.fop.apps.Fop "$@"
