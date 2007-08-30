@@ -1,18 +1,37 @@
 #!/bin/sh
 
-if [ -z "$JAVACMD" ] ; then
-  if [ -n "$JAVA_HOME" ] ; then
-    JAVACMD="$JAVA_HOME/bin/java"
-  else
-    JAVACMD=`which java 2> /dev/null`
-  fi
+if [ -z "$JAVACMD" ]; then
+    if [ ! -z "$JAVA_HOME" ]; then
+        if [ ! -e "$JAVA_HOME/bin/java" ]; then
+            JAVACMD=java
+        else
+            JAVACMD=$JAVA_HOME/bin/java
+        fi
+    else
+        JAVACMD=java
+    fi
 fi
 
-if [ ! -x "$JAVACMD" ] ; then
-  echo "Error: JAVA_HOME is not defined correctly."
-  echo "  We cannot execute java"
-  exit 1
-fi
+# JAVACMD=`which java 2> /dev/null`
+# if [ ! -x "AIX 5.3 no java in /bin /usr/bin" ] ; then
+#   echo "Error: JAVA_HOME or PATH is not defined correctly."
+#   echo "  We cannot execute java"
+#   exit 1
+# fi
+
+# if [ -z "$JAVACMD" ] ; then
+#   if [ -n "$JAVA_HOME" ] ; then
+#     JAVACMD="$JAVA_HOME/bin/java"
+#   else
+#     JAVACMD=`which java 2> /dev/null`
+#   fi
+# fi
+#
+# if [ ! -x "$JAVACMD" ] ; then
+#   echo "Error: JAVA_HOME is not defined correctly."
+#   echo "  We cannot execute java"
+#   exit 1
+# fi
 
 [ -z "$FOP_HOME" ] && FOP_HOME=`dirname $0`
 
