@@ -340,4 +340,13 @@
     <xsl:attribute name="space-after.maximum">0.1em</xsl:attribute>
   </xsl:attribute-set>
 
+<xsl:attribute-set name="xref.properties">
+  <xsl:attribute name="color">
+    <xsl:choose>
+      <xsl:when test="self::ulink">blue</xsl:when>
+      <xsl:otherwise>red</xsl:otherwise>
+    </xsl:choose>
+  </xsl:attribute>
+</xsl:attribute-set>
+
 </xsl:stylesheet>
