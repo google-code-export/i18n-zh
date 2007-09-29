@@ -7,7 +7,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: fop.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: fop.xsl 6402 2006-11-12 08:23:21Z bobstayton $
      ********************************************************************
      (c) Stephane Bline Peregrine Systems 2001
      Driver file to allow pdf bookmarking (based on fop implementation).

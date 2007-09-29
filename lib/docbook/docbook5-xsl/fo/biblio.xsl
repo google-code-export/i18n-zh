@@ -6,12 +6,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: biblio.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: biblio.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -189,7 +189,14 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:otherwise>
       <fo:block id="{$id}" xsl:use-attribute-sets="biblioentry.properties">
         <xsl:copy-of select="$label"/>
-        <xsl:apply-templates mode="bibliography.mode"/>
+	<xsl:choose>
+	  <xsl:when test="$bibliography.style = 'iso690'">
+	    <xsl:call-template name="iso690.makecitation"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:apply-templates mode="bibliography.mode"/>
+	  </xsl:otherwise>
+	</xsl:choose>
       </fo:block>
     </xsl:otherwise>
   </xsl:choose>

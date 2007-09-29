@@ -5,9 +5,7 @@
 <!ENTITY secondary 'normalize-space(concat(d:secondary/@sortas, d:secondary[not(@sortas) or @sortas = ""]))'>
 <!ENTITY tertiary  'normalize-space(concat(d:tertiary/@sortas, d:tertiary[not(@sortas) or @sortas = ""]))'>
 
-<!ENTITY scope 'count(ancestor::node()|$scope) = count(ancestor::node())
-                and ($role = @role or $type = @type or
-                (string-length($role) = 0 and string-length($type) = 0))'>
+<!ENTITY scope 'count(ancestor::node()|$scope) = count(ancestor::node()) and ($role = @role or $type = @type or (string-length($role) = 0 and string-length($type) = 0))'>
 ]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:d="http://docbook.org/ns/docbook"
@@ -21,12 +19,12 @@ xmlns:i="urn:cz-kosek:functions:index"
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: autoidx-kosek.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: autoidx-kosek.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -83,10 +81,7 @@ xmlns:i="urn:cz-kosek:functions:index"
   </xsl:variable>
 
   <xsl:variable name="terms"
-                select="//d:indexterm[count(.|key('group-code',
-                                          i:group-index(&primary;))
-                                          [&scope;][1]) = 1
-                                    and not(@class = 'endofrange')]"/>
+                select="//d:indexterm[count(.|key('group-code', i:group-index(&primary;))[&scope;][1]) = 1 and not(@class = 'endofrange')]"/>
 
   <div class="index">
     <xsl:apply-templates select="$terms" mode="index-div-kosek">
@@ -110,15 +105,13 @@ xmlns:i="urn:cz-kosek:functions:index"
     <xsl:call-template name="l10n.language"/>
   </xsl:variable>
 
-  <xsl:if test="key('group-code', $key)[&scope;]
-                [count(.|key('primary', &primary;)[&scope;][1]) = 1]">
+  <xsl:if test="key('group-code', $key)[&scope;][count(.|key('primary', &primary;)[&scope;][1]) = 1]">
     <div class="indexdiv">
       <h3>
         <xsl:value-of select="i:group-letter($key)"/>
       </h3>
       <dl>
-        <xsl:apply-templates select="key('group-code', $key)[&scope;]
-                                     [count(.|key('primary', &primary;)[&scope;][1])=1]"
+        <xsl:apply-templates select="key('group-code', $key)[&scope;][count(.|key('primary', &primary;)[&scope;][1])=1]"
                              mode="index-primary">
           <xsl:sort select="&primary;" lang="{$lang}"/>
           <xsl:with-param name="scope" select="$scope"/>

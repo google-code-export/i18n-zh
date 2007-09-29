@@ -13,12 +13,12 @@ version="1.0"
                 exclude-result-prefixes="k d">
 
 <!-- ********************************************************************
-     $Id: autoidx-kimber.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: autoidx-kimber.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the DocBook XSL Stylesheet distribution.
      See ../README or http://docbook.sf.net/ for copyright
-     and other information.
+     copyright and other information.
 
      ******************************************************************** -->
 

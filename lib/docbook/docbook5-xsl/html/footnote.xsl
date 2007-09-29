@@ -6,12 +6,12 @@ xmlns:exsl="http://exslt.org/common"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: footnote.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: footnote.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -29,6 +29,7 @@ xmlns:exsl="http://exslt.org/common"
       <sup>
         <xsl:text>[</xsl:text>
         <a name="{$name}" href="{$href}">
+          <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:apply-templates select="." mode="footnote.number"/>
         </a>
         <xsl:text>]</xsl:text>
@@ -38,6 +39,7 @@ xmlns:exsl="http://exslt.org/common"
       <sup>
         <xsl:text>[</xsl:text>
         <a name="{$name}" href="{$href}">
+          <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:apply-templates select="." mode="footnote.number"/>
         </a>
         <xsl:text>]</xsl:text>
@@ -49,15 +51,23 @@ xmlns:exsl="http://exslt.org/common"
 <xsl:template match="d:footnoteref">
   <xsl:variable name="targets" select="key('id',@linkend)"/>
   <xsl:variable name="footnote" select="$targets[1]"/>
-  <xsl:variable name="href">
-    <xsl:text>#ftn.</xsl:text>
-    <xsl:call-template name="object.id">
+
+  <xsl:variable name="target.href">
+    <xsl:call-template name="href.target">
       <xsl:with-param name="object" select="$footnote"/>
     </xsl:call-template>
   </xsl:variable>
+
+  <xsl:variable name="href">
+    <xsl:value-of select="substring-before($target.href, '#')"/>
+    <xsl:text>#ftn.</xsl:text>
+    <xsl:value-of select="substring-after($target.href, '#')"/>
+  </xsl:variable>
+
   <sup>
     <xsl:text>[</xsl:text>
     <a href="{$href}">
+      <xsl:apply-templates select="." mode="class.attribute"/>
       <xsl:apply-templates select="$footnote" mode="footnote.number"/>
     </a>
     <xsl:text>]</xsl:text>
@@ -127,6 +137,7 @@ xmlns:exsl="http://exslt.org/common"
     <sup>
       <xsl:text>[</xsl:text>
       <a name="{$name}" href="{$href}">
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:apply-templates select="ancestor::d:footnote"
                              mode="footnote.number"/>
       </a>
@@ -155,6 +166,7 @@ xmlns:exsl="http://exslt.org/common"
     <sup>
       <xsl:text>[</xsl:text>
       <a name="{$name}" href="{$href}">
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:apply-templates select="ancestor::d:footnote"
                              mode="footnote.number"/>
       </a>

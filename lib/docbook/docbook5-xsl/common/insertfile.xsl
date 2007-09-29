@@ -6,7 +6,7 @@ xmlns:xi="http://www.w3.org/2001/XInclude"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: insertfile.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: insertfile.xsl 5262 2005-10-12 14:58:42Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.

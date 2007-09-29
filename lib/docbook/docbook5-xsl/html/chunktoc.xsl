@@ -5,12 +5,12 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
                 exclude-result-prefixes="doc d">
 
 <!-- ********************************************************************
-     $Id: chunktoc.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: chunktoc.xsl 6942 2007-07-04 04:42:17Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -50,8 +50,8 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
   <xsl:variable name="chunk" select="$chunks//d:tocentry[@linkend=$id]"/>
   <xsl:variable name="filename">
-    <xsl:call-template name="dbhtml-filename">
-      <xsl:with-param name="pis" select="$chunk/processing-instruction('dbhtml')"/>
+    <xsl:call-template name="pi.dbhtml_filename">
+      <xsl:with-param name="node" select="$chunk"/>
     </xsl:call-template>
   </xsl:variable>
 

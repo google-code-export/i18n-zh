@@ -7,12 +7,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: sections.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: sections.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -53,40 +53,52 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
       <!-- xsl:use-attribute-sets takes only a Qname, not a variable -->
       <xsl:choose>
         <xsl:when test="$level = 1">
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level1.properties">
+          <xsl:element name="fo:{$section.container.element}"
+		       use-attribute-sets="section.level1.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:when>
         <xsl:when test="$level = 2">
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level2.properties">
+          <xsl:element name="fo:{$section.container.element}"
+		       use-attribute-sets="section.level2.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:when>
         <xsl:when test="$level = 3">
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level3.properties">
+          <xsl:element name="fo:{$section.container.element}"
+                       use-attribute-sets="section.level3.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:when>
         <xsl:when test="$level = 4">
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level4.properties">
+          <xsl:element name="fo:{$section.container.element}"
+                       use-attribute-sets="section.level4.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:when>
         <xsl:when test="$level = 5">
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level5.properties">
+          <xsl:element name="fo:{$section.container.element}"
+		       use-attribute-sets="section.level5.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:when>
         <xsl:otherwise>
-          <fo:block id="{$id}"
-                    xsl:use-attribute-sets="section.level6.properties">
+          <xsl:element name="fo:{$section.container.element}"
+		       use-attribute-sets="section.level6.properties">
+            <xsl:attribute name="id"><xsl:value-of 
+                                select="$id"/></xsl:attribute>
             <xsl:call-template name="section.content"/>
-          </fo:block>
+          </xsl:element>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:otherwise>
@@ -316,8 +328,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}" 
-            xsl:use-attribute-sets="section.level1.properties">
+  <xsl:element name="fo:{$section.container.element}"
+               use-attribute-sets="section.level1.properties">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="sect1.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -336,7 +350,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:if>
 
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="/d:sect1">
@@ -429,8 +443,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}" 
-            xsl:use-attribute-sets="section.level2.properties">
+  <xsl:element name="fo:{$section.container.element}"
+	       use-attribute-sets="section.level2.properties">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="sect2.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -449,7 +465,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:if>
 
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="d:sect3">
@@ -457,8 +473,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}" 
-            xsl:use-attribute-sets="section.level3.properties">
+  <xsl:element name="fo:{$section.container.element}"
+	       use-attribute-sets="section.level3.properties">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="sect3.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -477,7 +495,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:if>
 
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="d:sect4">
@@ -485,8 +503,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}" 
-            xsl:use-attribute-sets="section.level4.properties">
+  <xsl:element name="fo:{$section.container.element}"
+	       use-attribute-sets="section.level4.properties">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="sect4.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -505,7 +525,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:if>
 
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="d:sect5">
@@ -513,8 +533,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}" 
-            xsl:use-attribute-sets="section.level5.properties">
+  <xsl:element name="fo:{$section.container.element}"
+	       use-attribute-sets="section.level5.properties">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="sect5.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -533,7 +555,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:if>
 
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="d:simplesect">
@@ -541,10 +563,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <fo:block id="{$id}">
+  <xsl:element name="fo:{$section.container.element}">
+    <xsl:attribute name="id"><xsl:value-of 
+                        select="$id"/></xsl:attribute>
     <xsl:call-template name="simplesect.titlepage"/>
     <xsl:apply-templates/>
-  </fo:block>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="d:sectioninfo"></xsl:template>

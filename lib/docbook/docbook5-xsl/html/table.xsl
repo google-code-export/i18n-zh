@@ -12,12 +12,12 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 <xsl:include href="../common/table.xsl"/>
 
 <!-- ********************************************************************
-     $Id: table.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: table.xsl 7009 2007-07-11 09:42:54Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -149,27 +149,15 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
   </xsl:if>
 
   <xsl:variable name="summary">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'table-summary'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_table-summary"/>
   </xsl:variable>
 
   <xsl:variable name="cellspacing">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'cellspacing'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_cellspacing"/>
   </xsl:variable>
 
   <xsl:variable name="cellpadding">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')[1]"/>
-      <xsl:with-param name="attribute" select="'cellpadding'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_cellpadding"/>
   </xsl:variable>
 
   <table>
@@ -232,7 +220,6 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
     <xsl:choose>
       <xsl:when test="$table.borders.with.css != 0">
-        <xsl:attribute name="border">0</xsl:attribute>
         <xsl:choose>
           <xsl:when test="../@frame='all' or (not(../@frame) and $default.table.frame='all')">
             <xsl:attribute name="style">
@@ -319,12 +306,18 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
               </xsl:call-template>
             </xsl:attribute>
           </xsl:when>
+	  <xsl:when test="../@frame='none'">
+	    <xsl:attribute name="style">
+	      <xsl:text>border: none;</xsl:text>
+	    </xsl:attribute>
+	  </xsl:when>
           <xsl:otherwise>
             <xsl:attribute name="style">
               <xsl:text>border-collapse: collapse;</xsl:text>
             </xsl:attribute>
           </xsl:otherwise>
         </xsl:choose>
+
       </xsl:when>
       <xsl:when test="../@frame='none' or (not(../@frame) and $default.table.frame='none') or local-name(.) = 'entrytbl'">
         <xsl:attribute name="border">0</xsl:attribute>
@@ -343,10 +336,8 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
     </xsl:variable>
 
     <xsl:variable name="explicit.table.width">
-      <xsl:call-template name="dbhtml-attribute">
-        <xsl:with-param name="pis"
-                        select="../processing-instruction('dbhtml')[1]"/>
-        <xsl:with-param name="attribute" select="'table-width'"/>
+      <xsl:call-template name="pi.dbhtml_table-width">
+        <xsl:with-param name="node" select=".."/>
       </xsl:call-template>
     </xsl:variable>
 
@@ -437,10 +428,7 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <xsl:template match="d:tgroup/processing-instruction('dbhtml')">
   <xsl:variable name="summary">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis" select="."/>
-      <xsl:with-param name="attribute" select="'table-summary'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_table-summary"/>
   </xsl:variable>
 
   <!-- Suppress the table-summary PI -->
@@ -566,28 +554,19 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
   <xsl:variable name="row-height">
     <xsl:if test="processing-instruction('dbhtml')">
-      <xsl:call-template name="dbhtml-attribute">
-        <xsl:with-param name="pis" select="processing-instruction('dbhtml')"/>
-        <xsl:with-param name="attribute" select="'row-height'"/>
-      </xsl:call-template>
+      <xsl:call-template name="pi.dbhtml_row-height"/>
     </xsl:if>
   </xsl:variable>
 
   <xsl:variable name="bgcolor">
     <xsl:if test="processing-instruction('dbhtml')">
-      <xsl:call-template name="dbhtml-attribute">
-	<xsl:with-param name="pis" select="processing-instruction('dbhtml')"/>
-	<xsl:with-param name="attribute" select="'bgcolor'"/>
-      </xsl:call-template>
+      <xsl:call-template name="pi.dbhtml_bgcolor"/>
     </xsl:if>
   </xsl:variable>
 
   <xsl:variable name="class">
     <xsl:if test="processing-instruction('dbhtml')">
-      <xsl:call-template name="dbhtml-attribute">
-	<xsl:with-param name="pis" select="processing-instruction('dbhtml')"/>
-	<xsl:with-param name="attribute" select="'class'"/>
-      </xsl:call-template>
+      <xsl:call-template name="pi.dbhtml_class"/>
     </xsl:if>
   </xsl:variable>
 
@@ -801,10 +780,7 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
     <xsl:otherwise>
       <xsl:variable name="bgcolor">
         <xsl:if test="processing-instruction('dbhtml')">
-          <xsl:call-template name="dbhtml-attribute">
-            <xsl:with-param name="pis" select="processing-instruction('dbhtml')"/>
-            <xsl:with-param name="attribute" select="'bgcolor'"/>
-          </xsl:call-template>
+          <xsl:call-template name="pi.dbhtml_bgcolor"/>
         </xsl:if>
       </xsl:variable>
 

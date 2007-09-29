@@ -6,12 +6,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: formal.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: formal.xsl 6933 2007-07-03 11:48:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -43,11 +43,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   </xsl:variable>
 
   <xsl:variable name="keep.together">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'keep-together'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_keep-together"/>
   </xsl:variable>
 
   <xsl:choose>
@@ -133,11 +129,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   </xsl:variable>
 
   <xsl:variable name="keep.together">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'keep-together'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_keep-together"/>
   </xsl:variable>
 
   <xsl:choose>
@@ -286,11 +278,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
   <!-- Example doesn't have a pgwide attribute, so may use a PI -->
   <xsl:variable name="pgwide.pi">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'pgwide'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_pgwide"/>
   </xsl:variable>
 
   <xsl:variable name="pgwide">
@@ -468,11 +456,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
   <!-- Equation doesn't have a pgwide attribute, so may use a PI -->
   <xsl:variable name="pgwide">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'pgwide'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_pgwide"/>
   </xsl:variable>
 
   <xsl:variable name="equation">
