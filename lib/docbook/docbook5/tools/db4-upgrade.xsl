@@ -8,13 +8,13 @@
 
 <!--
 # ======================================================================
-# This file is part of DocBook V5.0CR4
+# This file is part of DocBook V5.0CR5
 #
 # Copyright 2005 Norman Walsh, Sun Microsystems, Inc., and the
 # Organization for the Advancement of Structured Information
 # Standards (OASIS).
 #
-# Release: $Id: db4-upgrade.xsl 6746 2007-03-22 17:08:24Z nwalsh $
+# Release: $Id: db4-upgrade.xsl 7428 2007-09-02 16:36:15Z mzjn $
 #
 # Permission to use, copy, modify and distribute this stylesheet
 # and its accompanying documentation for any purpose and without fee
@@ -1101,6 +1101,15 @@
     </para>
   </acknowledgements>
 </xsl:template>
+
+<xsl:template match="lot|lotentry|tocback|tocchap|tocfront|toclevel1|
+		     toclevel2|toclevel3|toclevel4|toclevel5|tocpart" priority="200">
+  <tocdiv>
+    <xsl:copy-of select="@*"/>
+    <xsl:apply-templates/>
+  </tocdiv>
+</xsl:template>
+
 
 <!-- ====================================================================== -->
 
