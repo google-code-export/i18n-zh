@@ -9,15 +9,13 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: stripns.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: stripns.xsl 7267 2007-08-22 12:20:28Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
-     This file contains general templates common to both the HTML and FO
-     versions of the DocBook stylesheets.
      ******************************************************************** -->
 
 <!-- put an xml:base attribute on the root element -->

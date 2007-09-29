@@ -1,13 +1,13 @@
 <!-- ********************************************************************
-     $Id: entities.ent 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: entities.ent 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
      
      This file contains common entity declarations used for
      sorting by various templates.
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -21,35 +21,27 @@
 <!ENTITY tertiary  'normalize-space(concat(tertiary/@sortas, tertiary[not(@sortas) or @sortas = ""]))'>
 
 
-<!ENTITY section   '(ancestor-or-self::set
-                     |ancestor-or-self::book
-                     |ancestor-or-self::part
-                     |ancestor-or-self::reference
-                     |ancestor-or-self::partintro
-                     |ancestor-or-self::chapter
-                     |ancestor-or-self::appendix
-                     |ancestor-or-self::preface
-                     |ancestor-or-self::article
-                     |ancestor-or-self::section
-                     |ancestor-or-self::sect1
-                     |ancestor-or-self::sect2
-                     |ancestor-or-self::sect3
-                     |ancestor-or-self::sect4
-                     |ancestor-or-self::sect5
-                     |ancestor-or-self::refentry
-                     |ancestor-or-self::refsect1
-                     |ancestor-or-self::refsect2
-                     |ancestor-or-self::refsect3
-                     |ancestor-or-self::simplesect
-                     |ancestor-or-self::bibliography
-                     |ancestor-or-self::glossary
-                     |ancestor-or-self::index
-                     |ancestor-or-self::webpage)[last()]'>
+<!ENTITY section   '(ancestor-or-self::set|ancestor-or-self::book|ancestor-or-self::part|ancestor-or-self::reference|ancestor-or-self::partintro|ancestor-or-self::chapter|ancestor-or-self::appendix|ancestor-or-self::preface|ancestor-or-self::article|ancestor-or-self::section|ancestor-or-self::sect1|ancestor-or-self::sect2|ancestor-or-self::sect3|ancestor-or-self::sect4|ancestor-or-self::sect5|ancestor-or-self::refentry|ancestor-or-self::refsect1|ancestor-or-self::refsect2|ancestor-or-self::refsect3|ancestor-or-self::simplesect|ancestor-or-self::bibliography|ancestor-or-self::glossary|ancestor-or-self::index|ancestor-or-self::webpage)[last()]'>
 
 <!ENTITY section.id 'generate-id(&section;)'>
 <!ENTITY sep '" "'>
 
-<!ENTITY scope 'count(ancestor::node()|$scope) = count(ancestor::node())
-                and ($role = @role or $type = @type or
-                (string-length($role) = 0 and string-length($type) = 0))'>
+<!ENTITY scope 'count(ancestor::node()|$scope) = count(ancestor::node()) and ($role = @role or $type = @type or (string-length($role) = 0 and string-length($type) = 0))'>
 
+<!ENTITY setup-language-variable '
+<xsl:variable name="language" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:call-template name="l10n.language"/>
+</xsl:variable>
+
+<xsl:variable name="lowercase" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:call-template name="gentext">
+    <xsl:with-param name="key">normalize.sort.input</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsl:variable name="uppercase" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:call-template name="gentext">
+    <xsl:with-param name="key">normalize.sort.output</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+'>

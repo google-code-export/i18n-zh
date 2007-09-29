@@ -5,12 +5,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: titles.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: titles.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -20,7 +20,7 @@
 
 <doc:mode mode="title.markup" xmlns="">
 <refpurpose>Provides access to element titles</refpurpose>
-<refdescription>
+<refdescription id="title.markup-desc">
 <para>Processing an element in the
 <literal role="mode">title.markup</literal> mode produces the
 title of the element. This does not include the label.
@@ -31,10 +31,11 @@ title of the element. This does not include the label.
 <xsl:template match="*" mode="title.markup">
   <xsl:param name="allow-anchors" select="0"/>
   <xsl:param name="verbose" select="1"/>
-
   <xsl:choose>
-    <xsl:when test="title">
-      <xsl:apply-templates select="title[1]" mode="title.markup">
+    <!-- * FIXME: this should handle other *info elements as well -->
+    <!-- * but this is good enough for now. -->
+    <xsl:when test="title|info/title">
+      <xsl:apply-templates select="title[1]|info/title[1]" mode="title.markup">
         <xsl:with-param name="allow-anchors" select="$allow-anchors"/>
       </xsl:apply-templates>
     </xsl:when>
@@ -232,7 +233,7 @@ title of the element. This does not include the label.
 
 <xsl:template match="section
                      |sect1|sect2|sect3|sect4|sect5
-                     |refsect1|refsect2|refsect3
+                     |refsect1|refsect2|refsect3|refsection
                      |simplesect"
               mode="title.markup">
   <xsl:param name="allow-anchors" select="0"/>
@@ -246,6 +247,7 @@ title of the element. This does not include the label.
                                       |refsect1info/title
                                       |refsect2info/title
                                       |refsect3info/title
+                                      |refsectioninfo/title
                                       |title)[1]"/>
 
   <xsl:apply-templates select="$title" mode="title.markup">
@@ -385,7 +387,7 @@ title of the element. This does not include the label.
 
 <xsl:template match="table" mode="title.markup">
   <xsl:param name="allow-anchors" select="0"/>
-  <xsl:apply-templates select="title|caption" mode="title.markup">
+  <xsl:apply-templates select="(title|caption)[1]" mode="title.markup">
     <xsl:with-param name="allow-anchors" select="$allow-anchors"/>
   </xsl:apply-templates>
 </xsl:template>

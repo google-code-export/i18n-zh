@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: formal.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: formal.xsl 7249 2007-08-18 09:34:34Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -16,7 +16,9 @@
 
 <xsl:template name="formal.object">
   <xsl:param name="placement" select="'before'"/>
-  <xsl:param name="class" select="local-name(.)"/>
+  <xsl:param name="class">
+    <xsl:apply-templates select="." mode="class.value"/>
+  </xsl:param>
 
   <xsl:call-template name="id.warning"/>
 

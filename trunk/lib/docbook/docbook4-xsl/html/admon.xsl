@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: admon.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: admon.xsl 7072 2007-07-17 16:14:37Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -112,12 +112,12 @@
       </xsl:attribute>
     </xsl:if>
 
-    <h3 class="title">
-      <xsl:call-template name="anchor"/>
-      <xsl:if test="$admon.textlabel != 0 or title or info/title">
+    <xsl:if test="$admon.textlabel != 0 or title or info/title">
+      <h3 class="title">
+        <xsl:call-template name="anchor"/>
         <xsl:apply-templates select="." mode="object.title.markup"/>
-      </xsl:if>
-    </h3>
+      </h3>
+    </xsl:if>
 
     <xsl:apply-templates/>
   </div>

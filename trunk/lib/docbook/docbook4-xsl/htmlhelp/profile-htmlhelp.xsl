@@ -7,7 +7,7 @@
                 exclude-result-prefixes="doc exsl set">
 
 <!-- ********************************************************************
-     $Id: profile-htmlhelp.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: profile-htmlhelp.xsl 1676 2002-06-12 13:21:54Z kosek $
      ******************************************************************** 
 
      This file is used by htmlhelp.xsl if you want to generate source

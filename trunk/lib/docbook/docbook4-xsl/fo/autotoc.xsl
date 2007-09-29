@@ -5,12 +5,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: autotoc.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: autotoc.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -110,6 +110,7 @@
 
   <xsl:variable name="nodes" select="section|sect1|refentry
                                      |article|bibliography|glossary
+                                     |qandaset[$qanda.in.toc != 0]
                                      |appendix|index"/>
   <xsl:if test="$nodes">
     <fo:block id="toc...{$id}"
@@ -145,6 +146,7 @@
 
   <xsl:variable name="nodes"
                 select="section|sect1|sect2|sect3|sect4|sect5|refentry
+                        |qandaset[$qanda.in.toc != 0]
                         |bridgehead[$bridgehead.in.toc != 0]"/>
 
   <xsl:variable name="level">
@@ -192,9 +194,7 @@
     <xsl:apply-templates select="." mode="label.markup"/>
   </xsl:variable>
 
-  <fo:block xsl:use-attribute-sets="toc.line.properties"
-            end-indent="{$toc.indent.width}pt"
-            last-line-end-indent="-{$toc.indent.width}pt">
+  <fo:block xsl:use-attribute-sets="toc.line.properties">
     <fo:inline keep-with-next.within-line="always">
       <fo:basic-link internal-destination="{$id}">
         <xsl:if test="$label != ''">
@@ -484,6 +484,7 @@
   </xsl:call-template>
 
   <xsl:variable name="nodes" select="section|sect1
+                                     |qandaset[$qanda.in.toc != 0]
                                      |simplesect[$simplesect.in.toc != 0]
                                      |refentry|appendix"/>
 
@@ -531,7 +532,8 @@
         <xsl:call-template name="set.toc.indent"/>
       </xsl:attribute>
               
-      <xsl:apply-templates select="sect2" mode="toc">
+      <xsl:apply-templates select="sect2|qandaset[$qanda.in.toc != 0]" 
+                           mode="toc">
         <xsl:with-param name="toc-context" select="$toc-context"/>
       </xsl:apply-templates>
     </fo:block>
@@ -570,7 +572,8 @@
         </xsl:call-template>
       </xsl:attribute>
               
-      <xsl:apply-templates select="sect3" mode="toc">
+      <xsl:apply-templates select="sect3|qandaset[$qanda.in.toc != 0]" 
+                           mode="toc">
         <xsl:with-param name="toc-context" select="$toc-context"/>
       </xsl:apply-templates>
     </fo:block>
@@ -609,7 +612,8 @@
         </xsl:call-template>
       </xsl:attribute>
               
-      <xsl:apply-templates select="sect4" mode="toc">
+      <xsl:apply-templates select="sect4|qandaset[$qanda.in.toc != 0]" 
+                           mode="toc">
         <xsl:with-param name="toc-context" select="$toc-context"/>
       </xsl:apply-templates>
     </fo:block>
@@ -648,7 +652,8 @@
         </xsl:call-template>
       </xsl:attribute>
               
-      <xsl:apply-templates select="sect5" mode="toc">
+      <xsl:apply-templates select="sect5|qandaset[$qanda.in.toc != 0]" 
+                           mode="toc">
         <xsl:with-param name="toc-context" select="$toc-context"/>
       </xsl:apply-templates>
     </fo:block>
@@ -722,7 +727,8 @@
           </xsl:call-template>
         </xsl:attribute>
                 
-        <xsl:apply-templates select="section" mode="toc">
+        <xsl:apply-templates select="section|qandaset[$qanda.in.toc != 0]" 
+                           mode="toc">
           <xsl:with-param name="toc-context" select="$toc-context"/>
         </xsl:apply-templates>
       </fo:block>
@@ -801,6 +807,49 @@
 </xsl:template>
 
 <!-- ==================================================================== -->
+
+<!-- qandaset handled like a section when qanda.in.toc is set -->
+<xsl:template match="qandaset" mode="toc">
+  <xsl:param name="toc-context" select="."/>
+
+  <xsl:variable name="id">
+    <xsl:call-template name="object.id"/>
+  </xsl:variable>
+
+  <xsl:variable name="cid">
+    <xsl:call-template name="object.id">
+      <xsl:with-param name="object" select="$toc-context"/>
+    </xsl:call-template>
+  </xsl:variable>
+
+  <xsl:variable name="depth" select="count(ancestor::section) + 1"/>
+  <xsl:variable name="reldepth"
+                select="count(ancestor::*)-count($toc-context/ancestor::*)"/>
+
+  <xsl:variable name="depth.from.context" select="count(ancestor::*)-count($toc-context/ancestor::*)"/>
+
+  <xsl:if test="$toc.section.depth &gt;= $depth">
+    <xsl:call-template name="toc.line">
+      <xsl:with-param name="toc-context" select="$toc-context"/>
+    </xsl:call-template>
+
+    <xsl:if test="$toc.section.depth > $depth 
+                  and $toc.max.depth > $depth.from.context
+                  and (child::qandadiv or child::qandaentry)">
+      <fo:block id="toc.{$cid}.{$id}">
+        <xsl:attribute name="margin-left">
+          <xsl:call-template name="set.toc.indent">
+            <xsl:with-param name="reldepth" select="$reldepth"/>
+          </xsl:call-template>
+        </xsl:attribute>
+                
+        <xsl:apply-templates select="qandadiv|qandaentry" mode="toc">
+          <xsl:with-param name="toc-context" select="$toc-context"/>
+        </xsl:apply-templates>
+      </fo:block>
+    </xsl:if>
+  </xsl:if>
+</xsl:template>
 
 </xsl:stylesheet>
 

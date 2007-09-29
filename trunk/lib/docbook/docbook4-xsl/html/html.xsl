@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: html.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: html.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -224,8 +224,17 @@
   <!-- permit customization of class attributes -->
   <!-- Use element name by default -->
   <xsl:attribute name="class">
-    <xsl:value-of select="$class"/>
+    <xsl:apply-templates select="." mode="class.value">
+      <xsl:with-param name="class" select="$class"/>
+    </xsl:apply-templates>
   </xsl:attribute>
+</xsl:template>
+
+<xsl:template match="*" mode="class.value">
+  <xsl:param name="class" select="local-name(.)"/>
+  <!-- permit customization of class value only -->
+  <!-- Use element name by default -->
+  <xsl:value-of select="$class"/>
 </xsl:template>
 
 </xsl:stylesheet>
