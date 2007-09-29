@@ -14,12 +14,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: graphics.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: graphics.xsl 7251 2007-08-18 11:29:53Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      Contributors:
      Colin Paul Adams, <colin@colina.demon.co.uk>
@@ -192,10 +192,8 @@
   </xsl:variable>
 
   <xsl:variable name="bgcolor">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="../processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'background-color'"/>
+    <xsl:call-template name="pi.dbfo_background-color">
+      <xsl:with-param name="node" select=".."/>
     </xsl:call-template>
   </xsl:variable>
 
@@ -377,9 +375,11 @@
             </xsl:otherwise>
           </xsl:choose>
         </xsl:when>
-        <xsl:otherwise>
-          <a xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"
-             href="{$filename}"/>
+	<xsl:otherwise>
+	  <xsl:message terminate="yes">
+	    <xsl:text>Cannot insert </xsl:text><xsl:value-of select="$filename"/>
+	    <xsl:text>. Check use.extensions and textinsert.extension parameters.</xsl:text> 
+	  </xsl:message>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:when>
@@ -496,9 +496,11 @@
           </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <a xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"
-             href="{$filename}"/>
-        </xsl:otherwise>
+	  <xsl:message terminate="yes">
+	    <xsl:text>Cannot insert </xsl:text><xsl:value-of select="$filename"/>
+	    <xsl:text>. Check use.extensions and textinsert.extension parameters.</xsl:text> 
+	  </xsl:message>
+	</xsl:otherwise>
       </xsl:choose>
     </xsl:when>
     <xsl:otherwise>
@@ -534,6 +536,7 @@
 </xsl:template>
 
 <xsl:template match="textdata">
+  <xsl:variable name="vendor" select="system-property('xsl:vendor')"/>
   <xsl:variable name="filename">
     <xsl:choose>
       <xsl:when test="@entityref">
@@ -566,16 +569,19 @@
         <xsl:when test="element-available('xtext:insertfile')">
           <xtext:insertfile href="{$filename}"/>
         </xsl:when>
-        <xsl:otherwise>
-          <xsl:message terminate="yes">
-            <xsl:text>No insertfile extension available.</xsl:text>
-          </xsl:message>
-        </xsl:otherwise>
+	<xsl:otherwise>
+	  <xsl:message terminate="yes">
+	    <xsl:text>Don't know how to insert files with </xsl:text>
+	    <xsl:value-of select="$vendor"/>
+	  </xsl:message>
+	</xsl:otherwise>
       </xsl:choose>
     </xsl:when>
     <xsl:otherwise>
-      <a xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"
-         href="{$filename}"/>
+      <xsl:message terminate="yes">
+	<xsl:text>Cannot insert </xsl:text><xsl:value-of select="$filename"/>
+	<xsl:text>. Check use.extensions and textinsert.extension parameters.</xsl:text> 
+      </xsl:message>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
@@ -612,8 +618,8 @@
 <xsl:template match="@fileref">
   <!-- need a check for absolute urls -->
   <xsl:choose>
-    <xsl:when test="contains(., ':')">
-      <!-- it has a uri scheme so it is an absolute uri -->
+    <xsl:when test="contains(., ':') or starts-with(.,'/')">
+      <!-- it has a uri scheme or starts with '/', so it is an absolute uri -->
       <xsl:value-of select="."/>
     </xsl:when>
     <xsl:when test="$keep.relative.image.uris != 0">

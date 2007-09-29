@@ -5,12 +5,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: qandaset.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: qandaset.xsl 6944 2007-07-04 08:41:53Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -23,11 +23,7 @@
                                           and local-name(.) != 'qandadiv'
                                           and local-name(.) != 'qandaentry']"/>
   <xsl:variable name="toc">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'toc'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_toc"/>
   </xsl:variable>
 
   <xsl:variable name="toc.params">
@@ -86,11 +82,7 @@
   </xsl:if>
 
   <xsl:variable name="toc">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'toc'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_toc"/>
   </xsl:variable>
 
   <xsl:variable name="toc.params">
@@ -176,9 +168,9 @@
       </xsl:variable>
 
       <xsl:if test="string-length($label.content) &gt; 0">
-        <b>
+        <p><b>
           <xsl:copy-of select="$label.content"/>
-        </b>
+        </b></p>
       </xsl:if>
     </td>
     <td align="left" valign="top">
@@ -214,9 +206,9 @@
         <xsl:apply-templates select="." mode="label.markup"/>
       </xsl:variable>
       <xsl:if test="string-length($answer.label) &gt; 0">
-        <b>
+        <p><b>
           <xsl:copy-of select="$answer.label"/>
-        </b>
+        </b></p>
       </xsl:if>
     </td>
     <td align="left" valign="top">
@@ -336,35 +328,19 @@
 <xsl:template name="process.qandaset">
 
   <xsl:variable name="label-width">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-        select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'label-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_label-width"/>
   </xsl:variable>
 
   <xsl:variable name="table-summary">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-        select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'table-summary'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_table-summary"/>
   </xsl:variable>
 
   <xsl:variable name="cellpadding">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-        select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'cellpadding'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_cellpadding"/>
   </xsl:variable>
 
   <xsl:variable name="cellspacing">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-        select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'cellspacing'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_cellspacing"/>
   </xsl:variable>
 
   <table border="0" summary="Q and A Set">

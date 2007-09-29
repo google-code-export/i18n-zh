@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: titlepage.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: titlepage.xsl 7253 2007-08-18 16:49:39Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -129,12 +129,15 @@
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:call-template name="anchor"/>
-    <xsl:call-template name="formal.object.heading">
-      <xsl:with-param name="title">
-        <xsl:apply-templates select="." mode="title.markup"/>
-      </xsl:with-param>
-    </xsl:call-template>
+    <xsl:if test="$abstract.notitle.enabled = 0">
+      <xsl:call-template name="formal.object.heading">
+        <xsl:with-param name="title">
+          <xsl:apply-templates select="." mode="title.markup"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
     <xsl:apply-templates mode="titlepage.mode"/>
+    <xsl:call-template name="process.footnotes"/>
   </div>
 </xsl:template>
 
@@ -207,22 +210,29 @@
     </xsl:if>
     <h3>
       <xsl:apply-templates select="." mode="class.attribute"/>
-      <xsl:call-template name="person.name"/>
+      <xsl:choose>
+        <xsl:when test="orgname">
+          <xsl:apply-templates/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="person.name"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </h3>
     <xsl:if test="not($contrib.inline.enabled = 0)">
-      <xsl:apply-templates mode="titlepage.mode" select="./contrib"/>
+      <xsl:apply-templates mode="titlepage.mode" select="contrib"/>
     </xsl:if>
-    <xsl:apply-templates mode="titlepage.mode" select="./affiliation"/>
-    <xsl:apply-templates mode="titlepage.mode" select="./email"/>
+    <xsl:apply-templates mode="titlepage.mode" select="affiliation"/>
+    <xsl:apply-templates mode="titlepage.mode" select="email"/>
     <xsl:if test="not($blurb.on.titlepage.enabled = 0)">
       <xsl:choose>
         <xsl:when test="$contrib.inline.enabled = 0">
           <xsl:apply-templates mode="titlepage.mode"
-                               select="./contrib|./authorblurb|./personblurb"/>
+                               select="contrib|authorblurb|personblurb"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates mode="titlepage.mode"
-                               select="./authorblurb|./personblurb"/>
+                               select="authorblurb|personblurb"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -332,7 +342,7 @@
       <span>
         <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:apply-templates mode="titlepage.mode"/>
-      </span>
+      </span><xsl:text>&#160;</xsl:text>
     </xsl:when>
     <xsl:otherwise>
       <div>
@@ -523,9 +533,7 @@
       <xsl:variable name="filename">
         <xsl:call-template name="make-relative-filename">
           <xsl:with-param name="base.dir" select="$base.dir"/>
-	  <xsl:with-param name="base.name">
-            <xsl:apply-templates mode="chunk-filename" select="."/>
-	  </xsl:with-param>
+	  <xsl:with-param name="base.name" select="concat($id,$html.ext)"/>
         </xsl:call-template>
       </xsl:variable>
 
@@ -621,7 +629,7 @@
             <xsl:apply-templates mode="titlepage.mode" select="contrib"/>
             <xsl:text>: </xsl:text>
             <xsl:call-template name="person.name"/>
-            <xsl:apply-templates mode="titlepage.mode" select="./affiliation"/>
+            <xsl:apply-templates mode="titlepage.mode" select="affiliation"/>
             <xsl:apply-templates select="following-sibling::othercredit[string(contrib)=$contrib]" mode="titlepage.othercredits"/>
           </xsl:with-param>
         </xsl:call-template>
@@ -634,7 +642,7 @@
           <xsl:call-template name="person.name"/>
         </xsl:with-param>
       </xsl:call-template>
-      <xsl:apply-templates mode="titlepage.mode" select="./affiliation"/>
+      <xsl:apply-templates mode="titlepage.mode" select="affiliation"/>
     </xsl:otherwise>
   </xsl:choose>
   </xsl:when>
@@ -935,7 +943,9 @@
 
   <h1>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <a name="{$id}"/>
+    <xsl:if test="$generate.id.attributes = 0">
+      <a name="{$id}"/>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="$show.revisionflag != 0 and @revisionflag">
 	<span class="{@revisionflag}">

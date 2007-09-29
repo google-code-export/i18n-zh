@@ -1,16 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE xsl:stylesheet [
-  <!ENTITY comment.block.parents "parent::answer|parent::appendix|parent::article|parent::bibliodiv|
-                                  parent::bibliography|parent::blockquote|parent::caution|parent::chapter|
-                                  parent::glossary|parent::glossdiv|parent::important|parent::index|
-                                  parent::indexdiv|parent::listitem|parent::note|parent::orderedlist|
-                                  parent::partintro|parent::preface|parent::procedure|parent::qandadiv|
-                                  parent::qandaset|parent::question|parent::refentry|parent::refnamediv|
-                                  parent::refsect1|parent::refsect2|parent::refsect3|parent::refsection|
-                                  parent::refsynopsisdiv|parent::sect1|parent::sect2|parent::sect3|parent::sect4|
-                                  parent::sect5|parent::section|parent::setindex|parent::sidebar|
-                                  parent::simplesect|parent::taskprerequisites|parent::taskrelated|
-                                  parent::tasksummary|parent::warning">
+  <!ENTITY comment.block.parents "parent::answer|parent::appendix|parent::article|parent::bibliodiv|parent::bibliography|parent::blockquote|parent::caution|parent::chapter|parent::glossary|parent::glossdiv|parent::important|parent::index|parent::indexdiv|parent::listitem|parent::note|parent::orderedlist|parent::partintro|parent::preface|parent::procedure|parent::qandadiv|parent::qandaset|parent::question|parent::refentry|parent::refnamediv|parent::refsect1|parent::refsect2|parent::refsect3|parent::refsection|parent::refsynopsisdiv|parent::sect1|parent::sect2|parent::sect3|parent::sect4|parent::sect5|parent::section|parent::setindex|parent::sidebar|parent::simplesect|parent::taskprerequisites|parent::taskrelated|parent::tasksummary|parent::warning">
 ]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xlink='http://www.w3.org/1999/xlink'
@@ -19,12 +9,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: inline.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: inline.xsl 7232 2007-08-11 16:10:40Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 <xsl:template name="simple.xlink">
@@ -51,6 +41,17 @@
                             and (not(contains($xhref,'&#40;'))
                             or starts-with($xhref,
                                        '#xpointer&#40;id&#40;'))">1</xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <!-- Is it an olink ? -->
+        <xsl:variable name="is.olink">
+          <xsl:choose>
+	    <!-- If xlink:role="http://docbook.org/xlink/role/olink" -->
+            <!-- and if the href contains # -->
+            <xsl:when test="contains($xhref,'#') and
+	         @xlink:role = $xolink.role">1</xsl:when>
             <xsl:otherwise>0</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -82,6 +83,8 @@
 
               <xsl:otherwise>
                 <a>
+                  <xsl:apply-templates select="." mode="class.attribute"/>
+
                   <xsl:attribute name="href">
                     <xsl:call-template name="href.target">
                       <xsl:with-param name="object" select="$target"/>
@@ -89,7 +92,7 @@
                   </xsl:attribute>
 
                   <xsl:choose>
-                    <xsl:when test="$node/@xlink.title">
+                    <xsl:when test="$node/@xlink:title">
                       <xsl:attribute name="title">
                         <xsl:value-of select="$node/@xlink:title"/>
                       </xsl:attribute>
@@ -113,13 +116,20 @@
             </xsl:choose>
           </xsl:when>
 
+          <xsl:when test="$is.olink = 1">
+	    <xsl:call-template name="olink">
+	      <xsl:with-param name="content" select="$content"/>
+	    </xsl:call-template>
+          </xsl:when>
+
           <!-- otherwise it's a URI -->
           <xsl:otherwise>
             <a>
+              <xsl:apply-templates select="." mode="class.attribute"/>
               <xsl:attribute name="href">
                 <xsl:value-of select="$xhref"/>
               </xsl:attribute>
-              <xsl:if test="$node/@xlink.title">
+              <xsl:if test="$node/@xlink:title">
                 <xsl:attribute name="title">
                   <xsl:value-of select="$node/@xlink:title"/>
                 </xsl:attribute>
@@ -139,6 +149,7 @@
         </xsl:call-template>
 
         <a>
+          <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:attribute name="href">
             <xsl:call-template name="href.target">
               <xsl:with-param name="object" select="$target"/>
@@ -220,6 +231,7 @@
   </xsl:param>
 
   <span>
+    <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:call-template name="generate.html.title"/>
     <xsl:call-template name="dir"/>
 
@@ -233,7 +245,6 @@
       </xsl:when>
       <xsl:otherwise>
         <strong>
-          <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:copy-of select="$content"/>
         </strong>
       </xsl:otherwise>
@@ -664,6 +675,7 @@
   <xsl:choose>
     <xsl:when test="$citerefentry.link != '0'">
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:call-template name="generate.citerefentry.link"/>
         </xsl:attribute>
@@ -710,9 +722,7 @@
         </xsl:apply-templates>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:attribute name="class">
-          <xsl:text>emphasis</xsl:text>
-        </xsl:attribute>
+        <xsl:apply-templates select="." mode="class.attribute"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:call-template name="anchor"/>
@@ -874,6 +884,7 @@
       <xsl:choose>
         <xsl:when test="$target">
           <a>
+            <xsl:apply-templates select="." mode="class.attribute"/>
             <xsl:if test="@id or @xml:id">
               <xsl:attribute name="name">
                 <xsl:value-of select="(@id|@xml:id)[1]"/>
@@ -960,6 +971,7 @@
             </xsl:call-template>
           </xsl:variable>
           <a href="{$chunkbase}#{$id}">
+            <xsl:apply-templates select="." mode="class.attribute"/>
             <xsl:call-template name="inline.italicseq">
               <xsl:with-param name="content" select="$content"/>
             </xsl:call-template>
@@ -997,6 +1009,7 @@
         </xsl:when>
         <xsl:otherwise>
           <a>
+            <xsl:apply-templates select="." mode="class.attribute"/>
             <xsl:if test="@id or @xml:id">
               <xsl:attribute name="name">
                 <xsl:value-of select="(@id|@xml:id)[1]"/>
@@ -1133,6 +1146,7 @@
         <xsl:text>&lt;</xsl:text>
       </xsl:if>
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:text>mailto:</xsl:text>
           <xsl:value-of select="."/>
@@ -1156,7 +1170,7 @@
       <xsl:when test="$action='click'">-</xsl:when>
       <xsl:when test="$action='double-click'">-</xsl:when>
       <xsl:when test="$action='other'"></xsl:when>
-      <xsl:otherwise>-</xsl:otherwise>
+      <xsl:otherwise>+</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
   <xsl:for-each select="*">
@@ -1233,13 +1247,22 @@
 
       <xsl:text>[</xsl:text>
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$target"/>
           </xsl:call-template>
         </xsl:attribute>
 
-        <xsl:call-template name="inline.charseq"/>
+	<xsl:choose>
+	  <xsl:when test="$bibliography.numbered != 0">
+	    <xsl:apply-templates select="$target" mode="citation"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:call-template name="inline.charseq"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+
       </a>
       <xsl:text>]</xsl:text>
     </xsl:when>
@@ -1249,6 +1272,11 @@
       <xsl:text>]</xsl:text>
     </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template match="biblioentry|bibliomixed" mode="citation">
+  <xsl:number from="bibliography" count="biblioentry|bibliomixed"
+	      level="any" format="1"/>
 </xsl:template>
 
 <!-- ==================================================================== -->

@@ -7,23 +7,20 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: glossary.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: glossary.xsl 7246 2007-08-16 20:58:06Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
 <!-- ==================================================================== -->
 
 <xsl:template match="glossary">
+  &setup-language-variable;
   <xsl:call-template name="id.warning"/>
-  
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
-  </xsl:variable>
 
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
@@ -39,8 +36,11 @@
       <xsl:when test="glossdiv">
         <xsl:apply-templates select="(glossdiv[1]/preceding-sibling::*)"/>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="glossentry">
         <xsl:apply-templates select="(glossentry[1]/preceding-sibling::*)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
 
@@ -48,14 +48,14 @@
       <xsl:when test="glossdiv">
         <xsl:apply-templates select="glossdiv"/>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="glossentry">
         <dl>
           <xsl:choose>
             <xsl:when test="$glossary.sort != 0">
               <xsl:apply-templates select="glossentry">
-                <xsl:sort lang="$language"
-                          select="translate(glossterm, &lowercase;, 
-                                            &uppercase;)"/>
+                <xsl:sort lang="{$language}"
+                          select="translate(glossterm, $lowercase, 
+                                            $uppercase)"/>
               </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
@@ -63,6 +63,9 @@
             </xsl:otherwise>
           </xsl:choose>
         </dl>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- empty glossary -->
       </xsl:otherwise>
     </xsl:choose>
 
@@ -81,6 +84,7 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="glosslist">
+  &setup-language-variable;
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:call-template name="anchor"/>
@@ -91,9 +95,9 @@
       <xsl:choose>
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="glossentry">
-            <xsl:sort lang="$language"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+            <xsl:sort lang="{$language}"
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -107,6 +111,7 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="glossdiv">
+  &setup-language-variable;
   <xsl:call-template name="id.warning"/>
 
   <div>
@@ -117,9 +122,9 @@
       <xsl:choose>
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="glossentry">
-            <xsl:sort lang="$language"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+            <xsl:sort lang="{$language}"
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -248,6 +253,7 @@ GlossEntry ::=
         <xsl:choose>
           <xsl:when test="$target">
             <a>
+              <xsl:apply-templates select="." mode="class.attribute"/>
               <xsl:attribute name="href">
                 <xsl:call-template name="href.target">
                   <xsl:with-param name="object" select="$target"/>
@@ -309,6 +315,7 @@ GlossEntry ::=
   <xsl:choose>
     <xsl:when test="$target">
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$target"/>
@@ -344,6 +351,7 @@ GlossEntry ::=
 <!-- Glossary collection -->
 
 <xsl:template match="glossary[@role='auto']" priority="2">
+  &setup-language-variable;
   <xsl:variable name="terms" 
                 select="//glossterm[not(parent::glossdef)]|//firstterm"/>
   <xsl:variable name="collection" select="document($glossary.collection, .)"/>
@@ -401,9 +409,9 @@ GlossEntry ::=
           <xsl:choose>
             <xsl:when test="$glossary.sort != 0">
               <xsl:for-each select="$collection//glossentry">
-                <xsl:sort lang="$language"
-                          select="translate(glossterm, &lowercase;, 
-                                            &uppercase;)"/>
+                <xsl:sort lang="{$language}"
+                          select="translate(glossterm, $lowercase, 
+                                            $uppercase)"/>
                 <xsl:variable name="cterm" select="glossterm"/>
                 <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
                   <xsl:apply-templates select="." mode="auto-glossary"/>
@@ -437,6 +445,8 @@ GlossEntry ::=
 <xsl:template match="glossdiv" mode="auto-glossary">
   <xsl:param name="terms" select="."/>
 
+  &setup-language-variable;
+
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates select="(glossentry[1]/preceding-sibling::*)"/>
@@ -445,9 +455,9 @@ GlossEntry ::=
       <xsl:choose>
         <xsl:when test="$glossary.sort != 0">
           <xsl:for-each select="glossentry">
-            <xsl:sort lang="$language"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+            <xsl:sort lang="{$language}"
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
             <xsl:variable name="cterm" select="glossterm"/>
             <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
               <xsl:apply-templates select="." mode="auto-glossary"/>

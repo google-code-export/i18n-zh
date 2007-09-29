@@ -7,12 +7,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: callout.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: callout.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -96,6 +96,7 @@
   <xsl:choose>
     <xsl:when test="$target">
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:if test="@id or @xml:id">
           <xsl:attribute name="name">
             <xsl:value-of select="(@id|@xml:id)[1]"/>

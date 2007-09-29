@@ -8,12 +8,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: callout.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: callout.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -136,9 +136,11 @@
     <xsl:when test="$callout.graphics != '0'
                     and $conum &lt;= $callout.graphics.number.limit">
       <xsl:variable name="filename"
-                    select="concat($callout.graphics.path,$conum,$callout.graphics.extension)"/>
+                    select="concat($callout.graphics.path, $conum,
+		                   $callout.graphics.extension)"/>
 
-      <fo:external-graphic>
+      <fo:external-graphic content-width="{$callout.icon.size}"
+                           width="{$callout.icon.size}">
         <xsl:attribute name="src">
           <xsl:choose>
             <xsl:when test="$passivetex.extensions != 0

@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: component.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: component.xsl 7000 2007-07-10 20:41:35Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -36,11 +36,13 @@
 
   <xsl:element name="h{$level+1}">
     <xsl:attribute name="class">title</xsl:attribute>
-    <xsl:call-template name="anchor">
-      <xsl:with-param name="node" select="$node"/>
-      <xsl:with-param name="conditional" select="0"/>
-    </xsl:call-template>
-    <xsl:apply-templates select="$node" mode="object.title.markup">
+    <xsl:if test="$generate.id.attributes = 0">
+      <xsl:call-template name="anchor">
+	<xsl:with-param name="node" select="$node"/>
+	<xsl:with-param name="conditional" select="0"/>
+      </xsl:call-template>
+    </xsl:if>
+      <xsl:apply-templates select="$node" mode="object.title.markup">
       <xsl:with-param name="allow-anchors" select="1"/>
     </xsl:apply-templates>
   </xsl:element>
@@ -371,7 +373,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="article/title" mode="titlepage.mode" priority="2">
+<xsl:template match="article/title|article/articleinfo/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::article[1]"/>
   </xsl:call-template>

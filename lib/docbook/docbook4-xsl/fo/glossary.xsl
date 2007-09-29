@@ -8,12 +8,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: glossary.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: glossary.xsl 6933 2007-07-03 11:48:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -37,24 +37,18 @@
                                            or self::glossdiv
                                            or self::glossentry)]"/>
 
+  &setup-language-variable;
+
   <xsl:variable name="id">
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
   <xsl:variable name="presentation">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glossary-presentation'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glossary-presentation"/>
   </xsl:variable>
 
   <xsl:variable name="term-width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glossterm-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glossterm-width"/>
   </xsl:variable>
 
   <xsl:variable name="width">
@@ -66,10 +60,6 @@
         <xsl:value-of select="$term-width"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:variable>
-
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
   </xsl:variable>
 
   <fo:block id="{$id}">
@@ -93,8 +83,8 @@
             <xsl:when test="$glossary.sort != 0">
               <xsl:apply-templates select="$entries" mode="glossary.as.list">
                 <xsl:sort lang="{$language}"
-                          select="translate(glossterm, &lowercase;, 
-                                            &uppercase;)"/>
+                          select="translate(glossterm, $lowercase, 
+                                            $uppercase)"/>
               </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
@@ -110,8 +100,8 @@
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="$entries" mode="glossary.as.blocks">
             <xsl:sort lang="{$language}"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -125,8 +115,8 @@
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="$entries" mode="glossary.as.blocks">
             <xsl:sort lang="{$language}"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -146,8 +136,8 @@
             <xsl:when test="$glossary.sort != 0">
               <xsl:apply-templates select="$entries" mode="glossary.as.list">
                 <xsl:sort lang="{$language}"
-                          select="translate(glossterm, &lowercase;, 
-                                            &uppercase;)"/>
+                          select="translate(glossterm, $lowercase, 
+                                            $uppercase)"/>
               </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
@@ -236,20 +226,14 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="glosslist">
+  &setup-language-variable;
+
   <xsl:variable name="presentation">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glosslist-presentation'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glosslist-presentation"/>
   </xsl:variable>
 
   <xsl:variable name="term-width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glossterm-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glossterm-width"/>
   </xsl:variable>
 
   <xsl:variable name="width">
@@ -261,10 +245,6 @@
         <xsl:value-of select="$term-width"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:variable>
-
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
   </xsl:variable>
 
   <xsl:if test="title or info/title">
@@ -280,8 +260,8 @@
           <xsl:when test="$glossary.sort != 0">
             <xsl:apply-templates select="glossentry" mode="glossary.as.list">
               <xsl:sort lang="{$language}"
-                        select="translate(glossterm, &lowercase;, 
-                                          &uppercase;)"/>
+                        select="translate(glossterm, $lowercase, 
+                                          $uppercase)"/>
             </xsl:apply-templates>
           </xsl:when>
           <xsl:otherwise>
@@ -295,8 +275,8 @@
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="glossentry" mode="glossary.as.blocks">
             <xsl:sort lang="{$language}"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -309,8 +289,8 @@
         <xsl:when test="$glossary.sort != 0">
           <xsl:apply-templates select="glossentry" mode="glossary.as.blocks">
             <xsl:sort lang="{$language}"
-                      select="translate(glossterm, &lowercase;, 
-                                        &uppercase;)"/>
+                      select="translate(glossterm, $lowercase, 
+                                        $uppercase)"/>
           </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
@@ -326,8 +306,8 @@
           <xsl:when test="$glossary.sort != 0">
             <xsl:apply-templates select="glossentry" mode="glossary.as.list">
               <xsl:sort lang="{$language}"
-                        select="translate(glossterm, &lowercase;, 
-                                          &uppercase;)"/>
+                        select="translate(glossterm, $lowercase, 
+                                          $uppercase)"/>
             </xsl:apply-templates>
           </xsl:when>
           <xsl:otherwise>
@@ -371,24 +351,18 @@
                                            or self::glossdiv
                                            or self::glossentry)]"/>
 
+  &setup-language-variable;
+
   <xsl:variable name="id">
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
   <xsl:variable name="presentation">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glossary-presentation'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glossary-presentation"/>
   </xsl:variable>
 
   <xsl:variable name="term-width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'glossterm-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_glossterm-width"/>
   </xsl:variable>
 
   <xsl:variable name="width">
@@ -400,10 +374,6 @@
         <xsl:value-of select="$term-width"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:variable>
-
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
   </xsl:variable>
 
   <xsl:if test="$glossary.collection = ''">
@@ -472,8 +442,8 @@
               <xsl:when test="$glossary.sort != 0">
                 <xsl:for-each select="$collection//glossentry">
                   <xsl:sort lang="{$language}"
-                            select="translate(glossterm, &lowercase;, 
-                                              &uppercase;)"/>
+                            select="translate(glossterm, $lowercase, 
+                                              $uppercase)"/>
                   <xsl:variable name="cterm" select="glossterm"/>
                   <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
                     <xsl:apply-templates select="." 
@@ -499,8 +469,8 @@
             <xsl:when test="$glossary.sort != 0">
               <xsl:for-each select="$collection//glossentry">
                 <xsl:sort lang="{$language}"
-                          select="translate(glossterm, &lowercase;, 
-                                            &uppercase;)"/>
+                          select="translate(glossterm, $lowercase, 
+                                            $uppercase)"/>
                 <xsl:variable name="cterm" select="glossterm"/>
                 <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
                   <xsl:apply-templates select="." 
@@ -527,8 +497,8 @@
               <xsl:when test="$glossary.sort != 0">
                 <xsl:for-each select="$collection//glossentry">
                   <xsl:sort lang="{$language}"
-                            select="translate(glossterm, &lowercase;, 
-                                              &uppercase;)"/>
+                            select="translate(glossterm, $lowercase, 
+                                              $uppercase)"/>
                   <xsl:variable name="cterm" select="glossterm"/>
                   <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
                     <xsl:apply-templates select="." 
@@ -630,9 +600,7 @@
   <xsl:param name="width" select="$glossterm.width"/>
   <xsl:param name="terms" select="."/>
 
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
-  </xsl:variable>
+  &setup-language-variable;
 
   <xsl:variable name="preamble"
                 select="*[not(self::title
@@ -650,7 +618,7 @@
       <xsl:when test="$glossary.sort != 0">
         <xsl:for-each select="glossentry">
           <xsl:sort lang="{$language}"
-                    select="translate(glossterm, &lowercase;, &uppercase;)"/>
+                    select="translate(glossterm, $lowercase, $uppercase)"/>
           <xsl:variable name="cterm" select="glossterm"/>
           <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
             <xsl:apply-templates select="." mode="auto-glossary-as-list"/>
@@ -676,9 +644,7 @@
 <xsl:template match="glossdiv" mode="auto-glossary-as-blocks">
   <xsl:param name="terms" select="."/>
 
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
-  </xsl:variable>
+  &setup-language-variable;
 
   <xsl:variable name="preamble"
                 select="*[not(self::title
@@ -693,7 +659,7 @@
     <xsl:when test="$glossary.sort != 0">
       <xsl:for-each select="glossentry">
         <xsl:sort lang="{$language}"
-                  select="translate(glossterm, &lowercase;, &uppercase;)"/>
+                  select="translate(glossterm, $lowercase, $uppercase)"/>
         <xsl:variable name="cterm" select="glossterm"/>
         <xsl:if test="$terms[@baseform = $cterm or . = $cterm]">
           <xsl:apply-templates select="." mode="auto-glossary-as-blocks"/>
@@ -722,11 +688,9 @@
 <xsl:template match="glossdiv" mode="glossary.as.list">
   <xsl:param name="width" select="$glossterm.width"/>
 
-  <xsl:variable name="entries" select="glossentry"/>
+  &setup-language-variable;
 
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
-  </xsl:variable>
+  <xsl:variable name="entries" select="glossentry"/>
 
   <xsl:variable name="preamble"
                 select="*[not(self::title
@@ -744,8 +708,8 @@
       <xsl:when test="$glossary.sort != 0">
         <xsl:apply-templates select="$entries" mode="glossary.as.list">
           <xsl:sort lang="{$language}"
-                    select="translate(glossterm, &lowercase;, 
-                                      &uppercase;)"/>
+                    select="translate(glossterm, $lowercase, 
+                                      $uppercase)"/>
         </xsl:apply-templates>
       </xsl:when>
       <xsl:otherwise>
@@ -954,15 +918,12 @@ GlossEntry ::=
 <!-- Format glossary blocks -->
 
 <xsl:template match="glossdiv" mode="glossary.as.blocks">
+  &setup-language-variable;
   <xsl:variable name="entries" select="glossentry"/>
   <xsl:variable name="preamble"
                 select="*[not(self::title
                             or self::subtitle
                             or self::glossentry)]"/>
-
-  <xsl:variable name="language">
-    <xsl:call-template name="l10n.language"/>
-  </xsl:variable>
 
   <xsl:call-template name="glossdiv.titlepage"/>
 
@@ -972,8 +933,8 @@ GlossEntry ::=
     <xsl:when test="$glossary.sort != 0">
       <xsl:apply-templates select="$entries" mode="glossary.as.blocks">
         <xsl:sort lang="{$language}"
-                  select="translate(glossterm, &lowercase;, 
-                                    &uppercase;)"/>
+                  select="translate(glossterm, $lowercase, 
+                                    $uppercase)"/>
       </xsl:apply-templates>
     </xsl:when>
     <xsl:otherwise>

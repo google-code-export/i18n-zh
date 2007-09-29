@@ -9,12 +9,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: verbatim.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: verbatim.xsl 6936 2007-07-04 01:30:15Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -178,26 +178,20 @@
 
   <!-- Extract the <?dbfo linenumbering.*?> PI values -->
   <xsl:variable name="pi.linenumbering.everyNth">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="$pi.context/processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'linenumbering.everyNth'"/>
+    <xsl:call-template name="pi.dbfo_linenumbering.everyNth">
+      <xsl:with-param name="node" select="$pi.context"/>
     </xsl:call-template>
   </xsl:variable>
 
   <xsl:variable name="pi.linenumbering.separator">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="$pi.context/processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'linenumbering.separator'"/>
+    <xsl:call-template name="pi.dbfo_linenumbering.separator">
+      <xsl:with-param name="node" select="$pi.context"/>
     </xsl:call-template>
   </xsl:variable>
 
   <xsl:variable name="pi.linenumbering.width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="$pi.context/processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'linenumbering.width'"/>
+    <xsl:call-template name="pi.dbfo_linenumbering.width">
+      <xsl:with-param name="node" select="$pi.context"/>
     </xsl:call-template>
   </xsl:variable>
 
@@ -356,7 +350,8 @@
 
 <xsl:template match="node()|@*" mode="hyphenate.verbatim">
   <xsl:copy>
-    <xsl:apply-templates select="node()|@*" mode="hyphenate.verbatim"/>
+    <xsl:copy-of select="@*"/>
+    <xsl:apply-templates mode="hyphenate.verbatim"/>
   </xsl:copy>
 </xsl:template>
 

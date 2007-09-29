@@ -4,12 +4,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: titlepage.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: titlepage.xsl 6933 2007-07-03 11:48:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -514,11 +514,7 @@
 <xsl:template match="revhistory" mode="titlepage.mode">
 
   <xsl:variable name="explicit.table.width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'table-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_table-width"/>
   </xsl:variable>
 
   <xsl:variable name="table.width">

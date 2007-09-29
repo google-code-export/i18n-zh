@@ -12,12 +12,12 @@
                 exclude-result-prefixes="k">
 
 <!-- ********************************************************************
-     $Id: autoidx-kimber.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: autoidx-kimber.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the DocBook XSL Stylesheet distribution.
      See ../README or http://docbook.sf.net/ for copyright
-     and other information.
+     copyright and other information.
 
      ******************************************************************** -->
 

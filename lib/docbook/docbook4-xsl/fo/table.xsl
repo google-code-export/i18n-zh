@@ -13,43 +13,31 @@
 <xsl:include href="../common/table.xsl"/>
 
 <!-- ********************************************************************
-     $Id: table.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: table.xsl 7252 2007-08-18 16:27:46Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
-<doc:reference xmlns="">
-<referenceinfo>
-<releaseinfo role="meta">
-$Id: table.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
-</releaseinfo>
-<author><surname>Walsh</surname>
-<firstname>Norman</firstname></author>
-<copyright><year>1999</year><year>2000</year>
-<holder>Norman Walsh</holder>
-</copyright>
-</referenceinfo>
-<title>Formatting Object Table Reference</title>
-
-<partintro id="partintro">
-<title>Introduction</title>
-
-<para>This is technical reference documentation for the DocBook XSL
-Stylesheets; it documents (some of) the parameters, templates, and
-other elements of the stylesheets.</para>
-
-<para>This is not intended to be <quote>user</quote> documentation.
-It is provided for developers writing customization layers for the
-stylesheets, and for anyone who's interested in <quote>how it
-works</quote>.</para>
-
-<para>Although I am trying to be thorough, this documentation is known
-to be incomplete. Don't forget to read the source, too :-)</para>
-</partintro>
+<doc:reference xmlns="" xml:id="table-templates">
+  <?dbhtml dir="fo"?>
+  <info>
+    <title>Formatting Object Table Reference</title>
+    <releaseinfo role="meta">
+      $Id: table.xsl 7252 2007-08-18 16:27:46Z mzjn $
+    </releaseinfo>
+  </info>
+  <partintro xml:id="partintro">
+    <title>Introduction</title>
+    <para>This is technical reference documentation for the FO
+      table-processing templates in the DocBook XSL Stylesheets.</para>
+    <para>This is not intended to be user documentation.  It is
+      provided for developers writing customization layers for the
+      stylesheets.</para>
+  </partintro>
 </doc:reference>
 
 <!-- ==================================================================== -->
@@ -75,11 +63,7 @@ to be incomplete. Don't forget to read the source, too :-)</para>
 <xsl:template name="calsTable">
 
   <xsl:variable name="keep.together">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'keep-together'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_keep-together"/>
   </xsl:variable>
 
   <xsl:for-each select="tgroup">
@@ -210,7 +194,7 @@ to be incomplete. Don't forget to read the source, too :-)</para>
       </fo:block-container>
     </xsl:when>
     <xsl:when test="@pgwide = 1">
-      <fo:block span="all" start-indent="0pt" end-indent="0pt">
+      <fo:block xsl:use-attribute-sets="pgwide.properties">
         <xsl:copy-of select="$table.block"/>
       </fo:block>
     </xsl:when>
@@ -289,6 +273,9 @@ to be incomplete. Don't forget to read the source, too :-)</para>
     <xsl:choose>
       <xsl:when test="../@frame">
         <xsl:value-of select="../@frame"/>
+      </xsl:when>
+      <xsl:when test="$default.table.frame != ''">
+        <xsl:value-of select="$default.table.frame"/>
       </xsl:when>
       <xsl:otherwise>all</xsl:otherwise>
     </xsl:choose>
@@ -477,16 +464,11 @@ to be incomplete. Don't forget to read the source, too :-)</para>
                 $passivetex.extensions != 0">
     <xsl:attribute name="table-layout">fixed</xsl:attribute>
   </xsl:if>
-
-  <xsl:if test="count(preceding-sibling::tgroup) = 0">
-    <!-- If this is the first tgroup, output the width attribute for the -->
-    <!-- surrounding fo:table. (If this isn't the first tgroup, trying   -->
-    <!-- to output the attribute will cause an error.)                   -->
+ 
     <xsl:attribute name="width">
       <xsl:value-of select="$table.width"/>
     </xsl:attribute>
-  </xsl:if>
-
+ 
   <xsl:choose>
     <xsl:when test="$use.extensions != 0
                     and $tablecolumns.extension != 0">
@@ -530,24 +512,20 @@ to be incomplete. Don't forget to read the source, too :-)</para>
   <xsl:variable name="explicit.table.width">
     <xsl:choose>
       <xsl:when test="self::entrytbl">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis" 
-                          select="processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'table-width'"/>
-        </xsl:call-template>
+        <xsl:call-template name="pi.dbfo_table-width"/>
       </xsl:when>
       <xsl:when test="self::table or self::informaltable">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis" 
-                          select="processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'table-width'"/>
-        </xsl:call-template>
+        <xsl:call-template name="pi.dbfo_table-width"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis" 
-                          select="../processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'table-width'"/>
+        <!-- * no dbfo@table-width PI as a child of this table, so check -->
+        <!-- * the parent of this table to see if the table has any -->
+        <!-- * sibling dbfo@table-width PIs (FIXME: 2007-07 MikeSmith: we -->
+        <!-- * should really instead be checking here just to see if the -->
+        <!-- * first preceding sibling of this table is a -->
+        <!-- * dbfo@table-width PI) -->
+        <xsl:call-template name="pi.dbfo_table-width">
+          <xsl:with-param name="node" select=".."/>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -556,9 +534,9 @@ to be incomplete. Don't forget to read the source, too :-)</para>
   <xsl:variable name="column.sum">
     <xsl:choose>
       <!-- CALS table -->
-      <xsl:when test="tgroup[1][@cols]">
-        <xsl:if test="count(tgroup[1]/colspec) = tgroup/@cols">
-          <xsl:for-each select="tgroup[1]/colspec">
+      <xsl:when test="@cols">
+        <xsl:if test="count(colspec) = @cols">
+          <xsl:for-each select="colspec">
             <xsl:if test="position() != 1">
               <xsl:text> + </xsl:text>
             </xsl:if>
@@ -749,15 +727,17 @@ to be incomplete. Don't forget to read the source, too :-)</para>
 <!-- customize this template to add row properties -->
 <xsl:template name="table.row.properties">
   <xsl:variable name="bgcolor">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis" select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'bgcolor'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_bgcolor"/>
   </xsl:variable>
   <xsl:if test="$bgcolor != ''">
     <xsl:attribute name="background-color">
       <xsl:value-of select="$bgcolor"/>
     </xsl:attribute>
+  </xsl:if>
+
+  <!-- Keep header row with next row -->
+  <xsl:if test="ancestor::thead">
+    <xsl:attribute name="keep-with-next.within-column">always</xsl:attribute>
   </xsl:if>
 
 </xsl:template>
@@ -809,6 +789,13 @@ to be incomplete. Don't forget to read the source, too :-)</para>
       <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row
                           or ancestor-or-self::thead/following-sibling::tbody
                           or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+        <xsl:value-of select="0"/>
+      </xsl:when>
+      <!-- Check for morerows too -->
+      <xsl:when test="(@morerows and count(ancestor-or-self::row[1]/
+                       following-sibling::row) = @morerows )
+                      and not (ancestor-or-self::thead/following-sibling::tbody
+                       or ancestor-or-self::tbody/preceding-sibling::tfoot)">
         <xsl:value-of select="0"/>
       </xsl:when>
       <xsl:otherwise>
@@ -936,34 +923,26 @@ to be incomplete. Don't forget to read the source, too :-)</para>
       </xsl:variable>
 
       <xsl:variable name="cell-orientation">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis"
-                          select="ancestor-or-self::entry/processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'orientation'"/>
+        <xsl:call-template name="pi.dbfo_orientation">
+          <xsl:with-param name="node" select="ancestor-or-self::entry"/>
         </xsl:call-template>
       </xsl:variable>
 
       <xsl:variable name="row-orientation">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis"
-                          select="ancestor-or-self::row/processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'orientation'"/>
+        <xsl:call-template name="pi.dbfo_orientation">
+          <xsl:with-param name="node" select="ancestor-or-self::row"/>
         </xsl:call-template>
       </xsl:variable>
 
       <xsl:variable name="cell-width">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis"
-                          select="ancestor-or-self::entry/processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'rotated-width'"/>
+        <xsl:call-template name="pi.dbfo_rotated-width">
+          <xsl:with-param name="node" select="ancestor-or-self::entry"/>
         </xsl:call-template>
       </xsl:variable>
 
       <xsl:variable name="row-width">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis"
-                          select="ancestor-or-self::row/processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'rotated-width'"/>
+        <xsl:call-template name="pi.dbfo_rotated-width">
+          <xsl:with-param name="node" select="ancestor-or-self::row"/>
         </xsl:call-template>
       </xsl:variable>
 
@@ -990,10 +969,8 @@ to be incomplete. Don't forget to read the source, too :-)</para>
       </xsl:variable>
 
       <xsl:variable name="bgcolor">
-        <xsl:call-template name="dbfo-attribute">
-          <xsl:with-param name="pis"
-                          select="ancestor-or-self::entry/processing-instruction('dbfo')"/>
-          <xsl:with-param name="attribute" select="'bgcolor'"/>
+        <xsl:call-template name="pi.dbfo_bgcolor">
+          <xsl:with-param name="node" select="ancestor-or-self::entry"/>
         </xsl:call-template>
       </xsl:variable>
 

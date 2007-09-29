@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: xep.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: xep.xsl 6898 2007-06-28 09:45:47Z bobstayton $
      ********************************************************************
      (c) Stephane Bline Peregrine Systems 2001
      Implementation of xep extensions:
@@ -18,7 +18,8 @@
 
 <xsl:template name="xep-document-information">
   <rx:meta-info>
-    <xsl:variable name="authors" select="(//author|//editor|//corpauthor|//authorgroup)[1]"/>
+    <xsl:variable name="authors" 
+                  select="(//author|//editor|//corpauthor|//authorgroup)[1]"/>
     <xsl:if test="$authors">
       <xsl:variable name="author">
         <xsl:choose>

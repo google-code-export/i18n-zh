@@ -6,12 +6,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: footnote.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: footnote.xsl 7265 2007-08-21 15:25:34Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -90,7 +90,7 @@
         <!-- FIXME: list in @from is probably not complete -->
         <xsl:number level="any" 
                     from="chapter|appendix|preface|article|refentry|bibliography" 
-                    count="footnote[not(@label)][not(ancestor::table) and not(ancestor::informaltable)]|ulink[$ulink.footnotes != 0][node()][@url != .][not(ancestor::footnote)]" 
+                    count="footnote[not(@label)][not(ancestor::table) and not(ancestor::informaltable)]|ulink[$ulink.footnotes != 0][node()][@url != .][not(ancestor::footnote)][$ulink.show != 0]" 
                     format="1"/>
       </xsl:variable>
       <xsl:choose>

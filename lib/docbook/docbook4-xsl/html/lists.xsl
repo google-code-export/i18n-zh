@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: lists.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: lists.xsl 6963 2007-07-07 08:15:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -211,11 +211,7 @@
 
 <xsl:template match="variablelist">
   <xsl:variable name="pi-presentation">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'list-presentation'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_list-presentation"/>
   </xsl:variable>
 
   <xsl:variable name="presentation">
@@ -233,27 +229,15 @@
   </xsl:variable>
 
   <xsl:variable name="list-width">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'list-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_list-width"/>
   </xsl:variable>
 
   <xsl:variable name="term-width">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'term-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_term-width"/>
   </xsl:variable>
 
   <xsl:variable name="table-summary">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'table-summary'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_table-summary"/>
   </xsl:variable>
 
   <div>
@@ -370,18 +354,14 @@
 
 <xsl:template match="varlistentry" mode="varlist-table">
   <xsl:variable name="presentation">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="../processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'term-presentation'"/>
+    <xsl:call-template name="pi.dbhtml_term-presentation">
+      <xsl:with-param name="node" select=".."/>
     </xsl:call-template>
   </xsl:variable>
 
   <xsl:variable name="separator">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="../processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'term-separator'"/>
+    <xsl:call-template name="pi.dbhtml_term-separator">
+      <xsl:with-param name="node" select=".."/>
     </xsl:call-template>
   </xsl:variable>
   <tr>
@@ -392,6 +372,7 @@
     </xsl:call-template>
 
     <td>
+      <p>
       <xsl:call-template name="anchor"/>
       <xsl:choose>
         <xsl:when test="$presentation = 'bold'">
@@ -419,6 +400,7 @@
           <xsl:value-of select="$separator"/>
         </xsl:otherwise>
       </xsl:choose>
+      </p>
     </td>
     <td>
       <xsl:apply-templates select="listitem"/>
@@ -450,6 +432,14 @@
 </xsl:template>
 
 <xsl:template match="varlistentry/listitem">
+  <!-- we can't just drop the anchor in since some browsers (Opera)
+       get confused about line breaks if we do. So if the first child
+       is a para, assume the para will put in the anchor. Otherwise,
+       put the anchor in anyway. -->
+  <xsl:if test="local-name(child::*[1]) != 'para'">
+    <xsl:call-template name="anchor"/>
+  </xsl:if>
+
   <xsl:choose>
     <xsl:when test="$show.revisionflag != 0 and @revisionflag">
       <div class="{@revisionflag}">
@@ -490,10 +480,10 @@
   <xsl:variable name="localized-choice-separator">
     <xsl:choose>
       <xsl:when test="processing-instruction('dbchoice')">
-	<xsl:call-template name="select.choice.separator"/>
+        <xsl:call-template name="select.choice.separator"/>
       </xsl:when>
       <xsl:otherwise>
-	<!-- empty -->
+        <!-- empty -->
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -785,11 +775,7 @@
 
 <xsl:template match="segmentedlist">
   <xsl:variable name="presentation">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'list-presentation'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_list-presentation"/>
   </xsl:variable>
 
   <div>
@@ -858,19 +844,11 @@
 
 <xsl:template match="segmentedlist" mode="seglist-table">
   <xsl:variable name="table-summary">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'table-summary'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_table-summary"/>
   </xsl:variable>
 
   <xsl:variable name="list-width">
-    <xsl:call-template name="dbhtml-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbhtml')"/>
-      <xsl:with-param name="attribute" select="'list-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbhtml_list-width"/>
   </xsl:variable>
 
   <xsl:apply-templates select="title"/>
@@ -951,14 +929,14 @@
       <xsl:when test="$callout.list.table != 0">
         <table border="0" summary="Callout list">
 	  <xsl:apply-templates select="callout
-			        |comment()[preceding-sibling::calllout]
+			        |comment()[preceding-sibling::callout]
 				|processing-instruction()[preceding-sibling::callout]"/>
 	</table>
       </xsl:when>
       <xsl:otherwise>
 	<dl compact="compact">
 	  <xsl:apply-templates select="callout
-			        |comment()[preceding-sibling::calllout]
+			        |comment()[preceding-sibling::callout]
 				|processing-instruction()[preceding-sibling::callout]"/>
 	</dl>
       </xsl:otherwise>
@@ -980,10 +958,12 @@
         </xsl:call-template>
 
         <td width="5%" valign="top" align="left">
-          <xsl:call-template name="anchor"/>
-          <xsl:call-template name="callout.arearefs">
-            <xsl:with-param name="arearefs" select="@arearefs"/>
-          </xsl:call-template>
+          <p>
+            <xsl:call-template name="anchor"/>
+            <xsl:call-template name="callout.arearefs">
+              <xsl:with-param name="arearefs" select="@arearefs"/>
+            </xsl:call-template>
+          </p>
         </td>
         <td valign="top" align="left">
           <xsl:apply-templates/>
@@ -1107,5 +1087,17 @@
 
 <!-- ==================================================================== -->
 
-</xsl:stylesheet>
+<xsl:template name="orderedlist-starting-number">
+  <xsl:param name="list" select="."/>
+  <xsl:variable name="pi-start">
+    <xsl:call-template name="pi.dbhtml_start">
+      <xsl:with-param name="node" select="$list"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:call-template name="output-orderedlist-starting-number">
+    <xsl:with-param name="list" select="$list"/>
+    <xsl:with-param name="pi-start" select="$pi-start"/>
+  </xsl:call-template>
+</xsl:template>
 
+</xsl:stylesheet>

@@ -5,11 +5,11 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: highlight.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: highlight.xsl 7266 2007-08-22 11:58:42Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
      and other information.
 
      ******************************************************************** -->
@@ -19,37 +19,36 @@
 </xsl:template>
 
 <xsl:template match='xslthl:string'>
-  <b class="hl-string"><i><font color='red'><xsl:apply-templates/></font></i></b>
+  <b class="hl-string"><i style="color:red"><xsl:apply-templates/></i></b>
 </xsl:template>
 
 <xsl:template match='xslthl:comment'>
-  <i class="hl-comment"><font color='silver'><xsl:apply-templates/></font></i>
+  <i class="hl-comment" style="color: silver"><xsl:apply-templates/></i>
 </xsl:template>
 
 <xsl:template match='xslthl:tag'>
-  <b class="hl-tag"><font color='blue'><xsl:apply-templates/></font></b>
+  <b class="hl-tag" style="color: blue"><xsl:apply-templates/></b>
 </xsl:template>
 
 <xsl:template match='xslthl:attribute'>
-  <span class="hl-attribute"><font color='blue'><xsl:apply-templates/></font></span>
+  <span class="hl-attribute" style="color: blue"><xsl:apply-templates/></span>
 </xsl:template>
 
 <xsl:template match='xslthl:value'>
-  <span class="hl-value"><font color='blue'><xsl:apply-templates/></font></span>
+  <span class="hl-value" style="color: blue"><xsl:apply-templates/></span>
 </xsl:template>
 
 <xsl:template match='xslthl:html'>
-  <b><i><font color='red'><xsl:apply-templates/></font></i></b>
+  <b><i style="color: red"><xsl:apply-templates/></i></b>
 </xsl:template>
 
 <xsl:template match='xslthl:xslt'>
-  <b><font color='blue'><xsl:apply-templates/></font></b>
+  <b style="color: blue"><xsl:apply-templates/></b>
 </xsl:template>
 
 <xsl:template match='xslthl:section'>
   <b><xsl:apply-templates/></b>
 </xsl:template>
-
 
 </xsl:stylesheet>
 

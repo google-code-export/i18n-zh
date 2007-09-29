@@ -3,12 +3,12 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: sections.xsl 8 2007-04-05 06:52:24Z dongsheng.song $
+     $Id: sections.xsl 7000 2007-07-10 20:41:35Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -465,11 +465,14 @@
         <xsl:attribute name="style">clear: both</xsl:attribute>
       </xsl:if>
     </xsl:if>
-    <xsl:if test="$allow-anchors != 0">
+    <xsl:if test="$allow-anchors != 0 and $generate.id.attributes = 0">
       <xsl:call-template name="anchor">
         <xsl:with-param name="node" select="$section"/>
         <xsl:with-param name="conditional" select="0"/>
       </xsl:call-template>
+    </xsl:if>
+    <xsl:if test="$generate.id.attributes != 0 and not(local-name(.) = 'appendix')">
+      <xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute>
     </xsl:if>
     <xsl:copy-of select="$title"/>
   </xsl:element>
