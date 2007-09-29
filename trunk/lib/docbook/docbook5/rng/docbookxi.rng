@@ -11,7 +11,7 @@
   <s:ns prefix="svg" uri="http://www.w3.org/2000/svg"/>
   <s:ns prefix="xi" uri="http://www.w3.org/2001/XInclude"/>
   <s:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
-<!-- DocBook V5.0CR4-->
+<!-- DocBook V5.0CR5-->
 <!-- See http://docbook.org/ns/docbook -->
   <start>
     <choice>
@@ -337,11 +337,8 @@
       <ref name="db.dir.enumeration"/>
     </attribute>
   </define>
-  <define name="db.common.attributes">
+  <define name="db.common.base.attributes">
     <interleave>
-      <optional>
-        <ref name="db.xml.id.attribute"/>
-      </optional>
       <optional>
         <ref name="db.version.attribute"/>
       </optional>
@@ -364,6 +361,14 @@
         <ref name="db.dir.attribute"/>
       </optional>
       <ref name="db.effectivity.attributes"/>
+    </interleave>
+  </define>
+  <define name="db.common.attributes">
+    <interleave>
+      <optional>
+        <ref name="db.xml.id.attribute"/>
+      </optional>
+      <ref name="db.common.base.attributes"/>
       <optional>
         <ref name="db.annotations.attribute"/>
       </optional>
@@ -372,28 +377,7 @@
   <define name="db.common.idreq.attributes">
     <interleave>
       <ref name="db.xml.id.attribute"/>
-      <optional>
-        <ref name="db.version.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.xml.lang.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.xml.base.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.remap.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.xreflabel.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.revisionflag.attribute"/>
-      </optional>
-      <optional>
-        <ref name="db.dir.attribute"/>
-      </optional>
-      <ref name="db.effectivity.attributes"/>
+      <ref name="db.common.base.attributes"/>
       <optional>
         <ref name="db.annotations.attribute"/>
       </optional>
@@ -733,9 +717,7 @@
   <define name="db._info">
     <choice>
       <group>
-        <optional>
-          <ref name="db._title.req"/>
-        </optional>
+        <ref name="db._title"/>
         <optional>
           <ref name="db.titleforbidden.info"/>
         </optional>
@@ -1179,9 +1161,11 @@
       <ref name="db.citetitle"/>
       <ref name="db.citebiblioid"/>
       <ref name="db.person"/>
+      <ref name="db.personblurb"/>
       <ref name="db.personname"/>
       <ref name="db.subtitle"/>
       <ref name="db.title"/>
+      <ref name="db.titleabbrev"/>
     </choice>
   </define>
   <div>
@@ -4758,6 +4742,7 @@
             <ref name="db.phone"/>
             <ref name="db.fax"/>
             <ref name="db.email"/>
+            <ref name="db.uri"/>
             <ref name="db.otheraddr"/>
           </choice>
         </zeroOrMore>
@@ -5178,6 +5163,7 @@
         <ref name="db.personblurb"/>
         <ref name="db.affiliation"/>
         <ref name="db.email"/>
+        <ref name="db.uri"/>
         <ref name="db.address"/>
         <ref name="db.contrib"/>
       </choice>
@@ -5190,6 +5176,7 @@
         <ref name="db.orgdiv"/>
         <ref name="db.affiliation"/>
         <ref name="db.email"/>
+        <ref name="db.uri"/>
         <ref name="db.address"/>
         <ref name="db.contrib"/>
       </choice>
@@ -5324,6 +5311,7 @@
             <ref name="db.address"/>
             <ref name="db.affiliation"/>
             <ref name="db.email"/>
+            <ref name="db.uri"/>
             <ref name="db.personblurb"/>
           </choice>
         </zeroOrMore>
@@ -5353,6 +5341,7 @@
             <ref name="db.address"/>
             <ref name="db.affiliation"/>
             <ref name="db.email"/>
+            <ref name="db.uri"/>
             <ref name="db.orgdiv"/>
           </choice>
         </zeroOrMore>
@@ -8076,6 +8065,8 @@
         <ref name="db.os.inlines"/>
         <ref name="db.technical.inlines"/>
         <ref name="db.markup.inlines"/>
+        <ref name="db.keyboard.inlines"/>
+        <ref name="db.gui.inlines"/>
       </choice>
       <ref name="db.co"/>
     </choice>
@@ -9204,7 +9195,7 @@ O, the molecular formula for water)</a:documentation>
       </interleave>
     </define>
     <define name="db.book.info">
-      <ref name="db._info.title.req"/>
+      <ref name="db._info"/>
     </define>
     <define name="db.book">
       <element name="book">
@@ -9216,13 +9207,13 @@ O, the molecular formula for water)</a:documentation>
         </s:pattern>
         <ref name="db.book.attlist"/>
         <ref name="db.book.info"/>
-        <oneOrMore>
+        <zeroOrMore>
           <choice>
             <ref name="db.navigation.components"/>
             <ref name="db.components"/>
             <ref name="db.divisions"/>
           </choice>
-        </oneOrMore>
+        </zeroOrMore>
       </element>
     </define>
   </div>
@@ -15067,11 +15058,16 @@ where the nonterminal
   </define>
   <define name="db.inlineequation.content">
     <choice>
+      <choice>
+        <oneOrMore>
+          <ref name="db.inlinemediaobject"/>
+        </oneOrMore>
+        <oneOrMore>
+          <ref name="db.mathphrase"/>
+        </oneOrMore>
+      </choice>
       <oneOrMore>
-        <ref name="db.inlinemediaobject"/>
-      </oneOrMore>
-      <oneOrMore>
-        <ref name="db.mathphrase"/>
+        <ref name="db._any.mml"/>
       </oneOrMore>
     </choice>
   </define>
