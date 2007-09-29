@@ -6,12 +6,12 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: labels.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: labels.xsl 7031 2007-07-14 19:58:59Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -21,7 +21,7 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <doc:mode mode="label.markup" xmlns="">
 <refpurpose>Provides access to element labels</refpurpose>
-<refdescription>
+<refdescription id="label.markup-desc">
 <para>Processing an element in the
 <literal role="mode">label.markup</literal> mode produces the
 element label.</para>
@@ -194,12 +194,31 @@ element label.</para>
       <xsl:value-of select="@label"/>
     </xsl:when>
     <xsl:when test="string($reference.autolabel) != 0">
+      <xsl:if test="$component.label.includes.part.label != 0 and
+                      ancestor::d:part">
+        <xsl:variable name="part.label">
+          <xsl:apply-templates select="ancestor::d:part" 
+                               mode="label.markup"/>
+        </xsl:variable>
+        <xsl:if test="$part.label != ''">
+          <xsl:value-of select="$part.label"/>
+          <xsl:apply-templates select="ancestor::d:part" 
+                               mode="intralabel.punctuation"/>
+        </xsl:if>
+      </xsl:if>
       <xsl:variable name="format">
         <xsl:call-template name="autolabel.format">
           <xsl:with-param name="format" select="$reference.autolabel"/>
         </xsl:call-template>
       </xsl:variable>
-      <xsl:number from="d:book" count="d:reference" format="{$format}" level="any"/>
+      <xsl:choose>
+        <xsl:when test="$label.from.part != 0 and ancestor::d:part">
+          <xsl:number from="d:part" count="d:reference" format="{$format}" level="any"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:number from="d:book" count="d:reference" format="{$format}" level="any"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:when>
   </xsl:choose>
 </xsl:template>
@@ -774,7 +793,7 @@ element label.</para>
 
 <doc:template name="label.this.section" xmlns="">
 <refpurpose>Returns true if $section should be labelled</refpurpose>
-<refdescription>
+<refdescription id="label.this.section-desc">
 <para>Returns true if the specified section should be labelled.
 By default, this template returns zero unless 
 the section level is less than or equal to the value of the
@@ -837,7 +856,7 @@ Custom stylesheets may override it to get more selective behavior.</para>
 
 <doc:template name="autolabel.format" xmlns="">
 <refpurpose>Returns format for autolabel parameters</refpurpose>
-<refdescription>
+<refdescription id="autolabel.format-desc">
 <para>Returns format passed as parameter if non zero. Supported
   format are 'arabic' or '1', 'loweralpha' or 'a', 'lowerroman' or 'i', 
   'upperlapha' or 'A', 'upperroman' or 'I', 'arabicindic' or '&#x661;'.

@@ -20,12 +20,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: inline.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: inline.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -42,7 +42,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                     and (not($node/@xlink:type) or 
                          $node/@xlink:type='simple')">
 
-      <!-- Is it a local idref or a uri? -->
+      <!-- Is it a local idref? -->
       <xsl:variable name="is.idref">
         <xsl:choose>
           <!-- if the href starts with # and does not contain an "(" -->
@@ -51,6 +51,17 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                           and (not(contains($xhref,'&#40;'))
                           or starts-with($xhref,
                                      '#xpointer&#40;id&#40;'))">1</xsl:when>
+          <xsl:otherwise>0</xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+
+      <!-- Is it an olink ? -->
+      <xsl:variable name="is.olink">
+        <xsl:choose>
+	  <!-- If xlink:role="http://docbook.org/xlink/role/olink" -->
+          <!-- and if the href contains # -->
+          <xsl:when test="contains($xhref,'#') and
+	       @xlink:role = $xolink.role">1</xsl:when>
           <xsl:otherwise>0</xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -86,6 +97,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
               </fo:basic-link>
             </xsl:otherwise>
           </xsl:choose>
+        </xsl:when>
+
+        <xsl:when test="$is.olink = 1">
+	  <xsl:call-template name="olink">
+	    <xsl:with-param name="content" select="$content"/>
+	  </xsl:call-template>
         </xsl:when>
 
         <!-- otherwise it's a URI -->
@@ -997,7 +1014,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
       <xsl:when test="$action='click'">-</xsl:when>
       <xsl:when test="$action='double-click'">-</xsl:when>
       <xsl:when test="$action='other'"></xsl:when>
-      <xsl:otherwise>-</xsl:otherwise>
+      <xsl:otherwise>+</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
   <xsl:for-each select="*">
@@ -1028,7 +1045,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
   <xsl:variable name="mm.separator">
     <xsl:choose>
-      <xsl:when test="$fop.extensions != 0 and
+      <xsl:when test="($fop.extensions != 0 or $fop1.extensions != 0 ) and
                 contains($menuchoice.menu.separator, '&#x2192;')">
         <fo:inline font-family="Symbol">
           <xsl:copy-of select="$menuchoice.menu.separator"/>
@@ -1094,7 +1111,15 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
           </xsl:call-template>
         </xsl:attribute>
 
-        <xsl:call-template name="inline.charseq"/>
+	<xsl:choose>
+	  <xsl:when test="$bibliography.numbered != 0">
+	    <xsl:apply-templates select="$target" mode="citation"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:call-template name="inline.charseq"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+     
       </fo:basic-link>
       <xsl:text>]</xsl:text>
     </xsl:when>
@@ -1105,6 +1130,11 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
       <xsl:text>]</xsl:text>
     </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template match="d:biblioentry|d:bibliomixed" mode="citation">
+  <xsl:number from="d:bibliography" count="d:biblioentry|d:bibliomixed"
+	      level="any" format="1"/>
 </xsl:template>
 
 <!-- ==================================================================== -->
@@ -1156,6 +1186,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 </xsl:template>
 
 <!-- ==================================================================== -->
+
+<xsl:template match="d:person">
+  <xsl:apply-templates select="d:personname"/>
+</xsl:template>
 
 <xsl:template match="d:personname">
   <xsl:call-template name="simple.xlink">

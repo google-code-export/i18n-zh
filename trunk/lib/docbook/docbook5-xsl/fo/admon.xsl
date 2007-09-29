@@ -6,12 +6,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: admon.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: admon.xsl 7248 2007-08-18 06:50:21Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -87,7 +87,9 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
           <fo:list-item-body start-indent="body-start()">
             <xsl:if test="$admon.textlabel != 0 or d:title or d:info/d:title">
               <fo:block xsl:use-attribute-sets="admonition.title.properties">
-                <xsl:apply-templates select="." mode="object.title.markup"/>
+                <xsl:apply-templates select="." mode="object.title.markup">
+		  <xsl:with-param name="allow-anchors" select="1"/>
+		</xsl:apply-templates>
               </fo:block>
             </xsl:if>
             <fo:block xsl:use-attribute-sets="admonition.properties">
@@ -109,7 +111,9 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     <xsl:if test="$admon.textlabel != 0 or d:title or d:info/d:title">
       <fo:block keep-with-next.within-column='always'
                 xsl:use-attribute-sets="admonition.title.properties">
-         <xsl:apply-templates select="." mode="object.title.markup"/>
+         <xsl:apply-templates select="." mode="object.title.markup">
+	   <xsl:with-param name="allow-anchors" select="1"/>
+	 </xsl:apply-templates>
       </fo:block>
     </xsl:if>
 

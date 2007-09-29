@@ -6,12 +6,12 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: table.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: table.xsl 7056 2007-07-17 13:56:09Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -124,24 +124,24 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <doc:template name="entry.colnum" xmlns="">
 <refpurpose>Determine the column number in which a given entry occurs</refpurpose>
-<refdescription>
-<para>If an <sgmltag>entry</sgmltag> has a
-<sgmltag class="attribute">colname</sgmltag> or
-<sgmltag class="attribute">namest</sgmltag> attribute, this template
+<refdescription id="entry.colnum-desc">
+<para>If an <tag>entry</tag> has a
+<tag class="attribute">colname</tag> or
+<tag class="attribute">namest</tag> attribute, this template
 will determine the number of the column in which the entry should occur.
-For other <sgmltag>entry</sgmltag>s, nothing is returned.</para>
+For other <tag>entry</tag>s, nothing is returned.</para>
 </refdescription>
-<refparameter>
+<refparameter id="entry.colnum-params">
 <variablelist>
 <varlistentry><term>entry</term>
 <listitem>
-<para>The <sgmltag>entry</sgmltag>-element which is to be tested.</para>
+<para>The <tag>entry</tag>-element which is to be tested.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 </refparameter>
 
-<refreturn>
+<refreturn id="entry.colnum-returns">
 <para>This template returns the column number if it can be determined,
 or 0 (the empty string)</para>
 </refreturn>
@@ -255,6 +255,7 @@ or 0 (the empty string)</para>
   <xsl:param name="attribute" select="'colsep'"/>
 
   <xsl:variable name="tgroup" select="$row/parent::*/parent::d:tgroup[1]"/>
+  <xsl:variable name="tbody" select="$row/parent::*[1]"/>
 
   <xsl:variable name="table" select="($tgroup/ancestor::d:table
                                      |$tgroup/ancestor::d:informaltable
@@ -337,6 +338,13 @@ or 0 (the empty string)</para>
     </xsl:call-template>
   </xsl:variable>
 
+  <xsl:variable name="tbody.value">
+    <xsl:call-template name="get-attribute">
+      <xsl:with-param name="element" select="$tbody"/>
+      <xsl:with-param name="attribute" select="$attribute"/>
+    </xsl:call-template>
+  </xsl:variable>
+
   <xsl:variable name="table.value">
     <xsl:call-template name="get-attribute">
       <xsl:with-param name="element" select="$table"/>
@@ -383,6 +391,9 @@ or 0 (the empty string)</para>
     </xsl:when>
     <xsl:when test="$calc.colvalue != ''">
       <xsl:value-of select="$calc.colvalue"/>
+    </xsl:when>
+    <xsl:when test="$tbody.value != ''">
+      <xsl:value-of select="$tbody.value"/>
     </xsl:when>
     <xsl:when test="$tgroup.value != ''">
       <xsl:value-of select="$tgroup.value"/>

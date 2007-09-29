@@ -7,12 +7,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: refentry.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: refentry.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -534,7 +534,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                      |d:refsection/d:title
                      |d:refsect1/d:title
                      |d:refsect2/d:title
-                     |d:refsect3/d:title"
+                     |d:refsect3/d:title
+                     |d:refsynopsisdiv/d:info/d:title
+                     |d:refsection/d:info/d:title
+                     |d:refsect1/d:info/d:title
+                     |d:refsect2/d:info/d:title
+                     |d:refsect3/d:info/d:title"
               mode="titlepage.mode"
               priority="2">
   <xsl:call-template name="format.refentry.subheading"/>
@@ -559,7 +564,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 <!--       <xsl:with-param name="gentext.key" select="'RefName'"/> -->
 <!--     </xsl:call-template> -->
 <!-- -->
-  <xsl:param name="section" select="parent::*"/>
+  <xsl:param name="section" 
+             select="(ancestor::d:refsynopsysdiv 
+                     |ancestor::d:refsection
+                     |ancestor::d:refsect1
+                     |ancestor::d:refsect2
+                     |ancestor::d:refsect3)[last()]"/>
   <xsl:param name="offset" select="0"/>
   <xsl:param name="gentext.key"/>
 

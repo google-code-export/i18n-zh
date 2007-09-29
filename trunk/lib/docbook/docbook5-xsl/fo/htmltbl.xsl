@@ -6,12 +6,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: htmltbl.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: htmltbl.xsl 6933 2007-07-03 11:48:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -159,10 +159,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
 <xsl:template match="d:td" mode="htmlTable">
   <xsl:variable name="bgcolor">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis" select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'bgcolor'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_bgcolor"/>
   </xsl:variable>
   <fo:table-cell xsl:use-attribute-sets="table.cell.padding">
     <xsl:call-template name="table.cell.properties">
@@ -186,12 +183,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
 <xsl:template match="d:th" mode="htmlTable">
   <xsl:variable name="bgcolor">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis" select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'bgcolor'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_bgcolor"/>
   </xsl:variable>
-
   <fo:table-cell xsl:use-attribute-sets="th.style table.cell.padding">
     <xsl:call-template name="table.cell.properties">
       <xsl:with-param name="bgcolor.pi" select="$bgcolor"/>
@@ -217,19 +210,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 </xsl:template>
 
 <xsl:template match="d:tr" mode="htmlTable">
-  <xsl:variable name="bgcolor">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis" select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'bgcolor'"/>
-    </xsl:call-template>
-  </xsl:variable>
-
   <fo:table-row>
-    <xsl:if test="$bgcolor != ''">
-      <xsl:attribute name="background-color">
-        <xsl:value-of select="$bgcolor"/>
-      </xsl:attribute>
-    </xsl:if>
+    <xsl:call-template name="table.row.properties"/>
     <xsl:apply-templates mode="htmlTable"/>
   </fo:table-row>
 </xsl:template>

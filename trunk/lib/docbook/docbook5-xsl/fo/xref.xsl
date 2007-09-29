@@ -8,14 +8,18 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: xref.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: xref.xsl 7008 2007-07-11 07:12:16Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
+
+<!-- Use internal variable for olink xlink role for consistency -->
+<xsl:variable 
+      name="xolink.role">http://docbook.org/xlink/role/olink</xsl:variable>
 
 <!-- ==================================================================== -->
 
@@ -715,6 +719,17 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   <xsl:apply-templates select="." mode="callout-bug"/>
 </xsl:template>
 
+<xsl:template match="d:area|d:areaset" mode="xref-to">
+  <xsl:param name="referrer"/>
+  <xsl:param name="xrefstyle"/>
+
+  <xsl:call-template name="callout-bug">
+    <xsl:with-param name="conum">
+      <xsl:apply-templates select="." mode="conumber"/>
+    </xsl:with-param>
+  </xsl:call-template>
+</xsl:template>
+
 <xsl:template match="d:book" mode="xref-to">
   <xsl:param name="referrer"/>
   <xsl:param name="xrefstyle"/>
@@ -790,36 +805,35 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
           <!-- If it has content, use it -->
           <xsl:apply-templates/>
         </xsl:when>
-        <xsl:otherwise>
-          <!-- else look for an endterm -->
+        <!-- look for an endterm -->
+        <xsl:when test="@endterm">
+          <xsl:variable name="etargets" select="key('id',@endterm)"/>
+          <xsl:variable name="etarget" select="$etargets[1]"/>
           <xsl:choose>
-            <xsl:when test="@endterm">
-              <xsl:variable name="etargets" select="key('id',@endterm)"/>
-              <xsl:variable name="etarget" select="$etargets[1]"/>
-              <xsl:choose>
-                <xsl:when test="count($etarget) = 0">
-                  <xsl:message>
-                    <xsl:value-of select="count($etargets)"/>
-                    <xsl:text>Endterm points to nonexistent ID: </xsl:text>
-                    <xsl:value-of select="@endterm"/>
-                  </xsl:message>
-                  <xsl:text>???</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="$etarget" mode="endterm"/>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:when>
-  
-            <xsl:otherwise>
+            <xsl:when test="count($etarget) = 0">
               <xsl:message>
-                <xsl:text>Link element has no content and no Endterm. </xsl:text>
-                <xsl:text>Nothing to show in the link to </xsl:text>
-                <xsl:value-of select="$target"/>
+                <xsl:value-of select="count($etargets)"/>
+                <xsl:text>Endterm points to nonexistent ID: </xsl:text>
+                <xsl:value-of select="@endterm"/>
               </xsl:message>
               <xsl:text>???</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="$etarget" mode="endterm"/>
             </xsl:otherwise>
           </xsl:choose>
+        </xsl:when>
+        <!-- Use the xlink:href if no other text -->
+        <xsl:when test="@xlink:href">
+          <xsl:value-of select="@xlink:href"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:message>
+            <xsl:text>Link element has no content and no Endterm. </xsl:text>
+            <xsl:text>Nothing to show in the link to </xsl:text>
+            <xsl:value-of select="$target"/>
+          </xsl:message>
+          <xsl:text>???</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </fo:inline>
@@ -968,15 +982,42 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 </xsl:template>
 
 <xsl:template match="d:olink" name="olink">
+  <!-- olink content may be passed in from xlink olink -->
+  <xsl:param name="content" select="NOTANELEMENT"/>
+
   <xsl:call-template name="anchor"/>
 
   <xsl:variable name="localinfo" select="@localinfo"/>
 
   <xsl:choose>
     <!-- olinks resolved by stylesheet and target database -->
-    <xsl:when test="@targetdoc or @targetptr" >
-      <xsl:variable name="targetdoc.att" select="@targetdoc"/>
-      <xsl:variable name="targetptr.att" select="@targetptr"/>
+    <xsl:when test="@targetdoc or @targetptr or
+                    (@xlink:role=$xolink.role and
+                     contains(@xlink:href, '#') )" >
+
+      <xsl:variable name="targetdoc.att">
+        <xsl:choose>
+          <xsl:when test="@targetdoc != ''">
+            <xsl:value-of select="@targetdoc"/>
+          </xsl:when>
+          <xsl:when test="@xlink:role=$xolink.role and
+                       contains(@xlink:href, '#')" >
+            <xsl:value-of select="substring-before(@xlink:href, '#')"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:variable>
+
+      <xsl:variable name="targetptr.att">
+        <xsl:choose>
+          <xsl:when test="@targetptr != ''">
+            <xsl:value-of select="@targetptr"/>
+          </xsl:when>
+          <xsl:when test="@xlink:role=$xolink.role and
+                       contains(@xlink:href, '#')" >
+            <xsl:value-of select="substring-after(@xlink:href, '#')"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:variable>
 
       <xsl:variable name="olink.lang">
         <xsl:call-template name="l10n.language">
@@ -1040,11 +1081,18 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
       </xsl:variable>
 
       <xsl:variable name="hottext">
-        <xsl:call-template name="olink.hottext">
-          <xsl:with-param name="olink.key" select="$olink.key"/>
-          <xsl:with-param name="olink.lang" select="$olink.lang"/>
-          <xsl:with-param name="target.database" select="$target.database"/>
-        </xsl:call-template>
+        <xsl:choose>
+          <xsl:when test="$content">
+            <xsl:copy-of select="$content"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="olink.hottext">
+              <xsl:with-param name="olink.key" select="$olink.key"/>
+              <xsl:with-param name="olink.lang" select="$olink.lang"/>
+              <xsl:with-param name="target.database" select="$target.database"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:variable>
 
       <xsl:variable name="olink.docname.citation">
@@ -1176,7 +1224,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   <xsl:param name="localinfo"/>
   <xsl:param name="return" select="d:href"/>
 
-  <xsl:message terminate="yes">Fatal error: what is this supposed to do?</xsl:message>
+  <xsl:message terminate="yes">Fatal error: olink.outline template: what is this supposed to do?</xsl:message>
 </xsl:template>
 
 <!-- ==================================================================== -->

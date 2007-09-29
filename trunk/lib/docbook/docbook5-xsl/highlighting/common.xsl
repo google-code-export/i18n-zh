@@ -7,11 +7,11 @@ xmlns:hl="java:net.sf.xslthl.ConnectorSaxon6"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: inline.xsl 5953 2006-05-08 04:23:10Z bobstayton $
+     $Id: common.xsl 7266 2007-08-22 11:58:42Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
      and other information.
 
      ******************************************************************** -->

@@ -12,12 +12,12 @@ xmlns:ng="http://docbook.org/docbook-ng"
             indent="no"/>
 
 <!-- ********************************************************************
-     $Id: docbook.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: docbook.xsl 7156 2007-07-26 21:42:04Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -28,6 +28,7 @@ xmlns:ng="http://docbook.org/docbook-ng"
 <xsl:include href="../lib/lib.xsl"/>
 <xsl:include href="../common/l10n.xsl"/>
 <xsl:include href="../common/common.xsl"/>
+<xsl:include href="../common/utility.xsl"/>
 <xsl:include href="../common/labels.xsl"/>
 <xsl:include href="../common/titles.xsl"/>
 <xsl:include href="../common/subtitles.xsl"/>
@@ -59,6 +60,7 @@ xmlns:ng="http://docbook.org/docbook-ng"
 <xsl:include href="admon.xsl"/>
 <xsl:include href="component.xsl"/>
 <xsl:include href="biblio.xsl"/>
+<xsl:include href="biblio-iso690.xsl"/>
 <xsl:include href="glossary.xsl"/>
 <xsl:include href="block.xsl"/>
 <xsl:include href="task.xsl"/>
@@ -71,7 +73,7 @@ xmlns:ng="http://docbook.org/docbook-ng"
 <xsl:include href="chunker.xsl"/>
 <xsl:include href="html-rtf.xsl"/>
 <xsl:include href="annotations.xsl"/>
-<xsl:include href="../common/db5.xsl"/>
+<xsl:include href="../common/addns.xsl"/>
 
 <xsl:param name="stylesheet.result.type" select="'html'"/>
 <xsl:param name="htmlhelp.output" select="0"/>
@@ -97,7 +99,7 @@ xmlns:ng="http://docbook.org/docbook-ng"
     <xsl:text>, but no template matches.</xsl:text>
   </xsl:message>
 
-  <font color="red">
+  <span style="color: red">
     <xsl:text>&lt;</xsl:text>
     <xsl:value-of select="name(.)"/>
     <xsl:text>&gt;</xsl:text>
@@ -105,7 +107,7 @@ xmlns:ng="http://docbook.org/docbook-ng"
     <xsl:text>&lt;/</xsl:text>
     <xsl:value-of select="name(.)"/>
     <xsl:text>&gt;</xsl:text>
-  </font>
+  </span>
 </xsl:template>
 
 <xsl:template match="text()">
@@ -326,19 +328,43 @@ body { background-image: url('</xsl:text>
 </xsl:template>
 
 <xsl:template match="/">
+  <!-- * Get a title for current doc so that we let the user -->
+  <!-- * know what document we are processing at this point. -->
+  <xsl:variable name="doc.title">
+    <xsl:call-template name="get.doc.title"/>
+  </xsl:variable>
   <xsl:choose>
+    
     <!-- include extra test for Xalan quirk -->
     <xsl:when test="namespace-uri(*[1]) != 'http://docbook.org/ns/docbook'">
-  <xsl:message>Adding DocBook namespace to version 4 DocBook document</xsl:message>
-  <xsl:variable name="addns">
+ <xsl:call-template name="log.message">
+ <xsl:with-param name="level">Note</xsl:with-param>
+ <xsl:with-param name="source" select="$doc.title"/>
+ <xsl:with-param name="context-desc">
+ <xsl:text>namesp. add</xsl:text>
+ </xsl:with-param>
+ <xsl:with-param name="message">
+ <xsl:text>added namespace before processing</xsl:text>
+ </xsl:with-param>
+ </xsl:call-template>
+ <xsl:variable name="addns">
     <xsl:apply-templates mode="addNS"/>
   </xsl:variable>
   <xsl:apply-templates select="exsl:node-set($addns)"/>
 </xsl:when>
     <!-- Can't process unless namespace removed -->
     <xsl:when test="namespace-uri(*[1]) != 'http://docbook.org/ns/docbook'">
-  <xsl:message>Adding DocBook namespace to version 4 DocBook document</xsl:message>
-  <xsl:variable name="addns">
+ <xsl:call-template name="log.message">
+ <xsl:with-param name="level">Note</xsl:with-param>
+ <xsl:with-param name="source" select="$doc.title"/>
+ <xsl:with-param name="context-desc">
+ <xsl:text>namesp. add</xsl:text>
+ </xsl:with-param>
+ <xsl:with-param name="message">
+ <xsl:text>added namespace before processing</xsl:text>
+ </xsl:with-param>
+ </xsl:call-template>
+ <xsl:variable name="addns">
     <xsl:apply-templates mode="addNS"/>
   </xsl:variable>
   <xsl:apply-templates select="exsl:node-set($addns)"/>

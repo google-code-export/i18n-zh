@@ -11,12 +11,12 @@ xmlns:exslt="http://exslt.org/common"
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: autoidx.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: autoidx.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -462,6 +462,7 @@ xmlns:exslt="http://exslt.org/common"
     </xsl:when>
     <xsl:otherwise>
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:variable name="title">
           <xsl:choose>
             <xsl:when test="&section;/d:titleabbrev and $index.prefer.titleabbrev != 0">
@@ -510,6 +511,7 @@ xmlns:exslt="http://exslt.org/common"
       <xsl:variable name="target" select="key('sections', $zone)[&scope;]"/>
 
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$target[1]"/>
@@ -532,6 +534,7 @@ xmlns:exslt="http://exslt.org/common"
       <xsl:variable name="target" select="key('sections', $zone)[&scope;]"/>
 
       <a>
+        <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$target[1]"/>

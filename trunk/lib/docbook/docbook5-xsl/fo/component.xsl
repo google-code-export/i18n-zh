@@ -7,16 +7,17 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: component.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: component.xsl 7033 2007-07-15 19:52:52Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
 <!-- ==================================================================== -->
+
 
 <xsl:template name="component.title">
   <xsl:param name="node" select="."/>
@@ -193,7 +194,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="dedication.titlepage"/>
       </fo:block>
       <xsl:apply-templates/>
@@ -268,7 +270,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="colophon.titlepage"/>
       </fo:block>
       <xsl:apply-templates/>
@@ -344,7 +347,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="preface.titlepage"/>
       </fo:block>
 
@@ -436,7 +440,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="chapter.titlepage"/>
       </fo:block>
 
@@ -526,7 +531,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="appendix.titlepage"/>
       </fo:block>
 
@@ -617,7 +623,8 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
         <xsl:with-param name="master-reference" select="$master-reference"/>
       </xsl:call-template>
 
-      <fo:block id="{$id}">
+      <fo:block id="{$id}"
+                xsl:use-attribute-sets="component.titlepage.properties">
         <xsl:call-template name="article.titlepage"/>
       </fo:block>
 
@@ -698,34 +705,56 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
 <!-- ==================================================================== -->
 
-<!-- Create a page sequence for an element -->
-<xsl:template match="*" mode="page.sequence">
-  <xsl:param name="content" select="NOTANODE"/>
+<!-- Utility template to create a page sequence for an element -->
+<xsl:template match="*" mode="page.sequence" name="page.sequence">
+  <xsl:param name="content">
+    <xsl:apply-templates/>
+  </xsl:param>
   <xsl:param name="master-reference">
     <xsl:call-template name="select.pagemaster"/>
+  </xsl:param>
+  <xsl:param name="element" select="local-name(.)"/>
+  <xsl:param name="gentext-key" select="local-name(.)"/>
+  <xsl:param name="language">
+    <xsl:call-template name="l10n.language"/>
+  </xsl:param>
+
+  <xsl:param name="format">
+    <xsl:call-template name="page.number.format">
+      <xsl:with-param name="master-reference" select="$master-reference"/>
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:param>
+
+  <xsl:param name="initial-page-number">
+    <xsl:call-template name="initial.page.number">
+      <xsl:with-param name="master-reference" select="$master-reference"/>
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:param>
+
+  <xsl:param name="force-page-count">
+    <xsl:call-template name="force.page.count">
+      <xsl:with-param name="master-reference" select="$master-reference"/>
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
   </xsl:param>
 
   <fo:page-sequence hyphenate="{$hyphenate}"
                     master-reference="{$master-reference}">
     <xsl:attribute name="language">
-      <xsl:call-template name="l10n.language"/>
+      <xsl:value-of select="$language"/>
     </xsl:attribute>
     <xsl:attribute name="format">
-      <xsl:call-template name="page.number.format">
-        <xsl:with-param name="master-reference" select="$master-reference"/>
-      </xsl:call-template>
+      <xsl:value-of select="$format"/>
     </xsl:attribute>
 
     <xsl:attribute name="initial-page-number">
-      <xsl:call-template name="initial.page.number">
-        <xsl:with-param name="master-reference" select="$master-reference"/>
-      </xsl:call-template>
+      <xsl:value-of select="$initial-page-number"/>
     </xsl:attribute>
 
     <xsl:attribute name="force-page-count">
-      <xsl:call-template name="force.page.count">
-        <xsl:with-param name="master-reference" select="$master-reference"/>
-      </xsl:call-template>
+      <xsl:value-of select="$force-page-count"/>
     </xsl:attribute>
 
     <xsl:attribute name="hyphenation-character">
@@ -746,10 +775,12 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
 
     <xsl:apply-templates select="." mode="running.head.mode">
       <xsl:with-param name="master-reference" select="$master-reference"/>
+      <xsl:with-param name="gentext-key" select="$gentext-key"/>
     </xsl:apply-templates>
 
     <xsl:apply-templates select="." mode="running.foot.mode">
       <xsl:with-param name="master-reference" select="$master-reference"/>
+      <xsl:with-param name="gentext-key" select="$gentext-key"/>
     </xsl:apply-templates>
 
     <fo:flow flow-name="xsl-region-body">

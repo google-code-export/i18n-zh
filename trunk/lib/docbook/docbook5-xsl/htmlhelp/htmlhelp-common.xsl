@@ -3,18 +3,18 @@
 <!ENTITY lf '<xsl:text xmlns:xsl="http://www.w3.org/1999/XSL/Transform">&#xA;</xsl:text>'>
 ]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:d="http://docbook.org/ns/docbook"
+  xmlns:d="http://docbook.org/ns/docbook"
 xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:set="http://exslt.org/sets"
-                xmlns:h="urn:x-hex"
-		xmlns:ng="http://docbook.org/docbook-ng"
-		xmlns:db="http://docbook.org/ns/docbook"
-		version="1.0"
-                exclude-result-prefixes="doc exsl set h db ng d">
+  xmlns:exsl="http://exslt.org/common"
+  xmlns:set="http://exslt.org/sets"
+  xmlns:h="urn:x-hex"
+  xmlns:ng="http://docbook.org/docbook-ng"
+  xmlns:db="http://docbook.org/ns/docbook"
+  version="1.0"
+  exclude-result-prefixes="doc exsl set h db ng d">
 
 <!-- ********************************************************************
-     $Id: htmlhelp-common.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: htmlhelp-common.xsl 7244 2007-08-15 10:44:03Z mzjn $
      ******************************************************************** -->
 
 <!-- ==================================================================== -->
@@ -28,34 +28,40 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <!-- ==================================================================== -->
 
-<xsl:param name="htmlhelp.generate.index" select="//d:indexterm[1]"/>
-
+<xsl:param name="htmlhelp.generate.index" select="//d:indexterm[1]|//db:indexterm[1]|//ng:indexterm[1]"/>
+  
 <!-- Set up HTML Help flag -->
 <xsl:variable name="htmlhelp.output" select="1"/>
 
-<xsl:variable name="raw.help.title">
-  <xsl:choose>
-    <xsl:when test="$htmlhelp.title = ''">
-      <xsl:choose>
-        <xsl:when test="$rootid != ''">
-          <xsl:apply-templates select="key('id',$rootid)" mode="title.markup"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates select="/*" mode="title.markup"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:value-of select="$htmlhelp.title"/>
-    </xsl:otherwise>
-  </xsl:choose>
-</xsl:variable>
-
-<xsl:variable name="help.title" select="normalize-space($raw.help.title)"/>
-  
 <!-- ==================================================================== -->
 
 <xsl:template match="/">
+
+  <!-- * Get a title for current doc so that we let the user -->
+  <!-- * know what document we are processing at this point. -->
+  <xsl:variable name="doc.title">
+    <xsl:call-template name="get.doc.title"/>
+  </xsl:variable>
+  <xsl:choose>
+    
+    <!-- include extra test for Xalan quirk -->
+    <xsl:when test="namespace-uri(*[1]) != 'http://docbook.org/ns/docbook'">
+ <xsl:call-template name="log.message">
+ <xsl:with-param name="level">Note</xsl:with-param>
+ <xsl:with-param name="source" select="$doc.title"/>
+ <xsl:with-param name="context-desc">
+ <xsl:text>namesp. add</xsl:text>
+ </xsl:with-param>
+ <xsl:with-param name="message">
+ <xsl:text>added namespace before processing</xsl:text>
+ </xsl:with-param>
+ </xsl:call-template>
+ <xsl:variable name="addns">
+    <xsl:apply-templates mode="addNS"/>
+  </xsl:variable>
+  <xsl:apply-templates select="exsl:node-set($addns)"/>
+</xsl:when>
+    <xsl:otherwise>
   <xsl:if test="$htmlhelp.only != 1">
     <xsl:choose>
       <xsl:when test="$rootid != ''">
@@ -89,6 +95,8 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
   <xsl:if test="$htmlhelp.generate.index">
     <xsl:call-template name="hhk"/>
   </xsl:if>
+</xsl:otherwise>
+</xsl:choose>
 </xsl:template>
 
 <!-- ==================================================================== -->
@@ -111,6 +119,27 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <!-- ==================================================================== -->
 <xsl:template name="hhp-main">
+
+  <xsl:variable name="raw.help.title">
+    <xsl:choose>
+      <xsl:when test="$htmlhelp.title = ''">
+	<xsl:choose>
+	  <xsl:when test="$rootid != ''">
+	    <xsl:apply-templates select="key('id',$rootid)" mode="title.markup"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:apply-templates select="/*" mode="title.markup"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$htmlhelp.title"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:variable name="help.title" select="normalize-space($raw.help.title)"/>
+  
 <xsl:variable name="default.topic">
   <xsl:choose>
     <xsl:when test="$htmlhelp.default.topic != ''">

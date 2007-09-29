@@ -6,12 +6,12 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: targets.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: targets.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -21,7 +21,7 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
 
 <doc:mode mode="collect.targets" xmlns="">
 <refpurpose>Collects information for potential cross reference targets</refpurpose>
-<refdescription>
+<refdescription id="collect.targets-desc">
 <para>Processing the root element in the
 <literal role="mode">collect.targets</literal> mode produces 
 a set of target database elements that can be used by

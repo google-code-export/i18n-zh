@@ -7,7 +7,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: axf.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: axf.xsl 6483 2007-01-08 18:00:22Z bobstayton $
      ******************************************************************** -->
 
 <xsl:template name="axf-document-information">

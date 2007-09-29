@@ -6,28 +6,24 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: qandaset.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: qandaset.xsl 6933 2007-07-03 11:48:38Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
 <!-- ==================================================================== -->
 
-<xsl:template match="d:qandaset">
+<xsl:template match="d:qandaset" name="process.qandaset">
   <xsl:variable name="id">
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
   <xsl:variable name="label-width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'label-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_label-width"/>
   </xsl:variable>
 
   <xsl:variable name="label-length">
@@ -47,11 +43,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   </xsl:variable>
   
   <xsl:variable name="toc">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'toc'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_toc"/>
   </xsl:variable>
 
   <xsl:variable name="toc.params">
@@ -158,11 +150,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
   <xsl:variable name="id"><xsl:call-template name="object.id"/></xsl:variable>
 
   <xsl:variable name="label-width">
-    <xsl:call-template name="dbfo-attribute">
-      <xsl:with-param name="pis"
-                      select="processing-instruction('dbfo')"/>
-      <xsl:with-param name="attribute" select="'label-width'"/>
-    </xsl:call-template>
+    <xsl:call-template name="pi.dbfo_label-width"/>
   </xsl:variable>
 
   <xsl:variable name="label-length">
@@ -265,25 +253,25 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:choose>
   </xsl:variable>
 
+
+      <xsl:variable name="label.content">
+        <xsl:apply-templates select="." mode="label.markup"/>
+        <xsl:if test="$deflabel = 'number' and not(d:label)">
+          <xsl:apply-templates select="." mode="intralabel.punctuation"/>
+        </xsl:if>
+      </xsl:variable>
+
   <fo:list-item id="{$entry.id}" xsl:use-attribute-sets="list.item.spacing">
     <fo:list-item-label id="{$id}" end-indent="label-end()">
-      <xsl:choose>
-        <xsl:when test="$deflabel = 'none'">
-          <fo:block/>
-        </xsl:when>
-        <xsl:otherwise>
-          <fo:block>
-            <xsl:apply-templates select="." mode="label.markup"/>
-            <xsl:if test="$deflabel = 'number' and not(d:label)">
-              <xsl:apply-templates select="." mode="intralabel.punctuation"/>
-            </xsl:if>
-          </fo:block>
-        </xsl:otherwise>
-      </xsl:choose>
+        <xsl:if test="string-length($label.content) &gt; 0">
+			<fo:block font-weight="bold">
+			  <xsl:copy-of select="$label.content"/>          
+			</fo:block>
+        </xsl:if>
     </fo:list-item-label>
     <fo:list-item-body start-indent="body-start()">
       <xsl:choose>
-        <xsl:when test="$deflabel = 'none'">
+        <xsl:when test="$deflabel = 'none' and not(d:label)">
           <fo:block font-weight="bold">
             <xsl:apply-templates select="*[local-name(.)!='label']"/>
           </fo:block>
@@ -318,24 +306,30 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
     </xsl:choose>
   </xsl:variable>
 
+      <xsl:variable name="answer.label">
+        <xsl:apply-templates select="." mode="label.markup"/>
+      </xsl:variable>
+
   <fo:list-item xsl:use-attribute-sets="list.item.spacing">
     <fo:list-item-label id="{$id}" end-indent="label-end()">
       <xsl:choose>
-        <xsl:when test="$deflabel = 'none'">
-          <fo:block/>
+        <xsl:when test="string-length($answer.label) &gt; 0">
+			<fo:block font-weight="bold">
+			  <xsl:copy-of select="$answer.label"/>
+			</fo:block>
         </xsl:when>
         <xsl:otherwise>
-          <fo:block>
-            <xsl:variable name="answer.label">
-              <xsl:apply-templates select="." mode="label.markup"/>
-            </xsl:variable>
-            <xsl:copy-of select="$answer.label"/>
-          </fo:block>
+			<fo:block/>
         </xsl:otherwise>
       </xsl:choose>
     </fo:list-item-label>
     <fo:list-item-body start-indent="body-start()">
-      <xsl:apply-templates select="*[local-name(.)!='label']"/>
+      <xsl:apply-templates select="*[local-name(.)!='label' and local-name(.) != 'qandaentry']"/>
+      <!-- * handle nested answer/qandaentry instances -->
+      <!-- * (bug 1509043 from Daniel Leidert) -->
+      <xsl:if test="descendant::d:question">
+        <xsl:call-template name="process.qandaset"/>
+      </xsl:if>
     </fo:list-item-body>
   </fo:list-item>
 </xsl:template>

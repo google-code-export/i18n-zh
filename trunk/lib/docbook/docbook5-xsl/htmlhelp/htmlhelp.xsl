@@ -8,7 +8,7 @@ xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
                 exclude-result-prefixes="doc exsl set d">
 
 <!-- ********************************************************************
-     $Id: htmlhelp.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: htmlhelp.xsl 1676 2002-06-12 13:21:54Z kosek $
      ******************************************************************** 
 
      This file is used by htmlhelp.xsl if you want to generate source

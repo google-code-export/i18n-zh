@@ -7,11 +7,11 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: highlight.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: highlight.xsl 7266 2007-08-22 11:58:42Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
      and other information.
 
      ******************************************************************** -->

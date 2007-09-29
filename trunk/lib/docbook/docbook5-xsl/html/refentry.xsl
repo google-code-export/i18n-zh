@@ -5,12 +5,12 @@
 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: refentry.xsl 9 2007-04-05 08:11:11Z dongsheng.song $
+     $Id: refentry.xsl 6910 2007-06-28 23:23:30Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
-     See ../README or http://nwalsh.com/docbook/xsl/ for copyright
-     and other information.
+     See ../README or http://docbook.sf.net/release/xsl/current/ for
+     copyright and other information.
 
      ******************************************************************** -->
 
@@ -253,11 +253,13 @@ version='1.0'>
     <xsl:call-template name="anchor">
       <xsl:with-param name="conditional" select="0"/>
     </xsl:call-template>
-    <xsl:apply-templates/>
+    <!-- pick up info title -->
+    <xsl:apply-templates select="(d:title|d:info/d:title)[1]"/>
+    <xsl:apply-templates select="node()[not(self::d:title) and not(self::d:info)]"/>
   </div>
 </xsl:template>
 
-<xsl:template match="d:refsection/d:title">
+<xsl:template match="d:refsection/d:title|d:refsection/d:info/d:title">
   <!-- the ID is output in the block.object call for refsect1 -->
   <xsl:variable name="level" select="count(ancestor-or-self::d:refsection)"/>
   <xsl:variable name="refsynopsisdiv">
@@ -277,21 +279,21 @@ version='1.0'>
   </xsl:element>
 </xsl:template>
 
-<xsl:template match="d:refsect1/d:title">
+<xsl:template match="d:refsect1/d:title|d:refsect1/d:info/d:title">
   <!-- the ID is output in the block.object call for refsect1 -->
   <h2>
     <xsl:apply-templates/>
   </h2>
 </xsl:template>
 
-<xsl:template match="d:refsect2/d:title">
+<xsl:template match="d:refsect2/d:title|d:refsect2/d:info/d:title">
   <!-- the ID is output in the block.object call for refsect2 -->
   <h3>
     <xsl:apply-templates/>
   </h3>
 </xsl:template>
 
-<xsl:template match="d:refsect3/d:title">
+<xsl:template match="d:refsect3/d:title|d:refsect3/d:info/d:title">
   <!-- the ID is output in the block.object call for refsect3 -->
   <h4>
     <xsl:apply-templates/>
