@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2007 Free Software Foundation, Inc.
+  
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+-->
+<!--
+  GDB supports a subset of XInclude.  Only whole documents can
+  be included, and only as XML.
+-->
+<grammar xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://relaxng.org/ns/structure/1.0">
+  <define name="include">
+    <element name="xi:include">
+      <ref name="attlist.include"/>
+      <ref name="EMPTY"/>
+    </element>
+  </define>
+  <define name="attlist.include" combine="interleave">
+    <attribute name="href"/>
+  </define>
+  <define name="EMPTY" combine="choice">
+    <notAllowed/>
+  </define>
+  <start>
+    <choice>
+      <ref name="include"/>
+    </choice>
+  </start>
+</grammar>
