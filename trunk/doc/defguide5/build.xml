@@ -69,6 +69,42 @@ Dependency:
                 file="build/defguide5-zh_CN.xml"/ -->
     </target>
 
+    <target name="pot.init">
+        <uptodate property="pot.isUpToDate" targetfile="po/defguide5.pot">
+            <srcfiles dir="xml" includes="defguide5.xml"/>
+        </uptodate>
+    </target>
+
+    <target name="pot" depends="pot.init" unless="pot.isUpToDate" description="Generate document - pot">
+        <!--fail>
+            <condition>
+                <or>
+                    <os family="windows"/>
+                </or>
+            </condition>
+            This target known work on unix, not windows !
+        </fail-->
+
+        <echo message="Making defguide5.pot ..."/>
+        <exec dir="${basedir}" executable="python">
+            <arg value="xml2po.py"/>
+            <arg value="-o"/>
+            <arg value="po/defguide5.pot"/>
+            <arg value="xml/defguide5.xml"/>
+        </exec>
+
+        <echo message="Merging zh_CN.po ..."/>
+        <exec dir="${basedir}" executable="msgmerge">
+            <!-- arg value="- -no-wrap"/ -->
+            <arg value="--width=96"/>
+            <arg value="-o"/>
+            <arg value="po/zh_CN.po.new"/>
+            <arg value="po/zh_CN.po"/>
+            <arg value="po/defguide5.pot"/>
+        </exec>
+        <move file="po/zh_CN.po.new" tofile="po/zh_CN.po"/>
+    </target>
+
     <target name="translate.init">
         <uptodate property="translate.isUpToDate" targetfile="build/defguide5-zh_CN.xml">
             <srcfiles dir="xml" includes="defguide5.xml"/>
