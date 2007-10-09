@@ -3,24 +3,26 @@
     xmlns:fo="http://www.w3.org/1999/XSL/Format"
     version='1.0'>
 
-  <xsl:import href="../../../../lib/docbook/docbook5-xsl/fo/docbook.xsl"/>
+  <xsl:import href="../../../lib/docbook/docbook4-xsl/fo/docbook.xsl"/>
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
 
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="tablecolumns.extension">0</xsl:param>
-  <xsl:param name="fop.extensions">0</xsl:param>
-  <xsl:param name="fop1.extensions">1</xsl:param>
+
+  <xsl:param name="fop.extensions">1</xsl:param>
+  <xsl:param name="fop1.extensions">0</xsl:param>
 
   <xsl:param name="draft.mode" select="no"/>
 
   <xsl:param name="variablelist.as.blocks" select="1" />
+
   <xsl:param name="admon.textlabel" select="0" />
   <xsl:param name="admon.graphics" select="1" />
   <xsl:param name="admon.graphics.path">images/</xsl:param>
   <xsl:param name="admon.graphics.extension">.png</xsl:param>
-  <xsl:param name="section.autolabel" select="1" />
+
   <xsl:attribute-set name="sidebar.properties" use-attribute-sets="formal.object.properties">
     <xsl:attribute name="border-style">solid</xsl:attribute>
     <xsl:attribute name="border-width">.1mm</xsl:attribute>
