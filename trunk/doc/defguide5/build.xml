@@ -1,230 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Usage:
-    build html(zh) output: ant html
-    build pdf(zh) output:  ant pdf
+    Building 'The Definitive Guide (5.0)' - all(html, chm & pdf)
+        $ ant
 
-    build html(en) output: ant html.en
-    build pdf(en) output:  ant pdf.en
+    Building 'The Definitive Guide (5.0)' - html
+        $ ant html
 
-    build all output: ant all
+    Building 'The Definitive Guide (5.0)' - chm
+        $ ant chm
+
+    Building 'The Definitive Guide (5.0)' - pdf
+        $ ant pdf
 
 Dependency:
-    *) python 2.4+
-    *) python-libxml2 2.6.27+
-    *) xsltproc 1.1.20+
-    *) gettext 0.16+
-    *) jdk 1.4.2+
+    *) ant 1.7
+    *) beanshell 2.0b4
+    *) xsltproc 1.1.20
+    *) jdk 1.4.2
+    *) saxon 6.5 & 8.9
+    *) DocBook v5 XSL 1.73.2
+    *) RELAX NG Support(jing)
+    *) python 2.4.4
+    *) python-libxml2 2.6.27
+    *) gettext 0.16.1
+    *) fop 0.20.5, pdf only
+    *) chinese font files, pdf only
     *) For windows user, you can download gettext & xsltproc binary from:
         http://i18n-zh.googlecode.com/files/gettext-0.16.1_xsltproc-1.1.20.tar.bz2
-
-description:
-    *) add dependency software
-    *) copy build.tmpl.properties to build.properties, and adjust build.properties
-    *) start building ...
-
-TODO:
-    *) Add Multi-Language support
-    *) Add chm output
-    *) ...
-
-Author：
-    *) Dongsheng Song <dongsheng.song@gmail.com>, 2007
-
 -->
 <project name="docbook" default="html">
 
     <property file="build.properties"/>
 
     <path id="lib.classpath">
-        <fileset dir="${fop.dir}/build">
+        <fileset dir="${ant.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${fop.home}">
             <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="${fop.dir}/lib">
+        <fileset dir="${usr.share.java}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
 
-    <target name="all">
-        <antcall target="html.en"/>
-        <antcall target="pdf.en"/>
+    <taskdef name="jing" classname="com.thaiopensource.relaxng.util.JingTask"/>
+
+    <target name="usage">
+        <echo message="Use the -projecthelp option instead"/>
+    </target>
+
+    <target name="all" description="Generate document - html,chm,pdf">
         <antcall target="html"/>
         <antcall target="pdf"/>
+        <!--antcall target="chm"/-->
     </target>
 
-    <target name="clean">
+    <target name="clean" description="Clean the build directory">
         <delete dir="build"/>
-        <delete file="en/bookinfo.xml"/>
     </target>
 
-    <target name="profile.init">
-        <uptodate property="profile.isUpToDate" targetfile="build/en/${doc.name}.xml">
-            <srcfiles dir="en" includes="book.xml, VERSION.xml"/>
-            <srcfiles dir="en/src" includes="*.xml"/>
-            <srcfiles dir="en/refpages" includes="intro-elements.xml, references.xml"/>
-        </uptodate>
+    <target name="validate" depends="translate" description="Validate document">
+        <jing rngfile="../../lib/docbook/docbook5/rng/docbook.rng"
+                file="xml/defguide5.xml"/>
+        <!-- Don't uncomment this unless xml2po support namespace ! -->
+        <!-- jing rngfile="../../lib/docbook/docbook5/rng/docbook.rng"
+                file="build/defguide5-zh_CN.xml"/ -->
     </target>
 
-    <target name="profile" depends="profile.init" unless="profile.isUpToDate">
-        <mkdir dir="build/en"/>
-        <copy todir="build/en/figures">
-            <fileset dir="en/figures" includes="*.png"/>
-        </copy>
-
-        <!-- omit elements reference for a while -->
-        <copy file="list-elements.xml" todir="en/refpages" overwrite="true"/>
-
-        <exec dir="." executable="xsltproc">
-            <arg value="--nonet"/>
-            <arg value="--output"/>
-            <arg value="en/bookinfo.xml"/>
-            <arg value="en/VERSION.xml"/>
-            <arg value="en/VERSION.xml"/>
-        </exec>
-
-        <exec dir="." executable="xmllint">
-            <arg value="--nonet"/>
-            <arg value="--xinclude"/>
-            <arg value="--output"/>
-            <arg value="build/en/${doc.name}.xml"/>
-            <arg value="en/book.xml"/>
-        </exec>
-    </target>
-
-    <target name="pot.init">
-        <uptodate property="pot.isUpToDate" targetfile="po/${doc.name}.pot">
-            <srcfiles dir="en" includes="book.xml, VERSION.xml"/>
-            <srcfiles dir="en/src" includes="*.xml"/>
-            <srcfiles dir="en/refpages" includes="intro-elements.xml, references.xml"/>
-        </uptodate>
-    </target>
-
-    <!-- For some xml2po bugs, this target should NOT run in Windows !-->
-    <target name="pot" depends="pot.init,profile" unless="pot.isUpToDate">
-        <exec dir="." executable="python">
-            <arg value="xml2po.py"/>
-            <arg value="-e"/>
-            <arg value="-o"/>
-            <arg value="po/${doc.name}.pot"/>
-            <arg value="build/en/${doc.name}.xml"/>
-        </exec>
-        <exec dir="." executable="msgmerge">
-            <arg value="--no-wrap"/>
-            <arg value="-o"/>
-            <arg value="po/zh_CN.po.new"/>
-            <arg value="po/zh_CN.po"/>
-            <arg value="po/${doc.name}.pot"/>
-        </exec>
-        <move file="po/zh_CN.po.new" tofile="po/zh_CN.po"/>
-    </target>
-
-    <!-- For some xml2po bugs, pot target should NOT run in Windows !-->
-    <!-- target name="translate.init" depends="pot" -->
-    <target name="translate.init" depends="profile">
-        <uptodate property="translate.isUpToDate" targetfile="build/zh/${doc.name}.xml">
-            <srcfiles dir="en" includes="book.xml, VERSION.xml"/>
-            <srcfiles dir="en/src" includes="*.xml"/>
-            <srcfiles dir="en/refpages" includes="intro-elements.xml, references.xml"/>
+    <target name="translate.init">
+        <uptodate property="translate.isUpToDate" targetfile="build/defguide5-zh_CN.xml">
+            <srcfiles dir="xml" includes="defguide5.xml"/>
             <srcfiles dir="po" includes="zh_CN.po"/>
         </uptodate>
     </target>
 
-    <target name="translate" depends="translate.init" unless="translate.isUpToDate">
-        <mkdir dir="build/zh"/>
-        <exec dir="." executable="msgfmt">
-            <arg value="po/zh_CN.po"/>
-            <arg value="-o"/>
-            <arg value="po/zh_CN.mo"/>
-        </exec>
-        <exec dir="." executable="python">
+    <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
+        <mkdir dir="build"/>
+        <echo message="Translating defguide5-zh_CN.xml ..."/>
+        <exec dir="${basedir}" executable="python">
             <arg value="xml2po.py"/>
             <arg value="-l"/>
             <arg value="zh-cn"/>
-            <arg value="-t"/>
-            <arg value="po/zh_CN.mo"/>
+            <arg value="-p"/>
+            <arg value="po/zh_CN.po"/>
             <arg value="-o"/>
-            <arg value="build/zh/${doc.name}.xml"/>
-            <arg value="build/en/${doc.name}.xml"/>
+            <arg value="build/defguide5-zh_CN-tmp.xml"/>
+            <arg value="xml/defguide5.xml"/>
+        </exec>
+        <exec dir="${basedir}/build" executable="xmllint">
+            <arg value="--encode"/>
+            <arg value="UTF-8"/>
+            <arg value="--output"/>
+            <arg value="defguide5-zh_CN.xml"/>
+            <arg value="--format"/>
+            <arg value="defguide5-zh_CN-tmp.xml"/>
         </exec>
     </target>
 
-    <target name="html" depends="translate">
-        <mkdir dir="build/zh/html"/>
-        <copy file="xsl/defguide.css" todir="build/zh/html"/>
+    <target name="html.init">
+        <uptodate property="html.isUpToDate" targetfile="build/html/.done">
+            <srcfiles dir="xml" includes="defguide5.xml"/>
+            <srcfiles dir="po" includes="zh_CN.po"/>
+        </uptodate>
+    </target>
 
-        <exec dir="build/zh/html" executable="xsltproc">
+    <target name="html" depends="translate,html.init" unless="html.isUpToDate" description="Generate document - html">
+        <copy file="stylesheets/defguide.css" todir="build/html"/>
+        <copy todir="build/html/figures">
+            <fileset dir="xml/figures" includes="*.png,*.gif,*.eps"/>
+        </copy>
+        <copy todir="build/html/figures">
+            <fileset dir="../../lib/docbook/docbook5-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
+        </copy>
+
+        <echo message="Making html ..."/>
+        <exec dir="${basedir}${file.separator}build${file.separator}html" executable="xsltproc">
             <arg value="--nonet"/>
-            <arg value="../../../xsl/html.xsl"/>
-            <arg value="../${doc.name}.xml"/>
+            <arg value="../../stylesheets/html.xsl"/>
+            <arg value="../../build/defguide5-zh_CN.xml"/>
         </exec>
-
+        <touch file="build/html/.done"/>
     </target>
 
-    <target name="pdf" depends="translate">
-        <copy todir="build/zh/pdf">
+    <target name="chm.init">
+        <uptodate property="chm.isUpToDate" targetfile="build/defguide5-zh_CN.chm">
+            <srcfiles dir="xml" includes="defguide5.xml"/>
+            <srcfiles dir="po" includes="zh_CN.po"/>
+        </uptodate>
+    </target>
+
+    <target name="chm" depends="translate,chm.init" unless="chm.isUpToDate" description="Generate document - chm">
+        <fail>
+            <condition>
+                <not><os family="windows"/></not>
+            </condition>
+            This target only known work on windows !
+        </fail>
+
+        <copy file="stylesheets/defguide.css" todir="build/htmlhelp"/>
+        <copy todir="build/htmlhelp/figures">
+            <fileset dir="xml/figures" includes="*.png"/>
+        </copy>
+        <copy todir="build/htmlhelp/images">
+            <fileset dir="../../lib/docbook/docbook5-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
+        </copy>
+
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}${file.separator}build"
+                 failonerror="true" maxmemory="512m">
+            <classpath refid="lib.classpath"/>
+            <arg value="defguide5-zh_CN.xml"/>
+            <arg value="../stylesheets/chm.xsl"/>
+        </java>
+
+        <!--exec dir="${basedir}${file.separator}build" executable="xsltproc" failonerror="true">
+            <arg value="- -nonet"/>
+            <arg value="../stylesheets/chm.xsl"/>
+            <arg value="build/defguide5-zh_CN.xml"/>
+        </exec-->
+
+        <exec dir="${basedir}${file.separator}build" executable="hhc" failonerror="false">
+            <arg value="htmlhelp.hhp"/>
+        </exec>
+
+        <!--delete dir="build/htmlhelp"/>
+        <delete file="build/toc.hhc"/>
+        <delete file="build/index.hhk"/>
+        <delete file="build/htmlhelp.hhp"/-->
+    </target>
+
+    <target name="pdf.init">
+        <uptodate property="pdf.isUpToDate" targetfile="build/defguide5-zh_CN.pdf">
+            <srcfiles dir="xml" includes="defguide5.xml"/>
+            <srcfiles dir="po" includes="zh_CN.po"/>
+        </uptodate>
+    </target>
+
+    <target name="pdf" depends="translate,pdf.init" unless="pdf.isUpToDate"  description="Generate document - pdf">
+
+        <copy todir="build/pdf/figures">
+            <fileset dir="xml/figures" includes="*.png,*.git,*.eps"/>
+        </copy>
+        <copy todir="build/pdf/images">
+            <fileset dir="../../lib/docbook/docbook5-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
+        </copy>
+
+        <copy todir="build/pdf">
             <fileset dir="${fonts.dir}">
                 <include name="*.ttf"/>
                 <include name="*.ttc"/>
             </fileset>
-            <fileset dir="${fop.dir}/conf">
+            <fileset dir="${fop.home}/conf">
                 <include name="*.xml"/>
             </fileset>
         </copy>
 
-        <exec dir="." executable="xsltproc">
-            <arg value="--nonet"/>
-            <arg value="--output"/>
-            <arg value="build/zh/pdf/${doc.name}.fo"/>
-            <arg value="xsl/zh_CN/fo.xsl"/>
-            <arg value="build/zh/${doc.name}.xml"/>
-        </exec>
+        <echo message="Making fo ..."/>
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}"
+                 failonerror="true" maxmemory="512m">
+            <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="build/pdf/defguide5-zh_CN.fo"/>
+            <arg value="build/defguide5-zh_CN.xml"/>
+            <arg value="stylesheets/zh_CN/fo.xsl"/>
+        </java>
 
-        <java classname="org.apache.fop.cli.Main" fork="true" dir="build/zh/pdf" maxmemory="512m">
+        <echo message="Making pdf ..."/>
+        <java classname="${fop.class}" fork="true" maxmemory="512m"
+                dir="${basedir}${file.separator}build${file.separator}pdf">
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
             <arg value="userconfig.xml"/>
-            <arg value="${doc.name}.fo"/>
-            <arg value="${doc.name}.pdf"/>
+            <arg value="defguide5-zh_CN.fo"/>
+            <arg value="../defguide5-zh_CN.pdf"/>
         </java>
 
-        <delete>
-            <fileset dir="build/zh/pdf" excludes="**/*.pdf, **/*.fo"/>
-        </delete>
-    </target>
-
-    <target name="html.en" depends="profile">
-        <mkdir dir="build/en/html"/>
-
-        <exec dir="build/en/html" executable="xsltproc">
-            <arg value="- -nonet"/>
-            <arg value="../../../xsl/html.xsl"/>
-            <arg value="../${doc.name}.xml"/>
-        </exec>
-
-        <copy file="xsl/defguide.css" todir="build/en/html"/>
-    </target>
-
-    <target name="pdf.en" depends="profile">
-        <mkdir dir="build/en/pdf"/>
-
-        <exec dir="." executable="xsltproc">
-            <arg value="--nonet"/>
-            <arg value="--output"/>
-            <arg value="build/en/pdf/${doc.name}.fo"/>
-            <arg value="xsl/fo.xsl"/>
-            <arg value="build/en/${doc.name}.xml"/>
-        </exec>
-
-        <java classname="org.apache.fop.cli.Main" fork="true"
-                dir="." maxmemory="512m">
-            <classpath refid="lib.classpath"/>
-            <arg value="build/en/pdf/${doc.name}.fo"/>
-            <arg value="build/en/pdf/${doc.name}.pdf"/>
-        </java>
-
-        <delete>
-            <fileset dir="build/en/pdf" excludes="**/*.pdf, **/*.fo"/>
-        </delete>
+        <delete dir="build/pdf"/>
     </target>
 
 </project>

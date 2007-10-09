@@ -1,8 +1,10 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-  <xsl:import href="../../../../lib/docbook/docbook5-xsl/html/chunk.xsl"/>
+  <xsl:import href="../../../lib/docbook/docbook5-xsl/html/chunk.xsl"/>
 
   <xsl:output method="html" encoding="utf-8" indent="yes"/>
+
+  <xsl:param name="l10n.gentext.language" select="'zh_cn'"/>
 
   <xsl:param name="html.stylesheet">defguide.css</xsl:param>
   <xsl:param name="toc.section.depth">3</xsl:param>

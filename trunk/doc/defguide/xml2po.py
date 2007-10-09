@@ -127,6 +127,7 @@ msgstr ""
             for reference in self.linenos[k]:
                 references += "%s:%d(%s) " % (reference[0], reference[2], reference[1])
             out.write("#: %s\n" % (references))
+            out.write("#.(%s)\n" % (reference[1]))
             if k in self.nowrap and self.nowrap[k]:
                 out.write("#, no-wrap\n")
             out.write("msgid \"%s\"\n" % (k))
@@ -714,8 +715,8 @@ import getopt, fileinput
 
 def usage (with_help = False):
         print >> sys.stderr, "Usage:  %s [OPTIONS] [XMLFILE]..." % (sys.argv[0])
-	if (with_help):
-        	print >> sys.stderr, """
+        if (with_help):
+            print >> sys.stderr, """
 OPTIONS may be some of:
     -a    --automatic-tags     Automatically decides if tags are to be considered
                                  "final" or not
@@ -789,7 +790,7 @@ for opt, arg in opts:
         print VERSION
         sys.exit(0)
     elif opt in ('-h', '--help'):
-    	usage(True)
+        usage(True)
 
 # Treat remaining arguments as XML files
 while args:
