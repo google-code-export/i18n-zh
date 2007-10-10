@@ -86,7 +86,7 @@ Dependency:
         </fail-->
 
         <echo message="Making defguide5.pot ..."/>
-        <exec dir="${basedir}" executable="python">
+        <exec dir="${basedir}" executable="python" failonerror="true">
             <arg value="xml2po.py"/>
             <arg value="-o"/>
             <arg value="po/defguide5.pot"/>
@@ -95,8 +95,7 @@ Dependency:
 
         <echo message="Merging zh_CN.po ..."/>
         <exec dir="${basedir}" executable="msgmerge">
-            <!-- arg value="- -no-wrap"/ -->
-            <arg value="--width=96"/>
+            <arg value="--no-wrap"/>
             <arg value="-o"/>
             <arg value="po/zh_CN.po.new"/>
             <arg value="po/zh_CN.po"/>
@@ -115,7 +114,7 @@ Dependency:
     <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
         <mkdir dir="build"/>
         <echo message="Translating defguide5-zh_CN.xml ..."/>
-        <exec dir="${basedir}" executable="python">
+        <exec dir="${basedir}" executable="python" failonerror="true">
             <arg value="xml2po.py"/>
             <arg value="-l"/>
             <arg value="zh-cn"/>

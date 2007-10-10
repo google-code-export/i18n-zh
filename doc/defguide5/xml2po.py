@@ -124,10 +124,16 @@ msgstr ""
             if k in self.comments:
                 out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
             references = ""
+            tagstr = ""
+            tags = []
             for reference in self.linenos[k]:
                 references += "%s:%d(%s) " % (reference[0], reference[2], reference[1])
+                if(reference[1] not in tags): 
+                    tags.append(reference[1])
+                    if(tagstr == ""): tagstr = "(" + str(reference[1]) + ")"
+                    else: tagstr += ", (" + str(reference[1]) + ")"
             out.write("#: %s\n" % (references))
-            out.write("#.(%s)\n" % (reference[1]))
+            out.write("#.%s\n" % (tagstr))
             if k in self.nowrap and self.nowrap[k]:
                 out.write("#, no-wrap\n")
             out.write("msgid \"%s\"\n" % (k))
