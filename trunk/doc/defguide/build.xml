@@ -68,6 +68,41 @@ Dependency:
                 file="build/defguide-zh_CN.xml"/ -->
     </target>
 
+    <target name="pot.init">
+        <uptodate property="pot.isUpToDate" targetfile="po/defguide.pot">
+            <srcfiles dir="xml" includes="xml/defguide.xml"/>
+        </uptodate>
+    </target>
+
+    <target name="pot" depends="pot.init" unless="pot.isUpToDate" description="Generate document - pot">
+        <!--fail>
+            <condition>
+                <or>
+                    <os family="windows"/>
+                </or>
+            </condition>
+            This target known work on unix, not windows !
+        </fail-->
+
+        <echo message="Making defguide.pot ..."/>
+        <exec dir="${basedir}" executable="python" failonerror="true">
+            <arg value="xml2po.py"/>
+            <arg value="-o"/>
+            <arg value="po/defguide.pot"/>
+            <arg value="xml/defguide.xml"/>
+        </exec>
+
+        <echo message="Merging zh_CN.po ..."/>
+        <exec dir="${basedir}" executable="msgmerge">
+            <arg value="--no-wrap"/>
+            <arg value="-o"/>
+            <arg value="po/zh_CN.po.new"/>
+            <arg value="po/zh_CN.po"/>
+            <arg value="po/defguide.pot"/>
+        </exec>
+        <move file="po/zh_CN.po.new" tofile="po/zh_CN.po"/>
+    </target>
+
     <target name="translate.init">
         <uptodate property="translate.isUpToDate" targetfile="build/defguide-zh_CN.xml">
             <srcfiles dir="xml" includes="defguide.xml"/>
@@ -88,6 +123,16 @@ Dependency:
             <arg value="build/defguide-zh_CN.xml"/>
             <arg value="xml/defguide.xml"/>
         </exec>
+        <exec dir="${basedir}/build" executable="xmllint">
+            <arg value="--encode"/>
+            <arg value="UTF-8"/>
+            <arg value="--output"/>
+            <arg value="defguide-zh_CN.xml"/>
+            <arg value="--format"/>
+            <arg value="defguide-zh_CN-tmp.xml"/>
+        </exec>
+        <delete file=".xml2po.mo"/>
+        <delete file="build/defguide-zh_CN-tmp.xml"/>
     </target>
 
     <target name="html.init">
