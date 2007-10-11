@@ -63,9 +63,9 @@ Dependency:
     <target name="validate" depends="translate" description="Validate document">
         <jing rngfile="../../lib/docbook/docbook4/rng/docbook.rng"
                 file="xml/defguide.xml"/>
-        <!-- Don't uncomment this unless xml2po support namespace ! -->
-        <!-- jing rngfile="../../lib/docbook/docbook4/rng/docbook.rng"
-                file="build/defguide-zh_CN.xml"/ -->
+
+        <jing rngfile="../../lib/docbook/docbook4/rng/docbook.rng"
+                file="build/defguide-zh_CN.xml"/>
     </target>
 
     <target name="pot.init">
@@ -110,6 +110,7 @@ Dependency:
         </uptodate>
     </target>
 
+    <!-- In PM-1.73 notebook, Total time: 3 seconds -->
     <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
         <mkdir dir="build"/>
         <echo message="Translating defguide-zh_CN.xml ..."/>
@@ -147,8 +148,11 @@ Dependency:
         <copy todir="build/html/figures">
             <fileset dir="xml/figures" includes="*.png,*.gif,*.eps"/>
         </copy>
-        <copy todir="build/html/figures">
+        <copy todir="build/html/images">
             <fileset dir="../../lib/docbook/docbook4-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
+        </copy>
+        <copy todir="build/examples">
+            <fileset dir="xml/examples" includes="*.png,*.gif,*.eps"/>
         </copy>
 
         <echo message="Making html ..."/>
@@ -181,6 +185,9 @@ Dependency:
         </copy>
         <copy todir="build/htmlhelp/images">
             <fileset dir="../../lib/docbook/docbook4-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
+        </copy>
+        <copy todir="build/examples">
+            <fileset dir="xml/examples" includes="*.png,*.gif,*.eps"/>
         </copy>
 
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}${file.separator}build"
@@ -221,6 +228,9 @@ Dependency:
         <copy todir="build/pdf/images">
             <fileset dir="../../lib/docbook/docbook4-xsl/images" includes="*.gif,*.png,*.tif,*.svg"/>
         </copy>
+        <copy todir="build/examples">
+            <fileset dir="xml/examples" includes="*.png,*.gif,*.eps"/>
+        </copy>
 
         <copy todir="build/pdf">
             <fileset dir="${fonts.dir}">
@@ -234,12 +244,13 @@ Dependency:
 
         <echo message="Making fo ..."/>
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}"
-                 failonerror="true" maxmemory="512m">
+                 failonerror="true" maxmemory="1536m">
             <classpath refid="lib.classpath"/>
             <arg value="-o"/>
             <arg value="build/pdf/defguide-zh_CN.fo"/>
             <arg value="build/defguide-zh_CN.xml"/>
             <arg value="stylesheets/zh_CN/fo.xsl"/>
+            <jvmarg value="-Xss128m"/>
         </java>
 
         <echo message="Making pdf ..."/>

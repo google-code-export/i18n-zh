@@ -130,7 +130,7 @@ class docbookXmlMode:
                 else:
                     hash = "THIS FILE DOESN'T EXIST"
                     print >>sys.stderr, "Warning: image file '%s' not found." % fullpath
-
+                    
                 msg.outputMessage("@@image: '%s'; md5=%s" % (attr, hash), node.lineNo(),
                                   "When image changes, this message will be marked fuzzy or untranslated for you.\n"+
                                   "It doesn't matter what you translate it to: it's not used at all.")
@@ -148,7 +148,7 @@ class docbookXmlMode:
 
     def postProcessXmlTranslation(self, doc, language, translators):
         """Sets a language and translators in "doc" tree.
-
+        
         "translators" is a string consisted of "Name <email>, years" pairs
         of each translator, separated by newlines."""
 
@@ -160,7 +160,7 @@ class docbookXmlMode:
             root.setProp('lang', language)
         else:
             return
-
+        
         if translators == self.getStringForTranslators():
             return
         elif translators:
@@ -202,4 +202,4 @@ if __name__ == '__main__':
 
     print "Credits from string: '%s'" % test.getStringForTranslators()
     print "Explanation for credits:\n\t'%s'" % test.getCommentForTranslators()
-
+    
