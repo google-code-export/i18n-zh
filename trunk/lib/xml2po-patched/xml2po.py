@@ -124,10 +124,15 @@ msgstr ""
             if k in self.comments:
                 out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
             references = ""
+            tagstr = ""
+            tags = []
             for reference in self.linenos[k]:
-                references += "%s:%d(%s) " % (reference[0], reference[2], reference[1])
-            out.write("#: %s\n" % (references))
-            out.write("#.(%s)\n" % (reference[1]))
+                references += "%s:%d " % (reference[0], reference[2])
+                if(reference[1] not in tags): 
+                    tags.append(reference[1])
+                    tagstr += "(" + str(reference[1]) + "), "
+            out.write("#.%s\n" % (tagstr[0 : len(tagstr) - 2]))
+            out.write("#: %s\n" % (references[0 : len(references) - 1]))
             if k in self.nowrap and self.nowrap[k]:
                 out.write("#, no-wrap\n")
             out.write("msgid \"%s\"\n" % (k))
@@ -361,7 +366,7 @@ def replaceNodeContentsWithText(node,text):
     """Replaces all subnodes of a node with contents of text treated as XML."""
 
     if node.children:
-        starttag = startTagForNode(node).decode('utf-8')
+        starttag = startTagForNode(node)
         endtag = endTagForNode(node)
 
         # Lets add document DTD so entities are resolved
@@ -510,7 +515,7 @@ def processElementTag(node, replacements, restart = 0):
         else:
             translation = outtxt.decode('utf-8')
 
-        starttag = startTagForNode(node).decode('utf-8')
+        starttag = startTagForNode(node)
         endtag = endTagForNode(node)
 
         worth = worthOutputting(node)
@@ -688,7 +693,7 @@ libxml2.registerErrorHandler(xml_error_handler, None)
 if __name__ != '__main__': raise NotImplementedError
 
 # Parameters
-submodes_path = "xml2po-modes"
+submodes_path = os.path.dirname(os.path.realpath(sys.argv[0])) + "/xml2po-modes"
 default_mode = 'docbook'
 
 filename = ''
