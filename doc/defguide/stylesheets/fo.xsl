@@ -9,7 +9,9 @@
 
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
-  <xsl:param name="tablecolumns.extension">0</xsl:param>
+  <xsl:param name="tablecolumns.extension">1</xsl:param>
+  <xsl:param name="callout.extensions">1</xsl:param>
+  <xsl:param name="textinsert.extension">1</xsl:param>
 
   <xsl:param name="fop.extensions">1</xsl:param>
   <xsl:param name="fop1.extensions">0</xsl:param>
@@ -144,10 +146,6 @@
   <!--###################################################
                            Callouts
       ################################################### -->
-
-  <!-- We want to use callouts... -->
-  <xsl:param name="callout.extensions">1</xsl:param>
-
   <!-- Place callout bullets at this column in programmlisting.-->
   <xsl:param name="callout.defaultcolumn">90</xsl:param>
 
