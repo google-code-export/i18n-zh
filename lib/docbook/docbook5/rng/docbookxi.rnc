@@ -503,64 +503,26 @@ db.general.inlines =
   | db.indexing.inlines
   | db.link.inlines
 db.domain.inlines =
-  (db.technical.inlines
-   | db.error.inlines
-   | db.os.inlines
-   | db.programming.inlines
-   | db.markup.inlines
-   | db.gui.inlines
-   | db.keyboard.inlines)
+  db.technical.inlines
   | db.math.inlines
+  | db.markup.inlines
+  | db.gui.inlines
+  | db.keyboard.inlines
+  | db.os.inlines
+  | db.programming.inlines
+  | db.error.inlines
 db.technical.inlines =
-  (db.replaceable
-   | db.systemitem
-   | db.option
-   | db.optional
-   | db.package
-   | db.parameter
-   | db.property)
+  (db.replaceable | db.package | db.parameter)
   | db.termdef
   | db.nonterminal
-db.error.inlines =
-  db.errorcode | db.errortext | db.errorname | db.errortype
-db.oo.inlines = db.ooclass | db.ooexception | db.oointerface
-db.programming.inlines =
-  db.function
-  | db.parameter
-  | db.varname
-  | db.returnvalue
-  | db.type
-  | db.classname
-  | db.exceptionname
-  | db.interfacename
-  | db.methodname
-  | db.modifier
-  | db.initializer
-  | db.oo.inlines
+  | (db.systemitem | db.option | db.optional | db.property)
 db.product.inlines =
-  db.productnumber
-  | db.productname
-  | db.database
-  | db.application
-  | db.hardware
-  | db.trademark
-db.os.inlines =
-  db.prompt
-  | db.envar
-  | db.filename
-  | db.command
-  | db.computeroutput
-  | db.userinput
-db.markup.inlines =
-  db.tag
-  | db.markup
-  | db.token
-  | db.symbol
-  | db.literal
-  | db.code
-  | db.constant
-  | db.email
-  | db.uri
+  db.trademark
+  | (db.productnumber
+     | db.productname
+     | db.database
+     | db.application
+     | db.hardware)
 db.bibliography.inlines =
   db.citation
   | db.citerefentry
@@ -590,39 +552,23 @@ db.publishing.inlines =
   | db.coref
 db.graphic.inlines = db.inlinemediaobject
 db.indexing.inlines = notAllowed | db.indexterm
-db.gui.inlines =
-  db.guiicon
-  | db.guibutton
-  | db.guimenuitem
-  | db.guimenu
-  | db.guisubmenu
-  | db.guilabel
-  | db.menuchoice
-  | db.mousebutton
-db.keyboard.inlines =
-  db.keycombo
-  | db.keycap
-  | db.keycode
-  | db.keysym
-  | db.shortcut
-  | db.accel
 db.link.inlines =
   (db.xref | db.link | db.olink | db.anchor) | db.biblioref
 db.extension.inlines = notAllowed
 db.nopara.blocks =
   (db.list.blocks
-   | db.admonition.blocks
    | db.formal.blocks
    | db.informal.blocks
    | db.publishing.blocks
    | db.graphic.blocks
    | db.technical.blocks
    | db.verbatim.blocks
-   | db.synopsis.blocks
    | db.bridgehead
    | db.remark
    | db.revhistory)
   | db.indexterm
+  | db.synopsis.blocks
+  | db.admonition.blocks
 db.para.blocks = db.anchor | db.para | db.formalpara | db.simpara
 db.all.blocks =
   (db.nopara.blocks | db.para.blocks | db.extension.blocks)
@@ -640,8 +586,6 @@ db.technical.blocks =
   | db.task
   | (db.productionset | db.constraintdef)
   | db.msgset
-db.admonition.blocks =
-  db.caution | db.important | db.note | db.tip | db.warning
 db.list.blocks =
   (db.itemizedlist
    | db.orderedlist
@@ -654,16 +598,9 @@ db.list.blocks =
   | db.calloutlist
   | db.qandaset
 db.verbatim.blocks =
-  (db.programlisting | db.screen | db.literallayout | db.synopsis)
+  (db.screen | db.literallayout)
   | (db.programlistingco | db.screenco)
-db.synopsis.blocks =
-  db.cmdsynopsis
-  | db.funcsynopsis
-  | db.classsynopsis
-  | db.methodsynopsis
-  | db.constructorsynopsis
-  | db.destructorsynopsis
-  | db.fieldsynopsis
+  | (db.programlisting | db.synopsis)
 db.extension.blocks = notAllowed
 db.info.extension = db._any
 db.info.elements =
@@ -694,8 +631,6 @@ db.info.elements =
    | db.othercredit
    | db.pagenums
    | db.printhistory
-   | db.productname
-   | db.productnumber
    | db.pubdate
    | db.publisher
    | db.publishername
@@ -709,6 +644,7 @@ db.info.elements =
   | db.extendedlink
   | (db.bibliomisc | db.bibliomset | db.bibliorelation | db.biblioset)
   | db.itermset
+  | (db.productname | db.productnumber)
   | db.xi.include
 db.bibliographic.elements =
   db.info.elements
@@ -1226,6 +1162,78 @@ div {
           "\x{a}" ~
           "            "
           s:assert [
+            test = "not(.//db:indexterm)"
+            "indexterm must not occur in the descendants of footnote"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:footnote"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:sidebar)"
+            "sidebar must not occur in the descendants of footnote"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:footnote"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:task)"
+            "task must not occur in the descendants of footnote"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:footnote"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:epigraph)"
+            "epigraph must not occur in the descendants of footnote"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:footnote"
+          "\x{a}" ~
+          "            "
+          s:assert [
             test = "not(.//db:caution)"
             "caution must not occur in the descendants of footnote"
           ]
@@ -1307,78 +1315,6 @@ div {
         "\x{a}" ~
         "        "
       ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:footnote"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:indexterm)"
-            "indexterm must not occur in the descendants of footnote"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:footnote"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:sidebar)"
-            "sidebar must not occur in the descendants of footnote"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:footnote"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:task)"
-            "task must not occur in the descendants of footnote"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:footnote"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:epigraph)"
-            "epigraph must not occur in the descendants of footnote"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
     ]
     element footnote { db.footnote.attlist, db.all.blocks+ }
 }
@@ -1448,524 +1384,6 @@ div {
     element simpara {
       db.simpara.attlist, db.simpara.info, db.all.inlines*
     }
-}
-db.admonition.contentmodel = db._info.title.only, db.all.blocks+
-div {
-  db.caution.role.attribute = attribute role { text }
-  db.caution.attlist =
-    db.caution.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.caution =
-    
-    ## A note of caution
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caution"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:caution)"
-            "caution must not occur in the descendants of caution"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caution"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:important)"
-            "important must not occur in the descendants of caution"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caution"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:note)"
-            "note must not occur in the descendants of caution"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caution"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:tip)"
-            "tip must not occur in the descendants of caution"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caution"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:warning)"
-            "warning must not occur in the descendants of caution"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element caution { db.caution.attlist, db.admonition.contentmodel }
-}
-div {
-  db.important.role.attribute = attribute role { text }
-  db.important.attlist =
-    db.important.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.important =
-    
-    ## An admonition set off from the text
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:important"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:caution)"
-            "caution must not occur in the descendants of important"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:important"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:important)"
-            "important must not occur in the descendants of important"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:important"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:note)"
-            "note must not occur in the descendants of important"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:important"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:tip)"
-            "tip must not occur in the descendants of important"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:important"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:warning)"
-            "warning must not occur in the descendants of important"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element important {
-      db.important.attlist, db.admonition.contentmodel
-    }
-}
-div {
-  db.note.role.attribute = attribute role { text }
-  db.note.attlist =
-    db.note.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.note =
-    
-    ## A message set off from the text
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:note"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:caution)"
-            "caution must not occur in the descendants of note"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:note"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:important)"
-            "important must not occur in the descendants of note"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:note"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:note)"
-            "note must not occur in the descendants of note"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:note"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:tip)"
-            "tip must not occur in the descendants of note"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:note"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:warning)"
-            "warning must not occur in the descendants of note"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element note { db.note.attlist, db.admonition.contentmodel }
-}
-div {
-  db.tip.role.attribute = attribute role { text }
-  db.tip.attlist =
-    db.tip.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.tip =
-    
-    ## A suggestion to the user, set off from the text
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:tip"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:caution)"
-            "caution must not occur in the descendants of tip"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:tip"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:important)"
-            "important must not occur in the descendants of tip"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:tip"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:note)"
-            "note must not occur in the descendants of tip"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:tip"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:tip)"
-            "tip must not occur in the descendants of tip"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:tip"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:warning)"
-            "warning must not occur in the descendants of tip"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element tip { db.tip.attlist, db.admonition.contentmodel }
-}
-div {
-  db.warning.role.attribute = attribute role { text }
-  db.warning.attlist =
-    db.warning.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.warning =
-    
-    ## An admonition set off from the text
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:warning"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:caution)"
-            "caution must not occur in the descendants of warning"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:warning"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:important)"
-            "important must not occur in the descendants of warning"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:warning"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:note)"
-            "note must not occur in the descendants of warning"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:warning"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:tip)"
-            "tip must not occur in the descendants of warning"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:warning"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:warning)"
-            "warning must not occur in the descendants of warning"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element warning { db.warning.attlist, db.admonition.contentmodel }
 }
 div {
   db.itemizedlist.role.attribute = attribute role { text }
@@ -2444,22 +1862,6 @@ div {
 db.verbatim.inlines = (db.all.inlines | db.lineannotation) | db.co
 db.verbatim.contentmodel =
   db._info.title.forbidden, (db.textobject | db.verbatim.inlines*)
-div {
-  db.programlisting.role.attribute = attribute role { text }
-  db.programlisting.width.attribute = db.width.characters.attribute
-  db.programlisting.attlist =
-    db.programlisting.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.verbatim.attributes
-    & db.programlisting.width.attribute?
-  db.programlisting =
-    
-    ## A literal listing of all or part of a program
-    element programlisting {
-      db.programlisting.attlist, db.verbatim.contentmodel
-    }
-}
 div {
   db.literallayout.role.attribute = attribute role { text }
   db.literallayout.class.enumeration =
@@ -3022,6 +2424,42 @@ div {
           "\x{a}" ~
           "            "
           s:assert [
+            test = "not(.//db:sidebar)"
+            "sidebar must not occur in the descendants of caption"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caption"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:task)"
+            "task must not occur in the descendants of caption"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caption"
+          "\x{a}" ~
+          "            "
+          s:assert [
             test = "not(.//db:caution)"
             "caution must not occur in the descendants of caption"
           ]
@@ -3103,601 +2541,9 @@ div {
         "\x{a}" ~
         "        "
       ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caption"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:sidebar)"
-            "sidebar must not occur in the descendants of caption"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caption"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:task)"
-            "task must not occur in the descendants of caption"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
     ]
     element caption {
       db.caption.attlist, db.caption.info, db.all.blocks+
-    }
-}
-div {
-  db.synopsis.role.attribute = attribute role { text }
-  db.synopsis.label.attribute = db.label.attribute
-  db.synopsis.attlist =
-    db.synopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.verbatim.attributes
-    & db.synopsis.label.attribute?
-  db.synopsis =
-    
-    ## A general-purpose element for representing the syntax of commands or functions
-    element synopsis { db.synopsis.attlist, db.verbatim.contentmodel }
-}
-div {
-  db.cmdsynopsis.role.attribute = attribute role { text }
-  db.cmdsynopsis.sepchar.attribute =
-    
-    ## Specifies the character that should separate the command and its top-level arguments
-    attribute sepchar { text }
-  db.cmdsynopsis.cmdlength.attribute =
-    
-    ## Indicates the displayed length of the command; this information may be used to intelligently indent command synopses which extend beyond one line
-    attribute cmdlength { text }
-  db.cmdsynopsis.label.attribute = db.label.attribute
-  db.cmdsynopsis.attlist =
-    db.cmdsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.cmdsynopsis.sepchar.attribute?
-    & db.cmdsynopsis.cmdlength.attribute?
-    & db.cmdsynopsis.label.attribute?
-  db.cmdsynopsis.info = db._info.title.forbidden
-  db.cmdsynopsis =
-    
-    ## A syntax summary for a software command
-    element cmdsynopsis {
-      db.cmdsynopsis.attlist,
-      db.cmdsynopsis.info,
-      (db.command | db.arg | db.group | db.sbr)+,
-      db.synopfragment*
-    }
-}
-db.rep.enumeration =
-  
-  ## Can not be repeated.
-  "norepeat"
-  | 
-    ## Can be repeated.
-    "repeat"
-db.rep.attribute =
-  
-  ## Indicates whether or not repetition is possible.
-  [ a:defaultValue = "norepeat" ] attribute rep { db.rep.enumeration }
-db.choice.enumeration =
-  
-  ## Formatted to indicate that it is optional.
-  "opt"
-  | 
-    ## Formatted without indication.
-    "plain"
-  | 
-    ## Formatted to indicate that it is required.
-    "req"
-db.choice.opt.attribute =
-  
-  ## Indicates optionality.
-  [ a:defaultValue = "opt" ] attribute choice { db.choice.enumeration }
-db.choice.req.attribute =
-  
-  ## Indicates optionality.
-  [ a:defaultValue = "req" ] attribute choice { db.choice.enumeration }
-div {
-  db.arg.role.attribute = attribute role { text }
-  db.arg.rep.attribute = db.rep.attribute
-  db.arg.choice.attribute = db.choice.opt.attribute
-  db.arg.attlist =
-    db.arg.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.arg.rep.attribute?
-    & db.arg.choice.attribute?
-  db.arg =
-    
-    ## An argument in a CmdSynopsis
-    element arg {
-      db.arg.attlist,
-      (db._text
-       | db.arg
-       | db.group
-       | db.option
-       | db.synopfragmentref
-       | db.sbr)*
-    }
-}
-div {
-  db.group.role.attribute = attribute role { text }
-  db.group.rep.attribute = db.rep.attribute
-  db.group.choice.attribute = db.choice.opt.attribute
-  db.group.attlist =
-    db.group.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.group.rep.attribute?
-    & db.group.choice.attribute?
-  db.group =
-    
-    ## A group of elements in a CmdSynopsis
-    element group {
-      db.group.attlist,
-      (db.arg
-       | db.group
-       | db.option
-       | db.synopfragmentref
-       | db.replaceable
-       | db.sbr)+
-    }
-}
-div {
-  db.sbr.role.attribute = attribute role { text }
-  db.sbr.attlist = db.sbr.role.attribute? & db.common.attributes
-  db.sbr =
-    
-    ## An explicit line break in a command synopsis
-    element sbr { db.sbr.attlist, empty }
-}
-div {
-  db.synopfragment.role.attribute = attribute role { text }
-  db.synopfragment.attlist =
-    db.synopfragment.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.synopfragment =
-    
-    ## A portion of a CmdSynopsis broken out from the main body of the synopsis
-    element synopfragment {
-      db.synopfragment.attlist, (db.arg | db.group)+
-    }
-}
-div {
-  db.synopfragmentref.role.attribute = attribute role { text }
-  db.synopfragmentref.attlist =
-    db.synopfragmentref.role.attribute?
-    & db.common.attributes
-    & db.linkend.attribute
-  db.synopfragmentref =
-    
-    ## A reference to a fragment of a command synopsis
-    [
-      s:pattern [
-        name = "Synopsis fragment type constraint"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:synopfragmentref"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test =
-              "local-name(//*[@xml:id=current()/@linkend]) = 'synopfragment' and namespace-uri(//*[@xml:id=current()/@linkend]) = 'http://docbook.org/ns/docbook'"
-            "@linkend on synopfragmentref must point to a synopfragment."
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element synopfragmentref { db.synopfragmentref.attlist, text }
-}
-div {
-  db.funcsynopsis.role.attribute = attribute role { text }
-  db.funcsynopsis.attlist =
-    db.funcsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-  db.funcsynopsis.info = db._info.title.forbidden
-  db.funcsynopsis =
-    
-    ## The syntax summary for a function definition
-    element funcsynopsis {
-      db.funcsynopsis.attlist,
-      db.funcsynopsis.info,
-      (db.funcsynopsisinfo | db.funcprototype)+
-    }
-}
-div {
-  db.funcsynopsisinfo.role.attribute = attribute role { text }
-  db.funcsynopsisinfo.attlist =
-    db.funcsynopsisinfo.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.verbatim.attributes
-  db.funcsynopsisinfo =
-    
-    ## Information supplementing the FuncDefs of a FuncSynopsis
-    element funcsynopsisinfo {
-      db.funcsynopsisinfo.attlist, db.verbatim.contentmodel
-    }
-}
-div {
-  db.funcprototype.role.attribute = attribute role { text }
-  db.funcprototype.attlist =
-    db.funcprototype.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.funcprototype =
-    
-    ## The prototype of a function
-    element funcprototype {
-      db.funcprototype.attlist,
-      db.modifier*,
-      db.funcdef,
-      (db.void | db.varargs | (db.paramdef+, db.varargs?)),
-      db.modifier*
-    }
-}
-div {
-  db.funcdef.role.attribute = attribute role { text }
-  db.funcdef.attlist =
-    db.funcdef.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.funcdef =
-    
-    ## A function (subroutine) name and its return type
-    element funcdef {
-      db.funcdef.attlist, (db._text | db.type | db.function)*
-    }
-}
-div {
-  db.void.role.attribute = attribute role { text }
-  db.void.attlist =
-    db.void.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.void =
-    
-    ## An empty element in a function synopsis indicating that the function in question takes no arguments
-    element void { db.void.attlist, empty }
-}
-div {
-  db.varargs.role.attribute = attribute role { text }
-  db.varargs.attlist =
-    db.varargs.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.varargs =
-    
-    ## An empty element in a function synopsis indicating a variable number of arguments
-    element varargs { db.varargs.attlist, empty }
-}
-div {
-  db.paramdef.role.attribute = attribute role { text }
-  db.paramdef.choice.enumeration =
-    
-    ## Formatted to indicate that it is optional.
-    "opt"
-    | 
-      ## Formatted to indicate that it is required.
-      "req"
-  db.paramdef.choice.attribute =
-    
-    ## Indicates optionality.
-    [ a:defaultValue = "opt" ]
-    attribute choice { db.paramdef.choice.enumeration }
-  db.paramdef.attlist =
-    db.paramdef.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.paramdef.choice.attribute?
-  db.paramdef =
-    
-    ## Information about a function parameter in a programming language
-    element paramdef {
-      db.paramdef.attlist,
-      (db._text
-       | db.initializer
-       | db.type
-       | db.parameter
-       | db.funcparams)*
-    }
-}
-div {
-  db.funcparams.role.attribute = attribute role { text }
-  db.funcparams.attlist =
-    db.funcparams.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.funcparams =
-    
-    ## Parameters for a function referenced through a function pointer in a synopsis
-    element funcparams { db.funcparams.attlist, db._text }
-}
-div {
-  db.classsynopsis.role.attribute = attribute role { text }
-  db.classsynopsis.class.enumeration =
-    
-    ## This is the synopsis of a class
-    "class"
-    | 
-      ## This is the synopsis of an interface
-      "interface"
-  db.classsynopsis.class.attribute =
-    
-    ## Specifies the nature of the synopsis
-    attribute class { db.classsynopsis.class.enumeration }
-  db.classsynopsis.attlist =
-    db.classsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-    & db.classsynopsis.class.attribute?
-  db.classsynopsis =
-    
-    ## The syntax summary for a class definition
-    element classsynopsis {
-      db.classsynopsis.attlist,
-      db.oo.inlines+,
-      (db.classsynopsisinfo
-       | db.methodsynopsis
-       | db.constructorsynopsis
-       | db.destructorsynopsis
-       | db.fieldsynopsis)*
-    }
-}
-div {
-  db.classsynopsisinfo.role.attribute = attribute role { text }
-  db.classsynopsisinfo.attlist =
-    db.classsynopsisinfo.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.verbatim.attributes
-  db.classsynopsisinfo =
-    
-    ## Information supplementing the contents of a ClassSynopsis
-    element classsynopsisinfo {
-      db.classsynopsisinfo.attlist, db.verbatim.contentmodel
-    }
-}
-div {
-  db.ooclass.role.attribute = attribute role { text }
-  db.ooclass.attlist =
-    db.ooclass.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.ooclass =
-    
-    ## A class in an object-oriented programming language
-    element ooclass {
-      db.ooclass.attlist, (db.package | db.modifier)*, db.classname
-    }
-}
-div {
-  db.oointerface.role.attribute = attribute role { text }
-  db.oointerface.attlist =
-    db.oointerface.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.oointerface =
-    
-    ## An interface in an object-oriented programming language
-    element oointerface {
-      db.oointerface.attlist,
-      (db.package | db.modifier)*,
-      db.interfacename
-    }
-}
-div {
-  db.ooexception.role.attribute = attribute role { text }
-  db.ooexception.attlist =
-    db.ooexception.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.ooexception =
-    
-    ## An exception in an object-oriented programming language
-    element ooexception {
-      db.ooexception.attlist,
-      (db.package | db.modifier)*,
-      db.exceptionname
-    }
-}
-db.modifier.xml.space.attribute =
-  
-  ## Can be used to indicate that whitespace in the modifier should be preserved (for multi-line annotations, for example).
-  attribute xml:space {
-    
-    ## Extra whitespace and line breaks must be preserved.
-    [
-      # Ideally the definition of xml:space used on modifier would be
-      # different from the definition used on the verbatim elements. The
-      # verbatim elements forbid the use of xml:space="default" which
-      # wouldn't be a problem on modifier. But doing that causes the
-      # generated XSD schemas to be broken so I'm just reusing the existing
-      # definition for now. It won't be backwards incompatible to fix this
-      # problem in the future.
-      #    | ## Extra whitespace and line breaks are not preserved.
-      #      "default"
-      
-    ]
-    "preserve"
-  }
-div {
-  db.modifier.role.attribute = attribute role { text }
-  db.modifier.attlist =
-    db.modifier.xml.space.attribute?
-    & db.modifier.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.modifier =
-    
-    ## Modifiers in a synopsis
-    element modifier { db.modifier.attlist, db._text }
-}
-div {
-  db.interfacename.role.attribute = attribute role { text }
-  db.interfacename.attlist =
-    db.interfacename.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.interfacename =
-    
-    ## The name of an interface
-    element interfacename { db.interfacename.attlist, db._text }
-}
-div {
-  db.exceptionname.role.attribute = attribute role { text }
-  db.exceptionname.attlist =
-    db.exceptionname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.exceptionname =
-    
-    ## The name of an exception
-    element exceptionname { db.exceptionname.attlist, db._text }
-}
-div {
-  db.fieldsynopsis.role.attribute = attribute role { text }
-  db.fieldsynopsis.attlist =
-    db.fieldsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-  db.fieldsynopsis =
-    
-    ## The name of a field in a class definition
-    element fieldsynopsis {
-      db.fieldsynopsis.attlist,
-      db.modifier*,
-      db.type?,
-      db.varname,
-      db.initializer?
-    }
-}
-div {
-  db.initializer.role.attribute = attribute role { text }
-  db.initializer.attlist =
-    db.initializer.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.initializer =
-    
-    ## The initializer for a FieldSynopsis
-    element initializer { db.initializer.attlist, db._text }
-}
-div {
-  db.constructorsynopsis.role.attribute = attribute role { text }
-  db.constructorsynopsis.attlist =
-    db.constructorsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-  db.constructorsynopsis =
-    
-    ## A syntax summary for a constructor
-    element constructorsynopsis {
-      db.constructorsynopsis.attlist,
-      db.modifier*,
-      db.methodname?,
-      (db.methodparam+ | db.void?),
-      db.exceptionname*
-    }
-}
-div {
-  db.destructorsynopsis.role.attribute = attribute role { text }
-  db.destructorsynopsis.attlist =
-    db.destructorsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-  db.destructorsynopsis =
-    
-    ## A syntax summary for a destructor
-    element destructorsynopsis {
-      db.destructorsynopsis.attlist,
-      db.modifier*,
-      db.methodname?,
-      (db.methodparam+ | db.void?),
-      db.exceptionname*
-    }
-}
-div {
-  db.methodsynopsis.role.attribute = attribute role { text }
-  db.methodsynopsis.attlist =
-    db.methodsynopsis.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.language.attribute?
-  db.methodsynopsis =
-    
-    ## A syntax summary for a method
-    element methodsynopsis {
-      db.methodsynopsis.attlist,
-      db.modifier*,
-      (db.type | db.void)?,
-      db.methodname,
-      (db.methodparam+ | db.void),
-      db.exceptionname*,
-      db.modifier*
-    }
-}
-div {
-  db.methodname.role.attribute = attribute role { text }
-  db.methodname.attlist =
-    db.methodname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.methodname =
-    
-    ## The name of a method
-    element methodname { db.methodname.attlist, db._text }
-}
-div {
-  db.methodparam.role.attribute = attribute role { text }
-  db.methodparam.rep.attribute = db.rep.attribute
-  db.methodparam.choice.attribute = db.choice.req.attribute
-  db.methodparam.attlist =
-    db.methodparam.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.methodparam.rep.attribute?
-    & db.methodparam.choice.attribute?
-  db.methodparam =
-    
-    ## Parameters to a method
-    element methodparam {
-      db.methodparam.attlist,
-      db.modifier*,
-      db.type?,
-      ((db.modifier*, db.parameter, db.initializer?) | db.funcparams),
-      db.modifier*
     }
 }
 div {
@@ -4176,9 +3022,9 @@ db.cover.contentmodel =
    | db.technical.blocks
    | db.verbatim.blocks
    | db.bridgehead
-   | db.synopsis.blocks
    | db.remark
-   | db.revhistory)+
+   | db.revhistory)
+  | db.synopsis.blocks
 div {
   db.cover.role.attribute = attribute role { text }
   db.cover.attlist =
@@ -4188,7 +3034,7 @@ div {
   db.cover =
     
     ## Additional content for the cover of a publication
-    element cover { db.cover.attlist, db.cover.contentmodel }
+    element cover { db.cover.attlist, db.cover.contentmodel+ }
 }
 db.date.contentmodel =
   xsd:date | xsd:dateTime | xsd:gYearMonth | xsd:gYear | text
@@ -4556,46 +3402,6 @@ div {
     element printhistory { db.printhistory.attlist, db.para.blocks+ }
 }
 div {
-  db.productname.role.attribute = attribute role { text }
-  db.productname.class.enumeration =
-    
-    ## A name with a copyright
-    "copyright"
-    | 
-      ## A name with a registered copyright
-      "registered"
-    | 
-      ## A name of a service
-      "service"
-    | 
-      ## A name which is trademarked
-      "trade"
-  db.productname.class.attribute =
-    
-    ## Specifies the class of product name
-    attribute class { db.productname.class.enumeration }
-  db.productname.attlist =
-    db.productname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.productname.class.attribute?
-  db.productname =
-    
-    ## The formal name of a product
-    element productname { db.productname.attlist, db._text }
-}
-div {
-  db.productnumber.role.attribute = attribute role { text }
-  db.productnumber.attlist =
-    db.productnumber.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.productnumber =
-    
-    ## A number assigned to a product
-    element productnumber { db.productnumber.attlist, db._text }
-}
-div {
   db.pubdate.role.attribute = attribute role { text }
   db.pubdate.attlist =
     db.pubdate.role.attribute?
@@ -4739,40 +3545,6 @@ div {
     element issuenum { db.issuenum.attlist, db._text }
 }
 div {
-  db.accel.role.attribute = attribute role { text }
-  db.accel.attlist =
-    db.accel.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.accel =
-    
-    ## A graphical user interface (GUI) keyboard shortcut
-    element accel { db.accel.attlist, db._text }
-}
-div {
-  db.application.class.enumeration =
-    
-    ## A hardware application
-    "hardware"
-    | 
-      ## A software application
-      "software"
-  db.application.class.attribute =
-    
-    ## Identifies the class of application
-    attribute class { db.application.class.enumeration }
-  db.application.role.attribute = attribute role { text }
-  db.application.attlist =
-    db.application.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.application.class.attribute?
-  db.application =
-    
-    ## The name of a software program
-    element application { db.application.attlist, db._text }
-}
-div {
   db.package.role.attribute = attribute role { text }
   db.package.attlist =
     db.package.role.attribute?
@@ -4782,119 +3554,6 @@ div {
     
     ## A software or application package
     element package { db.package.attlist, db._text }
-}
-div {
-  db.classname.role.attribute = attribute role { text }
-  db.classname.attlist =
-    db.classname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.classname =
-    
-    ## The name of a class, in the object-oriented programming sense
-    element classname { db.classname.attlist, db._text }
-}
-div {
-  db.command.role.attribute = attribute role { text }
-  db.command.attlist =
-    db.command.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.command =
-    
-    ## The name of an executable program or other software command
-    element command { db.command.attlist, db._text }
-}
-db.computeroutput.inlines =
-  (text
-   | db.ubiq.inlines
-   | db.os.inlines
-   | db.technical.inlines
-   | db.markup.inlines)
-  | db.co
-div {
-  db.computeroutput.role.attribute = attribute role { text }
-  db.computeroutput.attlist =
-    db.computeroutput.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.computeroutput =
-    
-    ## Data, generally text, displayed or presented by a computer
-    element computeroutput {
-      db.computeroutput.attlist, db.computeroutput.inlines*
-    }
-}
-div {
-  db.database.class.enumeration =
-    
-    ## An alternate or secondary key
-    "altkey"
-    | 
-      ## A constraint
-      "constraint"
-    | 
-      ## A data type
-      "datatype"
-    | 
-      ## A field
-      "field"
-    | 
-      ## A foreign key
-      "foreignkey"
-    | 
-      ## A group
-      "group"
-    | 
-      ## An index
-      "index"
-    | 
-      ## The first or primary key
-      "key1"
-    | 
-      ## An alternate or secondary key
-      "key2"
-    | 
-      ## A name
-      "name"
-    | 
-      ## The primary key
-      "primarykey"
-    | 
-      ## A (stored) procedure
-      "procedure"
-    | 
-      ## A record
-      "record"
-    | 
-      ## A rule
-      "rule"
-    | 
-      ## The secondary key
-      "secondarykey"
-    | 
-      ## A table
-      "table"
-    | 
-      ## A user
-      "user"
-    | 
-      ## A view
-      "view"
-  db.database.class.attribute =
-    
-    ## Identifies the class of database artifact
-    attribute class { db.database.class.enumeration }
-  db.database.role.attribute = attribute role { text }
-  db.database.attlist =
-    db.database.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.database.class.attribute?
-  db.database =
-    
-    ## The name of a database, or part of a database
-    element database { db.database.attlist, db._text }
 }
 div {
   db.email.role.attribute = attribute role { text }
@@ -4908,377 +3567,6 @@ div {
     element email { db.email.attlist, db._text }
 }
 div {
-  db.envar.role.attribute = attribute role { text }
-  db.envar.attlist =
-    db.envar.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.envar =
-    
-    ## A software environment variable
-    element envar { db.envar.attlist, db._text }
-}
-div {
-  db.errorcode.role.attribute = attribute role { text }
-  db.errorcode.attlist =
-    db.errorcode.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.errorcode =
-    
-    ## An error code
-    element errorcode { db.errorcode.attlist, db._text }
-}
-div {
-  db.errorname.role.attribute = attribute role { text }
-  db.errorname.attlist =
-    db.errorname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.errorname =
-    
-    ## An error name
-    element errorname { db.errorname.attlist, db._text }
-}
-div {
-  db.errortext.role.attribute = attribute role { text }
-  db.errortext.attlist =
-    db.errortext.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.errortext =
-    
-    ## An error message.
-    element errortext { db.errortext.attlist, db._text }
-}
-div {
-  db.errortype.role.attribute = attribute role { text }
-  db.errortype.attlist =
-    db.errortype.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.errortype =
-    
-    ## The classification of an error message
-    element errortype { db.errortype.attlist, db._text }
-}
-div {
-  db.filename.class.enumeration =
-    
-    ## A device
-    "devicefile"
-    | 
-      ## A directory
-      "directory"
-    | 
-      ## A filename extension
-      "extension"
-    | 
-      ## A header file (as for a programming language)
-      "headerfile"
-    | 
-      ## A library file
-      "libraryfile"
-    | 
-      ## A partition (as of a hard disk)
-      "partition"
-    | 
-      ## A symbolic link
-      "symlink"
-  db.filename.class.attribute =
-    
-    ## Identifies the class of filename
-    attribute class { db.filename.class.enumeration }
-  db.filename.path.attribute =
-    
-    ## Specifies the path of the filename
-    attribute path { text }
-  db.filename.role.attribute = attribute role { text }
-  db.filename.attlist =
-    db.filename.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.filename.path.attribute?
-    & db.filename.class.attribute?
-  db.filename =
-    
-    ## The name of a file
-    element filename { db.filename.attlist, db._text }
-}
-div {
-  db.function.role.attribute = attribute role { text }
-  db.function.attlist =
-    db.function.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.function =
-    
-    ## The name of a function or subroutine, as in a programming language
-    element function { db.function.attlist, db._text }
-}
-div {
-  db.guibutton.role.attribute = attribute role { text }
-  db.guibutton.attlist =
-    db.guibutton.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guibutton =
-    
-    ## The text on a button in a GUI
-    element guibutton {
-      db.guibutton.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.guiicon.role.attribute = attribute role { text }
-  db.guiicon.attlist =
-    db.guiicon.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guiicon =
-    
-    ## Graphic and/or text appearing as a icon in a GUI
-    element guiicon {
-      db.guiicon.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.guilabel.role.attribute = attribute role { text }
-  db.guilabel.attlist =
-    db.guilabel.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guilabel =
-    
-    ## The text of a label in a GUI
-    element guilabel {
-      db.guilabel.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.guimenu.role.attribute = attribute role { text }
-  db.guimenu.attlist =
-    db.guimenu.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guimenu =
-    
-    ## The name of a menu in a GUI
-    element guimenu {
-      db.guimenu.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.guimenuitem.role.attribute = attribute role { text }
-  db.guimenuitem.attlist =
-    db.guimenuitem.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guimenuitem =
-    
-    ## The name of a terminal menu item in a GUI
-    element guimenuitem {
-      db.guimenuitem.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.guisubmenu.role.attribute = attribute role { text }
-  db.guisubmenu.attlist =
-    db.guisubmenu.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.guisubmenu =
-    
-    ## The name of a submenu in a GUI
-    element guisubmenu {
-      db.guisubmenu.attlist,
-      (db._text | db.accel | db.superscript | db.subscript)*
-    }
-}
-div {
-  db.hardware.role.attribute = attribute role { text }
-  db.hardware.attlist =
-    db.hardware.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.hardware =
-    
-    ## A physical part of a computer system
-    element hardware { db.hardware.attlist, db._text }
-}
-div {
-  db.keycap.function.enumeration =
-    
-    ## The "Alt" key
-    "alt"
-    | 
-      ## The "Backspace" key
-      "backspace"
-    | 
-      ## The "Command" key
-      "command"
-    | 
-      ## The "Control" key
-      "control"
-    | 
-      ## The "Delete" key
-      "delete"
-    | 
-      ## The down arrow
-      "down"
-    | 
-      ## The "End" key
-      "end"
-    | 
-      ## The "Enter" or "Return" key
-      "enter"
-    | 
-      ## The "Escape" key
-      "escape"
-    | 
-      ## The "Home" key
-      "home"
-    | 
-      ## The "Insert" key
-      "insert"
-    | 
-      ## The left arrow
-      "left"
-    | 
-      ## The "Meta" key
-      "meta"
-    | 
-      ## The "Option" key
-      "option"
-    | 
-      ## The page down key
-      "pagedown"
-    | 
-      ## The page up key
-      "pageup"
-    | 
-      ## The right arrow
-      "right"
-    | 
-      ## The "Shift" key
-      "shift"
-    | 
-      ## The spacebar
-      "space"
-    | 
-      ## The "Tab" key
-      "tab"
-    | 
-      ## The up arrow
-      "up"
-  db.keycap.function-enum.attribute =
-    
-    ## Identifies the function key
-    attribute function { db.keycap.function.enumeration }?
-  db.keycap.function-other.attributes =
-    
-    ## Identifies the function key
-    attribute function {
-      
-      ## Indicates a non-standard function key
-      "other"
-    }?,
-    
-    ## Specifies a keyword that identifies the non-standard key
-    attribute otherfunction { text }
-  db.keycap.function.attrib =
-    db.keycap.function-enum.attribute
-    | db.keycap.function-other.attributes
-  db.keycap.role.attribute = attribute role { text }
-  db.keycap.attlist =
-    db.keycap.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.keycap.function.attrib
-  db.keycap =
-    
-    ## The text printed on a key on a keyboard
-    element keycap { db.keycap.attlist, db._text }
-}
-div {
-  db.keycode.role.attribute = attribute role { text }
-  db.keycode.attlist =
-    db.keycode.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.keycode =
-    
-    ## The internal, frequently numeric, identifier for a key on a keyboard
-    element keycode { db.keycode.attlist, db._text }
-}
-div {
-  db.keycombo.action.enumeration =
-    
-    ## A (single) mouse click.
-    "click"
-    | 
-      ## A double mouse click.
-      "double-click"
-    | 
-      ## A mouse or key press.
-      "press"
-    | 
-      ## Sequential clicks or presses.
-      "seq"
-    | 
-      ## Simultaneous clicks or presses.
-      "simul"
-  db.keycombo.action-enum.attribute =
-    
-    ## Identifies the nature of the action taken. If keycombo
-    ##  contains more than one element, simul
-    ##  is the default, otherwise there is no default.
-    attribute action { db.keycombo.action.enumeration }?
-  db.keycombo.action-other.attributes =
-    
-    ## Identifies the nature of the action taken
-    attribute action {
-      
-      ## Indicates a non-standard action
-      "other"
-    }?,
-    
-    ## Identifies the non-standard action in some unspecified way.
-    attribute otheraction { text }
-  db.keycombo.action.attrib =
-    db.keycombo.action-enum.attribute
-    | db.keycombo.action-other.attributes
-  db.keycombo.role.attribute = attribute role { text }
-  db.keycombo.attlist =
-    db.keycombo.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.keycombo.action.attrib
-  db.keycombo =
-    
-    ## A combination of input actions
-    element keycombo {
-      db.keycombo.attlist,
-      (db.keycap | db.keycombo | db.keysym | db.mousebutton)+
-    }
-}
-div {
-  db.keysym.role.attribute = attribute role { text }
-  db.keysym.attlist =
-    db.keysym.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.keysym =
-    
-    ## The symbolic name of a key on a keyboard
-    element keysym { db.keysym.attlist, db._text }
-}
-div {
   db.lineannotation.role.attribute = attribute role { text }
   db.lineannotation.attlist =
     db.lineannotation.role.attribute?
@@ -5288,157 +3576,6 @@ div {
     
     ## A comment on a line in a verbatim listing
     element lineannotation { db.lineannotation.attlist, db._text }
-}
-div {
-  db.literal.role.attribute = attribute role { text }
-  db.literal.attlist =
-    db.literal.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.literal =
-    
-    ## Inline text that is some literal value
-    element literal { db.literal.attlist, db._text }
-}
-div {
-  code.language.attribute =
-    
-    ## Identifies the (computer) language of the code fragment
-    attribute language { text }
-  db.code.role.attribute = attribute role { text }
-  db.code.attlist =
-    db.code.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & code.language.attribute?
-  db.code =
-    
-    ## An inline code fragment
-    element code {
-      db.code.attlist, (db.programming.inlines | db._text)*
-    }
-}
-div {
-  db.constant.class.attribute =
-    
-    ## Identifies the class of constant
-    attribute class {
-      
-      ## The value is a limit of some kind
-      "limit"
-    }
-  db.constant.role.attribute = attribute role { text }
-  db.constant.attlist =
-    db.constant.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.constant.class.attribute?
-  db.constant =
-    
-    ## A programming or system constant
-    element constant { db.constant.attlist, db._text }
-}
-div {
-  db.varname.role.attribute = attribute role { text }
-  db.varname.attlist =
-    db.varname.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.varname =
-    
-    ## The name of a variable
-    element varname { db.varname.attlist, db._text }
-}
-div {
-  db.markup.role.attribute = attribute role { text }
-  db.markup.attlist =
-    db.markup.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.markup =
-    
-    ## A string of formatting markup in text that is to be represented literally
-    element markup { db.markup.attlist, db._text }
-}
-div {
-  db.menuchoice.role.attribute = attribute role { text }
-  db.menuchoice.attlist =
-    db.menuchoice.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.menuchoice =
-    
-    ## A selection or series of selections from a menu
-    element menuchoice {
-      db.menuchoice.attlist,
-      db.shortcut?,
-      (db.guibutton
-       | db.guiicon
-       | db.guilabel
-       | db.guimenu
-       | db.guimenuitem
-       | db.guisubmenu)+
-    }
-}
-div {
-  db.shortcut.action.attrib = db.keycombo.action.attrib
-  db.shortcut.role.attribute = attribute role { text }
-  db.shortcut.attlist =
-    db.shortcut.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.shortcut.action.attrib
-  db.shortcut =
-    
-    ## A key combination for an action that is also accessible through a menu
-    element shortcut {
-      db.shortcut.attlist,
-      (db.keycap | db.keycombo | db.keysym | db.mousebutton)+
-    }
-}
-div {
-  db.mousebutton.role.attribute = attribute role { text }
-  db.mousebutton.attlist =
-    db.mousebutton.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.mousebutton =
-    
-    ## The conventional name of a mouse button
-    element mousebutton { db.mousebutton.attlist, db._text }
-}
-div {
-  db.option.role.attribute = attribute role { text }
-  db.option.attlist =
-    db.option.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.option =
-    
-    ## An option for a software command
-    element option { db.option.attlist, db._text }
-}
-div {
-  db.optional.role.attribute = attribute role { text }
-  db.optional.attlist =
-    db.optional.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.optional =
-    
-    ## Optional information
-    element optional { db.optional.attlist, db._text }
-}
-div {
-  db.property.role.attribute = attribute role { text }
-  db.property.attlist =
-    db.property.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.property =
-    
-    ## A unit of data associated with some part of a computer system
-    element property { db.property.attlist, db._text }
 }
 div {
   db.parameter.class.enumeration =
@@ -5465,18 +3602,6 @@ div {
     
     ## A value or a symbolic reference to a value
     element parameter { db.parameter.attlist, db._text }
-}
-db.prompt.inlines = db._text | db.co
-div {
-  db.prompt.role.attribute = attribute role { text }
-  db.prompt.attlist =
-    db.prompt.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.prompt =
-    
-    ## A character or string indicating the start of an input field in a  computer display
-    element prompt { db.prompt.attlist, db.prompt.inlines* }
 }
 db.replaceable.inlines = db._text | db.co
 div {
@@ -5511,185 +3636,6 @@ div {
     }
 }
 div {
-  db.returnvalue.role.attribute = attribute role { text }
-  db.returnvalue.attlist =
-    db.returnvalue.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.returnvalue =
-    
-    ## The value returned by a function
-    element returnvalue { db.returnvalue.attlist, db._text }
-}
-div {
-  db.tag.role.attribute = attribute role { text }
-  db.tag.class.enumeration =
-    
-    ## An attribute
-    "attribute"
-    | 
-      ## An attribute value
-      "attvalue"
-    | 
-      ## An element
-      "element"
-    | 
-      ## An empty element tag
-      "emptytag"
-    | 
-      ## An end tag
-      "endtag"
-    | 
-      ## A general entity
-      "genentity"
-    | 
-      ## The local name part of a qualified name
-      "localname"
-    | 
-      ## A namespace
-      "namespace"
-    | 
-      ## A numeric character reference
-      "numcharref"
-    | 
-      ## A parameter entity
-      "paramentity"
-    | 
-      ## A processing instruction
-      "pi"
-    | 
-      ## The prefix part of a qualified name
-      "prefix"
-    | 
-      ## An SGML comment
-      "comment"
-    | 
-      ## A start tag
-      "starttag"
-    | 
-      ## An XML processing instruction
-      "xmlpi"
-  db.tag.class.attribute =
-    
-    ## Identifies the nature of the tag content
-    attribute class { db.tag.class.enumeration }
-  db.tag.namespace.attribute =
-    
-    ## Identifies the namespace of the tag content
-    attribute namespace { xsd:anyURI }
-  db.tag.attlist =
-    db.tag.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.tag.class.attribute?
-    & db.tag.namespace.attribute?
-  db.tag =
-    
-    ## A component of XML (or SGML) markup
-    element tag { db.tag.attlist, db._text }
-}
-div {
-  db.symbol.class.attribute =
-    
-    ## Identifies the class of symbol
-    attribute class {
-      
-      ## The value is a limit of some kind
-      "limit"
-    }
-  db.symbol.role.attribute = attribute role { text }
-  db.symbol.attlist =
-    db.symbol.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.symbol.class.attribute?
-  db.symbol =
-    
-    ## A name that is replaced by a value before processing
-    element symbol { db.symbol.attlist, db._text }
-}
-db.systemitem.inlines = db._text | db.co
-div {
-  db.systemitem.class.enumeration =
-    
-    ## A daemon or other system process (syslogd)
-    "daemon"
-    | 
-      ## A domain name (example.com)
-      "domainname"
-    | 
-      ## An ethernet address (00:05:4E:49:FD:8E)
-      "etheraddress"
-    | 
-      ## An event of some sort (SIGHUP)
-      "event"
-    | 
-      ## An event handler of some sort (hangup)
-      "eventhandler"
-    | 
-      ## A filesystem (ext3)
-      "filesystem"
-    | 
-      ## A fully qualified domain name (my.example.com)
-      "fqdomainname"
-    | 
-      ## A group name (wheel)
-      "groupname"
-    | 
-      ## An IP address (127.0.0.1)
-      "ipaddress"
-    | 
-      ## A library (libncurses)
-      "library"
-    | 
-      ## A macro
-      "macro"
-    | 
-      ## A netmask (255.255.255.192)
-      "netmask"
-    | 
-      ## A newsgroup (comp.text.xml)
-      "newsgroup"
-    | 
-      ## An operating system name (Hurd)
-      "osname"
-    | 
-      ## A process (gnome-cups-icon)
-      "process"
-    | 
-      ## A protocol (ftp)
-      "protocol"
-    | 
-      ## A resource
-      "resource"
-    | 
-      ## A server (mail.example.com)
-      "server"
-    | 
-      ## A service (ppp)
-      "service"
-    | 
-      ## A system name (hephaistos)
-      "systemname"
-    | 
-      ## A user name (ndw)
-      "username"
-  db.systemitem.class.attribute =
-    
-    ## Identifies the nature of the system item
-    attribute class { db.systemitem.class.enumeration }
-  db.systemitem.role.attribute = attribute role { text }
-  db.systemitem.attlist =
-    db.systemitem.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-    & db.systemitem.class.attribute?
-  db.systemitem =
-    
-    ## A system-related item or term
-    element systemitem { db.systemitem.attlist, db.systemitem.inlines* }
-}
-div {
   db.uri.type.attribute =
     
     ## Identifies the type of URI specified
@@ -5704,48 +3650,6 @@ div {
     
     ## A Uniform Resource Identifier
     element uri { db.uri.attlist, db._text }
-}
-div {
-  db.token.role.attribute = attribute role { text }
-  db.token.attlist =
-    db.token.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.token =
-    
-    ## A unit of information
-    element token { db.token.attlist, db._text }
-}
-div {
-  db.type.role.attribute = attribute role { text }
-  db.type.attlist =
-    db.type.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.type =
-    
-    ## The classification of a value
-    element type { db.type.attlist, db._text }
-}
-db.userinput.inlines =
-  (text
-   | db.ubiq.inlines
-   | db.os.inlines
-   | db.technical.inlines
-   | db.markup.inlines
-   | db.keyboard.inlines
-   | db.gui.inlines)
-  | db.co
-div {
-  db.userinput.role.attribute = attribute role { text }
-  db.userinput.attlist =
-    db.userinput.role.attribute?
-    & db.common.attributes
-    & db.common.linking.attributes
-  db.userinput =
-    
-    ## Data entered by the user
-    element userinput { db.userinput.attlist, db.userinput.inlines* }
 }
 div {
   db.abbrev.role.attribute = attribute role { text }
@@ -6125,128 +4029,6 @@ div {
     
     ## A text-only annotation, often used for accessibility
     element alt { db.alt.attlist, (text | db.inlinemediaobject)* }
-}
-db.annotations.attribute =
-  
-  ## Identifies one or more annotations that apply to this element
-  attribute annotations { text }
-div {
-  db.annotation.role.attribute = attribute role { text }
-  db.annotation.annotates.attribute =
-    
-    ## Identifies one ore more elements to which this annotation applies
-    attribute annotates { text }
-  db.annotation.attlist =
-    db.annotation.role.attribute?
-    & db.annotation.annotates.attribute?
-    & db.common.attributes
-  db.annotation.info = db._info.title.only
-  db.annotation =
-    
-    ## An annotation
-    [
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:annotation"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:annotation)"
-            "annotation must not occur in the descendants of annotation"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-    ]
-    element annotation {
-      db.annotation.attlist, db.annotation.info, db.all.blocks+
-    }
-}
-db.xlink.from.attribute =
-  
-  ## Specifies the XLink traversal-from
-  attribute xlink:from { xsd:NMTOKEN }?
-db.xlink.label.attribute =
-  
-  ## Specifies the XLink label
-  attribute xlink:label { xsd:NMTOKEN }?
-db.xlink.to.attribute =
-  
-  ## Specifies the XLink traversal-to
-  attribute xlink:to { xsd:NMTOKEN }?
-div {
-  db.extendedlink.role.attribute = attribute role { text }
-  db.extendedlink.attlist =
-    db.extendedlink.role.attribute?
-    & db.common.attributes
-    & 
-      ## Identifies the XLink link type 
-      [ a:defaultValue = "extended" ]
-      attribute xlink:type {
-        
-        ## An XLink extended link
-        "extended"
-      }?
-    & db.xlink.role.attribute?
-    & db.xlink.title.attribute?
-  db.extendedlink =
-    
-    ## An XLink extended link
-    element extendedlink {
-      db.extendedlink.attlist, (db.locator | db.arc)+
-    }
-}
-div {
-  db.locator.role.attribute = attribute role { text }
-  db.locator.attlist =
-    db.locator.role.attribute?
-    & db.common.attributes
-    & 
-      ## Identifies the XLink link type 
-      [ a:defaultValue = "locator" ]
-      attribute xlink:type {
-        
-        ## An XLink locator link
-        "locator"
-      }?
-    & db.xlink.href.attribute
-    & db.xlink.role.attribute?
-    & db.xlink.title.attribute?
-    & db.xlink.label.attribute?
-  db.locator =
-    
-    ## An XLink locator in an extendedlink
-    element locator { db.locator.attlist, empty }
-}
-div {
-  db.arc.role.attribute = attribute role { text }
-  db.arc.attlist =
-    db.arc.role.attribute?
-    & db.common.attributes
-    & 
-      ## Identifies the XLink link type 
-      [ a:defaultValue = "arc" ]
-      attribute xlink:type {
-        
-        ## An XLink arc link
-        "arc"
-      }?
-    & db.xlink.arcrole.attribute?
-    & db.xlink.title.attribute?
-    & db.xlink.show.attribute?
-    & db.xlink.actuate.attribute?
-    & db.xlink.from.attribute?
-    & db.xlink.to.attribute?
-  db.arc =
-    
-    ## An XLink arc in an extendedlink
-    element arc { db.arc.attlist, empty }
 }
 db.status.attribute =
   
@@ -6782,6 +4564,128 @@ div {
        | db.acknowledgements
        | db.colophon)*
     }
+}
+db.annotations.attribute =
+  
+  ## Identifies one or more annotations that apply to this element
+  attribute annotations { text }
+div {
+  db.annotation.role.attribute = attribute role { text }
+  db.annotation.annotates.attribute =
+    
+    ## Identifies one ore more elements to which this annotation applies
+    attribute annotates { text }
+  db.annotation.attlist =
+    db.annotation.role.attribute?
+    & db.annotation.annotates.attribute?
+    & db.common.attributes
+  db.annotation.info = db._info.title.only
+  db.annotation =
+    
+    ## An annotation
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:annotation"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:annotation)"
+            "annotation must not occur in the descendants of annotation"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element annotation {
+      db.annotation.attlist, db.annotation.info, db.all.blocks+
+    }
+}
+db.xlink.from.attribute =
+  
+  ## Specifies the XLink traversal-from
+  attribute xlink:from { xsd:NMTOKEN }?
+db.xlink.label.attribute =
+  
+  ## Specifies the XLink label
+  attribute xlink:label { xsd:NMTOKEN }?
+db.xlink.to.attribute =
+  
+  ## Specifies the XLink traversal-to
+  attribute xlink:to { xsd:NMTOKEN }?
+div {
+  db.extendedlink.role.attribute = attribute role { text }
+  db.extendedlink.attlist =
+    db.extendedlink.role.attribute?
+    & db.common.attributes
+    & 
+      ## Identifies the XLink link type 
+      [ a:defaultValue = "extended" ]
+      attribute xlink:type {
+        
+        ## An XLink extended link
+        "extended"
+      }?
+    & db.xlink.role.attribute?
+    & db.xlink.title.attribute?
+  db.extendedlink =
+    
+    ## An XLink extended link
+    element extendedlink {
+      db.extendedlink.attlist, (db.locator | db.arc)+
+    }
+}
+div {
+  db.locator.role.attribute = attribute role { text }
+  db.locator.attlist =
+    db.locator.role.attribute?
+    & db.common.attributes
+    & 
+      ## Identifies the XLink link type 
+      [ a:defaultValue = "locator" ]
+      attribute xlink:type {
+        
+        ## An XLink locator link
+        "locator"
+      }?
+    & db.xlink.href.attribute
+    & db.xlink.role.attribute?
+    & db.xlink.title.attribute?
+    & db.xlink.label.attribute?
+  db.locator =
+    
+    ## An XLink locator in an extendedlink
+    element locator { db.locator.attlist, empty }
+}
+div {
+  db.arc.role.attribute = attribute role { text }
+  db.arc.attlist =
+    db.arc.role.attribute?
+    & db.common.attributes
+    & 
+      ## Identifies the XLink link type 
+      [ a:defaultValue = "arc" ]
+      attribute xlink:type {
+        
+        ## An XLink arc link
+        "arc"
+      }?
+    & db.xlink.arcrole.attribute?
+    & db.xlink.title.attribute?
+    & db.xlink.show.attribute?
+    & db.xlink.actuate.attribute?
+    & db.xlink.from.attribute?
+    & db.xlink.to.attribute?
+  db.arc =
+    
+    ## An XLink arc in an extendedlink
+    element arc { db.arc.attlist, empty }
 }
 db.sect1.sections =
   ((db.sect2+, db.simplesect*) | db.simplesect+)
@@ -9212,6 +7116,24 @@ div {
           "\x{a}" ~
           "            "
           s:assert [
+            test = "not(.//db:informaltable)"
+            "informaltable must not occur in the descendants of table"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:table"
+          "\x{a}" ~
+          "            "
+          s:assert [
             test = "not(.//db:caution)"
             "caution must not occur in the descendants of table"
           ]
@@ -9286,24 +7208,6 @@ div {
           s:assert [
             test = "not(.//db:warning)"
             "warning must not occur in the descendants of table"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:table"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:informaltable)"
-            "informaltable must not occur in the descendants of table"
           ]
           "\x{a}" ~
           "          "
@@ -9651,6 +7555,24 @@ div {
           "\x{a}" ~
           "            "
           s:assert [
+            test = "not(.//db:informaltable)"
+            "informaltable must not occur in the descendants of table"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:table"
+          "\x{a}" ~
+          "            "
+          s:assert [
             test = "not(.//db:caution)"
             "caution must not occur in the descendants of table"
           ]
@@ -9725,24 +7647,6 @@ div {
           s:assert [
             test = "not(.//db:warning)"
             "warning must not occur in the descendants of table"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:table"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:informaltable)"
-            "informaltable must not occur in the descendants of table"
           ]
           "\x{a}" ~
           "          "
@@ -9850,6 +7754,42 @@ div {
           "\x{a}" ~
           "            "
           s:assert [
+            test = "not(.//db:sidebar)"
+            "sidebar must not occur in the descendants of caption"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caption"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:task)"
+            "task must not occur in the descendants of caption"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caption"
+          "\x{a}" ~
+          "            "
+          s:assert [
             test = "not(.//db:caution)"
             "caution must not occur in the descendants of caption"
           ]
@@ -9924,42 +7864,6 @@ div {
           s:assert [
             test = "not(.//db:warning)"
             "warning must not occur in the descendants of caption"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caption"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:sidebar)"
-            "sidebar must not occur in the descendants of caption"
-          ]
-          "\x{a}" ~
-          "          "
-        ]
-        "\x{a}" ~
-        "        "
-      ]
-      s:pattern [
-        name = "Element exclusion"
-        "\x{a}" ~
-        "          "
-        s:rule [
-          context = "db:caption"
-          "\x{a}" ~
-          "            "
-          s:assert [
-            test = "not(.//db:task)"
-            "task must not occur in the descendants of caption"
           ]
           "\x{a}" ~
           "          "
@@ -10652,6 +8556,2091 @@ div {
     
     ## Any element from the SVG namespace
     element svg:* { (db._any.attribute | text | db._any)* }
+}
+db.markup.inlines =
+  db.tag
+  | db.markup
+  | db.token
+  | db.symbol
+  | db.literal
+  | db.code
+  | db.constant
+  | db.email
+  | db.uri
+div {
+  db.markup.role.attribute = attribute role { text }
+  db.markup.attlist =
+    db.markup.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.markup =
+    
+    ## A string of formatting markup in text that is to be represented literally
+    element markup { db.markup.attlist, db._text }
+}
+div {
+  db.tag.role.attribute = attribute role { text }
+  db.tag.class.enumeration =
+    
+    ## An attribute
+    "attribute"
+    | 
+      ## An attribute value
+      "attvalue"
+    | 
+      ## An element
+      "element"
+    | 
+      ## An empty element tag
+      "emptytag"
+    | 
+      ## An end tag
+      "endtag"
+    | 
+      ## A general entity
+      "genentity"
+    | 
+      ## The local name part of a qualified name
+      "localname"
+    | 
+      ## A namespace
+      "namespace"
+    | 
+      ## A numeric character reference
+      "numcharref"
+    | 
+      ## A parameter entity
+      "paramentity"
+    | 
+      ## A processing instruction
+      "pi"
+    | 
+      ## The prefix part of a qualified name
+      "prefix"
+    | 
+      ## An SGML comment
+      "comment"
+    | 
+      ## A start tag
+      "starttag"
+    | 
+      ## An XML processing instruction
+      "xmlpi"
+  db.tag.class.attribute =
+    
+    ## Identifies the nature of the tag content
+    attribute class { db.tag.class.enumeration }
+  db.tag.namespace.attribute =
+    
+    ## Identifies the namespace of the tag content
+    attribute namespace { xsd:anyURI }
+  db.tag.attlist =
+    db.tag.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.tag.class.attribute?
+    & db.tag.namespace.attribute?
+  db.tag =
+    
+    ## A component of XML (or SGML) markup
+    element tag { db.tag.attlist, db._text }
+}
+div {
+  db.symbol.class.attribute =
+    
+    ## Identifies the class of symbol
+    attribute class {
+      
+      ## The value is a limit of some kind
+      "limit"
+    }
+  db.symbol.role.attribute = attribute role { text }
+  db.symbol.attlist =
+    db.symbol.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.symbol.class.attribute?
+  db.symbol =
+    
+    ## A name that is replaced by a value before processing
+    element symbol { db.symbol.attlist, db._text }
+}
+div {
+  db.token.role.attribute = attribute role { text }
+  db.token.attlist =
+    db.token.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.token =
+    
+    ## A unit of information
+    element token { db.token.attlist, db._text }
+}
+div {
+  db.literal.role.attribute = attribute role { text }
+  db.literal.attlist =
+    db.literal.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.literal =
+    
+    ## Inline text that is some literal value
+    element literal { db.literal.attlist, db._text }
+}
+div {
+  code.language.attribute =
+    
+    ## Identifies the (computer) language of the code fragment
+    attribute language { text }
+  db.code.role.attribute = attribute role { text }
+  db.code.attlist =
+    db.code.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & code.language.attribute?
+  db.code =
+    
+    ## An inline code fragment
+    element code {
+      db.code.attlist, (db.programming.inlines | db._text)*
+    }
+}
+div {
+  db.constant.class.attribute =
+    
+    ## Identifies the class of constant
+    attribute class {
+      
+      ## The value is a limit of some kind
+      "limit"
+    }
+  db.constant.role.attribute = attribute role { text }
+  db.constant.attlist =
+    db.constant.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.constant.class.attribute?
+  db.constant =
+    
+    ## A programming or system constant
+    element constant { db.constant.attlist, db._text }
+}
+div {
+  db.productname.role.attribute = attribute role { text }
+  db.productname.class.enumeration =
+    
+    ## A name with a copyright
+    "copyright"
+    | 
+      ## A name with a registered copyright
+      "registered"
+    | 
+      ## A name of a service
+      "service"
+    | 
+      ## A name which is trademarked
+      "trade"
+  db.productname.class.attribute =
+    
+    ## Specifies the class of product name
+    attribute class { db.productname.class.enumeration }
+  db.productname.attlist =
+    db.productname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.productname.class.attribute?
+  db.productname =
+    
+    ## The formal name of a product
+    element productname { db.productname.attlist, db._text }
+}
+div {
+  db.productnumber.role.attribute = attribute role { text }
+  db.productnumber.attlist =
+    db.productnumber.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.productnumber =
+    
+    ## A number assigned to a product
+    element productnumber { db.productnumber.attlist, db._text }
+}
+div {
+  db.database.class.enumeration =
+    
+    ## An alternate or secondary key
+    "altkey"
+    | 
+      ## A constraint
+      "constraint"
+    | 
+      ## A data type
+      "datatype"
+    | 
+      ## A field
+      "field"
+    | 
+      ## A foreign key
+      "foreignkey"
+    | 
+      ## A group
+      "group"
+    | 
+      ## An index
+      "index"
+    | 
+      ## The first or primary key
+      "key1"
+    | 
+      ## An alternate or secondary key
+      "key2"
+    | 
+      ## A name
+      "name"
+    | 
+      ## The primary key
+      "primarykey"
+    | 
+      ## A (stored) procedure
+      "procedure"
+    | 
+      ## A record
+      "record"
+    | 
+      ## A rule
+      "rule"
+    | 
+      ## The secondary key
+      "secondarykey"
+    | 
+      ## A table
+      "table"
+    | 
+      ## A user
+      "user"
+    | 
+      ## A view
+      "view"
+  db.database.class.attribute =
+    
+    ## Identifies the class of database artifact
+    attribute class { db.database.class.enumeration }
+  db.database.role.attribute = attribute role { text }
+  db.database.attlist =
+    db.database.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.database.class.attribute?
+  db.database =
+    
+    ## The name of a database, or part of a database
+    element database { db.database.attlist, db._text }
+}
+div {
+  db.application.class.enumeration =
+    
+    ## A hardware application
+    "hardware"
+    | 
+      ## A software application
+      "software"
+  db.application.class.attribute =
+    
+    ## Identifies the class of application
+    attribute class { db.application.class.enumeration }
+  db.application.role.attribute = attribute role { text }
+  db.application.attlist =
+    db.application.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.application.class.attribute?
+  db.application =
+    
+    ## The name of a software program
+    element application { db.application.attlist, db._text }
+}
+div {
+  db.hardware.role.attribute = attribute role { text }
+  db.hardware.attlist =
+    db.hardware.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.hardware =
+    
+    ## A physical part of a computer system
+    element hardware { db.hardware.attlist, db._text }
+}
+db.gui.inlines =
+  db.guiicon
+  | db.guibutton
+  | db.guimenuitem
+  | db.guimenu
+  | db.guisubmenu
+  | db.guilabel
+  | db.menuchoice
+  | db.mousebutton
+div {
+  db.guibutton.role.attribute = attribute role { text }
+  db.guibutton.attlist =
+    db.guibutton.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guibutton =
+    
+    ## The text on a button in a GUI
+    element guibutton {
+      db.guibutton.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.guiicon.role.attribute = attribute role { text }
+  db.guiicon.attlist =
+    db.guiicon.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guiicon =
+    
+    ## Graphic and/or text appearing as a icon in a GUI
+    element guiicon {
+      db.guiicon.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.guilabel.role.attribute = attribute role { text }
+  db.guilabel.attlist =
+    db.guilabel.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guilabel =
+    
+    ## The text of a label in a GUI
+    element guilabel {
+      db.guilabel.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.guimenu.role.attribute = attribute role { text }
+  db.guimenu.attlist =
+    db.guimenu.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guimenu =
+    
+    ## The name of a menu in a GUI
+    element guimenu {
+      db.guimenu.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.guimenuitem.role.attribute = attribute role { text }
+  db.guimenuitem.attlist =
+    db.guimenuitem.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guimenuitem =
+    
+    ## The name of a terminal menu item in a GUI
+    element guimenuitem {
+      db.guimenuitem.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.guisubmenu.role.attribute = attribute role { text }
+  db.guisubmenu.attlist =
+    db.guisubmenu.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.guisubmenu =
+    
+    ## The name of a submenu in a GUI
+    element guisubmenu {
+      db.guisubmenu.attlist,
+      (db._text | db.accel | db.superscript | db.subscript)*
+    }
+}
+div {
+  db.menuchoice.role.attribute = attribute role { text }
+  db.menuchoice.attlist =
+    db.menuchoice.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.menuchoice =
+    
+    ## A selection or series of selections from a menu
+    element menuchoice {
+      db.menuchoice.attlist,
+      db.shortcut?,
+      (db.guibutton
+       | db.guiicon
+       | db.guilabel
+       | db.guimenu
+       | db.guimenuitem
+       | db.guisubmenu)+
+    }
+}
+div {
+  db.mousebutton.role.attribute = attribute role { text }
+  db.mousebutton.attlist =
+    db.mousebutton.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.mousebutton =
+    
+    ## The conventional name of a mouse button
+    element mousebutton { db.mousebutton.attlist, db._text }
+}
+db.keyboard.inlines =
+  db.keycombo
+  | db.keycap
+  | db.keycode
+  | db.keysym
+  | db.shortcut
+  | db.accel
+div {
+  db.keycap.function.enumeration =
+    
+    ## The "Alt" key
+    "alt"
+    | 
+      ## The "Backspace" key
+      "backspace"
+    | 
+      ## The "Command" key
+      "command"
+    | 
+      ## The "Control" key
+      "control"
+    | 
+      ## The "Delete" key
+      "delete"
+    | 
+      ## The down arrow
+      "down"
+    | 
+      ## The "End" key
+      "end"
+    | 
+      ## The "Enter" or "Return" key
+      "enter"
+    | 
+      ## The "Escape" key
+      "escape"
+    | 
+      ## The "Home" key
+      "home"
+    | 
+      ## The "Insert" key
+      "insert"
+    | 
+      ## The left arrow
+      "left"
+    | 
+      ## The "Meta" key
+      "meta"
+    | 
+      ## The "Option" key
+      "option"
+    | 
+      ## The page down key
+      "pagedown"
+    | 
+      ## The page up key
+      "pageup"
+    | 
+      ## The right arrow
+      "right"
+    | 
+      ## The "Shift" key
+      "shift"
+    | 
+      ## The spacebar
+      "space"
+    | 
+      ## The "Tab" key
+      "tab"
+    | 
+      ## The up arrow
+      "up"
+  db.keycap.function-enum.attribute =
+    
+    ## Identifies the function key
+    attribute function { db.keycap.function.enumeration }?
+  db.keycap.function-other.attributes =
+    
+    ## Identifies the function key
+    attribute function {
+      
+      ## Indicates a non-standard function key
+      "other"
+    }?,
+    
+    ## Specifies a keyword that identifies the non-standard key
+    attribute otherfunction { text }
+  db.keycap.function.attrib =
+    db.keycap.function-enum.attribute
+    | db.keycap.function-other.attributes
+  db.keycap.role.attribute = attribute role { text }
+  db.keycap.attlist =
+    db.keycap.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.keycap.function.attrib
+  db.keycap =
+    
+    ## The text printed on a key on a keyboard
+    element keycap { db.keycap.attlist, db._text }
+}
+div {
+  db.keycode.role.attribute = attribute role { text }
+  db.keycode.attlist =
+    db.keycode.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.keycode =
+    
+    ## The internal, frequently numeric, identifier for a key on a keyboard
+    element keycode { db.keycode.attlist, db._text }
+}
+db.keycombination.contentmodel =
+  (db.keycap | db.keycombo | db.keysym) | db.mousebutton
+div {
+  db.keycombo.action.enumeration =
+    
+    ## A (single) mouse click.
+    "click"
+    | 
+      ## A double mouse click.
+      "double-click"
+    | 
+      ## A mouse or key press.
+      "press"
+    | 
+      ## Sequential clicks or presses.
+      "seq"
+    | 
+      ## Simultaneous clicks or presses.
+      "simul"
+  db.keycombo.action-enum.attribute =
+    
+    ## Identifies the nature of the action taken. If keycombo
+    ##  contains more than one element, simul
+    ##  is the default, otherwise there is no default.
+    attribute action { db.keycombo.action.enumeration }?
+  db.keycombo.action-other.attributes =
+    
+    ## Identifies the nature of the action taken
+    attribute action {
+      
+      ## Indicates a non-standard action
+      "other"
+    }?,
+    
+    ## Identifies the non-standard action in some unspecified way.
+    attribute otheraction { text }
+  db.keycombo.action.attrib =
+    db.keycombo.action-enum.attribute
+    | db.keycombo.action-other.attributes
+  db.keycombo.role.attribute = attribute role { text }
+  db.keycombo.attlist =
+    db.keycombo.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.keycombo.action.attrib
+  db.keycombo =
+    
+    ## A combination of input actions
+    element keycombo {
+      db.keycombo.attlist, db.keycombination.contentmodel+
+    }
+}
+div {
+  db.keysym.role.attribute = attribute role { text }
+  db.keysym.attlist =
+    db.keysym.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.keysym =
+    
+    ## The symbolic name of a key on a keyboard
+    element keysym { db.keysym.attlist, db._text }
+}
+div {
+  db.accel.role.attribute = attribute role { text }
+  db.accel.attlist =
+    db.accel.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.accel =
+    
+    ## A graphical user interface (GUI) keyboard shortcut
+    element accel { db.accel.attlist, db._text }
+}
+div {
+  db.shortcut.action.attrib = db.keycombo.action.attrib
+  db.shortcut.role.attribute = attribute role { text }
+  db.shortcut.attlist =
+    db.shortcut.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.shortcut.action.attrib
+  db.shortcut =
+    
+    ## A key combination for an action that is also accessible through a menu
+    element shortcut {
+      db.shortcut.attlist, db.keycombination.contentmodel+
+    }
+}
+db.os.inlines =
+  db.prompt
+  | db.envar
+  | db.filename
+  | db.command
+  | db.computeroutput
+  | db.userinput
+db.computeroutput.inlines =
+  (text | db.ubiq.inlines | db.os.inlines | db.technical.inlines)
+  | db.co
+  | db.markup.inlines
+db.userinput.inlines =
+  (text | db.ubiq.inlines | db.os.inlines | db.technical.inlines)
+  | db.co
+  | db.markup.inlines
+  | db.gui.inlines
+  | db.keyboard.inlines
+db.prompt.inlines = db._text | db.co
+div {
+  db.prompt.role.attribute = attribute role { text }
+  db.prompt.attlist =
+    db.prompt.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.prompt =
+    
+    ## A character or string indicating the start of an input field in a  computer display
+    element prompt { db.prompt.attlist, db.prompt.inlines* }
+}
+div {
+  db.envar.role.attribute = attribute role { text }
+  db.envar.attlist =
+    db.envar.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.envar =
+    
+    ## A software environment variable
+    element envar { db.envar.attlist, db._text }
+}
+div {
+  db.filename.class.enumeration =
+    
+    ## A device
+    "devicefile"
+    | 
+      ## A directory
+      "directory"
+    | 
+      ## A filename extension
+      "extension"
+    | 
+      ## A header file (as for a programming language)
+      "headerfile"
+    | 
+      ## A library file
+      "libraryfile"
+    | 
+      ## A partition (as of a hard disk)
+      "partition"
+    | 
+      ## A symbolic link
+      "symlink"
+  db.filename.class.attribute =
+    
+    ## Identifies the class of filename
+    attribute class { db.filename.class.enumeration }
+  db.filename.path.attribute =
+    
+    ## Specifies the path of the filename
+    attribute path { text }
+  db.filename.role.attribute = attribute role { text }
+  db.filename.attlist =
+    db.filename.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.filename.path.attribute?
+    & db.filename.class.attribute?
+  db.filename =
+    
+    ## The name of a file
+    element filename { db.filename.attlist, db._text }
+}
+div {
+  db.command.role.attribute = attribute role { text }
+  db.command.attlist =
+    db.command.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.command =
+    
+    ## The name of an executable program or other software command
+    element command { db.command.attlist, db._text }
+}
+div {
+  db.computeroutput.role.attribute = attribute role { text }
+  db.computeroutput.attlist =
+    db.computeroutput.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.computeroutput =
+    
+    ## Data, generally text, displayed or presented by a computer
+    element computeroutput {
+      db.computeroutput.attlist, db.computeroutput.inlines*
+    }
+}
+div {
+  db.userinput.role.attribute = attribute role { text }
+  db.userinput.attlist =
+    db.userinput.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.userinput =
+    
+    ## Data entered by the user
+    element userinput { db.userinput.attlist, db.userinput.inlines* }
+}
+div {
+  db.cmdsynopsis.role.attribute = attribute role { text }
+  db.cmdsynopsis.sepchar.attribute =
+    
+    ## Specifies the character that should separate the command and its top-level arguments
+    attribute sepchar { text }
+  db.cmdsynopsis.cmdlength.attribute =
+    
+    ## Indicates the displayed length of the command; this information may be used to intelligently indent command synopses which extend beyond one line
+    attribute cmdlength { text }
+  db.cmdsynopsis.label.attribute = db.label.attribute
+  db.cmdsynopsis.attlist =
+    db.cmdsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.cmdsynopsis.sepchar.attribute?
+    & db.cmdsynopsis.cmdlength.attribute?
+    & db.cmdsynopsis.label.attribute?
+  db.cmdsynopsis.info = db._info.title.forbidden
+  db.cmdsynopsis =
+    
+    ## A syntax summary for a software command
+    element cmdsynopsis {
+      db.cmdsynopsis.attlist,
+      db.cmdsynopsis.info,
+      (db.command | db.arg | db.group | db.sbr)+,
+      db.synopfragment*
+    }
+}
+db.rep.enumeration =
+  
+  ## Can not be repeated.
+  "norepeat"
+  | 
+    ## Can be repeated.
+    "repeat"
+db.rep.attribute =
+  
+  ## Indicates whether or not repetition is possible.
+  [ a:defaultValue = "norepeat" ] attribute rep { db.rep.enumeration }
+db.choice.enumeration =
+  
+  ## Formatted to indicate that it is optional.
+  "opt"
+  | 
+    ## Formatted without indication.
+    "plain"
+  | 
+    ## Formatted to indicate that it is required.
+    "req"
+db.choice.opt.attribute =
+  
+  ## Indicates optionality.
+  [ a:defaultValue = "opt" ] attribute choice { db.choice.enumeration }
+db.choice.req.attribute =
+  
+  ## Indicates optionality.
+  [ a:defaultValue = "req" ] attribute choice { db.choice.enumeration }
+div {
+  db.arg.role.attribute = attribute role { text }
+  db.arg.rep.attribute = db.rep.attribute
+  db.arg.choice.attribute = db.choice.opt.attribute
+  db.arg.attlist =
+    db.arg.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.arg.rep.attribute?
+    & db.arg.choice.attribute?
+  db.arg =
+    
+    ## An argument in a CmdSynopsis
+    element arg {
+      db.arg.attlist,
+      (db._text
+       | db.arg
+       | db.group
+       | db.option
+       | db.synopfragmentref
+       | db.sbr)*
+    }
+}
+div {
+  db.group.role.attribute = attribute role { text }
+  db.group.rep.attribute = db.rep.attribute
+  db.group.choice.attribute = db.choice.opt.attribute
+  db.group.attlist =
+    db.group.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.group.rep.attribute?
+    & db.group.choice.attribute?
+  db.group =
+    
+    ## A group of elements in a CmdSynopsis
+    element group {
+      db.group.attlist,
+      (db.arg
+       | db.group
+       | db.option
+       | db.synopfragmentref
+       | db.replaceable
+       | db.sbr)+
+    }
+}
+div {
+  db.sbr.role.attribute = attribute role { text }
+  db.sbr.attlist = db.sbr.role.attribute? & db.common.attributes
+  db.sbr =
+    
+    ## An explicit line break in a command synopsis
+    element sbr { db.sbr.attlist, empty }
+}
+div {
+  db.synopfragment.role.attribute = attribute role { text }
+  db.synopfragment.attlist =
+    db.synopfragment.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.synopfragment =
+    
+    ## A portion of a CmdSynopsis broken out from the main body of the synopsis
+    element synopfragment {
+      db.synopfragment.attlist, (db.arg | db.group)+
+    }
+}
+div {
+  db.synopfragmentref.role.attribute = attribute role { text }
+  db.synopfragmentref.attlist =
+    db.synopfragmentref.role.attribute?
+    & db.common.attributes
+    & db.linkend.attribute
+  db.synopfragmentref =
+    
+    ## A reference to a fragment of a command synopsis
+    [
+      s:pattern [
+        name = "Synopsis fragment type constraint"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:synopfragmentref"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test =
+              "local-name(//*[@xml:id=current()/@linkend]) = 'synopfragment' and namespace-uri(//*[@xml:id=current()/@linkend]) = 'http://docbook.org/ns/docbook'"
+            "@linkend on synopfragmentref must point to a synopfragment."
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element synopfragmentref { db.synopfragmentref.attlist, text }
+}
+db.programming.inlines =
+  db.function
+  | db.parameter
+  | db.varname
+  | db.returnvalue
+  | db.type
+  | db.classname
+  | db.exceptionname
+  | db.interfacename
+  | db.methodname
+  | db.modifier
+  | db.initializer
+  | db.oo.inlines
+db.oo.inlines = db.ooclass | db.ooexception | db.oointerface
+db.synopsis.blocks =
+  (db.funcsynopsis
+   | db.classsynopsis
+   | db.methodsynopsis
+   | db.constructorsynopsis
+   | db.destructorsynopsis
+   | db.fieldsynopsis)
+  | db.cmdsynopsis
+div {
+  db.synopsis.role.attribute = attribute role { text }
+  db.synopsis.label.attribute = db.label.attribute
+  db.synopsis.attlist =
+    db.synopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.verbatim.attributes
+    & db.synopsis.label.attribute?
+  db.synopsis =
+    
+    ## A general-purpose element for representing the syntax of commands or functions
+    element synopsis { db.synopsis.attlist, db.verbatim.contentmodel }
+}
+div {
+  db.funcsynopsis.role.attribute = attribute role { text }
+  db.funcsynopsis.attlist =
+    db.funcsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+  db.funcsynopsis.info = db._info.title.forbidden
+  db.funcsynopsis =
+    
+    ## The syntax summary for a function definition
+    element funcsynopsis {
+      db.funcsynopsis.attlist,
+      db.funcsynopsis.info,
+      (db.funcsynopsisinfo | db.funcprototype)+
+    }
+}
+div {
+  db.funcsynopsisinfo.role.attribute = attribute role { text }
+  db.funcsynopsisinfo.attlist =
+    db.funcsynopsisinfo.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.verbatim.attributes
+  db.funcsynopsisinfo =
+    
+    ## Information supplementing the FuncDefs of a FuncSynopsis
+    element funcsynopsisinfo {
+      db.funcsynopsisinfo.attlist, db.verbatim.contentmodel
+    }
+}
+div {
+  db.funcprototype.role.attribute = attribute role { text }
+  db.funcprototype.attlist =
+    db.funcprototype.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.funcprototype =
+    
+    ## The prototype of a function
+    element funcprototype {
+      db.funcprototype.attlist,
+      db.modifier*,
+      db.funcdef,
+      (db.void | db.varargs | (db.paramdef+, db.varargs?)),
+      db.modifier*
+    }
+}
+div {
+  db.funcdef.role.attribute = attribute role { text }
+  db.funcdef.attlist =
+    db.funcdef.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.funcdef =
+    
+    ## A function (subroutine) name and its return type
+    element funcdef {
+      db.funcdef.attlist, (db._text | db.type | db.function)*
+    }
+}
+div {
+  db.function.role.attribute = attribute role { text }
+  db.function.attlist =
+    db.function.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.function =
+    
+    ## The name of a function or subroutine, as in a programming language
+    element function { db.function.attlist, db._text }
+}
+div {
+  db.void.role.attribute = attribute role { text }
+  db.void.attlist =
+    db.void.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.void =
+    
+    ## An empty element in a function synopsis indicating that the function in question takes no arguments
+    element void { db.void.attlist, empty }
+}
+div {
+  db.varargs.role.attribute = attribute role { text }
+  db.varargs.attlist =
+    db.varargs.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.varargs =
+    
+    ## An empty element in a function synopsis indicating a variable number of arguments
+    element varargs { db.varargs.attlist, empty }
+}
+div {
+  db.paramdef.role.attribute = attribute role { text }
+  db.paramdef.choice.enumeration =
+    
+    ## Formatted to indicate that it is optional.
+    "opt"
+    | 
+      ## Formatted to indicate that it is required.
+      "req"
+  db.paramdef.choice.attribute =
+    
+    ## Indicates optionality.
+    [ a:defaultValue = "opt" ]
+    attribute choice { db.paramdef.choice.enumeration }
+  db.paramdef.attlist =
+    db.paramdef.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.paramdef.choice.attribute?
+  db.paramdef =
+    
+    ## Information about a function parameter in a programming language
+    element paramdef {
+      db.paramdef.attlist,
+      (db._text
+       | db.initializer
+       | db.type
+       | db.parameter
+       | db.funcparams)*
+    }
+}
+div {
+  db.funcparams.role.attribute = attribute role { text }
+  db.funcparams.attlist =
+    db.funcparams.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.funcparams =
+    
+    ## Parameters for a function referenced through a function pointer in a synopsis
+    element funcparams { db.funcparams.attlist, db._text }
+}
+div {
+  db.classsynopsis.role.attribute = attribute role { text }
+  db.classsynopsis.class.enumeration =
+    
+    ## This is the synopsis of a class
+    "class"
+    | 
+      ## This is the synopsis of an interface
+      "interface"
+  db.classsynopsis.class.attribute =
+    
+    ## Specifies the nature of the synopsis
+    attribute class { db.classsynopsis.class.enumeration }
+  db.classsynopsis.attlist =
+    db.classsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+    & db.classsynopsis.class.attribute?
+  db.classsynopsis =
+    
+    ## The syntax summary for a class definition
+    element classsynopsis {
+      db.classsynopsis.attlist,
+      db.oo.inlines+,
+      (db.classsynopsisinfo
+       | db.methodsynopsis
+       | db.constructorsynopsis
+       | db.destructorsynopsis
+       | db.fieldsynopsis)*
+    }
+}
+div {
+  db.classsynopsisinfo.role.attribute = attribute role { text }
+  db.classsynopsisinfo.attlist =
+    db.classsynopsisinfo.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.verbatim.attributes
+  db.classsynopsisinfo =
+    
+    ## Information supplementing the contents of a ClassSynopsis
+    element classsynopsisinfo {
+      db.classsynopsisinfo.attlist, db.verbatim.contentmodel
+    }
+}
+div {
+  db.ooclass.role.attribute = attribute role { text }
+  db.ooclass.attlist =
+    db.ooclass.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.ooclass =
+    
+    ## A class in an object-oriented programming language
+    element ooclass {
+      db.ooclass.attlist, (db.package | db.modifier)*, db.classname
+    }
+}
+div {
+  db.oointerface.role.attribute = attribute role { text }
+  db.oointerface.attlist =
+    db.oointerface.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.oointerface =
+    
+    ## An interface in an object-oriented programming language
+    element oointerface {
+      db.oointerface.attlist,
+      (db.package | db.modifier)*,
+      db.interfacename
+    }
+}
+div {
+  db.ooexception.role.attribute = attribute role { text }
+  db.ooexception.attlist =
+    db.ooexception.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.ooexception =
+    
+    ## An exception in an object-oriented programming language
+    element ooexception {
+      db.ooexception.attlist,
+      (db.package | db.modifier)*,
+      db.exceptionname
+    }
+}
+db.modifier.xml.space.attribute =
+  
+  ## Can be used to indicate that whitespace in the modifier should be preserved (for multi-line annotations, for example).
+  attribute xml:space {
+    
+    ## Extra whitespace and line breaks must be preserved.
+    [
+      # Ideally the definition of xml:space used on modifier would be
+      # different from the definition used on the verbatim elements. The
+      # verbatim elements forbid the use of xml:space="default" which
+      # wouldn't be a problem on modifier. But doing that causes the
+      # generated XSD schemas to be broken so I'm just reusing the existing
+      # definition for now. It won't be backwards incompatible to fix this
+      # problem in the future.
+      #    | ## Extra whitespace and line breaks are not preserved.
+      #      "default"
+      
+    ]
+    "preserve"
+  }
+div {
+  db.modifier.role.attribute = attribute role { text }
+  db.modifier.attlist =
+    db.modifier.xml.space.attribute?
+    & db.modifier.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.modifier =
+    
+    ## Modifiers in a synopsis
+    element modifier { db.modifier.attlist, db._text }
+}
+div {
+  db.interfacename.role.attribute = attribute role { text }
+  db.interfacename.attlist =
+    db.interfacename.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.interfacename =
+    
+    ## The name of an interface
+    element interfacename { db.interfacename.attlist, db._text }
+}
+div {
+  db.exceptionname.role.attribute = attribute role { text }
+  db.exceptionname.attlist =
+    db.exceptionname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.exceptionname =
+    
+    ## The name of an exception
+    element exceptionname { db.exceptionname.attlist, db._text }
+}
+div {
+  db.fieldsynopsis.role.attribute = attribute role { text }
+  db.fieldsynopsis.attlist =
+    db.fieldsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+  db.fieldsynopsis =
+    
+    ## The name of a field in a class definition
+    element fieldsynopsis {
+      db.fieldsynopsis.attlist,
+      db.modifier*,
+      db.type?,
+      db.varname,
+      db.initializer?
+    }
+}
+div {
+  db.initializer.role.attribute = attribute role { text }
+  db.initializer.attlist =
+    db.initializer.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.initializer =
+    
+    ## The initializer for a FieldSynopsis
+    element initializer { db.initializer.attlist, db._text }
+}
+div {
+  db.constructorsynopsis.role.attribute = attribute role { text }
+  db.constructorsynopsis.attlist =
+    db.constructorsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+  db.constructorsynopsis =
+    
+    ## A syntax summary for a constructor
+    element constructorsynopsis {
+      db.constructorsynopsis.attlist,
+      db.modifier*,
+      db.methodname?,
+      (db.methodparam+ | db.void?),
+      db.exceptionname*
+    }
+}
+div {
+  db.destructorsynopsis.role.attribute = attribute role { text }
+  db.destructorsynopsis.attlist =
+    db.destructorsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+  db.destructorsynopsis =
+    
+    ## A syntax summary for a destructor
+    element destructorsynopsis {
+      db.destructorsynopsis.attlist,
+      db.modifier*,
+      db.methodname?,
+      (db.methodparam+ | db.void?),
+      db.exceptionname*
+    }
+}
+div {
+  db.methodsynopsis.role.attribute = attribute role { text }
+  db.methodsynopsis.attlist =
+    db.methodsynopsis.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.language.attribute?
+  db.methodsynopsis =
+    
+    ## A syntax summary for a method
+    element methodsynopsis {
+      db.methodsynopsis.attlist,
+      db.modifier*,
+      (db.type | db.void)?,
+      db.methodname,
+      (db.methodparam+ | db.void),
+      db.exceptionname*,
+      db.modifier*
+    }
+}
+div {
+  db.methodname.role.attribute = attribute role { text }
+  db.methodname.attlist =
+    db.methodname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.methodname =
+    
+    ## The name of a method
+    element methodname { db.methodname.attlist, db._text }
+}
+div {
+  db.methodparam.role.attribute = attribute role { text }
+  db.methodparam.rep.attribute = db.rep.attribute
+  db.methodparam.choice.attribute = db.choice.req.attribute
+  db.methodparam.attlist =
+    db.methodparam.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.methodparam.rep.attribute?
+    & db.methodparam.choice.attribute?
+  db.methodparam =
+    
+    ## Parameters to a method
+    element methodparam {
+      db.methodparam.attlist,
+      db.modifier*,
+      db.type?,
+      ((db.modifier*, db.parameter, db.initializer?) | db.funcparams),
+      db.modifier*
+    }
+}
+div {
+  db.varname.role.attribute = attribute role { text }
+  db.varname.attlist =
+    db.varname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.varname =
+    
+    ## The name of a variable
+    element varname { db.varname.attlist, db._text }
+}
+div {
+  db.returnvalue.role.attribute = attribute role { text }
+  db.returnvalue.attlist =
+    db.returnvalue.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.returnvalue =
+    
+    ## The value returned by a function
+    element returnvalue { db.returnvalue.attlist, db._text }
+}
+div {
+  db.type.role.attribute = attribute role { text }
+  db.type.attlist =
+    db.type.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.type =
+    
+    ## The classification of a value
+    element type { db.type.attlist, db._text }
+}
+div {
+  db.classname.role.attribute = attribute role { text }
+  db.classname.attlist =
+    db.classname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.classname =
+    
+    ## The name of a class, in the object-oriented programming sense
+    element classname { db.classname.attlist, db._text }
+}
+div {
+  db.programlisting.role.attribute = attribute role { text }
+  db.programlisting.width.attribute = db.width.characters.attribute
+  db.programlisting.attlist =
+    db.programlisting.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.verbatim.attributes
+    & db.programlisting.width.attribute?
+  db.programlisting =
+    
+    ## A literal listing of all or part of a program
+    element programlisting {
+      db.programlisting.attlist, db.verbatim.contentmodel
+    }
+}
+db.admonition.blocks =
+  db.caution | db.important | db.note | db.tip | db.warning
+db.admonition.contentmodel = db._info.title.only, db.all.blocks+
+div {
+  db.caution.role.attribute = attribute role { text }
+  db.caution.attlist =
+    db.caution.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.caution =
+    
+    ## A note of caution
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caution"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:caution)"
+            "caution must not occur in the descendants of caution"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caution"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:important)"
+            "important must not occur in the descendants of caution"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caution"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:note)"
+            "note must not occur in the descendants of caution"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caution"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:tip)"
+            "tip must not occur in the descendants of caution"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:caution"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:warning)"
+            "warning must not occur in the descendants of caution"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element caution { db.caution.attlist, db.admonition.contentmodel }
+}
+div {
+  db.important.role.attribute = attribute role { text }
+  db.important.attlist =
+    db.important.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.important =
+    
+    ## An admonition set off from the text
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:important"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:caution)"
+            "caution must not occur in the descendants of important"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:important"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:important)"
+            "important must not occur in the descendants of important"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:important"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:note)"
+            "note must not occur in the descendants of important"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:important"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:tip)"
+            "tip must not occur in the descendants of important"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:important"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:warning)"
+            "warning must not occur in the descendants of important"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element important {
+      db.important.attlist, db.admonition.contentmodel
+    }
+}
+div {
+  db.note.role.attribute = attribute role { text }
+  db.note.attlist =
+    db.note.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.note =
+    
+    ## A message set off from the text
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:note"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:caution)"
+            "caution must not occur in the descendants of note"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:note"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:important)"
+            "important must not occur in the descendants of note"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:note"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:note)"
+            "note must not occur in the descendants of note"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:note"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:tip)"
+            "tip must not occur in the descendants of note"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:note"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:warning)"
+            "warning must not occur in the descendants of note"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element note { db.note.attlist, db.admonition.contentmodel }
+}
+div {
+  db.tip.role.attribute = attribute role { text }
+  db.tip.attlist =
+    db.tip.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.tip =
+    
+    ## A suggestion to the user, set off from the text
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:tip"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:caution)"
+            "caution must not occur in the descendants of tip"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:tip"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:important)"
+            "important must not occur in the descendants of tip"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:tip"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:note)"
+            "note must not occur in the descendants of tip"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:tip"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:tip)"
+            "tip must not occur in the descendants of tip"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:tip"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:warning)"
+            "warning must not occur in the descendants of tip"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element tip { db.tip.attlist, db.admonition.contentmodel }
+}
+div {
+  db.warning.role.attribute = attribute role { text }
+  db.warning.attlist =
+    db.warning.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.warning =
+    
+    ## An admonition set off from the text
+    [
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:warning"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:caution)"
+            "caution must not occur in the descendants of warning"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:warning"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:important)"
+            "important must not occur in the descendants of warning"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:warning"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:note)"
+            "note must not occur in the descendants of warning"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:warning"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:tip)"
+            "tip must not occur in the descendants of warning"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+      s:pattern [
+        name = "Element exclusion"
+        "\x{a}" ~
+        "          "
+        s:rule [
+          context = "db:warning"
+          "\x{a}" ~
+          "            "
+          s:assert [
+            test = "not(.//db:warning)"
+            "warning must not occur in the descendants of warning"
+          ]
+          "\x{a}" ~
+          "          "
+        ]
+        "\x{a}" ~
+        "        "
+      ]
+    ]
+    element warning { db.warning.attlist, db.admonition.contentmodel }
+}
+db.error.inlines =
+  db.errorcode | db.errortext | db.errorname | db.errortype
+div {
+  db.errorcode.role.attribute = attribute role { text }
+  db.errorcode.attlist =
+    db.errorcode.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.errorcode =
+    
+    ## An error code
+    element errorcode { db.errorcode.attlist, db._text }
+}
+div {
+  db.errorname.role.attribute = attribute role { text }
+  db.errorname.attlist =
+    db.errorname.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.errorname =
+    
+    ## An error name
+    element errorname { db.errorname.attlist, db._text }
+}
+div {
+  db.errortext.role.attribute = attribute role { text }
+  db.errortext.attlist =
+    db.errortext.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.errortext =
+    
+    ## An error message.
+    element errortext { db.errortext.attlist, db._text }
+}
+div {
+  db.errortype.role.attribute = attribute role { text }
+  db.errortype.attlist =
+    db.errortype.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.errortype =
+    
+    ## The classification of an error message
+    element errortype { db.errortype.attlist, db._text }
+}
+db.systemitem.inlines = db._text | db.co
+div {
+  db.systemitem.class.enumeration =
+    
+    ## A daemon or other system process (syslogd)
+    "daemon"
+    | 
+      ## A domain name (example.com)
+      "domainname"
+    | 
+      ## An ethernet address (00:05:4E:49:FD:8E)
+      "etheraddress"
+    | 
+      ## An event of some sort (SIGHUP)
+      "event"
+    | 
+      ## An event handler of some sort (hangup)
+      "eventhandler"
+    | 
+      ## A filesystem (ext3)
+      "filesystem"
+    | 
+      ## A fully qualified domain name (my.example.com)
+      "fqdomainname"
+    | 
+      ## A group name (wheel)
+      "groupname"
+    | 
+      ## An IP address (127.0.0.1)
+      "ipaddress"
+    | 
+      ## A library (libncurses)
+      "library"
+    | 
+      ## A macro
+      "macro"
+    | 
+      ## A netmask (255.255.255.192)
+      "netmask"
+    | 
+      ## A newsgroup (comp.text.xml)
+      "newsgroup"
+    | 
+      ## An operating system name (Hurd)
+      "osname"
+    | 
+      ## A process (gnome-cups-icon)
+      "process"
+    | 
+      ## A protocol (ftp)
+      "protocol"
+    | 
+      ## A resource
+      "resource"
+    | 
+      ## A server (mail.example.com)
+      "server"
+    | 
+      ## A service (ppp)
+      "service"
+    | 
+      ## A system name (hephaistos)
+      "systemname"
+    | 
+      ## A user name (ndw)
+      "username"
+  db.systemitem.class.attribute =
+    
+    ## Identifies the nature of the system item
+    attribute class { db.systemitem.class.enumeration }
+  db.systemitem.role.attribute = attribute role { text }
+  db.systemitem.attlist =
+    db.systemitem.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+    & db.systemitem.class.attribute?
+  db.systemitem =
+    
+    ## A system-related item or term
+    element systemitem { db.systemitem.attlist, db.systemitem.inlines* }
+}
+div {
+  db.option.role.attribute = attribute role { text }
+  db.option.attlist =
+    db.option.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.option =
+    
+    ## An option for a software command
+    element option { db.option.attlist, db._text }
+}
+div {
+  db.optional.role.attribute = attribute role { text }
+  db.optional.attlist =
+    db.optional.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.optional =
+    
+    ## Optional information
+    element optional { db.optional.attlist, db._text }
+}
+div {
+  db.property.role.attribute = attribute role { text }
+  db.property.attlist =
+    db.property.role.attribute?
+    & db.common.attributes
+    & db.common.linking.attributes
+  db.property =
+    
+    ## A unit of data associated with some part of a computer system
+    element property { db.property.attlist, db._text }
 }
 div {
   db.xi.include.attlist =
