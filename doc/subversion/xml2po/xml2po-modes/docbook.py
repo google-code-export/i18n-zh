@@ -86,7 +86,7 @@ class docbookXmlMode:
         return """Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2."""
 
     def _find_articleinfo(self, node):
-        if node.name == 'articleinfo' or node.name == 'bookinfo':
+        if node.name == 'articleinfo' or node.name == 'bookinfo' or node.name == 'info':
             return node
         child = node.children
         while child:

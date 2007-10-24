@@ -83,7 +83,7 @@ class MessageOutput:
             if self.output_msgstr:
                 self.translations.append(t)
                 return
-
+            
             if self.do_translations or (not t in self.messages):
                 self.messages.append(t)
                 if spacepreserve:
@@ -103,7 +103,7 @@ class MessageOutput:
                     self.comments[t] = comment
 
     def outputHeader(self, out):
-        import time
+        from time import gmtime, strftime
         out.write("""msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\\n"
@@ -115,7 +115,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 
-""" % (time.strftime("%Y-%m-%d %H:%M%z")))
+""" % (strftime("%Y-%m-%d %H:%M +0000", gmtime())))
 
     def outputAll(self, out):
         self.outputHeader(out)
@@ -124,9 +124,15 @@ msgstr ""
             if k in self.comments:
                 out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
             references = ""
+            tagstr = ""
+            tags = []
             for reference in self.linenos[k]:
-                references += "%s:%d(%s) " % (reference[0], reference[2], reference[1])
-            out.write("#: %s\n" % (references))
+                references += "%s:%d " % (reference[0], reference[2])
+                if(reference[1] not in tags): 
+                    tags.append(reference[1])
+                    tagstr += "(" + str(reference[1]) + "), "
+            out.write("#.%s\n" % (tagstr[0 : len(tagstr) - 2]))
+            out.write("#: %s\n" % (references[0 : len(references) - 1]))
             if k in self.nowrap and self.nowrap[k]:
                 out.write("#, no-wrap\n")
             out.write("msgid \"%s\"\n" % (k))
@@ -687,7 +693,7 @@ libxml2.registerErrorHandler(xml_error_handler, None)
 if __name__ != '__main__': raise NotImplementedError
 
 # Parameters
-submodes_path = "xml2po-modes"
+submodes_path = os.path.dirname(os.path.realpath(sys.argv[0])) + "/xml2po-modes"
 default_mode = 'docbook'
 
 filename = ''
