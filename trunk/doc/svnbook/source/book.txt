@@ -1,0 +1,19 @@
+1. Fix URL of docbookx.dtd
+    vi book.xml
+        file:///U:/wc/svn/i18n-zh/trunk/lib/docbook/docbook4/docbookx.dtd
+    vi version.xml
+        <!ENTITY svn.version "2880">
+        <!ENTITY svn.l10n_revision "r">
+        <!ENTITY svn.date "2007-09-28 23:40:41 +0800">
+
+2. Upgrade to DocBook v5
+    xsltproc -o book-v5-tmp.xml db4-upgrade.xsl book.xml
+
+3. Clean up
+    vi book-v5-tmp.xml
+        <title>Version Control with Subversion</title>
+        <subtitle>For Subversion 1.5(Compiled from r2880)</subtitle>
+        <structname>
+    java -jar jing.jar  docbookxi.rng book-v5-tmp.xml
+
+    xmllint -o book-v5.xml --format book-v5-tmp.xml
