@@ -27,6 +27,9 @@
   </target>
 
   <target name="init" description="Check runtime class">
+    <available file="build.properties" property="properties.present"/>
+    <fail message="Please create your build.properties from build.tmpl.properties !" unless="properties.present"/>
+
     <condition property="saxon.present">
       <and>
         <available classname="com.icl.saxon.StyleSheet" classpathref="lib.classpath"/>
@@ -150,11 +153,19 @@
     </copy>
 
     <echo message="Making chm ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN">
-      <classpath refid="lib.classpath"/>
+    <exec dir="${basedir}/build/zh_CN" executable="xmllint">
+      <arg value="--encode"/>
+      <arg value="GB18030"/>
+      <arg value="--format"/>
+      <arg value="--output"/>
+      <arg value="book-GB18030.xml"/>
       <arg value="book.xml"/>
+    </exec>
+    <!--Must use GB18030 encoding and xsltproc for chm format !-->
+    <exec dir="${basedir}/build/zh_CN" executable="xsltproc" failonerror="true">
       <arg value="../../stylesheets/zh_CN/chm.xsl"/>
-    </java>
+      <arg value="book-GB18030.xml"/>
+    </exec>
 
     <exec dir="${basedir}/build/zh_CN" executable="hhc" failonerror="false">
       <arg value="htmlhelp.hhp"/>
