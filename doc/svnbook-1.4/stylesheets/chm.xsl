@@ -8,6 +8,11 @@
   <xsl:param name="htmlhelp.encoding" select="'UTF-8'"/>
   <xsl:param name="chunker.output.encoding" select="'UTF-8'"/>
 
+  <xsl:param name="saxon.character.representation" select="'native'"/>
+
+  <!--It maybe can prevent hhc crash.-->
+  <xsl:param name="suppress.navigation" select="0"/>
+
   <!--No adjustColumnWidths function available.-->
   <xsl:param name="use.extensions">0</xsl:param>
   <xsl:param name="tablecolumns.extension">0</xsl:param>
@@ -16,7 +21,6 @@
 
   <xsl:param name="base.dir" select="'htmlhelp/'"/>
 
-  <xsl:param name="VERSION" select="1.4"/>
   <xsl:param name="htmlhelp.chm" select="'svnbook.chm'"/>
 
   <xsl:param name="htmlhelp.title">
