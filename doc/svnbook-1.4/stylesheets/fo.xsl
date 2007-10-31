@@ -3,11 +3,15 @@
 
   <xsl:import href="fo-import.xsl"/>
 
+  <xsl:param name="l10n.gentext.language" select="'en'"/>
+
   <xsl:param name="paper.type" select="'A4'"></xsl:param>
 
+  <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="tablecolumns.extension">1</xsl:param>
   <xsl:param name="callouts.extension">1</xsl:param>
+  <xsl:param name="textinsert.extension">1</xsl:param>
 
   <xsl:param name="fop.extensions">1</xsl:param>
   <xsl:param name="fop1.extensions">0</xsl:param>

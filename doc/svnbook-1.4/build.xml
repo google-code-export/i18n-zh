@@ -26,6 +26,12 @@
     <delete file="stylesheets/fo-import.xsl"/>
   </target>
 
+  <target name="clean-svn">
+    <delete>
+      <fileset dir="${basedir}" excludes="**/.svn"/>
+    </delete>
+  </target>
+
   <target name="init" description="Check runtime class">
     <available file="build.properties" property="properties.present"/>
     <fail message="Please create your build.properties from build.tmpl.properties !" unless="properties.present"/>
@@ -40,7 +46,7 @@
     <echo message="java.version: ${java.version}"/>
   </target>
 
-  <target name="all" description="Generate document - html,chm,pdf">
+  <target name="all" description="Generate document - pdf,html,chm">
     <antcall target="pdf"/>
     <antcall target="html"/>
     <antcall target="chm"/>
@@ -52,6 +58,7 @@
     </uptodate>
   </target>
 
+  <!--Total time: 34 seconds-->
   <target name="pot" depends="pot.init" unless="pot.isUpToDate" description="Generate POTemplate">
     <echo message="Making pot ..."/>
     <exec dir="${basedir}/po" executable="python" failonerror="true">
@@ -79,6 +86,7 @@
     </uptodate>
   </target>
 
+  <!--Total time: 36 second-->
   <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
     <mkdir dir="build/zh_CN"/>
     <echo message="Translating to zh_CN ..."/>
@@ -111,6 +119,7 @@
     </uptodate>
   </target>
 
+  <!--Total time: 43 seconds-->
   <target name="html" depends="translate,html.init" unless="html.isUpToDate" description="Generate document - html">
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
     <copy file="stylesheets/html-import.tmpl.xsl" tofile="stylesheets/html-import.xsl" filtering="true" overwrite="true"/>
@@ -135,6 +144,7 @@
     </uptodate>
   </target>
 
+  <!--Total time: 53 seconds-->
   <target name="chm" depends="translate,chm.init" unless="chm.isUpToDate" description="Generate document - chm">
     <fail>
       <condition>
@@ -142,7 +152,7 @@
           <os family="windows"/>
         </not>
       </condition>
-      This target only known work on windows !
+      This target only work on windows !
     </fail>
 
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
@@ -177,12 +187,13 @@
   </target>
 
   <target name="fo.init">
-    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/pdf/book.fo">
+    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/book.fo">
       <srcfiles dir="source" includes="defguide.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
     </uptodate>
   </target>
 
+  <!--Total time: 17 seconds-->
   <target name="fo" depends="translate,fo.init" unless="fo.isUpToDate">
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
     <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
@@ -225,6 +236,7 @@
     </uptodate>
   </target>
 
+  <!--Total time: 23 seconds-->
   <target name="pdf" depends="fo,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
     <copy todir="build/zh_CN/pdf/images">
       <fileset dir="source/images" includes="*.png"/>
