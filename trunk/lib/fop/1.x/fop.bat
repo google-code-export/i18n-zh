@@ -26,4 +26,4 @@ goto runFop
 if "%JAVACMD%" == "" set JAVACMD=java
 
 :runFop
-"%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
+"%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %*
