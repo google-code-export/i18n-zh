@@ -9,8 +9,18 @@
 
   <!-- Font related Settings -->
   <xsl:param name="body.font.family">simsun</xsl:param>
+  <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="dingbat.font.family">simhei</xsl:param>
-  <xsl:param name="monospace.font.family">simsun</xsl:param>
+  <xsl:param name="monospace.font.family">CourierNew</xsl:param>
   <xsl:param name="title.font.family">simhei</xsl:param>
+
+  <!-- Admonitions -->
+  <xsl:param name="admon.graphics" select="1"/>
+
+  <xsl:param name="callout.unicode.font">simsun</xsl:param>
+  <xsl:param name="callout.unicode.start.character">10102</xsl:param>
+
+<!--Font Families -->
+
 
 </xsl:stylesheet>
