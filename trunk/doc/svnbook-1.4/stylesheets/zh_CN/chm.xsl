@@ -8,8 +8,6 @@
   <xsl:param name="htmlhelp.encoding" select="'GB18030'"/>
   <xsl:param name="chunker.output.encoding" select="'GB18030'"/>
 
-  <xsl:param name="htmlhelp.chm" select="'svnbook-zh_CN.chm'"/>
-
   <xsl:param name="htmlhelp.title">
     <xsl:text>Subversion 权威指南</xsl:text>
   </xsl:param>
