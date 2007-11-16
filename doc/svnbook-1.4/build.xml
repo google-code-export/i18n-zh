@@ -77,6 +77,7 @@
       <arg value="book.pot"/>
     </exec>
     <move file="po/zh_CN-tmp.po" tofile="po/zh_CN.po"/>
+    <fixcrlf srcdir="${basedir}" encoding="UTF-8" includes="source/book.xml,po/book.pot,po/zh_CN.po" eol="lf"/>
   </target>
 
   <target name="translate.init" depends="pot">
@@ -187,7 +188,7 @@
   </target>
 
   <target name="fo.init">
-    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/book.fo">
+    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/svnbook.fo">
       <srcfiles dir="source" includes="defguide.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
     </uptodate>
@@ -222,17 +223,17 @@
       <arg value="--nsclean"/>
       <arg value="--format"/>
       <arg value="--output"/>
-      <arg value="../book.fo"/>
+      <arg value="../svnbook.fo"/>
       <arg value="book-tmp.fo"/>
     </exec>
     <delete dir="build/zh_CN/pdf"/>
   </target>
 
   <target name="pdf.init">
-    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/book.pdf">
+    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook.pdf">
       <srcfiles dir="source" includes="defguide.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
-      <srcfiles dir="build/zh_CN" includes="book.fo"/>
+      <srcfiles dir="build/zh_CN" includes="svnbook.fo"/>
     </uptodate>
   </target>
 
@@ -251,7 +252,7 @@
         <include name="*.ttc"/>
       </fileset>
       <fileset dir="build/zh_CN">
-        <include name="book.fo"/>
+        <include name="svnbook.fo"/>
       </fileset>
     </copy>
 
@@ -260,8 +261,8 @@
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
       <arg value="userconfig.xml"/>
-      <arg value="book.fo"/>
-      <arg value="../book.pdf"/>
+      <arg value="svnbook.fo"/>
+      <arg value="../svnbook.pdf"/>
     </java>
     <delete dir="build/zh_CN/pdf"/>
   </target>
