@@ -2,7 +2,7 @@
 <book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="svn">
   <info>
     <title>Version Control with Subversion</title>
-    <subtitle>For Subversion 1.5(Compiled from r2881)</subtitle>
+    <subtitle>For Subversion 1.5(Compiled from r2888)</subtitle>
     <edition>Second</edition>
     <biblioid class="isbn">?-?????-???-?</biblioid>
     <authorgroup>
@@ -633,21 +633,21 @@ end:
       John R. Daily, Peter Davis, Olivier Davy, Robert P. J. Day, Mo
       DeJong, Brian Denny, Joe Drew, Nick Duffek, Ben Elliston, Justin
       Erenkrantz, Shlomi Fish, Julian Foad, Chris Foote, Martin
-      Furter, Dave Gilbert, Eric Gillespie, David Glasser, Matthew
-      Gregan, Art Haas, Eric Hanchrow, Greg Hudson, Alexis Huxley,
-      Jens B. Jorgensen, Tez Kamihira, David Kimdon, Mark Benedetto
-      King, Andreas J. Koenig, Nuutti Kotivuori, Matt Kraai, Scott
-      Lamb, Vincent Lefevre, Morten Ludvigsen, Paul Lussier, Bruce
-      A. Mah, Philip Martin, Feliciano Matias, Patrick Mayweg, Gareth
-      McCaughan, Jon Middleton, Tim Moloney, Christopher Ness, Mats
-      Nilsson, Joe Orton, Amy Lyn Pilato, Kevin Pilch-Bisson, Dmitriy
-      Popkov, Michael Price, Mark Proctor, Steffen Prohaska, Daniel
-      Rall, Jack Repenning, Tobias Ringstrom, Garrett Rooney, Joel
-      Rosdahl, Christian Sauer, Larry Shatzer, Russell Steicke, Sander
-      Striker, Erik Sjoelund, Johan Sundstroem, John Szakmeister,
-      Mason Thomas, Eric Wadsworth, Colin Watson, Alex Waugh, Chad
-      Whitacre, Josef Wolf, Blair Zajac, and the entire Subversion
-      community.</para>
+      Furter, Vlad Georgescu, Dave Gilbert, Eric Gillespie, David
+      Glasser, Matthew Gregan, Art Haas, Eric Hanchrow, Greg Hudson,
+      Alexis Huxley, Jens B. Jorgensen, Tez Kamihira, David Kimdon,
+      Mark Benedetto King, Andreas J. Koenig, Nuutti Kotivuori, Matt
+      Kraai, Scott Lamb, Vincent Lefevre, Morten Ludvigsen, Paul
+      Lussier, Bruce A. Mah, Philip Martin, Feliciano Matias, Patrick
+      Mayweg, Gareth McCaughan, Jon Middleton, Tim Moloney,
+      Christopher Ness, Mats Nilsson, Joe Orton, Amy Lyn Pilato, Kevin
+      Pilch-Bisson, Dmitriy Popkov, Michael Price, Mark Proctor,
+      Steffen Prohaska, Daniel Rall, Jack Repenning, Tobias Ringstrom,
+      Garrett Rooney, Joel Rosdahl, Christian Sauer, Larry Shatzer,
+      Russell Steicke, Sander Striker, Erik Sjoelund, Johan
+      Sundstroem, John Szakmeister, Mason Thomas, Eric Wadsworth,
+      Colin Watson, Alex Waugh, Chad Whitacre, Josef Wolf, Blair
+      Zajac, and the entire Subversion community.</para>
       <!-- =============================================================== -->
       <section xml:id="svn.preface.acks.sussman">
         <info>
@@ -762,6 +762,51 @@ end:
       files might be source code&#x2014;for others, anything from
       grocery shopping lists to digital video mixdowns and
       beyond.</para>
+      <!-- =============================================================== -->
+      <section xml:id="svn.intro.righttool">
+        <info>
+          <title>Is Subversion the Right Tool?</title>
+        </info>
+        <para>If you're a user or system administrator pondering the use
+        of Subversion, the first question you should ask yourself is:
+        "is this the right tool for the job?"  Subversion is a
+        fantastic hammer, but be careful not to view every problem as
+        a nail.</para>
+        <para>If you need to archive old versions of files and
+        directories, possibly resurrect them, or examine logs of how
+        they've changed over time, then Subversion is exactly the
+        right tool for you.  If you need to collaborate with people on
+        documents (usually over a network) and keep track of who made
+        which changes, then Subversion is also appropriate.  This is
+        why Subversion is so often used in software development
+        environments &#x2014; programming is an inherently social
+        activity, and Subversion makes it easy to collaborate with
+        other programmers.  Of course, there's a cost to using
+        Subversion as well: administrative overhead.  You'll need to
+        manage a data-repository to store the information and all its
+        history, and be diligent about backing it up.  When working
+        with the data on a daily basis, you won't be able to copy,
+        move, rename, or delete files the way you usually do.
+        Instead, you'll have to do all of those things through
+        Subversion.</para>
+        <para>Assuming you're fine with the extra workflow, you should
+        still make sure you're not using Subversion to solve a problem
+        that other tools solve better.  For example, because
+        Subversion replicates data to all the collaborators involved,
+        a common misuse is to treat it as a generic distribution
+        system.  People will sometimes use Subversion to distribute
+        huge collections of photos, digital music, or software
+        packages.  The problem is, this sort of data usually isn't
+        changing at all.  The collection itself grows over time, but
+        the individual files within the collection aren't being
+        changed.  In this case, using Subversion is
+        "overkill".<footnote><para>Or as a friend puts
+        it, <quote>swatting a fly with a
+        Buick.</quote></para></footnote> There are simpler tools that
+        efficiently replicate data <emphasis>without</emphasis> the
+        overhead of tracking changes, such as <command>rsync</command>
+        or <command>unison</command>.</para>
+      </section>
       <!-- =============================================================== -->
       <section xml:id="svn.intro.history">
         <info>
@@ -11687,10 +11732,10 @@ end:
       clients.  Because its protocol is explicitly designed for
       Subversion and is stateful (unlike HTTP), it provides
       significantly faster network operations&#x2014;but at the cost of
-      some features as well.  It only understands CRAM-MD5
-      authentication, has no logging, no web-browsing, and no option
-      to encrypt network traffic.  It is, however, extremely easy to
-      set up and is often the best option for small teams just
+      some features as well.  While it can use SASL to provide a
+      variety of authentication and encryption options, it has no
+      logging or built-in web-browsing.  It is, however, extremely
+      easy to set up and is often the best option for small teams just
       starting out with Subversion.</para>
       <para>A third option is to use <command>svnserve</command>
       tunneled over an SSH connection.  Even though this scenario
@@ -11727,13 +11772,16 @@ end:
               <entry>Authentication options</entry>
               <entry>HTTP(S) basic auth, X.509 certificates, LDAP, NTLM, or
               any other mechanism available to Apache httpd</entry>
-              <entry>CRAM-MD5</entry>
+              <entry>CRAM-MD5 by default;  LDAP, NTLM, or any other mechanism
+              available to SASL</entry>
               <entry>SSH</entry>
             </row>
             <row>
               <entry>User account options</entry>
-              <entry>private 'users' file</entry>
-              <entry>private 'users' file</entry>
+              <entry>private 'users' file, or other mechanisms
+            available to Apache httpd (LDAP, SQL, etc.)</entry>
+              <entry>private 'users' file, or other mechanisms available
+              to SASL (LDAP, SQL, etc.)</entry>
               <entry>system accounts</entry>
             </row>
             <row>
@@ -11748,7 +11796,7 @@ end:
             <row>
               <entry>Encryption</entry>
               <entry>via optional SSL</entry>
-              <entry>none</entry>
+              <entry>via optional SASL features</entry>
               <entry>SSH tunneled</entry>
             </row>
             <row>
@@ -11834,20 +11882,20 @@ end:
             <listitem>
               <itemizedlist>
                 <listitem>
-                  <para>Network protocol is not
-                encrypted.</para>
-                </listitem>
-                <listitem>
-                  <para>Only one choice of authentication
-                method.</para>
-                </listitem>
-                <listitem>
-                  <para>Password is stored in the clear on the
-                server.</para>
+                  <para>By default, only one authentication method
+                is available, the network protocol is not encrypted,
+                and the server stores cleartext passwords.  (All these
+                things can be changed by configuring SASL, but it's a
+                bit more work to do.)</para>
                 </listitem>
                 <listitem>
                   <para>No logging of any kind, not even
                 errors.</para>
+                </listitem>
+                <listitem>
+                  <para>No built-in web browsing.  (You'd have to
+                install a separate web server and some CGI software to
+                add this.)</para>
                 </listitem>
               </itemizedlist>
             </listitem>
@@ -11983,16 +12031,19 @@ end:
             network.  If your deployment is entirely within your
             company's LAN or VPN, this isn't an issue.  If the
             repository is exposed to the wide-open internet, then you
-            might want to make sure the repository's contents aren't
-            sensitive (e.g. it contains only open-source code.)</para>
+            might want to make sure that either the repository's
+            contents aren't sensitive (e.g. it contains only
+            open-source code), or that you go the extra mile in
+            configuring SASL to encrypt network communications.</para>
           </listitem>
           <listitem>
-            <para>If you need to integrate with existing identity
+            <para>If you need to integrate with existing legacy identity
             systems (LDAP, Active Directory, NTLM, X.509, etc.), then
-            an Apache-based server is your only real option.
-            Similarly, if you absolutely need server-side logs of
-            either server errors or client activities, then an
-            Apache-based server is required.</para>
+            you must use either the Apache-based server
+            or <command>svnserve</command> configured with SASL.  If
+            you absolutely need server-side logs of either server
+            errors or client activities, then an Apache-based server
+            is your only option.</para>
           </listitem>
           <listitem>
             <para>If you've decided to use either Apache or stock
@@ -12017,7 +12068,9 @@ end:
             by <command>svnserve</command> or Apache, rather than by
             full-blown system accounts.  If your deep desire for
             encrypted communication still draws you to this option, we
-            recommend using Apache with SSL instead.</para>
+            recommend using Apache with SSL
+            or <command>svnserve</command> with SASL encryption
+            instead.</para>
           </listitem>
           <listitem>
             <para>Do <emphasis>not</emphasis> be seduced by the simple
@@ -12081,8 +12134,8 @@ end:
             tunnel.</para>
           </listitem>
           <listitem>
-            <para>Run <command>svnserve</command> as a Windows
-            service.</para>
+            <para>Run <command>svnserve</command> as a Microsoft
+            Windows service.</para>
           </listitem>
         </itemizedlist>
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -12296,12 +12349,11 @@ C:\&gt; net start svn
           <listitem>
             <para>The server processes the repository's
         <filename>conf/svnserve.conf</filename> file, and begins to
-        enforce any authentication and authorization policies defined
-        therein.</para>
+        enforce any authentication and authorization policies it
+        describes.</para>
           </listitem>
           <listitem>
-            <para>Depending on the situation and authorization
-        policies,</para>
+            <para>Depending on the defined policies,</para>
             <itemizedlist>
               <listitem>
                 <para>the client may be allowed to make requests
@@ -12315,21 +12367,28 @@ C:\&gt; net start svn
               <listitem>
                 <para>if operating in <quote>tunnel
               mode</quote>, the client will declare itself to be
-              already externally authenticated.</para>
+              already externally authenticated (typically by
+              SSH).</para>
               </listitem>
             </itemizedlist>
           </listitem>
         </itemizedlist>
-        <para>At the time of writing, the server only knows how to send
-        a CRAM-MD5 <footnote><para>See RFC 2195.</para></footnote>
-        authentication challenge.  In essence, the server sends a
-        small amount of data to the client.  The client uses the MD5
-        hash algorithm to create a fingerprint of the data and
-        password combined, then sends the fingerprint as a response.
-        The server performs the same computation with the stored
-        password to verify that the result is identical.  <emphasis>At
-        no point does the actual password travel over the
-        network.</emphasis></para>
+        <para>The <command>svnserve</command> server, by default, only
+        knows how to send a CRAM-MD5 <footnote><para>See RFC
+        2195.</para></footnote> authentication challenge.  In essence,
+        the server sends a small amount of data to the client.  The
+        client uses the MD5 hash algorithm to create a fingerprint of
+        the data and password combined, then sends the fingerprint as
+        a response.  The server performs the same computation with the
+        stored password to verify that the result is
+        identical.  <emphasis>At no point does the actual password
+        travel over the network.</emphasis></para>
+        <para>If your <command>svnserve</command> server was built with
+        SASL, then it not only knows how to send CRAM-MD5 challenges,
+        but likely knows a whole host of other authentication
+        mechanisms.  See
+        <xref linkend="svn.serverconfig.svnserve.sasl"/> to configure
+        SASL authentication and encryption.</para>
         <para>It's also possible, of course, for the client to be
         externally authenticated via a tunnel agent, such as
         <command>SSH</command>.  In that case, the server simply
@@ -12458,17 +12517,190 @@ authz-db = authzfile
         </section>
       </section>
       <!-- =============================================================== -->
+      <section xml:id="svn.serverconfig.svnserve.sasl">
+        <info>
+          <title>Using <command>svnserve</command> with SASL</title>
+        </info>
+        <para>For many teams, the built-in CRAM-MD5 authentication is
+        all they need from <command>svnserve</command>.  However, if
+        your server (and your Subversion clients) were built with the
+        Cyrus Simple Authentication and Security Layer (SASL) library,
+        then you have a number of authentication and encryption
+        options available to you.</para>
+        <sidebar>
+          <info>
+            <title>What is SASL?</title>
+          </info>
+          <para>The Cyrus Simple Authentication and Security Layer is
+          open-source software written by Carnegie Mellon University.
+          It adds generic authentication and encryption capabilities
+          to any network protocol, and as of Subversion 1.5 and later,
+          both the <command>svnserve</command> server
+          and <command>svn</command> client know how to make use of
+          this library.  It may or may not be available to you: if
+          you're building Subversion yourself, you'll need to have at
+          least version 2.1 of SASL installed on your system and
+          you'll need to make sure that it's detected during
+          Subversion's build process.  If you're using a pre-built
+          Subversion binary package, you'll have to check with the
+          package maintainer as to whether SASL support was compiled
+          in.  SASL comes with a number of pluggable modules that
+          represent different authentication systems: Kerberos
+          (GSSAPI), NTLM, One-Time-Passwords (OTP), DIGEST-MD5, LDAP,
+          Secure-Remote-Password (SRP), and others.  Certain
+          mechanisms may or may not be available to you; be sure to
+          check which modules are provided.</para>
+          <para>You can download Cyrus SASL (both code and
+          documentation) from
+          <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://asg.web.cmu.edu/sasl/sasl-library.html">http://asg.web.cmu.edu/sasl/sasl-library.html</uri>.</para>
+        </sidebar>
+        <para>Normally, when a subversion client connects
+        to <command>svnserve</command>, the server sends a greeting
+        which advertises a list of capabilities it supports, and the
+        client responds with a similar list of capabilities.  If the
+        server is configured to require authentication, it then sends
+        a challenge which lists the authentication mechanisms
+        available; the client responds by choosing one of the
+        mechanisms, and then authentication is carried out in some
+        number of roundtrip messages.  Even when SASL capabilities
+        aren't present, the client and server inherently know how to
+        use the CRAM-MD5 and ANONYMOUS mechanisms (see
+        <xref linkend="svn.serverconfig.svnserve.auth"/>).  If server
+        and client were linked against SASL, then a number of other
+        authentication mechanisms may also be available.  However,
+        you'll need to explicitly configure SASL on the server-side to
+        advertise them.</para>
+        <section xml:id="svn.serverconfig.svnserve.sasl.authn">
+          <info>
+            <title>Authenticating with SASL</title>
+          </info>
+          <para>To activate specific SASL mechanisms on the server, you'll
+          need to do two things.  First, create
+          a <literal>[sasl]</literal> section in your
+          repository's <filename>svnserve.conf</filename> file, with
+          this key-value pair:</para>
+          <screen>
+          use-sasl = true
+</screen>
+          <para>Second, create a file
+          called <filename>subversion.conf</filename> in a place where
+          the SASL library can find it&#x2014;typically in the
+          directory where SASL plugins are located.  You'll have to
+          locate the plugin directory on your particular system, such
+          as <filename>/usr/lib/sasl2/</filename>
+          or <filename>/etc/sasl2/</filename>.  (Note that this
+          is <emphasis>not</emphasis>
+          the <filename>svnserve.conf</filename> file that lives
+          within a repository!)</para>
+          <para>On a Windows server, you'll have to also edit the
+          registry (using a tool like <command>regedit</command>) to
+          tell SASL where to find things.  Create a registry key
+          named <literal>[HKEY_LOCAL_MACHINE\SOFTWARE\Carnegie
+          Mellon\Project Cyrus\SASL Library]</literal>, and place two
+          keys inside it: a key called <literal>SearchPath</literal>
+          (whose value is a path containing the
+          SASL <filename>.dll</filename> plugins), and a key
+          called <literal>ConfFile</literal> (whose value is a path
+          containing the <filename>subversion.conf</filename>
+          file.)</para>
+          <para>Because SASL provides so many different kinds of
+          authentication mechanisms, it would be foolish (and far
+          beyond the scope of this book) to try and describe every
+          possible server-side configuration.  Instead, we recommend
+          that you read the documentation supplied in
+          the <filename>doc/</filename> subdirectory of the SASL
+          source code.  It goes into great detail about each mechanism
+          and how to configure the server appropriately for each.  For
+          the purposes of this discussion, we'll just demonstrate a
+          simple example of configuring the DIGEST-MD5 mechanism.  For
+          example, if your <filename>subversion.conf</filename>
+          contains:</para>
+          <screen>
+pwcheck_method: auxprop
+auxprop_plugin: sasldb
+mech_list: DIGEST-MD5
+</screen>
+          <para>...then you've told SASL to advertise the DIGEST-MD5
+          mechanism to clients, and to check user passwords against a
+          private password database (typically stored
+          in <filename>/etc/sasldb2</filename>).  A system
+          administrator can then use
+          the <command>saslpasswd2</command> program to add or modify
+          usernames and passwords in the database:</para>
+          <screen>
+$ saslpasswd2 -c -u realm username
+</screen>
+          <para>A few words of warning: first, make sure that the
+          "realm" argument to <command>saslpasswd2</command> matches
+          the same "realm" you've defined in your
+          repository's <filename>svnserve.conf</filename> file; if
+          they don't match, authentication will fail.  Also, due to a
+          shortcoming in SASL, the common realm must be a string with
+          no space characters.  Finally, if you decide to go with the
+          standard SASL password database, make sure that
+          the <command>svnserve</command> program has read access to
+          the file (and possibly write access as well, if you're using
+          a mechanism such as OTP.)</para>
+          <para>This is just one simple way of configuring SASL.  Many
+          other authentication mechanisms available, and passwords can
+          be stored in other places such as in LDAP or a SQL database.
+          Consult the full SASL documentation for details.</para>
+          <para>Remember that if you configure your server to only allow
+          certain SASL authentication mechanisms, this can also have
+          the effect of forcing all of connecting clients to have SASL
+          support as well.  Any Subversion client built without SASL
+          support (which includes all pre-1.5 clients) will be unable
+          to authenticate.  On the one hand, this sort of restriction
+          may be exactly what you want (<quote>my clients must all use
+          Kerberos!</quote>).  However, if you still want non-SASL
+          clients to be able to authenticate, be sure to advertise the
+          CRAM-MD5 mechanism as an option.  All clients are able to
+          use CRAM-MD5, whether they have SASL support or not.</para>
+        </section>
+        <section xml:id="svn.serverconfig.svnserve.sasl.encryption">
+          <info>
+            <title>SASL Encryption</title>
+          </info>
+          <para>SASL is also able to perform data-encryption if a
+          particular mechanism supports it.  The built-in CRAM-MD5
+          mechanism doesn't support encryption, but DIGEST-MD5 does,
+          and mechanisms like SRP actually require use of the OpenSSL
+          library .  To enable or disable different levels of
+          encryption, you can set two values in your
+          repository's <filename>svnserve.conf</filename> file:</para>
+          <screen>
+[sasl]
+use-sasl = true
+min-encryption = 128
+max-encryption = 256
+</screen>
+          <para>The <literal>min-encryption</literal>
+          and <literal>max-encryption</literal> variables control the
+          level of encryption demanded by the server.  To disable
+          encryption completely, set both values to 0.  To enable
+          simple checksumming of data (i.e. prevent tampering and
+          guarantee data integrity without encryption), set both
+          values to 1.  If you wish to allow&#x2014;but not
+          require&#x2014;encryption, set the minimum value to 0, and
+          the maximum value to some bit-length.  To require encryption
+          unconditionally, set both values to numbers greater than 1.
+          In our example above, we require clients to do at least
+          128-bit encryption, but no more than 256-bit
+          encryption.</para>
+        </section>
+      </section>
+      <!-- =============================================================== -->
       <section xml:id="svn.serverconfig.svnserve.sshauth">
         <info>
           <title>Tunneling over SSH</title>
         </info>
-        <para><command>svnserve</command>'s built-in authentication can
-        be very handy, because it avoids the need to create real
-        system accounts.  On the other hand, some administrators
-        already have well-established SSH authentication frameworks in
-        place.  In these situations, all of the project's users
-        already have system accounts and the ability to <quote>SSH
-        into</quote> the server machine.</para>
+        <para><command>svnserve</command>'s built-in authentication (and
+        SASL support) can be very handy, because it avoids the need to
+        create real system accounts.  On the other hand, some
+        administrators already have well-established SSH
+        authentication frameworks in place.  In these situations, all
+        of the project's users already have system accounts and the
+        ability to <quote>SSH into</quote> the server machine.</para>
         <para>It's easy to use SSH in conjunction with
         <command>svnserve</command>.  The client simply uses the
         <literal>svn+ssh://</literal> URL scheme to connect:</para>
