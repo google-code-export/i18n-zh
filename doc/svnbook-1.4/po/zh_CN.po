@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: svnbook 1.4\n"
 "POT-Creation-Date: 2007-10-24 11:11 +0000\n"
-"PO-Revision-Date: 2007-11-20 18:56+0800\n"
+"PO-Revision-Date: 2007-11-27 22:55+0800\n"
 "Last-Translator: Rock Sun <daijun@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com >\n"
 "MIME-Version: 1.0\n"
@@ -11575,19 +11575,16 @@ msgstr ""
 
 #. (para)
 #: ../source/book.xml:11292
-#, fuzzy
 msgid "Our target repository will now remember that it is a mirror of the public Subversion source code repository. Notice that we provided a username and password as arguments to <command>svnsync</command>—that was required by the pre-revprop-change hook on our mirror repository."
 msgstr "我们的目标版本库现在记住了它是Subversion公共源代码版本库的镜像，注意我们在<command>svnsync</command>提供了一个用户名和密码—这是我们的镜像版本库pre-revprop-change钩子的要求。"
 
 #. (para)
 #: ../source/book.xml:11298
-#, fuzzy
 msgid "The URLs provided to <command>svnsync</command> must point to the root directories of the target and source repositories, respectively. The tool does not handle mirroring of repository subtrees."
-msgstr "提供给<command>svnsync</command>的URL必须是指向目标和源版本库的根目录，这个工具不支持对版本库子树的处理。"
+msgstr "提供给<command>svnsync</command>的URL必须是指向目标和源版本库的根目录，这个工具不支持对版本库子树的镜像处理。"
 
 #. (para)
 #: ../source/book.xml:11304
-#, fuzzy
 msgid "The initial release of <command>svnsync</command> (in Subversion 1.4) has a small shortcoming—the values given to the <option>--username</option> and <option>--password</option> command-line options get used for authentication against both the source and destination repositories. Obviously, there's no guarantee that the synchronizing user's credentials are the same in both places. In the event that they are not the same, users trying to run <command>svnsync</command> in non-interactive mode (with the <option>--non-interactive</option> option) might experience problems."
 msgstr "<command>svnsync</command>的最初版本（在Subversion 1.4）有一些缺陷—用来认证的<option>--username</option>和<option>--password</option>命令行参数同时作用于源和目标版本库。显然，我们无法保证同步的用户认证信息是相同的，如果不一样，用户使用非交互模式（<option>--non-interactive</option>选项）来运行<command>svnsync</command>时会遇到这个问题。"
 
@@ -11598,7 +11595,6 @@ msgstr "要预先警告一下，尽管对于普通读者只需要几秒钟就可
 
 #. (para)
 #: ../source/book.xml:11316
-#, fuzzy
 msgid "And now comes the fun part. With a single subcommand, we can tell <command>svnsync</command> to copy all the as-yet-unmirrored revisions from the source repository to the target. <placeholder-1/> The <command>svnsync synchronize</command> subcommand will peek into the special revision properties previously stored on the target repository, and determine what repository it is mirroring and that the most recently mirrored revision was revision 0. Then it will query the source repository and determine what the latest revision in that repository is. Finally, it asks the source repository's server to start replaying all the revisions between 0 and that latest revision. As <command>svnsync</command> get the resulting response from the source repository's server, it begins forwarding those revisions to the target repository's server as new commits."
 msgstr "现在有趣的部分开始了，通过一个单独的子命令，我们可以告诉<command>svnsync</command>将所有未镜像的修订版本从源版本库拷贝到目标版本库。<placeholder-1/><command>svnsync synchronize</command>子命令会查看目标版本库特定修订版本的属性，并且检测同步的版本库是哪一个，以及最新镜像的修订版本是0。然后它会查询源版本库，检测其最新的修订版本。最后，它会询问源版本库服务器来开始重演从修订版本0到最新修订版本。<command>svnsync</command>从源版本库服务器得到返回的结果，然后将其作为新的提交转发到目标版本库服务器。"
 
@@ -11652,19 +11648,16 @@ msgstr ""
 
 #. (para)
 #: ../source/book.xml:11359
-#, fuzzy
 msgid "Of particular interest here is that for each mirrored revision, there is first a commit of that revision to the target repository, and then property changes follow. This is because the initial commit is performed by (and attributed to) the user <literal>syncuser</literal>, and datestamped with the time as of that revision's creation. Also, Subversion's underlying repository access interfaces don't provide a mechanism for setting arbitrary revision properties as part of a commit. So <command>svnsync</command> follows up with an immediate series of property modifications which copy all the revision properties found for that revision in the source repository into the target repository. This also has the effect of fixing the author and datestamp of the revision to match that of the source repository."
 msgstr "镜像修订版本有一点特别有趣，首先是到目标版本库的修订版本提交，然后跟着属性修改。这是因为最初的提交是通过用户<literal>syncuser</literal>执行的，而时间戳是提交的时间，而且Subversion底层的版本库访问接口不允许在提交时任意修改修订版本属性，所以<command>svnsync</command>会立即使用属性修改，将源版本库发现的所有修订版本属性拷贝到目标版本库，这其中就包括了修改作者和时间戳使之与源版本库一致的效果。"
 
 #. (para)
 #: ../source/book.xml:11373
-#, fuzzy
 msgid "Also noteworthy is that <command>svnsync</command> performs careful bookkeeping that allows it to be safely interrupted and restarted without ruining the integrity of the mirrored data. If a network glitch occurs while mirroring a repository, simply repeat the <command>svnsync synchronize</command> command and it will happily pick up right where it left off. In fact, as new revisions appear in the source repository, this is exactly what you to do in order to keep your mirror up-to-date."
 msgstr "值得注意的是<command>svnsync</command>会小心簿记所有的操作，可以安全的中断并重新开始，而不必破坏镜像数据的完整性。如果在<command>svnsync synchronize</command>时出现网络故障，只需要重新运行<command>svnsync synchronize</command>，她会从中断处开始。实际上，随着新的修订版本在源版本库出现，这样就可以保证你的镜像不会过时。"
 
 #. (para)
 #: ../source/book.xml:11382
-#, fuzzy
 msgid "There is, however, one bit of inelegance in the process. Because Subversion revision properties can be changed at any time throughout the lifetime of the repository, and don't leave an audit trail that indicates when they were changed, replication processes have to pay special attention to them. If you've already mirrored the first 15 revisions of a repository and someone then changes a revision property on revision 12, <command>svnsync</command> won't know to go back and patch up its copy of revision 12. You'll need to tell it to do so manually by using (or with some additionally tooling around) the <command>svnsync copy-revprops</command> subcommand, which simply re-replicates all the revision properties for a particular revision."
 msgstr "然而，这个进程还有一点不雅的地方，因为Subversion属性修改可以发生在整个生命周期的任何时候，不会留下任何审计痕迹来说明所作的修改，扶植进程需要对此额外关注。如果你已经镜像了某个版本库的15个修订版本，而某个人修改了修订版本12的属性，你需要告诉它手工使用（或一些额外的工具）<command>svnsync copy-revprops</command>子命令，只是简单的重新复制某个特定修订版本的属性。"
 
@@ -11703,7 +11696,6 @@ msgstr "版本库复制只是一个壳，你一定会希望利用这个进程的
 
 #. (para)
 #: ../source/book.xml:11415
-#, fuzzy
 msgid "Also, while it isn't very commonplace to do so, <command>svnsync</command> does gracefully mirror repositories in which the user as whom it authenticates only has partial read access. It simply copies only the bits of the repository that it is permitted to see. Obviously such a mirror is not useful as a backup solution."
 msgstr "而且，这样做并不平凡，在人证用户只有部分读权限时<command>svnsync</command>也会优雅的镜像，它只会拷贝允许查看的版本库内容，显然这种镜像不适合备份方案。"
 
@@ -11734,13 +11726,11 @@ msgstr ""
 
 #. (para)
 #: ../source/book.xml:11438
-#, fuzzy
 msgid "Now that the two repositories have the same UUID, you can use <command>svn switch --relocate</command> to point your working copy to whichever of the repositories you wish to operate against, a process which is described in <xref linkend=\"svn.ref.svn.c.switch\"/>. There is a possible danger here, though, in that if the primary and mirror repositories aren't in close synchronization, a working copy up-to-date with, and pointing to, the primary repository will, if relocated to point to an out-of-date mirror, become confused about the apparent sudden loss of revisions it fully expects to be present, and throws errors to that effect. If this occurs, you can relocate your working copy back to the primary repository and then either wait until the mirror repository is up-to-date, or backdate your working copy to a revision you know is present in the sync repository and then retry the relocation."
-msgstr "现在两个版本库有了相同的UUID，你可以使用<command>svn switch --relocate</command>指向任何你希望操作的版本库，详细方法见<xref linkend=\"svn.ref.svn.c.switch\"/>。这里也可能有危险，尽管如果主和镜像版本库没有同步的关闭，一个工作拷贝对于主版本库没有过时，而重定位的镜像却是过时的，显然期望存在的修订版本缺失会造成困惑。"
+msgstr "现在两个版本库有了相同的UUID，你可以使用<command>svn switch --relocate</command>指向任何你希望操作的版本库，详细方法见<xref linkend=\"svn.ref.svn.c.switch\"/>。这里也可能有危险，尽管如果主和镜像版本库没有同步的关闭，一个工作拷贝对于主版本库没有过时，而重定位的镜像却是过时的，显然期望存在的修订版本缺失会造成困惑。如果发生这个情况，你可以将工作拷贝重新定位到主版本库，然后等待镜像版本库变成最新，或者将工作拷贝恢复到你知道的版本库修订版本，再尝试重新定位。"
 
 #. (para)
 #: ../source/book.xml:11453
-#, fuzzy
 msgid "Finally, be aware that the revision-based replication provided by <command>svnsync</command> is only that—replication of revisions. It does not include such things as the hook implementations, repository or server configuration data, uncommitted transactions, or information about user locks on repository paths. Only information carried by the Subversion repository dump file format is available for replication."
 msgstr "最后我们需要意识到，<command>svnsync</command>只支持修订版本为基础的复制，它没有包括诸如钩子实现，版本库或服务器配置数据，未提交事务或关于用户锁定版本库路径的信息，只有Subversion版本库转储文件格式在复制时包含这些信息。"
 
@@ -11756,13 +11746,11 @@ msgstr "尽管现代计算机的诞生带来了许多便利，但有一件事听
 
 #. (para)
 #: ../source/book.xml:11476
-#, fuzzy
 msgid "There are two types of backup methods available for Subversion repository administrators—full and incremental. A full backup of the repository involves squirreling away in one sweeping action all the information required to fully reconstruct that repository in the event of a catastrophe. Usually, it means, quite literally, the duplication of the entire repository directory (which includes either a Berkeley DB or FSFS environment). Incremental backups are lesser things, backups of only the portion of the repository data that has changed since the previous backup."
 msgstr "Subversion版本库管理有两种备份方法—完全和增量。一个完全的版本库备份包含了在重大灾难后重建版本库所需的所有信息，通常，这意味着对版本库目录（包括Berkeley DB或FSFS环境）的完全复制，增量备份的内容要少一些，只包含在上次备份后改变的部分。"
 
 #. (para)
 #: ../source/book.xml:11487
-#, fuzzy
 msgid "As far as full backups go, the naive approach might seem like a sane one, but unless you temporarily disable all other access to your repository, simply doing a recursive directory copy runs the risk of generating a faulty backup. In the case of Berkeley DB, the documentation describes a certain order in which database files can be copied that will guarantee a valid backup copy. A similar ordering exists for FSFS data. But you don't have to implement these algorithms yourself, because the Subversion development team has already done so. The <command>svnadmin hotcopy</command> command takes care of the minutia involved in making a hot backup of your repository. And its invocation is as trivial as Unix's <command>cp</command> or Windows' <command>copy</command> operations:"
 msgstr "随着完全备份的使用，这种幼稚的方法或许看起来有点不够健全，但是除非你临时关闭所有访问版本库的进程，否则这种递归的拷贝目录会有产生错误拷贝的风险。Berkeley DB的情况下，其文档中记述了按照什么顺序拷贝可以保证正确的备份拷贝，FSFS也有类似的顺序。但是你不必自己实现这种算法，因为Subversion的开发团队已经这样做了。<command>svnadmin hotcopy</command>关注了在热拷贝版本库时的所有细节，它的调用就像Unix的<command>cp</command>或Windows的<command>copy</command>一样琐碎："
 
@@ -11783,7 +11771,6 @@ msgstr "作为结果的备份是一个完全功能的版本库，当发生严重
 
 #. (para)
 #: ../source/book.xml:11507
-#, fuzzy
 msgid "When making copies of a Berkeley DB repository, you can even instruct <command>svnadmin hotcopy</command> to purge any unused Berkeley DB logfiles (see <xref linkend=\"svn.reposadmin.maint.diskspace.bdblogs\"/>) from the original repository upon completion of the copy. Simply provide the <option>--clean-logs</option> option on the command-line."
 msgstr "当进行Berkeley DB版本库的备份时，你可以指导<command>svnadmin hotcopy</command>清理源版本库中无用的Berkeley DB日志文件（见<xref linkend=\"svn.reposadmin.maint.diskspace.bdblogs\"/>），只需要简单的在命令行里提供<option>--clean-logs</option>。"
 
@@ -11799,13 +11786,11 @@ msgstr ""
 
 #. (para)
 #: ../source/book.xml:11516
-#, fuzzy
 msgid "Additional tooling around this command is available, too. The <filename>tools/backup/</filename> directory of the Subversion source distribution holds the <command>hot-backup.py</command> script. This script adds a bit of backup management atop <command>svnadmin hotcopy</command>, allowing you to keep only the most recent configured number of backups of each repository. It will automatically manage the names of the backed-up repository directories to avoid collisions with previous backups, and will <quote>rotate off</quote> older backups, deleting them so only the most recent ones remain. Even if you also have an incremental backup, you might want to run this program on a regular basis. For example, you might consider using <command>hot-backup.py</command> from a program scheduler (such as <command>cron</command> on Unix systems) which will cause it to run nightly (or at whatever granularity of Time you deem safe)."
 msgstr "还有一些附加的加工命令，Subversion源程序中的<filename>tools/backup/</filename>目录包含了<command>hot-backup.py</command>脚本，这个脚本在<command>hot-backup.py</command>之上增加了备份管理功能，你可以保存每个版本库最近的配置号码。为了防止与以前的备份冲突，它会自动管理备份版本库目录名字，<quote>循环</quote>利用备份名，删除掉旧的，保存新的。即使你也有一个增量的备份，你还是会希望有规律的运行这个程序。例如，你会在一个调度程序（例如Unix系统的<command>cron</command>）中调用<command>hot-backup.py</command>会导致它在半夜执行（或者是任何你认为安全的时间间隔）。"
 
 #. (para)
 #: ../source/book.xml:11533
-#, fuzzy
 msgid "Some administrators use a different backup mechanism built around generating and storing repository dump data. We described in <xref linkend=\"svn.reposadmin.maint.migrate\"/> how to use <command>svnadmin dump --incremental</command> to perform an incremental backup of a given revision or range of revisions. And of course, there is a full backup variation of this achieved by omitting the <option>--incremental</option> option to that command. There is some value in these methods, in that the format of your backed-up information is flexible—it's not tied to a particular platform, versioned filesystem type, or release of Subversion or Berkeley DB. But that flexibility comes at a cost, namely that restoring that data can take a long time—longer with each new revision committed to your repository. Also, as is the case with so many of the various backup methods, revision property changes made to already-backed-up revisions won't get picked up by a non-overlapping, incremental dump generation. For these reasons, we recommend against relying solely on dump-based backup approaches."
 msgstr "一些管理员使用不同的备份机制，通过生成和保存版本库转储数据。我们在<xref linkend=\"svn.reposadmin.maint.migrate\"/>中描述如何使用<command>svnadmin dump --incremental</command>来对一个修订版本或一个修订版本范围执行增量备份。当然，通过取消<option>--incremental</option>选项可以得到完整的备份。在备份信息中方法的值非常灵活—不会与特定平台，版本化的文件系统类型或Subversion和Berkeley DB的版本绑定。但是灵活带来了代价，数据恢复会占用更长的时间—比每个新版本提交更长。此外，在非完全的量转储生成时，对已经备份修订版本的修订版本属性的修改不会被采纳，因为这些原因，我们不建议你单独依赖转储为基础的备份方法。"
 
@@ -11816,13 +11801,11 @@ msgstr "如你所见，几种备份方式都有各自的优点，最简单的方
 
 #. (para)
 #: ../source/book.xml:11567
-#, fuzzy
 msgid "The <command>svnsync</command> program (see <xref linkend=\"svn.reposadmin.maint.replication\"/>) actually provides a rather handy middle-ground approach. If you are regularly synchronizing a read-only mirror with your main repository, then in a pinch, your read-only mirror is probably a good candidate for replacing that main repository if it falls over. The primary disadvantage of this method is that only the versioned repository data gets synchronized—repository configuration files, user-specified repository path locks, and other items which might live in the physical repository directory but not <emphasis>inside</emphasis> the repository's virtual versioned filesystem are not handled by svnsync."
-msgstr "<command>svnsync</command>实际上提供了一种更易实施的妥协方法，如果你有规律的同步镜像版本库，则在必要时，镜像版本库就成了主版本库发生问题时的一个合适替代者。这个方法最大的缺点是只有版本化的数据得到了同步—版本库的配置信息，用户指定的路径锁定和其它以物理形式存在于版本库路径而不存在于版本库虚拟文件系统的项目不会被svnsync处理。"
+msgstr "<command>svnsync</command>（见<xref linkend=\"svn.reposadmin.maint.replication\"/>）实际上提供了一种更易实施的妥协方法，如果你有规律的同步镜像版本库，则在必要时，镜像版本库就成了主版本库发生问题时的一个合适替代者。这个方法最大的缺点是只有版本化的数据得到了同步—版本库的配置信息，用户指定的路径锁定和其它以物理形式存在于版本库路径而不存在于版本库虚拟文件系统的项目不会被svnsync处理。"
 
 #. (para)
 #: ../source/book.xml:11585
-#, fuzzy
 msgid "<command>svnadmin setlog</command> can be called in a way that bypasses the hook interface altogether."
 msgstr "<command>svnadmin setlog</command>可以被绕过钩子程序被调用。"
 
@@ -11843,7 +11826,6 @@ msgstr "你知道的—只是对各种变化莫测的问题的统称。"
 
 #. (para)
 #: ../source/book.xml:11602
-#, fuzzy
 msgid "Often, the best approach to repository backups is a diversified one which leverages combinations of the methods described here. The Subversion developers, for example, back up the Subversion source code repository nightly using <command>hot-backup.py</command> and an offsite <command>rsync</command> of those full backups; keep multiple archives of all the commit and property change notification emails; and have repository mirrors maintained by various volunteers using <command>svnsync</command>. Your solution might be similar, but should be catered to your needs and that delicate balance of convenience with paranoia. And whatever you do, validate your backups from time to time—what good is a spare tire that has a hole in it? While all of this might not save your hardware from the iron fist of Fate, <placeholder-1/> it should certainly help you recover from those trying times."
 msgstr "通常情况下，最好的版本库备份方式是混合的，你可以平衡完全和增量备份，另外配合提交邮件的归档。Subversion开发者，举个例子，使用<command>hot-backup.py</command>对Subversion版本库进行完全备份并使用<command>rsync</command>同步这些备份；同时保存所有的提交日至和修改通知邮件；并且使用许多志愿者维护的<command>svnsync</command>镜像版本库。你们的解决方案可能非常类似，但是要实现满足需要和便利性的平衡。无论你做了什么，你需要一次次的验证你的备份—就像要检查备用轮胎是否有个窟窿？当然，所有做的事情都无法回避我们的硬件来自钢铁的命运，<placeholder-1/>它将帮助你从艰难的时光恢复过来。"
 
@@ -11864,7 +11846,6 @@ msgstr "服务配置"
 
 #. (para)
 #: ../source/book.xml:11649
-#, fuzzy
 msgid "A Subversion repository can be accessed simultaneously by clients running on the same machine on which the repository resides using the <literal>file://</literal> method. But the typical Subversion setup involves a single server machine being accessed from clients on computers all over the office—or, perhaps, all over the world."
 msgstr "一个Subversion的版本库可以和客户端同时运行在同一个机器上，使用<literal>file:///</literal>访问，但是一个典型的Subversion设置应该包括一个单独的服务器，可以被办公室的所有客户端访问—或者有可能是整个世界。"
 
@@ -11885,19 +11866,16 @@ msgstr "Subversion的设计包括一个抽象的网络层，这意味着版本�
 
 #. (para)
 #: ../source/book.xml:11676
-#, fuzzy
 msgid "Apache is an extremely popular webserver; using the <command>mod_dav_svn</command> module, Apache can access a repository and make it available to clients via the WebDAV/DeltaV protocol, which is an extension of HTTP. Because Apache is an extremely extensible web server, it provides a number of features <quote>for free</quote>, such as encrypted SSL communication, logging, integration with a number of third-party authentication systems, and limited built-in web browsing of repositories."
 msgstr "Apache是最流行的web服务器，通过使用<command>mod_dav_svn</command>模块，Apache可以访问版本库，并且可以使客户端使用HTTP的扩展协议WebDAV/DeltaV进行访问，因为Apache是一个非常易于扩展的web服务器，它提供了许多<quote>易于获取的</quote>特性，例如加密的SSL通讯，日志和与第三方工具的集成，以及内置的版本库web浏览功能。"
 
 #. (para)
 #: ../source/book.xml:11685
-#, fuzzy
 msgid "In the other corner is <command>svnserve</command>: a small, lightweight server program that speaks a custom protocol with clients. Because its protocol is explicitly designed for Subversion and is stateful (unlike HTTP), it provides significantly faster network operations—but at the cost of some features as well. It only understands CRAM-MD5 authentication, has no logging, no web-browsing, and no option to encrypt network traffic. It is, however, extremely easy to set up and is often the best option for small teams just starting out with Subversion."
 msgstr "在另一个角落是<command>svnserve</command>：一个更小，轻型的服务器程序，同客户端使用自定义的协议。因为协议是为Subversion专门设计的，并且是有状态的（不像HTTP），它提供了更快的网络操作—但也有一些代价。它只理解CRAM-MD5的认证，然而它非常易于配置，是开始使用Subversion的小团队的最佳选择。"
 
 #. (para)
 #: ../source/book.xml:11695
-#, fuzzy
 msgid "A third option is to use <command>svnserve</command> tunneled over an SSH connection. Even though this scenario still uses <command>svnserve</command>, it differs quite a bit in features from a traditional <command>svnserve</command> deployment. SSH is used to encrypt all communication. SSH is also used exclusively to authenticate, so real system accounts are required on the server host (unlike vanilla <command>svnserve</command>, which has its own private user accounts.) Finally, because this setup requires that each user spawn a private, temporary <command>svnserve</command> process, it's equivalent (from a permissions point of view) to allowing a group of local users to all access the repository via <literal>file://</literal> URLs. Path-based access control has no meaning, since each user is accessing the repository database files directly."
 msgstr "第三个选择是使用SSH连接包裹的<command>svnserve</command>，尽管这个场景依然使用<command>svnserve</command>，它与传统的<command>svnserve</command>部署非常不同，SSH在多所有的通讯中使用加密方式，SSH也使用排他的认证，所以在服务器主机（<command>svnserve</command>与之不同，它包含了自己的私有用户帐号）上必须要有真实的系统帐户。最后，因为这些配置需要每个用户发起一个私有的临时<command>svnserve</command>进程，这与允许一组本地用户通过<literal>file://</literal>协议访问等同（从访问许可的视点）。因此路径为基础的访问控制变得没有意义，因为每个用户都可以直接访问版本库。"
 
@@ -12105,9 +12083,8 @@ msgstr "下面是你选择或者不选择某一个部署方式的原因。"
 
 #. (title)
 #: ../source/book.xml:11806
-#, fuzzy
 msgid "The <command>svnserve</command> Server"
-msgstr "<command>svnserve</command> 服务器"
+msgstr "<command>svnserve</command>服务器"
 
 #. (term)
 #: ../source/book.xml:11810
@@ -12169,9 +12146,8 @@ msgstr "没有任何类型的日志，甚至是错误。"
 
 #. (title)
 #: ../source/book.xml:11859
-#, fuzzy
 msgid "<command>svnserve</command> over SSH"
-msgstr "<command>svnserve</command> 使用 SSH 隧道"
+msgstr "<command>svnserve</command>使用SSH通道"
 
 #. (para)
 #: ../source/book.xml:11871
@@ -12190,9 +12166,8 @@ msgstr "需要用户在同一个系统组，使用共享ssh密钥。"
 
 #. (para)
 #: ../source/book.xml:11898
-#, fuzzy
 msgid "If used improperly, can lead to file permissions problems."
-msgstr "会导致文件许可问题。"
+msgstr "如果使用不正确，会导致文件许可问题。"
 
 #. (title)
 #: ../source/book.xml:11908
@@ -12246,7 +12221,6 @@ msgstr "推荐"
 
 #. (para)
 #: ../source/book.xml:11968
-#, fuzzy
 msgid "In general, the authors of this book recommend a vanilla <command>svnserve</command> installation for small teams just trying to get started with a Subversion server; it's the simplest to set up, and has the fewest maintenance issues. You can always switch to a more complex server deployment as your needs change."
 msgstr "通常，本书的作者推荐希望尝试开始使用Subversion的小团队使用<command>svnserve</command>；这是设置最简单，维护最少的方法，而当你的需求改变时，你可以转换到复杂的部署方式。"
 
@@ -12257,9 +12231,8 @@ msgstr "下面是一些常见的建议和小技巧，基于多年对用户的支
 
 #. (para)
 #: ../source/book.xml:11978
-#, fuzzy
 msgid "If you're trying to set up the simplest possible server for your group, then a vanilla <command>svnserve</command> installation is the easiest, fastest route. Note, however, that your repository data will be transmitted in the clear over the network. If your deployment is entirely within your company's LAN or VPN, this isn't an issue. If the repository is exposed to the wide-open internet, then you might want to make sure the repository's contents aren't sensitive (e.g. it contains only open-source code.)"
-msgstr "如果你尝试为你的团队建立最简单的服务器，安装<command>svnserve</command>是最简单的，最快速的方法。注意，无论如何，如果你的整个部署都是在局域网或者VPN中，版本库数据可以在网络上没有限制的传递。如果版本库部署在internet，你会希望确定版本库的内容不是敏感的（例如只包含开源代码。）。"
+msgstr "如果你尝试为你的团队建立最简单的服务器，安装<command>svnserve</command>是最简单的，最快速的方法。注意，无论如何，如果你的整个部署都是在局域网或者VPN中，版本库数据可以在网络上没有限制的传递。如果版本库部署在internet，你会希望确定版本库的内容不是敏感的（例如只包含开源代码。）"
 
 #. (para)
 #: ../source/book.xml:11990
@@ -12268,19 +12241,16 @@ msgstr "如果你希望与现有的认证系统（LDAP、Active Directory、NTLM
 
 #. (para)
 #: ../source/book.xml:11998
-#, fuzzy
 msgid "If you've decided to use either Apache or stock <command>svnserve</command>, create a single <literal>svn</literal> user on your system and run the server process as that user. Be sure to make the repository directory wholly owned by the <literal>svn</literal> user as well. From a security point of view, this keeps the repository data nicely siloed and protected by operating system filesystem permissions, changeable by only the Subversion server process itself."
 msgstr "如果你已经决定使用Apache或<command>svnserve</command>，应该单独创建一个运行服务器进程的<literal>svn</literal>用户，也需要确定版本库目录属于<literal>svn</literal>用户。从安全的角度，这样很好的利用了操作系统的文件系统许可保护了版本库数据，只有Subversion服务进程可以修改其内容。"
 
 #. (para)
 #: ../source/book.xml:12010
-#, fuzzy
 msgid "If you have an existing infrastructure heavily based on SSH accounts, and if your users already have system accounts on your server machine, then it makes sense to deploy an svnserve-over-ssh solution. Otherwise, we don't widely recommend this option to the public. It's generally considered safer to have your users access the repository via (imaginary) accounts managed by <command>svnserve</command> or Apache, rather than by full-blown system accounts. If your deep desire for encrypted communication still draws you to this option, we recommend using Apache with SSL instead."
 msgstr "如果你有一个严重依赖于SSH帐号的基础，而且你的用户已经在服务器上有了帐号，那建立一个通过ssh的svnserve方案就非常有意义，否则，我们不会建议这种方案。通常还是通过<command>svnserve</command>或Apache管理的用户访问版本库比较安全，而不是使用完全的系统帐户。如果你很希望加密的通讯，那可能还是需要选择这个方案，但我们更加推荐SSL的Apache方案。"
 
 #. (para)
 #: ../source/book.xml:12023
-#, fuzzy
 msgid "Do <emphasis>not</emphasis> be seduced by the simple idea of having all of your users access a repository directly via <literal>file://</literal> URLs. Even if the repository is readily available to everyone via network share, this is a bad idea. It removes any layers of protection between the users and the repository: users can accidentally (or intentionally) corrupt the repository database, it becomes hard to take the repository offline for inspection or upgrade, and it can lead to a mess of file-permissions problems (see <xref linkend=\"svn.serverconfig.multimethod\"/>.) Note that this is also one of the reasons we warn against accessing repositories via <literal>svn+ssh://</literal> URLs—from a security standpoint, it's effectively the same as local users accessing via <literal>file://</literal>, and can entail all the same problems if the administrator isn't careful."
 msgstr "不要被简单的让所有用户使用<literal>file://</literal>的URL访问版本库的方案诱惑，即使，版本库版本库已经对网络共享的所有用户可见，这也不是一个好方案。这样删除了用户和版本库之间的所有保护层：用户可能会偶然（或有意的）毁坏版本库数据库，这样也很难在检查或升级时将版本库脱机，而且这样会造成曾混乱的文件许可问题（见<xref linkend=\"svn.serverconfig.multimethod\"/>。），注意那就是我们警告使用<literal>svn+ssh://</literal>的原因—从安全角度讲，这样与作为本地用户访问<literal>file://</literal>是一样的，如果管理员不小心，会造成同样的问题。"
 
@@ -12291,7 +12261,6 @@ msgstr "svnserve，一个定制的服务器"
 
 #. (para)
 #: ../source/book.xml:12051
-#, fuzzy
 msgid "The <command>svnserve</command> program is a lightweight server, capable of speaking to clients over TCP/IP using a custom, stateful protocol. Clients contact an <command>svnserve</command> server by using URLs that begin with the <literal>svn://</literal> or <literal>svn+ssh://</literal> scheme. This section will explain the different ways of running <command>svnserve</command>, how clients authenticate themselves to the server, and how to configure appropriate access control to your repositories."
 msgstr "<command>svnserve</command>是一个轻型的服务器，可以同客户端通过在TCP/IP基础上的自定义有状态协议通讯，客户端通过使用开头为<literal>svn://</literal>或者<literal>svn+ssh://</literal><command>svnserve</command>的URL来访问一个<command>svnserve</command>服务器。这一小节将会解释运行<command>svnserve</command>的不同方式，客户端怎样实现服务器的认证，怎样配置版本库恰当的访问控制。"
 
@@ -12302,39 +12271,33 @@ msgstr "调用服务器"
 
 #. (para)
 #: ../source/book.xml:12065
-#, fuzzy
 msgid "There are a few different ways to run the <command>svnserve</command> program:"
 msgstr "有许多不同方法运行<command>svnserve</command>："
 
 #. (para)
 #: ../source/book.xml:12069
-#, fuzzy
 msgid "Run <command>svnserve</command> as a standalone daemon, listening for requests."
 msgstr "作为一个独立守护进程启动<command>svnserve</command>，监听请求。"
 
 #. (para)
 #: ../source/book.xml:12074
-#, fuzzy
 msgid "Have the Unix <command>inetd</command> daemon temporarily spawn <command>svnserve</command> whenever a request comes in on a certain port."
 msgstr "当特定端口收到一个请求，就会使UNIX的<command>inetd</command>守护进程临时调用<command>svnserve</command>处理。"
 
 #. (para)
 #: ../source/book.xml:12079
-#, fuzzy
 msgid "Have SSH invoke a temporary <command>svnserve</command> over an encrypted tunnel."
 msgstr "使用SSH在加密通道发起临时<command>svnserve</command>服务。"
 
 #. (para)
 #: ../source/book.xml:12084
-#, fuzzy
 msgid "Run <command>svnserve</command> as a Windows service."
 msgstr "以Windows service服务方式运行<command>svnserve</command>。"
 
 #. (title)
 #: ../source/book.xml:12091
-#, fuzzy
 msgid "<command>svnserve</command> as Daemon"
-msgstr "<command>svnserve</command> 作为后台程序"
+msgstr "<command>svnserve</command>作为守护进程"
 
 #. (para)
 #: ../source/book.xml:12093
