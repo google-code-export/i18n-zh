@@ -40,10 +40,10 @@ LinkChecker 4.5              Copyright (C) 2000-2006 Bastian Kleineidam
 
 === tidy
 ----------------------------------------------------------------
-$ sed /^[[:space:]]*$/d example.html > tmp
+# $ sed /^[[:space:]]*$/d example.html > tmp
+
 $ tidy -utf8 -b -i -q --wrap 0 --output-bom no --newline LF -asxhtml \
-      --tidy-mark no --doctype transitional -o example.html tmp
-$ /bin/rm -f tmp
+      --tidy-mark no --doctype transitional -m example.html
 ----------------------------------------------------------------
 
 === validate
