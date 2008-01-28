@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>OpenBSD CVSup</title>
   <link rev="made" href="mailto:www@openbsd.org" />
@@ -14,79 +14,65 @@
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000" link="#23238E">
-  <a href="index.html"><img alt="[OpenBSD]" height="30" width="141" src=
-  "../images/smalltitle.gif" border="0" /></a>
+  <a href="index.html"><img alt="[OpenBSD]" height="30" width="141" src="../images/smalltitle.gif" border="0" /></a>
 
   <h2><font color="#E00000">CVSup</font></h2>
   <hr />
 
-  <h3>内容索引</h3>
+  <h3>目录</h3>
 
   <ul>
-    <li><a href="#cvsup">什么是CVSup?</a></li>
+    <li><a href="#cvsup">什么是 CVSup?</a></li>
 
-    <li><a href="#starting">开始使用CVSup</a></li>
+    <li><a href="#CVS">什么是 CVS?</a></li>
 
-    <li><a href="#using">使用CVS来更新你的源码树</a></li>
+    <li><a href="#starting">开始使用 CVSup</a></li>
 
-    <li><a href="#checkout">将CVSup运行在Checkout模式</a></li>
+    <li><a href="#using">使用 CVS 更新源代码</a></li>
 
-    <li><a href="#CVSROOT">可用的CVSup服务器</a></li>
+    <li><a href="#checkout">在检出模式运行 CVSup</a></li>
+
+    <li><a href="#CVSROOT">可用的 CVSup 服务器</a></li>
   </ul>
   <hr />
 
-  <h3><a name="cvsup" id="cvsup"><font color="#0000E0">什么是CVSup?</font></a></h3>
+  <h3><a name="cvsup" id="cvsup"><font color="#0000E0">什么是 CVSup?</font></a></h3>
 
-  <p><b>CVSup</b> 是一个用于从远程服务器主机上的主<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1">cvs(1)</a>
-  库分发和更新源码树的软件包.OpenBSD源码的维护，用的是位于加拿大的一个中心开发机器上的CVS库.通过使用CVSup，OpenBSD用户
-  可以很简单的让他们自己的源码树保持最新.</p>
+  <p><b>CVSup</b> 是一个用于从远程服务器主机上的主 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1">cvs(1)</a> 版本库分发和更新版本库的软件包。OpenBSD 用位于加拿大的一个中心开发机器上的 CVS 版本库维护源代码。使用 CVSup 的 OpenBSD 用户可以容易的保证他们的版本库最新。</p>
 
-  <p><b>CVSup</b>使用所谓拉模式的更新方式.在拉模式作用下，客户在需要的时候，询问服务器以获取更新.服务器被动的等待它的 客
-  户发出更新请求.因而，所有等更新由客户端发起，服务器从不主动发送更新请求.用户必须手动运行<b>CVSup</b>客户端来获 取更 新，或者设置一个<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=cron%20&amp;sektion=8"></a><a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=cron%20&amp;sektion=8">cron(8)</a>
-  作业定期自动运行.</p>
+  <p><b>CVSup</b> 使用所谓拉模型执行更新。在拉模型中，客户端在需要的时候，询问服务器以获取更新数据。服务器被动的等待客户端发出更新请求，因此所有更新由客户端发起，服务器不会主动发送更新数据。用户必须手工运行 <b>CVSup</b> 客户端获取更新数据，或者设置一个 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cron&amp;sektion=8">cron(8)</a> 任务定期自动运行。</p>
 
-  <p>术语<b>CVSup</b>，大写表示，指代整个软件包.它的主要组件是运行于客户端机器的<tt>cvsup，</tt> 还有运行在每个 OpenBSD CVSup站点的服务器端
-  <tt>cvsupd</tt> .</p>
+  <p>术语 <b>CVSup</b>，大写指代整个软件包。它的主要组件是运行在每个用户机器上的客户端软件 <tt>cvsup</tt> 和运行于每个 OpenBSD CVSup 镜像站点的服务器软件 <tt>cvsupd</tt>。</p>
 
-  <p><b>CVSup</b>被设计为比<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=sup%20&amp;sektion=1&amp;format=html">sup(1)</a>更快速和灵活，并且是它
-  的替代软件.</p>
+  <p><b>CVSup</b> 被设计为比其前辈 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sup&amp;sektion=1&amp;format=html">sup(1)</a> 更快速和灵活。</p>
 
-  <p>OpenBSD项目当前有六个主要的源码库：</p>
+  <p>OpenBSD 项目当前有 6 个主要的版本库:</p>
 
   <ul>
-    <li><b>src</b> - 存放OpenBSD操作系统的所有源码.</li>
+    <li><b>src</b> - 存放 OpenBSD 操作系统的全部代码。</li>
 
-    <li><b>ports</b> - 存放<a href="../ports.html">OpenBSD Ports</a>.</li>
+    <li><b>ports</b> - 存放 <a href="../ports.html">OpenBSD Ports</a>。</li>
 
-    <li><b>www</b> - 存放所有OpenBSD web页(包括现在这个).</li>
+    <li><b>www</b> - 存放全部的 OpenBSD 网页(包括本页)。</li>
 
-    <li><b>x11</b> - 存放OpenBSD对<a href="http://www.xfree86.org/"></a><a href=
-    "http://www.xfree86.org/">XFree86-3</a> 软件计划的改编版本.现在这仅仅是历史了，大多数用户已经不在使用.</li>
+    <li><b>X11</b> - 存放 OpenBSD 对 <a href="http://www.XFree86.org/">XFree86-3</a> 项目的移植。它只是用来保留历史，大多数用户没有理由使用，也不再被使用。</li>
 
-    <li><b>xf4</b> - 存放OpenBSD x 树.</li>
+    <li><b>XF4</b> - 存放 OpenBSD 活跃的 X 代码开发树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始废弃此版本库，现在只是用来保留历史</font>)。</li>
 
-    <li><b>xenocara</b> - 存放OpenBSD 正在开发的 X.org v7 树。</li>
+    <li><b>xenocara</b> - 存放 OpenBSD 正在开发的 X.org v7 代码树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始使用此版本库作为正式的 X11 代码库</font>)。</li>
   </ul>
 
-  <h3><a name="CVS" id="CVS"><font color="#0000E0">什么是CVS?</font></a></h3>
+  <h3><a name="CVS" id="CVS"><font color="#0000E0">什么是 CVS?</font></a></h3>
 
-  <p>CVS是用于管理OpenBSD源码树的源码控制系统.详细说明请参考<a href="anoncvs.html#CVS">这里</a>.注意CVS和CVSup是完全不 同的程序.
-  尽管CVS可被用作远程文件访问，但没有对大规模的网络源码发布作优化，而CVSup对完成这样的任务更有效.</p>
+  <p>CVS 是用来管理 OpenBSD 源代码的源代码控制系统。它在<a href="anoncvs.html#CVS">这里</a>有更详细的描述。注意 CVS 和 CVSup 是完全不同的程序。尽管 CVS 可以用来访问远程文件，但是它没有针对通过网络分发整个版本库优化，CVSup 为此提供了数量级上的优化。</p>
 
-  <h3><a name="starting" id="starting"><font color="#0000E0">开始使用CVSup</font></a></h3>
+  <h3><a name="starting" id="starting"><font color="#0000E0">Getting Started Using CVSup</font></a></h3>
 
-  <p>Build CVSup被证明是很麻烦的，因为它是用Modula-3编写的.<tt>lang/ezm3</tt> port Modula-3 编译器和运行时系统的一个小 型发布版本.
-  不过，如果你只是担心如何运行CVSup，推荐你从<a href="ftp.html">ftp mirror sites</a> 下载package,而不是自己从
-  <tt>net/cvsup</tt> port来build.. Currently the Ezm3的OpenBSD ports还有CVSup只能用于i386平台.</p>
+  <p>因为 CVSup 用 Modula-3 语言编写，从源代码构建 CVSup 是很麻烦的事情。<tt>lang/ezm3</tt> 提供了一个很小的 Modula-3 编译器和运行库，它只适用于使用 Modula-3 仅仅为了构建 CVSup 的用户。然而，如果你只关心运行 CVSup，建议你从 <a href="../ftp.html">FTP 镜像站点</a>下载软件包，而不是从 <tt>net/cvsup</tt> 构建它。当前 OpenBSD 只移植了 Ezm3 这个 Modula-3 实现，因此 CVSup 只能用于 i386 平台。</p>
 
-  <p>想进一步了解CVSup，请浏览作者的<a href="http://www.polstra.com/projects/freeware/CVSup/">project
-  homepage</a>.</p>
+  <p>想进一步了解 CVSup，参见其 <a href="http://www.cvup.org/">项目主页</a>。</p>
 
-  <p>如果要用CVSup镜像OpenBSD库，可能要用到如下的配置文件：</p>
+  <p>为了使用 CVSup 镜像 OpenBSD 版本库，可以使用下述配置文件:</p>
   <pre>
         # Defaults that apply to all the collections
         *default release=cvs
@@ -105,48 +91,42 @@
         #OpenBSD-ports
         #OpenBSD-x11
         #OpenBSD-xf4
+        #OpenBSD-xenocara
 </pre>
 
-  <p>这将告诉cvsup去<b>cvsup.uk.openbsd.org</b>刷新所有的OpenBSD发布，这里本地库所在目录的<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=umask%20&amp;sektion=2"></a><a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=umask%20&amp;sektion=2">umask(2)</a>
-  要允许组具有写权限.</p>
+  <p>它告诉 cvsup 从 <b>cvsync.uk.openbsd.org</b> 更新全部 OpenBSD 版本库，使用 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=umask&amp;sektion=2">umask(2)</a> 设置同组用户有写本地版本库的权限。</p>
 
-  <p>假设该文件另存为<tt>cvs-supfile</tt>, 使用如下命令调用cvsup GUI:</p>
+  <p>假设该文件另存为 <tt>cvs-supfile</tt>，可以用下面的命令调用 cvsup:</p>
   <pre>
         cvsup cvs-supfile
 </pre>
 
-  <p>对于batch mode,可能要用下面的命令:</p>
+  <p>然而在批处理模式，需要用下面的命令(<font color="red">译者注：主要是用选项"-g"禁用图形界面，如果你安装的是"cvsup-no_x11"，那么就无所谓了。"-L 2"比较吵，建议用"-L 1"</font>):</p>
   <pre>
         cvsup -g -L 2 cvs-supfile
 </pre>
 
-  <h3><a name="using" id="using"><font color="#0000E0">使用CVS来更新你的源码树</font></a></h3>
+  <h3><a name="using" id="using"><font color="#0000E0">使用 CVS 更新源代码</font></a></h3>
 
-  <p>check out任何其中一个CVSup库很简单了,对Korn/Bourne shells：</p>
+  <p>现在从用 CVSup 同步的版本库检出任意模块都很简单:</p>
   <pre>
         # cd /usr
-        # CVSROOT=/cvs cvs checkout src
+        # cvs -d /cvs checkout src
 </pre>
 
-  <p>上述操作将check out最新的源码树.很多人只想要release源码，特别是你在patch你的系统的时候.为了checkout release源码，
-  你必须在你的命令行指定一个标签，例如：</p>
+  <p>上述命令会检出当前最新的代码。许多情况下你只需要稳定版本的源代码，尤其是为你的系统打补丁的时候。要检出稳定版本的代码，必须在命令中指定标签。例如:</p>
   <pre>
         # cd /usr
-        # cvs checkout -rOPENBSD_3_7 src
+        # cvs -d /cvs checkout -rOPENBSD_3_7 src
 </pre>
 
-  <p>对3.6<tt>,相应替换为OPENBSD_3_6等.</tt></p>
+  <p>或者使用 <tt>OPENBSD_3_6</tt> 检出 3.6 的稳定版本，等等。</p>
 
-  <h3><a name="checkout" id="checkout"><font color=
-  "#0000E0">将CVSup运行在Checkout模式</font></a></h3>
+  <h3><a name="checkout" id="checkout"><font color="#0000E0">在检出模式运行 CVSup</font></a></h3>
 
-  <p>作为获取库和使用CVS的另外一种选择，你可以通过添加一个<tt>tag</tt>或者<tt>date</tt>关键字到你的supfile以使CVSup运 行
-  在checkout模式, 作为<tt>*default</tt> 或者collection的一个选项.特别有用的是，这样子可以非常高效的更新取自<a href=
-  "orders.html">CDROMs</a>的源码和ports树.</p>
+  <p>除了使用 CVSup 获得版本库，然后使用 CVS 之外，你还可以通过在文件 supfile 的 <tt>*default</tt> 或集合的选项中增加 <tt>tag</tt> 或 <tt>date</tt> 让 CVSup 在检出模式运行，这样就不需要用 CVS 检出了，还可以节约大量磁盘空间，缺陷是你无法再使用本地版本库来快速执行 CVS 操作。特别指出，你还可以使用<a href="orders.html">光盘</a>中的源代码来有效的加速同步操作。</p>
 
-  <p>下面的supfile可用来更新你的ports 树:</p>
+  <p>可以使用下述配置文件更新你的 ports 源代码:</p>
   <pre>
         # Defaults that apply to all the collections
         *default host=cvsup.uk.openbsd.org
@@ -159,24 +139,19 @@
         OpenBSD-ports tag=.
 </pre>
 
-  <p>任何CVS符号标签均可使用.一个"."表示HEAD，也就是，main branch所有文件的最新修订本 .要当心不要指定一个已有的标签， 因 为CVSup 不能区别非法的标签，
-  试图同步现存的源码树到一个非法的标签将删除所有文件.</p>
+  <p>可以使用任意的 CVS 符号标签。一个点"."代表最新的开发版本，也就是主分支中所有文件的最新版本。注意由于 CVSup 不能辨别标签的有效性，所以要指定一个存在的标签，尝试用不存在的标签同步现有的源代码，将会删除所有文件。</p>
 
-  <p>Alternatively, use the keyword <tt>date=[cc.]yy.mm.dd.hh.mm.ss</tt> to select a revision
-  by date. All 17 or 20 characters must be given as shown. For the years 2000 and beyond,
-  specify the century <var>cc</var>. For earlier years, specify only the last two digits
-  <var>yy</var>. You may also combine the <tt>tag</tt> and <tt>date</tt> keywords.</p>
+  <p>或者，你也可以使用关键字 <tt>date=[cc.]yy.mm.dd.hh.mm.ss</tt> 来用日期选择版本。所有的 17 或 20 个字符必须按照显示的格式给出。对于2000年或其后的日期，要指定世纪 <var>cc</var>。对于更早的时间，只需要指定最后两个数字 <var>yy</var>。你也可以同时使用 <tt>tag</tt> 和 <tt>date</tt>。</p>
 
-  <h3><a name="CVSROOT" id="CVSROOT"><font color="#0000E0">可用的CVSup服务器</font></a></h3>
+  <h3><a name="CVSROOT" id="CVSROOT"><font color="#0000E0">可用的 CVSup 服务器</font></a></h3>
 
-  <p>有如下可用的CVSup服务器：</p>
+  <p>下述 CVSup 服务器可用:</p>
 
   <dl>
-    <dt><a href="http://cvsup.uk.openbsd.org/"><strong>cvsup.uk.openbsd.org</strong></a></dt>
+    <dt><a href="http://cvsup.uk.openbsd.org"><strong>cvsup.uk.openbsd.org</strong></a></dt>
 
     <dd>
-      <p>located in Brighton, UK; maintained by <a href="mailto:brian@openbsd.org">Brian
-      Somers</a>.<br />
+      <p>located in Brighton, UK; maintained by <a href="mailto:brian@openbsd.org">Brian Somers</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -234,65 +209,10 @@
   </dl>
 
   <dl>
-    <dt><strong>cvsup.hu.openbsd.org</strong></dt>
-
-    <dd>
-      <p>located in Hungary; maintained by <a href="mailto:mohacsi@hera.ik.bme.hu">Mohacsi
-      Janos</a>.<br />
-      Updated every 4 hours.</p>
-
-      <p>Available collections:</p>
-
-      <table>
-        <tr>
-          <td width="20"></td>
-
-          <td><strong>OpenBSD-src</strong></td>
-
-          <td>- The <b>src</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-ports</strong></td>
-
-          <td>- The <b>ports</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-www</strong></td>
-
-          <td>- The <b>www</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-x11</strong></td>
-
-          <td>- The <b>XFree86-3</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-all</strong></td>
-
-          <td>- All OpenBSD repositories</td>
-        </tr>
-      </table>
-    </dd>
-  </dl>
-
-  <dl>
     <dt><strong>cvsup.usa.openbsd.org</strong></dt>
 
     <dd>
-      <p>located in West Lafayette, Indiana, USA; maintained by <a href=
-      "mailto:will@csociety.ecn.purdue.edu">Will Andrews</a>.<br />
+      <p>located in West Lafayette, Indiana, USA; maintained by <a href="mailto:will@csociety.ecn.purdue.edu">Will Andrews</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -353,70 +273,7 @@
     <dt><strong>anoncvs1.usa.openbsd.org</strong></dt>
 
     <dd>
-      <p>located in Redwood City, California, western USA; maintained by <a href=
-      "mailto:millert@openbsd.org">Todd Miller</a>.<br />
-      Updated every 2 hours.</p>
-
-      <p>Available collections:</p>
-
-      <table>
-        <tr>
-          <td width="20"></td>
-
-          <td><strong>OpenBSD-src</strong></td>
-
-          <td>- The <b>src</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-ports</strong></td>
-
-          <td>- The <b>ports</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-www</strong></td>
-
-          <td>- The <b>www</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-x11</strong></td>
-
-          <td>- The <b>XFree86-3</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-xf4</strong></td>
-
-          <td>- The <b>XFree86-4</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-all</strong></td>
-
-          <td>- All OpenBSD repositories</td>
-        </tr>
-      </table>
-    </dd>
-  </dl>
-
-  <dl>
-    <dt><strong>anoncvs3.usa.openbsd.org</strong></dt>
-
-    <dd>
-      <p>located at the University of Colorado, Boulder, western USA; maintained by <a href=
-      "mailto:millert@openbsd.org">Todd Miller</a>.<br />
+      <p>located in Redwood City, California, western USA; maintained by <a href="mailto:millert@openbsd.org">Todd Miller</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -477,8 +334,7 @@
     <dt><a href="http://cvsup.no.openbsd.org/"><strong>cvsup.no.openbsd.org</strong></a></dt>
 
     <dd>
-      <p>located in Oslo, Norway; maintained by <a href="mailto:anders@fupp.net">Anders
-      Nordby</a>.<br />
+      <p>located in Oslo, Norway; maintained by <a href="mailto:anders@fupp.net">Anders Nordby</a>.<br />
       Updated every 3 hours.</p>
 
       <p>Available collections:</p>
@@ -539,73 +395,8 @@
     <dt><a href="http://cvsup.pt.openbsd.org/"><strong>cvsup.pt.openbsd.org</strong></a></dt>
 
     <dd>
-      <p>located at the University of Coimbra, Portugal; maintained by <a href=
-      "mailto:jpedras@webvolution.net">Joo Pedras</a>.<br />
+      <p>located at the University of Coimbra, Portugal; maintained by <a href="mailto:jpedras@webvolution.net">João Pedras</a>.<br />
       Updated every 3 hours.</p>
-
-      <p>Available collections:</p>
-
-      <table>
-        <tr>
-          <td width="20"></td>
-
-          <td><strong>OpenBSD-src</strong></td>
-
-          <td>- The <b>src</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-ports</strong></td>
-
-          <td>- The <b>ports</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-www</strong></td>
-
-          <td>- The <b>www</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-x11</strong></td>
-
-          <td>- The <b>XFree86-3</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-xf4</strong></td>
-
-          <td>- The <b>XFree86-4</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-all</strong></td>
-
-          <td>- All OpenBSD repositories</td>
-        </tr>
-      </table>
-    </dd>
-  </dl>
-
-  <dl>
-    <dt><a href=
-    "http://anoncvs.de.openbsd.org/"><strong>anoncvs.de.openbsd.org</strong></a></dt>
-
-    <dd>
-      <p>also known as <strong>grappa.unix-ag.uni-kl.de</strong>.<br />
-      located at the University of Kaiserslautern, Germany; maintained by <a href=
-      "mailto:naddy@openbsd.org">Christian Weisgerber</a>.<br />
-      Updated every 6 hours.</p>
 
       <p>Available collections:</p>
 
@@ -665,8 +456,7 @@
     <dt><a href="http://rt.fm/cvsup.html"><strong>rt.fm</strong></a></dt>
 
     <dd>
-      <p>located at Lake in the Hills, Illinois, USA; maintained by <a href=
-      "mailto:jcs@rt.fm">Joshua Stein</a>.<br />
+      <p>located at Lake in the Hills, Illinois, USA; maintained by <a href="mailto:jcs@rt.fm">Joshua Stein</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -715,6 +505,14 @@
         <tr>
           <td></td>
 
+          <td><strong>OpenBSD-xenocara</strong></td>
+
+          <td>- The <b>Xenocara</b> repository</td>
+        </tr>
+
+        <tr>
+          <td></td>
+
           <td><strong>OpenBSD-all</strong></td>
 
           <td>- All OpenBSD repositories</td>
@@ -727,8 +525,7 @@
     <dt><strong>skeleton.phys.spbu.ru</strong></dt>
 
     <dd>
-      <p>located in St. Petersburg State University, St. Petersburg, Russia; maintained by
-      <a href="mailto:kab00m@lich.phys.spbu.ru">Dima Veselov</a>.<br />
+      <p>located in St. Petersburg State University, St. Petersburg, Russia; maintained by <a href="mailto:kab00m@lich.phys.spbu.ru">Dima Veselov</a>.<br />
       Updated every 4 hours.</p>
 
       <p>Available collections:</p>
@@ -749,8 +546,7 @@
     <dt><strong>cvsup.jp.OpenBSD.org</strong></dt>
 
     <dd>
-      <p>located at Otemachi, Tokyo, china; maintained by <a href=
-      "mailto:cvsupadm@openbsd.bsdlab.org">CVSup Administrator</a>.<br />
+      <p>located at Otemachi, Tokyo, Japan; maintained by <a href="mailto:cvsupadm@openbsd.bsdlab.org">CVSup Administrator</a>.<br />
       Updated every 3 hours.</p>
 
       <p>Available collections:</p>
@@ -811,8 +607,7 @@
     <dt><strong>cvsup.tw.OpenBSD.org</strong></dt>
 
     <dd>
-      <p>located at National Chiao-Tung University, Taiwan; maintained by <a href=
-      "mailto:ijliao@FreeBSD.org">Ying-Chieh Liao</a>.<br />
+      <p>located at National Chiao-Tung University, Taiwan; maintained by <a href="mailto:ijliao@FreeBSD.org">Ying-Chieh Liao</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -873,8 +668,7 @@
     <dt><strong>wiretapped.net</strong></dt>
 
     <dd>
-      <p>located in Sydney Australia; maintained by <a href="mailto:gbayley@ausmac.net">Grant
-      Bayley</a>.<br />
+      <p>located in Sydney Australia; maintained by <a href="mailto:gbayley@ausmac.net">Grant Bayley</a>.<br />
       Updated every 6 hours.</p>
 
       <p>Available collections:</p>
@@ -923,6 +717,14 @@
         <tr>
           <td></td>
 
+          <td><strong>OpenBSD-xenocara</strong></td>
+
+          <td>- The <b>Xenocara</b> repository</td>
+        </tr>
+
+        <tr>
+          <td></td>
+
           <td><strong>OpenBSD-all</strong></td>
 
           <td>- All OpenBSD repositories</td>
@@ -935,8 +737,7 @@
     <dt><a href="http://mirror.osn.de/"><strong>mirror.osn.de</strong></a></dt>
 
     <dd>
-      <p>located in Germany maintained by <a href="mailto:aw@osn.de">Armin
-      Wolfermann</a>.<br />
+      <p>located in Germany maintained by <a href="mailto:aw@osn.de">Armin Wolfermann</a>.<br />
       Updated every 4 hours.</p>
 
       <p>Available collections:</p>
@@ -985,65 +786,9 @@
         <tr>
           <td></td>
 
-          <td><strong>OpenBSD-all</strong></td>
+          <td><strong>OpenBSD-xenocara</strong></td>
 
-          <td>- All OpenBSD repositories</td>
-        </tr>
-      </table>
-    </dd>
-  </dl>
-
-  <dl>
-    <dt><strong>cvsup2.de.openbsd.org</strong></dt>
-
-    <dd>
-      <p>also known as <strong>openbsd.informatik.uni-erlangen.de</strong>.<br />
-      located at the University of Erlangen, Germany; maintained by <a href=
-      "mailto:grunk@openbsd.org">Alexander von Gernler</a> and <a href=
-      "mailto:stuka@pestilenz.org">Christian Kollee</a>.<br />
-      Updated every 2 hours.</p>
-
-      <p>Available collections:</p>
-
-      <table>
-        <tr>
-          <td width="20"></td>
-
-          <td><strong>OpenBSD-src</strong></td>
-
-          <td>- The <b>src</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-ports</strong></td>
-
-          <td>- The <b>ports</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-www</strong></td>
-
-          <td>- The <b>www</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-x11</strong></td>
-
-          <td>- The <b>XFree86-3</b> repository</td>
-        </tr>
-
-        <tr>
-          <td></td>
-
-          <td><strong>OpenBSD-xf4</strong></td>
-
-          <td>- The <b>XFree86-4</b> repository</td>
+          <td>- The <b>Xenocara</b> repository</td>
         </tr>
 
         <tr>
@@ -1061,8 +806,7 @@
     <dt><strong>cvsup.bg.openbsd.org</strong></dt>
 
     <dd>
-      <p>located in Plovdiv, Bulgaria, maintained by <a href=
-      "mailto:veno@evrocom.net">Ventsislav Velkov</a>.<br />
+      <p>located in Plovdiv, Bulgaria, maintained by <a href="mailto:veno@evrocom.net">Ventsislav Velkov</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -1120,11 +864,10 @@
   </dl>
 
   <dl>
-    <dt><strong><a href="http://cvsup.open.bsd.lv/">cvsup.open.bsd.lv</a></strong></dt>
+    <dt><strong><a href="http://cvsup.open.bsd.lv">cvsup.open.bsd.lv</a></strong></dt>
 
     <dd>
-      <p>located in Riga, Latvia; maintained by <a href="mailto:petruha@bsd.lv">Peter
-      Dunaskin</a>.<br />
+      <p>located in Riga, Latvia; maintained by <a href="mailto:petruha@bsd.lv">Peter Dunaskin</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -1185,8 +928,7 @@
     <dt><strong>rudy.mif.pg.gda.pl</strong></dt>
 
     <dd>
-      <p>located at the Gdansk University of Technology, Poland; maintained by <a href=
-      "mailto:szati@rudy.mif.pg.gda.pl">Lukasz Sztachanski</a>.<br />
+      <p>located at the Gdansk University of Technology, Poland; maintained by <a href="mailto:szati@rudy.mif.pg.gda.pl">Lukasz Sztachanski</a>.<br />
       Updated every 2 hours.</p>
 
       <p>Available collections:</p>
@@ -1247,8 +989,7 @@
     <dt><strong>mirror.public-internet.co.uk</strong></dt>
 
     <dd>
-      <p>located at London, UK; maintained by <a href=
-      "mailto:tom.beard@public-internet.co.uk">Tom Beard</a>.<br />
+      <p>located at London, UK; maintained by <a href="mailto:tom.beard@public-internet.co.uk">Tom Beard</a>.<br />
       Updated every 2 hours from cvsup2.de.openbsd.org.</p>
 
       <p>Available collections:</p>
@@ -1303,46 +1044,13 @@
         </tr>
       </table>
     </dd>
-  </dl><!--
-<dl>
-<dt><strong>anoncvs.openbsd.org.ua</strong></dt>
-<dd><p>
-located in Kiev, Ukraine;
-maintained by <a href="mailto:hunter@mirotel.net">Sergey Smitienko</a>.
-<br>
-Updated every 6 hours.
-<p>
-Available collections:
-<table>
-<tr><td width="20"></td>
-    <td><strong>OpenBSD-src</strong></td>
-    <td>- The <b>src</b> repository</td></tr>
-<tr><td></td>
-    <td><strong>OpenBSD-ports</strong></td>
-    <td>- The <b>ports</b> repository</td></tr>
-<tr><td></td>
-    <td><strong>OpenBSD-www</strong></td>
-    <td>- The <b>www</b> repository</td></tr>
-<tr><td></td>
-    <td><strong>OpenBSD-x11</strong></td>
-    <td>- The <b>XFree86-3</b> repository</td></tr>
-<tr><td></td>
-    <td><strong>OpenBSD-xf4</strong></td>
-    <td>- The <b>XFree86-4</b> repository</td></tr>
-<tr><td></td>
-    <td><strong>OpenBSD-all</strong></td>
-    <td>- All OpenBSD repositories</td></tr>
-</table>
-</dd>
-</dl>
--->
+  </dl>
 
   <dl>
     <dt><strong>cvsup.openbsd.nu</strong></dt>
 
     <dd>
-      <p>located in Stockholm, Sweden; maintained by <a href="mailto:kent@openbsd.nu">Kent
-      Riboe</a>.<br />
+      <p>located in Stockholm, Sweden; maintained by <a href="mailto:kent@openbsd.nu">Kent Riboe</a>.<br />
       Updated every 3 hours from cvsync.de.openbsd.org.</p>
 
       <p>Available collections:</p>
@@ -1399,15 +1107,11 @@ Available collections:
     </dd>
   </dl>
 
-  <p><em>说明:</em>如果你列在这里的服务器信息不准确或者不完全，请联系<a href=
-  "mailto:beck@openbsd.org"><tt>beck@openbsd.org</tt></a> 或<a href=
-  "mailto:brian@openbsd.org"><tt>brian@openbsd.org</tt></a></p>
+  <p><em>注意:</em> 如果列在这里的你的服务器的信息不准确或者不清楚，请联系 <a href="mailto:www@openbsd.org"><tt>www@openbsd.org</tt></a>。</p>
 
-  <p>你可能想用<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=traceroute%20&amp;sektion=8">traceroute(8)</a>
-  来找 出距离你最近的服务器.若发现服务器的问题请报告给我们的<b>维护人员</b>.</p>
+  <p>你可能想用 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=traceroute&amp;sektion=8&amp;format=html">traceroute(8)</a> 来找出距离你最近的服务器。当发现服务器有问题请报告给我们的<b>维护者</b>。</p>
 
-  <p>当前 (截止 August 21, 2006)，CVS库大小为：</p>
+  <p>在2006年8月21日，CVS 版本库的大小是:</p>
 
   <table>
     <tr>
@@ -1451,22 +1155,61 @@ Available collections:
     </tr>
   </table>
 
-  <dl>
-    <dt>对于CVSROOT目录,需要额外的<b>408</b>MB开销.这个库的大小现在以大约每年<b>400</b>MB的速率增长 .</dt>
-  </dl>
+  <p>还有个额外的目录 CVSROOT 大约 <b>408</b>MB。全部版本库的大小以每年 <b>400</b>MB 的速度增长。</p>
 
-  <p><strong>重要说明:</strong> 有一些与密码学软件相关的问题每个人都应该注意的：</p>
+  <p>译者在本地镜像了 ports，src，www 和 xenocara。在2008年1月28日，以 du(1) 的输出为准，版本库根目录的大小是 <b>2753</b>MB，相关目录的大小是:</p>
+
+  <table>
+    <tr>
+      <td width="20"></td>
+
+      <td><strong>CVSROOT</strong></td>
+
+      <td>- <b>86</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>ports</strong></td>
+
+      <td>- <b>304</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>src</strong></td>
+
+      <td>- <b>1452</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>www</strong></td>
+
+      <td>- <b>333</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>xenocara</strong></td>
+
+      <td>- <b>579</b>MB</td>
+    </tr>
+  </table>
+
+  <p><strong>重要说明:</strong> 有一些与加密软件相关的问题每个人都应该注意:</p>
 
   <ul>
     <li>
-      <p>源码出自加拿大. 参看调查研究<a href="http://www.efc.ca/pages/doc/crypto-export.html"></a><a href=
-      "http://www.efc.ca/pages/doc/crypto-export.html"></a> <a href=
-      "http://www.efc.ca/pages/doc/crypto-export.html">researched by a Canadian individual</a>
-      ，以及根据 <a href="http://axion.physics.ubc.ca/ECL.html">described in the Export Control list
-      of Canada</a>，从加拿大往世界各地输出密码学软件是合法的.</p>
+      <p>OpenBSD 源代码出自加拿大。根据<a href="http://www.efc.ca/pages/doc/crypto-export.html">加拿大个人研究</a>和<a href="http://axion.physics.ubc.ca/ECL.html">加拿大输出控制列表</a>的描述，从加拿大向世界各地输出加密软件是合法的。</p>
     </li>
 
-    <li>然后，如果你不在美国或者加拿大，你不应该从防止在美国的匿名CVS服务器上获取OpenBSD源码的密码学部分. 可能的文件有. ..
+    <li>
+      <p>然而，如果你不在美国或加拿大，你不应该从位于美国的 CVSup 服务器上获取 OpenBSD 源代码的加密软件部分。可能有问题的文件是...</p>
 
       <ul>
         <li><tt>src/kerberosIV/*</tt></li>
@@ -1492,19 +1235,16 @@ Available collections:
         <li><tt>XF4/xc/lib/Xdmcp/Wraphelp.c</tt></li>
       </ul>
 
-      <p>由于 USA ITAR munitions list，加密软件只能从美国输出到加拿大.</p>
+      <p>由于美国 ITAR 军用品列表，加密软件只能从美国输出到加拿大。</p>
     </li>
   </ul>
 
-  <p>OpenBSD计划在寻求更多的CVSup服务器--如果你感兴趣,请联系 <a href=
-  "mailto:www@openbsd.org"><tt>www@openbsd.org</tt></a>了解配置细节.</p>
+  <p>OpenBSD 项目正在寻求更多的 CVSup 服务器 -- 如果你有兴趣，请与 <a href="mailto:www@openbsd.org"><tt>www@openbsd.org</tt></a> 联系以获得详细的配置信息。</p>
   <hr />
-  <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt=
-  "OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
+  <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt="OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
   <small><!--
-Originally [OpenBSD: cvsup.html,v 1.107 ]<br>
-$Translation: cvsup.html,v 1.4 2007/02/14 12:54:25 tjmao Exp $<br>
--->
-   $OpenBSD: cvsup.html,v 1.4 2007/02/14 19:01:56 jufi Exp $</small>
+Originally [OpenBSD: cvsup.html,v 1.112 ]<br>
+$Translation$<br>
+-->$OpenBSD: cvsup.html,v 1.112 2007/09/25 15:15:13 millert Exp $</small>
 </body>
 </html>

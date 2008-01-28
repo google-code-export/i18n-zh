@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>OpenBSD CVSync</title>
   <link rev="made" href="mailto:www@openbsd.org" />
@@ -14,181 +14,154 @@
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000" link="#23238E">
-  <a href="index.html"><img alt="[OpenBSD]" height="30" width="141" src=
-  "../images/smalltitle.gif" border="0" /></a>
+  <a href="index.html"><img alt="[OpenBSD]" height="30" width="141" src="../images/smalltitle.gif" border="0" /></a>
 
   <h2><font color="#E00000">CVSync</font></h2>
   <hr />
 
-  <h3>内容索引</h3>
+  <h3>目录</h3>
 
   <ul>
-    <li><a href="#CVSync">什么是CVSync?</a></li>
+    <li><a href="#CVSync">什么是 CVSync?</a></li>
 
-    <li><a href="#CVS">什么是CVS?</a></li>
+    <li><a href="#CVS">什么是 CVS?</a></li>
 
-    <li><a href="#starting">开始使用CVSync</a></li>
+    <li><a href="#starting">开始使用 CVSync</a></li>
 
-    <li><a href="#using">使用CVS更新你的源码树</a></li>
+    <li><a href="#using">使用 CVS 更新源代码</a></li>
 
-    <li><a href="#CVSROOT">可用的CVSync服务器</a></li>
+    <li><a href="#CVSROOT">可用的 CVSync 服务器</a></li>
   </ul>
   <hr />
 
-  <h3><a name="CVSync" id="CVSync"><font color="#0000E0">什么是CVSync?</font></a></h3>
+  <h3><a name="CVSync" id="CVSync"><font color="#0000E0">什么是 CVSync?</font></a></h3>
 
-  <p><b>CVSync</b>是一个用于从远程服务器主机上的主 <a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1">cvs(1)</a>库分发和更新源码树的软件包.OpenBSD源码
-  的维护，用的是位于加拿大的一个中心开发机器上的CVS库.通过使用CVSync，OpenBSD用户可以很简单的让他们自己的源码树保持最 新.</p>
+  <p><b>CVSync</b> 是一个用于从远程服务器主机上 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1">cvs(1)</a> 版本库分发和更新版本库的软件包。OpenBSD 用位于加拿大的一个中心开发机器上的 CVS 版本库维护源代码。使用 CVSync 的 OpenBSD 用户可以容易的保证他们的版本库最新。</p>
 
-  <p><b>CVSync</b>使用所谓拉模式的更新方式.在拉模式作用下，客户在需要的时候，询问服务器以获取更新.服务器被动的等待它的 客户
-  发出更新请求.因而，所有等更新由客户端发起，服务器从不主动发送更新请求.用户必须手动运行<b>CVSync</b> 客户端来获取更新 ，或者设置一个<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=cron&amp;sektion=8">cron(8)</a> 作业定期自动运行.</p>
+  <p><b>CVSync</b> 使用所谓拉模型执行更新。在拉模型中，客户端在需要的时候，询问服务器以获取更新数据。服务器被动的等待客户端发出更新请求，因此所有更新由客户端发起，服务器不会主动发送更新数据。用户必须手工运行 <b>CVSync</b> 客户端获取更新数据，或者设置一个 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cron&amp;sektion=8">cron(8)</a> 任务定期自动运行。</p>
 
-  <p>术语<b>CVSync</b>，大写表示，指代整个软件包.它的主要组件是运行于客户端机器的<tt>cvsync</tt>，还有运行在每个 OpenBSD
-  CVSync镜像站点的服务器端 <tt>cvsyncd</tt>.</p>
+  <p>术语 <b>CVSync</b>，大写指代整个软件包。它的主要组件是运行在每个用户机器上的客户端软件 <tt>cvsync</tt> 和运行于每个 OpenBSD CVSync 镜像站点的服务器软件 <tt>cvsyncd</tt>。</p>
 
-  <p><b>CVSync</b> 被设计为比<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=sup&amp;sektion=1&amp;format=html">sup(1)</a>
-  和<a href="cvsup.html">CVSup</a>更快速和灵活.</p>
+  <p><b>CVSync</b> 被设计为比 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sup&amp;sektion=1&amp;format=html">sup(1)</a> 和 <a href="cvsup.html">CVSup</a> 更快速和灵活。</p>
 
-  <p>OpenBSD项目当前有五个主要的源码库：</p>
+  <p>OpenBSD 项目当前有 6 个主要的版本库:</p>
 
   <ul>
-    <li><b>src</b> - 存放OpenBSD操作系统的所有源码.</li>
+    <li><b>src</b> - 存放 OpenBSD 操作系统的全部代码。</li>
 
-    <li><b>ports</b> - 存放<a href="../ports.html">OpenBSD Ports</a>.</li>
+    <li><b>ports</b> - 存放 <a href="../ports.html">OpenBSD Ports</a>。</li>
 
-    <li><b>www</b> - 存放所有OpenBSD web页(包括现在这个).</li>
+    <li><b>www</b> - 存放全部的 OpenBSD 网页(包括本页)。</li>
 
-    <li><b>x11</b> - 存放OpenBSD对<a href="http://www.xfree86.org/"></a><a href=
-    "http://www.xfree86.org/">XFree86-3</a> 软件计划的改编版本.现在这仅仅是历史了，大多数用户已经不在使用.</li>
+    <li><b>X11</b> - 存放 OpenBSD 对 <a href="http://www.XFree86.org/">XFree86-3</a> 项目的移植。它只是用来保留历史，大多数用户没有理由使用，也不再被使用。</li>
 
-    <li><b>xf4</b> - 存放OpenBSD x 树.</li>
+    <li><b>XF4</b> - 存放 OpenBSD 活跃的 X 代码开发树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始废弃此版本库，现在只是用来保留历史</font>)。</li>
 
-    <li><b>xenocara</b> - 存放OpenBSD 正在开发的 X.org v7 树</li>
+    <li><b>xenocara</b> - 存放 OpenBSD 正在开发的 X.org v7 代码树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始使用此版本库作为正式的 X11 代码库</font>)。</li>
   </ul>
 
-  <h3><a name="CVS" id="CVS"><font color="#0000E0">什么是CVS?</font></a></h3>
+  <h3><a name="CVS" id="CVS"><font color="#0000E0">什么是 CVS?</font></a></h3>
 
-  <p>CVS是用于管理OpenBSD源码树的源码控制系统.详细说明请参考<a href="anoncvs.html#CVS">这里</a>.注意CVS和CVSync是完全 不同的 程序.
-  尽管CVS可被用作远程文件访问，但没有对大规模的网络源码发布作优化，而CVSync对完成这样的任务更有效.</p>
+  <p>CVS 是用来管理 OpenBSD 源代码的源代码控制系统。它在<a href="anoncvs.html#CVS">这里</a>有更详细的描述。注意 CVS 和 CVSync 是完全不同的程序。尽管 CVS 可以用来访问远程文件，但是它没有针对通过网络分发整个版本库优化，CVSync 为此提供了数量级上的优化。</p>
 
-  <h3><a name="starting" id="starting"><font color="#0000E0">开始使用CVSync</font></a></h3>
+  <h3><a name="starting" id="starting"><font color="#0000E0">开始使用 CVSync</font></a></h3>
 
-  <p>如果你只是担心如何运行CVSync，推荐你从<a href="ftp.html">ftp mirror sites下载</a>cvsync包，而不是自行从
-  <tt>net/cvsync</tt> port来build.</p>
+  <p>如果你只关心运行 CVSync，建议你从 <a href="../ftp.html">FTP 镜像站点</a>下载软件包，而不是从 <tt>net/cvsync</tt> 构建它。</p>
 
-  <p>想进一步了解CVSync，请访问<a href="http://www.cvsync.org/">project homepage</a>.</p>
+  <p>想进一步了解 CVSync，参见其 <a href="http://www.cvsync.org/">项目主页</a>。</p>
 
-  <p>为了使用CVSync镜像OpenBSD库.可能要用到如下的配置文件：</p>
+  <p>为了使用 CVSync 镜像 OpenBSD 版本库，可以使用下述配置文件:</p>
   <pre>
-    config {
-        hostname anoncvs.de.openbsd.org
-        # If your network link is a T1 or faster, comment out the following line.
-        compress
-        collection {
-        name openbsd release rcs
-        prefix /cvs
-        umask 002
-        }
-    }
+  config {
+      hostname cvsync.de.openbsd.org
+      # If your network link is a T1 or faster, comment out the following line.
+      compress
+      collection {
+    name openbsd release rcs
+    prefix /cvs
+    umask 002
+      }
+  }
 </pre>
 
-  <p>该文件告诉cvsync去<b>anoncvs.de.openbsd.org</b> 刷新所有的OpenBSD发布，这里本地库所在目录的<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=umask&amp;sektion=2">umask(2)</a>
-  要允许组具有写权限.</p>
+  <p>它告诉 cvsync 从 <b>cvsync.de.openbsd.org</b> 更新全部 OpenBSD 版本库，使用 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=umask&amp;sektion=2">umask(2)</a> 设置同组用户有写本地版本库的权限。</p>
 
-  <p>假设该文件另存为<tt>cvs-syncfile</tt>,用下面的命令调用cvsync</p>
+  <p>假设该文件另存为 <tt>cvs-syncfile</tt>，可以用下面的命令调用 cvsync:</p>
   <pre>
         cvsync -c cvs-syncfile
 </pre>
 
-  <h3><a name="using" id="using"><font color="#0000E0">使用CVS更新你的源码树</font></a></h3>
+  <h3><a name="using" id="using"><font color="#0000E0">使用 CVS 更新源代码</font></a></h3>
 
-  <p>check out任何其中一个CVSync库很简单了,对Korn/Bourne shells：</p>
+  <p>现在从用 CVSync 同步的版本库检出任意模块都很简单:</p>
   <pre>
         # cd /usr
-        # CVSROOT=/cvs cvs checkout src
+        # cvs -d /cvs checkout src
 </pre>
 
-  <p>上述操作将check out最新的源码树.很多人只想要release源码，特别是你在patch你的系统的时候.为了checkout release源码，
-  你必须在你的命令行指定一个标签，例如：</p>
+  <p>上述命令会检出当前最新的代码。许多情况下你只需要稳定版本的源代码，尤其是为你的系统打补丁的时候。要检出稳定版本的代码，必须在命令中指定标签。例如:</p>
   <pre>
         # cd /usr
-        # cvs checkout -rOPENBSD_3_5 src
+        # cvs -d /cvs checkout -rOPENBSD_3_5 src
 </pre>
 
-  <p><tt>对3.4，用OPENBSD_3_4</tt>等等.</p>
+  <p>或者使用 <tt>OPENBSD_3_4</tt> 检出 3.4 的稳定版本，等等。</p>
 
-  <h3><a name="CVSROOT" id="CVSROOT"><font color="#0000E0">可用的CVSync服务器</font></a></h3>
+  <h3><a name="CVSROOT" id="CVSROOT"><font color="#0000E0">可用的 CVSync 服务器</font></a></h3>
 
-  <p>下列CVSync服务器可用：</p>
+  <p>下述 CVSync 服务器可用:</p>
 
   <ul>
     <li><strong>cvsync.de.openbsd.org</strong><br />
-    Location: University of Erlangen-Nuremberg, Erlangen, Germany.<br />
-    Maintained by <a href="mailto:grunk@pestilenz.org">Alexander von Gernler</a>.<br />
-    Updated every 2 hours.<br /></li>
+    位置: University of Erlangen-Nuremberg, Erlangen, Germany.<br />
+    维护者: <a href="mailto:grunk@pestilenz.org">Alexander von Gernler</a>.<br />
+    每 2 小时更新一次。<br /></li>
 
     <li><strong>anoncvs1.usa.openbsd.org</strong><br />
-    Host also known as <strong>anoncvs.usa.openbsd.org,
-    anoncvs4.usa.openbsd.org</strong>.<br />
-    Location: Redwood City, CA, USA.<br />
-    Maintained by <a href="mailto:millert@openbsd.org">Todd Miller</a>.<br />
-    Updated every 2 hours.<br /></li>
+    主机别名: <strong>anoncvs.usa.openbsd.org, anoncvs4.usa.openbsd.org</strong>.<br />
+    位置: Redwood City, CA, USA.<br />
+    维护者: <a href="mailto:millert@openbsd.org">Todd C. Miller</a>.<br />
+    每 2 小时更新一次。<br /></li>
 
     <li><strong>anoncvs3.usa.openbsd.org</strong><br />
-    Location: National Center for Atmospheric Research, Boulder, CO, USA.<br />
-    Maintained by <a href="mailto:millert@openbsd.org">Todd Miller</a>.<br />
-    Updated every 2 hours.<br /></li>
+    位置: National Center for Atmospheric Research, Boulder, CO, USA.<br />
+    维护者: <a href="mailto:millert@openbsd.org">Todd C. Miller</a>.<br />
+    每 2 小时更新一次。<br /></li>
 
-    <li><strong>cvsync.catai.net</strong><br />
-    Host also known as <strong>anoncvs.catai.net</strong>.<br />
-    Location: Vienna, Austria.<br />
-    Maintained by <a href="mailto:martin@openbsd.org">Martin Reindl</a>.<br />
-    Updated every 2 hours from anoncvs.de.openbsd.org.<br /></li>
-
-    <li><a href=
-    "http://anoncvs.de.openbsd.org/"><strong>anoncvs.de.openbsd.org</strong></a><br />
-    Host also known as <strong>grappa.unix-ag.uni-kl.de</strong>.<br />
-    Location: University of Kaiserslautern, Kaiserslautern, Germany.<br />
-    Maintained by <a href="mailto:naddy@openbsd.org">Christian Weisgerber</a>.<br />
-    Updated every 6 hours.<br /></li>
+    <li><strong>anga.funkfeuer.at</strong><br />
+    位置: Vienna, Austria.<br />
+    维护者: <a href="mailto:martin@openbsd.org">Martin Reindl</a>.<br />
+    每 2 小时从 anoncvs1.usa.openbsd.org 更新一次。<br /></li>
 
     <li><a href="http://mirror.osn.de/"><strong>mirror.osn.de</strong></a><br />
-    Location: Nrnberg, Germany.<br />
-    Maintained by <a href="mailto:aw@osn.de">Armin Wolfermann</a>.<br />
-    Updated every 4 hours from anoncvs1.usa.openbsd.org.<br /></li>
+    位置: Nürnberg, Germany.<br />
+    维护者: <a href="mailto:aw@osn.de">Armin Wolfermann</a>.<br />
+    每 4 小时从 anoncvs1.usa.openbsd.org 更新一次。<br /></li>
 
     <li><a href="http://www.allbsd.org/"><strong>cvsync.allbsd.org</strong></a><br />
-    Location: Tokyo, china.<br />
-    Maintained by <a href="mailto:hrs@allbsd.org">Hiroki Sato</a>.<br /></li>
+    位置: Tokyo, Japan.<br />
+    维护者: <a href="mailto:hrs@allbsd.org">Hiroki Sato</a>.<br /></li>
 
     <li><strong>cvsync.openbsd.nu</strong><br />
-    Location: Stockholm, Sweden.<br />
-    Maintained by <a href="mailto:kent@openbsd.nu">Kent Riboe</a>.<br />
-    Updated every 3 hours from cvsync.de.openbsd.org.<br /></li>
+    位置: Stockholm, Sweden.<br />
+    维护者: <a href="mailto:kent@openbsd.nu">Kent Riboe</a>.<br />
+    每 3 小时从 cvsync.de.openbsd.org 更新一次。<br /></li>
 
     <li><a href="http://mirror.sg.depaul.edu/"><strong>mirror.sg.depaul.edu</strong></a><br />
-    Location: DePaul University, Chicago, IL, USA.<br />
-    Maintained by <a href="mailto:mirror-admin@sg.depaul.edu">Eric Pancer</a>.<br />
-    Updated every 2 hours.<br /></li>
+    位置: DePaul University, Chicago, IL, USA.<br />
+    维护者: <a href="mailto:mirror-admin@sg.depaul.edu">Eric Pancer</a>.<br />
+    每 2 小时更新一次。<br /></li>
 
     <li><a href="http://csociety.org/cvsup.html"><strong>cvsync.csociety.org</strong></a><br />
-    Location: Purdue University, West Lafayette, IN, USA.<br />
-    Maintained by <a href="mailto:will@csociety.purdue.edu">Will Andrews</a>.<br /></li>
+    位置: Purdue University, West Lafayette, IN, USA.<br />
+    维护者: <a href="mailto:will@csociety.purdue.edu">Will Andrews</a>.<br /></li>
   </ul>
 
-  <p><em>说明:</em> 如果你列在这里的服务器信息不准确或者不完全，请联系<a href=
-  "mailto:beck@openbsd.org"><tt>beck@openbsd.org</tt></a> 或<a href=
-  "mailto:naddy@openbsd.org"><tt>naddy@openbsd.org</tt></a></p>
+  <p><em>注意:</em> 如果列在这里的你的服务器的信息不准确或者不清楚，请联系 <a href="mailto:beck@openbsd.org"><tt>beck@openbsd.org</tt></a> 或 <a href="mailto:naddy@openbsd.org"><tt>naddy@openbsd.org</tt></a>。</p>
 
-  <p>你可能想用<a href=
-  "http://www.openbsd.org/cgi-bin/man.cgi?query=traceroute&amp;sektion=8">traceroute(8)</a>来找出距离
-  你最近的服务器.若发现服务器的问题请报告给我们的<b>维护人员.</b></p>
+  <p>你可能想用 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=traceroute&amp;sektion=8&amp;format=html">traceroute(8)</a> 来找出距离你最近的服务器。当发现服务器有问题请报告给我们的<b>维护者</b>。</p>
 
-  <p>当前(截止 August 21, 2006)，CVS库大小为：</p>
+  <p>在2006年8月21日，CVS 版本库的大小是:</p>
 
   <table>
     <tr>
@@ -240,20 +213,61 @@
     </tr>
   </table>
 
-  <p>这个库的大小现在以大约每年<b>400</b>MB的速率增长.</p>
+  <p>全部版本库的大小以每年 <b>400</b>MB 的速度增长。</p>
 
-  <p><strong>重要说明:</strong>有一些与密码学软件相关的问题每个人都应该注意的：</p>
+  <p>译者在本地镜像了 ports，src，www 和 xenocara。在2008年1月28日，以 du(1) 的输出为准，版本库根目录的大小是 <b>2753</b>MB，相关目录的大小是:</p>
+
+  <table>
+    <tr>
+      <td width="20"></td>
+
+      <td><strong>CVSROOT</strong></td>
+
+      <td>- <b>86</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>ports</strong></td>
+
+      <td>- <b>304</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>src</strong></td>
+
+      <td>- <b>1452</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>www</strong></td>
+
+      <td>- <b>333</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>xenocara</strong></td>
+
+      <td>- <b>579</b>MB</td>
+    </tr>
+  </table>
+
+  <p><strong>重要说明:</strong> 有一些与加密软件相关的问题每个人都应该注意:</p>
 
   <ul>
     <li>
-      <p>源码出自加拿大. 参看调查研究<a href="http://www.efc.ca/pages/doc/crypto-export.html"></a> <a href=
-      "http://www.efc.ca/pages/doc/crypto-export.html">researched by a Canadian individual</a>
-      ，以及根据 <a href="http://axion.physics.ubc.ca/ECL.html">described in the Export Control list
-      of Canada</a>, 从加拿大往世界各地输出密码学软件是合法的.</p>
+      <p>OpenBSD 源代码出自加拿大。根据<a href="http://www.efc.ca/pages/doc/crypto-export.html">加拿大个人研究</a>和<a href="http://axion.physics.ubc.ca/ECL.html">加拿大输出控制列表</a>的描述，从加拿大向世界各地输出加密软件是合法的。</p>
     </li>
 
     <li>
-      <p>然后，如果你不在美国或者加拿大，你不应该从防止在美国的匿名CVS服务器上获取OpenBSD源码的密码学部分. 可能的文件 有. ..</p>
+      <p>然而，如果你不在美国或加拿大，你不应该从位于美国的 CVSync 服务器上获取 OpenBSD 源代码的加密软件部分。可能有问题的文件是...</p>
 
       <ul>
         <li><tt>src/kerberosIV/*</tt></li>
@@ -279,19 +293,16 @@
         <li><tt>XF4/xc/lib/Xdmcp/Wraphelp.c</tt></li>
       </ul>
 
-      <p>由于 USA ITAR munitions list，加密软件只能从美国输出到加拿大.</p>
+      <p>由于美国 ITAR 军用品列表，加密软件只能从美国输出到加拿大。</p>
     </li>
   </ul>
 
-  <p>OpenBSD计划在寻求更多的CVSync服务器--如果你感兴趣,请联系<a href="mailto:naddy@openbsd.org">Christian
-  Weisgerber</a>了解配置细节.</p>
+  <p>OpenBSD 项目正在寻求更多的 CVSync 服务器 -- 如果你有兴趣，请与 <a href="mailto:naddy@openbsd.org">Christian Weisgerber</a> 联系以获得详细的配置信息。</p>
   <hr />
-  <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt=
-  "OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
+  <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt="OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
   <small><!--
-Originally [OpenBSD: cvsync.html,v 1.43 ]<br>
-$Translation: cvsync.html,v 1.5 2007/02/14 12:59:04 tjmao Exp $<br>
--->
-   $OpenBSD: cvsync.html,v 1.5 2007/02/14 19:01:56 jufi Exp $</small>
+Originally [OpenBSD: cvsync.html,v 1.47 ]<br>
+$Translation$<br>
+-->$OpenBSD: cvsync.html,v 1.47 2008/01/14 15:49:54 grunk Exp $</small>
 </body>
 </html>
