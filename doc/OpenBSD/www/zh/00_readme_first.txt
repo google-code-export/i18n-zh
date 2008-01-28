@@ -41,9 +41,15 @@ LinkChecker 4.5              Copyright (C) 2000-2006 Bastian Kleineidam
 === tidy
 ----------------------------------------------------------------
 # $ sed /^[[:space:]]*$/d example.html > tmp
+Before translate:
+tidy --input-encoding latin1 --output-encoding utf8 -b -i -q --wrap 0 \
+      --output-bom no --newline LF -asxhtml --doctype transitional \
+      --tidy-mark no -m translation.html
 
-$ tidy -utf8 -b -i -q --wrap 0 --output-bom no --newline LF -asxhtml \
-      --tidy-mark no --doctype transitional -m example.html
+After translate:
+$ tidy -utf8 -b -i -q --wrap 0 \
+      --output-bom no --newline LF -asxhtml --doctype transitional \
+      --tidy-mark no -m example.html
 ----------------------------------------------------------------
 
 === validate

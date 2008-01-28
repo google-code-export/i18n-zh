@@ -41,7 +41,7 @@
 
     <li><a href="#SUP">使用 sup(1) 镜像 CVS 版本库</a></li>
 
-    <li><a href="#MIRROR">设置匿名 CVS镜像</a></li>
+    <li><a href="#MIRROR">配置匿名 CVS 镜像</a></li>
   </ul>
   <hr />
 
@@ -49,31 +49,29 @@
 
   <p>匿名 CVS 是用来跟踪 OpenBSD 源代码，从而保证本地副本是最新的源代码的一种方法。除了可以跟踪开发状态，还可以跟踪发行版本勘误的补丁。</p>
 
-
   <p>匿名 CVS 与其它代码更新技术相比，主要的优势是直接与中心版本库或其镜像通信。这意味着你可以使用全部的 CVS 命令来控制合并与更新，执行比较，查询历史或其它针对中央版本库的操作。</p>
 
   <p>OpenBSD 项目当前有 6 个主要的版本库:</p>
 
   <ul>
-    <li><b>src</b>    - 存放 OpenBSD 操作系统的全部代码。</li>
+    <li><b>src</b> - 存放 OpenBSD 操作系统的全部代码。</li>
 
-    <li><b>ports</b>  - 存放 <a href="../ports.html">OpenBSD Ports</a>。</li>
+    <li><b>ports</b> - 存放 <a href="../ports.html">OpenBSD Ports</a>。</li>
 
-    <li><b>www</b>    - 存放全部的 OpenBSD 网页(包括本页)。</li>
+    <li><b>www</b> - 存放全部的 OpenBSD 网页(包括本页)。</li>
 
-    <li><b>X11</b>    - 存放 OpenBSD 对 <a href="http://www.XFree86.org/">XFree86-3</a> 项目的移植。它只是用来保留历史，大多数用户没有理由使用，也不再被使用。</li>
+    <li><b>X11</b> - 存放 OpenBSD 对 <a href="http://www.XFree86.org/">XFree86-3</a> 项目的移植。它只是用来保留历史，大多数用户没有理由使用，也不再被使用。</li>
 
-    <li><b>XF4</b>    - 存放 OpenBSD 活跃的 X 代码开发树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始废弃此版本库，现在只是用来保留历史</font>)。</li>
+    <li><b>XF4</b> - 存放 OpenBSD 活跃的 X 代码开发树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始废弃此版本库，现在只是用来保留历史</font>)。</li>
 
     <li><b>xenocara</b> - 存放 OpenBSD 正在开发的 X.org v7 代码树(<font color="red">译者注：原文中的信息已经过时，从 OpenBSD 4.2 开始使用此版本库作为正式的 X11 代码库</font>)。</li>
   </ul>
 
-  <p>简而言之，使用匿名 CVS 真正强大之处在于它是一个“宽容的”的版本控制系统 - 它<strong>尊重</strong>你的本地修改，并且以<strong>“最好的效果”</strong>更新你的整个代码树，不会给你留下一系列神秘的问题，让你必须解决后才能继续工作(<font color="red">译者注：推测起来，似乎是批评 svn 的 cleanup 等命令</font>)。</p>
-
+  <p>简而言之，使用匿名 CVS 真正强大之处在于它是一个"宽容的"的版本控制系统 - 它<strong>尊重</strong>你的本地修改，并且以<strong>"最好的效果"</strong>更新你的整个代码树，不会给你留下一系列神秘的问题，让你必须解决后才能继续工作(<font color="red">译者注：推测起来，似乎是批评 svn 的 cleanup 等命令</font>)。</p>
 
   <h3><a name="CVS" id="CVS"><font color="#0000E0">什么是 CVS?</font></a></h3>
 
-  <p><a href="http://ximbiot.com/cvs/">CVS</a> 是<a href="why-cvs.html">管理 OpenBSD 代码树</a>的源代码控制系统。它为所有官方发布源代码和修改实现了一个中央仓库，允许开发者维护源代码的本地副本和他们的修改。有两个级别的源代码访问权限:
+  <p><a href="http://ximbiot.com/cvs/">CVS</a> 是<a href="why-cvs.html">管理 OpenBSD 代码树</a>的源代码控制系统。它为所有官方发布源代码和修改实现了一个中央仓库，允许开发者维护源代码的本地副本和他们的修改。有两个级别的源代码访问权限:</p>
 
   <ul>
     <li><b>开发者拥有读写权限:</b> 需要提交修改到源代码树的开发者必须在 OpenBSD 主机上有账号。对于与其他 OpenBSD 开发人员协同开发的人来说，拥有此权限是很正常的事情。如果有人作出了很好的成绩，显示了他们可以与团队一起工作，那么将会获得账号。</li>
@@ -83,19 +81,16 @@
 
   <p>CVS 主要的强处是能对中心库的修改与本地副本的修改执行智能合并。它意味着，如果你对某个模块作了修改，然后执行更新操 作，你的修改不会被风吹走，而且 CVS 还会对两者的修改做最佳的合并。</p>
 
-  <p>如果修改不能被完全合并，CVS 提供了“soft fallback”，它为你的本地副本提供带注解的修改，为你的版本保留一个未修改的副本，然后继续更新你所请求的其它源代码模块。</p>
+  <p>如果修改不能被完全合并，CVS 提供了"soft fallback"，它为你的本地副本提供带注解的修改，为你的版本保留一个未修改的副本，然后继续更新你所请求的其它源代码模块。</p>
 
-  <h3><a name="starting" id="starting"><font color="#0000E0">开始使用匿名 CVS</font></a></h3>
-
-  当你从匿名 CVS 服务器下载全部源代码时，你可以从 OpenBSD CD 或 FTP 服务器“预加载”，它会节约大量时间和带宽。尤其是当你运行 <a href="stable.html"><i>-stable</i></a> 版本时，它更加有效，因为在 <i>-release</i> 和 <i>-stable</i> 之间修改的文件很少。
+  <h3><a name="starting" id="starting"><font color="#0000E0">开始使用匿名 CVS</font></a></h3>当你从匿名 CVS 服务器下载全部源代码时，你可以从 OpenBSD CD 或 FTP 服务器"预加载"，它会节约大量时间和带宽。尤其是当你运行 <a href="stable.html"><i>-stable</i></a> 版本时，它更加有效，因为在 <i>-release</i> 和 <i>-stable</i> 之间修改的文件很少。
 
   <p>将源代码从 CD 解压到 <i>/usr/src</i>(假设 CD 被挂接到 /mnt):</p>
   <pre>
     # <b>cd /usr/src; tar xzf /mnt/src.tar.gz</b>
     # <b>cd /usr; tar xzf /mnt/XF4.tar.gz</b>
     # <b>tar xzf /mnt/ports.tar.gz</b>
-</pre>
-为了缩小那些只需要部分代码的用户的下载时间，从 FTP 服务器下载的源文件分为两部分。<tt>sys.tar.gz</tt> 包含了创建内核需要的文件，<tt>src.tar.gz</tt> 包含了其他“用户空间”工具。然而，你通常都需要全部安装它们。假定下载的文件 <tt>src.tar.gz</tt> 和 <tt>sys.tar.gz</tt> 在 <tt>/usr</tt> 目录:
+</pre>为了缩小那些只需要部分代码的用户的下载时间，从 FTP 服务器下载的源文件分为两部分。<tt>sys.tar.gz</tt> 包含了创建内核需要的文件，<tt>src.tar.gz</tt> 包含了其他"用户空间"工具。然而，你通常都需要全部安装它们。假定下载的文件 <tt>src.tar.gz</tt> 和 <tt>sys.tar.gz</tt> 在 <tt>/usr</tt> 目录:
   <pre>
     # <b>cd /usr/src</b>
     # <b>tar xzf ../sys.tar.gz</b>
@@ -112,7 +107,8 @@
   <p>此时，<tt>/usr/src</tt> 是良好的检出目录，全部的 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1&amp;format=html">cvs(1)</a> 命令可以正确工作。</p>
 
   <h3><a name="using" id="using"><font color="#0000E0">使用 CVS 获得和更新源码树</font></a></h3>
-  <p>CVS 被设计为一种简便的方法来获得和更新你的源代码。首先，你必须确定你要跟踪的是 <i>-current</i>，还是 <a href="stable.html">patch branch</a>。current 反映所有最新的修改，patch branch 包含正式的发行版本加上<a href="../errata.html">勘误</a>发布的补丁，它更安全可靠。请参阅<a href="faq/faq5.html#Flavors">风味</a>以了解关于 OpenBSD “风味”的更多信息。</p>
+
+  <p>CVS 被设计为一种简便的方法来获得和更新你的源代码。首先，你必须确定你要跟踪的是 <i>-current</i>，还是 <a href="stable.html">patch branch</a>。current 反映所有最新的修改，patch branch 包含正式的发行版本加上<a href="../errata.html">勘误</a>发布的补丁，它更安全可靠。请参阅<a href="faq/faq5.html#Flavors">风味</a>以了解关于 OpenBSD "风味"的更多信息。</p>
 
   <p>一旦确定了要跟踪的代码树，你必须选择要使用的匿名 CVS 服务器。<a href="#CVSROOT">下面</a>是这些服务器的列表。</p>
 
@@ -342,7 +338,9 @@
         <li>XF4/xc-old/lib/Xdmcp/Wraphelp.c</li>
 
         <li>XF4/xc/lib/Xdmcp/Wraphelp.c</li>
-      </ul>由于美国商业部门的的政策，加密软件只能从美国输出到加拿大。
+      </ul>
+
+      <p>由于美国商业部门的的政策，加密软件只能从美国输出到加拿大。</p>
     </li>
   </ul>
 
@@ -362,13 +360,13 @@ $ <strong>cvs diff -bc -r1.1 -r1.5 locore.s</strong>
     [显示版本 1.1 与 版本 1.5 的差异]
 </pre>
 
-  <p><a name="pserver" id="pserver">为了使用 cvs “pserver”(用直接 TCP 连接代替使用 ssh 或 rsh)，你必须登录一次:</a></p>
+  <p><a name="pserver" id="pserver">为了使用 cvs "pserver"(用直接 TCP 连接代替使用 ssh 或 rsh)，你必须登录一次:</a></p>
   <pre>
 $ <strong>cvs -d :pserver:anoncvs@anoncvs.ca.openbsd.org:/cvs login</strong>
 (Logging in to anoncvs@anoncvs1.ca.openbsd.org)
 CVS password: <strong>anoncvs</strong>
     [它向 ~/.cvspass (可以用 CVS_PASSFILE修改文件名称)增加一行。]
-    [如上输入密码“blah”之后，我的 ~/.cvspass 文件样例行:      ]
+    [如上输入密码"blah"之后，我的 ~/.cvspass 文件样例行:      ]
     [:pserver:anoncvs@anoncvs5.usa.openbsd.org:/cvs Au'yc       ]
     [在输入一次后，每次使用这个 CVSROOT 都不需要再次登录。      ]
 $ <strong>cvs -d :pserver:anoncvs@anoncvs.ca.openbsd.org:/cvs get ksrc-i386 ksrc-common</strong>
@@ -457,72 +455,72 @@ $ <strong>cvs -d :pserver:anoncvs@anoncvs.ca.openbsd.org:/cvs get ksrc-i386 ksrc
 
   <p><a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1&amp;format=html">cvs(1) 手册页</a> (包含于 CVS 源代码)有许多如何使用 CVS 的信息。</p>
 
-  <p><strong>警告:</strong> When using cvs you should take care that your current directory is either the root of the tree you are referencing or in a separate place such as /tmp. Some commands such as "get" can create an arbitrary sub-tree in the current directory, and a subsequent update will recursively flesh out this sub-tree.</p>
+  <p><strong>警告:</strong> 当使用 cvs 时要注意当前目录，一般使用源代码树的根目录或者 /tmp。象"get"这些命令会在当前目录创建任意深度的子目录，后续的更新也会递归的更新这些子目录树。</p>
 
-  <p>The anoncvs service gives fledgling developers a chance to learn CVS operation and get thoroughly involved in the development process before getting "commit" access -- as a result of showing useful skills and high quality results they will naturally later be given developer access. As well, people providing patches can create their "diff"s relative to the CVS tree, which will ease integration.</p>
+  <p>在获得"提交"权限之前，匿名 CVS 服务给新开发人员一个学习 CVS 操作的机会，相当彻底的了解开发流程。-- 作为显示了有用的技能和高质量的工作结果，他们之后会自然的获得开发权限。此外，大家可以提供相对于 CVS 树的"差异"补丁，它很容易集成。</p>
 
-  <h3><a name="WHICH" id="WHICH"><font color="#0000E0">Use rsh(1) or ssh(1)?</font></a></h3>CVS supports three access methods between the CVS server and the CVS client:
+  <h3><a name="WHICH" id="WHICH"><font color="#0000E0">使用 rsh(1) 还是 ssh(1)?</font></a></h3>CVS 支持客户端使用三种方式访问服务器:
 
   <ul>
-    <li><b>ssh:</b> Secure Shell can be used to access the anonymous CVS servers. This is the <i>recommended</i> way of doing so, as it is encrypted.</li>
+    <li><b>ssh:</b> 它可以用来访问匿名 CVS 服务器。由于它是加密的，所以是<i>被推荐</i>的方式。</li>
 
-    <li><b>rsh:</b> Remote Shell can be used on some of the servers for users who don't have access to <a href="http://www.openssh.com/">ssh</a>.</li>
+    <li><b>rsh:</b> 对于不能访问 <a href="http://www.openssh.com/">ssh</a> 的用户，rsh 可以用来访问某些服务器。</li>
 
-    <li><b>pserver:</b> pserver is primarily useful for users who are behind firewalls that block the other two connections.</li>
+    <li><b>pserver:</b> pserver 主要供在阻塞其它两种访问方式的防火墙后面的用户使用。</li>
   </ul>
 
-  <p><b>NOTE:</b> For users wishing to use rsh, you must first set the <tt>CVS_RSH</tt> environment variable to point to the rsh(1) program:</p>
+  <p><b>注意:</b> 对于希望使用 rsh 的用户，必须先设置环境变量 <tt>CVS_RSH</tt> 指向 rsh(1) 程序:</p>
 
   <ul>
-    <li>For Korn/Bourne shells:
+    <li>对于 ksh/bsh/bash:
       <pre>
         $ <b>export CVS_RSH=/usr/bin/rsh</b>
 </pre>
     </li>
 
-    <li>For csh/tcsh:
+    <li>对于 csh/tcsh:
       <pre>
         % <b>setenv CVS_RSH /usr/bin/rsh</b>
 </pre>
     </li>
   </ul>
 
-  <p>By default, OpenBSD's CVS client uses ssh ("secure shell": <a href="http://www.openssh.com/">OpenSSH</a>) to talk to the CVS server.</p>
+  <p>OpenBSD 的 CVS 客户端默认使用 ssh ("secure shell": <a href="http://www.openssh.com/">OpenSSH</a>) 与 CVS 服务器通信。</p>
 
-  <p>Many of the CVS sites no longer support rsh for security reasons. Local problems like firewalls or imperfect protocol emulators such as slirp may also hinder rsh usage. However, if rsh is desired, one must set the <var>CVS_RSH</var> environment variable to point to rsh (typically <strong>/usr/bin/rsh</strong>).</p>
+  <p>由于安全原因，许多 CVS 站点不再支持 rsh。本地问题，例如防火墙，或者象 slirp 等有缺陷的协议仿真器也可能阻碍使用 rsh。然而，如果希望使用 rsh，必须设置环境变量 <tt>CVS_RSH</tt> 指向 rsh(典型位置是 <strong>/usr/bin/rsh</strong>)。</p>
 
-  <p>If local policy prevents outgoing connections to ssh's default port of 22, port 2022 may be used in its place. Note, however, that not all anoncvs servers accept ssh connections on this port. Furthermore, most anoncvs servers no longer accept the <strong>none</strong> cipher, as it is disabled in recent versions of ssh for security reasons. Also, do not be tempted to turn on compression: CVS already compresses.</p>
+  <p>如果本地策略阻塞 ssh 默认端口 22 的向外连接，某些服务器可以使用端口 2022。注意，不是所有的匿名 CVS 服务器在端口 2022 接受 ssh 连接。此外，由于安全原因，最近的 ssh 版本已经禁用了 <strong>none</strong> 加密算法，因此大多数匿名 CVS服务器也不再支持此算法了。而且，不要试图打开压缩，因为 CVS 已经压缩了。</p>
 
-  <p>One could specify something like the following in the <strong>$HOME/.ssh/config</strong> configuration file to avoid the pitfalls and restrictions mentioned above:</p>
+  <p>某些人可能需要修改配置文件 <strong>$HOME/.ssh/config</strong> 来避免上述缺陷和约束带来的麻烦:</p>
   <pre>
         Host anoncvs.ca.openbsd.org
             Compression no
             Port 2022
 </pre>
 
-  <p>CVS is a little noisy starting up; to quiet it a bit you may want to do this:</p>
+  <p>CVS 启动有些吵闹；你可能想让它安静一些:</p>
   <pre>
         <strong>$ export CVS_CLIENT_PORT=-1</strong>
 </pre>
 
-  <h3><a name="SUP" id="SUP"><font color="#0000E0">Mirroring the CVS repository via sup(1)</font></a></h3>
+  <h3><a name="SUP" id="SUP"><font color="#0000E0">使用 sup(1) 镜像 CVS 版本库</font></a></h3>
 
-  <p>Users wishing to mirror the OpenBSD CVS tree itself may now do so from <em>anoncvs.usa.openbsd.org</em> or <em>anoncvs3.usa.openbsd.org</em> (these are different machines). Note that this is the cvs tree, <b>not</b> a checked out source tree. It is only useful if you want to be able to do fast cvs operations (diff, annotate, etc) or if you have multiple source trees and you only want to transfer new data once (you can then checkout a tree from your local cvs mirror).</p>
+  <p>希望镜像 OpenBSD CVS 的用户可以使用 <em>anoncvs.usa.openbsd.org</em> 或 <em>anoncvs3.usa.openbsd.org</em> (它们是不同的主机)。注意这是 cvs 版本库，<b>不是</b> 检出的代码树。它只对以下情况有用：执行快速 cvs 操作(diff，annotate，等)，或者你有多个源代码树，并且只想传输一次数据(然后你可以从本地 cvs 镜像检出)。</p>
 
-  <p>A sample supfile would be:</p>
+  <p>一个 supfile 的例子:</p>
   <pre>
         cvs host=anoncvs.usa.openbsd.org hostbase=/ base=/home delete
 </pre>
 
-  <p>which would mirror the cvs tree into /home/cvs with the sup data files ending up in /home/sup. The full OpenBSD cvs tree is currently about 3.5GB in size, and will, of course continue to grow.</p>
+  <p>它会将 cvs 版本库镜像到 /home/cvs，保存 sup 数据文件到 /home/sup。全部的 OpenBSD cvs 版本库当前有 3.5 GB，当然将会持续增长。</p>
 
-  <h3><a name="MIRROR" id="MIRROR"><font color="#0000E0">Setting up an anoncvs mirror</font></a></h3>
+  <h3><a name="MIRROR" id="MIRROR"><font color="#0000E0">配置匿名 CVS 镜像</font></a></h3>
 
-  <p>If you wish to setup a new anoncvs mirror site and make it available to the general public, please contact the anoncvs <a href="mailto:sup@openbsd.org">maintainer</a>. Anoncvs mirrors currently require about 3.5GB of disk (and it will grow!), and use up to 32MB of swap per anoncvs user (assuming the user does a large operation; while smaller operations use fewer resources, anoncvs still makes much more of an impact than ftp or sup). Such anoncvs machines should have excellent network connectivity for the area they are expected to serve. A <a href="anoncvs.shar">document</a> which describes the setup of anoncvs servers is available.</p>
+  <p>如果你配置了新的公开服务匿名 CVS 镜像站点，请与匿名 CVS 的<a href="mailto:sup@openbsd.org">维护者</a>联系。匿名 CVS 镜像当前需要大约 3.5GB 磁盘空间(将会持续增长!)，每个匿名 CVS 用户使用 32MB 的 swap 空间(假定用户执行大操作；当然小操作需要的资源也少，但是仍旧比 ftp 或 sup 消耗的多)。这些匿名 CVS 主机应当对于所服务器的地区具有极好的网络性能。有<a href="anoncvs.shar">文档</a> 描述了配置匿名 CVS 服务器的方法。</p>
 
-  <h3><font color="#0000E0">Final notes</font></h3>After upgrading your source tree, you should read the comments at the top of <kbd>/usr/src/Makefile</kbd> before attempting a build. Also, you should build a new kernel <strong>before</strong> doing a <kbd>make build</kbd> if possible. In some cases it may be necessary to rebuild and install the <kbd>config</kbd> utility before you can build the kernel. If <kbd>config GENERIC</kbd> fails this is probably the case.
+  <h3><font color="#0000E0">最后说明</font></h3>更新源代码树之后，你应当在构建之前阅读文件 <kbd>/usr/src/Makefile</kbd> 中的注解。同样，如果可能，你应该在 <kbd>make build</kbd> <strong>之前</strong>构建新内核。某些情况下，你需要在构建新内核之前，重构和安装 <kbd>config</kbd> 工具，尤其是在 <kbd>config GENERIC</kbd> 失败的时候。
 
-  <p>It is important to note that upgrading from a release to the current tree by rebuilding the sources can be rather difficult due to dependencies that are often not obvious. Therefore, it is suggested that you first install the latest snapshot before attempting a tree build from source.</p>
+  <p>重要说明：由于经常有不明显的依赖关系，使用重构从发行版本升级到当前开发版本可能相当困难。因此，建议你在尝试从源代码构建之前先安装最新的<a href="ftp://ftp.openbsd.org/pub/OpenBSD/snapshots/">快照</a>。</p>
   <hr />
   <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt="OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
   <small><!--
