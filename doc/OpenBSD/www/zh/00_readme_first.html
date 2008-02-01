@@ -305,7 +305,7 @@ div#toc a:visited { color: blue; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
-window.onload = function(){generateToc(2)}
+window.onload = function(){generateToc(3)}
 /* Author: Mihai Bazon, September 2002
  * http://students.infoiasi.ro/~mishoo
  *
@@ -375,32 +375,69 @@ function generateToc(toclevels) {
 }
 /*]]>*/
 </script>
-<title></title>
+<title>Translation of the OpenBSD documentation</title>
 </head>
 <body>
 <div id="header">
+<h1>Translation of the OpenBSD documentation</h1>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
 </div>
 </div>
-<h2 id="_install_html_tools">1. Install HTML tools</h2>
+<h2 id="_install_tools">1. Install tools</h2>
 <div class="sectionbody">
-<h3 id="_tidy">1.1. tidy</h3><div style="clear:left"></div>
+<h3 id="_iconv">1.1. iconv</h3><div style="clear:left"></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>$ cd /usr/ports/converters/libiconv
+$ make install
+$ iconv --version
+iconv (GNU libiconv 1.9)
+Copyright (C) 2000-2002 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+Written by Bruno Haible.</tt></pre>
+</div></div>
+<h3 id="_tidy">1.2. tidy</h3><div style="clear:left"></div>
+<div class="para"><p>We prefer tidy:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>$ cd /usr/ports/www/tidy
 $ make install
 $ tidy -v
-HTML Tidy for OpenBSD released on 1 September 2005
-
-$ cvs -d :pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co tidy
+HTML Tidy for OpenBSD released on 1 September 2005</tt></pre>
+</div></div>
+<div class="para"><p>The latest version of tidy is exclusively available through CVS:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>$ cvs -d :pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co tidy
 $ cd tidy/build/gmake
 $ sudo gmake install
 $ tidy -v
 HTML Tidy for OpenBSD released on 25 January 2008</tt></pre>
 </div></div>
-<h3 id="_validate">1.2. validate</h3><div style="clear:left"></div>
+<div class="para"><p>The configuration of tidy:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>$ cat ~/tidy.conf
+bare: yes
+# break-before-br: yes
+doctype: transitional
+drop-empty-paras: yes
+drop-proprietary-attributes: yes
+indent: auto
+newline: LF
+output-bom: no
+output-encoding: utf8
+output-xhtml: yes
+quiet: yes
+tidy-mark: no
+word-2000: yes
+wrap: 0
+write-back: yes</tt></pre>
+</div></div>
+<div class="para"><p>But you can use validate instead:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>$ cd /usr/ports/textproc/validate
@@ -418,31 +455,32 @@ $ linkchecker -V
 LinkChecker 4.5              Copyright (C) 2000-2006 Bastian Kleineidam</tt></pre>
 </div></div>
 </div>
-<h2 id="_validate_correct_and_pretty_html_file">2. Validate, correct, and pretty HTML file</h2>
+<h2 id="_convert_html_file_encoding_from_iso_8859_1_to_utf_8">2. Convert HTML file encoding from  iso-8859-1 to utf-8</h2>
 <div class="sectionbody">
-<h3 id="_tidy_2">2.1. tidy</h3><div style="clear:left"></div>
+<div class="para"><p>Before translation, you must convert HTML files encoding from  iso-8859-1 to utf-8.
+For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>$ iconv -f ISO-8859-1 -t UTF-8 porting.html &gt; zh/porting.html</tt></pre>
+</div></div>
+</div>
+<h2 id="_validate_correct_and_pretty_html_file">3. Validate, correct, and pretty HTML file</h2>
+<div class="sectionbody">
+<div class="para"><p>We prefer tidy:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt># $ sed /^[[:space:]]*$/d example.html &gt; tmp
-Before translate:
-tidy --input-encoding latin1 --output-encoding utf8 -b -i -q --wrap 0 \
-      --output-bom no --newline LF -asxhtml --doctype transitional \
-      --tidy-mark no -m translation.html
 
-After translate:
-$ tidy -utf8 -b -i -q --wrap 0 \
-      --output-bom no --newline LF -asxhtml --doctype transitional \
-      --tidy-mark no -m example.html</tt></pre>
+$ tidy -config ~/tidy.conf -utf8 example.html</tt></pre>
 </div></div>
-<h3 id="_validate_2">2.2. validate</h3><div style="clear:left"></div>
+<div class="para"><p>But you can use validate instead:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>$ validate -w --charset=utf-8 example.html</tt></pre>
 </div></div>
 </div>
-<h2 id="_check_html_file_for_broken_links">3. Check HTML file for broken links</h2>
+<h2 id="_check_html_file_for_broken_links">4. Check HTML file for broken links</h2>
 <div class="sectionbody">
-<h3 id="_linkchecker_2">3.1. linkchecker</h3><div style="clear:left"></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>$ linkchecker -r 1 example.html</tt></pre>
@@ -450,7 +488,7 @@ $ tidy -utf8 -b -i -q --wrap 0 \
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2008-01-28 01:20:22 CST
+Last updated 2008-02-01 15:08:19 CST
 </div>
 </div>
 </body>
