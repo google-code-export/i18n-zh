@@ -10,7 +10,7 @@
   <meta name="description" content="How to get OpenBSD updates via Internet using CVSync" />
   <meta name="keywords" content="openbsd,cvsync,updates" />
   <meta name="distribution" content="global" />
-  <meta name="copyright" content="This document copyright 2003-2007 by OpenBSD." />
+  <meta name="copyright" content="This document copyright 2003-2008 by OpenBSD." />
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000" link="#23238E">
@@ -28,7 +28,7 @@
 
     <li><a href="#starting">开始使用 CVSync</a></li>
 
-    <li><a href="#using">使用 CVS 更新源代码</a></li>
+    <li><a href="#using">使用 CVS 操作你的版本库</a></li>
 
     <li><a href="#CVSROOT">可用的 CVSync 服务器</a></li>
   </ul>
@@ -91,21 +91,14 @@
         cvsync -c cvs-syncfile
 </pre>
 
-  <h3><a name="using" id="using"><font color="#0000E0">使用 CVS 更新源代码</font></a></h3>
+  <h3><a name="using" id="using"><font color="#0000E0">使用 CVS 操作你的版本库</font></a></h3>
 
-  <p>现在从用 CVSync 同步的版本库检出任意模块都很简单:</p>
+  <p>现在你有了 CVS 版本库的本地副本，可以在本地象操作远程版本库一样操作，例如检出、更新，或者其它的 CVS 操作。例如:</p>
   <pre>
-        # cd /usr
-        # cvs -d /cvs checkout src
-</pre>
-
-  <p>上述命令会检出当前最新的代码。许多情况下你只需要稳定版本的源代码，尤其是为你的系统打补丁的时候。要检出稳定版本的代码，必须在命令中指定标签。例如:</p>
-  <pre>
-        # cd /usr
-        # cvs -d /cvs checkout -rOPENBSD_3_5 src
-</pre>
-
-  <p>或者使用 <tt>OPENBSD_3_4</tt> 检出 3.4 的稳定版本，等等。</p>
+        cvs -d/cvs checkout src -P
+        cvs -d/cvs up -Pd
+        cvs -d/cvs diff -u file.c
+</pre>关于 CVS 操作更详细的信息位于 <a href="../faq/faq5.html#BldGetSrc">FAQ5，获取适当的源代码</a> 和 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cvs&amp;sektion=1">cvs(1)</a> 手册页。
 
   <h3><a name="CVSROOT" id="CVSROOT"><font color="#0000E0">可用的 CVSync 服务器</font></a></h3>
 
@@ -161,7 +154,7 @@
 
   <p>你可能想用 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=traceroute&amp;sektion=8&amp;format=html">traceroute(8)</a> 来找出距离你最近的服务器。当发现服务器有问题请报告给我们的<b>维护者</b>。</p>
 
-  <p>在2006年8月21日，CVS 版本库的大小是:</p>
+  <p>在2008年1月，CVS 版本库的大小是:</p>
 
   <table>
     <tr>
@@ -169,7 +162,7 @@
 
       <td><strong>openbsd-ports</strong></td>
 
-      <td>- <b>222</b>MB</td>
+      <td>- <b>310</b>MB</td>
     </tr>
 
     <tr>
@@ -177,7 +170,7 @@
 
       <td><strong>openbsd-src</strong></td>
 
-      <td>- <b>1396</b>MB</td>
+      <td>- <b>1500</b>MB</td>
     </tr>
 
     <tr>
@@ -185,7 +178,15 @@
 
       <td><strong>openbsd-www</strong></td>
 
-      <td>- <b>247</b>MB</td>
+      <td>- <b>350</b>MB</td>
+    </tr>
+
+    <tr>
+      <td></td>
+
+      <td><strong>openbsd-xenocara</strong></td>
+
+      <td>- <b>600</b>MB</td>
     </tr>
 
     <tr>
@@ -201,7 +202,7 @@
 
       <td><strong>openbsd-xf4</strong></td>
 
-      <td>- <b>562</b>MB</td>
+      <td>- <b>564</b>MB</td>
     </tr>
 
     <tr>
@@ -214,50 +215,6 @@
   </table>
 
   <p>全部版本库的大小以每年 <b>400</b>MB 的速度增长。</p>
-
-  <p>译者在本地镜像了 ports，src，www 和 xenocara。在2008年1月28日，以 du(1) 的输出为准，版本库根目录的大小是 <b>2753</b>MB，相关目录的大小是:</p>
-
-  <table>
-    <tr>
-      <td width="20"></td>
-
-      <td><strong>CVSROOT</strong></td>
-
-      <td>- <b>86</b>MB</td>
-    </tr>
-
-    <tr>
-      <td></td>
-
-      <td><strong>ports</strong></td>
-
-      <td>- <b>304</b>MB</td>
-    </tr>
-
-    <tr>
-      <td></td>
-
-      <td><strong>src</strong></td>
-
-      <td>- <b>1452</b>MB</td>
-    </tr>
-
-    <tr>
-      <td></td>
-
-      <td><strong>www</strong></td>
-
-      <td>- <b>333</b>MB</td>
-    </tr>
-
-    <tr>
-      <td></td>
-
-      <td><strong>xenocara</strong></td>
-
-      <td>- <b>579</b>MB</td>
-    </tr>
-  </table>
 
   <p><strong>重要说明:</strong> 有一些与加密软件相关的问题每个人都应该注意:</p>
 
@@ -301,8 +258,8 @@
   <hr />
   <a href="index.html"><img height="24" width="24" src="../back.gif" border="0" alt="OpenBSD" /></a> <a href="mailto:www@openbsd.org">www@openbsd.org</a><br />
   <small><!--
-Originally [OpenBSD: cvsync.html,v 1.47 ]<br>
+Originally [OpenBSD: cvsync.html,v 1.50 ]<br>
 $Translation$<br>
--->$OpenBSD: cvsync.html,v 1.47 2008/01/14 15:49:54 grunk Exp $</small>
+-->$OpenBSD: cvsync.html,v 1.50 2008/01/31 01:56:07 nick Exp $</small>
 </body>
 </html>
