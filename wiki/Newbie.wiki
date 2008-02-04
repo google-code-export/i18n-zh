@@ -24,3 +24,35 @@
     msgmerge --no-wrap -o zh_CN-new.po zh_CN.po foo.pot
     mv -f zh_CN-new.po zh_CN.po
 }}}
+
+= 常见错误(Q&A)欢迎补充 =
+ * Q:Desktop/zh_CN.po:158: 'msgid' and 'msgstr`[`1`]`' entries do not both end with '\n'
+原文如下：
+{{{
+    #: driver.c:819
+    #, c-format
+    msgid "fetchlimit %d reached; %d message left on server %s account %s\n"
+    msgid_plural ""
+    "fetchlimit %d reached; %d messages left on server %s account %s\n"
+    msgstr[0] "达到收件上限 %d；%d 邮件留在了服务器 %s 帐号为 %s\n"
+    msgstr[1] ""
+}}}
+    我在一开始已经做好了"Plural-Forms: nplurals=1; plural=0;\n"，怎么会出现这种错误呢？不是只取 msgstr`[`0`]`中的翻译吗？msgstr`[`1`]` 中是用不着的啊。
+*A:把 msgstr`[`1`]` "" 删掉*
+----
+ 
+ * Q:Desktop/zh_CN.po:164: 'msgstr' is not a valid C format string, unlike 'msgid'. Reason: In the directive number 1, the character '$' is not a valid conversion specifier.
+原文如下：
+{{{
+  #: driver.c:876
+  #, c-format
+  msgid "timeout after %d seconds waiting to connect to server %s.\n"
+  msgstr "在等待连接服务器 %$2s %$1d 秒后超时\n"
+}}}
+  因为我想交换两个字符串的位置。但出错了。
+*A:是 %2$s %1$d，而不是 %$2s。注意 ‘$’ 和 ‘2’ 的位置关系！*
+
+----
+ * Q:我用了 po-mode.el，但当我按 <DEL> 的时候，它不会自动加上 fuzzy 标识。可快捷键明明是 <DEL> 啊。我知道这是由于 emacs 对 <DEL> 键进行了点映射，能告诉我怎么办啊？
+*A：我一般用 backspace*
+----
