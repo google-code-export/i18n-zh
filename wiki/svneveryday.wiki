@@ -56,16 +56,17 @@ svn add *
 上面有段命令是新建一个工程时，一直要做的。命令很多，但每次都很有规律，所以嘛，呵呵。我写成了脚本
 {{{
    #!/bin/bash
-   # filename: genpo
-   mkdir $1
-   mv $1.pot $1
-   cd $1
+   # filename: genpo.sh
+   echo -n "Enter a directory name: "
+   read d_name
+   mkdir ${d_name}
+   mv $1.pot ${d_name}
+   cd ${d_name}
    msginit -l zh_CN.utf8
    mv zh_CN.po $1.zh_CN.po
    cd ..
-   svn add $1
-   vi $1/$1.zh_CN.po
+   svn add ${d_name}
+   vi ${d_name}/$1.zh_CN.po
 }}}
-   这样，我把下载到的 pot 放在了 myworkplace 目录下。然后用 `genpo 文件名-版本号` 不要带后缀 .pot。
-编辑好以后，我直接 `svn ci` 就 OK 了。
+   这样，以后把下载到的 pot 放在 myworkplace 目录下。然后用 `genpo.sh 文件名-版本号` 不要带后缀 .pot。编辑好以后，直接 `svn ci` 就 OK 了。
 [TP 回到TP]
