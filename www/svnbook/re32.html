@@ -1,0 +1,60 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>svn update</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="ch09.html#svn.ref.svn.c" title="svn Subcommands"><link rel="prev" href="re31.html" title="svn unlock"><link rel="next" href="ch09s02.html" title="svnadmin"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">svn update</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="re31.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center"><span class="command"><strong>svn</strong></span> Subcommands</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch09s02.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="refentry" lang="zh-cn"><a name="svn.ref.svn.c.update"></a><div class="titlepage"></div><a class="indexterm" name="d0e19671"></a><div class="refnamediv"><h2>&#21517;&#31216;</h2><p>svn update &#8212; &#26356;&#26032;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#12290;</p></div><div class="refsection" lang="zh-cn"><a name="d0e19683"></a><h2>&#27010;&#35201;</h2><pre class="programlisting">svn update [PATH...]</pre></div><div class="refsection" lang="zh-cn"><a name="d0e19689"></a><h2>&#25551;&#36848;</h2><p><span class="command"><strong>svn update</strong></span> brings changes from the
+            repository into your working copy.  If no revision is given,
+            it brings your working copy up-to-date with the
+            <code class="literal">HEAD</code> revision.  Otherwise, it
+            synchronizes the working copy to the revision given by the
+            <code class="option">--revision</code> option.  As part of the
+            synchronization, <span class="command"><strong>svn update</strong></span> also
+            removes any stale locks (see <a class="xref" href="ch02s06.html" title="&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;">&#8220;&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;&#8221;&#19968;&#33410;</a>) found in the
+            working copy.</p><p>For each updated item, it prints a line that starts
+            with a character reporting the action taken.  These
+            characters have the following meaning:</p><div class="variablelist"><dl><dt><span class="term">A</span></dt><dd><p>&#28155;&#21152;</p></dd><dt><span class="term">D</span></dt><dd><p>&#21024;&#38500;</p></dd><dt><span class="term">U</span></dt><dd><p>&#26356;&#26032;</p></dd><dt><span class="term">C</span></dt><dd><p>Conflicted</p></dd><dt><span class="term">G</span></dt><dd><p>&#21512;&#24182;</p></dd><dt><span class="term">E</span></dt><dd><p>Existed</p></dd></dl></div><p>&#31532;&#19968;&#21015;&#30340;&#23383;&#31526;&#21453;&#26144;&#25991;&#20214;&#26412;&#36523;&#30340;&#26356;&#26032;&#65292;&#32780;&#31532;&#20108;&#21015;&#20250;&#21453;&#26144;&#25991;&#20214;&#23646;&#24615;&#30340;&#26356;&#26032;&#12290;</p><p>As with most subcommands, you can limit the scope of
+            the update operation to a particular tree depth using the
+            <code class="option">--depth</code> option.  Alternatively, you can
+            use the --set-depth option to set a new
+            &#8220;<span class="quote">sticky</span>&#8221; working copy depth on the update
+            target.  Currently, the depth of a working copy directory
+            can only be increased (telescoped more deeply); you cannot
+            make a directory more shallow.</p></div><div class="refsection" lang="zh-cn"><a name="d0e19757"></a><h2>&#21035;&#21517;</h2><p>up</p></div><div class="refsection" lang="zh-cn"><a name="d0e19763"></a><h2>&#25913;&#21464;</h2><p>&#24037;&#20316;&#25335;&#36125;2</p></div><div class="refsection" lang="zh-cn"><a name="d0e19769"></a><h2>&#26159;&#21542;&#35775;&#38382;&#29256;&#26412;&#24211;</h2><p>&#26159;</p></div><div class="refsection" lang="zh-cn"><a name="d0e19775"></a><h2>&#36873;&#39033;</h2><pre class="screen">
+--revision (-r) REV
+--depth ARG
+--set-depth ARG
+--force
+--quiet (-q)
+--no-ignore
+--incremental
+--diff3-cmd CMD
+--editor-cmd ARG
+--accept ARG
+--username USER
+--password PASS
+--no-auth-cache
+--non-interactive
+--config-dir DIR
+--ignore-externals
+--changelist
+</pre></div><div class="refsection" lang="zh-cn"><a name="d0e19781"></a><h2>&#20363;&#23376;</h2><p>&#33719;&#21462;&#20320;&#19978;&#27425;&#26356;&#26032;&#20043;&#21518;&#29256;&#26412;&#24211;&#30340;&#20462;&#25913;&#65306;</p><pre class="screen">
+$ svn update
+A  newdir/toggle.c
+A  newdir/disclose.c
+A  newdir/launch.c
+D  newdir/README
+Updated to revision 32.
+</pre><p>You can also &#8220;<span class="quote">update</span>&#8221; your working copy
+            to an older revision (Subversion doesn't have the concept
+            of &#8220;<span class="quote">sticky</span>&#8221; files like CVS does; see <a class="xref" href="apb.html" title="&#38468;&#24405;&nbsp;B.&nbsp;CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;">&#38468;&#24405;&nbsp;B, <i>CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;</i></a>):</p><pre class="screen">
+$ svn update -r30
+A  newdir/README
+D  newdir/toggle.c
+D  newdir/disclose.c
+D  newdir/launch.c
+U  foo.c
+Updated to revision 30.
+</pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#25552;&#31034;</h3><p>If you want to examine an older revision of a
+              single file, you may want to use <span class="command"><strong>svn
+              cat</strong></span> instead&#8212;it won't change your working
+              copy.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="re31.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch09.html#svn.ref.svn.c">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch09s02.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">svn unlock&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;
+          <span class="command"><strong>svnadmin</strong></span>
+        </td></tr></table></div></body></html>

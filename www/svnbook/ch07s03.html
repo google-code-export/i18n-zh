@@ -1,0 +1,48 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Using External Editors</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="ch07.html" title="&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340; Subversion &#29992;&#27861;"><link rel="prev" href="ch07s02.html" title="&#26412;&#22320;&#21270;"><link rel="next" href="ch07s04.html" title="Using External Differencing and Merge Tools"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using External Editors</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch07s02.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340; Subversion &#29992;&#27861;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch07s04.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.advanced.externaleditors"></a>Using External Editors</h2></div></div></div><p>The most obvious way to get data into Subversion is through
+      the addition of files to version control, committing changes to
+      those files, and so on.  But there are other pieces of
+      information besides merely versioned file data that live in your
+      Subversion repository.  Some of these bits of
+      information&#8212;commit log messages, lock comments, and some
+      property values&#8212;tend to be textual in nature and are
+      provided explicitly by users.  Most of this information can be
+      provided to the Subversion command-line client using the
+      <code class="option">--message (-m)</code> and <code class="option">--file (-F)</code>
+      options with the appropriate subcommands.</p><p>Each of these options has its pros and cons.  For example,
+      when performing a commit, <code class="option">--file (-F)</code> works
+      well if you've already prepared a text file that holds your
+      commit log message.  If you didn't, though, you can use
+      <code class="option">--message (-m)</code> to provide a log message on the
+      command line.  Unfortunately, it can be tricky to compose
+      anything more than a simple one-line message on the command line.
+      Users want more flexibility&#8212;multi-line, free-form log
+      message editing on demand.</p><p>Subversion supports this by allowing you to specify an
+      external text editor which it will launch as necessary in order
+      to give you a more powerful input mechanism for this textual
+      metadata.  There are several ways to tell Subversion which
+      editor you'd like use.  Subversion checks the following things,
+      in the order specified, when it wants to launch such an
+      editor:</p><div class="orderedlist"><ol type="1"><li><p><code class="literal">--editor-cmd</code> command-line option</p></li><li><p><code class="literal">SVN_EDITOR</code> environment variable</p></li><li><p><code class="literal">editor-cmd</code> runtime configuration option</p></li><li><p><code class="literal">VISUAL</code> environment variable</p></li><li><p><code class="literal">EDITOR</code> environment variable</p></li><li><p>Possibly, a fallback value built into the Subversion
+          libraries (not present in the official builds)</p></li></ol></div><p>The value of any of these options or variables is the
+      beginning of a command line to be executed by the shell.
+      Subversion appends to that command line a space and the pathname
+      of a temporary file to be edited.  So, in order to be used with
+      Subversion, the configured or specified editor needs to support
+      an invocation in which its last command-line parameter is a file
+      to be edited, and it should be able to save the file in place
+      and return a zero exit code to indicate success.</p><p>As noted, external editors can be used to provide commit log
+      messages to any of the committing subcommands (such as
+      <span class="command"><strong>svn commit</strong></span> or <span class="command"><strong>import</strong></span>,
+      <span class="command"><strong>svn mkdir</strong></span> or <span class="command"><strong>delete</strong></span> when
+      provided a URL target, and so on), and Subversion will try to
+      launch the editor automatically if you don't specify either of
+      the <code class="option">--message (-m)</code> or <code class="option">--file
+      (-F)</code> options.  The <span class="command"><strong>svn propedit</strong></span>
+      command is built almost entirely around the use of an external
+      editor.  And beginning in version 1.5, Subversion will also use
+      the configured external text editor when the user asks it to
+      launch an editor during interactive conflict resolution.  Oddly,
+      there doesn't appear to be a way to use external editors to
+      interactively provide lock comments.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch07s02.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch07.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch07s04.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#26412;&#22320;&#21270;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Using External Differencing and Merge Tools</td></tr></table></div></body></html>

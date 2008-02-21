@@ -1,0 +1,174 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#20351;&#29992;&#20998;&#25903;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="ch04.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;"><link rel="prev" href="ch04.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;"><link rel="next" href="ch04s03.html" title="Basic Merging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#20351;&#29992;&#20998;&#25903;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch04s03.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.branchmerge.using"></a>&#20351;&#29992;&#20998;&#25903;</h2></div></div></div><p>&#22312;&#36825;&#19968;&#28857;&#19978;&#65292;&#20320;&#24517;&#39035;&#29702;&#35299;&#27599;&#19968;&#27425;&#25552;&#20132;&#26159;&#24590;&#26679;&#24314;&#31435;&#25972;&#20010;&#26032;&#30340;&#25991;&#20214;&#31995;&#32479;&#26641;&#65288;&#21483;&#20570;&#8220;<span class="quote">&#20462;&#35746;&#29256;&#26412;</span>&#8221;&#65289;&#30340;&#65292;&#22914;&#26524;&#27809;&#26377;&#65292;&#21487;&#20197;&#22238;&#22836;&#21435;&#35835;<a class="xref" href="ch01s03.html#svn.basic.in-action.revs" title="&#20462;&#35746;&#29256;&#26412;">&#8220;&#20462;&#35746;&#29256;&#26412;&#8221;&#19968;&#33410;</a>&#12290;</p><p>&#23545;&#20110;&#26412;&#31456;&#33410;&#65292;&#25105;&#20204;&#20250;&#22238;&#21040;<a class="xref" href="ch01.html" title="&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;">&#31532;&nbsp;1&nbsp;&#31456; <i>&#22522;&#26412;&#27010;&#24565;</i></a>&#30340;&#21516;&#19968;&#20010;&#20363;&#23376;&#65292;&#36824;&#35760;&#24471;&#20320;&#21644;&#20320;&#30340;&#21512;&#20316;&#32773;Sally&#20998;&#20139;&#19968;&#20010;&#21253;&#21547;&#20004;&#20010;&#39033;&#30446;&#30340;&#29256;&#26412;&#24211;&#65292;<code class="filename">paint</code>&#21644;<code class="filename">calc</code>&#12290;&#27880;&#24847;<a class="xref" href="ch04s02.html#svn.branchmerge.using.dia-1" title="&#22270;&nbsp;4.2.&nbsp;&#24320;&#22987;&#35268;&#21010;&#29256;&#26412;&#24211;">&#22270;&nbsp;4.2 &#8220;&#24320;&#22987;&#35268;&#21010;&#29256;&#26412;&#24211;&#8221;</a>&#65292;&#28982;&#32780;&#65292;&#29616;&#22312;&#27599;&#20010;&#39033;&#30446;&#30340;&#37117;&#26377;&#19968;&#20010;<code class="filename">trunk</code>&#21644;<code class="filename">branches</code>&#23376;&#30446;&#24405;&#65292;&#23427;&#20204;&#23384;&#22312;&#30340;&#29702;&#30001;&#24456;&#24555;&#23601;&#20250;&#28165;&#26224;&#36215;&#26469;&#12290;</p><div class="figure"><a name="svn.branchmerge.using.dia-1"></a><p class="title"><b>&#22270;&nbsp;4.2.&nbsp;&#24320;&#22987;&#35268;&#21010;&#29256;&#26412;&#24211;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch04dia2.png"></div></div></div><br class="figure-break"><p>&#20687;&#20197;&#21069;&#19968;&#26679;&#65292;&#20551;&#23450;Sally&#21644;&#20320;&#37117;&#26377;&#8220;<span class="quote">calc</span>&#8221;&#39033;&#30446;&#30340;&#19968;&#20221;&#25335;&#36125;&#65292;&#26356;&#20934;&#30830;&#22320;&#35828;&#65292;&#20320;&#26377;&#19968;&#20221;<code class="filename">/calc/trunk</code>&#30340;&#24037;&#20316;&#25335;&#36125;&#65292;&#36825;&#20010;&#39033;&#30446;&#30340;&#25152;&#26377;&#30340;&#25991;&#20214;&#22312;&#36825;&#20010;&#23376;&#30446;&#24405;&#37324;&#65292;&#32780;&#19981;&#26159;&#22312;<code class="filename">/calc</code>&#19979;&#65292;&#22240;&#20026;&#20320;&#30340;&#23567;&#32452;&#20915;&#23450;&#20351;&#29992;<code class="filename">/calc/trunk</code>&#20316;&#20026;&#24320;&#21457;&#20351;&#29992;&#30340;&#8220;<span class="quote">&#20027;&#32447;</span>&#8221;&#12290;</p><p>Let's say that you've been given the task of implementing a
+      large software feature.  It will take a long time to write, and
+      will affect all the files in the project.  The immediate problem
+      is that you don't want to interfere with Sally, who is in the
+      process of fixing small bugs here and there.  She's depending on
+      the fact that the latest version of the project (in
+      <code class="filename">/calc/trunk</code>) is always usable.  If you
+      start committing your changes bit-by-bit, you'll surely break
+      things for Sally (and other team members as well.)</p><p>One strategy is to crawl into a hole: you and Sally can stop
+      sharing information for a week or two.  That is, start gutting
+      and reorganizing all the files in your working copy, but don't
+      commit or update until you're completely finished with the task.
+      There are a number of problems with this, though.  First, it's
+      not very safe.  Most people like to save their work to the
+      repository frequently, should something bad accidentally happen
+      to their working copy.  Second, it's not very flexible.  If you
+      do your work on different computers (perhaps you have a working
+      copy of <code class="filename">/calc/trunk</code> on two different
+      machines), you'll need to manually copy your changes back and
+      forth, or just do all the work on a single computer.  By that
+      same token, it's difficult to share your changes-in-progress
+      with anyone else.  A common software development &#8220;<span class="quote">best
+      practice</span>&#8221; is to allow your peers to review your work as
+      you go.  If nobody sees your intermediate commits, you lose
+      potential feedback, and may end up going down the wrong path for
+      weeks before another person on your team notices.  Finally, when
+      you're finished with all your changes, you might find it very
+      difficult to re-merge your final work with the rest of the
+      company's main body of code.  Sally (or others) may have made
+      many other changes in the repository that are difficult to
+      incorporate into your working copy&#8212;especially if you
+      run <span class="command"><strong>svn update</strong></span> after weeks of
+      isolation.</p><p>The better solution is to create your own branch, or line of
+      development, in the repository.  This allows you to save your
+      half-broken work frequently without interfering with others, yet
+      you can still selectively share information with your
+      collaborators.  You'll see exactly how this works as we go.
+      </p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.using.create"></a>&#21019;&#24314;&#20998;&#25903;</h3></div></div></div><p>&#24314;&#31435;&#20998;&#25903;&#38750;&#24120;&#30340;&#31616;&#21333;&#8212;&#20351;&#29992;<span class="command"><strong>svn copy</strong></span>&#21629;&#20196;&#32473;&#20320;&#30340;&#24037;&#31243;&#20570;&#20010;&#25335;&#36125;&#65292;Subversion&#19981;&#20165;&#21487;&#20197;&#25335;&#36125;&#21333;&#20010;&#25991;&#20214;&#65292;&#20063;&#21487;&#20197;&#25335;&#36125;&#25972;&#20010;&#30446;&#24405;&#65292;&#22312;&#30446;&#21069;&#24773;&#20917;&#19979;&#65292;&#20320;&#24076;&#26395;&#20316;<code class="filename">/calc/trunk</code>&#30340;&#25335;&#36125;&#65292;&#26032;&#30340;&#25335;&#36125;&#24212;&#35813;&#22312;&#21738;&#37324;&#65311;&#22312;&#20320;&#24076;&#26395;&#30340;&#20219;&#20309;&#22320;&#26041;&#8212;&#23427;&#21482;&#26159;&#22312;&#20110;&#39033;&#30446;&#30340;&#25919;&#31574;&#65292;&#25105;&#20204;&#20551;&#35774;&#20320;&#20204;&#39033;&#30446;&#30340;&#25919;&#31574;&#26159;&#22312;<code class="filename">/calc/branches</code>&#24314;&#31435;&#20998;&#25903;&#65292;&#24182;&#19988;&#20320;&#24076;&#26395;&#25226;&#20320;&#30340;&#20998;&#25903;&#21483;&#20570;<code class="literal">my-calc-branch</code>&#65292;&#20320;&#24076;&#26395;&#24314;&#31435;&#19968;&#20010;&#26032;&#30340;&#30446;&#24405;<code class="filename">/calc/branches/my-calc-branch</code>&#65292;&#20316;&#20026;/calc/trunk&#30340;&#25335;&#36125;&#24320;&#22987;&#23427;&#30340;&#29983;&#21629;&#21608;&#26399;&#12290;</p><p>At this point, you might have seen <span class="command"><strong>svn
+        copy</strong></span> used to copy one file to another within a
+        working copy.  But it can also be used to do
+        a &#8220;<span class="quote">remote</span>&#8221; copy entirely within the repository.
+        Just copy one URL to another:</p><pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/branches/my-calc-branch \
+      -m "Creating a private branch of /calc/trunk."
+
+Committed revision 341.
+</pre><p>This command causes a near-instantaneous commit in the
+        repository, creating a new directory in revision 341.  The new
+        directory is a copy of <code class="filename">/calc/trunk</code>.  This
+        is shown in
+        <a class="xref" href="ch04s02.html#svn.branchmerge.using.create.dia-1" title="&#22270;&nbsp;4.3.&nbsp;&#29256;&#26412;&#24211;&#19982;&#22797;&#21046;">&#22270;&nbsp;4.3 &#8220;&#29256;&#26412;&#24211;&#19982;&#22797;&#21046;&#8221;</a>.
+        <sup>[<a name="d0e6425" href="#ftn.d0e6425" class="footnote">20</a>]</sup>
+
+        While it's also possible to create a branch by
+        using <span class="command"><strong>svn copy</strong></span> to duplicate a directory
+        within the working copy, this technique isn't recommended.  It
+        can be quite slow, in fact!  Copying a directory on the
+        client-side is a linear-time operation, in that it actually
+        has to duplicate every file and subdirectory on local disk.
+        Copying a directory on the server, however, is a constant-time
+        operation, and it's the way most people create
+        branches.</p><div class="figure"><a name="svn.branchmerge.using.create.dia-1"></a><p class="title"><b>&#22270;&nbsp;4.3.&nbsp;&#29256;&#26412;&#24211;&#19982;&#22797;&#21046;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch04dia3.png"></div></div></div><br class="figure-break"><div class="sidebar"><p class="title"><b>&#24265;&#20215;&#22797;&#21046;</b></p><p>Subversion's repository has a special design.  When you
+          copy a directory, you don't need to worry about the
+          repository growing huge&#8212;Subversion doesn't actually
+          duplicate any data.  Instead, it creates a new directory
+          entry that points to an <span class="emphasis"><em>existing</em></span> tree.
+          If you're an experienced Unix user, you'll recognize this as
+          the same concept behind a hard-link.  As further changes are
+          made to files and directories beneath the copied directory,
+          Subversion continues to employ this hard-link concept where
+          it can.  It only duplicates data when it is necessary to
+          disambiguate different versions of objects.</p><p>This is why you'll often hear Subversion users talk
+          about &#8220;<span class="quote">cheap copies</span>&#8221;.  It doesn't matter how
+          large the directory is&#8212;it takes a very tiny, constant
+          amount of time and space to make a copy of it.  In fact,
+          this feature is the basis of how commits work in Subversion:
+          each revision is a &#8220;<span class="quote">cheap copy</span>&#8221; of the previous
+          revision, with a few items lazily changed within.  (To read
+          more about this, visit Subversion's website and read about
+          the &#8220;<span class="quote">bubble up</span>&#8221; method in Subversion's design
+          documents.)</p><p>&#24403;&#28982;&#65292;&#25335;&#36125;&#19982;&#20998;&#20139;&#30340;&#20869;&#37096;&#26426;&#21046;&#23545;&#29992;&#25143;&#26469;&#35762;&#26159;&#19981;&#21487;&#35265;&#30340;&#65292;&#29992;&#25143;&#21482;&#26159;&#30475;&#21040;&#25335;&#36125;&#26641;&#65292;&#36825;&#37324;&#30340;&#35201;&#28857;&#26159;&#25335;&#36125;&#30340;&#26102;&#38388;&#19982;&#31354;&#38388;&#20195;&#20215;&#24456;&#23567;&#12290;&#22914;&#26524;&#20320;&#23436;&#20840;&#22312;&#29256;&#26412;&#24211;&#37324;&#21019;&#24314;&#20998;&#25903;&#65288;&#36890;&#36807;&#36816;&#34892;<span class="command"><strong>svn copy URL1 URL2</strong></span>&#65289;&#65292;&#36825;&#26159;&#19968;&#20010;&#24555;&#36895;&#30340;&#65292;&#26102;&#38388;&#22522;&#26412;&#22266;&#23450;&#30340;&#25805;&#20316;&#65292;&#21482;&#35201;&#20320;&#24076;&#26395;&#65292;&#21487;&#20197;&#38543;&#24847;&#21019;&#24314;&#20998;&#25903;&#12290;</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.using.work"></a>&#22312;&#20998;&#25903;&#19978;&#24037;&#20316;</h3></div></div></div><p>&#29616;&#22312;&#20320;&#24050;&#32463;&#22312;&#39033;&#30446;&#37324;&#24314;&#31435;&#20998;&#25903;&#20102;&#65292;&#20320;&#21487;&#20197;&#21462;&#20986;&#19968;&#20010;&#26032;&#30340;&#24037;&#20316;&#25335;&#36125;&#26469;&#24320;&#22987;&#20351;&#29992;&#65306;</p><pre class="screen">
+$ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch
+A  my-calc-branch/Makefile
+A  my-calc-branch/integer.c
+A  my-calc-branch/button.c
+Checked out revision 341.
+</pre><p>There's nothing special about this working copy; it simply
+        mirrors a different directory in the repository.  When you
+        commit changes, however, Sally won't see them when she
+        updates, because her working copy is of
+        <code class="filename">/calc/trunk</code>.  (Be sure to read <a class="xref" href="ch04s05.html" title="&#20351;&#29992;&#20998;&#25903;">&#8220;&#20351;&#29992;&#20998;&#25903;&#8221;&#19968;&#33410;</a> later in this chapter: the
+        <span class="command"><strong>svn switch</strong></span> command is an alternate way of
+        creating a working copy of a branch.)</p><p>&#25105;&#20204;&#20551;&#23450;&#26412;&#21608;&#23601;&#35201;&#36807;&#21435;&#20102;&#65292;&#22914;&#19979;&#30340;&#25552;&#20132;&#21457;&#29983;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>&#20320;&#20462;&#25913;&#20102;<code class="filename">/calc/branches/my-calc-branch/button.c</code>&#65292;&#29983;&#25104;&#20462;&#35746;&#29256;&#26412;342&#12290;</p></li><li><p>&#20320;&#20462;&#25913;&#20102;<code class="filename">/calc/branches/my-calc-branch/integer.c</code>&#65292;&#29983;&#25104;&#20462;&#35746;&#29256;&#26412;343&#12290;</p></li><li><p>Sally&#20462;&#25913;&#20102;<code class="filename">/calc/trunk/integer.c</code>&#65292;&#29983;&#25104;&#20102;&#20462;&#35746;&#29256;&#26412;344&#12290;</p></li></ul></div><p>&#29616;&#22312;&#26377;&#20004;&#20010;&#29420;&#31435;&#24320;&#21457;&#32447;&#65292;<a class="xref" href="ch04s02.html#svn.branchmerge.using.work.dia-1" title="&#22270;&nbsp;4.4.&nbsp;&#19968;&#20010;&#25991;&#20214;&#30340;&#20998;&#25903;&#21382;&#21490;">&#22270;&nbsp;4.4 &#8220;&#19968;&#20010;&#25991;&#20214;&#30340;&#20998;&#25903;&#21382;&#21490;&#8221;</a>&#26174;&#31034;&#20102;<code class="filename">integer.c</code>&#30340;&#21382;&#21490;&#12290;</p><div class="figure"><a name="svn.branchmerge.using.work.dia-1"></a><p class="title"><b>&#22270;&nbsp;4.4.&nbsp;&#19968;&#20010;&#25991;&#20214;&#30340;&#20998;&#25903;&#21382;&#21490;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch04dia4.png"></div></div></div><br class="figure-break"><p>&#24403;&#20320;&#30475;&#21040;<code class="filename">integer.c</code>&#30340;&#25913;&#21464;&#26102;&#65292;&#20320;&#20250;&#21457;&#29616;&#24456;&#26377;&#36259;&#65306;</p><pre class="screen">
+$ pwd
+/home/user/my-calc-branch
+
+$ svn log -v integer.c
+------------------------------------------------------------------------
+r343 | user | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Changed paths:
+   M /calc/branches/my-calc-branch/integer.c
+
+* integer.c:  frozzled the wazjub.
+
+------------------------------------------------------------------------
+r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Changed paths:
+   A /calc/branches/my-calc-branch (from /calc/trunk:340)
+
+Creating a private branch of /calc/trunk.
+
+------------------------------------------------------------------------
+r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines
+Changed paths:
+   M /calc/trunk/integer.c
+
+* integer.c:  changed a docstring.
+
+------------------------------------------------------------------------
+r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines
+Changed paths:
+   A /calc/trunk/integer.c
+
+* integer.c:  adding this file to the project.
+
+------------------------------------------------------------------------
+</pre><p>&#27880;&#24847;&#65292;Subversion&#36861;&#36394;&#20998;&#25903;&#19978;&#30340;<code class="filename">integer.c</code>&#30340;&#21382;&#21490;&#65292;&#21253;&#25324;&#25152;&#26377;&#30340;&#25805;&#20316;&#65292;&#29978;&#33267;&#36861;&#36394;&#21040;&#25335;&#36125;&#20043;&#21069;&#12290;&#36825;&#34920;&#31034;&#20102;&#24314;&#31435;&#20998;&#25903;&#20063;&#26159;&#21382;&#21490;&#20013;&#30340;&#19968;&#27425;&#20107;&#20214;&#65292;&#22240;&#20026;&#22312;&#25335;&#36125;&#25972;&#20010;<code class="filename">/calc/trunk/</code>&#26102;&#24050;&#32463;&#25335;&#36125;&#20102;&#19968;&#20221;<code class="filename">integer.c</code>&#12290;&#29616;&#22312;&#30475;Sally&#22312;&#22905;&#30340;&#24037;&#20316;&#25335;&#36125;&#36816;&#34892;&#21516;&#26679;&#30340;&#21629;&#20196;&#65306;</p><pre class="screen">
+$ pwd
+/home/sally/calc
+
+$ svn log -v integer.c
+------------------------------------------------------------------------
+r344 | sally | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Changed paths:
+   M /calc/trunk/integer.c
+
+* integer.c:  fix a bunch of spelling errors.
+
+------------------------------------------------------------------------
+r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines
+Changed paths:
+   M /calc/trunk/integer.c
+
+* integer.c:  changed a docstring.
+
+------------------------------------------------------------------------
+r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines
+Changed paths:
+   A /calc/trunk/integer.c
+
+* integer.c:  adding this file to the project.
+
+------------------------------------------------------------------------
+</pre><p>sally&#30475;&#21040;&#22905;&#33258;&#24049;&#30340;344&#20462;&#35746;&#65292;&#20320;&#20570;&#30340;343&#20462;&#25913;&#22905;&#30475;&#19981;&#21040;&#65292;&#20174;Subversion&#30475;&#26469;&#65292;&#20004;&#27425;&#25552;&#20132;&#21482;&#26159;&#24433;&#21709;&#29256;&#26412;&#24211;&#20013;&#19981;&#21516;&#20301;&#32622;&#19978;&#30340;&#20004;&#20010;&#25991;&#20214;&#12290;&#28982;&#32780;&#65292;Subversion<span class="emphasis"><em>&#26174;&#31034;</em></span>&#20102;&#20004;&#20010;&#25991;&#20214;&#26377;&#20849;&#21516;&#30340;&#21382;&#21490;&#65292;&#22312;&#20998;&#25903;&#25335;&#36125;&#20043;&#21069;&#65292;&#20182;&#20204;&#20351;&#29992;&#21516;&#19968;&#20010;&#25991;&#20214;&#65292;&#25152;&#20197;&#20320;&#21644;Sally&#37117;&#30475;&#21040;&#29256;&#26412;&#21495;303&#21040;98&#30340;&#20462;&#25913;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.using.concepts"></a>The Key Concepts Behind Branching</h3></div></div></div><p>There are two important lessons that you should remember
+        from this section.  First, Subversion has no internal concept
+        of a branch&#8212;it only knows how to make copies.  When you
+        copy a directory, the resulting directory is only
+        a &#8220;<span class="quote">branch</span>&#8221; because <span class="emphasis"><em>you</em></span>
+        attach that meaning to it.  You may think of the directory
+        differently, or treat it differently, but to Subversion it's
+        just an ordinary directory that happens to carry some extra
+        historical information.</p><p>Second, because of this copy mechanism, Subversion's
+        branches exist as <span class="emphasis"><em>normal filesystem
+        directories</em></span> in the repository.  This is different
+        from other version control systems, where branches are
+        typically defined by adding
+        extra-dimensional &#8220;<span class="quote">labels</span>&#8221; to collections of
+        files.  The location of your branch directory doesn't matter
+        to Subversion.  Most teams follow a convention of putting all
+        branches into a <code class="filename">/branches</code> directory, but
+        you're free to invent any policy you wish.</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e6425" href="#d0e6425" class="para">20</a>] </sup>Subversion&#19981;&#25903;&#25345;&#36328;&#29256;&#26412;&#24211;&#30340;&#25335;&#36125;&#65292;&#24403;&#20351;&#29992;<span class="command"><strong>svn copy</strong></span>&#25110;&#32773;<span class="command"><strong>svn move</strong></span>&#30452;&#25509;&#25805;&#20316;URL&#26102;&#20320;&#21482;&#33021;&#22312;&#21516;&#19968;&#20010;&#29256;&#26412;&#24211;&#20869;&#25805;&#20316;&#12290;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch04.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch04s03.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Basic Merging</td></tr></table></div></body></html>
