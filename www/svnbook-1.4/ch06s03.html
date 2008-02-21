@@ -1,0 +1,331 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>svnserve&#65292;&#19968;&#20010;&#23450;&#21046;&#30340;&#26381;&#21153;&#22120;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="ch06.html" title="&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;"><link rel="prev" href="ch06s02.html" title="&#36873;&#25321;&#19968;&#20010;&#26381;&#21153;&#22120;&#37197;&#32622;"><link rel="next" href="ch06s04.html" title="httpd&#65292;Apache &#30340; HTTP &#26381;&#21153;&#22120;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">svnserve&#65292;&#19968;&#20010;&#23450;&#21046;&#30340;&#26381;&#21153;&#22120;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s02.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch06s04.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.serverconfig.svnserve"></a>svnserve&#65292;&#19968;&#20010;&#23450;&#21046;&#30340;&#26381;&#21153;&#22120;</h2></div></div></div><p><span class="command"><strong>svnserve</strong></span>&#26159;&#19968;&#20010;&#36731;&#22411;&#30340;&#26381;&#21153;&#22120;&#65292;&#21487;&#20197;&#21516;&#23458;&#25143;&#31471;&#36890;&#36807;&#22312;TCP/IP&#22522;&#30784;&#19978;&#30340;&#33258;&#23450;&#20041;&#26377;&#29366;&#24577;&#21327;&#35758;&#36890;&#35759;&#65292;&#23458;&#25143;&#31471;&#36890;&#36807;&#20351;&#29992;&#24320;&#22836;&#20026;<code class="literal">svn://</code>&#25110;&#32773;<code class="literal">svn+ssh://</code><span class="command"><strong>svnserve</strong></span>&#30340;URL&#26469;&#35775;&#38382;&#19968;&#20010;<span class="command"><strong>svnserve</strong></span>&#26381;&#21153;&#22120;&#12290;&#36825;&#19968;&#23567;&#33410;&#23558;&#20250;&#35299;&#37322;&#36816;&#34892;<span class="command"><strong>svnserve</strong></span>&#30340;&#19981;&#21516;&#26041;&#24335;&#65292;&#23458;&#25143;&#31471;&#24590;&#26679;&#23454;&#29616;&#26381;&#21153;&#22120;&#30340;&#35748;&#35777;&#65292;&#24590;&#26679;&#37197;&#32622;&#29256;&#26412;&#24211;&#24688;&#24403;&#30340;&#35775;&#38382;&#25511;&#21046;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.serverconfig.svnserve.invoking"></a>&#35843;&#29992;&#26381;&#21153;&#22120;</h3></div></div></div><p>&#26377;&#35768;&#22810;&#19981;&#21516;&#26041;&#27861;&#36816;&#34892;<span class="command"><strong>svnserve</strong></span>&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>&#20316;&#20026;&#19968;&#20010;&#29420;&#31435;&#23432;&#25252;&#36827;&#31243;&#21551;&#21160;<span class="command"><strong>svnserve</strong></span>&#65292;&#30417;&#21548;&#35831;&#27714;&#12290;</p></li><li><p>&#24403;&#29305;&#23450;&#31471;&#21475;&#25910;&#21040;&#19968;&#20010;&#35831;&#27714;&#65292;&#23601;&#20250;&#20351;UNIX&#30340;<span class="command"><strong>inetd</strong></span>&#23432;&#25252;&#36827;&#31243;&#20020;&#26102;&#35843;&#29992;<span class="command"><strong>svnserve</strong></span>&#22788;&#29702;&#12290;</p></li><li><p>&#20351;&#29992;SSH&#22312;&#21152;&#23494;&#36890;&#36947;&#21457;&#36215;&#20020;&#26102;<span class="command"><strong>svnserve</strong></span>&#26381;&#21153;&#12290;</p></li><li><p>&#20197;Windows service&#26381;&#21153;&#26041;&#24335;&#36816;&#34892;<span class="command"><strong>svnserve</strong></span>&#12290;</p></li></ul></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.invoking.daemon"></a><span class="command"><strong>svnserve</strong></span>&#20316;&#20026;&#23432;&#25252;&#36827;&#31243;</h4></div></div></div><p>&#20351;&#29992;<span class="command"><strong>svnserve</strong></span>&#26368;&#31616;&#21333;&#30340;&#26041;&#24335;&#26159;&#20316;&#20026;&#29420;&#31435;&#8220;<span class="quote">&#23432;&#25252;</span>&#8221;&#36827;&#31243;&#36816;&#34892;&#65292;&#20351;&#29992;<code class="option">-d</code>&#36873;&#39033;&#65306;</p><pre class="screen">
+$ svnserve -d
+$               # svnserve is now running, listening on port 3690
+</pre><p>&#24403;&#20197;&#23432;&#25252;&#27169;&#24335;&#36816;&#34892;<span class="command"><strong>svnserve</strong></span>&#26102;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;<code class="option">--listen-port=</code>&#21644;<code class="option">--listen-host=</code>&#36873;&#39033;&#26469;&#33258;&#23450;&#20041;&#8220;<span class="quote">&#32465;&#23450;</span>&#8221;&#30340;&#31471;&#21475;&#21644;&#20027;&#26426;&#21517;&#12290;</p><p>&#19968;&#26086;<span class="command"><strong>svnserve</strong></span>&#24050;&#32463;&#36816;&#34892;&#65292;&#23427;&#20250;&#23558;&#20320;&#31995;&#32479;&#20013;&#25152;&#26377;&#29256;&#26412;&#24211;&#21457;&#24067;&#21040;&#32593;&#32476;&#65292;&#19968;&#20010;&#23458;&#25143;&#31471;&#38656;&#35201;&#25351;&#23450;&#29256;&#26412;&#24211;&#22312;URL&#20013;&#30340;<span class="emphasis"><em>&#32477;&#23545;</em></span>&#36335;&#24452;&#65292;&#20030;&#20010;&#20363;&#23376;&#65292;&#22914;&#26524;&#19968;&#20010;&#29256;&#26412;&#24211;&#26159;&#20301;&#20110;<code class="filename">/usr/local/repositories/project1</code>&#65292;&#21017;&#19968;&#20010;&#23458;&#25143;&#31471;&#21487;&#20197;&#20351;&#29992;<code class="uri">svn://host.example.com/usr/local/repositories/project1</code>&#26469;&#36827;&#34892;&#35775;&#38382;&#65292;&#20026;&#20102;&#25552;&#39640;&#23433;&#20840;&#24615;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svnserve</strong></span>&#30340;<code class="option">-r</code>&#36873;&#39033;&#65292;&#36825;&#26679;&#20250;&#38480;&#21046;&#21482;&#36755;&#20986;&#25351;&#23450;&#36335;&#24452;&#19979;&#30340;&#29256;&#26412;&#24211;&#65292;&#20363;&#22914;&#65306;</p><pre class="screen">
+$ svnserve -d -r /usr/local/repositories
+&#8230;
+</pre><p>&#20351;&#29992;<code class="option">-r</code>&#21487;&#20197;&#26377;&#25928;&#22320;&#25913;&#21464;&#25991;&#20214;&#31995;&#32479;&#30340;&#26681;&#20301;&#32622;&#65292;&#23458;&#25143;&#31471;&#21487;&#20197;&#20351;&#29992;&#21435;&#25481;&#21069;&#21322;&#37096;&#20998;&#30340;&#36335;&#24452;&#65292;&#30041;&#19979;&#30340;&#35201;&#30701;&#19968;&#20123;&#30340;&#65288;&#26356;&#21152;&#26377;&#25552;&#31034;&#24615;&#65289;URL&#65306;</p><pre class="screen">
+$ svn checkout svn://host.example.com/project1
+&#8230;
+</pre></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.invoking.inetd"></a>&#20351;&#29992;<span class="command"><strong>svnserve</strong></span>&#36890;&#36807;<span class="command"><strong>inetd</strong></span></h4></div></div></div><p>&#22914;&#26524;&#20320;&#24076;&#26395;<span class="command"><strong>inetd</strong></span>&#21551;&#21160;&#36827;&#31243;&#65292;&#20320;&#38656;&#35201;&#20351;&#29992;<code class="option">-i</code>&#65288;<code class="option">--inetd</code>&#65289;&#36873;&#39033;&#65292;&#22312;&#36825;&#20010;&#20363;&#23376;&#37324;&#65292;&#25105;&#20204;&#26174;&#31034;&#20102;&#22312;&#21629;&#20196;&#34892;&#20013;&#36816;&#34892;<code class="literal">svnserve -i</code>&#30340;&#36755;&#20986;&#65292;&#20294;&#26159;&#35831;&#27880;&#24847;&#36825;&#19981;&#26159;&#22914;&#20309;&#23454;&#38469;&#21551;&#21160;daemon; &#35831;&#32487;&#32493;&#38405;&#35835;&#20363;&#23376;&#21518;&#30340;&#25991;&#31456;&#65292;&#23398;&#20064;&#22914;&#20309;&#37197;&#32622;<span class="command"><strong>inetd</strong></span>&#21551;&#21160;<span class="command"><strong>svnserve</strong></span>&#12290;</p><pre class="screen">
+$ svnserve -i
+( success ( 1 2 ( ANONYMOUS ) ( edit-pipeline ) ) )
+</pre><p>&#24403;&#29992;&#21442;&#25968;<code class="option">--inetd</code>&#35843;&#29992;&#26102;&#65292;<span class="command"><strong>svnserve</strong></span>&#20250;&#23581;&#35797;&#20351;&#29992;&#33258;&#23450;&#20041;&#21327;&#35758;&#36890;&#36807;<span class="emphasis"><em>stdin</em></span>&#21644;<span class="emphasis"><em>stdout</em></span>&#26469;&#19982;Subversion&#23458;&#25143;&#31471;&#36890;&#35805;&#65292;&#36825;&#26159;&#20351;&#29992;<span class="command"><strong>inetd</strong></span>&#24037;&#20316;&#30340;&#26631;&#20934;&#26041;&#24335;&#65292;IANA&#20026;Subversion&#21327;&#35758;&#20445;&#30041;3690&#31471;&#21475;&#65292;&#25152;&#20197;&#22312;&#31867;Unix&#31995;&#32479;&#20320;&#21487;&#20197;&#22312;<code class="filename">/etc/services</code>&#28155;&#21152;&#22914;&#19979;&#30340;&#20960;&#34892;&#65288;&#22914;&#26524;&#19981;&#23384;&#22312;&#30340;&#35805;&#65289;&#65306;</p><pre class="screen">
+svn           3690/tcp   # Subversion
+svn           3690/udp   # Subversion
+</pre><p>&#22914;&#26524;&#31995;&#32479;&#26159;&#20351;&#29992;&#32463;&#20856;&#30340;&#31867;Unix&#30340;<span class="command"><strong>inetd</strong></span>&#23432;&#25252;&#36827;&#31243;&#65292;&#20320;&#21487;&#20197;&#22312;<code class="filename">/etc/inetd.conf</code>&#28155;&#21152;&#36825;&#20960;&#34892;&#65306;</p><pre class="screen">
+svn stream tcp nowait svnowner /usr/bin/svnserve svnserve -i
+</pre><p>&#30830;&#23450;&#8220;<span class="quote">svnowner</span>&#8221;&#29992;&#25143;&#25317;&#26377;&#35775;&#38382;&#29256;&#26412;&#24211;&#30340;&#36866;&#24403;&#26435;&#38480;&#65292;&#29616;&#22312;&#22914;&#26524;&#19968;&#20010;&#23458;&#25143;&#36830;&#25509;&#26469;&#21040;&#20320;&#30340;&#26381;&#21153;&#22120;&#30340;&#31471;&#21475;3690&#65292;<span class="command"><strong>inetd</strong></span>&#20250;&#20135;&#29983;&#19968;&#20010;<span class="command"><strong>svnserve</strong></span>&#36827;&#31243;&#26469;&#20570;&#26381;&#21153;&#12290;&#24403;&#28982;&#65292;&#20320;&#20063;&#21487;&#20197;&#28155;&#21152;<code class="option">-r</code>&#21040;&#21629;&#20196;&#34892;&#65292;&#38480;&#21046;&#26292;&#38706;&#20986;&#30340;&#29256;&#26412;&#24211;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.invoking.tunnel"></a>&#36890;&#36807;&#36890;&#36947;&#20351;&#29992;<span class="command"><strong>svnserve</strong></span></h4></div></div></div><p>&#31532;&#19977;&#31181;&#26041;&#24335;&#20351;&#29992;<code class="option">-t</code>&#36873;&#39033;&#30340;&#8220;<span class="quote">&#31649;&#36947;&#27169;&#24335;</span>&#8221;&#65292;&#36825;&#20010;&#27169;&#24335;&#20551;&#23450;&#19968;&#20010;&#20998;&#24067;&#24335;&#26381;&#21153;&#31243;&#24207;&#22914;<span class="command"><strong>RSH</strong></span>&#25110;<span class="command"><strong>SSH</strong></span>&#24050;&#32463;&#39564;&#35777;&#20102;&#19968;&#20010;&#29992;&#25143;&#65292;&#24182;&#19988;<span class="emphasis"><em>&#20197;&#36825;&#20010;&#29992;&#25143;</em></span>&#35843;&#29992;&#20102;&#19968;&#20010;&#31169;&#26377;<span class="command"><strong>svnserve</strong></span>&#36827;&#31243;&#65292;<span class="command"><strong>svnserve</strong></span>&#36816;&#20316;&#22914;&#24120;&#65288;&#36890;&#36807;<span class="emphasis"><em>stdin</em></span>&#21644;<span class="emphasis"><em>stdout</em></span>&#36890;&#35759;&#65289;&#65292;&#24182;&#19988;&#21487;&#20197;&#35774;&#24819;&#36890;&#35759;&#26159;&#33258;&#21160;&#36716;&#21521;&#21040;&#19968;&#31181;&#36890;&#36947;&#24182;&#20256;&#36882;&#22238;&#23458;&#25143;&#31471;&#65292;&#24403;<span class="command"><strong>svnserve</strong></span>&#34987;&#36825;&#26679;&#30340;&#36890;&#36947;&#20195;&#29702;&#35843;&#29992;&#65292;&#30830;&#23450;&#35748;&#35777;&#29992;&#25143;&#23545;&#29256;&#26412;&#25968;&#25454;&#24211;&#26377;&#23436;&#20840;&#30340;&#35835;&#20889;&#26435;&#38480;&#65292;&#36825;&#19982;&#26412;&#22320;&#29992;&#25143;&#36890;&#36807;<code class="literal">file:///</code>URl&#35775;&#38382;&#29256;&#26412;&#24211;&#21516;&#26679;&#37325;&#35201;&#12290;</p><p>&#36825;&#20010;&#36873;&#39033;&#23558;&#22312;<a class="xref" href="ch06s03.html#svn.serverconfig.svnserve.sshauth" title="SSH &#38567;&#36947;">&#8220;SSH &#38567;&#36947;&#8221;&#19968;&#33410;</a>&#35814;&#32454;&#35752;&#35770;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.invoking.winservice"></a><span class="command"><strong>svnserve</strong></span>&#20316;&#20026;Windows&#26381;&#21153;</h4></div></div></div><p>&#22914;&#26524;&#20320;&#30340;Windows&#31995;&#32479;&#26159;Windows NT (2000, 2003, XP, Vista)&#30340;&#21518;&#20195;&#65292;&#20320;&#21487;&#20197;&#23558;<span class="command"><strong>svnserve</strong></span>&#20316;&#20026;Windows&#26381;&#21153;&#36816;&#34892;&#65292;&#36825;&#26159;&#27604;&#20351;&#29992;<code class="option">--daemon (-d)</code>&#36873;&#39033;&#30452;&#25509;&#36816;&#34892;&#23432;&#25252;&#36827;&#31243;&#24863;&#35273;&#26356;&#22909;&#12290;&#20351;&#29992;&#23432;&#25252;&#36827;&#31243;&#27169;&#24335;&#65292;&#38656;&#35201;&#25171;&#24320;&#21629;&#20196;&#34892;&#31383;&#21475;&#65292;&#36755;&#20837;&#21629;&#20196;&#65292;&#28982;&#21518;&#20445;&#25345;&#21629;&#20196;&#34892;&#31383;&#21475;&#19981;&#20851;&#38381;&#65292;&#32780;&#20316;&#20026;Windows&#26381;&#21153;&#26102;&#65292;&#22312;&#21518;&#21488;&#36816;&#34892;&#65292;&#21487;&#20197;&#22312;&#21551;&#21160;&#26102;&#33258;&#21160;&#25191;&#34892;&#65292;&#24182;&#19988;&#21487;&#20197;&#20351;&#29992;&#21516;&#20854;&#20182;Windows&#26381;&#21153;&#19968;&#33268;&#30340;&#31649;&#29702;&#30028;&#38754;&#21551;&#21160;&#21644;&#20572;&#27490;&#26381;&#21153;&#12290;</p><p>&#20320;&#38656;&#35201;&#20351;&#29992;&#21629;&#20196;&#34892;&#24037;&#20855;<span class="command"><strong>SC.EXE</strong></span>&#23450;&#20041;&#26032;&#30340;&#26381;&#21153;&#65292;&#23601;&#20687;<span class="command"><strong>inetd</strong></span>&#30340;&#37197;&#32622;&#34892;&#65292;&#20320;&#24517;&#39035;&#22312;Windows&#21551;&#21160;&#26102;&#25351;&#26126;<span class="command"><strong>svnserve</strong></span>&#30340;&#35843;&#29992;&#65306;</p><pre class="screen">
+C:\&gt; sc create svn
+        binpath= "C:\svn\bin\svnserve.exe --service -r C:\repos"
+        displayname= "Subversion Server"
+        depend= Tcpip
+        start= auto
+</pre><p>&#36825;&#26679;&#23450;&#20041;&#20102;&#19968;&#20010;&#26032;&#30340;Windows&#26381;&#21153;&#65292;&#21483;&#20570;&#8220;<span class="quote">svn</span>&#8221;&#65292;&#20250;&#22312;&#21551;&#21160;&#26102;&#65288;&#22312;&#36825;&#20010;&#20363;&#23376;&#37324;&#65292;&#26681;&#30446;&#24405;&#26159;<code class="filename">C:\repos</code>&#12290;&#65289;&#25191;&#34892;&#29305;&#23450;&#30340;<span class="command"><strong>svnserve.exe</strong></span>&#65292;&#21487;&#26159;&#21069;&#38754;&#36825;&#20010;&#20363;&#23376;&#20135;&#29983;&#20102;&#19968;&#20123;&#38169;&#35823;&#12290;</p><p>&#39318;&#20808;&#65292;&#35201;&#27880;&#24847;<span class="command"><strong>svnserve.exe</strong></span>&#24517;&#39035;&#20351;&#29992;<code class="option">--service</code>&#36873;&#39033;&#21551;&#21160;&#12290;<span class="command"><strong>svnserve</strong></span>&#30340;&#20854;&#23427;&#36873;&#39033;&#24517;&#39035;&#22312;&#21516;&#19968;&#34892;&#19978;&#25351;&#23450;&#65292;&#20294;&#20320;&#19981;&#33021;&#20351;&#29992;&#20914;&#31361;&#30340;&#36873;&#39033;&#65292;&#20363;&#22914;<code class="option">--daemon (-d)</code>&#12289;<code class="option">--tunnel</code>&#25110;<code class="option">--inetd (-i)</code>&#65292;&#32780;&#36873;&#39033;<code class="option">-r</code>&#25110;<code class="option">--listen-port</code>&#37117;&#27809;&#26377;&#38382;&#39064;&#12290;&#31532;&#20108;&#65292;&#35843;&#29992;<span class="command"><strong>SC.EXE</strong></span>&#26102;&#24517;&#39035;&#27880;&#24847;&#31354;&#26684;&#65306;<code class="literal">key= value</code>&#30340;&#27169;&#24335;&#20013;<code class="literal">key=</code>&#20043;&#38388;&#24517;&#39035;&#27809;&#26377;&#31354;&#26684;&#65292;&#32780;&#19988;&#22312;&#19982;<code class="literal">value</code>&#20043;&#38388;&#21482;&#33021;&#26377;&#19968;&#20010;&#31354;&#26684;&#12290;&#26368;&#21518;&#65292;&#24517;&#39035;&#27880;&#24847;&#25191;&#34892;&#30340;&#21629;&#20196;&#34892;&#20013;&#30340;&#31354;&#26684;&#65292;&#22914;&#26524;&#30446;&#24405;&#21517;&#20013;&#21253;&#21547;&#20102;&#31354;&#26684;&#65288;&#25110;&#20854;&#23427;&#38656;&#35201;&#22238;&#36991;&#30340;&#23383;&#31526;&#65289;&#65292;&#20026;&#20102;&#22238;&#36991;&#36825;&#20123;&#23383;&#31526;&#65292;&#35831;&#23558;&#25972;&#20010;<code class="literal">binpath</code>&#20540;&#25918;&#22312;&#21452;&#24341;&#21495;&#20013;&#65306;</p><pre class="screen">
+C:\&gt; sc create svn
+        binpath= "\"C:\program files\svn\bin\svnserve.exe\" --service -r C:\repos"
+        displayname= "Subversion Server"
+        depend= Tcpip
+        start= auto
+</pre><p>&#20063;&#38656;&#35201;&#27880;&#24847;&#21333;&#35789;<code class="literal">binpath</code>&#20250;&#36896;&#25104;&#35823;&#35299;&#8212;&#23427;&#30340;&#20540;&#26159;&#19968;&#20010;<span class="emphasis"><em>&#21629;&#20196;&#34892;</em></span>&#65292;&#32780;&#19981;&#26159;&#21487;&#25191;&#34892;&#30340;&#36335;&#24452;&#65292;&#25152;&#20197;&#25105;&#20204;&#20026;&#20102;&#38450;&#27490;&#26377;&#23884;&#20837;&#30340;&#31354;&#26684;&#32780;&#20351;&#29992;&#20102;&#24341;&#21495;&#22260;&#32469;&#12290;</p><p>Once the service is defined, it can stopped, started, or
+          queried using standard GUI tools (the Services
+          administrative control panel), or at the command line as
+          well:</p><pre class="screen">
+C:\&gt; net stop svn
+C:\&gt; net start svn
+</pre><p>The service can also be uninstalled (i.e. undefined) by
+          deleting its definition:  <code class="literal">sc delete svn</code>.
+          Just be sure to stop the service first!
+          The <span class="command"><strong>SC.EXE</strong></span> program has many other
+          subcommands and options; run <code class="literal">sc /?</code> to
+          learn more about it.</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.serverconfig.svnserve.auth"></a>&#20869;&#32622;&#30340;&#35748;&#35777;&#21644;&#25480;&#26435;</h3></div></div></div><p>When a client connects to an <span class="command"><strong>svnserve</strong></span>
+        process, the following things happen:</p><div class="itemizedlist"><ul type="disc"><li><p>&#23458;&#25143;&#31471;&#36873;&#25321;&#29305;&#23450;&#30340;&#29256;&#26412;&#24211;&#12290;</p></li><li><p>The server processes the repository's
+        <code class="filename">conf/svnserve.conf</code> file, and begins to
+        enforce any authentication and authorization policies defined
+        therein.</p></li><li><p>&#20381;&#36182;&#20110;&#20301;&#32622;&#21644;&#25480;&#26435;&#25919;&#31574;&#65292;</p><div class="itemizedlist"><ul type="circle"><li><p>&#22914;&#26524;&#27809;&#26377;&#25910;&#21040;&#35748;&#35777;&#35831;&#27714;&#65292;&#23458;&#25143;&#31471;&#21487;&#33021;&#34987;&#20801;&#35768;&#21311;&#21517;&#35775;&#38382;&#65292;&#25110;&#32773;</p></li><li><p>&#23458;&#25143;&#31471;&#25910;&#21040;&#35748;&#35777;&#35831;&#27714;&#65292;&#25110;&#32773;</p></li><li><p>&#22914;&#26524;&#25805;&#20316;&#22312;&#8220;<span class="quote">&#36890;&#36947;&#27169;&#24335;</span>&#8221;&#65292;&#23458;&#25143;&#31471;&#20250;&#23459;&#24067;&#33258;&#24049;&#24050;&#32463;&#22312;&#22806;&#37096;&#24471;&#21040;&#35748;&#35777;&#12290;</p></li></ul></div></li></ul></div><p>&#22312;&#25776;&#20889;&#26412;&#25991;&#26102;&#65292;&#26381;&#21153;&#22120;&#36824;&#21482;&#30693;&#36947;&#24590;&#26679;&#21457;&#36865;CRAM-MD5<sup>[<a name="d0e10136" href="#ftn.d0e10136" class="footnote">38</a>]</sup>&#35748;&#35777;&#35831;&#27714;&#65292;&#26412;&#36136;&#19978;&#35762;&#65292;&#23601;&#26159;&#26381;&#21153;&#22120;&#21457;&#36865;&#19968;&#20123;&#25968;&#25454;&#21040;&#23458;&#25143;&#31471;&#65292;&#23458;&#25143;&#31471;&#20351;&#29992;MD5&#21704;&#24076;&#31639;&#27861;&#21019;&#24314;&#36825;&#20123;&#25968;&#25454;&#32452;&#21512;&#23494;&#30721;&#30340;&#25351;&#32441;&#65292;&#28982;&#21518;&#36820;&#22238;&#25351;&#32441;&#65292;&#26381;&#21153;&#22120;&#25191;&#34892;&#21516;&#26679;&#30340;&#35745;&#31639;&#24182;&#19988;&#26469;&#35745;&#31639;&#32467;&#26524;&#30340;&#19968;&#33268;&#24615;&#65292;<span class="emphasis"><em>&#30495;&#27491;&#30340;&#23494;&#30721;&#24182;&#27809;&#26377;&#22312;&#20114;&#32852;&#32593;&#19978;&#20256;&#36882;&#12290;</em></span></p><p>It's also possible, of course, for the client to be
+        externally authenticated via a tunnel agent, such as
+        <span class="command"><strong>SSH</strong></span>.  In that case, the server simply
+        examines the user it's running as, and uses it as the
+        authenticated username.  For more on this, see <a class="xref" href="ch06s03.html#svn.serverconfig.svnserve.sshauth" title="SSH &#38567;&#36947;">&#8220;SSH &#38567;&#36947;&#8221;&#19968;&#33410;</a>.</p><p>As you've already guessed, a repository's
+        <code class="filename">svnserve.conf</code> file is the central
+        mechanism for controlling authentication and authorization
+        policies.  The file has the same format as other configuration
+        files (see <a class="xref" href="ch07.html#svn.advanced.confarea" title="&#36816;&#34892;&#37197;&#32622;&#21306;">&#8220;&#36816;&#34892;&#37197;&#32622;&#21306;&#8221;&#19968;&#33410;</a>): section names
+        are marked by square brackets (<code class="literal">[</code> and
+        <code class="literal">]</code>), comments begin with hashes
+        (<code class="literal">#</code>), and each section contains
+        specific variables that can be set (<code class="literal">variable =
+        value</code>).  Let's walk through these files and learn how
+        to use them.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.auth.users"></a>&#21019;&#24314;&#19968;&#20010;&#29992;&#25143;&#25991;&#20214;&#21644;&#35748;&#35777;&#22495;</h4></div></div></div><p>For now, the <code class="literal">[general]</code> section of the
+          <code class="filename">svnserve.conf</code> has all the variables you
+          need.  Begin by changing the values of those variables:
+          choose a name for a file which will contain your usernames
+          and passwords, and choose an authentication realm:</p><pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+</pre><p>The <code class="literal">realm</code> is a name that you define.
+          It tells clients which sort of &#8220;<span class="quote">authentication
+          namespace</span>&#8221; they're connecting to; the Subversion
+          client displays it in the authentication prompt, and uses it
+          as a key (along with the server's hostname and port) for
+          caching credentials on disk (see <a class="xref" href="ch03s09.html#svn.serverconfig.netmodel.credcache" title="&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;">&#8220;&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;&#8221;&#19968;&#33410;</a>).  The
+          <code class="literal">password-db</code> variable points to a separate
+          file that contains a list of usernames and passwords, using
+          the same familiar format.  For example:</p><pre class="screen">
+[users]
+harry = foopassword
+sally = barpassword
+</pre><p>The value of <code class="literal">password-db</code> can be an
+          absolute or relative path to the users file.  For many
+          admins, it's easy to keep the file right in the
+          <code class="filename">conf/</code> area of the repository, alongside
+          <code class="filename">svnserve.conf</code>.  On the other hand, it's
+          possible you may want to have two or more repositories share
+          the same users file; in that case, the file should probably
+          live in a more public place.  The repositories sharing the
+          users file should also be configured to have the same realm,
+          since the list of users essentially defines an
+          authentication realm.  Wherever the file lives, be sure to
+          set the file's read and write permissions appropriately.  If
+          you know which user(s) <span class="command"><strong>svnserve</strong></span> will run
+          as, restrict read access to the user file as necessary.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.auth.general"></a>&#35774;&#32622;&#35775;&#38382;&#25511;&#21046;</h4></div></div></div><p>There are two more variables to set in the
+          <code class="filename">svnserve.conf</code> file: they determine what
+          unauthenticated (anonymous) and authenticated users are
+          allowed to do.  The variables <code class="literal">anon-access</code>
+          and <code class="literal">auth-access</code> can be set to the values
+          <code class="literal">none</code>, <code class="literal">read</code>, or
+          <code class="literal">write</code>.  Setting the value to
+          <code class="literal">none</code> prohibits both reading and writing;
+          <code class="literal">read</code> allows read-only access to the
+          repository, and <code class="literal">write</code> allows complete
+          read/write access to the repository.  For example:</p><pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# anonymous users can only read the repository
+anon-access = read
+
+# authenticated users can both read and write
+auth-access = write
+</pre><p>&#23454;&#20363;&#20013;&#30340;&#35774;&#32622;&#23454;&#38469;&#19978;&#26159;&#21442;&#25968;&#30340;&#32570;&#30465;&#20540;&#65292;&#20320;&#19968;&#23450;&#19981;&#35201;&#24536;&#20102;&#35774;&#32622;&#23427;&#20204;&#65292;&#22914;&#26524;&#20320;&#24076;&#26395;&#26356;&#20445;&#23432;&#19968;&#28857;&#65292;&#20320;&#21487;&#20197;&#23436;&#20840;&#23553;&#38145;&#21311;&#21517;&#35775;&#38382;&#65306;</p><pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# anonymous users aren't allowed
+anon-access = none
+
+# authenticated users can both read and write
+auth-access = write
+</pre><p>The server process not only understands
+        these &#8220;<span class="quote">blanket</span>&#8221; access controls to the
+        repository, but also finer-grained access restrictions placed
+        on specific files and directories within the repository.  To
+        make use of this feature, you need to define a file containing
+        more detailed rules, and then set
+        the <code class="literal">authz-db</code> variable to point to it:</p><pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# Specific access rules for specific locations
+authz-db = authzfile
+</pre><p>The syntax of the <code class="filename">authzfile</code> file is
+          discussed in detail in
+          <a class="xref" href="ch06s05.html" title="&#22522;&#20110;&#36335;&#24452;&#30340;&#25480;&#26435;">&#8220;&#22522;&#20110;&#36335;&#24452;&#30340;&#25480;&#26435;&#8221;&#19968;&#33410;</a>.  Note
+          that the <code class="literal">authz-db</code> variable isn't mutually
+          exclusive with the <code class="literal">anon-access</code>
+          and <code class="literal">auth-access</code> variables;  if all the
+          variables are defined at once, then <span class="emphasis"><em>all</em></span>
+          of the rules must be satisfied before access is allowed.</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.serverconfig.svnserve.sshauth"></a>SSH &#38567;&#36947;</h3></div></div></div><p><span class="command"><strong>svnserve</strong></span>'s built-in authentication can
+        be very handy, because it avoids the need to create real
+        system accounts.  On the other hand, some administrators
+        already have well-established SSH authentication frameworks in
+        place.  In these situations, all of the project's users
+        already have system accounts and the ability to &#8220;<span class="quote">SSH
+        into</span>&#8221; the server machine.</p><p>It's easy to use SSH in conjunction with
+        <span class="command"><strong>svnserve</strong></span>.  The client simply uses the
+        <code class="literal">svn+ssh://</code> URL scheme to connect:</p><pre class="screen">
+$ whoami
+harry
+
+$ svn list svn+ssh://host.example.com/repos/project
+harry@host.example.com's password:  *****
+
+foo
+bar
+baz
+&#8230;
+</pre><p>In this example, the Subversion client is invoking a local
+        <span class="command"><strong>ssh</strong></span> process, connecting to
+        <code class="literal">host.example.com</code>, authenticating as the
+        user <code class="literal">harry</code>, then spawning a private
+        <span class="command"><strong>svnserve</strong></span> process on the remote machine
+        running as the user <code class="literal">harry</code>.  The
+        <span class="command"><strong>svnserve</strong></span> command is being invoked in tunnel
+        mode (<code class="option">-t</code>) and its network protocol is being
+        &#8220;<span class="quote">tunneled</span>&#8221; over the encrypted connection by
+        <span class="command"><strong>ssh</strong></span>, the tunnel-agent.
+        <span class="command"><strong>svnserve</strong></span> is aware that it's running as the
+        user <code class="literal">harry</code>, and if the client performs a
+        commit, the authenticated username will be used as the
+        author of the new revision.</p><p>The important thing to understand here is that the
+        Subversion client is <span class="emphasis"><em>not</em></span> connecting to a
+        running <span class="command"><strong>svnserve</strong></span> daemon.  This method of
+        access doesn't require a daemon, nor does it notice one if
+        present.  It relies wholly on the ability of
+        <span class="command"><strong>ssh</strong></span> to spawn a temporary
+        <span class="command"><strong>svnserve</strong></span> process, which then terminates
+        when the network connection is closed.</p><p>When using <code class="literal">svn+ssh://</code> URLs to access a
+        repository, remember that it's the <span class="command"><strong>ssh</strong></span>
+        program prompting for authentication, and
+        <span class="emphasis"><em>not</em></span> the <span class="command"><strong>svn</strong></span> client
+        program.  That means there's no automatic password caching
+        going on (see <a class="xref" href="ch03s09.html#svn.serverconfig.netmodel.credcache" title="&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;">&#8220;&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;&#8221;&#19968;&#33410;</a>).  The
+        Subversion client often makes multiple connections to the
+        repository, though users don't normally notice this due to the
+        password caching feature.  When using
+        <code class="literal">svn+ssh://</code> URLs, however, users may be
+        annoyed by <span class="command"><strong>ssh</strong></span> repeatedly asking for a
+        password for every outbound connection.  The solution is to
+        use a separate SSH password-caching tool like
+        <span class="command"><strong>ssh-agent</strong></span> on a Unix-like system, or
+        <span class="command"><strong>pageant</strong></span> on Windows.</p><p>When running over a tunnel, authorization is primarily
+        controlled by operating system permissions to the repository's
+        database files; it's very much the same as if Harry were
+        accessing the repository directly via a
+        <code class="literal">file://</code> URL.  If multiple system users are
+        going to be accessing the repository directly, you may want to
+        place them into a common group, and you'll need to be careful
+        about umasks.  (Be sure to read <a class="xref" href="ch06s06.html" title="&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;">&#8220;&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;&#8221;&#19968;&#33410;</a>.)  But even in the case of
+        tunneling, the <code class="filename">svnserve.conf</code> file can
+        still be used to block access, by simply setting
+        <code class="literal">auth-access = read</code> or <code class="literal">auth-access
+        = none</code>.
+        <sup>[<a name="d0e10396" href="#ftn.d0e10396" class="footnote">39</a>]</sup>
+      </p><p>You'd think that the story of SSH tunneling would end
+        here, but it doesn't.  Subversion allows you to create custom
+        tunnel behaviors in your run-time <code class="filename">config</code>
+        file (see <a class="xref" href="ch07.html#svn.advanced.confarea" title="&#36816;&#34892;&#37197;&#32622;&#21306;">&#8220;&#36816;&#34892;&#37197;&#32622;&#21306;&#8221;&#19968;&#33410;</a>).  For example,
+        suppose you want to use RSH instead of SSH<sup>[<a name="d0e10410" href="#ftn.d0e10410" class="footnote">40</a>]</sup>.  In the
+        <code class="literal">[tunnels]</code> section of your
+        <code class="filename">config</code> file, simply define it like
+        this:</p><pre class="screen">
+[tunnels]
+rsh = rsh
+</pre><p>And now, you can use this new tunnel definition by using a
+        URL scheme that matches the name of your new variable:
+        <code class="literal">svn+rsh://host/path</code>.  When using the new
+        URL scheme, the Subversion client will actually be running the
+        command <span class="command"><strong>rsh host svnserve -t</strong></span> behind the
+        scenes.  If you include a username in the URL (for example,
+        <code class="literal">svn+rsh://username@host/path</code>) the client
+        will also include that in its command (<span class="command"><strong>rsh
+        username@host svnserve -t</strong></span>).  But you can define new
+        tunneling schemes to be much more clever than that:</p><pre class="screen">
+[tunnels]
+joessh = $JOESSH /opt/alternate/ssh -p 29934
+</pre><p>This example demonstrates a couple of things.  First, it
+        shows how to make the Subversion client launch a very specific
+        tunneling binary (the one located at
+        <code class="filename">/opt/alternate/ssh</code>) with specific
+        options.  In this case, accessing a
+        <code class="literal">svn+joessh://</code> URL would invoke the
+        particular SSH binary with <code class="option">-p 29934</code> as
+        arguments&#8212;useful if you want the tunnel program to
+        connect to a non-standard port.</p><p>Second, it shows how to define a custom environment
+        variable that can override the name of the tunneling program.
+        Setting the <code class="literal">SVN_SSH</code> environment variable is
+        a convenient way to override the default SSH tunnel agent.
+        But if you need to have several different overrides for
+        different servers, each perhaps contacting a different port or
+        passing a different set of options to SSH, you can use the
+        mechanism demonstrated in this example.  Now if we were to set
+        the <code class="literal">JOESSH</code> environment variable, its value
+        would override the entire value of the tunnel
+        variable&#8212;<span class="command"><strong>$JOESSH</strong></span> would be executed
+        instead of <span class="command"><strong>/opt/alternate/ssh -p
+        29934</strong></span>.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.serverconfig.svnserve.sshtricks"></a>SSH &#37197;&#32622;&#25216;&#24039;</h3></div></div></div><p>It's not only possible to control the way in which the
+        client invokes <span class="command"><strong>ssh</strong></span>, but also to control
+        the behavior of <span class="command"><strong>sshd</strong></span> on your server
+        machine.  In this section, we'll show how to control the
+        exact <span class="command"><strong>svnserve</strong></span> command executed
+        by <span class="command"><strong>sshd</strong></span>, as well as how to have multiple
+        users share a single system account.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.sshtricks.setup"></a>&#21021;&#22987;&#35774;&#32622;</h4></div></div></div><p>To begin, locate the home directory of the account
+          you'll be using to launch <span class="command"><strong>svnserve</strong></span>.  Make
+          sure the account has an SSH public/private keypair
+          installed, and that the user can log in via public-key
+          authentication.  Password authentication will not work,
+          since all of the following SSH tricks revolve around using
+          the SSH <code class="filename">authorized_keys</code> file.</p><p>If it doesn't already exist, create the
+          <code class="filename">authorized_keys</code> file (on Unix,
+          typically <code class="filename">~/.ssh/authorized_keys</code>).
+          Each line in this file describes a public key that is
+          allowed to connect.  The lines are typically of the
+          form:</p><pre class="screen">
+  ssh-dsa AAAABtce9euch.... user@example.com
+</pre><p>The first field describes the type of key, the second
+          field is the base64-encoded key itself, and the third field
+          is a comment.  However, it's a lesser known fact that the
+          entire line can be preceded by a <code class="literal">command</code>
+          field:</p><pre class="screen">
+  command="program" ssh-dsa AAAABtce9euch.... user@example.com
+</pre><p>When the <code class="literal">command</code> field is set, the
+          SSH daemon will run the named program instead of the
+          typical <span class="command"><strong>svnserve -t</strong></span> invocation that the
+          Subversion client asks for.  This opens the door to a number
+          of server-side tricks.  In the following examples, we
+          abbreviate the lines of the file as:</p><pre class="screen">
+  command="program" TYPE KEY COMMENT
+</pre></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.serverconfig.svnserve.sshtricks.fixedcmd"></a>&#25511;&#21046;&#35843;&#29992;&#30340;&#21629;&#20196;</h4></div></div></div><p>Because we can specify the executed server-side command,
+          it's easy to name a specific <span class="command"><strong>svnserve</strong></span>
+          binary to run and to pass it extra arguments:</p><pre class="screen">
+  command="/path/to/svnserve -t -r /virtual/root" TYPE KEY COMMENT
+</pre><p>In this example, <code class="filename">/path/to/svnserve</code>
+          might be a custom wrapper script
+          around <span class="command"><strong>svnserve</strong></span> which sets the umask (see
+          <a class="xref" href="ch06s06.html" title="&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;">&#8220;&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;&#8221;&#19968;&#33410;</a>).  It also shows how to
+          anchor <span class="command"><strong>svnserve</strong></span> in a virtual root
+          directory, just as one often does when
+          running <span class="command"><strong>svnserve</strong></span> as a daemon process.
+          This might be done either to restrict access to parts of the
+          system, or simply to relieve the user of having to type an
+          absolute path in the <code class="literal">svn+ssh://</code>
+          URL.</p><p>It's also possible to have multiple users share a single
+          account.  Instead of creating a separate system account for
+          each user, generate a public/private keypair for each
+          person.  Then place each public key into
+          the <code class="filename">authorized_users</code> file, one per
+          line, and use the <code class="option">--tunnel-user</code>
+          option:</p><pre class="screen">
+  command="svnserve -t --tunnel-user=harry" TYPE1 KEY1 harry@example.com
+  command="svnserve -t --tunnel-user=sally" TYPE2 KEY2 sally@example.com
+</pre><p>This example allows both Harry and Sally to connect to
+          the same account via public-key authentication.  Each of
+          them has a custom command that will be executed;
+          the <code class="option">--tunnel-user</code> option 
+          tells <span class="command"><strong>svnserve -t</strong></span> to assume that the named
+          argument is the authenticated user.  Without
+          <code class="option">--tunnel-user</code>, it would appear as though
+          all commits were coming from the one shared system
+          account.</p><p>A final word of caution: giving a user access to the
+          server via public-key in a shared account might still allow
+          other forms of SSH access, even if you've set
+          the <code class="literal">command</code> value
+          in <code class="filename">authorized_keys</code>.  For example, the
+          user may still get shell access through SSH, or be able to
+          perform X11 or general port-forwarding through your server.
+          To give the user as little permission as possible, you may
+          want to specify a number of restrictive options immediately
+          after the <code class="literal">command</code>:</p><pre class="screen">
+  command="svnserve -t --tunnel-user=harry",no-port-forwarding,\
+           no-agent-forwarding,no-X11-forwarding,no-pty \
+           TYPE1 KEY1 harry@example.com
+</pre></div></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e10136" href="#d0e10136" class="para">38</a>] </sup>&#35265;RFC 2195&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e10396" href="#d0e10396" class="para">39</a>] </sup>Note that using any sort
+            of <span class="command"><strong>svnserve</strong></span>-enforced access control at
+            all is a bit pointless;  the user already has direct access to
+            the repository database.</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e10410" href="#d0e10410" class="para">40</a>] </sup>&#25105;&#20204;&#23454;&#38469;&#19978;&#19981;&#25903;&#25345;&#36825;&#20010;&#65292;&#22240;&#20026;RSH&#22312;&#23433;&#20840;&#24615;&#19978;&#26174;&#33879;&#19981;&#22914;SSH&#12290;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s02.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch06.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch06s04.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#36873;&#25321;&#19968;&#20010;&#26381;&#21153;&#22120;&#37197;&#32622;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;httpd&#65292;Apache &#30340; HTTP &#26381;&#21153;&#22120;</td></tr></table></div></body></html>

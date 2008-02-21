@@ -1,0 +1,71 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#36827;&#20837;&#24037;&#20316;&#25335;&#36125;&#30340;&#31649;&#29702;&#21306;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="ch08.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion"><link rel="prev" href="ch08.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion"><link rel="next" href="ch08s03.html" title="&#20351;&#29992; API"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#36827;&#20837;&#24037;&#20316;&#25335;&#36125;&#30340;&#31649;&#29702;&#21306;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch08.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch08s03.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.developer.insidewc"></a>&#36827;&#20837;&#24037;&#20316;&#25335;&#36125;&#30340;&#31649;&#29702;&#21306;</h2></div></div></div><p>As we mentioned earlier, each directory of a Subversion
+      working copy contains a special subdirectory called
+      <code class="filename">.svn</code> which houses administrative data about
+      that working copy directory.  Subversion uses the information in
+      <code class="filename">.svn</code> to keep track of things like:</p><div class="itemizedlist"><ul type="disc"><li><p>&#24037;&#20316;&#25335;&#36125;&#20013;&#23637;&#31034;&#30340;&#30446;&#24405;&#21644;&#25991;&#20214;&#22312;&#29256;&#26412;&#24211;&#20013;&#30340;&#20301;&#32622;&#12290;</p></li><li><p>&#24037;&#20316;&#25335;&#36125;&#20013;&#24403;&#21069;&#23637;&#31034;&#30340;&#25991;&#20214;&#21644;&#30446;&#24405;&#30340;&#20462;&#35746;&#29256;&#26412;&#12290;</p></li><li><p>&#25152;&#26377;&#38468;&#21152;&#22312;&#25991;&#20214;&#21644;&#30446;&#24405;&#19978;&#30340;&#29992;&#25143;&#23450;&#20041;&#23646;&#24615;&#12290;</p></li><li><p>&#21021;&#22987;&#65288;&#26410;&#32534;&#36753;&#65289;&#30340;&#24037;&#20316;&#25335;&#36125;&#25991;&#20214;&#30340;&#25335;&#36125;&#12290;</p></li></ul></div><p>The Subversion working copy administration area's layout and
+      contents are considered implementation details not really
+      intended for human consumption.  Developers are encouraged to
+      use Subversion's public APIs, or the tools that Subversion provides, to access and
+      manipulate the working copy data, instead of directly reading
+      or modifying those files.  The file formats employed by the working
+      copy library for its administrative data do change from time to
+      time&#8212;a fact that the public APIs do a great job of
+      hiding from the average user.  In this section, we
+      expose some of these implementation details sheerly to appease
+      your overwhelming curiosity.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.insidewc.entries"></a>&#26465;&#30446;&#25991;&#20214;</h3></div></div></div><p>Perhaps the single most important file in the
+        <code class="filename">.svn</code> directory is the
+        <code class="filename">entries</code> file.  It
+        contains the bulk of the administrative
+        information about the versioned items in a working copy
+        directory.  It is this one file which tracks the repository
+        URLs, pristine revision, file checksums, pristine text and
+        property timestamps, scheduling and conflict state
+        information, last-known commit information (author, revision,
+        timestamp), local copy history&#8212;practically everything
+        that a Subversion client is interested in knowing about a
+        versioned (or to-be-versioned) resource!</p><p>Folks familiar with CVS's administrative directories will
+        have recognized at this point that Subversion's
+        <code class="filename">.svn/entries</code> file serves the purposes of,
+        among other things, CVS's <code class="filename">CVS/Entries</code>,
+        <code class="filename">CVS/Root</code>, and
+        <code class="filename">CVS/Repository</code> files combined.</p><p>The format of the <code class="filename">.svn/entries</code> file
+        has changed over time.  Originally an XML file, it now uses a
+        custom&#8212;though still human-readable&#8212;file format.
+        While XML was a great choice for early developers of
+        Subversion who were frequently debugging the file's contents
+        (and Subversion's behavior in light of them), the need for
+        easy developer debugging has diminished as Subversion has
+        matured, and has been replaced by the user's need for snappier
+        performance.  Be aware that Subversion's working copy library
+        automatically upgrades working copies from one format to
+        another&#8212;it reads the old formats, and writes the
+        new&#8212;which saves you the hassle of checking out a new
+        working copy, but can also complicate situations where
+        different versions of Subversion might be trying to use the
+        same working copy.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.insidewc.base-and-props"></a>&#21407;&#22987;&#25335;&#36125;&#21644;&#23646;&#24615;&#25991;&#20214;</h3></div></div></div><p>As mentioned before, the <code class="filename">.svn</code>
+        directory also holds the pristine &#8220;<span class="quote">text-base</span>&#8221;
+        versions of files.  Those can be found in
+        <code class="filename">.svn/text-base</code>.  The benefits of these
+        pristine copies are multiple&#8212;network-free checks for
+        local modifications and difference reporting, network-free
+        reversion of modified or missing files, more efficient transmission
+        of changes to the server&#8212;but comes at the cost of having
+        each versioned file stored at least twice on disk.  These
+        days, this seems to be a negligible penalty for most files.
+        However, the situation gets uglier as the size of your
+        versioned files grows.  Some attention is being given to
+        making the presence of the &#8220;<span class="quote">text-base</span>&#8221; an option.
+        Ironically though, it is as your versioned files' sizes get
+        larger that the existence of the &#8220;<span class="quote">text-base</span>&#8221;
+        becomes more crucial&#8212;who wants to transmit a huge file
+        across a network just because they want to commit a tiny
+        change to it?</p><p>Similar in purpose to the &#8220;<span class="quote">text-base</span>&#8221; files
+        are the property files and their pristine
+        &#8220;<span class="quote">prop-base</span>&#8221; copies, located in
+        <code class="filename">.svn/props</code> and
+        <code class="filename">.svn/prop-base</code> respectively.  Since
+        directories can have properties, too, there are also
+        <code class="filename">.svn/dir-props</code> and
+        <code class="filename">.svn/dir-prop-base</code> files.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch08.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch08s03.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#20351;&#29992; API</td></tr></table></div></body></html>
