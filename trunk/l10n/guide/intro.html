@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>FVWM 入门指南-简介</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<h1>FVWM 入门指南</h1>
+<p><b>FVWM</b>（或称 Feeble Virtual Window Manager）是一个非常全面的X系统桌面
+（窗口）管理器。尽管这个名称有点歧义，但刚开始 FVWM 是一个原叫 TWM 的窗口管
+理器的分支，而且还是个<i>简化过的</i>代用品。
+<a href="http://en.wikipedia.org/wiki/Image:Fvwm_family.png">这里</a>
+有张漂亮的图表让你得以一窥FVWM家族史。
+FVWM 从刚开始的一个粗陋的产品，到现在已经成为一个高度可配置性的窗口管理器。
+想想你需要桌面（窗口）管理器做的事吧，FVWM 有可能会做得更好。尽管‘Feeble’这个
+词的意思已经不再适用于目前的窗口管理器，但许多改名字的尝试，包含对‘F’的原义
+进行都市浪漫色彩般的诠释均告失败，而且走进了死胡同。现在最普遍的说法是：它就指
+F? Virtual Window Manager，或者就是缩写 FVWM。</p>
+
+<p>FVWM 是非常全面和可编程的，但是还是有很多人由于缺少 GUI 配置工具而退却了。
+尽管现在已经尝试着开发了一些那方面的工具，如<a href="http://fvwm-themes.sourc
+eforge.net/">fvwm-themes</a>，但只靠那些工具中包含的选项还是不能轻易的建立起
+完整的 GUI 界面，因此最好的方面是用个性化的配置文件来配置 FVWM。
+这份指南的目的是帮<b>你</b>熟悉 FVWM 所用的配置文件的语法。指南的第一部分将一步一步地引导你建立一个简单的配置文件。我已经另外放上去配置文件的超链接，以便各位看指南时可以方便的复制、粘贴。我的目标是看指南时能随时复制、粘贴某些部分，但也能进行一点修改，按我放在那儿而你又看懂的语法，改成你自己喜欢的配置。在你按这份指南做完基本的配置后，接下来我写了份附录，包含更多的高级话题和配置，你也可以看看并把它们用到你的桌面上去。这份指南的最后是我的希望，但愿你熟悉 FVWM 并能写出自己的配置，把它变成<b>你的</b>窗口管理器。</p>
+
+<p>指南中会试着解释我提出的绝大多数选项，但所有这些东西在<b>FVWM MAN PAGES</b>中有清楚详尽的解释。手册页非常冗长，但只要有关键词就能轻易的查到选项在配置文件中的用法。我会略过或跳过提到的某些配置，希望你用手册页去找我没说的具体事宜。如果你没听见我说的话就再说一遍，<b>FVWM MAN PAGES</b>是非常有价值的资源。</p>
+
+<p>本指南是为 unstable 版的配置语法而写的，目前是 fvwm-2.5.10。我没在稳定版2.4.18中进行过测试，因此我不能肯定对它是否有效。我建议用2.5.10，尽管它号称不稳定版，但基本的功能是很稳定的，而且在使用中也没发现什么严重的错误。
+我也在配置中用了点半透明补丁，但只把它作为可选内容。如果你对用半透明补丁给你的菜单加上逼真的透明效果，<a href="intsall.html">这里</a>有份怎么安装的说明。</p>
+
+<p>所有<a href="http://fvwm.org">FVWM</a>的配置保存在单一配置文件里，通常位于 $HOME/.fvwm2rc 或 $HOME/.fvwm/.fvwm2rc。虽然用'Read'命令能把它们分割到更小的文件中去，但在这里我们只把它们放在一个配置文件中。为能把所有东西放在 $HOME/.fvwm 目录下，第一步就是建立 $HOME/.fvwm 和 .fvwm2rc 空文件。在第一次运行 fvwm 时，如果发现默认配置很丑，不要惊讶！因为很多人同意你的观点，但这是个好起点。</p>
+
+<p>我在指南中用到的图片都能从<a href="fvwm-guide-icons.tar.gz2">这里</a>下载。如果你想在看指南的时候用我的图片，就下载那个文件，然后解压到你的 $HOME 目录；它会创建 .fvwm 目录，包含所有我在指南中用到的图标和装饰。也可以从复制、粘贴本指南的第一部分的内容，从而生成一份 fvwm2rc 文件的拷贝。</p>
+
+<p>下一步，用你最喜欢的编辑器打开 $HOME/.fvwm/.fvwm2rc 文件，FVWM 会在启动（或重启）时读取这个文件并用其中的内容建立桌面的外观。用'#'注释一行，这我们在文件头部放些注释来作为练习的起点。例如，你可以把下面这一段放在你新建的 fvwm2rc 文件中</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">###########</font>
+<font color="#0000ff">#  ____________________________</font>
+<font color="#0000ff"># (   _________________________)</font>
+<font color="#0000ff">#  ) (__  _  _  _    _  </font>
+<font color="#0000ff"># (   __)( \/ )( \/\/ )/\/\</font>
+<font color="#0000ff">#  ) (    \  /  \    //    \</font>
+<font color="#0000ff"># (___)    \/    \/\/(_/\/\_) 2.5.10</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># My personal fvwm2rc file</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff">#######################</font>
+</pre>
+</td></tr></table></center>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><br></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="global.html">全局设置</a>
+</td></tr></table>
+</body>
+</html>

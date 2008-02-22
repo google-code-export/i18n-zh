@@ -1,0 +1,131 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 函数进阶</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>函数是我最喜欢用的东西，正如你所看见的那样，我甚至为一件简单的事情而写个函数。而且还真是如此，几乎你想要程序拥有的任何功能，关键都在于是否能写出漂亮
+的函数。几乎所有的高级主题部分都包含函数，因此这部分充斥着各种不同的函数。
+</p>
+
+<p>这头两个函数来自<a href="http://dev.gentoo.org/~taviso/fvwm2rc.html">
+	taviso 的</a> fvwm2rc 配置文件。 它们用 ImageMagick 中的工具来为
+打开的窗口抓图，然后以它作为图标。第一个函数 Thumbnail 会用当前窗口的抓图
+来做这个窗口的图标。</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">DestroyFunc</font> Thumbnail
+<font color="#008b8b">AddToFunc</font> Thumbnail
++ I <font color="#008b8b">Raise</font>
++ I <font color="#008b8b">SetEnv</font> Icon-<font color="#a020f0">$[w.id]</font> <font color="#a020f0">$[w.iconfile]</font>
++ I ThisWindow (!<font color="#008b8b">Shaded</font> Iconifiable !<font color="#008b8b">Iconic</font>) <font color="#008b8b">PipeRead</font> \
+    &quot;xwd -silent -id <font color="#a020f0">$[w.id]</font> | convert -scale <font color="#a020f0">$$</font>((<font color="#a020f0">$[w.width]</font>/5)) -frame 1x1 \
+    -mattecolor black -quality 0 xwd:- png:<font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png \
+    &amp;&amp; <font color="#008b8b">echo</font> <font color="#008b8b">Nop</font>&quot;
++ I TestRc (Match) Test (f <font color="#a020f0">$[fvwm_icon]</font>/<font color="#a020f0">$[w.iconfile]</font>, f <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png) \
+    <font color="#008b8b">PipeRead</font> &quot;composite -geometry +2+4 \
+    <font color="#a020f0">$[fvwm_icon]</font>/<font color="#a020f0">$[w.iconfile]</font> <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png \
+    <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png &amp;&amp; \
+    <font color="#008b8b">echo</font> WindowStyle <font color="#a52a2a"><b>IconOverride</b></font>, <font color="#a52a2a"><b>Icon</b></font> <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png || <font color="#008b8b">echo</font> <font color="#008b8b">Nop</font>&quot;
++ I TestRc (NoMatch) WindowStyle <font color="#a52a2a"><b>IconOverride</b></font>, <font color="#a52a2a"><b>Icon</b></font> <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png
++ I <font color="#008b8b">Iconify</font>
+
+<font color="#008b8b">DestroyFunc</font> DeThumbnail
+<font color="#008b8b">AddToFunc</font> DeThumbnail
++ I <font color="#008b8b">PipeRead</font> <font color="#ff00ff">&quot;echo WindowStyle Icon \\$\\[Icon-$[w.id]\\]&quot;</font>
++ I <font color="#008b8b">UnsetEnv</font> Icon-<font color="#a020f0">$[w.id]</font>
++ I <font color="#008b8b">Exec</font> rm -f <font color="#a020f0">$[fvwm_tmp]</font>/icon.tmp.<font color="#a020f0">$[w.id]</font>.png
+</pre>
+</td></tr></table></center>
+
+<p>这些函数可用于代替 'Iconify'。Thumbnail 函数首先抓取当前窗口的图像，把
+它写入一个临时文件，这个文件放在 $[fvwm_tmp] 下，因此你必须设置过这个环境
+变量。然后 'Test (f $[fvwm_home]/icons/$[w.iconfile])' 会试着看看你是不是
+已经为窗口设定了图标文件。仅当你用 style 命令设置时 $[w.iconfile] 才会有内
+容，如 'Style "Firefox-bin" Icon 48x48/firefox.png' 会把 $[w.iconfile] 的
+内容设为 48x48/firefox.png，注意我将所有的图标都放在了 $[fvwm_icon] 目录
+内。如果存在这个文件，一方面函数会将两张图叠加为一张；另一方面，它会将程
+序图标设置为我们刚刚创建的图标，然后图标化这个窗口。DeThumbnail 函数清除
+所有东西，它会将图标变回原来的那个样子，然后删除刚才的临时图标，这样下一
+次再用 Thumbnail 时就会跟第一次运行时完全一样。当窗口非图标化时，有两种方
+法可以确保函数运行成功。其中之一是将 '+ I Iconify' 添加至这个函数并绑定，
+这样当你非图标化一个窗口时它就会运行了。或者，我更欣赏这样，在非图标化窗
+时让 FvwmEvent 模块来完成这个任务。这非常完美，因为无所谓如何实现非图标化，
+这个函数总会运行一下。想这么做的话，就要像下面这样设置 FvwmEvent，然后在
+StarFunction 函数中调用这个模块。</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmEvent</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyModuleConfig</font> FvwmEvent: *
+<font color="#a020f0">*FvwmEvent</font>: deiconify DeThumbnail
+</pre>
+</td></tr></table></center>
+
+<p>最后要提请注意的是，当你重启 FVWM 时所有图标都会回到原来的样子，而你将
+不得不先来一个 deiconify 再来一次 iconify，重新让它们再变成你想要的样子。
+有个方法可以避免出现这种情况，把 '+I All (Iconic) ReThumbnail' 加到 Resta
+rtFunction 函数中去，ReThumbnail 函数如下所示</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">DestroyFunc</font> ReThumbnail
+<font color="#008b8b">AddToFunc</font>   ReThumbnail
++ I <font color="#008b8b">Iconify</font>
++ I Thumbnail
+</pre>
+</td></tr></table></center>
+
+<p>如果每样东西都设置正确，那么你的图标化窗口应该看起来像下面这两幅图那样
+样图为 firefox 和 gvim 
+
+<center>
+<table border="0" cellpadding="5">
+<tr><td valign="center">
+<img src="firefox_thumbnail.png">
+</td><td valign="cener"><img src="gvim_thumbnail.png">
+</td></tr></table></center>
+
+<p>taviso 写的另一个函数是 FvwmExpose，这个函数很像 WindowList 函数。它的
+作用是，用 ImageMagick 截取所有当前打开窗口的图像，然后将它们放入一个菜单，
+以截取的图像作为图标。这里是份拷贝</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmExpose</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> FvwmExpose
+<font color="#008b8b">AddToFunc</font> FvwmExpose
++ I <font color="#008b8b">AddToMenu</font> FvwmExposeMenu <font color="#ff00ff">&quot;e x p o s e&quot;</font> <font color="#008b8b">Title</font>
++ I + <font color="#a52a2a"><b>DynamicPopDownAction</b></font> <font color="#008b8b">DestroyMenu</font> FvwmExposeMenu
++ I <font color="#a52a2a"><b>All</b></font> (!<font color="#008b8b">Iconic</font> !<font color="#008b8b">Shaded</font> <font color="#008b8b">AcceptsFocus</font>)\
+    <font color="#008b8b">PipeRead</font> &quot;<font color="#008b8b">echo</font> <font color="#008b8b">Raise</font>; \
+        xwd -silent -id <font color="#a020f0">$[w.id]</font> | convert -scale <font color="#a020f0">$$</font>((<font color="#a020f0">$[w.width]</font>/10)) -quality 0 xwd:- \
+        png:<font color="#a020f0">$[fvwm_home]</font>/tmp/icon.exp.<font color="#a020f0">$[w.id]</font>.png \
+    &amp;&amp; <font color="#008b8b">echo</font> <font color="#008b8b">AddToMenu</font> FvwmExposeMenu \
+    %<font color="#a020f0">$[fvwm_home]</font>/tmp/icon.exp.<font color="#a020f0">$[w.id]</font>.png%\\\'\<font color="#ff00ff">&quot;$[w.name]\&quot;</font>\\\' <font color="#008b8b">WindowID</font> <font color="#a020f0">$[w.id]</font> <font color="#008b8b">WarpToWindow</font> 50 50 \
+        &amp;&amp; <font color="#008b8b">echo</font> <font color="#008b8b">AddToMenu</font> FvwmExposeMenu \\\<font color="#ff00ff">&quot;\\\&quot;</font> <font color="#008b8b">Nop</font> \
+    || <font color="#008b8b">Nop</font>&quot;
++ I <font color="#008b8b">Popup</font> FvwmExposeMenu
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> rm -f <font color="#a020f0">$[fvwm_home]</font>/tmp/icon.exp.*
+</pre>
+</td></tr></table></center>
+
+<p>我用 alt+鼠标中键 来调用这个函数，它会弹出 FvwmExposeMenu。<a href="fvwm_expose.png">这里</a>有张样图能让你看到菜单看起来会是什么样子</p>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="advanced.html">高级主题</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="advanced_menu.html">菜单进阶</a></td></tr></table>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 菜单</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>所谓"菜单"是指从按键绑定或任务条的开始菜单弹出的列表项目。菜单可用于列出程
+序，甚至能够被动态创建以便于列出目录内容、最近用过的程序等内容。要做的第一件
+事就是用设定菜单要用的色彩模板。绝大多数菜单需要两个色彩模板，一个用于主菜单
+，另一个用于当前激活项目。一个简单的双色彩模板的设置如下：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Menu Colorsets</font>
+<font color="#0000ff">###########</font>
+<font color="#a52a2a"><b>Colorset</b></font> 7 fg Black, bg <font color="#2e8b57"><b>#e6e7d7</b></font>, sh Black, hi <font color="#2e8b57"><b>#202070</b></font>
+<font color="#a52a2a"><b>Colorset</b></font> 8 fg DarkRed, bg <font color="#2e8b57"><b>#e6e7d7</b></font>, sh Black, hi <font color="#2e8b57"><b>#202070</b></font>
+</pre>
+</td></tr></table></center>
+
+<p>
+<p>在 fvwm 2.5.10 中可以对菜单使用 RootTransparent 色彩模板。这些模板会把背景
+做为菜单的位图，这样菜单就会显得透明了，但不会显示在菜单下的任何窗口。这种模
+板的例子：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#a52a2a"><b>Colorset</b></font> 7 RootTransparent, fg Black, bg average, sh Black, \
+  hi <font color="#2e8b57"><b>#202070</b></font>, Tint White 60, bgTint White 60
+</pre>
+</td></tr></table></center>
+
+<p>这是一个 RootTransparent 模板，其中 Tint 和 bgTint 是菜单的色调，跟着的是
+色调百分比，0 代表不要上色且所有菜单均透明，而 100 代表纯色调。</p>
+<p>你能用<a href="install.html">Translucency</a> 补丁使窗口更接近于真正的透明
+。如果你正确安装了补丁，就可以创建半透明的色彩模板。要用这个选项的话，你可以
+将 'Translucent [color][percent]' 添加到色彩模板，就像这样：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#a52a2a"><b>Colorset</b></font> 7 fg Black, Translucent White 75, \
+  hi Black, sh Black
+</pre>
+</td></tr></table></center>
+
+<p>设定好色彩模板后，是时候定义一些 MenuSytles 告诉 FVWM 如何显示菜单。MenuSt
+yles 类似于 Style 命令，能用广义字符 '*' 使所有的菜单风格都一样，或者也可以用
+不同的 MenuStyles 做出不同的菜单风格。以下是些全局 MenuStyles 的例子：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># MenuStyles</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>PopupDelayed</b></font>, <font color="#a52a2a"><b>PopupDelay</b></font> 300, <font color="#a52a2a"><b>PopdownImmediately</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>PopupOffset</b></font> -5 100, <font color="#a52a2a"><b>TitleWarpOff</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>TitleUnderlines2</b></font>, <font color="#a52a2a"><b>SeparatorsLong</b></font>, <font color="#a52a2a"><b>TrianglesSolid</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>AnimationOff</b></font>, <font color="#a52a2a"><b>AutomaticHotkeysOff</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>BorderWidth</b></font> 2
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>PopupAsSubmenu</b></font>, <font color="#a52a2a"><b>HoldSubmenus</b></font>, <font color="#a52a2a"><b>SubmenusRight</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>ItemFormat</b></font> <font color="#ff00ff">&quot;%|%5.5i%1.3l%2.3&gt;%|&quot;</font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>VerticalItemSpacing</b></font> 1 1, <font color="#a52a2a"><b>VerticalTitleSpacing</b></font> 2 2
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>MenuColorset</b></font> 7
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>ActiveFore</b></font>, <font color="#a52a2a"><b>Hilight3DOff</b></font>
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>ActiveColorset</b></font> 8
+<font color="#008b8b">MenuStyle</font> * <font color="#a52a2a"><b>Font</b></font> <font color="#ff00ff">&quot;Shadow=2:xft:Sans:Bold:size=11:antialias=True&quot;</font>
+</pre>
+</td></tr></table></center>
+
+<p>去 man 页查找每个选项的意思，但是绝大多数的意思都是不言而喻的，用来控制 Po
+pUp 和 PopDown 菜单的行为，用到的色彩模板，字体以及菜单项和菜单标题的格式。如
+果想让不同的菜单看起来不一样，可以用你自己感兴趣的菜单名来替换 '*'。如，可以
+用 'MenuStyle FvwmMenu* [styles]' 和 'MenuStyle MyMenu* [style]' 来定义两个独
+立的菜单外观，分别是以 Fvwmmenu 和 Mymenu 开头的菜单名。</p>
+
+<p>到此为止我们已经设定了菜单的外观和行为，现在需要建立些菜单。建立菜单与建立
+函数非常的类似，首先你要销毁以前的菜单，然后再向菜单中以你想要的显示顺序添加
+菜单项。一个简单的根菜单看起来像这样：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmRootMenu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyMenu</font> FvwmRootMenu
+<font color="#008b8b">AddToMenu</font>   FvwmRootMenu <font color="#ff00ff">&quot;Root Menu&quot;</font> <font color="#008b8b">Title</font>
++ <font color="#ff00ff">&quot;Programs</font><font color="#0000ff">%menu/programs.png%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Popup</font> FvwmProgramsMenu
++ <font color="#ff00ff">&quot;Console</font><font color="#0000ff">%menu/terminal.png%</font><font color="#ff00ff">&quot;</font>  FvwmATerm
++ <font color="#ff00ff">&quot;FVWM Console</font><font color="#0000ff">%menu/terminal.png%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Module</font> FvwmConsole
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;Help</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Popup</font> FvwmManPagesMenu
++ <font color="#ff00ff">&quot;Restart FVWM</font><font color="#0000ff">%menu/restart.png%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Restart</font>
++ <font color="#ff00ff">&quot;Quit FVWM</font><font color="#0000ff">%menu/quit.png%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Quit</font>
+</pre>
+</td></tr></table></center>
+
+<p>基本的菜单项格式是 '+ "[item name]%[icon]%" [action]'。icon 无所谓在 item 
+name 前还是后，如 '+ "%[icon]%[item name]" [action]' 具有相同的效果。如果要控
+制图标在菜单项的左边还是右边，你需要与 MenuStyles 混合使用。这里建立了一个简
+单的 'Root Menu'，只要你在根窗口上点击就会弹出来。（可参考按键绑定一章）。菜
+单中有 5 个菜单项，第一个有个叫 'FvwmProgramsMenu' 的子菜单，第二个在点击时会
+启动 FvwmATerm 函数运行 aterm。第三个会打开 FvwmConsole 模块，这个终端允许你
+输入 FVWM 命令，并立即执行。 '+ "" Nop' 会创建一个分隔条。最后几个菜单项可以
+打开另一个子菜单 'FvwmManPagesMenu'，重启以及退出 fvwm。</p>
+
+<p>现在我们已建立了两个子菜单，因此把它们加入到我们的配置文件中来。其中一个是
+可扩展的程序列表，另一个是包含所有 fvwm 手册页的漂亮菜单。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Programs Menu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyMenu</font> FvwmProgramsMenu
+<font color="#008b8b">AddToMenu</font>   FvwmProgramsMenu <font color="#ff00ff">&quot;Programs&quot;</font> <font color="#008b8b">Title</font>
++ <font color="#ff00ff">&quot;GVim</font><font color="#0000ff">%menu/vim.png%</font><font color="#ff00ff">&quot;</font>  FvwmGVim
++ <font color="#ff00ff">&quot;Gimp</font><font color="#0000ff">%menu/gimp.png%</font><font color="#ff00ff">&quot;</font>  FvwmGimp
++ <font color="#ff00ff">&quot;FireFox</font><font color="#0000ff">%menu/firefox.png%</font><font color="#ff00ff">&quot;</font>  FvwmFireFox
++ <font color="#ff00ff">&quot;Irssi</font><font color="#0000ff">%menu/irc.png%</font><font color="#ff00ff">&quot;</font>  FvwmIrssi
++ <font color="#ff00ff">&quot;Xmms</font><font color="#0000ff">%menu/xmms.png%</font><font color="#ff00ff">&quot;</font>  FvwmXmms
++ <font color="#ff00ff">&quot;XRoach-Invasion</font><font color="#0000ff">%menu/xroach.png%</font><font color="#ff00ff">&quot;</font>  XRoachInvasion
++ <font color="#ff00ff">&quot;XRoach-Exterminate</font><font color="#0000ff">%menu/xroach.png%</font><font color="#ff00ff">&quot;</font>  XRoachExterminate
+
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FVWM Help Menu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyMenu</font> FvwmManPagesMenu
+<font color="#008b8b">AddToMenu</font>   FvwmManPagesMenu <font color="#ff00ff">&quot;FVWM Man Pages&quot;</font> <font color="#008b8b">Title</font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm&quot;</font>                FvwmViewManPage <font color="#a52a2a"><b>fvwm</b></font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmAnimate&quot;</font>         FvwmViewManPage FvwmAnimate
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmAuto&quot;</font>            FvwmViewManPage FvwmAuto
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmBacker&quot;</font>          FvwmViewManPage FvwmBacker
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmBanner&quot;</font>          FvwmViewManPage FvwmBanner
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmButtons&quot;</font>         FvwmViewManPage <font color="#a52a2a"><b>FvwmButtons</b></font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmCommand&quot;</font>         FvwmViewManPage FvwmCommand
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmConsole&quot;</font>         FvwmViewManPage FvwmConsole
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmConsoleC.pl&quot;</font>     FvwmViewManPage FvwmConsoleC.pl
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmCpp&quot;</font>             FvwmViewManPage FvwmCpp
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmDebug&quot;</font>           FvwmViewManPage FvwmDebug
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmDragWell&quot;</font>        FvwmViewManPage FvwmDragWell
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmEvent&quot;</font>           FvwmViewManPage FvwmEvent
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmForm&quot;</font>            FvwmViewManPage FvwmForm
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmGtk&quot;</font>             FvwmViewManPage FvwmGtk
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmGtkDebug&quot;</font>        FvwmViewManPage FvwmGtkDebug
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmIconBox&quot;</font>         FvwmViewManPage FvwmIconBox
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmIconMan&quot;</font>         FvwmViewManPage FvwmIconMan
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmIdent&quot;</font>           FvwmViewManPage FvwmIdent
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmM4&quot;</font>              FvwmViewManPage FvwmM4
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmPager&quot;</font>           FvwmViewManPage FvwmPager
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmPerl&quot;</font>            FvwmViewManPage FvwmPerl
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmProxy&quot;</font>           FvwmViewManPage FvwmProxy
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmRearrange&quot;</font>       FvwmViewManPage FvwmRearrange
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmSave&quot;</font>            FvwmViewManPage FvwmSave
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmSaveDesk&quot;</font>        FvwmViewManPage FvwmSaveDesk
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmScript&quot;</font>          FvwmViewManPage FvwmScript
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmScroll&quot;</font>          FvwmViewManPage FvwmScroll
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmTaskBar&quot;</font>         FvwmViewManPage FvwmTaskBar
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmTheme&quot;</font>           FvwmViewManPage FvwmTheme
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmWharf&quot;</font>           FvwmViewManPage FvwmWharf
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmWinList&quot;</font>         FvwmViewManPage FvwmWinList
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">FvwmWindowMenu&quot;</font>      FvwmViewManPage FvwmWindowMenu
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-config&quot;</font>         FvwmViewManPage fvwm-config
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-perllib&quot;</font>        FvwmViewManPage fvwm-perllib
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-root&quot;</font>           FvwmViewManPage fvwm-root
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-bug&quot;</font>            FvwmViewManPage fvwm-bug
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-convert-2.2&quot;</font>    FvwmViewManPage fvwm-convert-2.2
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-convert-2.4&quot;</font>    FvwmViewManPage fvwm-convert-2.4
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-menu-desktop&quot;</font>   FvwmViewManPage fvwm-menu-desktop
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-menu-directory&quot;</font> FvwmViewManPage fvwm-menu-directory
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-menu-headlines&quot;</font> FvwmViewManPage fvwm-menu-headlines
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/help.png%</font><font color="#ff00ff">fvwm-menu-xlock&quot;</font>     FvwmViewManPage fvwm-menu-xlock
+</pre>
+</td></tr></table></center>
+
+<p>下面的菜单是窗口操作列表，你可以对窗口执行各种各样的操作以及抓图。在绑定一
+章，我设定了一个绑定操作，当你在根窗口上右击时会打开这个窗口。最后一项是 Fvwm
+Ident 模块，会弹出个窗口告诉你窗口的各种属性，如名字、类、资源和其它有用的东
+西。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># fvwm Window Operation Menu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyMenu</font> FvwmWindowOpsMenu
+<font color="#008b8b">AddToMenu</font>   FvwmWindowOpsMenu <font color="#ff00ff">&quot;Window Operations&quot;</font> <font color="#008b8b">Title</font>
++ <font color="#ff00ff">&quot;Move</font><font color="#0000ff">%menu/window-move.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Move</font>
++ <font color="#ff00ff">&quot;Resize</font><font color="#0000ff">%menu/window-resize.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Resize</font>
++ <font color="#ff00ff">&quot;(De)Iconify</font><font color="#0000ff">%menu/window-iconify.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Iconify</font>
++ <font color="#ff00ff">&quot;(Un)Maximize</font><font color="#0000ff">%menu/window-maximize.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Maximize</font>
++ <font color="#ff00ff">&quot;(Un)Shade</font><font color="#0000ff">%menu/window-shade.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">WindowShade</font>
++ <font color="#ff00ff">&quot;(Un)Stick</font><font color="#0000ff">%menu/window-stick.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Stick</font>
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;Close</font><font color="#0000ff">%menu/window-close.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Close</font>
++ <font color="#ff00ff">&quot;Delete</font><font color="#0000ff">%menu/window-delete.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Delete</font>
++ <font color="#ff00ff">&quot;Destroy</font><font color="#0000ff">%menu/window-destroy.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Destroy</font>
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;StaysOnTop</font><font color="#0000ff">%menu/window-raise.xpm%</font><font color="#ff00ff">&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) <font color="#008b8b">Layer</font> 0 6
++ <font color="#ff00ff">&quot;Layer +1</font><font color="#0000ff">%menu/window-raise.xpm%</font><font color="#ff00ff">&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) <font color="#008b8b">Layer</font> +1
++ <font color="#ff00ff">&quot;StaysPut</font><font color="#0000ff">%menu/window.xpm%</font><font color="#ff00ff">&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) <font color="#008b8b">Layer</font> 0 4
++ <font color="#ff00ff">&quot;Layer -1</font><font color="#0000ff">%menu/window-lower.xpm%</font><font color="#ff00ff">&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) <font color="#008b8b">Layer</font> -1
++ <font color="#ff00ff">&quot;StaysOnBottom</font><font color="#0000ff">%menu/window-lower.xpm%</font><font color="#ff00ff">&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) <font color="#008b8b">Layer</font> 0 2
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/window.xpm%</font><font color="#ff00ff">Window Screenshot&quot;</font>  Pick (<font color="#a52a2a"><b>CirculateHit</b></font>) FvwmWindowScreenshot
++ <font color="#ff00ff">&quot;</font><font color="#0000ff">%menu/display.xpm%</font><font color="#ff00ff">Screenshot&quot;</font> FvwmDesktopScreenshot 5
++ <font color="#ff00ff">&quot;&quot;</font> <font color="#008b8b">Nop</font>
++ <font color="#ff00ff">&quot;Identify</font><font color="#0000ff">%menu/window-identify.xpm%</font><font color="#ff00ff">&quot;</font>  <font color="#008b8b">Module</font> FvwmIdent
+</pre>
+</td></tr></table></center>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="window.html">窗口装饰</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="modules.html">模块</a>
+</td></tr></table>
+</body>
+</html>

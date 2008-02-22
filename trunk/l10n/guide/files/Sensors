@@ -1,0 +1,82 @@
+WindowTitle {FvwmApplet-Sensors}
+WindowSize  100 56
+Font		"xft:Comic Sans MS:style=Bold:size=10"
+
+Init
+ Begin
+  Set $MainColorset=(GetScriptArgument 1)
+  If $MainColorset <> {} Then
+  Begin
+   ChangeColorset 0 $MainColorset
+   ChangeColorset 1 $MainColorset
+   ChangeColorset 2 $MainColorset
+   ChangeColorset 3 $MainColorset
+  End
+  Set $CPUtemp = (GetOutput {exec sensors} 11 3)
+  Set $MBtemp = (GetOutput {exec sensors} 12 3)
+  Set $Fan = (GetOutput {exec sensors} 9 3)
+   Set $tmp1 = {CPU: } (StrCopy $CPUtemp 2 3) {°C}
+   Set $tmp2 = {Mobo: } (StrCopy $MBtemp 2 3) {°C}
+   Set $tmp3 = {Fan: } $Fan
+   ChangeTitle 1 $tmp1
+   ChangeTitle 2 $tmp2
+   ChangeTitle 3 $tmp3
+End
+
+PeriodicTasks
+ Begin 
+  If (RemainderOfDiv (GetTime) 30)==0 Then
+  Begin
+     Set $CPUtemp = (GetOutput {exec sensors} 11 3)
+     Set $MBtemp = (GetOutput {exec sensors} 12 3)
+     Set $Fan = (GetOutput {exec sensors} 9 3)
+     Set $tmp1 = {CPU: } (StrCopy $CPUtemp 2 3) {°C}
+     Set $tmp2 = {Mobo: } (StrCopy $MBtemp 2 3) {°C}
+     Set $tmp3 = {Fan: } $Fan
+     ChangeTitle 1 $tmp1
+     ChangeTitle 2 $tmp2
+     ChangeTitle 3 $tmp3
+  End
+End
+
+Widget 1
+Property
+ Position 0 0
+ Size 100 18
+ Type ItemDraw
+ Flags NoReliefString
+ Title {}
+Main
+ Case message of
+  SingleClic :
+  Begin
+  End
+End
+
+Widget 2
+Property
+ Position 0 18
+ Size 100 18
+ Type ItemDraw
+ Flags NoReliefString
+ Title {}
+Main
+ Case message of
+  SingleClic :
+  Begin
+  End
+End
+
+Widget 3
+Property
+ Position 0 36
+ Size 100 18
+ Type ItemDraw
+ Flags NoReliefString
+ Title {}
+Main
+ Case message of
+  SingleClic :
+  Begin
+  End
+End

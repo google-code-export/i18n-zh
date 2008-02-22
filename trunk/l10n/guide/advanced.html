@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 高级主题</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+
+<body>
+<p>现在你已经搞定了第一份 fvwm2rc 配置文件，而且充分领略了配置语法，下面就让
+我们更加深入地了解一些专题，从而给你的桌面带来更多的特性。在接下来的几页里，
+我会给出些在我的桌面上使用的小点缀，如果喜欢的话，你可以将它们整合至自己的桌
+面。我用到的一些东西需要你装有 ImageMagick 工具。如果还没装过这套工具，我建议
+你现在就去装上，因为它们实在是太棒了！</p>
+
+<p>真正有用的用于创建更复杂函数的工具，就是利用 shell，可以用 'ExecUseShell /
+bin/bash' 命令设置 FVWM 所用的 shell，通过 PipeRead 实现。PipeRead 所做的就是
+从 shell 标准输出获取内容，并将它用于配置 FVWM。这将允许你使用 shell 脚本（甚
+至是其它能在 shell 中运行的脚本或程序）的输出进一步自定义 FVWM。以下面的例子
+来说明这是如何工作的，如你写了个简单的脚本，它会输出一些你想包含在 fvwm2rc 文
+件中的语法，然后你可以在配置文件中写上 'PipeRead "simple_script"' 来使用它。
+</p>
+
+<p>比如我们想做些事情。首先建个函数，它能从所有位于 wallpaper 目录中的 .png 
+文件中生成一个 WallPaperMenu，wallpaper 目录由环境变量 $[fvwm_wallpaper] 指定
+。注意，我用 fvwm-root 设定 X 的墙纸，fvwm-root 既能用 .xpm 文件也能用 .png 
+文件。由于我更倾向于使用 .png 文件，因此所有的文件都被转换为 .png 格式。如果
+你还想愿意用 .jpg 格式的文件，你需要修改这个脚本。接下来给出我所用的三个函数
+，它们要用于 wallpaper 菜单和背景设置。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">DestroyFunc</font> BuildWallPaperMenu
+<font color="#008b8b">AddToFunc</font>   BuildWallPaperMenu
++ I <font color="#008b8b">Exec</font> rm <font color="#a020f0">$[fvwm_icon]</font>/wallpaper/*.png
++ I <font color="#008b8b">PipeRead</font> 'for i in <font color="#a020f0">$[fvwm_img]</font>/wallpaper/*.png; \
+  do convert -scale 64 <font color="#a020f0">$i</font> \
+  <font color="#ff00ff">&quot;$[fvwm_icon]/wallpaper/`basename $i`&quot;</font>; done &amp;&amp; <font color="#008b8b">echo</font> <font color="#008b8b">Nop</font>'
++ I <font color="#008b8b">Exec</font> rm <font color="#a020f0">$[fvwm_home]</font>/WallpaperMenu
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">echo</font> <font color="#ff00ff">&quot;DestroyMenu FvwmWallpaperMenu&quot;</font> &gt; \
+  <font color="#a020f0">$[fvwm_home]</font>/WallpaperMenu
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">echo</font> <font color="#ff00ff">&quot;AddToMenu FvwmWallpaperMenu \&quot;</font>Wallpapers\<font color="#ff00ff">&quot; Title&quot;</font> &gt;&gt; \
+  <font color="#a020f0">$[fvwm_home]</font>/WallpaperMenu
++ I <font color="#008b8b">PipeRead</font> 'for i in <font color="#a020f0">$[fvwm_img]</font>/wallpaper/*.png; \
+  do <font color="#008b8b">echo</font> &quot;<font color="#008b8b">AddToMenu</font> FvwmWallpaperMenu \
+  \<font color="#ff00ff">&quot;`basename $i`%wallpaper/`basename $i`%\&quot;</font> \
+  FvwmChangeBackground \<font color="#ff00ff">&quot;`basename $i`\&quot;</font>&quot; \
+  &gt;&gt; <font color="#a020f0">$[fvwm_home]</font>/WallpaperMenu; done &amp;&amp; <font color="#008b8b">echo</font> <font color="#008b8b">Nop</font>'
++ I <font color="#a52a2a"><b>Read</b></font> <font color="#a020f0">$[fvwm_home]</font>/WallpaperMenu
+
+<font color="#008b8b">DestroyFunc</font> FvwmChangeBackground
+<font color="#008b8b">AddToFunc</font>   FvwmChangeBackground
++ I <font color="#008b8b">Exec</font> fvwm-root --retain-pixmap <font color="#a020f0">$[fvwm_img]</font>/wallpaper/<font color="#a020f0">$0</font>
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">echo</font> &quot;fvwm-root --retain-pixmap \
+  <font color="#a020f0">$[fvwm_img]</font>/wallpaper/<font color="#a020f0">$0</font>&quot; &gt; <font color="#a020f0">$[fvwm_home]</font>/cfg/background.cfg
+
+<font color="#008b8b">DestroyFunc</font> InitWallpaper
+<font color="#008b8b">AddToFunc</font>   InitWallpaper
++ I <font color="#008b8b">Exec</font> source <font color="#a020f0">$[fvwm_home]</font>/cfg/background.cfg
+</pre>
+</td></tr></table></center>
+
+<p>当调用 BuildWallPaperMenu 函数时，它所做的第一件事就是删除所有自上次运行以
+来的旧图标。然后，它从每个 $[fvwm_wallpaper] 目录中的 .png 文件中，用 ImageMa
+gick 中的 convert 命令创建一个图标。接下来，用 FVWM 语法创建菜单并将它写入 $[
+fvwm_home]/WallpaperMenu 文件。最后，读入这个新建的文件，这会新建一个可被 FVW
+M 使用的叫 FvwmWallpaperMenu 的菜单。我喜欢把所有东西都写入一个 WallpaperMenu
+，这样我就只要在启动时，把 'Read $[fvwm_home]/WallpaperMenu' 加入 StartFuncti
+on 中就能创建所需菜单了。或者在 fvwm2rc 配置的 menu 部分中直接写上那条命令。
+如果我在 $[fvwm_wallpaper] 目录中加了新的墙纸，我所要做的只是再次运行这条命令
+，它会生成新的 FvwmWallpaperMenu。同时请注意，我还设置了 FvwmChangeBackground
+函数，如果你在所选墙纸上点击的话就会变更墙纸；然后，我将所变更的墙纸写入一个
+配置文件。这么做的原因是当我从 InitFunction 函数中运行 InitWallpaper 时，它就
+会用我上一次选中的墙纸。
+
+<p>在我用 FVWM 的日子里，我收藏并修改了许多脚本来帮助自定义 FVWM 设置，使之合
+乎我的要求。自始至终，我将在高级主题部分展示其中的很大一部分（绝大多数是函数
+和脚本），它们被我碰巧获得并按我的喜好进行过修改。我不能保证在其它机器上也有
+效，但希望它们能给你些启示，让你能为自己的 FVWM 功能。我已经将这一
+主题分解为三个部分，祝你愉快！</p>
+<h2>高级主题</h2>
+<ol type=I>
+<li><a href="advanced_functions.html">函数进阶</a>
+<li><a href="advanced_menu.html">菜单进阶</a>
+<li><a href="advanced_buttons.html">FvwmButtons 进阶</a>
+</ol>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="conclusion.html">结果预览</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="advanced_functions.html">函数进阶</a></td></tr></table>
+</body>
+</html> 

@@ -1,0 +1,289 @@
+<html>
+<head>
+<title>FVWM 入门指南 - FvwmButtons 进阶</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>FvwmButtons 可能是 FVWM 中最全面的一个模块了。你可以做出任何形式的 'Dock'
+和 'Panel'，外加它们都能用上透明模板。Taviso 写了一篇 FvwmButtons 简介，能在
+<a href="http://forums.gentoo.org/viewtopic.php?t=162177">这里</a> 找到。下
+面的几个配置例子能让你看到使用 FvwmButtons 的精彩要素。</p>
+
+<p>第一个例子，我创建了一个透明的圆角 'Dock'，包含了一个脚本用来建立一个简单
+的小时钟</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># DockButtons</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;DockButtons&quot;</font> !<font color="#008b8b">Title</font>, !<font color="#a52a2a"><b>Handles</b></font>, <font color="#008b8b">Sticky</font>, <font color="#a52a2a"><b>WindowListSkip</b></font>, \
+        <font color="#a52a2a"><b>CirculateSkip</b></font>, <font color="#a52a2a"><b>BorderWidth</b></font> 0, <font color="#a52a2a"><b>HandleWidth</b></font> 0
+<font color="#a52a2a"><b>Colorset</b></font> 15 RootTransparent, fg <font color="#2e8b57"><b>rgb:00/00/00</b></font>, bg average, \
+  Tint white 40, bgTint white 40, RootTransparent, \
+  Shape dock-mask.xpm
+<font color="#a52a2a"><b>Colorset</b></font> 16 RootTransparent, fg <font color="#2e8b57"><b>rgb:00/00/00</b></font>, bg average, \
+  Tint white 40, bgTint white 40, RootTransparent
+
+<font color="#008b8b">DestroyModuleConfig</font> DockButtons: *
+<font color="#a020f0">*DockButtons</font>: Geometry 600x80
+<font color="#a020f0">*DockButtons</font>: <font color="#a52a2a"><b>Colorset</b></font> 15
+<font color="#a020f0">*DcokButtons</font>: Rows 2
+<font color="#a020f0">*DockButtons</font>: Columns 30
+<font color="#a020f0">*DockButtons</font>: (1x2, Frame 0)
+<font color="#a020f0">*DockButtons</font>: (4x2, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 64x64/terminal.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmATerm&quot;</font>, Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmXTerm&quot;</font>)
+<font color="#a020f0">*DockButtons</font>: (4x2, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 64x64/firefox.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmFireFox&quot;</font>)
+<font color="#a020f0">*DockButtons</font>: (4x2, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 64x64/xmms.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXmms&quot;</font>)
+<font color="#a020f0">*DockButtons</font>: (4x2, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 64x64/gimp.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGimp&quot;</font>)
+<font color="#a020f0">*DockButtons</font>: (4x2, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 64x64/editor.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGVim&quot;</font>)
+<font color="#a020f0">*DockButtons</font>: (8x1, Frame 0, \
+  Swallow FvwmApplet-DigitalClock `FvwmScript <font color="#a020f0">$[fvwm_scrpt]</font>/DigitalClock 16`)
+<font color="#a020f0">*DockButtons</font>: (2x1, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 32x32/cpumon.png)
+<font color="#a020f0">*DockButtons</font>: (2x1, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 32x32/memmon.png)
+<font color="#a020f0">*DockButtons</font>: (2x1, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 32x32/diskmon.png)
+<font color="#a020f0">*DockButtons</font>: (2x1, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 32x32/netmon.png)
+<font color="#a020f0">*DockButtons</font>: (1x2, Frame 0)
+</pre>
+</td></tr></table></center>
+
+<p>开始我先为 DockButtons 设置一个默认样式，并建了两个色彩模板。不同于其它色
+彩模板的地方在于我用了 'Shape' 选项，用该选项后它会以一张 xpm 图像的形状来描
+绘 button 的外观。为做到这一点，我建了个透明的 xpm 文件（如下所示），用图像的
+透明部分来描绘窗口（按钮）的外观。要想了解更多的内容，请看 FvwmThemes 手册页，
+以及查找 'Shape', 'TitleShape' 还有 'AspectShape'。</p>
+<center><img src="dock-mask-ss.png"><br>
+用 <a href="http://gimp.org">gimp</a> 打开的 dock-mask.xpm
+<br><br><img src="dockbuttons.jpg"><br>
+ 圆角的 DockButtons </center>
+
+<p>你应该在 DockButtons 注意到一个东西，'<a href="files/DigitalClock">Digital
+Clock</a>' 小程序。它是用 'FvwmScript' 模块来实现的，这个模块可用于建立图形界
+面。 DigitalClock 脚本所做的仅是把 'date "+%b %e, %R"' 的输出显示到窗口上。这
+个脚本能接受一个参数，告诉脚本用哪个色彩模板。然后，我将这个窗口吞入(Swallow)
+ DockButtons。这真是个好功能，因为你可以让 FvwmButtons 吞入许多程序，甚至是那
+些不可入坞的程序。在这里，我 swallow DigitalClock 脚本的输出，包括日期和时间，
+用到了发给脚本的色彩模板。</p>
+
+<p>下面是我自己的 FvwmButtons，涵盖了时间，几个我最喜欢的程序的快速启动按钮，
+一个被吞入的 FvwmPager， xosview 系统监视器，一个从 lm-senors 获取输出的 Fvwm
+Script 。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;UkkostaButtons&quot;</font> !<font color="#008b8b">Title</font>, !<font color="#a52a2a"><b>Handles</b></font>, <font color="#008b8b">Sticky</font>, <font color="#a52a2a"><b>WindowListSkip</b></font>, \
+        <font color="#a52a2a"><b>CirculateSkip</b></font>, <font color="#a52a2a"><b>BorderWidth</b></font> 0, <font color="#a52a2a"><b>HandleWidth</b></font> 0
+<font color="#a52a2a"><b>Colorset</b></font> 15 fg <font color="#2e8b57"><b>rgb:00/00/00</b></font>, bg <font color="#2e8b57"><b>#e6e7d7</b></font>, Shape ukkostabuttons-mask.xpm
+<font color="#a52a2a"><b>Colorset</b></font> 16 fg <font color="#2e8b57"><b>rgb:00/00/00</b></font>, bg <font color="#2e8b57"><b>#e6e7d7</b></font>
+
+<font color="#008b8b">DestroyModuleConfig</font> UkkostaButtons: *
+<font color="#a020f0">*UkkostaButtons</font>: Geometry 110x580-20+20@1
+<font color="#a020f0">*UkkostaButtons</font>: <font color="#a52a2a"><b>Colorset</b></font> 15
+<font color="#a020f0">*UkkostaButtons</font>: <font color="#a52a2a"><b>Pixmap</b></font> <font color="#a020f0">$[fvwm_img]</font>/buttons-bg.png
+<font color="#a020f0">*UkkostaButtons</font>: Rows 40
+<font color="#a020f0">*UkkostaButtons</font>: Columns 4
+<font color="#a020f0">*UkkostaButtons</font>: Frame 0
+<font color="#a020f0">*UkkostaButtons</font>: <font color="#a52a2a"><b>Font</b></font> <font color="#ff00ff">&quot;Shadow=2:xft:Winks:Medium:pixelsize=24:minspace=False:antialias=True&quot;</font>
+<font color="#a020f0">*UkkostaButtons</font>: (4x2, Frame 0, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) '<font color="#a52a2a"><b>All</b></font> (<font color="#008b8b">Sticky</font> Iconifiable) <font color="#008b8b">Iconify</font>', \
+        <font color="#008b8b">Title</font>(Center) <font color="#ff00ff">&quot;ukkosta&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (4x1, Frame 0, \
+        Swallow FvwmApplet-DigitalClock `FvwmScript <font color="#a020f0">$[fvwm_scrpt]</font>/DigitalClock 16`)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/firefox.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmFireFox&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/terminal.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXTerm&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 2) <font color="#ff00ff">&quot;Exec exec pterm&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmATerm&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/editor.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGVim&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmXEmacs&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/chat.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmTalkbox&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 2) <font color="#ff00ff">&quot;FvwmIrssi&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmGaim&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/xmms.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXmms&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 2) <font color="#ff00ff">&quot;FvwmMixer&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/tux.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmRox&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/gimp.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGimp&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 2) <font color="#ff00ff">&quot;FvwmXpaint&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmXfig&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (2x4, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> 48x48/x.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXlock&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 2) <font color="#ff00ff">&quot;Restart&quot;</font>, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;Quit&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (4x8, Frame 0, \
+        Swallow FvwmPager '<font color="#008b8b">Module</font> FvwmPager')
+<font color="#a020f0">*UkkostaButtons</font>: (1x2, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> <font color="#008b8b">menu</font>/cpumon.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) 'FvwmTop')
+<font color="#a020f0">*UkkostaButtons</font>: (3x2, Frame 0, \
+        Swallow(UseOld) <font color="#ff00ff">&quot;cpumon&quot;</font> `<font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xosview -title cpumon +cpu`)
+<font color="#a020f0">*UkkostaButtons</font>: (1x2, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> <font color="#008b8b">menu</font>/memmon.png)
+<font color="#a020f0">*UkkostaButtons</font>: (3x2, Frame 0, \
+        Swallow(UseOld) <font color="#ff00ff">&quot;memmon&quot;</font> `<font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xosview -title memmon +mem`)
+<font color="#a020f0">*UkkostaButtons</font>: (1x2, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> <font color="#008b8b">menu</font>/diskmon.png)
+<font color="#a020f0">*UkkostaButtons</font>: (3x2, Frame 0, \
+        Swallow(UseOld) <font color="#ff00ff">&quot;diskmon&quot;</font> `<font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xosview -title diskmon +disk`)
+<font color="#a020f0">*UkkostaButtons</font>: (1x2, Frame 0, \
+        <font color="#a52a2a"><b>Icon</b></font> <font color="#008b8b">menu</font>/netmon.png, \
+        Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;Exec exec xterm -title iptraf -e 'sudo /usr/sbin/iptraf -i all'&quot;</font>)
+<font color="#a020f0">*UkkostaButtons</font>: (3x2, Frame 0, \
+        Swallow(UseOld) <font color="#ff00ff">&quot;netmon&quot;</font> `<font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xosview -title netmon +net`)
+<font color="#a020f0">*UkkostaButtons</font>: (4x4, Frame 0, \
+        Swallow FvwmApplet-Sensors `FvwmScript <font color="#a020f0">$[fvwm_scrpt]</font>/Sensors 11`)
+<font color="#a020f0">*UkkostaButtons</font>: (4x1, Frame 0)
+</pre>
+</td></tr></table></center>
+
+<p>这些按钮拥有了我想在桌面显示的每样东西。在最上方，我显示了电脑名和时间，跟
+着一组快速启动按钮。下面 swallow 一个 FvwmPager，以便我看到当前打开的是哪个窗
+口。在 pager 后面是一组用到<a href="http://xosview.sourceforge.net/">xosview</a>的监视器。Xosview 是一组能以图形条的方式显示当前状态的系统监视器。为设置它们，
+我首先关闭了 <a href="files/Xdefaults">.Xdefaults</a> 文件中默认的监视器。然
+后为每个我想要 xosview 显示的监视器调用 swallow 。如我的 'cpumon' 就以 
+"Swallow(UseOld) <font color="#ff00ff">&quot;cpumon&quot;</font> `<font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xosview -title cpumon +cpu`" 运行。以上所做的就是用让 FvwmButtons swallow（并使用，如果存在）这个叫 
+cpumon 的程序。然后启动 xosview，它被要求以 cpumon 作为标题，并打开 cpu 监控。
+这里，我用上了四个监控器 cpu、内存、磁盘、网络。在按钮的最下面，我 swallow 另
+一个叫 '<a href="files/Sensors">Sensors</a>' 的 FvwmScript，它能从 lm-sensors
+ 命令中获取输出，并将它写入 UkkostaButtons。<a href="ukkostabuttons.png">
+这里</a> 有张样图能让你了解这些按钮看起来会是什么样。</p>
+
+<p>最后一个例子，我会与你分享一组来自 <a href="http://liusd.spymac.net/linux/fvwm/">Liusd</a> 的函数，它们已被提交到 fvwm 邮件列表，而且我已进行过改动。这
+些函数在 2.5.10 中工作得非常出色，尽管有点小停顿。请注意，由于这些函数已被
+提交过了，因此 FVWM CVS 树中的一个新补丁已经有 FvwmButtons 的 HoverIcon 和 
+PressIcon 支持了。我比较喜欢这个视觉效果，而不是只在鼠标滑过或点击时切换图标。
+原因在于，这样做实际上生成一个新的透明 FvwmButton 悬浮于当前按钮之上，而又不
+受制于原来的按钮位置。如此说来，让我们看一下这组函数。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmDock Styles</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> FvwmDock* <font color="#008b8b">Sticky</font>, <font color="#a52a2a"><b>NoTitle</b></font>, <font color="#a52a2a"><b>NoHandles</b></font>, <font color="#a52a2a"><b>BorderWidth</b></font> 0, <font color="#a52a2a"><b>WindowListSkip</b></font>, \
+        <font color="#a52a2a"><b>CirculateSkip</b></font>
+<font color="#008b8b">Style</font> FvwmDock-* <font color="#a52a2a"><b>StaysOnBottom</b></font>, <font color="#a52a2a"><b>FixedPosition</b></font>, FixedSize
+<font color="#008b8b">Style</font> FvwmDockA* <font color="#a52a2a"><b>StaysOnTop</b></font>, FixedSize
+
+<font color="#0000ff">################</font>
+<font color="#0000ff"># </font>
+<font color="#0000ff"># ButtonDock Functions. These collection of functions create</font>
+<font color="#0000ff">#   single icon buttons that cause the button to hover above</font>
+<font color="#0000ff">#   everything when the mouse is moved atop of it.  To get these</font>
+<font color="#0000ff">#   to work it should only take copying all the five functions</font>
+<font color="#0000ff">#   CreateDock, EnterHandler, LeaveHandler, RestoreButton</font>
+<font color="#0000ff">#   and CreateActiveButton.  Then call the function 'CreateDock'</font>
+<font color="#0000ff">#   for each button on the dock bar. The function works as follows:</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># CreateDock '$0' '$1' '$2' '$3' '$4' '$5' '$6' '$7' '$8' '$9'</font>
+<font color="#0000ff">#   $0 -&gt; ButtonId</font>
+<font color="#0000ff">#   $1 -&gt; Geometry</font>
+<font color="#0000ff">#   $2 -&gt; Icon</font>
+<font color="#0000ff">#   $3 -&gt; LargeIcon</font>
+<font color="#0000ff">#   $4 -&gt; X offset (from upper left hand corner)</font>
+<font color="#0000ff">#   $5 -&gt; Y offset (from upper left hand corner)</font>
+<font color="#0000ff">#   $6 -&gt; action for Mouse 1</font>
+<font color="#0000ff">#   $7 -&gt; action for Mouse 2</font>
+<font color="#0000ff">#   $8 -&gt; action for Mouse 3</font>
+<font color="#0000ff">#   $9 -&gt; Size of LargeIcon</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff">###################################</font>
+<font color="#008b8b">DestroyFunc</font> CreateDock
+<font color="#008b8b">AddToFunc</font> CreateDock
++ I <font color="#008b8b">DestroyModuleConfig</font> FvwmDock-<font color="#a020f0">$0</font>: *
++ I *FvwmDock-<font color="#a020f0">$0</font>: Geometry <font color="#a020f0">$1</font>
++ I *FvwmDock-<font color="#a020f0">$0</font>: <font color="#a52a2a"><b>Font</b></font> <font color="#008b8b">none</font>
++ I *FvwmDock-<font color="#a020f0">$0</font>: <font color="#a52a2a"><b>Colorset</b></font> 9
++ I *FvwmDock-<font color="#a020f0">$0</font>: Frame 0
++ I *FvwmDock-<font color="#a020f0">$0</font>: Padding 0 0
++ I *FvwmDock-<font color="#a020f0">$0</font>: (Id D<font color="#a020f0">$0</font>, <font color="#a52a2a"><b>Icon</b></font> <font color="#a020f0">$2</font>)
++ I <font color="#008b8b">Module</font> FvwmButtons FvwmDock-<font color="#a020f0">$0</font>
++ I <font color="#008b8b">AddToFunc</font> <font color="#6a5acd">StartFunction</font> I <font color="#008b8b">Module</font> FvwmAuto 100 -menter 'EnterHandler <font color="#a020f0">$0</font> <font color="#ff00ff">&quot;$2&quot;</font> <font color="#a020f0">$3</font> <font color="#a020f0">$4</font> <font color="#a020f0">$5</font> <font color="#a020f0">$6</font> <font color="#a020f0">$7</font> <font color="#a020f0">$8</font> <font color="#a020f0">$9</font>' 'LeaveHandler <font color="#a020f0">$0</font> <font color="#a020f0">$2</font>'
+
+<font color="#008b8b">DestroyFunc</font> EnterHandler
+<font color="#008b8b">AddToFunc</font> EnterHandler
++ I ThisWindow (FvwmDock-<font color="#a020f0">$0</font>) ThisWindow (!FvwmDock-*) Deschedule 35
++ I ThisWindow (FvwmDock-<font color="#a020f0">$0</font>) <font color="#008b8b">WindowId</font> <font color="#a020f0">$[last_winid]</font> (FvwmDockA<font color="#a020f0">$0</font>) Deschedule 35
++ I ThisWindow (FvwmDockA<font color="#a020f0">$0</font>) Deschedule 45
++ I ThisWindow (FvwmDock-<font color="#a020f0">$0</font>) <font color="#008b8b">SendToModule</font> FvwmDock-<font color="#a020f0">$0</font> ChangeButton D<font color="#a020f0">$0</font> <font color="#a52a2a"><b>Icon</b></font> <font color="#ff00ff">&quot;shadow.png&quot;</font>
++ I ThisWindow (FvwmDock-<font color="#a020f0">$0</font>) CreateActiveButton <font color="#a020f0">$0</font> '<font color="#a020f0">$1</font>' <font color="#a020f0">$2</font> <font color="#a020f0">$3</font> <font color="#a020f0">$4</font> <font color="#a020f0">$5</font> <font color="#a020f0">$6</font> <font color="#a020f0">$7</font> <font color="#a020f0">$8</font>
+
+<font color="#0000ff"># Delay ms should be longer than delay in FvwmAuto</font>
+<font color="#008b8b">DestroyFunc</font> LeaveHandler
+<font color="#008b8b">AddToFunc</font> LeaveHandler
++ I ThisWindow <font color="#008b8b">SetEnv</font> last_winid <font color="#a020f0">$[w.id]</font>
++ I ThisWindow (FvwmDockA<font color="#a020f0">$0</font>) Schedule 110 35 RestoreButton <font color="#a020f0">$0</font> <font color="#a020f0">$1</font>
++ I ThisWindow (FvwmDock-<font color="#a020f0">$0</font>) Schedule 110 45 RestoreButton <font color="#a020f0">$0</font> <font color="#a020f0">$1</font>
+
+<font color="#008b8b">DestroyFunc</font> RestoreButton
+<font color="#008b8b">AddToFunc</font> RestoreButton
++ I <font color="#008b8b">SendToModule</font> FvwmDock-<font color="#a020f0">$0</font> ChangeButton D<font color="#a020f0">$0</font> <font color="#a52a2a"><b>Icon</b></font> <font color="#a020f0">$1</font>
++ I <font color="#008b8b">KillModule</font> FvwmButtons FvwmDockA<font color="#a020f0">$0</font>
+
+<font color="#008b8b">DestroyFunc</font> CreateActiveButton
+<font color="#008b8b">AddToFunc</font> CreateActiveButton
++ I <font color="#008b8b">DestroyModuleConfig</font> FvwmDockA<font color="#a020f0">$0</font>: *
++ I *FvwmDockA<font color="#a020f0">$0</font>: <font color="#a52a2a"><b>Pixmap</b></font> <font color="#008b8b">none</font>
++ I *FvwmDockA<font color="#a020f0">$0</font>: BoxSize <font color="#a52a2a"><b>fixed</b></font>
++ I *FvwmDockA<font color="#a020f0">$0</font>: Frame 0
++ I *FvwmDockA<font color="#a020f0">$0</font>: <font color="#a52a2a"><b>Font</b></font> <font color="#008b8b">none</font>
++ I *FvwmDockA<font color="#a020f0">$0</font>: Padding 0 0
++ I *FvwmDockA<font color="#a020f0">$0</font>: Rows 1
++ I *FvwmDockA<font color="#a020f0">$0</font>: Columns 1
++ I ThisWindow <font color="#008b8b">PipeRead</font> `<font color="#008b8b">echo</font> *FvwmDockA<font color="#a020f0">$0</font>: Geometry <font color="#a020f0">$8</font>+$((<font color="#a020f0">$[w.x]$3</font>))+$((<font color="#a020f0">$[w.y]$4</font>))`
++ I *FvwmDockA<font color="#a020f0">$0</font>: (<font color="#a52a2a"><b>Icon</b></font> <font color="#a020f0">$2</font>, Action(<font color="#a52a2a"><b>Mouse</b></font> 1) '<font color="#a020f0">$5</font>', Action(<font color="#a52a2a"><b>Mouse</b></font> 2) '<font color="#a020f0">$6</font>', Action(<font color="#a52a2a"><b>Mouse</b></font> 3) '<font color="#a020f0">$7</font>')
++ I <font color="#008b8b">Module</font> FvwmButtons FvwmDockA<font color="#a020f0">$0</font>
+</pre>
+</td></tr></table></center>
+
+<p>你所要做的就是从 StartFunction（或者 fvwm2rc 文件）中为每个你想出现在 dock
+中的图标调用 CreateDock 就行了。如你所见，上面的 CreateDock 函数有 10 个参数，
+它们指定了大小，图标以及你想绑定到按钮的动作。比如说，你想建一个拥有两个图标的
+dock，一个在另一个的上方。你要做的就是为两个 dock 分别调用 CreateDock 函数，
+然后用 geometry 选项使两个恰好叠在一起。如我在 StartFunction 中加了如下两行</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
++ I CreateDock '10' '56x56-74+62@1' '48x48/firefox.png' '64x64/firefox.png' '-20' '-30' 'FvwmFireFox' '<font color="#008b8b">Nop</font>' '<font color="#008b8b">Nop</font>' '64x64'
++ I CreateDock '11' '56x56-74+116@1' '48x48/xmms.png' '64x64/xmms.png' '+20' '-30' 'FvwmXmms' '<font color="#008b8b">Nop</font>' 'FvwmMixer' '64x64'
+</pre>
+</td></tr></table></center>
+
+<p>这创建了两个 Dock，编号 10 和 11。然后我在其中一个 Dock 上滑动鼠标，它会先
+用 <a href="files/shadow.png">shadow.png</a> 代替当前的图标，再生成一个拥有
+大图标的临时坞。下面的三张图显示了这样的效果是怎么回事的。取决于你的 cpu 速度，
+这可能会有点小小的停顿，但不管怎么说我还是觉得这看起来棒极了！</p>
+<center><img src="fvwmdock-1.png">&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="fvwmdock-2.png">&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="fvwmdock-3.png">&nbsp;&nbsp;&nbsp;&nbsp;
+</center>
+
+<p>最后提请注意，要让以上所有这些东西起作用都要通过 StartFunction 来设置。因
+此如果你不在 StartFunction 启动时调用这些函数的话，你必须再运行 StartFunction 
+让它们生效</p>
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="advanced_menu.html">菜单进阶</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="links.html">更多资源</a></td></tr></table>
+</body>
+</html>

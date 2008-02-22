@@ -1,0 +1,100 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 菜单进阶</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>在 FVWM 中菜单是个有用的工具，可以动态生成。上一页中的 FvwmExpose 函数就是
+个榜样。能从脚本中生成 FVWM 菜单是件很美妙的事情，之所以这么说是因为你能基于
+目录中的墙纸创建一个菜单，如上面演示过的。或者你可以创建一个菜单列出目录及其
+子目录中的所有内容。想看更多有关这一内容的信息可以找随 FVWM 一起发行的 fvwm-m
+enu-directory 和 fvwm-menu-headlines 脚本的手册页来看。也可以在 FVWM 手册页中
+查找 MissingSubmenuFunction, DynamicPopupAction 和 DynamicPopdownAction。</p>
+
+<p>我选择的发行版是 <a href="debian.org">Debian</a>。随 debian 一同发行的
+有个好东西 'menu' 包，这个包用于生成菜单。FVWM 的 debian 包附带了一个脚本，
+它能利用这个工具生成你在 debian 上已安装的程序的菜单。我搞到这个脚本并进
+行了修改，使之符合我的喜好，用它在我的桌面上生成一个 DebainMenu 菜单。如
+果你有 debian 且对此也有兴趣，你需要抓得以下三个文件: <a href="files/fvwm
+_menu">fvwm_menu</a>,<a href="files/fvwm_menu.h">fvwm_menu.h</a> 以及 <a 
+href="files/fvwm_menu_data.h">fvwm_menu_data.h</a>。然后，你必须将这些文
+件放入 $[fvwm_scrpt] 目录。接下来，你还要把以下函数添加至 fvwm2rc 文件</p>
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># DebianMenu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> BuildDebianMenu
+<font color="#008b8b">AddToFunc</font>   BuildDebianMenu
++ I <font color="#008b8b">Exec</font> if [ -f <font color="#ff00ff">&quot;$[fvwm_home]/DebianMenu&quot;</font> ] then rm <font color="#a020f0">$[fvwm_home]</font>/DebianMenu fi
++ I <font color="#008b8b">PipeRead</font> 'update-menus --menumethod <font color="#a020f0">$[fvwm_scrpt]</font>/fvwm_menu; \
+  cat <font color="#a020f0">$[fvwm_home]</font>/DebianMenu'
+</pre>
+</td></tr></table></center>
+
+<p>利用 menu 包这个函数创建了一个文件叫 $HOME/.fvwm/DebianMenu，但如果你
+用了其它路径作为 $[fvwm_home]，你必须对 fvwm_menu 脚本做些小改动。然后函
+数 cat 文件并用这个文件创建 DebianMenu。我就做了这些，而当菜单需要更新
+时，你得随时运行 BuildDebianMenu。但更好的方法是，你只要在启动时用 'Read 
+$[fvwm_home]/DebianMenu' 包含这个菜单就行了。要显示菜单的话，只要用它加入
+FvwmRootMenu 并加上 'Popup DebianMenu' 就可以了。
+
+<p>下一个例子，我修改了 fvwm-menu-directory 用于创建我自己的 MediaMenu 菜
+单显示我的音乐列表。我建议你先看看 fvwm-menu-directory 和 fvwm-menu-headl
+ines 的手册页。下面是一个改动过的 <a href="files/fvwm-menu-directory">fvw
+m-menu-directory</a> 版本。我给脚本加入了两条重要特性。第一条，它会为任意
+目录找一个叫 [directory_name].png 的文件，如果找到了就会把它作为目录在菜
+单中的图标，以及目录生成的子菜单的标题。伴随这一特性，我还设置了这个东西，
+你可以忽略所有 .png 文件并不在菜单中列出它们。我添加的第二条特性是，仅列
+出目录的部分内容，这样菜单不会变得太大。在我详细解释它的实现方法前，先看
+下 FuncFvwmMenuDirectory，它被用于生成这些函数以及用于保存它们的 'MediaMe
+nu'</p> 
+
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">DestroyFunc</font> FuncFvwmMenuDirectory
+<font color="#008b8b">AddToFunc</font>   FuncFvwmMenuDirectory
++ I <font color="#008b8b">PipeRead</font> '<font color="#a020f0">$[fvwm_scrpt]</font>/fvwm-menu-directory --title <font color="#ff00ff">&quot;%d&quot;</font> --dir <font color="#ff00ff">&quot;$0&quot;</font> \
+  --links --command-file <font color="#ff00ff">&quot;exec xmms \\&quot;</font>%f\\<font color="#ff00ff">&quot;&quot;</font> \
+  --command-title <font color="#ff00ff">&quot;exec xmms \\&quot;</font>%d\\<font color="#ff00ff">&quot;&quot;</font> \
+  --icon-title <font color="#ff00ff">&quot;$0.png&quot;</font> --icon-file <font color="#ff00ff">&quot;menu/notes.png&quot;</font> \
+  --exclude <font color="#ff00ff">&quot;.png&quot;</font>'
+
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># MediaMenu</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyMenu</font> MusicMenu
+<font color="#008b8b">AddToMenu</font>   MusicMenu <font color="#ff00ff">&quot;Music&quot;</font> <font color="#008b8b">Title</font>
+<font color="#008b8b">AddToMenu</font>   MusicMenu <font color="#6a5acd">MissingSubmenuFunction</font> FuncFvwmMenuDirectory
++ <font color="#ff00ff">&quot;Artists A-B</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[14AB]
++ <font color="#ff00ff">&quot;Artists C-G</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[CDEFG]
++ <font color="#ff00ff">&quot;Artists H-K</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[HIJK]
++ <font color="#ff00ff">&quot;Artists L-O</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[LMNO]
++ <font color="#ff00ff">&quot;Artists P-S</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[PQRS]
++ <font color="#ff00ff">&quot;Artists T-Z</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/artists|[TUVWXYZ]
++ <font color="#ff00ff">&quot;Unsorted</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/unsorted
++ <font color="#ff00ff">&quot;Assorted Music</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/assorted
++ <font color="#ff00ff">&quot;Collections</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/collections
++ <font color="#ff00ff">&quot;Soundtracks</font><font color="#0000ff">%menu/music.xpm%</font><font color="#ff00ff">&quot;</font> <font color="#008b8b">Popup</font> /home/music/albums/soundtracks
+</pre>
+</td></tr></table></center>
+
+<p>MediaMenu 的实现方法是，先把 FuncFvwmMenuDirectory 设为 MissingSubmenu
+Function。这样做了以后，当你想弹出一个不存在的子菜单时，它会发送子菜单名
+到 FuncFvwmMenuDirectory。然后函数会生成那个子菜单使之弹出。FuncFvwmMenuD
+irectory 的实现方法是，它会显示带有项目首字母的目录名。如，'Popup /home/music/albums/artists|[CDEFG]' 只会列出在 /home/music/albums/artists 中以 C,
+D, E, F 或者 G 打头的文件或目录。<a href="fvwm-menu-directory.png">这里</a>
+有张样图</p>
+
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="advanced_functions.html">函数进阶</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="advanced_buttons.html">FvwmButtons 进阶</a></td></tr></table>
+</body>
+</html>
