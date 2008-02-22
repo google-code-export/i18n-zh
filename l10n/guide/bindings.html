@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 按键绑定</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+
+<body>
+<p>有两种类型的绑定，绑定至鼠标，或绑定到键盘。要想理解这是怎么回事，先看只拥有一个窗口，二个图标化窗口的典型屏幕。在下面的图中，注意屏幕是如何被分割成以下几部分的：R - 根窗口，I - 图标，F - 窗口边角，S - 窗口边缘，T - 标题栏，W - 程序窗口，还有0-9 这些是按钮。注意：A代表任意地方，即不管鼠标在哪里。
+</p>
+<center>
+<img src="window_layout.png">
+</center>
+
+<p>绑定需如此设定。你可以绑定到键盘，用'Key X Context Modifier Action'，或者用'Mouse X Context Modifier Action' 绑定至鼠标。Context 是指如上所示的当前鼠标位置，Modifier 是如下任意组合：(A)ny, (C)ontrol, (S)hift, (M)eta, (N)othing, 或1-5, 代表X Modifiers mod1-mod5 (man xmodmap)。
+绑定的例子：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Basic Bindings</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Key</font> F1 A M <font color="#008b8b">Menu</font> MenuFvwmRoot
+<font color="#008b8b">Key</font> Tab A M <font color="#008b8b">WindowList</font> <font color="#008b8b">Root</font> c c <font color="#a52a2a"><b>NoDeskSort</b></font>, <font color="#a52a2a"><b>SelectOnRelease</b></font> Meta_L
+<font color="#008b8b">Key</font> Super_L A A FvwmATerm
+<font color="#a52a2a"><b>Mouse</b></font> 1 R A <font color="#008b8b">Menu</font> FvwmRootMenu
+<font color="#a52a2a"><b>Mouse</b></font> 3 R A <font color="#008b8b">Menu</font> FvwmWindowOpsMenu
+<font color="#a52a2a"><b>Mouse</b></font> 1 1 A FvwmDeleteOrDestroy
+<font color="#a52a2a"><b>Mouse</b></font> 1 3 A FvwmIconifyOrShade
+<font color="#a52a2a"><b>Mouse</b></font> 1 5 A FvwmMaximize 100 100
+<font color="#a52a2a"><b>Mouse</b></font> 2 5 A FvwmMaximize 0 100
+<font color="#a52a2a"><b>Mouse</b></font> 3 5 A FvwmMaximize 100 0
+<font color="#a52a2a"><b>Mouse</b></font> 1 W M FvwmMoveOrIconify
+<font color="#a52a2a"><b>Mouse</b></font> 1 I A FvwmMoveOrIconify
+<font color="#a52a2a"><b>Mouse</b></font> 4 T A FvwmWindowShade <font color="#a52a2a"><b>True</b></font>
+<font color="#a52a2a"><b>Mouse</b></font> 5 T A FvwmWindowShade <font color="#a52a2a"><b>False</b></font>
+</pre>
+</td></tr></table></center>
+
+<p>从上到下的绑定分别做以下这些事：</p>
+<ol type=1>
+<li>任何地方按下 alt-f1 时显示根菜单
+<li>按下 alt-tab 时显示 WindowList - 列出运行着的程序，松开 alt 键时切换到你选
+中的程序
+<li>按下左边的 win 键时启动 aterm 
+<li>当鼠标左键在根窗口上点击时，打开根菜单
+<li>当鼠标右键在根窗口上点击时，打开窗口选项菜单
+<li>当按钮 1 被单击或双击时删除或销毁窗口
+<li>当按钮 3 被单击或双击时图标化或卷起窗口
+<li>当鼠标按键一（左键）点击按钮 5 时，最大化窗口至充满整个屏幕
+<li>当鼠标按键二（中键）点击按钮 5 时，垂直最大化窗口
+<li>当鼠标按键三（右键）点击按钮 5 时，水平最大化窗口（译者注：鼠标按键可人为定义，因此可能不同的机器上不一样，如果你不是左撇子的话就没必要自定义默认的鼠标按键。像我有时用左手就要自定义了！;-）
+<li>alt+按着左键并移动鼠标可拖动窗口，而 alt+双击会图标化窗口
+<li>将 FvwmMoveOrIconify 函数绑定至 'Icons'，以便能进行移动和图标化
+<li>向上滚动两次滚轮卷起活动窗口（这个函数要求双击，因此要滚两下）
+<li>向下滚动两次滚轮放下活动窗口
+</ol>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="functions.html">函数</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="window.html">窗口装饰</a>
+</td></tr></table>
+</body>
+</html>

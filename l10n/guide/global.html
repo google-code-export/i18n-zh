@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 全局设置</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+	<p>配置 FVWM 的第一步就是全局设置，如：环境变量以及桌面的基本设定。环境变量类似于 shell 中用的那些东西，可以对变量赋值以便能在整个 fvwm2rc 文件中随时使用，这样如果你想改的话就不用去文件中每个用到的地方一个个地改了。我主要用环境变量告诉 fvwm 到哪里去找配置中要用到的各种各样的东西。</p>
+
+	<p>但请注意，从头到尾都用环境变量的话会引起严重问题，尤其当这些变量仅被用于保存那些每年都要有所改动的内容时尤为严重。需要详细信息的话，你可以看看 fvwm 论坛中的<a href="http://fvwm.lair.be/viewtopic.php?t=1505">thread</a>。</p>
+
+	<p>例如你能像下面这样建立些环境变量：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Set Environment variables</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">SetEnv</font> fvwm_img <font
+color="#a020f0">$[FVWM_USERDIR]</font>/images
+<font color="#008b8b">SetEnv</font> fvwm_icon <font
+color="#a020f0">$[FVWM_USERDIR]</font>/<font color="#a52a2a"><b>icons</b></font>
+<font color="#008b8b">SetEnv</font> fvwm_scrpt <font
+color="#a020f0">$.</font>/scripts
+<font color="#008b8b">SetEnv</font> fvwm_wallpapers <font
+color="#a020f0">$[FVWM_USERDIR]</font>/wallpaper
+</pre>
+</td></tr></table></center>
+
+<p>你也可以用环境变量设定你最喜欢用的默认程序，如：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">SetEnv</font> fvwm_webbrowser /usr/bin/firefox
+<font color="#008b8b">SetEnv</font> fvwm_term /usr/bin/aterm
+<font color="#008b8b">SetEnv</font> fvwm_mail /usr/bin/mutt
+<font color="#008b8b">SetEnv</font> fvwm_media_player /usr/bin/xmms
+<font color="#008b8b">SetEnv</font> fvwm_video_player /usr/bin/mplayer
+</pre>
+</td></tr></table></center>
+
+<p>下一步是建立图片（标）目录，告诉 FVWM 去哪里找你要显示的图片（标），比如菜单或是快速启动按钮要用的图标。这有点像是 shell 的环境变量 $PATH。典型的图片目录看起来就像这样：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Set the image path</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">ImagePath</font> <font
+color="#a020f0">$[fvwm_icon]</font>:<font
+color="#a020f0">$[fvwm_icon]</font>;.png:$[fvwm_wallpapers]:+
+</pre>
+</td></tr></table></center>
+
+<p>我把所有要用到的图标全放在 $[fvwm_icon] 目录下。之所以要连写两遍的原因是，我在后面跟了个';.png'，这意味着既能用默认的 .xpm 文件，又能交替使用 .png 文件来表示图标。如果有一些共用图像放在'/usr/local/share/images'下，又或者有些$HOME/images 下的个人图片想在 fvwm 中使用的话，你可以在这里轻易地加些目录。</p>
+
+<p>下一步，建立虚拟桌面。FVWM 允许你想要多少虚拟桌面就有多少，同时允许每个桌面拥有多个 Pages（页）。假定你想要3个虚拟桌面，每个又拥有3x3格9个 pages，你能用如下方法建立。</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Virtual Desktops</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DesktopSize</font> 3x3
+DesktopName 0 Main
+DesktopName 1 Work
+DesktopName 2 Games
+<font color="#008b8b">EdgeScroll</font> 100 100
+<font color="#008b8b">EdgeResistance</font> 150  150
+<font color="#008b8b">EdgeThickness</font> 1
+</pre>
+</td></tr></table></center>
+
+<p>桌面大小决定了每个虚拟桌面上的 pages 数目，如3x3的桌面会在桌面中建立一组3x3的网格，每格代表一个页面，看起来像</p>
+<center><table border="1" cellpadding="10" width="180">
+<tr><td><br></td><td><br></td><td><br></td></tr>
+<tr><td><br></td><td><br></td><td><br></td></tr>
+<tr><td><br></td><td><br></td><td><br></td></tr>
+</table></center>
+
+<p>然后建立3个虚拟桌面，分别命名为 Main，Work，Games（标号为0,1,2）。当你的鼠标移动到屏幕边缘时，EdgeScroll 参数设定屏幕滚动的百分比。'EdgeScroll 100 100'代表，如果把鼠标移动到屏幕边缘，整个屏幕都会滚动至下一个屏幕。EdgeResistance 设定滚动发生前需要多少'阻力'（时间延迟），而 EdgeThickness 则会设定 EdgeScroll 效果发生时与'root'窗口间的像素模糊度是多少。如果你不喜欢这种效果，可以设置'EdgeThickness 0'或'EdgeScroll 0 0'。</p>
+
+<p>下一步是设定默认的鼠标和聚焦动作。如下：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Mouse and Focus Behavior</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">ClickTime</font> 350
+<font color="#008b8b">MoveThreshold</font> 3
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>SloppyFocus</b></font>, <font color="#a52a2a"><b>MouseFocusClickRaises</b></font>
+</pre>
+</td></tr></table></center>
+
+<p>ClickTime 是在按下和松开鼠标间以毫秒计算的时间，FVWM 把这个动作看作是一次 'click'。如果超过时间，FVWM 会认为这是一个 'hold'行为。MoveThreshold 指要让 FVWM 认为这是一次 'move' 动作，鼠标所必须移动的像素。注意，所有这些东西设定你的窗口管理器的外观感受，而且在编写函数时很重要！</p>
+
+<p>Styles 在整个 FVWM 中用来设定各种各样的风格，包括你想它怎么动、外观、行为等等，Styles 会被用得非常多。但作为上手，就让我们只看这一行 style。
+在 Style 语句中，* 是广义字符，因此 'Style *' 就是说把这句风格定义用到每个窗口上，后面跟着一串用逗号分隔的你想要的风格列表。如，我用的第一个 Style 就是 SloppyFocus，意思是当鼠标悬停于窗口上方时窗口即获得焦点（除了特殊窗口以外，如根窗口）。第二个 Style 是 MouseFocusClickRaises，意思是说如果我在获得焦点的窗口上点击，它就会升到最上面。其它 styles 还有 'ClickToFocus', 'ClickToFocusPassesClick',
+'ClickToFocusPassesClickOff', 'ClickToFocusRaises' 和 'ClickToFocusRaisesOff'。所有更详细的解释请看手册页。</p>
+
+<p>除了 Styles，还有一些特殊的关键字用来设定默认的桌面行为。举其中一些例子如下：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+EwmhBaseStruts 62 162 0 48
+<font color="#008b8b">IgnoreModifiers</font> L25
+</pre>
+</td></tr></table></center>
+
+<p>第一行 EwmhBaseStruts 设定不可用的屏幕区域，用法是'EwmhBaseStruts 左 右 上 下'。数字代表当最大化窗口及窗口部署时给屏幕每条边预留的空白像素。这里为屏幕上的 FvwmTaskBar,FvwmPager,FvwmButtons 预留了右、左、下三处的一点空间。如果你希望窗口忽略这个设定，你可以用 EWMHMaximizeIgoreWorkingArea 选项。下一行让 FVWM 忽略某些特定的修改按键，在这里它会忽略 'Num Lock' 按键，这在很多情况下都有好处。</p>
+
+<p>我在 fvwm2rc 文件中用到的其它一些 styles 如下。我不准备在这里做什么说明，只想让你看看，在配置文件中可以添加各种各样的其它选项来进一步控制 FVWM 桌面的行为。</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Global Styles and options</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>TileCascadePlacement</b></font>, <font color="#a52a2a"><b>GrabFocusOff</b></font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>NoPPosition</b></font>, <font color="#a52a2a"><b>ResizeOpaque</b></font>
+<font color="#008b8b">OpaqueMoveSize</font> -1
+<font color="#008b8b">Emulate</font> <font color="#a52a2a"><b>MWM</b></font>
+<font color="#008b8b">HideGeometryWindow</font> <font color="#a52a2a"><b>Never</b></font>
+<font color="#008b8b">SnapAttraction</font> 5 <font color="#a52a2a"><b>SameType</b></font> <font color="#a52a2a"><b>Screen</b></font>
+<font color="#008b8b">SnapGrid</font> 3 3
+<font color="#008b8b">XorValue</font> 55555
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>DecorateTransient</b></font>, <font color="#a52a2a"><b>DontRaiseTransient</b></font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>DontLowerTransient</b></font>, <font color="#a52a2a"><b>StackTransientParent</b></font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>GrabFocusTransientOff</b></font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>WindowShadeSteps</b></font> 20, <font color="#a52a2a"><b>WindowShadeScrolls</b></font>
+<font color="#008b8b">SetAnimation</font>  10  -.01 0 .01 .03 .08 .18 .3 .45 .6 .75 .85 .90 .94 .97 .99 1.0
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>MwmDecor</b></font>, <font color="#a52a2a"><b>SlipperyIcon</b></font>
+<font color="#008b8b">Style</font> * <font color="#a52a2a"><b>IconBox</b></font> <font color="#a52a2a"><b>screen</b></font> w 15 15 -165 -15, <font color="#a52a2a"><b>IconGrid</b></font> 3 3, <font color="#a52a2a"><b>IconFill</b></font> <font color="#008b8b">right</font> <font color="#008b8b">top</font>
+</pre>
+</td></tr></table></center>
+
+<p>下一步，我设定各类程序的具体样式。Style 命令的形式是 'Style [string] [styles]'，FVWM 会比较 [string]（包括广义字符'*'）与窗口名称、类或者资源。你可以用 FvwmIdent 模块指出应用程序的名称、类和资源。这个例子设定了程序的特殊样式，我主要是设定和程序有关的 MiniIcon 和 Icon，但是任何 Style 选项都可以用在这些程序身上。</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Program Styles</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;*&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/unknown.xpm
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;XTerm&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/xterm.png, <font color="#a52a2a"><b>NoActiveIconOverride</b></font>, <font color="#a52a2a"><b>MiniIcon</b></font> mini/xterm.png
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;gvim&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/gvim.png, <font color="#a52a2a"><b>IconOverride</b></font>, <font color="#a52a2a"><b>MiniIcon</b></font> mini/gvim.png, EWMHMiniIconOverride
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;Firefox-bin&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/firefox.png, <font color="#a52a2a"><b>MiniIcon</b></font> mini/firefox.png, EWMHMiniIconOverride
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;irssi&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/gaim.png, <font color="#a52a2a"><b>MiniIcon</b></font> mini/irc.png
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;xmms&quot;</font> <font color="#a52a2a"><b>WindowListSkip</b></font>, <font color="#a52a2a"><b>CirculateSkip</b></font>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;MPlayer&quot;</font> <font color="#a52a2a"><b>Icon</b></font> 48x48/mplayer.png
+</pre>
+</td></tr></table></center>
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="intro.html">简介</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="functions.html">函数</a>
+</td></tr></table>
+</body>
+</html>

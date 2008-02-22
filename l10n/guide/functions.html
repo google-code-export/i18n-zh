@@ -1,0 +1,212 @@
+<html>
+<head>
+<title>FVWM 入门指南 - 函数</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>FVWM 能在配置文件中任何地方使用函数，我仅在此提一下函数的基本语法，然后再给
+出些基本函数，想要更复杂的功能函数请看<a href="advanced.html">高级主题</a>部分
+</p>
+<p>上路前，让我们看一下有关函数的基本骨架。我把它放在下面的注释框内，你可以将它
+粘贴到配置文件中去，以便当你忘记时提醒你函数是怎么起作用的。
+</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># DestroyFunc FuncName</font>
+<font color="#0000ff"># AddToFunc   FuncName</font>
+<font color="#0000ff"># + I (立刻执行)</font>
+<font color="#0000ff"># + C (点击时执行)</font>
+<font color="#0000ff"># + D (双击时执行)</font>
+<font color="#0000ff"># + H (按住时执行)</font>
+<font color="#0000ff"># + M (移动时执行)</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff">###########</font>
+</pre>
+</td></tr></table></center>
+
+<p>如你所见，你要做的第一件事就是用 DestroyFunc 来清除已经生效的有关函数。然后
+把要函数做的事放到 AddToFunc 列表中去，以上这些事可分配给不同的鼠标事件。现在，
+当你在 FVWM 中调用函数时，你可以给它发送各种各样的参数，如：可以像这样 'FuncName "$0" "$1" "$2" "$3" "$4" '来调用上面的函数，$0-$4是传递给函数的参数，用于决定
+函数执行的结果。考虑以下列表中的基本函数
+</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Basic Functions</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> FvwmDeleteOrDestroy
+<font color="#008b8b">AddToFunc</font>   FvwmDeleteOrDestroy
++ H <font color="#008b8b">Nop</font>
++ M <font color="#008b8b">Nop</font>
++ C <font color="#008b8b">Delete</font>
++ D <font color="#008b8b">Destroy</font>
+
+<font color="#008b8b">DestroyFunc</font> FvwmIconifyOrShade
+<font color="#008b8b">AddToFunc</font>   FvwmIconifyOrShade
++ C <font color="#008b8b">Iconify</font>
++ D <font color="#008b8b">WindowShade</font>
+
+<font color="#008b8b">DestroyFunc</font> FvwmMaximize
+<font color="#008b8b">AddToFunc</font>   FvwmMaximize
++ H <font color="#008b8b">Nop</font>
++ M <font color="#008b8b">Nop</font>
++ C <font color="#008b8b">Maximize</font> <font color="#a020f0">$0</font> <font color="#a020f0">$1</font>
+
+<font color="#008b8b">DestroyFunc</font> FvwmMoveOrIconify
+<font color="#008b8b">AddToFunc</font>   FvwmMoveOrIconify
++ M <font color="#008b8b">Move</font>
++ D <font color="#008b8b">Iconify</font>
+
+<font color="#008b8b">DestroyFunc</font> FvwmWindowShade
+<font color="#008b8b">AddToFunc</font>   FvwmWindowShade
++ D <font color="#008b8b">WindowShade</font> <font color="#a020f0">$0</font>
+</pre>
+</td></tr></table></center>
+
+<p>第一个函数 FvwmDeleteOrDestroy，如果鼠标处于按下或移动状态时，它不会做任何事。单击时，删除活动窗口，而双击会销毁活动窗口。第二个函数 FvwmIconifyOrShade，在
+单击时图标化窗口而双击时卷起窗口。FvwmMaximized 函数能接受两个参数以判断如果最
+大化窗口。例如你可以 'FvwmMaximize 100 100'，这会让窗口在水平和垂直方向上100%
+的充满屏幕；而 'FvwmMaximize 100 0' 会在水平方向上最大化窗口，垂直方向不变。
+当鼠标移动时，FvwmMoveOrIconify 函数能够移动当前窗口，双击时图标化窗口。FvwmWindowShade 卷起（FvwmWindowShade True）或放下（FvwmWindowShade False）当前窗口。如
+果不带任何参数的话，FvwmWindowShade 会卷起正常窗口，而放下已卷起的窗口。
+</p>
+<p>下一步，我会用函数来驱动我的所有程序，这样用的时候我只要调用函数就行了。这些
+函数比较简单，但它们使事情变得更富有效率。样例函数：
+</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Program Launching Functions</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> FvwmXTerm
+<font color="#008b8b">AddToFunc</font>   FvwmXTerm
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xterm
+
+<font color="#008b8b">DestroyFunc</font> FvwmATerm
+<font color="#008b8b">AddToFunc</font>   FvwmATerm
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> aterm
+
+<font color="#008b8b">DestroyFunc</font> FvwmGVim
+<font color="#008b8b">AddToFunc</font>   FvwmGVim
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> gvim
+
+<font color="#008b8b">DestroyFunc</font> FvwmGimp
+<font color="#008b8b">AddToFunc</font>   FvwmGimp
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> gimp-2.0
+
+<font color="#008b8b">DestroyFunc</font> FvwmFireFox
+<font color="#008b8b">AddToFunc</font>   FvwmFireFox
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> firefox
+
+<font color="#008b8b">DestroyFunc</font> FvwmIrssi
+<font color="#008b8b">AddToFunc</font>   FvwmIrssi
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> aterm -e irssi
+
+<font color="#008b8b">DestroyFunc</font> FvwmXmms
+<font color="#008b8b">AddToFunc</font>   FvwmXmms
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xmms
+
+<font color="#008b8b">DestroyFunc</font> FvwmViewManPage
+<font color="#008b8b">AddToFunc</font>   FvwmViewManPage
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xterm -fg White -bg DarkBlue -g 80x40 -fn 7x14 -fb 7x14bold \
+ -n <font color="#ff00ff">&quot;Manual Page - $0&quot;</font> -T <font color="#ff00ff">&quot;Manual Page - $0&quot;</font> -e man <font color="#ff00ff">&quot;$0&quot;</font>
+</pre>
+</td></tr></table></center>
+
+<p>第一个函数不言自明，最后一个函数以 man 页作为参数并显示该页，例如你可以这样
+'FvwmViewManPage fvwm'来调用该函数，它会弹出 fvwm 的手册页。你应该注意看上面最
+后几行的语法。在倒数第二行与最后一行间有个 '\'，这使上下两行连接在一起，这样
+FVWM 会把最后两行认为是一个整行。
+</p>
+<p>
+看看这三个特殊函数，'StartFunction', 'InitFunction' 'RestartFunction'。StartFunction 在每次 FVWM 启动时执行，而当第一次初始化 FVWM 时 InitFunction 跟在 StartFunction 后面执行一次。当 FVWM 重启时，RestartFunction 跟在 StartFunction 后面执行。样例：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Startup Functions</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> <font color="#6a5acd">StartFunction</font>
+<font color="#008b8b">AddToFunc</font>   <font color="#6a5acd">StartFunction</font>
++ I <font color="#008b8b">Module</font> FvwmTaskBar
++ I <font color="#008b8b">Module</font> FvwmPager 0 2
++ I <font color="#008b8b">Module</font> FvwmButtons MyButtons
+
+<font color="#008b8b">DestroyFunc</font> <font color="#6a5acd">InitFunction</font>
+<font color="#008b8b">AddToFunc</font>   <font color="#6a5acd">InitFunction</font>
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xscreensaver
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> fvwm-root -r <font color="#a020f0">$[fvwm_wallpapers]</font>/background.png
++ I FvwmXmms
++ I FvwmATerm
+
+<font color="#008b8b">DestroyFunc</font> <font color="#6a5acd">RestartFunction</font>
+<font color="#008b8b">AddToFunc</font>   <font color="#6a5acd">RestartFunction</font>
++ I <font color="#008b8b">Nop</font>
+</pre>
+</td></tr></table></center>
+
+<p>
+启动后，fvwm 紧接着导入三个模块：FvwmButtons, FvwmPager 和 FvwmTaskBar。第一次
+启动 FVWM 时它会运行 xscreensaver 设置背景，然后运行 xmms 和 aterm。重启 FVWM 时，除了运行一次 StartFunction 外，它什么都不干。</p>
+
+<p>可以很细致地构造出一些函数以增强桌面的可用性。函数也能带着任意个参数($0,$1,
+$2,$3,等)一起用，而且只要基于不同的鼠标事件也能将其中一些功能合并。能给函数起
+任意一个名字，只要不是被 FVWM 保留的功能名（如：Nop,Delete,Destroy,Restart,Exec
+,等）</p>
+
+<p>这里有些稍微复杂点的函数，如下：</p>
+<center><table border="1" width="400" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># Screenshot Functions (uses ImageMagick)</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> FvwmWindowScreenshot
+<font color="#008b8b">AddToFunc</font>   FvwmWindowScreenshot
++ I ThisWindow (!<font color="#008b8b">Shaded</font> !<font color="#008b8b">Iconic</font> Iconifiable) \
+  <font color="#008b8b">Exec</font> import -window <font color="#a020f0">$[w.id]</font> -quality 100 -silent \
+  <font color="#ff00ff">&quot;$[fvwm_home]/screenshot/screenshot-`date +%F[%R]`.$[w.id].jpg&quot;</font>
+
+<font color="#008b8b">DestroyFunc</font> FvwmDesktopScreenshot
+<font color="#008b8b">AddToFunc</font>   FvwmDesktopScreenshot
++ I <font color="#008b8b">Exec</font> sleep <font color="#a020f0">$0</font>; import -window <font color="#008b8b">root</font> -quality 100 -silent \
+  <font color="#ff00ff">&quot;$[fvwm_home]/screenshot/screenshot-`date +%F[%R]`.jpg&quot;</font>
+
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># XRoach Invasion</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">DestroyFunc</font> XRoachInvasion
+<font color="#008b8b">AddToFunc</font>   XRoachInvasion
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 5 -rc Cyan -speed 17
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 3 -rc Red -speed 15
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 7 -rc Green -speed 10
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 3 -rc Blue -speed 20
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 1 -rc Black -speed 30
++ I <font color="#008b8b">Exec</font> <font color="#008b8b">exec</font> xroach -roaches 1 -rc White -speed 40
+
+<font color="#008b8b">DestroyFunc</font> XRoachExterminate
+<font color="#008b8b">AddToFunc</font>   XRoachExterminate
++ I <font color="#008b8b">Exec</font> killall xroach
+</pre>
+</td></tr></table></center>
+
+<p>第一组函数能用imagemagick 包中的 import 工具抓图，可以是整个桌面，也可以是
+单独一个窗口。要抓单独一个窗口，你需要这样来调用函数 'Pick (CirculateHit) FvwmWindowScreenshot'，让会显示一个十字指针让你选择你想抓图的窗口。第二个函数会在 '$0' 秒延时后抓取整个桌面，这在抓图开始前给你一定时间去打开菜单，棒极了！例如 'FvwmDesktopScreenshot 5' 会在5秒以后开始抓图。
+第二组函数仅是个古老的 X 玩具，它会搞出很多不同色彩的蜚蠊（有点像德国小蠊的小
+虫）快速爬动，但会躲在窗口后面。你既能让这些小虫入侵，也能消灭它们。要成功运行这
+些函数的话，你需要安装有 'xroach'。
+</p>
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="global.html">全局设置</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="bindings.html">按键绑定</a>
+</td></tr></table>
+</body>
+</html>

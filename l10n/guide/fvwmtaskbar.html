@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>FVWM 入门指南 - FvwmTaskBar</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+
+<body>
+<p>FvwmTaskBar 极其类似于 Windows 中的任务条。上面有个开始菜单，你能将任何菜
+单绑定到它那里去，有个放快速启动按钮的地方，还有当前任务列表以及在最最后面有
+个时间。</p>
+
+<p>首先，为 FvwmTaskBar 设定一些样式。我们想将任务条设成无窗口装饰，
+也不要让它把自己放在当前任务列表中。我还让任务条 'Sticky'，这样它会显示在所有
+的虚拟桌面上，并且还指定了它的大小和位置。你可以用以下方法做到这些：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmTaskBar</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;FvwmTaskBar&quot;</font> <font color="#a52a2a"><b>NoTitle</b></font>, !<font color="#a52a2a"><b>Handles</b></font>, !Borders, <font color="#008b8b">Sticky</font>, <font color="#a52a2a"><b>WindowListSkip</b></font>, \
+  <font color="#a52a2a"><b>CirculateSkip</b></font>, <font color="#a52a2a"><b>StaysOnBottom</b></font>, <font color="#a52a2a"><b>FixedPosition</b></font>, FixedSize, !Iconifiable
+</pre>
+</td></tr></table></center>
+
+<p>然后，你要为 FvwmTaskBar 模块设定各种各样的选项。如下去做：</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#008b8b">DestroyModuleConfig</font> FvwmTaskBar: *
+<font color="#a020f0">*FvwmTaskBar</font>: Geometry +0-0
+<font color="#a020f0">*FvwmTaskBar</font>: Rows 3
+<font color="#a020f0">*FvwmTaskBar</font>: <font color="#a52a2a"><b>Font</b></font> <font color="#ff00ff">&quot;xft:Sans:Bold:pixelsize=12:minispace=True:antialias=True&quot;</font>
+<font color="#a020f0">*FvwmTaskBar</font>: SelFont <font color="#ff00ff">&quot;xft:Sans:Bold:pixelsize=12:minispace=True:antialias=True&quot;</font>
+<font color="#a020f0">*FvwmTaskBar</font>: StatusFont <font color="#ff00ff">&quot;xft:Sans:Bold:pixelsize=12:minispace=True:antialias=True&quot;</font>
+<font color="#a020f0">*FvwmTaskBar</font>: <font color="#a52a2a"><b>Colorset</b></font> 9
+<font color="#a020f0">*FvwmTaskBar</font>: IconColorset 9
+<font color="#a020f0">*FvwmTaskBar</font>: FocusColorset 9
+<font color="#a020f0">*FvwmTaskBar</font>: TipsColorset 9
+<font color="#a020f0">*FvwmTaskBar</font>: UseSkipList
+<font color="#a020f0">*FvwmTaskBar</font>: UseIconNames
+<font color="#a020f0">*FvwmTaskBar</font>: ShowTips
+<font color="#a020f0">*FvwmTaskBar</font>: StartName <font color="#a52a2a"><b>FVWM</b></font>
+<font color="#a020f0">*FvwmTaskBar</font>: StartMenu FvwmRootMenu
+<font color="#a020f0">*FvwmTaskBar</font>: <font color="#a52a2a"><b>Button</b></font> <font color="#008b8b">Title</font> ATerm, <font color="#a52a2a"><b>Icon</b></font> mini/xterm.png, Action (<font color="#a52a2a"><b>Mouse</b></font> 1) FvwmATerm
+<font color="#a020f0">*FvwmTaskBar</font>: Action Click3 <font color="#008b8b">Menu</font> FvwmWindowOpsMenu
+<font color="#a020f0">*FvwmTaskBar</font>: StartIcon mini/fvwm.png
+</pre>
+</td></tr></table></center>
+
+<p>第一行销毁默认设置并让你从头开始配置，下面几行设定各种各样的选项，都在 Fvw
+mTaskBar 手册页中有详细解释。主要是设定任务条用的色彩模板、字体。我也让任务条
+ UseSkipList，因此任何含有 'WindowSkipList' 样式的窗口都不会出现在任务条中。
+我还设定了一个动作，如果在按钮上右键单击的话会打开 WindowOps 菜单，这样你可以
+对你点中的窗口进行一些操作。我还建立了一个按钮，通过点击就能启动 aterm。</p>
+
+<p>现在只要已经配置好模块，你唯一要做的就是启动它了。这个模块用 'Module FvwmT
+askBar' 启动，但这已经在 StartFunction 中做好了，因此没必要再放一个了。</p>
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="modules.html">模块</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="fvwmpager.html">FvwmPager</a>
+</td></tr></table>
+</body>
+</html>

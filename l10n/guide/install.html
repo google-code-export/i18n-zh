@@ -1,0 +1,52 @@
+<html>
+<head>
+ <title>安装半透明补丁</title>
+ <link rel="stylesheet" href="fvwm.css">
+</head>
+
+
+<body>
+<p>The following is a set of instructions to install FVWM with the 
+<a href="files/fvwm-translucency.diff">translucency patch</a>.
+Before you start please consider the following: First off if your
+using gentoo the patch is already included and you don't need to install
+it yourself. If you are using another OS, please consider that the basic
+meathod introduced here will install FVWM from source and not
+nesicarally use the pacakge managment of your OS, so you will want to remove
+any FVWM packages provided with your OS. Also note that because of this you
+wont be able to manage the install or removal of FVWM with your package
+manager. My suggestion is if your new to installing softwear from source to
+consolte your OS first. As a final note if you use <a href="http://debian.org">
+debian</a> I provide instructions on how to make your own deb so you can
+use dpkg to manage the install and removal.</p>
+
+<p>First you need is the following:</p>
+<ol type=1>
+<li><a href="ftp://ftp.fvwm.org/pub/fvwm/version-2/fvwm-2.5.12.tar.bz2">fvwm-2.5.12</a>
+source from <a href="http://fvwm.org">fvwm.org</a>.
+<li>The translucency <a href="files/fvwm-translucency.diff">patch</a>.
+<li>autoconf version 2.5x.
+<li>automake version 1.7.x (I beilve 1.6.x will work as well).
+<li>other development libraries needed to compile fvwm 2.5.10 from source.
+<li>If you have debian you'll need fakeroot and deb development tools.
+</ol>
+
+<p>Next follow the instructions to compile FVWM with the translucency patch.</p>
+<ol type=1>
+<li>Extract the FVWM source, 'tar xjvf fvwm-2.5.12.tar.bz2'.
+<li>Apply the patch, 'cd fvwm-2.5.12' and then 'patch -p1 &#60 ../fvwm-translucency.diff'
+<li>Run 'autoconf' followed by 'aclocal' then 'automake'
+<li>Run the './configure' script, and make sure all the options you want are included.
+If ya see something missing, you'll need to install the developers lib to get that support.
+<li>Now its time to compile fvwm, there are three options you can use
+<ol type=I>
+<li>Traditional, 'make &#38&#38 make install' (note make install should be run as root)
+<li>Make a custom deb, 'make deb-inplace release=X fullname=name'
+ (note this requires you have the deb building files and fakeroot installed)
+<li>Make a custom rpm, 'make release=X rpm-this' (I don't use rpm systems and have not tried this, so it may or may not work)
+</ol>
+<li>Install the deb/rpm if ya used that method, then run fvwm, its now installed, don't let the 'ugly' default config scare you, and return to <a href="intro.html">here</a> to start learning how to configure it.
+</ol>
+
+</body>
+</html>

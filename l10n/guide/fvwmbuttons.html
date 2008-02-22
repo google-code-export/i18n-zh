@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>FVWM 入门指南 - FvwmButtons</title>
+<link rel="stylesheet" href="fvwm.css">
+</head>
+
+<body>
+<p>如 taviso 所说：FvwmButtons 可能是 FVWM 中最多才多艺的一个模块了。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># FvwmButtons is an incredible piece of software.</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># It can create freeform panels of any size, shape (including Non-Rectangular windows), </font>
+<font color="#0000ff"># Colour and function. It can swallow other applications, even applications not designed</font>
+<font color="#0000ff"># for docking, have &quot;panels&quot; that slide out consisting of other panels, has a &quot;startup-notification&quot;</font>
+<font color="#0000ff"># like feature, hundreds of possible bindings, uses the powerful fvwm Colorsets feature, and</font>
+<font color="#0000ff"># can even change dynamically and respond to window manager events.</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># The widgets can be transparent, use Xft fonts, and using fvwm's font definitions can render drop shadows</font>
+<font color="#0000ff"># at any direction, offset, size and colour. Buttons can all use different Colorsets, and can have different</font>
+<font color="#0000ff"># reliefs, shapes, anything! </font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># FvwmButtons is even tolerant to errors in configuration, and can workaround bad or impossible </font>
+<font color="#0000ff"># definitions!</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># As it's an fvwm module, it has 100% integration with the window manager and can use</font>
+<font color="#0000ff"># internal fvwm commands, functions, etc.</font>
+<font color="#0000ff"># </font>
+<font color="#0000ff"># as you can tell, i am a big FvwmButtons fan :)</font>
+<font color="#0000ff">#</font>
+<font color="#0000ff"># I've written a quick introduction into making panels with FvwmButtons, you can read it here</font>
+<font color="#0000ff"># <A HREF="http://forums.gentoo.org/viewtopic.php?t=162177">http://forums.gentoo.org/viewtopic.php?t=162177</A></font>
+<font color="#0000ff">#</font>
+<font color="#0000ff">###########</font>
+</pre>
+</td></tr></table><i>
+taken from taviso's <a href="http://dev.gentoo.org/~taviso/fvwm2rc.html">fvwm2rc</a> file.
+</i></center>
+
+<p>诚如那人所说的，但在这篇简介中只涉及如何设置 FvwmButtons 的最基础的部分。
+像上面提到的那样，你想要多少个 FvwmButtons 就能创建多少个，在桌面上做任何你想
+做的事。我将建立一组简单的按钮 MyButtons 让你熟悉一下语法。在<a href="advance
+d.html">高级主题</a> 一章中，我会给一个更复杂的例子，让你对如何配置它有个更好
+的认识。</p>
+
+<p>FvwmButtons 的基本布局是矩形，但如 taviso 所说，你可以将它配置成任意形状。
+用宽x高的形式定义 FvwmButtons 的大小，然后再用行列数分割成一个个小格子。这很
+重要，因为每个 FvwmButtons 面板中的按钮都可以占用任意数目的行列，允许做任意大
+小的按钮。而在每个按钮中又能建立标题、图标、动作，甚至让它包含其它应用程序（
+更多内容在附录中的高级主题中）。按钮从左上角填充到右下角，如下图所示</p>
+<center>
+<img src="fvwmbuttons_layout.png">
+</center>
+
+<p>我为这份指南做的例子非常基础，只是让你了解基本语法。这是一个只有一栏的按钮
+，有个标题，还有一些快速启动按钮用来启动某些程序。</p>
+<center><table width="400" border="1" cellpadding="10">
+<tr><td valign="center">
+<pre>
+<font color="#0000ff">#####</font>
+<font color="#0000ff"># MyButtons</font>
+<font color="#0000ff">###########</font>
+<font color="#008b8b">Style</font> <font color="#ff00ff">&quot;MyButtons&quot;</font> <font color="#a52a2a"><b>NoTitle</b></font>, !<font color="#a52a2a"><b>Handles</b></font>, !Borders, <font color="#008b8b">Sticky</font>, <font color="#a52a2a"><b>WindowListSkip</b></font>, \
+  <font color="#a52a2a"><b>CirculateSkip</b></font>, <font color="#a52a2a"><b>StaysOnBottom</b></font>, <font color="#a52a2a"><b>FixedPosition</b></font>, FixedSize, !Iconifiable
+
+<font color="#008b8b">DestroyModuleConfig</font> MyButtons: *
+<font color="#a020f0">*MyButtons</font>: Geometry 60x420+0+0
+<font color="#a020f0">*MyButtons</font>: <font color="#a52a2a"><b>Colorset</b></font> 9
+<font color="#a020f0">*MyButtons</font>: Rows 38
+<font color="#a020f0">*MyButtons</font>: Columns 1
+<font color="#a020f0">*MyButtons</font>: Frame 0
+<font color="#a020f0">*MyButtons</font>: <font color="#a52a2a"><b>Font</b></font> <font color="#ff00ff">&quot;Shadow=3:xft:Sans:Bold:pixelsize=14:minspace=True:antialias=True&quot;</font>
+<font color="#a020f0">*MyButtons</font>: (1x2, Frame 0, <font color="#008b8b">Title</font>(Center) <font color="#ff00ff">&quot;FVWM&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/terminal.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmATerm&quot;</font>, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 3) <font color="#ff00ff">&quot;FvwmXTerm&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/xmms.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXmms&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/vim.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGvim&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/gimp.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmGimp&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/firefox.png, \
+  Action(Mosue 1) <font color="#ff00ff">&quot;FvwmFireFox&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/irc.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmIrssi&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x5, Frame 0, <font color="#a52a2a"><b>Icon</b></font> 48x48/tux.png, \
+  Action(<font color="#a52a2a"><b>Mouse</b></font> 1) <font color="#ff00ff">&quot;FvwmXLock&quot;</font>)
+<font color="#a020f0">*MyButtons</font>: (1x1, Frame 0)
+</pre>
+</td></tr></table></center>
+
+
+<hr>
+<table width="100%" border="0" cellpadding="0">
+<tr><td align="left" width="33%"><a href="fvwmpager.html">FvwmPager</a></td>
+<td align="center" width="34%"><a href="index.html">索引</a></td>
+<td align="right" width="33%"><a href="conclusion.html">结果预览</a>
+</td></tr></table>
+</body>
+</html>
