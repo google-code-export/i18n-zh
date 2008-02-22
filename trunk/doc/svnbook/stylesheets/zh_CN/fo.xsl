@@ -11,7 +11,6 @@
   <xsl:param name="body.font.family">simsun</xsl:param>
   <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="dingbat.font.family">simhei</xsl:param>
-  <xsl:param name="monospace.font.family">CourierNew</xsl:param>
   <xsl:param name="title.font.family">simhei</xsl:param>
 
   <!-- Admonitions -->
