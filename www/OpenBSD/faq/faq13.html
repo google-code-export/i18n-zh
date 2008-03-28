@@ -1,0 +1,1395 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>13 - Multimedia</title>
+<link rev= "made" href= "mailto:www@openbsd.org">
+<meta name= "resource-type" content= "document">
+<meta name= "description"   content= "the OpenBSD FAQ page">
+<meta name= "keywords"      content= "openbsd,faq">
+<meta name= "distribution"  content= "global">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+</head>
+
+<!--
+Copyright (c) 2005-2007 Steven Mestdagh <steven@openbsd.org>
+
+Permission to use, copy, modify, and distribute this documentation for
+any purpose with or without fee is hereby granted, provided that the
+above copyright notice and this permission notice appear in all copies.
+
+THE DOCUMENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS DOCUMENTATION INCLUDING ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS DOCUMENTATION
+-->
+
+<body bgcolor= "#ffffff" text= "#000000">
+
+<a href="../index.html">
+<img alt="[OpenBSD]" height=30 width=141 src="../images/smalltitle.gif" border="0">    
+</a>
+<p>
+<font color= "#0000e0">
+<a href= "index.html">[FAQ Index]</a>
+<a href= "faq12.html">[To Section 12 - Hardware and Platform-Specific Questions]</a>
+<a href= "faq14.html">[To Section 14 - Disk Setup]</a>
+</font>
+
+<h1><font color="#e00000">13 - Multimedia</font></h1><hr>
+
+<h3>Table of Contents</h3>
+<ul>
+<li><a href="#confaudio"  >13.1 - How do I configure my audio device?</a>
+<li><a href="#playaudio"  >13.2 - Playing different kinds of audio</a>
+<li><a href="#playCD"     >13.3 - How can I play audio CDs in OpenBSD?</a>
+<li><a href="#recordaudio">13.4 - Can I use OpenBSD to record audio samples?</a>
+<li><a href="#lossyaudio" >13.5 - Tell me about Ogg Vorbis and MP3 encoding?</a>
+<li><a href="#playDVD"    >13.6 - How can I playback video DVDs in OpenBSD?</a>
+<li><a href="#burnCD"     >13.7 - How do I burn CDs and DVDs?</a>
+<ul>
+  <li><a href="#burnIntro">13.7.1 - Introduction and basic setup</a>
+  <li><a href="#writeCD"  >13.7.2 - Writing CDs</a>
+  <li><a href="#writeDVD" >13.7.3 - Writing DVDs</a>
+</ul>
+<li><a href="#convert"    >13.8 - But I want my media files in format FOO.</a>
+<li><a href="#streaming"  >13.9 - Is it possible to play streaming media under
+  OpenBSD?</a>
+<li><a href="#javaplugin" >13.10 - Can I have a Java plugin in my web
+  browser? (i386 only)</a>
+<li><a href="#flashplugin">13.11 - Can I have a Flash plugin in my web
+  browser? (i386 only)</a>
+<!--
+<li><a href="#camera"     >13.xx - Can I use my digital camera under OpenBSD?</a>
+<li><a href="#scanner"    >13.yy - How do I set up and use my scanner?</a>
+-->
+</ul>
+<hr>
+
+<a name="confaudio"></a>
+<h2>13.1 - How do I configure my audio device?</h2>
+
+The devices in OpenBSD that are related to audio are: <tt>/dev/audio</tt>,
+<tt>/dev/sound</tt>, <tt>/dev/audioctl</tt> and <tt>/dev/mixer</tt>.
+For a good overview of the audio driver layer, please read the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=audio&amp;sektion=4">audio(4)</a>
+manual page.
+
+<p>
+All supported audio drivers are already included in the GENERIC kernel so
+there is no need for extra configuration or installation of drivers.
+To find out about options for your specific sound chip, you must find out
+which sound chip you have. Supported chips may be found on the hardware
+compatibility page for your <a href="../plat.html">platform</a>.
+When you already have OpenBSD running, look for a sound driver in the output
+of the 
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=dmesg&amp;sektion=8">dmesg(8)</a>
+command, and read its manual page to find more specific information like
+options and other details about the driver.
+An example of an audio chip in a dmesg output is:
+
+<blockquote><pre>
+auich0 at pci0 dev 31 function 5 "Intel 82801BA AC97" rev 0x04: irq 10, ICH2 AC97
+ac97: codec id 0x41445360 (Analog Devices AD1885)
+ac97: codec features headphone, Analog Devices Phat Stereo
+audio0 at auich0
+</pre></blockquote>
+
+<p>
+You can test whether or not your audio device is working properly by sending
+an audio file (usually with .au extension) to it.
+If you don't have an audio file, you can also send any text or binary file
+to the device:
+
+<blockquote><pre>
+$ <strong>cat filename > /dev/audio</strong>
+</pre></blockquote>
+
+If you hear something (if it's not an audio file it will not sound good and
+may sound loud, too), it means that the chip is supported by OpenBSD and was
+recognized and configured by the kernel at boot time.
+
+<p>
+<b>Note:</b>
+Not every variation or utilization of every chip has been tested or debugged.
+
+<p>
+If you did not hear anything upon entering the above command, there are a
+number of possible reasons:
+<ul>
+<li>The file you sent to the device is so small you can hardly hear it.
+Try again with a file of at least 10 kB.
+<li>The chip was recognized and configured correctly, but the sound is muted
+and must be unmuted to hear it, see below.
+<li>The chip was recognized but not configured correctly.
+Maybe you have an old ISA card which needs to be configured with a different
+I/O address and IRQ value to avoid conflicts with other hardware.
+You can easily try different combinations using the
+<a href="faq5.html#BootConfig">User Kernel Configuration (UKC)</a>.
+<li>Your card/chipset is not fully supported.
+</ul>
+
+<p>
+Note that even if you did hear a sound, it does not necessarily mean that
+everything is going to be functioning as desired.
+If you encounter problems while playing sound, here is another list of
+things to check:
+<ul>
+<li>Find information about your sound device.
+Use the documentation, or use an internet search engine to find its
+specifications.
+They may actually help you find the source of the problem.
+<li>Please unmute <b>all</b> outputs (see below) before reporting a problem.
+Sometimes the listed outputs do not represent reality, for instance the
+headphones output may be mixed up with the line output.
+<li>It is possible that a less than optimal driver attaches to the sound
+device, and that you can get better results using another driver.
+This is not the easiest thing to spot, but take a closer look at your
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=dmesg&amp;sektion=8">dmesg(8)</a>
+output, and find the lines where audio drivers attach.
+If you see more than one sound driver attaching (or trying to), test
+them one at a time by disabling some and leaving one enabled using the
+<a href="faq5.html#BootConfig">User Kernel Configuration (UKC)</a>.
+<li>You have a sound device which can play only fixed sample rates.
+In this case, there are some audio tools which support rate resampling,
+as mentioned in <a href="#playaudio">Playing different kinds of audio</a>.
+</ul>
+
+<p>
+To tune the parameters for the audio device, such as playing sample rate,
+you can use
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=audioctl&amp;sektion=1">audioctl(1)</a>.
+To tune the sound volume and other mixer settings, you can use
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mixerctl&amp;sektion=1">mixerctl(1)</a>.
+Both utilities are provided as part of the base system.
+
+<p>
+For instance, to set the sound volume of the left and right channels to 200,
+you would, for example (see Note 2 below), issue
+
+<blockquote><pre>
+$ <strong>mixerctl outputs.master=200,200</strong>
+outputs.master: 255,255 -&gt; 207,207
+</pre></blockquote>
+
+Notice how the value becomes 207.
+The reason for this is that my audio device has an AC'97 codec, which uses
+only 5 bits for volume control, leading to only 32 possible values.
+Obviously, other hardware could have different resolution.
+
+<p>
+To unmute the master channel, you would do
+
+<blockquote><pre>
+$ <strong>mixerctl outputs.master.mute=off</strong>
+outputs.master.mute: on -&gt; off
+</pre></blockquote>
+
+<p>
+To make your changes permanent you need to edit <i>/etc/mixerctl.conf</i>,
+for example:
+
+<blockquote><pre>
+$ <strong>cat /etc/mixerctl.conf</strong>
+outputs.master=200,200
+outputs.master.mute=off
+outputs.headphones=160,160
+outputs.headphones.mute=off
+</pre></blockquote>
+
+<b>Note 1:</b>
+You may see more outputs than there are on your sound card or motherboard.
+This is because audio chips are generally cheaper to install on boards than
+the jacks used to connect the outputs, so not every option of every audio
+chip necessarily reaches the outside world.
+
+<p>
+<b>Note 2:</b>
+The outputs of the audio device in your system may be labeled differently.
+For instance, you might not have an "outputs.master" as in the above
+example, you may need to adjust "outputs.output" or something else instead.
+This depends on the audio driver, and you can easily find the proper name
+by listing the controls with
+
+<blockquote><pre>
+$ <b>mixerctl -a</b>
+</pre></blockquote>
+
+
+<a name="playaudio"></a>
+<h2>13.2 - Playing different kinds of audio</h2>
+
+<h3>Digitized audio</h3>
+
+<h4>Lossless audio formats (AU, PCM, WAV, FLAC, TTA)</h4>
+
+Some of the lossless audio formats may be played without the need for third
+party software, provided they contain the uncompressed digital samples in
+chunks of bytes.
+These formats include Sun audio (AU), raw PCM files (without
+headers), and RIFF WAV.
+<p>
+In order to play such a file, you should know its main parameters: encoding
+type, number of channels, sample rate, bits per sample.
+If you don't know this, you might find out with the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=file&amp;sektion=1">file(1)</a>
+utility:
+
+<blockquote><pre>
+$ <strong>file music.au</strong>
+music.au:  Sun/NeXT audio data: 16-bit linear PCM, stereo, 44100 Hz
+</pre></blockquote>
+
+<blockquote><pre>
+$ <strong>file music.wav</strong>
+music.wav: Microsoft RIFF, WAVE audio data, 16 bit, stereo 44100 Hz
+</pre></blockquote>
+
+The only remaining things to know about these example files is that they
+use little-endian byte ordering and signed linear quantization.
+You could figure this out by reading the header with
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=hexdump&amp;sektion=1">hexdump(1)</a>.
+If you are using a headerless (raw) file, there is no way to know the
+parameters beforehand.
+Set the following parameters accordingly using
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=audioctl&amp;sektion=1">audioctl(1)</a>.
+
+<blockquote><pre>
+play.encoding=slinear_le
+play.rate=44100
+play.channels=2
+play.precision=16
+</pre></blockquote>
+
+Next, pass the audio file to the sound device:
+
+<blockquote><pre>
+$ <strong>cat music.au > /dev/sound</strong>
+</pre></blockquote>
+
+If you applied the correct settings, you should be hearing what you expected.
+
+<p>
+Note: Always use <tt>/dev/sound</tt>, not <tt>/dev/audio</tt>, if you want
+the settings you applied with audioctl to stay in place. 
+
+<p>
+There are other utilities you can use, such as
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=aucat&amp;sektion=1">aucat(1)</a>,
+and <tt>audio/waveplay</tt> in packages and ports.
+Of course, popular software like XMMS is also able to play these files,
+among other audio formats.
+
+<p>
+Apart from the above, there are audio formats which use lossless data
+compression.
+Examples are the Free Lossless Audio Codec (FLAC) and TTA.
+The FLAC implementation has been ported to OpenBSD and may be found under
+<tt>audio/flac</tt> in packages and ports.
+
+<h4>Audio formats using lossy compression (Ogg Vorbis, MP3, WMA, AAC)</h4>
+
+Lossy compression methods are often used for audio or other media files.
+The idea is that an amount of data is thrown away during compression, but
+in such a way that the compressed result is still very usable and has a
+good enough quality to be played.
+The advantage is that these techniques enable much higher compression ratios,
+resulting in reduced disk space and bandwidth requirements.
+
+<p>
+A good example is the free, open and unpatented
+<a href="http://www.vorbis.com/">Ogg Vorbis</a> format.
+To play Ogg Vorbis files, you can use the ogg123 utility, which is bundled
+in the <tt>audio/vorbis-tools</tt> package. For example:
+
+<blockquote><pre>
+$ <strong>ogg123 music.ogg</strong>
+
+Audio Device:   Sun audio driver output
+
+Playing: music.ogg
+Ogg Vorbis stream: 2 channel, 44100 Hz
+Time: 00:02.95 [02:21.45] of 02:24.40  (133.1 kbps)  Output Buffer  87.5%
+</pre></blockquote>
+
+Of course, Ogg Vorbis plugins exist for many other audio software.
+
+<p>
+Another example is the very popular MPEG-1 Audio Layer 3 (MP3) encoding,
+which has, however, its share of licensing and patent issues.
+Many tools can play MP3 files, just have a look through the <tt>audio</tt>
+section of the packages and ports system and pick one you like.
+
+<p>
+How about the proprietary Windows Media Audio (WMA) format? Files of this
+type can be played using <tt>x11/mplayer</tt> which uses the
+<a href="http://ffmpeg.sourceforge.net">FFmpeg</a> framework.
+
+<p>
+A good starting point to learn more about different audio file formats is
+this Wikipedia article:
+<a href="http://en.wikipedia.org/wiki/Audio_file_format">Audio file formats</a>.
+
+<h4>Coping with fixed rate sound devices</h4>
+
+Some sound devices can play only fixed sample rates.
+For instance, you may be trying to play a 22050 Hz file through a sound
+chip which is locked at 48000 Hz.
+
+<p>
+There are audio utilities in the packages and ports collection that
+tackle this problem by performing rate resampling.
+For example, <tt>x11/mplayer</tt> has a "<tt>-srate</tt>" switch to specify
+a desired output sample rate.
+You would set that to the rate your sound device is using.
+KDE's <tt>artsd</tt> and some games support similar options.
+Read the documentation of your specific audio application to find out
+whether it supports rate resampling.
+
+
+<h3>Synthesized sound</h3>
+
+<h4>MIDI</h4>
+
+The Musical Instrument Digital Interface (MIDI) protocol provides a
+standardized and efficient means to represent musical performance
+information as electronic data. A MIDI file can be extremely small as
+compared to a sampled audio file, because it contains only instructions
+needed by a synthesizer to play the sounds.
+
+<p>
+Two widely used technologies in music synthesizers are:
+<ul>
+<li>Frequency Modulation (FM) Synthesis: an older method which approximates
+the waveform of each instrument using a set of parameters; generally poor
+quality, inexpensive to implement and therefore used on many sound cards.
+<li>Wavetable Synthesis: a newer method which uses small digitized recordings
+of real instruments; better quality sound, requires on-board memory, found
+only on more expensive sound cards.
+</ul>
+
+<p>
+Most of the necessary information about MIDI on OpenBSD can be found in the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=midi&amp;sektion=4">midi(4)</a>
+manual page.
+
+<p>
+The main utility to handle standard MIDI files is
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=midiplay&amp;sektion=1">midiplay(1)</a>.
+To get a list of MIDI devices available on your system, try the following:
+
+<blockquote><pre>
+$ <strong>midiplay -l</strong>
+0: SB MIDI UART
+1: SB Yamaha OPL3
+2: PC speaker
+</pre></blockquote>
+
+In this example, we see the UART output to which an external MIDI device
+can be connected, the Yamaha OPL3 FM on-board synthesizer, and the plain
+old speaker.
+
+<p>
+<b>Note:</b>
+Not all sound cards have an on-board MIDI synthesizer, so you may see only
+an UART ouput and the PC speaker listed.
+
+<p>
+Playing a standard MIDI file, in this example through the OPL3 synthesizer,
+is as easy as:
+
+<blockquote><pre>
+$ <strong>midiplay -d 1 file.mid</strong>
+</pre></blockquote>
+
+Notice that we specified MIDI device number 1 as a parameter because
+device number 0 is used by default.
+
+<p>
+More information: <a href="http://www.harmony-central.com/MIDI/Doc/tutorial.html">Tutorial
+on MIDI and Music Synthesis</a>
+
+<h4>MOD</h4>
+
+A Soundtracker module is a binary format that mixes audio samples
+with sequencing orders, making it possible to play rather long pieces
+of digital music with reasonably good quality.
+
+<p>
+The easiest way to play your favorite MOD files on OpenBSD is probably to
+use the XMMS software, available through packages and ports.
+You should install the <tt>-mikmod</tt> subpackage for XMMS to let it use
+the MikMod sound library, which supports the MOD, S3M, IT and XM module
+formats.
+
+<p>
+You will also find a number of so-called "trackers" in the <tt>audio</tt>
+section of the packages and ports collection, e.g. tracker, soundtracker.
+With these trackers you can not only play but also generate your own
+modules.
+Note, however, that not every tracker format is supported by the tools in
+the ports tree.
+You are always welcome to <a href="../porting.html">submit a port</a>
+of your favorite tracker software.
+
+
+<a name="playCD"></a>
+<h2>13.3 - How can I play audio CDs in OpenBSD?</h2>
+
+To play an audio CD using the analog output of your CD-ROM drive, you can
+<ul>
+<li>Use the headphones output, usually at the front side of the drive.
+<li>Connect the audio output at the back side to your audio card. Yes, this
+is a supplementary cable next to the data (SCSI/IDE) and power cables.
+</ul>
+
+<p>
+A nice command line utility called
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cdio&amp;sektion=1">cdio(1)</a>,
+has been included in the base system. Called without parameters, it will
+enter interactive mode. If you want to play the CD right away, just enter
+
+<blockquote><pre>
+$ <strong>cdio play</strong>
+</pre></blockquote>
+
+<p>
+This will read from the first CD-ROM drive, <tt>cd0</tt>, by default.
+Note that the user running cdio should have permissions to read the CD-ROM
+device (e.g. <tt>/dev/rcd0c</tt>).
+As this device is only readable by root or the operator group by default,
+for convenience you may want to add the user to the operator group by
+adjusting this group's line in <tt>/etc/group</tt>.
+Alternatively, you can modify the file permissions of the device as needed.
+
+<p>
+Note that you may need to unmute the CD input of the mixer.
+Just like the outputs, the actual name of this input may vary between
+systems, but you will be using a command like:
+
+<blockquote><pre>
+$ <strong>mixerctl inputs.cd.mute=off</strong>
+</pre></blockquote>
+
+<p>
+If you prefer a beautiful GUI, there are plenty of X11-based CD players in
+the packages and ports collection.
+Just have a look in the <tt>audio</tt> section.
+
+
+<a name="recordaudio"></a>
+<h2>13.4 - Can I use OpenBSD to record audio samples?</h2>
+
+Yes, to do this you can use /dev/sound or /dev/audio as an input device.
+<p>
+First, set the relevant recording parameters with
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=audioctl&amp;sektion=1">audioctl(1)</a>,
+e.g.
+
+<blockquote><pre>
+record.encoding=mulaw
+record.rate=8000
+record.channels=1
+record.precision=8
+</pre></blockquote>
+
+Here I'm using nonuniform quantizing with the mu-law algorithm, with one
+channel, a sampling rate of 8000 Hz and using 8 bits per sample.
+The mu-law and A-law algorithms are especially useful when digitizing speech
+signals, because they achieve a greater coding efficiency.
+This means that the quality of the sampled speech will be better for a given
+number of bits per sample, or less bits will be required for a given quality.
+
+<p>
+If you decide to adopt the above values (only those!), you can use the
+/dev/audio device which uses them by default, so you do not need to set them
+explicitly in that case.
+
+<p>
+Next, make sure that you select the right device to record from and that the
+source is unmuted.
+You can set the necessary parameters using
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mixerctl&amp;sektion=1">mixerctl(1)</a>.
+For example:
+
+<blockquote><pre>
+inputs.mic.mute=on
+inputs.mic.preamp=on
+inputs.mic.source=mic0
+record.source=mic
+record.volume=255,255
+record.volume.mute=off
+record.mic=0
+record.mic.mute=off
+</pre></blockquote>
+
+In this example, I'll be recording from a microphone.
+Pre-amplifying has been enabled, otherwise the recorded sound can be pretty
+silent.
+
+<p>
+To do the actual recording, just use
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cat&amp;sektion=1">cat(1)</a>
+or
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=dd&amp;sektion=1">dd(1)</a>:
+
+<blockquote><pre>
+$ <strong>dd if=/dev/audio of=myvoice.raw</strong>
+</pre></blockquote>
+
+Press [CTRL]-C to finish the recording.
+The output is a raw sequence of bytes.
+This sound can be played, as explained in
+<a href="#playaudio">Playing different kinds of audio</a>.
+For a quick test, assuming the audio parameters are set correctly:
+
+<blockquote><pre>
+$ <strong>dd if=myvoice.raw of=/dev/audio</strong>
+</pre></blockquote>
+
+<p>
+Again, if you set other encoding parameters, you should be using the
+/dev/sound device.
+
+Another example of encoding parameters:
+<blockquote><pre>
+record.encoding=slinear_le
+record.rate=22050
+record.channels=2
+record.precision=8
+</pre></blockquote>
+
+This will result in PCM with signed linear (uniform) quantization, stored in
+little-endian byte ordering, at a sampling rate of 22050 Hz, in stereo,
+and using 8 bits to represent one sample
+(2^8 = 256 quantization levels).
+
+<p>
+<b>Note:</b>
+You will probably want to convert this recording in raw (headerless) format
+to a more usable format for further processing.
+Read <a href="#convert">FAQ 13 - Conversion</a> to find out more.
+
+
+<a name="lossyaudio"></a>
+<h2>13.5 - Tell me about Ogg Vorbis and MP3 encoding?</h2>
+
+These formats were already mentioned in
+<a href="#playaudio">Playing different kinds of audio</a>.
+In this section we will give a brief introduction about encoding such files.
+If you are interested in learning how these audio compression codecs work,
+further reading may be found through these Wikipedia articles about
+<a href="http://en.wikipedia.org/wiki/Vorbis">Vorbis</a> and
+<a href="http://en.wikipedia.org/wiki/MP3">MP3</a>.
+
+<h3>Ogg Vorbis</h3>
+
+Encoding raw, WAV or AIFF format audio to
+<a href="http://www.vorbis.com/">Ogg Vorbis</a> may be done with the
+<b>oggenc</b> utility, contained in the <tt>audio/vorbis-tools</tt> package,
+which is available through OpenBSD's packages and ports system.
+
+<p>
+Say you have a number of WAV files ready to encode, for example your
+favorite album you just extracted from its CD.
+To encode all these files using an approximate bit rate of 192 kbps, you
+could issue a command like
+<blockquote><pre>
+$ <strong>oggenc *.wav -b 192</strong>
+</pre></blockquote>
+
+When finished, this will give you a set of .ogg files in the current directory.
+More extensive examples, as well as encoding options, can be found in the
+oggenc manual page.
+
+<h3>MPEG-1 Audio Layer 3 (MP3)</h3>
+
+If for some reason you want to use the MP3 format, you can use
+<a href="http://mp3dev.org/">"Lame ain't an MP3 encoder" (LAME)</a>,
+an educational tool to be used for learning about MP3 encoding.
+Lame is included in the OpenBSD ports tree.
+Note that due to MP3 patents, you will not find this package on the
+<a href="../orders.html">official CD sets</a>.
+
+<p>
+Below is a simple example of encoding a WAV file with a bit rate of 192 kbps:
+<blockquote><pre>
+$ <strong>lame -b 192 track01.wav track01.mp3</strong>
+</pre></blockquote>
+
+For all options and details, please consult the manual page that comes with
+lame.
+
+
+<a name="playDVD"></a>
+<h2>13.6 - How can I playback video DVDs in OpenBSD?</h2>
+
+OpenBSD supports DVD media through the ISO 9660 filesystem which
+is also used on CD-ROMs, and, since OpenBSD 3.8, also through the newer
+<a href="http://www.osta.org/specs/">Universal Disk Format (UDF)</a>
+filesystem which is found on some DVDs.
+However, almost all DVD-Video and DVD-ROM discs use the UDF bridge format,
+which is a combination of the DVD MicroUDF (subset of UDF 1.02) and ISO 9660
+filesystems.
+It is used for backward compatibility reasons.
+
+<p>
+As most computers with DVD-ROM drives use software decoding, it is
+recommended to have at least a 350-MHz Pentium II or equivalent CPU to have
+good quality playback.
+
+<p>
+Some popular media players, supporting DVD playback, have been ported to
+OpenBSD.
+Examples are <a href="http://www.dtek.chalmers.se/groups/dvd/">ogle</a>,
+<a href="http://www.mplayerhq.hu/">mplayer</a>,
+<a href="http://www.xinehq.de/">xine</a>, and
+<a href="http://kaffeine.sourceforge.net/">kaffeine</a>.
+Please read the installation instructions that come with these packages,
+because these tools may need further setup.
+With these utilities, it is possible to playback the DVD by directly
+accessing the raw device.
+Of course, it is also possible to mount a DVD first using
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mount_cd9660&amp;sektion=8">mount_cd9660(8)</a>,
+and play the files on this or any other mounted filesystem.
+
+<p>
+<b>Notes:</b>
+<ul>
+<li>Nearly all DVDs you buy are encrypted using the Content Scrambling
+System (CSS).
+To be able to playback these encrypted DVDs, you can use the
+<b>libdvd</b> library, also available through packages and ports.
+<li>Be aware that a region code may be present on your DVD disk(s).
+This should not be much of a problem when playing DVDs on a computer.
+</ul>
+
+
+<a name="burnCD"></a>
+<h2>13.7 - How do I burn CDs and DVDs?</h2>
+
+<a name="burnIntro"></a>
+<h3>13.7.1 - Introduction and basic setup</h3>
+
+You should first make sure your CD/DVD writer has been recognized and
+configured by the kernel.
+Most SCSI devices are supported. IDE/ATAPI and USB devices are supported
+through SCSI emulation. You will quickly find your device in a
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=dmesg&amp;sektion=8">dmesg(8)</a>
+output.
+Just look for lines beginning with "cd", for example
+
+<blockquote><pre>
+cd0 at scsibus0 targ 0 lun 0: &lt;TOSHIBA, CD-ROM XM-5702B, 2826&gt; SCSI0 5/cdrom removable
+cd1 at scsibus1 targ 4 lun 0: &lt;PLEXTOR, CD-R PX-R412C, 1.04&gt; SCSI2 5/cdrom removable
+</pre></blockquote>
+
+<h4>But <tt>cdrecord -scanbus</tt> does not work!</h4>
+
+Yes. OpenBSD uses a different device namespace than the OS for which the
+cdrecord utility was written.
+All configured devices should be in the dmesg output, as mentioned above.
+The information you need is right there.
+
+<h4>Error: <tt>mount_cd9660: /dev/cd2c on /mnt/cdrom: No such file or directory</tt></h4>
+
+By default, the OpenBSD installer creates only two cd device nodes,
+<tt>cd0</tt> and <tt>cd1</tt>.
+To start using your <tt>cd2</tt> device, you must create the necessary
+device nodes for it.
+The recommended way to do that is using the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=MAKEDEV&amp;sektion=8">MAKEDEV(8)</a>
+(select your specific platform) script:
+
+<blockquote><pre>
+# <strong>cd /dev</strong>
+# <strong>./MAKEDEV cd2</strong>
+</pre></blockquote>
+
+In what follows, we will mostly be accessing the CD/DVD writer through the
+<i>raw</i> character device, <b>not</b> the <i>block</i> device.
+
+<h4>Checking CD/DVD writer operation</h4>
+
+It is recommended to check whether your CD/DVD writer is working correctly.
+In this example, I'll be using this USB 2.0 DVD writer:
+
+<blockquote><pre>
+cd2 at scsibus2 targ 1 lun 0: &lt;LITE-ON, DVDRW LDW-851S, GS0C&gt; SCSI0 5/cdrom removable
+</pre></blockquote>
+
+Try to use it by mounting an existing CD/DVD in it.
+If desired, you could also check the transfer rate you are getting when
+copying files to your hard disk.
+The
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=time&amp;sektion=1">time(1)</a>
+command will be your willing assistant.
+
+<p>
+If something goes wrong here and you are getting errors during this phase,
+it is wise to fix the problem and not to start writing a CD/DVD yet.
+
+<h3>I want to write a CD here! Can we get on with it?</h3>
+
+Before proceeding, it is a good idea to keep a few words of advice in mind:
+
+<ul>
+<li>Do not run any disk-intensive jobs while writing a CD/DVD. Doing this
+will reduce the throughput to your CD/DVD writer. If the throughput drops
+below what the writer is expecting for too long, its buffer will run empty.
+This phenomenon is also known as a "buffer underrun".
+<li>Prevent shocks during writing as this may cause the laser beam to drift
+from its track, which may lead to errors on the disc.
+<li>Not every DVD writer supports every DVD format, see below.
+</ul>
+
+<a name="writeCD"></a>
+<h3>13.7.2 - Writing CDs</h3>
+
+<h4>Creating data CD-ROMs</h4>
+
+First, you will want to create an ISO 9660 filesystem to put on a CD-ROM.
+To do this you can use the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mkhybrid&amp;sektion=8">mkhybrid(8)</a>
+utility in the base system, or the mkisofs utility which comes with the
+cdrtools <a href="faq15.html#PkgMgmt">package</a> and which does a better
+job with large file trees.
+In the examples below, we will use mkhybrid, although mkisofs usage is
+very similar.
+
+<p>
+As an example usage, let's say I wanted to store the OpenBSD kernel sources
+in an ISO 9660 image:
+
+<blockquote><pre>
+$ <strong>mkhybrid -R -o sys.iso /usr/src/sys</strong>
+
+Using ALTQ_RMC.000;1 for  /usr/src/sys/altq/altq_rmclass_debug.h (altq_rmclass.h)
+...
+Using IEEE8021.00H;1 for  /usr/src/sys/net80211/ieee80211_amrr.c (ieee80211.c)
+ 10.89% done, estimate finish Sat Nov  3 08:01:23 2007
+ 21.78% done, estimate finish Sat Nov  3 08:01:28 2007
+...
+ 87.12% done, estimate finish Sat Nov  3 08:01:31 2007
+ 98.01% done, estimate finish Sat Nov  3 08:01:32 2007
+Total translation table size: 0
+Total rockridge attributes bytes: 896209
+Total directory bytes: 2586624
+Path table size(bytes): 11886
+Max brk space used 0
+45919 extents written (89 Mb)
+</pre></blockquote>
+
+<p>
+The <tt>-R</tt> option tells <tt>mkhybrid</tt> to create Rock Ridge
+extensions in the ISO 9660 image.
+The Rock Ridge Interchange Protocol was created to support POSIX filesystem
+semantics in ISO 9660 filesystems, such as longer file names, ownerships,
+permissions, file links, soft links, device nodes, deep file hierarchies
+(more than 8 levels of subdirectories), etc.
+
+<p>
+If you want the long file names on your CD-ROM to be readable on Windows
+or DOS systems, you should add the <tt>-J</tt> flag to include Joliet
+extensions in the ISO 9660 image as well.
+
+<p>
+After creating the filesystem, you can verify it by
+<a href="faq14.html#MountImage">mounting the ISO 9660 image</a>.
+If all is well, you are now ready to burn the CD-R(W).
+The easiest way to do this is to use the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cdio&amp;sektion=1">cdio(1)</a>
+utility.
+
+<p>
+If you are using multi-write media such as CD-RW, you will need to blank the
+media before burning it.
+
+<blockquote><pre>
+# <strong>cdio -f cd1c blank</strong>
+</pre></blockquote>
+
+You are now ready to burn the image created in the above
+example to a blank CD-R(W). You could use a command similar to:
+
+<blockquote><pre>
+# <strong>cdio -f cd1c tao sys.iso</strong>
+</pre></blockquote>
+
+With the options specified above, we're asking cdio to use the second
+CD-ROM device as the CD writer.
+
+<p>
+To verify whether the CD-ROM has been written correctly, you can mount it
+and check whether everything is there.
+To mount the filesystem, you should use the <i>block</i> device for the
+CD-ROM drive, which in this case is still the CD writer:
+
+<blockquote><pre>
+# <strong>mount /dev/cd1c /mnt/cdrom</strong>
+</pre></blockquote>
+
+
+<h4>Creating audio CDs</h4>
+
+To burn audio CDs, you can again use
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=cdio&amp;sektion=1">cdio(1)</a> with the <tt>tao -a</tt> option.
+
+<p>
+As an example, I'll be making a backup copy of one of my music CDs.
+This involves two steps:
+
+<ol>
+<li>Fetch the audio tracks from the original CD.
+For example:
+<blockquote><pre>
+# <strong>cdio -f cd1c cdrip</strong>
+</pre></blockquote>
+This command will extract a series of WAV files from your second CD-ROM drive
+to your disk.
+<li>Write the audio tracks to a blank CD.
+For example:
+<blockquote><pre>
+# <strong>cdio -f cd1c tao -a *.wav</strong>
+</pre></blockquote>
+</ol>
+
+
+<a name="writeDVD"></a>
+<h3>13.7.3 - Writing DVDs</h3>
+
+There are a few important things about DVD you should know about before
+proceeding to write your own DVDs.
+
+<p>
+<b>Important notes:</b>
+<ul>
+<li>If you really want to know all about DVD, I suggest you read the very
+extensive <a href="http://www.dvddemystified.com/dvdfaq.html">DVD FAQ</a>
+document to start with.
+<li>This section has seen only very limited testing, and we certainly have
+not tried every possible media and writer combination.
+Nevertheless, we have had, or have heard of, positive experiences with
+all of the DVD formats mentioned below.
+You are welcome to <a href="mailto:faq@openbsd.org">let us know</a> about
+your successes or failures.
+</ul>
+
+<h4>Different DVD formats</h4>
+
+There are a number of different DVD formats. Commonly used are the DVD-R,
+DVD-RW, DVD+R, and DVD+RW formats (R means writable once, RW means it can
+be rewritten a few thousand times).
+They are pretty much competing standards.
+
+<p>
+A pretty different format is DVD-RAM, which was mainly developed as a
+data drive and has advanced packet writing functions, allowing it to be
+used like a kind of optical hard disk. DVD-RAM is not recommended for
+video usage as video gets written to the discs in a format not compatible
+with normal DVD players.
+
+<p>
+The important thing is you use media which suit your DVD writer.
+If you expect compatibility with other DVD players, watch your step and
+be sure to read
+<a href="http://www.dvddemystified.com/dvdfaq.html#4.3.1">this section</a>
+of the DVD FAQ.
+
+<h4>DVD writing speed</h4>
+
+It may be useful to point out that DVD speed indications differ from CD-ROM
+speed indications. The following table gives an overview:
+
+<p>
+<table border="1" style="empty-cells: show;">
+<tr align="center">
+<td>DVD read/write speed</td>
+<td>Transfer rate (MB/s)</td>
+<td>Equivalent CD-R(W) read/write speed</td>
+</tr>
+<tr align="center">
+<td>1x</td>
+<td>1.32</td>
+<td>9x</td>
+</tr>
+<tr align="center">
+<td>2x</td>
+<td>2.64</td>
+<td>18x</td>
+</tr>
+<tr align="center">
+<td>4x</td>
+<td>5.28</td>
+<td>36x</td>
+</tr>
+<tr align="center">
+<td>8x</td>
+<td>10.57</td>
+<td>72x</td>
+</tr>
+</table>
+
+<p>
+As can been seen from the table, the transfer rates are relatively high,
+and you should check whether your bus (SCSI, (E)IDE/ATAPI, USB) is performant
+enough to handle this throughput.
+Especially the older USB 1.0 and 1.1 interfaces work at slower transfer
+rates, with maximal rates of 1.5 Mbit/s and 12 Mbit/s, respectively.
+That means USB 1.0 has a maximal throughput of 178.8 kByte/s and
+USB 1.1 has a maximal throughput of 1.43 MB/s.
+USB 2.0 is much faster: 480 Mbit/s or 57.2 MB/s.
+In general, the speed of SCSI and (E)IDE/ATAPI buses should be just fine.
+
+<h4>Writing the DVD</h4>
+
+Basically, the process is very similar to writing CD-R(W)s. The software
+used, however, is different.
+At the moment, the best option is <b>growisofs</b> from the
+<tt>sysutils/dvd+rw-tools</tt> package.
+This utility writes an ISO 9660 image to the DVD medium.
+All recordable DVD formats are supported by the dvd+rw-tools.
+
+<p>
+In case you want to find out more info about the media in your DVD writer
+(for example if you lost the info label in the jewel case or are just
+disorganized like me), you can use the <b>dvd+rw-mediainfo</b> utility.
+
+<!--blockquote><pre>
+$ <strong>dvd+rw-mediainfo /dev/rcd2c</strong>
+INQUIRY:                [LITE-ON ][DVDRW LDW-851S  ][GS0C]
+GET [CURRENT] CONFIGURATION:
+ Mounted Media:         1Ah, DVD+RW
+ Current Write Speed:   4.0x1385=5540KB/s
+ Write Speed #0:        4.0x1385=5540KB/s
+ Write Speed #1:        2.4x1385=3324KB/s
+GET [CURRENT] PERFORMANCE:
+ Write Performance:     4.0x1385=5540KB/s@[0 -> 0]
+ Speed Descriptor#0:    00/0 R@2.4x1385=3324KB/s W@4.0x1385=5540KB/s
+ Speed Descriptor#1:    00/0 R@2.4x1385=3324KB/s W@2.4x1385=3324KB/s
+READ DVD STRUCTURE[#0h]:
+ Media Book Type:       92h, DVD+RW book [revision 2]
+ Media ID:              SONY/S11
+ Legacy lead-out at:    2295104*2KB=4700372992
+READ DISC INFORMATION:
+ Disc status:           blank
+ Number of Sessions:    1
+ State of Last Session: empty
+ Number of Tracks:      1
+READ TRACK INFORMATION[#1]:
+ Track State:           blank
+ Track Start Address:   0*2KB
+ Free Blocks:           2295104*2KB
+ Track Size:            2295104*2KB
+READ CAPACITY:          1*2048=2048
+</pre></blockquote-->
+
+There are two options to write the DVD:
+<ul>
+<li>Pre-master an ISO 9660 from your data, storing the image on your hard
+disk; then write this image to the DVD.
+<li>Write an ISO 9660 from your data immediately to the DVD.
+</ul>
+
+<p>
+I created a pre-mastered ISO 9660 image from the OpenBSD CVS modules
+(src, XF4, ports and www) contained in the /cvs directory on my disk.
+I used the following command, which looks very similar to the one I used
+to create the CD-ROM image above.
+
+<blockquote><pre>
+$ <strong>mkisofs -R -o cvs.iso /cvs</strong>
+</pre></blockquote>
+
+If desired, check the ISO 9660 filesystem by
+<a href="faq14.html#MountImage">mounting the image</a>.
+To write this image (about 2 GB) to an empty DVD disc, one could use:
+
+<blockquote><pre>
+# <strong>growisofs -dvd-compat -Z /dev/rcd2c=cvs.iso</strong>
+Executing 'builtin_dd if=cvs.iso of=/dev/rcd2c obs=32k seek=0'
+/dev/rcd2c: pre-formatting blank DVD+RW...
+/dev/rcd2c: "Current Write Speed" is 4.1x1385KBps.
+  23822336/1545832448 ( 1.5%) @3.9x, remaining 5:19
+  42172416/1545832448 ( 2.7%) @3.9x, remaining 5:20
+  60522496/1545832448 ( 3.9%) @3.9x, remaining 4:54
+...
+1504706560/1545832448 (97.3%) @3.9x, remaining 0:07
+1523318784/1545832448 (98.5%) @3.9x, remaining 0:04
+1541898240/1545832448 (99.7%) @3.9x, remaining 0:00
+/dev/rcd2c: flushing cache
+/dev/rcd2c: writing lead-out
+/dev/rcd2c: reloading tray
+</pre></blockquote>
+
+The <tt>-Z</tt> option tells growisofs to burn an initial session to the
+device, which in this case is my DVD writer, attached to cd2.
+The <tt>-dvd-compat</tt> option closes the disk, which means no more sessions
+can be appended to it.
+This should provide better compatibility with video DVD players and some
+older DVD-ROM units.
+
+<p>Notice how growisofs indicates the writing speed, in this case 3.9x
+DVD speed, which is what could be expected from the media and writer
+combination, as indicated by dvd+rw-mediainfo.
+
+<p>
+If you are short on disk space and cannot store an ISO 9660 image for a
+DVD, you can write your data directly to the DVD. Let's first do a dry
+run, which simulates the creation of the filesystem.
+
+<blockquote><pre>
+# <strong>growisofs -dry-run -Z /dev/rcd2c -R /cvs</strong>
+</pre></blockquote>
+
+If this succeeds, just leave out the -dry-run option and start burning the
+DVD.
+
+<blockquote><pre>
+# <strong>growisofs -Z /dev/rcd2c -R /cvs</strong>
+</pre></blockquote>
+
+<p>
+It is also possible to append data to an existing DVD, by using the -M
+option, which merges a new session to an existing one:
+
+<blockquote><pre>
+# <strong>growisofs -M /dev/rcd2c -R /mydata</strong>
+</pre></blockquote>
+
+For more information about growisofs, refer to the manual page.
+
+<p>
+When you have finished writing the DVD, mount it and see whether everything
+you expected to be there, is indeed there.
+
+<h4>Why am I not getting the writing speed I expected?</h4>
+
+Instead of the above writing output, you may see something like:
+
+<blockquote><pre>
+   4784128/1545832448 ( 0.3%) @0.7x, remaining 26:50
+   7929856/1545832448 ( 0.5%) @0.7x, remaining 29:05
+  14123008/1545832448 ( 0.9%) @0.7x, remaining 27:06
+...
+</pre></blockquote>
+
+which is much slower.
+It means you are somehow not getting enough throughput on whatever bus
+your DVD writer is using.
+In the above example, the USB DVD writer was attached to a machine on which
+the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ehci&amp;sektion=4">ehci(4)</a>
+driver, used by USB 2.0 controllers, failed to initialize properly.
+As always, you are welcome to provide patches and test results.
+The DVD writer fell back to the slower USB 1.1 interface, which causes
+reduced throughput.
+Indeed, USB 1.1 is limited to 12 Mbit/s, which amounts to 1.43 MB/s or
+1.08x in DVD speed terms.
+The DVD writer falls back to a lower pace than the maximum, to reduce the
+risk of buffer underruns.
+
+
+<a name="convert"></a>
+<h2>13.8 - But I want my media files in format FOO.</h2>
+
+<h3>Converting between different audio formats</h3>
+
+Let's say we want to process the sound recording from
+<a href="#recordaudio">FAQ 13 - Audio Recording</a>.
+This recording has been stored in the raw format.
+It will be useful to convert it, because the raw format does not include
+headers and the recording parameters will need to be specified at every
+usage of the file.
+
+<p>
+One sound conversion tool is <tt>audio/sox</tt>, available through
+packages and ports.
+<b>sox</b> supports AIFF, AU, MP3, Ogg Vorbis, RIFF WAV and raw formats,
+as well as some of the more exotic audio formats out there.
+Below is an example for converting the recording to RIFF WAV format.
+
+<blockquote><pre>
+$ <strong>sox -U -c 1 -r 8000 -b myvoice.raw myvoice.wav</strong>
+</pre></blockquote>
+
+Note that the specified parameters correspond to the recording parameters
+specified before the recording.
+This was just an example. More audio-related libraries and software can
+be used for audio conversion.
+
+<p>
+<b>Note:</b>
+It is not recommended to convert between different lossy compression formats.
+For instance, the MP3 and Vorbis codecs throw away different parts of an
+original audio waveform.
+Therefore, when converting a MP3 file to Ogg Vorbis, the end result will
+probably sound worse than the original MP3.
+
+<h3>Converting between different video formats</h3>
+
+It's important to make a clear distinction between
+<ul>
+<li>the container file format - popular examples are
+MP4, OGG, MPEG, MOV, AVI, ASF.
+<li>the video codec - for example MPEG-1, MPEG-2, MPEG-4 compliant codecs
+(like Xvid and DivX), FFmpeg, WMV, ... - read this
+<a href="http://en.wikipedia.org/wiki/Video_codec">Wikipedia article
+about video codecs</a> to find out more.
+</ul>
+
+In OpenBSD, support for MPEG and AVI containers is most mature at this
+time.
+No utilities in the ports tree can create streams in MP4 containers yet.
+
+<p>
+Two popular utilities are <tt>multimedia/transcode</tt> and
+<b>mencoder</b> (part of <tt>x11/mplayer</tt>).
+They use or can use the <b>libavcodec</b> library as part of the
+<tt>graphics/ffmpeg</tt> port, which generates good quality output.
+You can, of course, also use <b>ffmpeg</b> directly.
+It should also be possible to use the XviD encoder in
+<tt>multimedia/xvidcore</tt>.
+
+<p>
+The documentation that comes with these packages, under the form of manual
+pages or HTML documents in <tt>/usr/local/share/doc</tt>, contains many
+examples, so it is HIGHLY recommended to read those documents.
+
+
+<a name="streaming"></a>
+<h2>13.9 - Is it possible to play streaming media under OpenBSD?</h2>
+
+Yes, it is.
+Many audio and video streams will work just fine, on a limited number of
+platforms.
+A few of them will not.
+
+<p>
+This is not meant to be a complete, overly detailed answer to have every
+possible streaming format work on any hardware architecture.
+You may want to learn more about streaming media to start with.
+A slightly dated but still good starting point is this
+<a href="http://www.oreilly.com/catalog/sound/chapter/ch05.html">chapter
+about streaming media</a> from the O'Reilly book titled Designing Web Audio.
+
+<p>
+The first thing to understand is that there are a number of different
+streaming protocols around.
+The streaming <b>protocol</b> defines how the streams will be sent over the
+network.
+They have been developed to allow efficient transmission of audio/video
+over the internet in real-time.
+Mostly, the streaming protocol is a (Layer 7) application protocol, which
+can use either UDP or TCP (Layer 4) transport protocols.
+The User Datagram Protocol (UDP) is very suited for this type of
+application since it doesn't do any retransmision of packets or other
+overhead.
+A number of specialized but proprietary protocols have been developed, e.g.
+Microsoft Media Services (MMS) and the Real Time Streaming Protocol (RTSP).
+As we will see, HTTP (which uses TCP) is sometimes used as well, even
+though it does not allow serving streams at a steady bitrate like UDP,
+RTSP and MMS.
+
+<p>
+Next, there is the streaming <b>format</b>, which is how the audio/video
+data has been organized and can be played.
+The most widely used streaming formats are MP3, Real Audio (RA, RM) and
+Windows Media (ASF), all proprietary technologies.
+Occasionally you will also encounter streams in the open Ogg Vorbis format.
+
+<p>
+As an example, I'll explain in a few steps how I get to listen to
+<a href="http://www.radio1.be">Radio 1</a>,
+one of the Belgian national radio stations.
+Browser-embedded plugins are not available on OpenBSD, so the story is
+usually not an instant "click and play".
+
+<ul>
+<li>Determine the streaming protocol and format.<br>
+This is usually indicated on the website where you access the stream.
+In this case, I followed the link "Listen live" from the main site, and
+it's telling me my operating system is not supported.
+They are being nice by saying I can also listen to their MP3 streams
+without their embedded Flash player.
+Apart from that, a list of links to the national radio stations appears,
+allowing me to proceed to the next step.
+Note that I used a JavaScript-enabled browser to get this far.
+<li>Figure out the precise URL.<br>
+Many websites link to a container metafile or playlist
+(such as M3U, ASX, RAM), which contains the actual location of the stream.
+Just save the file, and read the URL from it.
+In my example this is
+
+<blockquote><pre>
+$ <strong>ftp http://internetradio.vrt.be/dab/hoeluisteren/pc/help/gebruiksvoorwaarden/stream_11.m3U</strong>
+$ <strong>cat stream_11.m3U</strong>
+http://mp3.streampower.be/radio1-mid.mp3
+http://mp3.streampower.be/radio1-low.mp3
+http://mp3.streampower.be/radio1-high.mp3
+</pre></blockquote>
+
+It looks like I can even choose between low, medium and high quality streams.
+Other websites may contain some JavaScript code to generate the URL.
+In that case, the best tip is: dig up the HTML source and scripts it
+refers to.
+There is a good chance you can reconstruct the URL from it.
+
+<li>To play streams, your best bet is probably <tt>x11/mplayer</tt>,
+which is available through packages and ports.
+It supports most of the streaming protocols and formats, and has been
+reported to work on amd64, i386, powerpc and sparc64 platforms.
+But there are alternatives:
+<b>ogg123</b> from <tt>audio/vorbis-tools</tt> (for Ogg Vorbis streams),
+<tt>audio/mpg123</tt> and <tt>audio/mpg321</tt> (for MP3 streams),
+XMMS in <tt>audio/xmms</tt> and the Videolan Client in <tt>x11/vlc</tt>.
+Continuing the example:
+
+<blockquote><pre>
+$ <strong>mplayer http://mp3.streampower.be/radio1-mid.mp3</strong>
+</pre></blockquote>
+
+<li>Optionally, you may want to make it a little easier by including an
+alias in your <tt>.profile</tt>:
+
+<blockquote><pre>
+alias radio1='mplayer http://mp3.streampower.be/radio1-mid.mp3'
+</pre></blockquote>
+
+</ul>
+
+<!--  
+check out http://www.cbc.ca/listen/index.html
+it has DivX streams over MMS as well as Ogg Vorbis streams over HTTP.
+maybe a good example but also nearly an ideal case...
+-->
+
+Windows Media (ASF) streams will often work, though they may contain data
+in formats supported only through the <tt>graphics/win32-codecs</tt> port,
+which runs on i386 only ('pkg_info win32-codecs' will tell you which
+codecs).
+Some Real Audio streams can be made to work on i386 using <b>mplayer</b>
+in conjunction with the
+<tt>graphics/win32-codecs</tt> and <tt>emulators/fedora/base</tt> ports
+(see
+<a href="http://marc.info/?t=107060510300001&amp;r=1&amp;w=2">this
+thread</a> on the ports mailing list).
+
+<a name="javaflash"></a>
+<a name="javaplugin"></a>
+<h2>13.10 - Can I have a Java plugin in my web browser? (i386 only)</h2>
+
+The Java plugin is part of the Java Development Toolkit (JDK).
+For licensing reasons, OpenBSD cannot ship binary packages for the JDK.
+This means you will have to build it from ports.
+Further information on building the JDK can be found in
+<a href="faq8.html#Programming">FAQ 8 - Programming Languages</a>.
+Once you have finished building the JDK, you can install either the full
+JDK package or just the Java Runtime Environment (JRE) which is in a
+subpackage and contains the browser plugin.
+
+<p>
+Upon installation, instructions are displayed for using the Java plugin
+with a Firefox or Mozilla web browser.
+Create the symlink as explained, and then you should see the Java plugin
+upon entering "about:plugins" in the URL bar.
+
+<p>
+<b>Note:</b> The Java plugin has only been tested with the Firefox and
+Mozilla browsers.
+If it works well for you using a different browser, please let us know.
+
+
+<a name="flashplugin"></a>
+<h2>13.11 - Can I have a Flash plugin in my web browser? (i386 only)</h2>
+
+The Flash plugin is distributed by Adobe in binary form only.
+Adobe does not provide a native OpenBSD plugin, but there is a Linux
+plugin which you can use under Linux emulation.
+This plugin is available only for the i386 platform.
+
+<p>
+Before continuing, it is a good idea to read about Linux emulation in the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=compat_linux&amp;sektion=8">compat_linux(8)</a>
+manual page, and also
+<a href="faq9.html#Interact">FAQ 9 - Running Linux binaries on OpenBSD</a>.
+
+<p>
+If you have understood this and you didn't install the necessary files yet,
+just add the fedora package.
+Assuming you have the environment variable <tt>PKG_PATH</tt> set
+(see <a href="faq15.html#Easy">FAQ 15</a>),
+
+<blockquote><pre>
+# <b>pkg_add -i fedora_base</b>
+</pre></blockquote>
+
+This will automatically set <tt>kern.emul.linux=1</tt>, but not permanently.
+If you need permanent Linux emulation, you need to specify that in
+<tt>/etc/sysctl.conf</tt>, as explained in
+<a href="faq9.html#Interact">FAQ 9 - Running Linux binaries on OpenBSD</a>.
+
+<p>
+Another thing you should know is that Linux shared libraries and modules
+cannot be used with OpenBSD executables, so you will need a Linux browser
+as well.
+
+<p>
+One candidate is the <a href="http://www.opera.com/">Opera</a> web browser,
+available in the ports tree.
+OpenBSD does not distribute packages for it, since Opera's license is not
+clear about its redistribution.
+However, installation should not take long, since it is distributed in
+binary form by Opera Software.
+After that you can easily install the Flash plugin from the ports tree.
+
+<blockquote><pre>
+# <b>cd /usr/ports/www/opera</b>
+# <b>make install</b>
+# <b>cd /usr/ports/www/opera-flashplugin</b>
+# <b>make install</b>
+</pre></blockquote>
+
+<p>
+<b>Note:</b>
+It should be sufficient to perform the last step alone, and the ports
+system will install the dependencies automatically.
+For clarity, however, we split the process into a few steps here to
+explain.
+
+<p>
+If you have followed the above guidelines, the Flash plugin should now be
+listed when you type "about:plugins" in the URL bar.
+
+
+
+<!--
+this would be interesting, but lack of hardware at the moment
+
+<a name="camera"></a>
+<h2>13.xx - Can I use my digital camera under OpenBSD?</h2>
+
+<a name="scanner"></a>
+<h2>13.yy - How do I set up and use my scanner?</h2>
+-->
+
+<p>
+<font color= "#0000e0">
+<a href= "index.html">[FAQ Index]</a>
+<a href= "faq12.html">[To Section 12 - Hardware and Platform-Specific Questions]</a>
+<a href= "faq14.html">[To Section 14 - Disk Setup]</a>
+</font>
+
+<p>
+<hr>
+<a href= "index.html"><img height= "24" width= "24" src= "../images/back.gif" border= "0" alt="[back]"></a>
+<a href="mailto:www@openbsd.org">www@openbsd.org</a>
+<br>
+<small>$OpenBSD: faq13.html,v 1.119 2007/12/01 14:29:56 steven Exp $</small>
+
+</body>
+</html>
+

@@ -87,7 +87,14 @@ $ iconv -f ISO-8859-1 -t UTF-8 example.html > zh/example.html
 ----------------------------------------------------------------
 
 === 翻译文档
-准确翻译，仔细复审。然后预览效果，尽量与原文的版面一致。
+ * 准确翻译，仔细复审。
+ * 除非必要，不许增删改 HTML 标签，或者调整这些标签的顺序。
+ * 预览效果，尽量与原文的版面一致。
+ * 尽量保证行长不大于 72 个英文字符。
+ * 注意换行引入的额外空格。尽量在需要加入空格的地方或标点符号之后换行。
+ * 不许修改版权信息，包括年份。
+ * 由于http://steelix.kd85.com/translation/tagreport/#zh[标签报告]的问题，建议使用文本编辑器从事翻译工作。
+ * 经常浏览http://steelix.kd85.com/translation/status.html#zh[翻译状态页面]，及时更新。
 
 === 校验文档
 
@@ -118,10 +125,23 @@ $ linkchecker -r 1 example.html
 和 http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
 
 在完成翻译，通过各种检查后，由 http://code.google.com/p/i18n-zh/[i18n-zh]
-小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库，然后回写(CVS keyword)到
+小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库，然后回写 CVS 标签到
 http://hg.sharesource.org/g11n/[sharesource]，可能还有
 http://code.google.com/p/i18n-zh/[i18n-zh] 和
 http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
+
+从匿名 CVS 服务器更新 sharesource 的英文版本：
+----------------------------------------------------------------
+WC_CVS=/usr/www
+WC_HG=/home/dongsheng/wc/hg/g11n
+
+cd ${WC_CVS}
+for i in . faq faq/pf openbgpd opencvs openntpd openssh papers porting spamd; do
+    /bin/cp ${WC_CVS}/${i}/*.html ${WC_HG}/os/OpenBSD/www/${i}
+done
+
+cd ${WC_HG}/os/OpenBSD/www/ &&  hg ci -m "Sync with AnonCVS" && hg purge -f
+----------------------------------------------------------------
 
 === OpenBSD 翻译版本库
 目前官方版本库不对翻译人员开放。
@@ -129,6 +149,51 @@ http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
 在 steelix.kd85.com 有一个不对外提供匿名 CVS 服务的翻译版本库。翻译人员在取得
 账户后，可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方
 版本库中。
+
+=== 从 steelix 检出
+对于 steelix 的文档，不需要全部检出，只检出我们需要的部分即可。首先执行非递归检出，例如：
+----------------------------------------------------------------
+cd /home/dongsheng/wc
+cvs -d dongsheng@steelix.kd85.com:/cvs co -l -d steelix-www www
+----------------------------------------------------------------
+
+然后就可以执行非递归更新了，例如只检出/更新当前翻译相关部分：
+----------------------------------------------------------------
+cd /home/dongsheng/wc/steelix-www
+
+cvs up -l images
+cvs up -l zh
+cvs up -l opencvs
+cvs up -l opencvs/images
+cvs up -l opencvs/zh
+cvs up -l faq
+cvs up -l faq/images
+cvs up -l faq/zh
+cvs up -l faq/pf
+cvs up -l faq/pf/zh
+cvs up -l spamd
+cvs up -l spamd/zh
+----------------------------------------------------------------
+
+=== 提交到 steelix
+
+从 sharesource 提交到 steelix 后，再向 sharesource 同步 CVS 标签。
+----------------------------------------------------------------
+WC_CVS=/home/dongsheng/wc/steelix-www
+WC_HG=/home/dongsheng/wc/hg/g11n
+
+for i in zh opencvs/zh faq/zh faq/pf/zh spamd/zh; do
+    /bin/cp ${WC_HG}/os/OpenBSD/www/${i}/*.html ${WC_CVS}/${i}
+done
+
+cd ${WC_CVS} && cvs ci -m "Sync with http://hg.sharesource.org/g11n/"
+
+for i in zh opencvs/zh faq/zh faq/pf/zh spamd/zh; do
+    /bin/cp ${WC_CVS}/${i}/*.html  ${WC_HG}/os/OpenBSD/www/${i}
+done
+
+cd ${WC_HG} && hg ci -m "Sync CVS Tags"
+----------------------------------------------------------------
 
 == 加入我们
 如果大家发现问题，请先检查 http://hg.sharesource.org/g11n/[sharesource]
@@ -138,5 +203,5 @@ http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
 的http://groups.google.com/group/i18n-zh/[讨论组]或译者。
 
 如果你有兴趣参加，请在 http://code.google.com/p/i18n-zh/[i18n-zh]
-的http://groups.google.com/group/i18n-zh/[讨论组]发言。只有在提交数个网页的合
-格翻译后，才能获得 http://hg.sharesource.org/g11n/[sharesource] 的写权限。
+的http://groups.google.com/group/i18n-zh/[讨论组]发言。在提交数个网页的合
+格翻译后，会被授予 http://hg.sharesource.org/g11n/[sharesource] 的写权限。
