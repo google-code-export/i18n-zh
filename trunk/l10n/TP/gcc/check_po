@@ -1,0 +1,100 @@
+#!/usr/bin/perl -w
+use strict;
+
+sub countPerCent($) {
+  my $str = shift;
+  my $cnt = 0;
+  for(my $i=0; $i < length($str); $i++) {
+    $cnt++ if(substr($str, $i,1) eq '%' && substr($str, $i,2) ne "%'");
+  }
+  return $cnt;
+}
+
+sub printMSG($$$) {
+  my ($msg,$msgid, $msgstr) = @_;
+  print("ERROR: $msg\n"
+       ."  msgid  ".$msgid."\n"
+       ."  msgstr ".$msgstr."\n\n");
+}
+
+
+sub checkDollar($$) {
+  my ($msgid, $msgstr) = @_;
+  my @idstr = ();
+  my $cnt = 0;
+  my $i;
+
+  for($i = 0; $i < length($msgid); $i++) {
+    if(substr($msgid, $i,1) eq '%' && substr($msgid, $i,2) ne "%'") {
+      push(@idstr, substr($msgid, $i+1,1));
+      $cnt++;
+    }
+  }
+  return if(length($msgstr) < 4);
+  for($i = 0; $i+4 < length($msgstr); $i++) {
+    if(substr($msgstr, $i,3) =~ m/%\d\$/) {
+      if(substr($msgstr, $i+3,1) ne $idstr[substr($msgstr, $i+1,1)-1]) {
+        printMSG("Error: ".substr($msgstr, $i,4)." is wrong", $msgid, $msgstr);
+      }
+    }
+  }
+}
+
+sub check($$) {
+  my ($msgid, $msgstr) = @_;
+  my $cntid  = countPerCent($msgid);
+  my $cntstr = countPerCent($msgstr);
+  if ($cntid != $cntstr) {
+     printMSG("Wrong number of '%' signs($cntid vs. $cntstr)", $msgid, $msgstr);
+     return;
+  }
+  if ($cntid == 0) { return; }
+  if ($msgstr =~ m/[^%]%[0-9]\$/ && $msgstr =~ m/[^%]%[^0-9]/) {
+     printMSG("Cannot combine '%' with %n\$", $msgid, $msgstr);
+     return;
+  }
+
+  checkDollar($msgid,$msgstr) if($msgstr =~ m/[^%]%[0-9]\$/);
+}
+
+
+
+my $msgid = '';
+my $msgstr = '';
+my $fuzzy = 0;
+
+open(IN, "<$ARGV[0]")|| die "Cannot open $ARGV[0]: $_";
+while(<IN>) {
+  chomp; # Remove trailing '\n'
+  if(m/^msgid/) {
+    $msgid = $_;
+    $msgid =~ s/msgid "//;
+    chop($msgid); # Remove trailing '"'
+  } elsif(m/^msgstr/) {
+    $msgstr = $_;
+    $msgstr =~ s/msgstr "//;
+    chop($msgstr); # Remove trailing '"'
+    if ($msgstr eq '') { $msgid = ""; $fuzzy = 0; }
+  } elsif(m/^#,.*fuzzy/) {
+    $fuzzy = 1;
+  } elsif(m/^"/) {
+    my $line = $_;
+    chop($line); # Remove trailing '"'
+    if($msgstr ne "") {
+      $msgstr = $msgstr.$line; 
+    } else {
+      $msgstr = $msgstr.$line;
+    }
+  } else {
+    if($fuzzy) {
+      $msgid = "";
+      $msgstr = "";
+      $fuzzy = 0;
+    }
+    next if($msgid eq "");
+    check($msgid,$msgstr);
+    $msgid = "";
+    $msgstr = "";
+    $fuzzy = 0;
+  }
+}
