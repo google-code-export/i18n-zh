@@ -128,19 +128,24 @@ $ linkchecker -r 1 example.html
 小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库，然后回写 CVS 标签到
 http://hg.sharesource.org/g11n/[sharesource]，可能还有
 http://code.google.com/p/i18n-zh/[i18n-zh] 和
-http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
+http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。 +
 
 从匿名 CVS 服务器更新 sharesource 的英文版本：
 ----------------------------------------------------------------
 WC_CVS=/usr/www
 WC_HG=/home/dongsheng/wc/hg/g11n
 
-cd ${WC_CVS}
+# for i in . faq faq/pf openbgpd opencvs openntpd openssh papers porting spamd; do
+#     /bin/rm ${WC_CVS}/${i}/*.html
+# done
+# cd ${WC_CVS} && cvs up
+
 for i in . faq faq/pf openbgpd opencvs openntpd openssh papers porting spamd; do
     /bin/cp ${WC_CVS}/${i}/*.html ${WC_HG}/os/OpenBSD/www/${i}
 done
 
-cd ${WC_HG}/os/OpenBSD/www/ &&  hg ci -m "Sync with AnonCVS" && hg purge -f
+cd ${WC_HG}/os/OpenBSD/www/ && hg purge -f .
+# cd ${WC_HG}/os/OpenBSD/www/ && hg ci -m "Sync with AnonCVS" .
 ----------------------------------------------------------------
 
 === OpenBSD 翻译版本库
