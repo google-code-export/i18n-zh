@@ -11,7 +11,7 @@
   <xsl:param name="body.font.family">simsun</xsl:param>
   <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="dingbat.font.family">simhei</xsl:param>
-  <xsl:param name="monospace.font.family">CourierNew</xsl:param>
+  <xsl:param name="monospace.font.family">simsun</xsl:param>
   <xsl:param name="title.font.family">simhei</xsl:param>
 
   <!-- Admonitions -->
@@ -21,6 +21,14 @@
   <xsl:param name="callout.unicode.start.character">10102</xsl:param>
 
 <!--Font Families -->
+
+<xsl:param name="body.start.indent">
+  <xsl:choose>
+    <xsl:when test="$fop.extensions != 0">0pt</xsl:when>
+    <xsl:when test="$passivetex.extensions != 0">0pt</xsl:when>
+    <xsl:otherwise>0pc</xsl:otherwise>
+  </xsl:choose>
+</xsl:param>
 
 
 </xsl:stylesheet>
