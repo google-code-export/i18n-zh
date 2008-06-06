@@ -9,10 +9,11 @@
 
   <!-- Font related Settings -->
   <xsl:param name="body.font.family">simsun</xsl:param>
-  <xsl:param name="body.font.size">12</xsl:param>
+  <xsl:param name="body.font.size">8</xsl:param>
   <xsl:param name="dingbat.font.family">simhei</xsl:param>
   <xsl:param name="monospace.font.family">simsun</xsl:param>
   <xsl:param name="title.font.family">simhei</xsl:param>
+  <xsl:param name="title.font.size">10</xsl:param>
 
   <!-- Admonitions -->
   <xsl:param name="admon.graphics" select="1"/>

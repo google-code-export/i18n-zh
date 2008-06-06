@@ -5,7 +5,7 @@
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
 
-  <xsl:param name="paper.type" select="'A4'"></xsl:param>
+  <xsl:param name="paper.type" select="'C8'"></xsl:param>
 
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
