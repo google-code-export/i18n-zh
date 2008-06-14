@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0' xmlns:saxon="http://icl.com/saxon"
+  extension-element-prefixes="saxon">
 
   <xsl:import href="html-import.xsl"/>
 
-  <xsl:output method="html" encoding="utf-8" indent="yes"/>
+  <xsl:output method="html" encoding="utf-8" indent="yes" saxon:character-representation="native;decimal"/>
+  <xsl:param name="use.id.as.filename">1</xsl:param>
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
 
