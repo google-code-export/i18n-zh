@@ -1,0 +1,175 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Peg&#21644;&#23454;&#26045;&#20462;&#35746;&#29256;&#26412;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.advanced.html" title="&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;"><link rel="prev" href="svn.advanced.externals.html" title="&#22806;&#37096;&#23450;&#20041;"><link rel="next" href="svn.advanced.changelists.html" title="Changelists"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Peg&#21644;&#23454;&#26045;&#20462;&#35746;&#29256;&#26412;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.advanced.externals.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.changelists.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.advanced.pegrevs"></a>Peg&#21644;&#23454;&#26045;&#20462;&#35746;&#29256;&#26412;</h2></div></div></div><p>We copy, move, rename, and completely replace files and
+      directories on our computers all the time.  And your version
+      control system shouldn't get in the way of your doing these
+      things with your version-controlled files and directories,
+      either.  Subversion's file management support is quite
+      liberating, affording almost as much flexibility for versioned
+      files as you'd expect when manipulating your unversioned ones.
+      But that flexibility means that across the lifetime of your
+      repository, a given versioned object might have many paths, and
+      a given path might represent several entirely different
+      versioned objects.  This introduces a certain level of
+      complexity to your interactions with those paths and
+      objects.</p><p>Subversion is pretty smart about noticing when an object's
+      version history includes such &#8220;<span class="quote">changes of address.</span>&#8221;
+      For example, if you ask for the revision history log of a
+      particular file that was renamed last week, Subversion happily
+      provides all those logs&#8212;the revision in which the rename
+      itself happened, plus the logs of relevant revisions both before
+      and after that rename.  So, most of the time, you don't even
+      have to think about such things.  But occasionally, Subversion
+      needs your help to clear up ambiguities.</p><p>The simplest example of this occurs when a directory or file
+      is deleted from version control, and then a new directory or
+      file is created with the same name and added to version control.
+      The thing you deleted and the thing you later added aren't the
+      same thing.  They merely happen to have had the same
+      path&#8212;<code class="filename">/trunk/object</code>, for example.
+      What, then, does it mean to ask Subversion about the history of
+      <code class="filename">/trunk/object</code>?  Are you asking about the
+      thing currently at that location, or the old thing you deleted
+      from that location?  Are you asking about the operations that
+      have happened to <span class="emphasis"><em>all</em></span> the objects that have
+      ever lived at that path?  Subversion needs a hint about what you
+      really want.</p><p>And thanks to moves, versioned object history can get far
+      more twisted than that, even.  For example, you might have a
+      directory named <code class="filename">concept</code>, containing some
+      nascent software project you've been toying with.  Eventually,
+      though, that project matures to the point that the idea seems to
+      actually have some wings, so you do the unthinkable and decide
+      to give the project a name.
+      <sup>[<a name="d0e5983" href="#ftn.d0e5983" class="footnote">17</a>]</sup>
+      Let's say you called your software Frabnaggilywort.  At this
+      point, it makes sense to rename the directory to reflect the
+      project's new name, so <code class="filename">concept</code> is renamed
+      to <code class="filename">frabnaggilywort</code>.  Life goes on,
+      Frabnaggilywort releases a 1.0 version and is downloaded and
+      used daily by hordes of people aiming to improve their
+      lives.</p><p>&#36825;&#26159;&#19968;&#20010;&#32654;&#22909;&#30340;&#25925;&#20107;&#65292;&#20294;&#26159;&#27809;&#26377;&#22312;&#36825;&#37324;&#32467;&#26463;&#65292;&#20316;&#20026;&#20027;&#21150;&#20154;&#65292;&#20320;&#19968;&#23450;&#24819;&#21040;&#20102;&#21478;&#19968;&#20214;&#20107;&#65292;&#25152;&#20197;&#20320;&#21019;&#24314;&#20102;&#19968;&#20010;&#30446;&#24405;&#21483;&#20570;<code class="filename">concept</code>&#65292;&#21608;&#26399;&#37325;&#26032;&#24320;&#22987;&#12290;&#23454;&#38469;&#19978;&#65292;&#36825;&#20010;&#24490;&#29615;&#22312;&#20960;&#24180;&#37324;&#24320;&#22987;&#20102;&#22810;&#27425;&#65292;&#27599;&#19968;&#20010;&#24819;&#27861;&#20174;&#20351;&#29992;&#26087;&#30340;<code class="filename">concept</code>&#30446;&#24405;&#24320;&#22987;&#65292;&#28982;&#21518;&#26377;&#26102;&#22312;&#24819;&#27861;&#25104;&#29087;&#20043;&#21518;&#37325;&#26032;&#21629;&#21517;&#65292;&#26377;&#26102;&#20320;&#25918;&#24323;&#20102;&#36825;&#20010;&#27880;&#24847;&#32780;&#21024;&#38500;&#20102;&#36825;&#20010;&#30446;&#24405;&#12290;&#25110;&#32773;&#26356;&#21152;&#21464;&#24577;&#19968;&#28857;&#65292;&#25110;&#35768;&#20320;&#25226;<code class="filename">concept</code>&#25913;&#25104;&#20854;&#20182;&#21517;&#23383;&#20043;&#21518;&#21448;&#22240;&#20026;&#19968;&#20123;&#21407;&#22240;&#37325;&#26032;&#25913;&#22238;<code class="filename">concept</code>&#12290;</p><p>In scenarios like these, attempting to instruct
+      Subversion to work with these re-used paths can be a little like
+      instructing a motorist in Chicago's West Suburbs to drive east
+      down Roosevelt Road and turn left onto Main Street.  In a mere
+      20 minutes, you can cross &#8220;<span class="quote">Main Street</span>&#8221; in
+      Wheaton, Glen Ellyn, and Lombard.  And no, they aren't the same
+      street.  Our motorist&#8212;and our Subversion&#8212;need a
+      little more detail in order to do the right thing.</p><p>In version 1.1, Subversion introduced a way for you to tell
+      it exactly which Main Street you meant.  It's called the
+      <em class="firstterm">peg revision</em>, and it is provided to
+      Subversion for the sole purpose of identifying a unique line of
+      history.  Because at most, one versioned object may occupy a path
+      at any given time&#8212;or, more precisely, in any one
+      revision&#8212;the combination of a path and a peg revision is
+      all that is needed to refer to a specific line of history.  Peg
+      revisions are specified to the Subversion command-line client
+      using <em class="firstterm">at syntax</em>, so called because the
+      syntax involves appending an &#8220;<span class="quote">at sign</span>&#8221;
+      (<code class="literal">@</code>) and the peg revision to the end of the
+      path with which the revision is associated.</p><p>But what of the <code class="option">--revision</code>
+      (<code class="option">-r</code>) of which we've spoken so much in this
+      book?  That revision (or set of revisions) is called the
+      <em class="firstterm">operative revision</em> (or
+      <em class="firstterm">operative revision range</em>).  Once a
+      particular line of history has been identified using a path and
+      peg revision, Subversion performs the requested operation using
+      the operative revision(s).  To map this to our Chicagoland
+      streets analogy, if we are told to go to 606 N. Main Street in
+      Wheaton,
+      <sup>[<a name="d0e6042" href="#ftn.d0e6042" class="footnote">18</a>]</sup>
+      we can think of &#8220;<span class="quote">Main Street</span>&#8221; as our path and
+      &#8220;<span class="quote">Wheaton</span>&#8221; as our peg revision.  These two pieces of
+      information identify a unique path that can be travelled (north or
+      south on Main Street), and they keep us from travelling up and
+      down the wrong Main Street in search of our destination.  Now we
+      throw in &#8220;<span class="quote">606 N.</span>&#8221; as our operative revision of
+      sorts, and we know <span class="emphasis"><em>exactly</em></span> where to
+      go.</p><div class="sidebar"><p class="title"><b>The Peg Revision Algorithm</b></p><p>Subversion&#21629;&#20196;&#34892;&#22312;&#35299;&#20915;&#36335;&#24452;&#21644;&#20462;&#35746;&#29256;&#26412;&#28151;&#28102;&#26102;&#38656;&#35201;peg&#20462;&#35746;&#29256;&#26412;&#31639;&#27861;&#65292;&#36825;&#37324;&#26159;&#19968;&#20010;&#29992;&#20197;&#35828;&#26126;&#30340;&#20363;&#23376;&#65306;</p><pre class="screen">
+$ svn <em class="replaceable"><code>command</code></em> -r <em class="replaceable"><code>OPERATIVE-REV</code></em> item@<em class="replaceable"><code>PEG-REV</code></em>
+</pre><p>&#22914;&#26524;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#27604;<em class="replaceable"><code>PEG-REV</code></em>&#26356;&#32769;&#65292;&#21017;&#31639;&#27861;&#22914;&#19979;&#65306;</p><div class="orderedlist"><ol type="1"><li><p>&#26469;&#21040;&#20462;&#35746;&#29256;&#26412;<em class="replaceable"><code>PEG-REV</code></em>&#65292;&#25214;&#21040;<em class="replaceable"><code>item</code></em>&#65292;&#22312;&#29256;&#26412;&#24211;&#23450;&#20301;&#21040;&#19968;&#20010;&#21807;&#19968;&#30340;&#23545;&#35937;&#12290;</p></li><li><p>&#36861;&#36394;&#23545;&#35937;&#30340;&#21382;&#21490;&#32972;&#26223;(&#36890;&#36807;&#20219;&#20309;&#21487;&#33021;&#30340;&#25913;&#21517;)&#26469;&#21040;&#20462;&#35746;&#29256;&#26412;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#30340;&#31062;&#20808;&#12290;</p></li><li><p>&#23545;&#37027;&#20010;&#31062;&#20808;&#25191;&#34892;&#35831;&#27714;&#30340;&#21160;&#20316;&#65292;&#26080;&#35770;&#23427;&#30340;&#20301;&#32622;&#65292;&#26080;&#35770;&#23427;&#26159;&#20160;&#20040;&#21517;&#23383;&#65292;&#26080;&#35770;&#24403;&#26102;&#26159;&#21542;&#23384;&#22312;&#12290;</p></li></ol></div><p>&#20294;&#26159;&#22914;&#26524;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#27604;<em class="replaceable"><code>PEG-REV</code></em>&#26356;&#24180;&#36731;&#26102;&#20250;&#24590;&#20040;&#26679;&#65311;&#36825;&#20026;&#23450;&#20301;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#20013;&#30340;&#36335;&#24452;&#30340;&#29702;&#35770;&#38382;&#39064;&#22686;&#21152;&#20102;&#19968;&#20123;&#22797;&#26434;&#24615;&#65292;&#22240;&#20026;&#22312;<em class="replaceable"><code>PEG-REV</code></em>&#21644;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#20043;&#38388;&#65292;&#36335;&#24452;&#22312;&#21382;&#21490;&#20013;&#21487;&#20197;&#20986;&#29616;&#22810;&#27425;(&#30001;&#20110;&#25335;&#36125;&#25805;&#20316;)&#65292;&#32780;&#19988;&#37027;&#36824;&#19981;&#26159;&#20840;&#37096;&#8212;Subversion&#19981;&#20250;&#20445;&#23384;&#21521;&#21069;&#36319;&#36394;&#21382;&#21490;&#30340;&#36275;&#22815;&#20449;&#24687;&#65292;&#25152;&#20197;&#31639;&#27861;&#20250;&#26377;&#19968;&#28857;&#19981;&#21516;&#65306;</p><div class="orderedlist"><ol type="1"><li><p>&#26469;&#21040;&#20462;&#35746;&#29256;&#26412;<em class="replaceable"><code>PEG-REV</code></em>&#65292;&#25214;&#21040;<em class="replaceable"><code>item</code></em>&#65292;&#22312;&#29256;&#26412;&#24211;&#23450;&#20301;&#21040;&#19968;&#20010;&#21807;&#19968;&#30340;&#23545;&#35937;&#12290;</p></li><li><p>&#36861;&#36394;&#23545;&#35937;&#30340;&#21382;&#21490;&#32972;&#26223;(&#36890;&#36807;&#20219;&#20309;&#21487;&#33021;&#30340;&#25913;&#21517;)&#26469;&#21040;&#20462;&#35746;&#29256;&#26412;<em class="replaceable"><code>PEG-REV</code></em>&#30340;&#31062;&#20808;&#12290;</p></li><li><p>&#22312;<em class="replaceable"><code>PEG-REV</code></em>&#20013;&#26816;&#39564;&#23545;&#35937;&#30340;&#20301;&#32622;(&#39034;&#24207;)&#19982;&#22312;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#20013;&#30456;&#21516;&#65292;&#22914;&#26524;&#37027;&#26159;&#38382;&#39064;&#65292;&#21017;&#33267;&#23569;&#20004;&#20010;&#20301;&#32622;&#26159;&#30452;&#25509;&#20851;&#32852;&#30340;&#65292;&#25152;&#20197;&#22312;<em class="replaceable"><code>OPERATIVE-REV</code></em>&#30340;&#20301;&#32622;&#25191;&#34892;&#35831;&#27714;&#21160;&#20316;&#12290;&#21542;&#21017;&#65292;&#20851;&#32852;&#27809;&#26377;&#24314;&#31435;&#65292;&#25152;&#20197;&#20250;&#25253;&#21578;&#27809;&#26377;&#21487;&#29992;&#20301;&#32622;&#30340;&#38169;&#35823;&#12290;(&#26377;&#19968;&#22825;&#65292;&#25105;&#20204;&#24076;&#26395;Subversion&#21487;&#20197;&#26356;&#28789;&#27963;&#21644;&#20248;&#38597;&#30340;&#22788;&#29702;&#36825;&#31181;&#22330;&#26223;&#12290;)</p></li></ol></div><p>&#27880;&#24847;&#65292;&#21363;&#20351;&#20320;&#27809;&#26377;&#26126;&#30830;&#25552;&#20379;peg&#20462;&#35746;&#29256;&#26412;&#25110;&#25805;&#20316;&#20462;&#35746;&#29256;&#26412;&#65292;&#20182;&#20204;&#20381;&#28982;&#26159;&#23384;&#22312;&#30340;&#12290;&#20026;&#20102;&#20351;&#29992;&#30340;&#31616;&#20415;&#65292;&#23545;&#20110;&#24037;&#20316;&#25335;&#36125;&#39033;&#30446;&#30340;&#32570;&#30465;peg&#20462;&#35746;&#29256;&#26412;&#26159;<code class="literal">BASE</code>&#65292;&#32780;&#29256;&#26412;&#24211;URL&#30340;&#32570;&#30465;&#20540;&#26159;<code class="literal">HEAD</code>&#12290;&#24403;&#27809;&#26377;&#25552;&#20379;&#25805;&#20316;&#20462;&#35746;&#29256;&#26412;&#26102;&#65292;&#32570;&#30465;&#26159;&#19982;peg&#20462;&#35746;&#29256;&#26412;&#19968;&#26679;&#12290;</p></div><p>Say that long ago we created our repository, and in revision 1
+      added our first <code class="filename">concept</code> directory, plus an
+      <code class="filename">IDEA</code> file in that directory talking about
+      the concept.  After several revisions in which real code was
+      added and tweaked, we, in revision 20, renamed this directory to
+      <code class="filename">frabnaggilywort</code>.  By revision 27, we had a
+      new concept, a new <code class="filename">concept</code> directory to
+      hold it, and a new <code class="filename">IDEA</code> file to describe
+      it.  And then 5 years and 20 thousand revisions flew by,
+      just like they would in any good romance story.</p><p>Now, years later, we wonder what the
+      <code class="filename">IDEA</code> file looked like back in revision 1.
+      But Subversion needs to know if we are asking about how the
+      <span class="emphasis"><em>current</em></span> file looked back in revision 1, or
+      if we are asking for the contents of whatever file lived at
+      <code class="filename">concepts/IDEA</code> in revision 1.  Certainly
+      those questions have different answers, and because of peg
+      revisions, you can ask question.  To find out how the
+      current <code class="filename">IDEA</code> file looked in that old
+      revision, you run:</p><pre class="screen">
+$ svn cat -r 1 concept/IDEA 
+svn: Unable to find repository location for 'concept/IDEA' in revision 1
+</pre><p>Of course, in this example, the current
+      <code class="filename">IDEA</code> file didn't exist yet in revision 1,
+      so Subversion gives an error.  The previous command is shorthand
+      for a longer notation which explicitly lists a peg revision.
+      The expanded notation is:</p><pre class="screen">
+$ svn cat -r 1 concept/IDEA@BASE
+svn: Unable to find repository location for 'concept/IDEA' in revision 1
+</pre><p>&#24403;&#25191;&#34892;&#26102;&#65292;&#23427;&#21253;&#21547;&#26399;&#26395;&#30340;&#32467;&#26524;&#12290;</p><p>The perceptive reader is probably wondering at this point if
+      the peg revision syntax causes problems for working copy paths
+      or URLs that actually have at signs in them.  After
+      all, how does <span class="command"><strong>svn</strong></span> know whether
+      <code class="literal">news@11</code> is the name of a directory in my
+      tree or just a syntax for &#8220;<span class="quote">revision 11 of
+      <code class="filename">news</code></span>&#8221;?  Thankfully, while
+      <span class="command"><strong>svn</strong></span> will always assume the latter, there is a
+      trivial workaround.  You need only append an at sign to the
+      end of the path, such as <code class="literal">news@11@</code>.
+      <span class="command"><strong>svn</strong></span> cares only about the last at sign in
+      the argument, and it is not considered illegal to omit a literal
+      peg revision specifier after that at sign.  This workaround
+      even applies to paths that end in an at sign&#8212;you would
+      use <code class="literal">filename@@</code> to talk about a file named
+      <code class="filename">filename@</code>.</p><p>&#28982;&#21518;&#35753;&#25105;&#20204;&#35810;&#38382;&#21478;&#19968;&#20010;&#38382;&#39064;&#8212;&#22312;&#20462;&#35746;&#29256;&#26412;1 &#65292;&#21344;&#25454;<code class="filename">concepts/IDEA</code>&#36335;&#24452;&#30340;&#25991;&#20214;&#30340;&#20869;&#23481;&#21040;&#24213;&#26159;&#20160;&#20040;&#65311;&#25105;&#20204;&#20250;&#20351;&#29992;&#19968;&#20010;&#26126;&#30830;&#30340;peg&#20462;&#35746;&#29256;&#26412;&#26469;&#24110;&#21161;&#25105;&#20204;&#23436;&#25104;&#12290;</p><pre class="screen">
+$ svn cat concept/IDEA@1
+The idea behind this project is to come up with a piece of software
+that can frab a naggily wort.  Frabbing naggily worts is tricky
+business, and doing it incorrectly can have serious ramifications, so
+we need to employ over-the-top input validation and data verification
+mechanisms.
+</pre><p>&#27880;&#24847;&#25105;&#20204;&#36825;&#19968;&#27425;&#27809;&#26377;&#25552;&#20379;&#25805;&#20316;&#20462;&#35746;&#29256;&#26412;&#65292;&#37027;&#26159;&#22240;&#20026;&#22914;&#26524;&#27809;&#26377;&#25351;&#23450;&#25805;&#20316;&#20462;&#35746;&#29256;&#26412;&#65292;Subversion&#20551;&#23450;&#32570;&#30465;&#30340;&#25805;&#20316;&#20462;&#35746;&#29256;&#26412;&#26159;peg&#20462;&#35746;&#29256;&#26412;&#12290;</p><p>As you can see, the output from our operation appears to be
+      correct.  The text even mentions frabbing naggily worts, so this
+      is almost certainly the file that describes the software now
+      called Frabnaggilywort.  In fact, we can verify this using the
+      combination of an explicit peg revision and explicit operative
+      revision.  We know that in <code class="literal">HEAD</code>, the
+      Frabnaggilywort project is located in the
+      <code class="filename">frabnaggilywort</code> directory.  So we specify
+      that we want to see how the line of history identified in
+      <code class="literal">HEAD</code> as the path
+      <code class="filename">frabnaggilywort/IDEA</code> looked in revision
+      1.</p><pre class="screen">
+$ svn cat -r 1 frabnaggilywort/IDEA@HEAD
+The idea behind this project is to come up with a piece of software
+that can frab a naggily wort.  Frabbing naggily worts is tricky
+business, and doing it incorrectly can have serious ramifications, so
+we need to employ over-the-top input validation and data verification
+mechanisms.
+</pre><p>&#32780;&#19988;peg&#20462;&#35746;&#29256;&#26412;&#21644;&#23454;&#26045;&#20462;&#35746;&#29256;&#26412;&#20063;&#19981;&#38656;&#35201;&#36825;&#26679;&#29712;&#30862;&#65292;&#20030;&#20010;&#20363;&#23376;&#65292;&#25105;&#20204;&#30340;<code class="filename">frabnaggilywort</code>&#24050;&#32463;&#22312;<code class="literal">HEAD</code>&#21024;&#38500;&#65292;&#20294;&#25105;&#20204;&#30693;&#36947;&#22312;&#20462;&#35746;&#29256;&#26412;20&#23427;&#26159;&#23384;&#22312;&#30340;&#65292;&#25105;&#20204;&#24076;&#26395;&#30693;&#36947;<code class="filename">IDEA</code>&#20174;&#20462;&#35746;&#29256;&#26412;4&#21040;10&#30340;&#21306;&#21035;&#65292;&#25105;&#20204;&#21487;&#20197;&#20351;&#29992;peg&#20462;&#35746;&#29256;&#26412;20&#21644;<code class="filename">IDEA</code>&#25991;&#20214;&#30340;&#20462;&#35746;&#29256;&#26412;20&#30340;URL&#30340;&#32452;&#21512;&#65292;&#28982;&#21518;&#20351;&#29992;4&#21040;10&#20316;&#20026;&#25105;&#20204;&#30340;&#23454;&#26045;&#20462;&#35746;&#29256;&#26412;&#33539;&#22260;&#12290;</p><pre class="screen">
+$ svn diff -r 4:10 http://svn.red-bean.com/projects/frabnaggilywort/IDEA@20
+Index: frabnaggilywort/IDEA
+===================================================================
+--- frabnaggilywort/IDEA	(revision 4)
++++ frabnaggilywort/IDEA	(revision 10)
+@@ -1,5 +1,5 @@
+-The idea behind this project is to come up with a piece of software
+-that can frab a naggily wort.  Frabbing naggily worts is tricky
+-business, and doing it incorrectly can have serious ramifications, so
+-we need to employ over-the-top input validation and data verification
+-mechanisms.
++The idea behind this project is to come up with a piece of
++client-server software that can remotely frab a naggily wort.
++Frabbing naggily worts is tricky business, and doing it incorrectly
++can have serious ramifications, so we need to employ over-the-top
++input validation and data verification mechanisms.
+</pre><p>&#24184;&#36816;&#30340;&#26159;&#65292;&#20960;&#20046;&#25152;&#26377;&#30340;&#20154;&#19981;&#20250;&#38754;&#20020;&#22914;&#27492;&#22797;&#26434;&#30340;&#24773;&#24418;&#65292;&#20294;&#26159;&#22914;&#26524;&#26159;&#65292;&#35760;&#20303;peg&#20462;&#35746;&#29256;&#26412;&#26159;&#24110;&#21161;Subversion&#28165;&#38500;&#28151;&#28102;&#30340;&#39069;&#22806;&#25552;&#31034;&#12290;</p><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e5983" href="#d0e5983" class="para">17</a>] </sup>&#8220;<span class="quote">&#20320;&#19981;&#26159;&#34987;&#26399;&#26395;&#21435;&#21629;&#21517;&#23427;&#65292;&#19968;&#26086;&#20320;&#21462;&#20102;&#21517;&#23383;&#65292;&#20320;&#24320;&#22987;&#19982;&#20043;&#32852;&#31995;&#22312;&#19968;&#36215;&#12290;</span>&#8221; &#8212; Mike Wazowski</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e6042" href="#d0e6042" class="para">18</a>] </sup>606 N. Main Street, Wheaton, Illinois, is the home of
+          the Wheaton <span class="emphasis"><em>History</em></span> Center.  It seemed
+          appropriate&#8230;.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.advanced.externals.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.advanced.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.changelists.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#22806;&#37096;&#23450;&#20041;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Changelists</td></tr></table></div></body></html>

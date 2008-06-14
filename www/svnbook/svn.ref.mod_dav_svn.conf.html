@@ -1,0 +1,157 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>mod_dav_svn Configuration Directives</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.ref.mod_dav_svn.html" title="mod_dav_svn"><link rel="prev" href="svn.ref.mod_dav_svn.html" title="mod_dav_svn"><link rel="next" href="svn.ref.properties.html" title="Subversion Properties"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><code class="literal">mod_dav_svn</code> Configuration Directives</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.ref.mod_dav_svn.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">
+          <span class="command"><strong>mod_dav_svn</strong></span>
+        </th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.ref.properties.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="refentry" lang="zh-cn"><a name="svn.ref.mod_dav_svn.conf"></a><div class="titlepage"></div><div class="refnamediv"><h2>&#21517;&#31216;</h2><p><code class="literal">mod_dav_svn</code> Configuration Directives &#8212; Apache configuration
+        directives for serving Subversion repositories through the
+        Apache HTTP Server.</p></div><div class="refsection" lang="zh-cn"><a name="svn.ref.mod_dav_svn.conf.desc"></a><h2>&#25551;&#36848;</h2><p>&#36825;&#20010;&#23567;&#33410;&#20027;&#35201;&#25551;&#36848;&#20102;Subversion Apache&#37197;&#32622;&#30340;&#27599;&#20010;&#25351;&#31034;&#65292;&#20851;&#20110;Apache&#37197;&#32622;Subversion&#30340;&#26356;&#22810;&#20449;&#24687;&#35265;<a class="xref" href="svn.serverconfig.httpd.html" title="httpd, the Apache HTTP Server">&#8220;httpd, the Apache HTTP Server&#8221;&#19968;&#33410;</a>&#12290;</p></div><div class="refsection" lang="zh-cn"><a name="svn.ref.mod_dav_svn.conf.directives"></a><h2>&#25351;&#31034;</h2><div class="variablelist"><dl><dt><span class="term">
+                <code class="literal">DAV svn</code>
+              </span></dt><dd><p>This directive must be included in any
+                <code class="literal">Directory</code> or
+                <code class="literal">Location</code> block for a Subversion
+                repository.  It tells httpd to use the Subversion
+                backend for <code class="literal">mod_dav</code> to handle all
+                requests.</p></dd><dt><span class="term">
+                <code class="literal">SVNAllowBulkUpdates On|Off</code>
+              </span></dt><dd><p>This directive toggles support for all-inclusive
+                responses to update-style <code class="literal">REPORT</code>
+                requests.  Subversion clients use
+                <code class="literal">REPORT</code> requests to get information
+                about directory tree checkouts and updates from
+                <code class="literal">mod_dav_svn</code>.  They can ask the
+                server to send that information in one of two ways:
+                with the entirety of the tree's information in one
+                massive response, or with a
+                <em class="firstterm">skelta</em> (a skeletal
+                representation of a tree delta) which contains just
+                enough information for the client to know what
+                <span class="emphasis"><em>additional</em></span> data to request from
+                the server.  When this directive is included with a
+                value of <code class="literal">off</code>,
+                <code class="literal">mod_dav_svn</code> will only ever respond
+                to these <code class="literal">REPORT</code> requests with
+                skelta responses, regardless of the type of responses
+                requested by the client.</p><p>Most folks won't need to use this directive at
+                all.  It primarily exists for administrators who
+                wish&#8212;for security or auditing reasons&#8212;to
+                force Subversion clients to fetch individually all the
+                files and directories needed for updates and
+                checkouts, thus leaving an audit trail of
+                <code class="literal">GET</code> and <code class="literal">PROPFIND</code>
+                requests in Apache's logs.  The default value of this
+                directive is <code class="literal">on</code>.</p></dd><dt><span class="term">
+                <code class="literal">SVNAutoversioning On|Off</code>
+              </span></dt><dd><p>This directive, when its value is
+                <code class="literal">on</code>, allows write requests from
+                WebDAV clients to result in automatic commits.  A
+                generic log message is autogenerated and attached to
+                each revision.  If you enable Autoversioning, you'll
+                likely want to set <code class="literal">ModMimeUsePathInfo
+                On</code> so that <code class="literal">mod_mime</code> can
+                set <code class="literal">svn:mime-type</code> to the correct
+                mime-type automatically (as best as
+                <code class="literal">mod_mime</code> is able to, of course).
+                For more information, see <a class="xref" href="svn.webdav.html" title="&#38468;&#24405;&nbsp;C.&nbsp;WebDAV&#21644;&#33258;&#21160;&#29256;&#26412;">&#38468;&#24405;&nbsp;C, <i>WebDAV&#21644;&#33258;&#21160;&#29256;&#26412;</i></a>.  The default value of this
+                directive is <code class="literal">off</code>.</p></dd><dt><span class="term">
+                <code class="literal">SVNPath
+              <em class="replaceable"><code>directory-path</code></em></code>
+              </span></dt><dd><p>&#36825;&#20010;&#25351;&#31034;&#25351;&#23450;Subversion&#29256;&#26412;&#24211;&#25991;&#20214;&#25991;&#20214;&#31995;&#32479;&#30340;&#20301;&#32622;&#65292;&#22312;&#19968;&#20010;Subversion&#29256;&#26412;&#24211;&#30340;&#37197;&#32622;&#22359;&#37324;&#65292;&#24517;&#39035;&#25552;&#20379;&#36825;&#20010;&#25351;&#31034;&#25110;<code class="literal">SVNParentPath</code>&#65292;&#20294;&#19981;&#33021;&#21516;&#26102;&#23384;&#22312;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">SVNSpecialURI
+              <em class="replaceable"><code>component</code></em></code>
+              </span></dt><dd><p>Specifies the URI component (namespace) for
+                special Subversion resources.  The default is
+                &#8220;<span class="quote"><code class="literal">!svn</code></span>&#8221;, and most
+                administrators will never use this directive.  Set
+                this only if there is a pressing need to have a file
+                named <code class="filename">!svn</code> in your repository.
+                If you change this on a server already in use, it will
+                break all of the outstanding working copies, and your
+                users will hunt you down with pitchforks and flaming
+                torches.</p></dd><dt><span class="term">
+                <code class="literal">SVNReposName
+              <em class="replaceable"><code>name</code></em></code>
+              </span></dt><dd><p>&#25351;&#23450;Subversion&#29256;&#26412;&#24211;&#22312;<code class="literal">HTTP GET</code>&#35831;&#27714;&#20013;&#20351;&#29992;&#30340;&#21517;&#23383;&#65292;&#36825;&#20010;&#20540;&#20250;&#20316;&#20026;&#25152;&#26377;&#30446;&#24405;&#21015;&#34920;(&#24403;&#20320;&#29992;web&#27983;&#35272;&#22120;&#23519;&#30475;Subversion&#29256;&#26412;&#24211;&#26102;&#20250;&#30475;&#21040;)&#30340;&#26631;&#39064;&#65292;&#36825;&#20010;&#25351;&#31034;&#26159;&#21487;&#36873;&#30340;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">SVNIndexXSLT
+              <em class="replaceable"><code>directory-path</code></em></code>
+              </span></dt><dd><p>&#30446;&#24405;&#21015;&#34920;&#25152;&#20351;&#29992;&#30340;XSL&#36716;&#21270;&#30340;URI&#65292;&#36825;&#20010;&#25351;&#31034;&#21487;&#36873;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">SVNParentPath
+              <em class="replaceable"><code>directory-path</code></em></code>
+              </span></dt><dd><p>&#25351;&#23450;&#23376;&#30446;&#24405;&#20250;&#26159;&#29256;&#26412;&#24211;&#30340;&#29238;&#30446;&#24405;&#22312;&#25991;&#20214;&#31995;&#32479;&#30340;&#20301;&#32622;&#65292;&#22312;&#19968;&#20010;Subversion&#29256;&#26412;&#24211;&#30340;&#37197;&#32622;&#22359;&#37324;&#65292;&#24517;&#39035;&#25552;&#20379;&#36825;&#20010;&#25351;&#31034;&#25110;<code class="literal">SVNPath</code>&#65292;&#20294;&#19981;&#33021;&#21516;&#26102;&#23384;&#22312;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">SVNPathAuthz
+              <em class="replaceable"><code>file-path</code></em></code>
+              </span></dt><dd><p>&#25511;&#21046;&#24320;&#21551;&#21644;&#20851;&#38381;&#36335;&#24452;&#20026;&#22522;&#30784;&#30340;&#25480;&#26435;&#65292;&#26356;&#22810;&#32454;&#33410;&#35265;<a class="xref" href="svn.serverconfig.httpd.html#svn.serverconfig.httpd.authz.pathauthzoff" title="Disabling path-based checks">&#8220;Disabling path-based checks&#8221;&#19968;&#33410;</a>&#12290;</p></dd><dt><span class="term">
+                <code class="literal">SVNListParentPath On|Off</code>
+              </span></dt><dd><p>When set to <code class="literal">On</code>, allows
+                a <code class="literal">GET</code>
+                of <code class="literal">SVNParentPath</code>, which results in
+                a listing of all repositories under that path.  The
+                default setting is
+                <code class="literal">Off</code>.</p></dd><dt><span class="term">
+                <code class="literal">SVNMasterURI
+              <em class="replaceable"><code>url</code></em></code>
+              </span></dt><dd><p>Specifies a URI to the master Subversion
+                repository (used for a write-through proxy).</p></dd><dt><span class="term">
+                <code class="literal">SVNActivitiesDB
+              <em class="replaceable"><code>directory-path</code></em></code>
+              </span></dt><dd><p>Specifies the location in the filesystem where the
+                activities database should be stored.  By default,
+                mod_dav_svn creates and uses a directory in the
+                repository
+                called <code class="filename">dav/activities.d</code>.  The
+                path specified with this option must be an absolute
+                path.</p><p>If specified for
+                an <code class="literal">SVNParentPath</code> area, mod_dav_svn
+                appends the basename of the repository to the path
+                specified here.  For example:</p><pre class="screen">
+&lt;Location /svn&gt;
+  DAV svn
+
+  # any "/svn/foo" URL will map to a repository in /net/svn.nfs/repositories/foo
+  SVNParentPath         "/net/svn.nfs/repositories"
+  # any "/svn/foo" URL will map to an activities db in /var/db/svn/activities/foo
+  SVNActivitiesDB       "/var/db/svn/activities"
+&lt;/Location&gt;
+</pre></dd></dl></div></div><div class="refsection" lang="zh-cn"><a name="svn.ref.mod_dav_svn.conf.logging"></a><h2>High-level logging</h2><p>This is a list of Subversion action log messages
+          produced by Apache's high-level logging mechanism, followed
+          by an example of the log message.  See <a class="xref" href="svn.serverconfig.httpd.html#svn.serverconfig.httpd.extra.logging" title="Apache logging">&#8220;Apache logging&#8221;&#19968;&#33410;</a> for details
+          on logging.</p><div class="variablelist"><dl><dt><span class="term">Checkout or export</span></dt><dd><p>
+                  <code class="literal">checkout-or-export /path r62
+            depth=infinity</code>
+                </p></dd><dt><span class="term">Commit</span></dt><dd><p>
+                  <code class="literal">commit harry r100</code>
+                </p></dd><dt><span class="term">Diffs</span></dt><dd><p>
+                  <code class="literal">diff /path r15:20 depth=infinity ignore-ancestry</code>
+                </p><p>
+                  <code class="literal">diff /path1@15 /path2@20 depth=infinity ignore-ancestry</code>
+                </p></dd><dt><span class="term">Fetching a directory</span></dt><dd><p>
+                  <code class="literal">get-dir /trunk r17 text</code>
+                </p></dd><dt><span class="term">Fetch a file</span></dt><dd><p>
+                  <code class="literal">get-file /path r20 props</code>
+                </p></dd><dt><span class="term">Fetch file revision</span></dt><dd><p>
+                  <code class="literal">get-file-revs /path r12:15 include-merged-revisions</code>
+                </p></dd><dt><span class="term">Fetching of merge information</span></dt><dd><p>
+                  <code class="literal">get-mergeinfo (/path1 /path2)</code>
+                </p></dd><dt><span class="term">Lock</span></dt><dd><p>
+                  <code class="literal">lock /path steal</code>
+                </p></dd><dt><span class="term">Log</span></dt><dd><p>
+                  <code class="literal">log (/path1,/path2,/path3) r20:90
+            discover-changed-paths revprops=()</code>
+                </p></dd><dt><span class="term">Replaying of revisions (svnsync)</span></dt><dd><p>
+                  <code class="literal">replay /path r19</code>
+                </p></dd><dt><span class="term">Revision property change</span></dt><dd><p>
+                  <code class="literal">change-rev-prop r50
+            propertyname</code>
+                </p></dd><dt><span class="term">Revision property list</span></dt><dd><p>
+                  <code class="literal">rev-proplist r34</code>
+                </p></dd><dt><span class="term">&#29366;&#24577;</span></dt><dd><p>
+                  <code class="literal">remote-status /path r62
+            depth=infinity</code>
+                </p></dd><dt><span class="term">Switch</span></dt><dd><p>
+                  <code class="literal">switch /pathA /pathB@50 depth=infinity</code>
+                </p></dd><dt><span class="term">Unlock</span></dt><dd><p>
+                  <code class="literal">unlock /path break</code>
+                </p></dd><dt><span class="term">&#26356;&#26032;</span></dt><dd><p>
+                  <code class="literal">update /path r17 send-copyfrom-args</code>
+                </p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.ref.mod_dav_svn.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.ref.mod_dav_svn.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.ref.properties.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">
+          <span class="command"><strong>mod_dav_svn</strong></span>
+        &nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Subversion Properties</td></tr></table></div></body></html>

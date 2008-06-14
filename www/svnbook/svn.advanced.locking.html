@@ -1,0 +1,347 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#38145;&#23450;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.advanced.html" title="&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;"><link rel="prev" href="svn.advanced.sparsedirs.html" title="Sparse Directories"><link rel="next" href="svn.advanced.externals.html" title="&#22806;&#37096;&#23450;&#20041;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#38145;&#23450;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.advanced.sparsedirs.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.externals.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.advanced.locking"></a>&#38145;&#23450;</h2></div></div></div><p>Subversion's copy-modify-merge version control model lives
+      and dies on its data merging algorithms&#8212;specifically on
+      how well those algorithms perform when trying to resolve
+      conflicts caused by multiple users modifying the same file
+      concurrently.  Subversion itself provides only one such
+      algorithm:  a three-way differencing algorithm that is smart
+      enough to handle data at a granularity of a single line of text.
+      Subversion also allows you to supplement its content merge
+      processing with external differencing utilities (as described in
+      <a class="xref" href="svn.advanced.externaldifftools.html#svn.advanced.externaldifftools.diff3" title="&#22806;&#32622; diff3">&#8220;&#22806;&#32622; diff3&#8221;&#19968;&#33410;</a>), some
+      of which may do an even better job, perhaps providing
+      granularity of a word or a single character of text.  But common
+      among those algorithms is that they generally work only on text
+      files.  The landscape starts to look pretty grim when you start
+      talking about content merges of non-textual file formats.  And
+      when you can't find a tool that can handle that type of merging,
+      you begin to run into problems with the copy-modify-merge
+      model.</p><p>&#35753;&#25105;&#20204;&#30475;&#19968;&#20010;&#20351;&#29992;&#36825;&#20010;&#27169;&#22411;&#30340;&#30495;&#23454;&#20363;&#23376;&#65292;Harry&#21644;Sally&#26159;&#21516;&#19968;&#20010;&#39033;&#30446;&#30340;&#22270;&#24418;&#35774;&#35745;&#24072;&#65292;&#27773;&#36710;&#25216;&#24037;&#30340;&#38388;&#25509;&#33829;&#38144;&#12290;&#28023;&#25253;&#30340;&#35774;&#35745;&#19968;&#20010;&#23567;&#36710;&#65292;&#38656;&#35201;&#19968;&#20123;&#20027;&#35201;&#37096;&#20998;&#30340;&#24037;&#20316;&#65292;&#20351;&#29992;PNG&#25991;&#20214;&#26684;&#24335;&#12290;&#28023;&#25253;&#30340;&#24067;&#23616;&#20960;&#20046;&#23436;&#25104;&#65292;Harry&#21644;Sally&#37117;&#30475;&#19978;&#20102;&#19968;&#20010;&#20174;&#25439;&#22351;&#23567;&#36710;&#24471;&#21040;&#30340;&#29305;&#21035;&#29031;&#29255;&#8212;&#19968;&#20010;1967&#30340;&#28129;&#34013;&#33394;&#30340;Ford Mustang&#65292;&#25377;&#27877;&#26495;&#26377;&#19968;&#20123;&#28293;&#36857;&#12290;</p><p>Now, as is common in graphic design work, there's a change
+      in plans, which causes the car's color to be a concern.  So Sally
+      updates her working copy to <code class="literal">HEAD</code>, fires up
+      her photo-editing software, and sets about tweaking the image so
+      that the car is now cherry red.  Meanwhile, Harry, feeling
+      particularly inspired that day, decides that the image would
+      have greater impact if the car also appears to have suffered
+      greater impact.  He, too, updates to <code class="literal">HEAD</code>,
+      and then draws some cracks on the vehicle's windshield.  He
+      manages to finish his work before Sally finishes hers, and after
+      admiring the fruits of his undeniable talent, commits the
+      modified image.  Shortly thereafter, Sally is finished with the
+      car's new finish and tries to commit her changes.  But, as
+      expected, Subversion fails the commit, informing Sally that
+      her version of the image is now out of date.</p><p>Here's where the difficulty sets in.  If Harry and Sally
+      were making changes to a text file, Sally would simply update
+      her working copy, receiving Harry's changes in the process.  In
+      the worst possible case, they would have modified the same
+      region of the file, and Sally would have to work out by hand the
+      proper resolution to the conflict.  But these aren't text
+      files&#8212;they are binary images.  And while it's a simple
+      matter to describe what one would expect the results of this
+      content merge to be, there is precious little chance that any
+      software exists that is smart enough to examine the common
+      baseline image that each of these graphic artists worked
+      against, the changes that Harry made, and the changes that Sally
+      made, and then spit out an image of a busted-up red Mustang with
+      a cracked windshield!</p><p>Of course, things would have gone more smoothly if Harry and
+      Sally had serialized their modifications to the image&#8212;if, say,
+      Harry had waited to draw his windshield cracks on Sally's
+      now-red car, or if Sally had tweaked the color of a car whose
+      windshield was already cracked.  As is discussed in <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge" title="&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;">&#8220;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;&#8221;&#19968;&#33410;</a>, most of these
+      types of problems go away entirely where perfect communication
+      between Harry and Sally exists.
+      <sup>[<a name="d0e5276" href="#ftn.d0e5276" class="footnote">14</a>]</sup>
+      But as one's version control system is, in fact, one form of
+      communication, it follows that having that software facilitate
+      the serialization of nonparallelizable editing efforts is no
+      bad thing.  This is where Subversion's implementation of the
+      lock-modify-unlock model steps into the spotlight.  This is
+      where we talk about Subversion's <em class="firstterm">locking</em>
+      feature, which is similar to the &#8220;<span class="quote">reserved
+      checkouts</span>&#8221; mechanisms of other version control
+      systems.</p><p>Subversion &#30340;&#38145;&#23450;&#29305;&#24615;&#20026;&#20004;&#20010;&#20027;&#35201;&#30446;&#30340;&#26381;&#21153;&#65306;</p><div class="orderedlist"><ol type="1"><li><p><span class="emphasis"><em>&#39034;&#24207;&#35775;&#38382;&#36164;&#28304;</em></span>&#12290;&#20801;&#35768;&#29992;&#25143;&#24471;&#21040;&#19968;&#20010;&#25490;&#20182;&#30340;&#20462;&#25913;&#25991;&#20214;&#26435;&#65292;&#36825;&#20010;&#29992;&#25143;&#21487;&#20197;&#30830;&#23450;&#19981;&#21487;&#21512;&#24182;&#30340;&#20462;&#25913;&#19981;&#20250;&#34987;&#28010;&#36153;&#8212;&#20182;&#23545;&#36825;&#20010;&#20462;&#25913;&#30340;&#25552;&#20132;&#20250;&#25104;&#21151;&#12290;</p></li><li><p><span class="emphasis"><em>&#36741;&#21161;&#20132;&#27969;</em></span>&#12290;&#36890;&#36807;&#35201;&#27714;&#29992;&#25143;&#23545;&#26576;&#20010;&#29256;&#26412;&#21270;&#23545;&#35937;&#20018;&#34892;&#24037;&#20316;&#65292;&#29992;&#25143;&#21487;&#20197;&#30693;&#36947;&#23545;&#35937;&#27491;&#22312;&#34987;&#21035;&#20154;&#20462;&#25913;&#65292;&#36825;&#26679;&#21487;&#20197;&#38450;&#27490;&#28010;&#36153;&#31934;&#21147;&#21644;&#26102;&#38388;&#21435;&#20462;&#25913;&#19968;&#20010;&#19981;&#21487;&#21512;&#24182;&#21644;&#25552;&#20132;&#30340;&#23545;&#35937;&#12290;</p></li></ol></div><p>When referring to Subversion's locking feature, one is
+      actually talking about a fairly diverse collection of behaviors,
+      which include the ability to lock a versioned file
+      <sup>[<a name="d0e5301" href="#ftn.d0e5301" class="footnote">15</a>]</sup>
+      (claiming the exclusive right to modify the file), to unlock
+      that file (yielding that exclusive right to modify), to see
+      reports about which files are locked and by whom, to annotate
+      files for which locking before editing is strongly advised, and
+      so on.  In this section, we'll cover all of these facets of the
+      larger locking feature.</p><div class="sidebar"><a name="svn.advanced.locking.meanings"></a><p class="title"><b>The Three Meanings of &#8220;<span class="quote">Lock</span>&#8221;</b></p><p>&#22312;&#26412;&#23567;&#33410;&#65292;&#21644;&#20960;&#20046;&#26412;&#20070;&#30340;&#27599;&#19968;&#20010;&#22320;&#26041;&#8220;<span class="quote">lock</span>&#8221;&#21644;&#8220;<span class="quote">locking</span>&#8221;&#25551;&#36848;&#20102;&#19968;&#31181;&#36991;&#20813;&#29992;&#25143;&#20043;&#38388;&#20914;&#31361;&#25552;&#20132;&#30340;&#25490;&#20182;&#26426;&#21046;&#65292;&#20294;&#26159;&#20343;&#19981;&#24184;&#65292;Subversion&#20013;&#36824;&#26377;&#21478;&#22806;&#20004;&#31181;&#38145;&#65292;&#22240;&#27492;&#38656;&#35201;&#22312;&#26412;&#20070;&#26684;&#22806;&#20851;&#24515;&#12290;</p><p>&#31532;&#19968;&#31181;&#26159;<em class="firstterm">&#24037;&#20316;&#25335;&#36125;&#38145;</em>&#65292;Subversion&#20869;&#37096;&#29992;&#26469;&#38450;&#27490;&#19981;&#21516;&#23458;&#25143;&#31471;&#21516;&#26102;&#25805;&#20316;&#21516;&#19968;&#20221;&#24037;&#20316;&#25335;&#36125;&#30340;&#38145;&#65292;&#36825;&#31181;&#38145;&#20351;&#29992;<span class="command"><strong>svn status</strong></span>&#36755;&#20986;&#20013;&#31532;&#19977;&#21015;&#20986;&#29616;&#30340;<code class="computeroutput">L</code>&#34920;&#31034;&#65292;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svn cleanup</strong></span>&#21024;&#38500;&#65292;<a class="xref" href="svn.tour.cleanup.html" title="&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;">&#8220;&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;&#8221;&#19968;&#33410;</a>&#26377;&#20171;&#32461;&#12290;</p><p>Secondly, there are <em class="firstterm">database locks</em>,
+        used internally by the Berkeley DB backend to prevent clashes
+        between multiple programs trying to access the database.  This
+        is the sort of lock whose unwanted persistence after an error
+        can cause a repository to be &#8220;<span class="quote">wedged,</span>&#8221; as
+        described in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.recovery" title="Berkeley DB &#24674;&#22797;">&#8220;Berkeley DB &#24674;&#22797;&#8221;&#19968;&#33410;</a>.</p><p>&#22312;&#21457;&#29983;&#38382;&#39064;&#20043;&#21069;&#20320;&#23436;&#20840;&#21487;&#20197;&#24536;&#35760;&#19978;&#38754;&#20004;&#31181;&#38145;&#65292;&#22312;&#26412;&#20070;&#65292;&#8220;<span class="quote">&#38145;&#23450;</span>&#8221;&#24847;&#21619;&#30528;&#31532;&#19968;&#31181;&#38145;&#65292;&#38500;&#38750;&#26159;&#22312;&#20174;&#19978;&#19979;&#25991;&#20013;&#21313;&#20998;&#26126;&#30830;&#25110;&#26126;&#30830;&#25351;&#20986;&#30340;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.locking.creation"></a>Creating Locks</h3></div></div></div><p>In the Subversion repository, a
+        <em class="firstterm">lock</em> is a piece of metadata that
+        grants exclusive access to one user to change a file.  This
+        user is said to be the <em class="firstterm">lock owner</em>.
+        Each lock also has a unique identifier, typically a long
+        string of characters, known as the <em class="firstterm">lock
+        token</em>.  The repository manages locks, ultimately
+        handling their creation, enforcement, and removal.  If any
+        commit transaction attempts to modify or delete a locked file
+        (or delete one of the parent directories of the file), the
+        repository will demand two pieces of information&#8212;that
+        the client performing the commit be authenticated as the lock
+        owner, and that the lock token has been provided as part of
+        the commit process as a sort of proof that client knows which
+        lock it is using.</p><p>To demonstrate lock creation, let's refer back to our
+        example of multiple graphic designers working on the same
+        binary image files.  Harry has decided to change a JPEG image.
+        To prevent other people from committing changes to the file
+        while he is modifying it (as well as alerting them that he is
+        about to change it), he locks the file in the repository using
+        the <span class="command"><strong>svn lock</strong></span> command.</p><pre class="screen">
+$ svn lock banana.jpg -m "Editing file for tomorrow's release."
+'banana.jpg' locked by user 'harry'.
+$
+</pre><p>There are a number of new things demonstrated in the
+        previous example.  First, notice that Harry passed the
+        <code class="option">--message</code> (<code class="option">-m</code>) option to
+        <span class="command"><strong>svn lock</strong></span>.  Similar to <span class="command"><strong>svn
+        commit</strong></span>, the <span class="command"><strong>svn lock</strong></span> command can
+        take comments (either via <code class="option">--message</code>
+        (<code class="option">-m</code>) or <code class="option">--file</code>
+        (<code class="option">-F</code>) to describe the reason for locking the
+        file.  Unlike <span class="command"><strong>svn commit</strong></span>, however,
+        <span class="command"><strong>svn lock</strong></span> will not demand a message by
+        launching your preferred text editor.  Lock comments are
+        optional, but still recommended to aid communication.</p><p>Secondly, the lock attempt succeeded.  This means that the
+        file wasn't already locked, and that Harry had the latest
+        version of the file.  If Harry's working copy of the file had
+        been out of date, the repository would have rejected the
+        request, forcing Harry to <span class="command"><strong>svn update</strong></span> and
+        reattempt the locking command.  The locking command would also
+        have failed if the file had already been locked by someone
+        else.</p><p>&#23601;&#20687;&#20320;&#30475;&#21040;&#30340;&#65292;<span class="command"><strong>svn lock</strong></span>&#25171;&#21360;&#20102;&#38145;&#23450;&#25104;&#21151;&#30340;&#30830;&#35748;&#20449;&#24687;&#12290;&#27492;&#26102;&#65292;&#36890;&#36807;<span class="command"><strong>svn status</strong></span>&#21644;<span class="command"><strong>svn info</strong></span>&#30340;&#36755;&#20986;&#25105;&#20204;&#21487;&#20197;&#30475;&#21040;&#25991;&#20214;&#24050;&#32463;&#38145;&#23450;&#12290;</p><pre class="screen">
+$ svn status
+     K banana.jpg
+
+$ svn info banana.jpg
+Path: banana.jpg
+Name: banana.jpg
+URL: http://svn.example.com/repos/project/banana.jpg
+Repository UUID: edb2f264-5ef2-0310-a47a-87b0ce17a8ec
+Revision: 2198
+Node Kind: file
+Schedule: normal
+Last Changed Author: frank
+Last Changed Rev: 1950
+Last Changed Date: 2006-03-15 12:43:04 -0600 (Wed, 15 Mar 2006)
+Text Last Updated: 2006-06-08 19:23:07 -0500 (Thu, 08 Jun 2006)
+Properties Last Updated: 2006-06-08 19:23:07 -0500 (Thu, 08 Jun 2006)
+Checksum: 3b110d3b10638f5d1f4fe0f436a5a2a5
+Lock Token: opaquelocktoken:0c0f600b-88f9-0310-9e48-355b44d4a58e
+Lock Owner: harry
+Lock Created: 2006-06-14 17:20:31 -0500 (Wed, 14 Jun 2006)
+Lock Comment (1 line):
+Editing file for tomorrow's release.
+
+$
+</pre><p>The fact that the <span class="command"><strong>svn info</strong></span> command,
+        which does not contact the repository when run against working
+        copy paths, can display the lock token reveals an important
+        piece of information about those tokens:  they are cached in
+        the working copy.  The presence of the lock token is critical.
+        It gives the working copy authorization to make use of the
+        lock later on.  Also, the <span class="command"><strong>svn status</strong></span>
+        command shows a <code class="literal">K</code> next to the file (short
+        for locKed), indicating that the lock token is present.</p><div class="sidebar"><p class="title"><b>Regarding Lock Tokens</b></p><p>&#19968;&#20010;&#38145;&#19981;&#26159;&#19968;&#20010;&#35748;&#35777;&#20196;&#29260;&#65292;&#32780;&#26159;&#19968;&#20010;<span class="emphasis"><em>&#25480;&#26435;</em></span>&#20196;&#29260;&#65292;&#36825;&#20010;&#20196;&#29260;&#19981;&#26159;&#19968;&#20010;&#21463;&#20445;&#25252;&#30340;&#31192;&#23494;&#65292;&#20107;&#23454;&#19978;&#65292;&#20219;&#20309;&#20154;&#37117;&#21487;&#20197;&#36890;&#36807;<span class="command"><strong>svn info URL</strong></span>&#21457;&#29616;&#36825;&#20010;&#21807;&#19968;&#20196;&#29260;&#12290;&#19968;&#20010;&#38145;&#23450;&#20196;&#29260;&#21482;&#26377;&#22312;&#24037;&#20316;&#25335;&#36125;&#20013;&#25165;&#26377;&#29305;&#21035;&#30340;&#24847;&#20041;&#65292;&#23427;&#26159;&#38145;&#23450;&#24314;&#31435;&#22312;&#36825;&#20010;&#24037;&#20316;&#25335;&#36125;&#30340;&#35777;&#25454;&#65292;&#32780;&#19981;&#26159;&#20854;&#23427;&#29992;&#25143;&#22312;&#20854;&#20182;&#22320;&#26041;&#65292;&#20165;&#20165;&#26816;&#39564;&#38145;&#23450;&#25317;&#26377;&#32773;&#36824;&#19981;&#33021;&#38450;&#27490;&#20986;&#29616;&#24847;&#22806;&#12290;</p><p>&#20363;&#22914;&#65292;&#20320;&#22312;&#21150;&#20844;&#23460;&#30005;&#33041;&#19978;&#38145;&#23450;&#20102;&#19968;&#20010;&#25991;&#20214;&#65292;&#25110;&#35768;&#20462;&#25913;&#27491;&#22312;&#36827;&#34892;&#20013;&#12290;&#24456;&#26377;&#21487;&#33021;&#22312;&#20320;&#30340;&#23478;&#29992;&#35745;&#31639;&#26426;&#19978;&#30340;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;(&#25110;&#21035;&#30340;Subversion&#23458;&#25143;&#31471;)&#37324;&#20320;&#21448;&#19981;&#23567;&#24515;&#20462;&#25913;&#20102;&#21516;&#19968;&#20010;&#25991;&#20214;&#65292;&#20165;&#20165;&#22240;&#20026;&#26816;&#39564;&#20102;&#20320;&#23601;&#26159;&#38145;&#23450;&#30340;&#25317;&#26377;&#32773;&#12290;&#25442;&#21477;&#35805;&#35828;&#65292;&#38145;&#23450;&#20196;&#29260;&#38450;&#27490;&#20320;&#36890;&#36807;&#19968;&#20010;Subversion&#30456;&#20851;&#36719;&#20214;&#30340;&#24037;&#20316;&#30772;&#22351;&#21478;&#19968;&#20010;&#30340;&#24037;&#20316;&#12290;(&#22312;&#25105;&#20204;&#30340;&#20363;&#23376;&#37324;&#65292;&#22914;&#26524;&#20320;&#30495;&#30340;&#38656;&#35201;&#22312;&#21478;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#20462;&#25913;&#36825;&#20010;&#25991;&#20214;&#65292;&#20320;&#24517;&#39035;<em class="firstterm">&#25171;&#30772;</em>&#38145;&#23450;&#20877;&#37325;&#26032;&#38145;&#23450;&#25991;&#20214;&#12290;)</p></div><p>&#29616;&#22312;Harry&#24050;&#32463;&#38145;&#23450;&#20102;<code class="filename">banana.jpg</code>&#65292;Sally&#19981;&#33021;&#20462;&#25913;&#25110;&#21024;&#38500;&#36825;&#20010;&#25991;&#20214;&#65306;</p><pre class="screen">
+$ svn delete banana.jpg
+D         banana.jpg
+$ svn commit -m "Delete useless file."
+Deleting       banana.jpg
+svn: Commit failed (details follow):
+svn: Server sent unexpected return value (423 Locked) in response to DELETE\
+ request for '/repos/project/!svn/wrk/64bad3a9-96f9-0310-818a-df4224ddc35d/\
+banana.jpg'
+$
+</pre><p>But Harry, after touching up the banana's shade of yellow,
+        is able to commit his changes to the file.  That's because he
+        authenticates as the lock owner and also because his working
+        copy holds the correct lock token:</p><pre class="screen">
+$ svn status
+M    K banana.jpg
+$ svn commit -m "Make banana more yellow"
+Sending        banana.jpg
+Transmitting file data .
+Committed revision 2201.
+$ svn status
+$
+</pre><p>Notice that after the commit is finished, <span class="command"><strong>svn
+        status</strong></span> shows that the lock token is no longer
+        present in working copy.  This is the standard behavior of
+        <span class="command"><strong>svn commit</strong></span>&#8212;it searches the working
+        copy (or list of targets, if you provide such a list) for
+        local modifications and sends all the lock tokens it
+        encounters during this walk to the server as part of the
+        commit transaction.  After the commit completes successfully,
+        all of the repository locks that were mentioned are
+        released&#8212;<span class="emphasis"><em>even on files that weren't
+        committed</em></span>.  This is meant to discourage users from
+        being sloppy about locking or from holding locks for too long.
+        If Harry haphazardly locks 30 files in a directory named
+        <code class="filename">images</code> because he's unsure of which files
+        he needs to change, yet changes only 4 of those files, when he
+        runs <span class="command"><strong>svn commit images</strong></span>, the process will
+        still release all 30 locks.</p><p>&#33258;&#21160;&#37322;&#25918;&#38145;&#23450;&#30340;&#29305;&#24615;&#21487;&#20197;&#36890;&#36807;<span class="command"><strong>svn commit</strong></span>&#30340;<code class="option">--no-unlock</code>&#36873;&#39033;&#20851;&#38381;&#65292;&#24403;&#20320;&#35201;&#25552;&#20132;&#25991;&#20214;&#65292;&#21516;&#26102;&#26399;&#26395;&#32487;&#32493;&#20462;&#25913;&#32780;&#24517;&#39035;&#20445;&#30041;&#38145;&#23450;&#26102;&#38750;&#24120;&#26377;&#29992;&#12290;&#36825;&#20010;&#29305;&#24615;&#20063;&#21487;&#20197;&#21322;&#27704;&#20037;&#24615;&#30340;&#35774;&#23450;&#65292;&#26041;&#27861;&#26159;&#35774;&#32622;&#36816;&#34892;&#20013;<code class="filename">config</code>&#25991;&#20214;(&#35265;<a class="xref" href="svn.customization.html#svn.advanced.confarea" title="&#36816;&#34892;&#37197;&#32622;&#21306;">&#8220;&#36816;&#34892;&#37197;&#32622;&#21306;&#8221;&#19968;&#33410;</a>)&#30340;<code class="literal">no-unlock = yes</code>&#12290;</p><p>&#24403;&#28982;&#65292;&#38145;&#23450;&#19968;&#20010;&#25991;&#20214;&#19981;&#20250;&#24378;&#21046;&#19968;&#20010;&#20154;&#35201;&#25552;&#20132;&#20462;&#25913;&#65292;&#20219;&#20309;&#26102;&#20505;&#37117;&#21487;&#20197;&#36890;&#36807;&#36816;&#34892;<span class="command"><strong>svn unlock</strong></span>&#21629;&#20196;&#37322;&#25918;&#38145;&#23450;&#65306;</p><pre class="screen">
+$ svn unlock banana.c
+'banana.c' unlocked.
+</pre></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.locking.discovery"></a>Discovering Locks</h3></div></div></div><p>&#26368;&#26126;&#26174;&#30340;&#26041;&#24335;&#23601;&#26159;&#22240;&#20026;&#38145;&#23450;&#32780;&#19981;&#33021;&#25552;&#20132;&#19968;&#20010;&#25991;&#20214;&#65292;&#26368;&#31616;&#21333;&#30340;&#26041;&#24335;&#26159;<span class="command"><strong>svn status --show-updates</strong></span>&#65306;</p><pre class="screen">
+$ svn status -u
+M              23   bar.c
+M    O         32   raisin.jpg
+       *       72   foo.h
+Status against revision:     105
+$
+</pre><p>In this example, Sally can see not only that her copy of
+        <code class="filename">foo.h</code> is out of date, but that one of the
+        two modified files she plans to commit is locked in the
+        repository.  The <code class="literal">O</code> symbol stands for
+        &#8220;<span class="quote">Other,</span>&#8221; meaning that a lock exists on the file
+        and was created by somebody else.  If she were to attempt a
+        commit, the lock on <code class="filename">raisin.jpg</code> would
+        prevent it.  Sally is left wondering who made the lock, when,
+        and why.  Once again, <span class="command"><strong>svn info</strong></span> has the
+        answers:</p><pre class="screen">
+$ svn info http://svn.example.com/repos/project/raisin.jpg
+Path: raisin.jpg
+Name: raisin.jpg
+URL: http://svn.example.com/repos/project/raisin.jpg
+Repository UUID: edb2f264-5ef2-0310-a47a-87b0ce17a8ec
+Revision: 105
+Node Kind: file
+Last Changed Author: sally
+Last Changed Rev: 32
+Last Changed Date: 2006-01-25 12:43:04 -0600 (Sun, 25 Jan 2006)
+Lock Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b
+Lock Owner: harry
+Lock Created: 2006-02-16 13:29:18 -0500 (Thu, 16 Feb 2006)
+Lock Comment (1 line):
+Need to make a quick tweak to this image.
+$
+</pre><p>&#23601;&#20687;<span class="command"><strong>svn info</strong></span>&#21487;&#20197;&#26816;&#39564;&#24037;&#20316;&#25335;&#36125;&#30340;&#23545;&#35937;&#65292;&#23427;&#20063;&#21487;&#20197;&#26816;&#39564;&#29256;&#26412;&#24211;&#30340;&#23545;&#35937;&#65292;&#22914;&#26524;<span class="command"><strong>svn info</strong></span>&#30340;&#20027;&#35201;&#21442;&#25968;&#26159;&#24037;&#20316;&#25335;&#36125;&#36335;&#24452;&#65292;&#25152;&#26377;&#24037;&#20316;&#25335;&#36125;&#30340;&#32531;&#23384;&#20449;&#24687;&#37117;&#20250;&#26174;&#31034;&#65292;&#21457;&#29616;&#20102;&#38145;&#23450;&#23601;&#24847;&#21619;&#30528;&#24037;&#20316;&#25335;&#36125;&#25317;&#26377;&#38145;&#23450;&#20196;&#29260;(&#22914;&#26524;&#19968;&#20010;&#25991;&#20214;&#34987;&#21478;&#19968;&#20010;&#29992;&#25143;&#22312;&#21478;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#38145;&#23450;&#65292;&#24037;&#20316;&#25335;&#36125;&#36335;&#24452;&#19978;&#36816;&#34892;<span class="command"><strong>svn info</strong></span>&#19981;&#20250;&#26174;&#31034;&#38145;&#23450;&#20449;&#24687;)&#12290;&#22914;&#26524;<span class="command"><strong>svn info</strong></span>&#30340;&#20027;&#21442;&#25968;&#26159;URL&#65292;&#23601;&#20250;&#21453;&#26144;&#29256;&#26412;&#24211;&#20013;&#26368;&#26032;&#29256;&#26412;&#30340;&#23545;&#35937;&#20449;&#24687;&#65292;&#20219;&#20309;&#23545;&#38145;&#23450;&#30340;&#25552;&#21450;&#25551;&#36848;&#20102;&#24403;&#21069;&#23545;&#35937;&#30340;&#38145;&#23450;&#12290;</p><p>So in this particular example, Sally can see that Harry
+        locked the file on February 16th to &#8220;<span class="quote">make a quick
+        tweak.</span>&#8221;  It being June, she suspects that he probably
+        forgot all about the lock.  She might phone Harry to complain
+        and ask him to release the lock.  If he's unavailable, she
+        might try to forcibly break the lock herself or ask an
+        administrator to do so.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.locking.break-steal"></a>Breaking and Stealing Locks</h3></div></div></div><p>A repository lock isn't sacred&#8212;in Subversion's
+        default configuration state, locks can be released not only by
+        the person who created them, but by anyone.  When somebody
+        other than the original lock creator destroys a lock, we refer
+        to this as <em class="firstterm">breaking the lock</em>.</p><p>&#20174;&#31649;&#29702;&#21592;&#30340;&#20301;&#23376;&#19978;&#24456;&#23481;&#26131;&#25171;&#30772;&#38145;&#23450;&#65292;<span class="command"><strong>svnlook</strong></span>&#21644;<span class="command"><strong>svnadmin</strong></span>&#31243;&#24207;&#37117;&#26377;&#33021;&#21147;&#20174;&#29256;&#26412;&#24211;&#30452;&#25509;&#26174;&#31034;&#21644;&#21024;&#38500;&#38145;&#23450;&#12290;(&#20851;&#20110;&#36825;&#20123;&#24037;&#20855;&#30340;&#20449;&#24687;&#21487;&#20197;&#30475;<a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.tk" title="&#31649;&#29702;&#21592;&#30340;&#24037;&#20855;&#31665;">&#8220;&#31649;&#29702;&#21592;&#30340;&#24037;&#20855;&#31665;&#8221;&#19968;&#33410;</a>&#12290;)</p><pre class="screen">
+$ svnadmin lslocks /var/svn/repos
+Path: /project2/images/banana.jpg
+UUID Token: opaquelocktoken:c32b4d88-e8fb-2310-abb3-153ff1236923
+Owner: frank
+Created: 2006-06-15 13:29:18 -0500 (Thu, 15 Jun 2006)
+Expires: 
+Comment (1 line):
+Still improving the yellow color.
+
+Path: /project/raisin.jpg
+UUID Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b
+Owner: harry
+Created: 2006-02-16 13:29:18 -0500 (Thu, 16 Feb 2006)
+Expires: 
+Comment (1 line):
+Need to make a quick tweak to this image.
+
+$ svnadmin rmlocks /var/svn/repos /project/raisin.jpg
+Removed lock on '/project/raisin.jpg'.
+$
+</pre><p>The more interesting option is allowing users to break
+        each other's locks over the network.  To do this, Sally simply
+        needs to pass the <code class="option">--force</code> to the <span class="command"><strong>svn
+        unlock</strong></span> command:</p><pre class="screen">
+$ svn status -u
+M              23   bar.c
+M    O         32   raisin.jpg
+       *       72   foo.h
+Status against revision:     105
+$ svn unlock raisin.jpg
+svn: 'raisin.jpg' is not locked in this working copy
+$ svn info raisin.jpg | grep URL
+URL: http://svn.example.com/repos/project/raisin.jpg
+$ svn unlock http://svn.example.com/repos/project/raisin.jpg
+svn: Unlock request failed: 403 Forbidden (http://svn.example.com)
+$ svn unlock --force http://svn.example.com/repos/project/raisin.jpg
+'raisin.jpg' unlocked.
+$
+</pre><p>Sally&#21021;&#22987;&#30340;unlock&#21629;&#20196;&#22833;&#36133;&#20102;&#65292;&#22240;&#20026;&#22905;&#30452;&#25509;&#22312;&#33258;&#24049;&#30340;&#24037;&#20316;&#25335;&#36125;&#19978;&#36816;&#34892;&#20102;<span class="command"><strong>svn unlock</strong></span>&#65292;&#32780;&#36825;&#37324;&#27809;&#26377;&#38145;&#23450;&#20196;&#29260;&#12290;&#20026;&#20102;&#30452;&#25509;&#20174;&#29256;&#26412;&#24211;&#21024;&#38500;&#38145;&#23450;&#65292;&#22905;&#38656;&#35201;&#32473;<span class="command"><strong>svn unlock</strong></span>&#20256;&#36882;URL&#21442;&#25968;&#65292;&#22905;&#30340;&#36825;&#19968;&#27425;&#23581;&#35797;&#21448;&#22833;&#36133;&#20102;&#65292;&#22240;&#20026;&#22905;&#19981;&#26159;&#38145;&#23450;&#30340;&#25317;&#26377;&#32773;(&#20063;&#27809;&#26377;&#38145;&#23450;&#20196;&#29260;)&#12290;&#24403;&#22905;&#20351;&#29992;&#20102;<code class="option">--force</code>&#36873;&#39033;&#21518;&#65292;&#35748;&#35777;&#21644;&#25480;&#26435;&#30340;&#35201;&#27714;&#34987;&#24573;&#30053;&#20102;&#65292;&#36828;&#31243;&#30340;&#38145;&#23450;&#34987;&#25171;&#30772;&#20102;&#12290;</p><p>&#24403;&#28982;&#65292;&#31616;&#21333;&#30340;&#25171;&#30772;&#38145;&#23450;&#20063;&#35768;&#36824;&#19981;&#22815;&#65292;&#22312;&#36825;&#20010;&#20363;&#23376;&#37324;&#65292;Sally&#19981;&#20165;&#24819;&#35201;&#25171;&#30772;Harry&#36951;&#24536;&#30340;&#38145;&#23450;&#65292;&#22905;&#20063;&#24076;&#26395;&#33258;&#24049;&#37325;&#26032;&#38145;&#23450;&#12290;&#22905;&#21487;&#20197;&#36890;&#36807;&#36816;&#34892;<span class="command"><strong>svn unlock --force</strong></span>&#32039;&#25509;&#30528;<span class="command"><strong>svn lock</strong></span>&#65292;&#20294;&#26159;&#26377;&#21487;&#33021;&#26377;&#20154;&#22312;&#36825;&#20004;&#27425;&#21629;&#20196;&#20043;&#38388;&#38145;&#23450;&#20102;&#25991;&#20214;&#65292;&#26368;&#31616;&#21333;&#30340;&#26041;&#24335;&#26159;<em class="firstterm">&#31363;&#21462;</em>&#36825;&#20010;&#38145;&#23450;&#65292;&#23558;&#25171;&#30772;&#21644;&#37325;&#26032;&#38145;&#23450;&#21464;&#25104;&#19968;&#31181;&#21407;&#23376;&#25805;&#20316;&#65292;&#20026;&#27492;&#38656;&#35201;&#36816;&#34892;<span class="command"><strong>svn lock</strong></span>&#21152;<code class="option">--force</code>&#36873;&#39033;&#65306;</p><pre class="screen">
+$ svn lock raisin.jpg
+svn: Lock request failed: 423 Locked (http://svn.example.com)
+$ svn lock --force raisin.jpg
+'raisin.jpg' locked by user 'sally'.
+$
+</pre><p>&#22312;&#20219;&#20309;&#24773;&#20917;&#19979;&#65292;&#26080;&#35770;&#38145;&#23450;&#34987;&#25171;&#30772;&#36824;&#26159;&#31363;&#21462;&#65292;Harry&#37117;&#20250;&#24863;&#21040;&#24778;&#35766;&#12290;Harry&#30340;&#24037;&#20316;&#25335;&#36125;&#36824;&#20445;&#30041;&#26377;&#21407;&#26469;&#30340;&#38145;&#23450;&#20196;&#29260;&#65292;&#20294;&#26159;&#38145;&#23450;&#24050;&#32463;&#19981;&#23384;&#22312;&#20102;&#65292;&#38145;&#23450;&#20196;&#29260;&#21487;&#20197;&#35828;&#24050;&#32463;<em class="firstterm">&#27515;&#25481;&#20102;</em>&#12290;&#38145;&#23450;&#20196;&#29260;&#25351;&#20195;&#30340;&#38145;&#23450;&#34987;&#25171;&#30772;(&#29256;&#26412;&#24211;&#20013;&#19981;&#20877;&#23384;&#22312;)&#25110;&#32773;&#26159;&#31363;&#21462;&#20102;(&#34987;&#21478;&#19968;&#20010;&#38145;&#23450;&#20195;&#26367;&#20102;)&#65292;&#20219;&#20309;&#19968;&#31181;&#24773;&#20917;&#19979;&#65292;Harry&#37117;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svn status</strong></span>&#35810;&#38382;&#29256;&#26412;&#24211;&#65306;</p><pre class="screen">
+$ svn status
+     K raisin.jpg
+$ svn status -u
+     B         32   raisin.jpg
+$ svn update
+  B  raisin.jpg
+$ svn status
+$
+</pre><p>&#22914;&#26524;&#29256;&#26412;&#24211;&#38145;&#23450;&#34987;&#25171;&#30772;&#20102;&#65292;<span class="command"><strong>svn status --show-updates</strong></span>&#20250;&#22312;&#25991;&#20214;&#26049;&#36793;&#26174;&#31034;&#19968;&#20010;<code class="literal">B</code> (Broken)&#12290;&#22914;&#26524;&#26377;&#19968;&#20010;&#26032;&#30340;&#38145;&#65292;&#23601;&#20250;&#26174;&#31034;&#19968;&#20010;<code class="literal">T</code> (sTolen)&#31526;&#21495;&#12290;&#26368;&#32456;&#65292;<span class="command"><strong>svn update</strong></span>&#20250;&#27880;&#24847;&#21040;&#25152;&#26377;&#27515;&#25481;&#30340;&#38145;&#23450;&#24182;&#19988;&#25226;&#23427;&#20204;&#20174;&#24037;&#20316;&#25335;&#36125;&#20013;&#21024;&#38500;&#25481;&#12290;</p><div class="sidebar"><p class="title"><b>&#38145;&#23450;&#31574;&#30053;</b></p><p>&#19981;&#21516;&#30340;&#31995;&#32479;&#26377;&#19981;&#21516;&#30340;&#38145;&#23450;&#38480;&#21046;&#31243;&#24230;&#30340;&#35266;&#24565;&#12290;&#26377;&#20123;&#20154;&#35748;&#20026;&#38145;&#23450;&#24517;&#39035;&#19981;&#39038;&#20219;&#20309;&#20195;&#20215;&#30340;&#20005;&#26684;&#25191;&#34892;&#65292;&#21482;&#26377;&#21407;&#22987;&#30340;&#21019;&#24314;&#32773;&#21644;&#31649;&#29702;&#21592;&#21487;&#20197;&#37322;&#25918;&#12290;&#20182;&#20204;&#35748;&#20026;&#22914;&#26524;&#26377;&#20154;&#25171;&#30772;&#20102;&#38145;&#23450;&#65292;&#28151;&#20081;&#23601;&#20250;&#25918;&#20219;&#65292;&#38145;&#23450;&#23601;&#23436;&#20840;&#22833;&#21435;&#20102;&#24847;&#20041;&#12290;&#21478;&#22806;&#19968;&#20123;&#20154;&#35748;&#20026;&#38145;&#23450;&#26159;&#31532;&#19968;&#20010;&#21644;&#26368;&#39318;&#35201;&#30340;&#20132;&#27969;&#24037;&#20855;&#65292;&#22914;&#26524;&#29992;&#25143;&#32463;&#24120;&#30340;&#25171;&#30772;&#21035;&#20154;&#30340;&#38145;&#23450;&#65292;&#20195;&#34920;&#20102;&#22242;&#38431;&#30340;&#25991;&#21270;&#22833;&#36133;&#21644;&#36719;&#20214;&#20043;&#22806;&#30340;&#38382;&#39064;&#12290;</p><p>Subversion defaults to the &#8220;<span class="quote">softer</span>&#8221;
+          approach, but still allows administrators to create stricter
+          enforcement policies through the use of hook scripts.  In
+          particular, the <code class="filename">pre-lock</code> and
+          <code class="filename">pre-unlock</code> hooks allow administrators
+          to decide when lock creation and lock releases are allowed
+          to happen.  Depending on whether a lock already exists,
+          these two hooks can decide whether to allow a certain user
+          to break or steal a lock.  The
+          <code class="filename">post-lock</code> and
+          <code class="filename">post-unlock</code> hooks are also available,
+          and can be used to send email after locking actions.  To
+          learn more about repository hooks, see <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;">&#8220;&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;&#8221;&#19968;&#33410;</a>.</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.locking.lock-communication"></a>&#38145;&#23450;&#20132;&#27969;</h3></div></div></div><p>&#25105;&#20204;&#24050;&#32463;&#35265;&#21040;&#20102;&#22914;&#20309;&#21033;&#29992;<span class="command"><strong>svn lock</strong></span>&#21644;<span class="command"><strong>svn unlock</strong></span>&#26469;&#21019;&#24314;&#12289;&#37322;&#25918;&#12289;&#25171;&#30772;&#21644;&#31363;&#21462;&#38145;&#23450;&#65292;&#36825;&#23601;&#28385;&#36275;&#20102;&#39034;&#24207;&#35775;&#38382;&#25991;&#20214;&#30340;&#35201;&#27714;&#65292;&#20294;&#26159;&#28010;&#36153;&#26102;&#38388;&#36825;&#20010;&#22823;&#38382;&#39064;&#35813;&#22914;&#20309;&#21602;&#65311;</p><p>For example, suppose Harry locks an image file and then
+        begins editing it.  Meanwhile, miles away, Sally wants to do
+        the same thing.  She doesn't think to run <span class="command"><strong>svn status
+        --show-updates</strong></span>, so she has no idea that Harry has
+        already locked the file.  She spends hours editing the file,
+        and when she tries to commit her change, she discovers that
+        either the file is locked or that she's out of date.
+        Regardless, her changes aren't mergeable with Harry's.  One of
+        these two people has to throw away their work, and a lot of
+        time has been wasted.</p><p>Subversion's solution to this problem is to provide a
+        mechanism to remind users that a file ought to be locked
+        <span class="emphasis"><em>before</em></span> the editing begins.  The mechanism
+        is a special property:  <code class="literal">svn:needs-lock</code>.  If
+        that property is attached to a file (regardless of its value,
+        which is irrelevant), then Subversion will try to use
+        filesystem-level permissions to make the file read-only&#8212;unless,
+        of course, the user has explicitly locked the file.
+        When a lock token is present (as a result of running
+        <span class="command"><strong>svn lock</strong></span>), the file becomes read-write.
+        When the lock is released, the file becomes read-only
+        again.</p><p>&#26681;&#25454;&#36825;&#20010;&#21407;&#29702;&#65292;&#22914;&#26524;&#19968;&#20010;&#22270;&#20687;&#25991;&#20214;&#26377;&#36825;&#20010;&#23646;&#24615;&#65292;Sally&#25171;&#24320;&#32534;&#36753;&#25991;&#20214;&#23601;&#20250;&#31435;&#21051;&#27880;&#24847;&#21040;&#26377;&#20123;&#29305;&#21035;&#65292;&#22823;&#22810;&#25968;&#31243;&#24207;&#20250;&#22312;&#25171;&#24320;&#21482;&#35835;&#25991;&#20214;&#26102;&#31435;&#21051;&#35686;&#21578;&#65292;&#33267;&#23569;&#25152;&#26377;&#30340;&#31243;&#24207;&#20250;&#38450;&#27490;&#22905;&#20445;&#23384;&#20462;&#25913;&#65292;&#36825;&#25552;&#37266;&#20102;&#22905;&#32534;&#36753;&#20043;&#21069;&#38656;&#35201;&#38145;&#23450;&#25991;&#20214;&#65292;&#36825;&#26679;&#22905;&#23601;&#21457;&#29616;&#20102;&#21407;&#26469;&#23384;&#22312;&#30340;&#38145;&#23450;&#65306;</p><pre class="screen">
+$ /usr/local/bin/gimp raisin.jpg
+gimp: error: file is read-only!
+$ ls -l raisin.jpg
+-r--r--r--   1 sally   sally   215589 Jun  8 19:23 raisin.jpg
+$ svn lock raisin.jpg
+svn: Lock request failed: 423 Locked (http://svn.example.com)
+$ svn info http://svn.example.com/repos/project/raisin.jpg | grep Lock
+Lock Token: opaquelocktoken:fc2b4dee-98f9-0310-abf3-653ff3226e6b
+Lock Owner: harry
+Lock Created: 2006-06-08 07:29:18 -0500 (Thu, 08 June 2006)
+Lock Comment (1 line):
+Making some tweaks.  Locking for the next two hours.
+$
+</pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#25552;&#31034;</h3><p>Users and administrators alike are encouraged to attach
+          the <code class="literal">svn:needs-lock</code> property to any file
+          that cannot be contextually merged.  This is the primary
+          technique for encouraging good locking habits and preventing
+          wasted effort.</p></div><p>Note that this property is a communication tool that
+        works independently from the locking system.  In other words,
+        any file can be locked, whether or not this property is
+        present.  And conversely, the presence of this property
+        doesn't make the repository require a lock when
+        committing.</p><p>&#36825;&#20010;&#31995;&#32479;&#24182;&#19981;&#26159;&#27627;&#26080;&#29781;&#30133;&#65292;&#21363;&#20351;&#26377;&#36825;&#20010;&#23646;&#24615;&#65292;&#21482;&#35835;&#25552;&#37266;&#20063;&#26377;&#21487;&#33021;&#22833;&#25928;&#12290;&#26377;&#20123;&#31243;&#24207;&#8220;<span class="quote">&#20599;&#20599;&#30340;&#31713;&#25913;&#20102;</span>&#8221;&#25991;&#20214;&#30340;&#21482;&#35835;&#23646;&#24615;&#65292;&#24708;&#26080;&#22768;&#24687;&#30340;&#20801;&#35768;&#29992;&#25143;&#32534;&#36753;&#21644;&#20445;&#23384;&#25991;&#20214;&#65292;&#19981;&#24184;&#30340;&#26159;&#65292;Subversion&#23545;&#27492;&#26080;&#33021;&#20026;&#21147;&#8212;&#21363;&#20351;&#21040;&#20102;&#29616;&#20170;&#65292;&#36824;&#26159;&#27809;&#26377;&#20219;&#20309;&#24037;&#20855;&#33021;&#22815;&#20195;&#26367;&#20154;&#19982;&#20154;&#30340;&#33391;&#22909;&#20132;&#27969;&#12290;<sup>[<a name="d0e5712" href="#ftn.d0e5712" class="footnote">16</a>]</sup></p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e5276" href="#d0e5276" class="para">14</a>] </sup>Communication wouldn't have been such bad medicine for
+          Harry and Sally's Hollywood namesakes, either, for that
+          matter.</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e5301" href="#d0e5301" class="para">15</a>] </sup>Subversion&#30446;&#21069;&#19981;&#20801;&#35768;&#38145;&#23450;&#30446;&#24405;&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e5712" href="#d0e5712" class="para">16</a>] </sup>&#38500;&#38750;&#26159;&#65292;&#25110;&#35768;&#19968;&#20010;&#32463;&#20856;&#30340;&#28779;&#31070;&#31934;&#31070;&#34701;&#21512;&#12290;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.advanced.sparsedirs.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.advanced.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.externals.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">Sparse Directories&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#22806;&#37096;&#23450;&#20041;</td></tr></table></div></body></html>

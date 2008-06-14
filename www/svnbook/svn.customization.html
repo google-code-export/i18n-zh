@@ -1,0 +1,377 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340;Subversion&#20307;&#39564;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="prev" href="svn.serverconfig.multimethod.html" title="&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;"><link rel="next" href="svn.advanced.l10n.html" title="&#26412;&#22320;&#21270;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340;Subversion&#20307;&#39564;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.serverconfig.multimethod.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.l10n.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="chapter" lang="zh-cn"><div class="titlepage"><div><div><h1 class="title"><a name="svn.customization"></a>&#23450;&#21046;&#20320;&#30340;Subversion&#20307;&#39564;</h1></div></div></div><div class="toc"><p><b>&#30446;&#24405;</b></p><dl><dt><span class="section"><a href="svn.customization.html#svn.advanced.confarea">&#36816;&#34892;&#37197;&#32622;&#21306;</a></span></dt><dd><dl><dt><span class="section"><a href="svn.customization.html#svn.advanced.confarea.layout">&#37197;&#32622;&#21306;&#24067;&#23616;</a></span></dt><dt><span class="section"><a href="svn.customization.html#svn.advanced.confarea.windows-registry">&#37197;&#32622;&#21644;Windows&#27880;&#20876;&#34920;</a></span></dt><dt><span class="section"><a href="svn.customization.html#svn.advanced.confarea.opts">&#37197;&#32622;&#36873;&#39033;</a></span></dt></dl></dd><dt><span class="section"><a href="svn.advanced.l10n.html">&#26412;&#22320;&#21270;</a></span></dt><dd><dl><dt><span class="section"><a href="svn.advanced.l10n.html#svn.advanced.l10n.understanding">Understanding Locales</a></span></dt><dt><span class="section"><a href="svn.advanced.l10n.html#svn.advanced.l10n.svnuse">Subversion's Use of Locales</a></span></dt></dl></dd><dt><span class="section"><a href="svn.advanced.externaleditors.html">Using External Editors</a></span></dt><dt><span class="section"><a href="svn.advanced.externaldifftools.html">Using External Differencing and Merge Tools</a></span></dt><dd><dl><dt><span class="section"><a href="svn.advanced.externaldifftools.html#svn.advanced.externaldifftools.diff">&#22806;&#32622; diff</a></span></dt><dt><span class="section"><a href="svn.advanced.externaldifftools.html#svn.advanced.externaldifftools.diff3">&#22806;&#32622; diff3</a></span></dt></dl></dd></dl></div><p>Version control can be a complex subject, as much art as
+    science, that offers myriad ways of getting stuff done.
+    Throughout this book, you've read of the various Subversion
+    command-line client subcommands and the options that modify their
+    behavior.  In this chapter, we'll look into still more ways to
+    customize the way Subversion works for you&#8212;setting up the
+    Subversion runtime configuration, using external helper
+    applications, Subversion's interaction with the operating system's
+    configured locale, and so on.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.advanced.confarea"></a>&#36816;&#34892;&#37197;&#32622;&#21306;</h2></div></div></div><p>Subversion provides many optional behaviors that can be
+      controlled by the user.  Many of these options are of the kind
+      that a user would wish to apply to all Subversion operations.
+      So, rather than forcing users to remember command-line arguments
+      for specifying these options and to use them for every
+      operation they perform, Subversion uses configuration files,
+      segregated into a Subversion configuration area.</p><p>The Subversion <em class="firstterm">configuration area</em> is
+      a two-tiered hierarchy of option names and their values.
+      Usually, this boils down to a special directory that contains
+      <em class="firstterm">configuration files</em> (the first tier),
+      which are just text files in standard INI format (with
+      &#8220;<span class="quote">sections</span>&#8221; providing the second tier).  These files
+      can be easily edited using your favorite text editor (such as
+      Emacs or vi), and that contain directives read by the client to
+      determine which of several optional behaviors the user
+      prefers.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.confarea.layout"></a>&#37197;&#32622;&#21306;&#24067;&#23616;</h3></div></div></div><p>The first time that the <span class="command"><strong>svn</strong></span>
+        command-line client is executed, it creates a per-user
+        configuration area.  On Unix-like systems, this area appears
+        as a directory named <code class="filename">.subversion</code> in the
+        user's home directory.  On Win32 systems, Subversion creates a
+        folder named <code class="filename">Subversion</code>, typically inside
+        the <code class="filename">Application Data</code> area of the user's
+        profile directory (which, by the way, is usually a hidden
+        directory).  However, on this platform, the exact location
+        differs from system to system and is dictated by the Windows
+        registry.
+        <sup>[<a name="d0e14252" href="#ftn.d0e14252" class="footnote">47</a>]</sup>
+        We will refer to the per-user configuration area using its Unix
+        name, <code class="filename">.subversion</code>.</p><p>&#38500;&#20102;&#29992;&#25143;&#37197;&#32622;&#21306;&#65292;Subversion&#20063;&#25552;&#20379;&#20102;&#31995;&#32479;&#37197;&#32622;&#21306;&#65292;&#36890;&#36807;&#31995;&#32479;&#37197;&#32622;&#21306;&#65292;&#31995;&#32479;&#31649;&#29702;&#21592;&#21487;&#20197;&#20026;&#26576;&#20010;&#26426;&#22120;&#30340;&#25152;&#26377;&#29992;&#25143;&#24314;&#31435;&#32570;&#30465;&#37197;&#32622;&#20540;&#12290;&#27880;&#24847;&#31995;&#32479;&#37197;&#32622;&#21306;&#19981;&#20250;&#35268;&#23450;&#24378;&#21046;&#24615;&#30340;&#31574;&#30053;&#8212;&#27599;&#20010;&#29992;&#25143;&#37197;&#32622;&#21306;&#37117;&#21487;&#20197;&#35206;&#30422;&#31995;&#32479;&#37197;&#32622;&#21306;&#20013;&#30340;&#37197;&#32622;&#39033;&#65292;&#32780;<span class="command"><strong>svn</strong></span>&#30340;&#21629;&#20196;&#34892;&#21442;&#25968;&#20915;&#23450;&#20102;&#26368;&#21518;&#30340;&#34892;&#20026;&#12290;&#22312;&#31867;Unix&#30340;&#24179;&#21488;&#19978;&#65292;&#31995;&#32479;&#37197;&#32622;&#21306;&#20301;&#20110;<code class="filename">/etc/subversion</code>&#30446;&#24405;&#19979;&#65292;&#22312;Windows&#24179;&#21488;&#19978;&#65292;&#31995;&#32479;&#37197;&#32622;&#21306;&#20301;&#20110;<code class="filename">Application Data</code>(&#20877;&#35828;&#19968;&#27425;&#65292;&#26159;&#30001;Windows&#27880;&#20876;&#34920;&#20915;&#23450;&#30340;)&#30340;<code class="filename">Subversion</code>&#30446;&#24405;&#20013;&#12290;&#19982;&#27599;&#29992;&#25143;&#37197;&#32622;&#21306;&#19981;&#21516;&#65292;<span class="command"><strong>svn</strong></span>&#19981;&#20250;&#35797;&#22270;&#21019;&#24314;&#31995;&#32479;&#37197;&#32622;&#21306;&#12290;</p><p>The per-user configuration area currently contains three
+        files&#8212;two configuration files (<code class="filename">config</code> and
+        <code class="filename">servers</code>), and a <code class="filename">README.txt</code> 
+        file, which describes the INI format.  At the time of their
+        creation, the files contain default values for each of the
+        supported Subversion options, mostly commented out and grouped
+        with textual descriptions about how the values for the key
+        affect Subversion's behavior.  To change a certain behavior,
+        you need only to load the appropriate configuration file into
+        a text editor, and to modify the desired option's value.  If at
+        any time you wish to have the default configuration settings
+        restored, you can simply remove (or rename) your configuration
+        directory and then run some innocuous <span class="command"><strong>svn</strong></span>
+        command, such as <span class="command"><strong>svn --version</strong></span>.  A new
+        configuration directory with the default contents will be
+        created.</p><p>&#29992;&#25143;&#37197;&#32622;&#21306;&#20063;&#32531;&#23384;&#20102;&#35748;&#35777;&#20449;&#24687;&#65292;<code class="filename">auth</code>&#30446;&#24405;&#19979;&#30340;&#23376;&#30446;&#24405;&#20013;&#32531;&#23384;&#20102;&#19968;&#20123;Subversion&#25903;&#25345;&#30340;&#21508;&#31181;&#35748;&#35777;&#26041;&#27861;&#30340;&#20449;&#24687;&#65292;&#36825;&#20010;&#30446;&#24405;&#38656;&#35201;&#30456;&#24212;&#30340;&#29992;&#25143;&#26435;&#38480;&#25165;&#21487;&#20197;&#35775;&#38382;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.confarea.windows-registry"></a>&#37197;&#32622;&#21644;Windows&#27880;&#20876;&#34920;</h3></div></div></div><p>&#38500;&#20102;&#22522;&#20110;INI&#25991;&#20214;&#30340;&#37197;&#32622;&#21306;&#65292;&#36816;&#34892;&#22312;Windows&#24179;&#21488;&#30340;Subversion&#23458;&#25143;&#31471;&#20063;&#21487;&#20197;&#20351;&#29992;Windows&#27880;&#20876;&#34920;&#26469;&#20445;&#23384;&#37197;&#32622;&#25968;&#25454;&#12290;&#27880;&#20876;&#34920;&#20013;&#20445;&#23384;&#30340;&#36873;&#39033;&#21517;&#31216;&#21644;&#20540;&#30340;&#21547;&#20041;&#19982;INI&#25991;&#20214;&#20013;&#30456;&#21516;&#65292;&#8220;<span class="quote">file/section</span>&#8221;&#22312;&#27880;&#20876;&#34920;&#20013;&#34920;&#29616;&#20026;&#27880;&#20876;&#34920;&#38190;&#26641;&#30340;&#23618;&#32423;&#65292;&#20351;&#24471;&#21452;&#23618;&#32467;&#26500;&#24471;&#20197;&#20445;&#30041;&#19979;&#26469;&#12290;</p><p>Subversion&#30340;&#31995;&#32479;&#37197;&#32622;&#20540;&#20445;&#23384;&#22312;&#38190;<code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion</code>&#19979;&#12290;&#20030;&#20010;&#20363;&#23376;&#65292;<code class="literal">global-ignores</code>&#36873;&#39033;&#20301;&#20110;<code class="filename">config</code>&#25991;&#20214;&#30340;<code class="literal">miscellany</code>&#23567;&#33410;&#65292;&#22312;Windows&#27880;&#20876;&#34920;&#20013;&#65292;&#21017;&#20301;&#20110;<code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion\Config\Miscellany\global-ignores</code>&#12290;&#29992;&#25143;&#37197;&#32622;&#20540;&#23384;&#25918;&#22312;<code class="literal">HKEY_CURRENT_USER\Software\Tigris.org\Subversion</code>&#19979;&#12290;</p><p>&#22522;&#20110;&#27880;&#20876;&#34920;&#30340;&#37197;&#32622;&#39033;&#22312;&#22522;&#20110;&#25991;&#20214;&#30340;&#37197;&#32622;&#39033;<span class="emphasis"><em>&#20043;&#21069;</em></span>&#35299;&#26512;&#65292;&#25152;&#20197;&#20854;&#37197;&#32622;&#39033;&#30340;&#20540;&#20250;&#34987;&#37197;&#32622;&#25991;&#20214;&#20013;&#30456;&#21516;&#37197;&#32622;&#39033;&#30340;&#20540;&#35206;&#30422;&#65292;&#25442;&#21477;&#35805;&#35828;&#65292;&#22312;Windows&#31995;&#32479;&#19979;&#36825;&#26679;&#26597;&#25214;&#37197;&#32622;&#20449;&#24687;&#65307;&#20302;&#20301;&#30340;&#20301;&#32622;&#20248;&#20808;&#20110;&#39640;&#20301;&#30340;&#20301;&#32622;&#65306;</p><div class="orderedlist"><ol type="1"><li><p>&#21629;&#20196;&#34892;&#36873;&#39033;</p></li><li><p>&#29992;&#25143;INI&#37197;&#32622;&#25991;&#20214;</p></li><li><p>&#29992;&#25143;&#27880;&#20876;&#34920;&#20540;</p></li><li><p>&#31995;&#32479;INI&#37197;&#32622;&#25991;&#20214;</p></li><li><p>&#31995;&#32479;&#27880;&#20876;&#34920;&#20540;</p></li></ol></div><p>Also, the Windows Registry doesn't really support the
+        notion of something being &#8220;<span class="quote">commented out.</span>&#8221;
+        However, Subversion will ignore any option key whose name
+        begins with a hash (<code class="literal">#</code>) character.  This
+        allows you to effectively comment out a Subversion option
+        without deleting the entire key from the Registry, obviously
+        simplifying the process of restoring that option.</p><p>The <span class="command"><strong>svn</strong></span> command-line client never
+        attempts to write to the Windows Registry and will not attempt
+        to create a default configuration area there.  You can create
+        the keys you need using the <span class="command"><strong>REGEDIT</strong></span>
+        program.  Alternatively, you can create a
+        <code class="filename">.reg</code> file (such as the one in <a class="xref" href="svn.customization.html#svn.advanced.confarea.windows-registry.ex-1" title="&#20363;&nbsp;7.1.&nbsp;Sample registration entries (.reg) file.">&#20363;&nbsp;7.1 &#8220;Sample registration entries (.reg) file.&#8221;</a>), and
+        then double-click on that file's icon in the Explorer shell,
+        which will cause the data to be merged into your
+        registry.</p><div class="example"><a name="svn.advanced.confarea.windows-registry.ex-1"></a><p class="title"><b>&#20363;&nbsp;7.1.&nbsp;Sample registration entries (.reg) file.</b></p><div class="example-contents"><pre class="programlisting">
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion\Servers\groups]
+
+[HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion\Servers\global]
+"#http-proxy-host"=""
+"#http-proxy-port"=""
+"#http-proxy-username"=""
+"#http-proxy-password"=""
+"#http-proxy-exceptions"=""
+"#http-timeout"="0"
+"#http-compression"="yes"
+"#neon-debug-mask"=""
+"#ssl-authority-files"=""
+"#ssl-trust-default-ca"=""
+"#ssl-client-cert-file"=""
+"#ssl-client-cert-password"=""
+
+[HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\auth]
+"#store-passwords"="yes"
+"#store-auth-creds"="yes"
+
+[HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\helpers]
+"#editor-cmd"="notepad"
+"#diff-cmd"=""
+"#diff3-cmd"=""
+"#diff3-has-program-arg"=""
+
+[HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\tunnels]
+
+[HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\miscellany]
+"#global-ignores"="*.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store"
+"#log-encoding"=""
+"#use-commit-times"=""
+"#no-unlock"=""
+"#enable-auto-props"=""
+
+[HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\auto-props]
+</pre></div></div><br class="example-break"><p>The previous example shows the contents of a
+        <code class="filename">.reg</code> file, which contains some of the most
+        commonly used configuration options and their default values.
+        Note the presence of both system-wide (for network
+        proxy-related options) and per-user settings (editor programs
+        and password storage, among others).  Also note that all the
+        options are effectively commented out.  You need only to
+        remove the hash (<code class="literal">#</code>) character from the
+        beginning of the option names and set the values as you
+        desire.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.confarea.opts"></a>&#37197;&#32622;&#36873;&#39033;</h3></div></div></div><p>In this section, we will discuss the specific
+        runtime configuration options that are currently supported
+        by Subversion.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.advanced.confarea.opts.servers"></a>&#26381;&#21153;&#22120;</h4></div></div></div><p>The <code class="filename">servers</code> file contains
+          Subversion configuration options related to the network
+          layers.  There are two special section names in this
+          file&#8212;<code class="literal">groups</code> and
+          <code class="literal">global</code>.  The <code class="literal">groups</code>
+          section is essentially a cross-reference table.  The keys in
+          this section are the names of other sections in the file;
+          their values are <em class="firstterm">globs</em>&#8212;textual
+          tokens that possibly contain wildcard
+          characters&#8212;that are compared against the hostnames of
+          the machine to which Subversion requests are sent.</p><pre class="programlisting">
+[groups]
+beanie-babies = *.red-bean.com
+collabnet = svn.collab.net
+
+[beanie-babies]
+&#8230;
+
+[collabnet]
+&#8230;
+</pre><p>When Subversion is used over a network, it attempts to
+          match the name of the server it is trying to reach with a
+          group name under the <code class="literal">groups</code> section.  If
+          a match is made, Subversion then looks for a section in the
+          <code class="filename">servers</code> file whose name is the matched
+          group's name.  From that section, it reads the actual network
+          configuration settings.</p><p>The <code class="literal">global</code> section contains the
+          settings that are meant for all of the servers not matched
+          by one of the globs under the <code class="literal">groups</code>
+          section.  The options available in this section are
+          exactly the same as those that are valid for the other server
+          sections in the file (except, of course, the special
+          <code class="literal">groups</code> section), and are as
+          follows:</p><div class="variablelist"><dl><dt><span class="term">
+                <code class="literal">http-proxy-exceptions</code>
+              </span></dt><dd><p>This specifies a comma-separated list of patterns
+                for repository hostnames that should be accessed
+                directly, without using the proxy machine.  The
+                pattern syntax is the same as is used in the Unix
+                shell for filenames.  A repository hostname matching
+                any of these patterns will not be proxied.</p></dd><dt><span class="term">
+                <code class="literal">http-proxy-host</code>
+              </span></dt><dd><p>&#20195;&#29702;&#26381;&#21153;&#22120;&#30340;&#35814;&#32454;&#20027;&#26426;&#21517;&#65292;&#26159;HTTP&#20026;&#22522;&#30784;&#30340;Subversion&#35831;&#27714;&#24517;&#39035;&#36890;&#36807;&#30340;&#65292;&#32570;&#30465;&#20540;&#20026;&#31354;&#65292;&#24847;&#21619;&#30528;Subversion&#19981;&#20250;&#23581;&#35797;&#36890;&#36807;&#20195;&#29702;&#26381;&#21153;&#22120;&#36827;&#34892;HTTP&#35831;&#27714;&#65292;&#32780;&#20250;&#23581;&#35797;&#30452;&#25509;&#36830;&#25509;&#30446;&#26631;&#26426;&#22120;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-proxy-port</code>
+              </span></dt><dd><p>&#20195;&#29702;&#26381;&#21153;&#22120;&#30340;&#35814;&#32454;&#31471;&#21475;&#65292;&#32570;&#30465;&#20540;&#20026;&#31354;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-proxy-username</code>
+              </span></dt><dd><p>&#20195;&#29702;&#26381;&#21153;&#22120;&#30340;&#29992;&#25143;&#21517;&#65292;&#32570;&#30465;&#20540;&#20026;&#31354;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-proxy-password</code>
+              </span></dt><dd><p>&#20195;&#29702;&#26381;&#21153;&#22120;&#30340;&#23494;&#30721;&#65292;&#32570;&#30465;&#20026;&#31354;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-timeout</code>
+              </span></dt><dd><p>&#31561;&#24453;&#26381;&#21153;&#22120;&#21709;&#24212;&#30340;&#26102;&#38388;&#65292;&#20197;&#31186;&#20026;&#21333;&#20301;&#65292;&#22914;&#26524;&#20320;&#30340;&#32593;&#32476;&#36895;&#24230;&#36739;&#24930;&#65292;&#23548;&#33268;Subversion&#30340;&#25805;&#20316;&#36229;&#26102;&#65292;&#20320;&#21487;&#20197;&#21152;&#22823;&#36825;&#20010;&#25968;&#20540;&#65292;&#32570;&#30465;&#20540;&#26159;<code class="literal">0</code>&#65292;&#24847;&#24605;&#26159;&#35753;HTTP&#24211;Neon&#20351;&#29992;&#33258;&#24049;&#30340;&#32570;&#30465;&#20540;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-compression</code>
+              </span></dt><dd><p>&#36825;&#35828;&#26126;&#26159;&#21542;&#22312;&#19982;&#35774;&#32622;&#22909;DAV&#30340;&#26381;&#21153;&#22120;&#36890;&#35759;&#26102;&#20351;&#29992;&#32593;&#32476;&#21387;&#32553;&#35831;&#27714;&#65292;&#32570;&#30465;&#20540;&#26159;<code class="literal">yes</code>(&#23613;&#31649;&#21482;&#26377;&#22312;&#36825;&#20010;&#21151;&#33021;&#32534;&#35793;&#21040;&#32593;&#32476;&#23618;&#26102;&#21387;&#32553;&#25165;&#20250;&#26377;&#25928;)&#65292;&#35774;&#32622;<code class="literal">no</code>&#26469;&#20851;&#38381;&#21387;&#32553;&#65292;&#22914;&#35843;&#35797;&#32593;&#32476;&#20256;&#36755;&#26102;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">http-library</code>
+              </span></dt><dd><p>Subversion provides a pair of repository access
+                modules that understand its WebDAV network protocol.
+                The original one, which shipped with Subversion 1.0, is
+                <code class="literal">libsvn_ra_neon</code> (though back then it
+                was called <code class="literal">libsvn_ra_dav</code>).  Newer
+                Subversion versions also provide
+                <code class="literal">libsvn_ra_serf</code>, which uses a
+                different underlying implementation and aims to
+                support some of the newer HTTP concepts.</p><p>At this point, <code class="literal">libsvn_ra_serf</code>
+                is still considered experimental, though it appears to
+                work in the common cases quite well.  To encourage
+                experimentation, Subversion provides the
+                <code class="literal">http-library</code> runtime configuration
+                option to allow users to specify (generally, or in a
+                per-server-group fashion) which WebDAV access module
+                they'd prefer to use&#8212;<code class="literal">neon</code> or
+                <code class="literal">serf</code>.</p></dd><dt><span class="term">
+                <code class="literal">http-auth-types</code>
+              </span></dt><dd><p>This option is a semicolon-delimited list of
+                authentication types supported by the Neon-based
+                WebDAV repository access modules.  Valid members of
+                this list are <code class="literal">basic</code>,
+                <code class="literal">digest</code>, and
+                <code class="literal">negotiate</code>.</p></dd><dt><span class="term">
+                <code class="literal">neon-debug-mask</code>
+              </span></dt><dd><p>&#21482;&#26159;&#19968;&#20010;&#25972;&#24418;&#30340;&#25513;&#30721;&#65292;&#24213;&#23618;&#30340;HTTP&#24211;Neon&#29992;&#26469;&#36873;&#25321;&#20135;&#29983;&#35843;&#35797;&#30340;&#36755;&#20986;&#65292;&#32570;&#30465;&#20540;&#26159;<code class="literal">0</code>&#65292;&#24847;&#24605;&#26159;&#20851;&#38381;&#25152;&#26377;&#30340;&#35843;&#35797;&#36755;&#20986;&#65292;&#20851;&#20110;Subversion&#20351;&#29992;Neon&#30340;&#35814;&#32454;&#20449;&#24687;&#65292;&#35265;<a class="xref" href="svn.developer.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837;Subversion">&#31532;&nbsp;8&nbsp;&#31456; <i>&#23884;&#20837;Subversion</i></a>&#12290;</p></dd><dt><span class="term">
+                <code class="literal">ssl-authority-files</code>
+              </span></dt><dd><p>&#36825;&#26159;&#19968;&#20010;&#20998;&#21495;&#20998;&#21106;&#30340;&#36335;&#24452;&#21644;&#25991;&#20214;&#21015;&#34920;&#65292;&#36825;&#20123;&#25991;&#20214;&#21253;&#21547;&#20102;Subversion&#23458;&#25143;&#31471;&#22312;&#29992;HTTPS&#35775;&#38382;&#26102;&#21487;&#20197;&#25509;&#21463;&#30340;&#35748;&#35777;&#25480;&#26435;(&#25110;&#32773;CA)&#35777;&#20070;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">ssl-trust-default-ca</code>
+              </span></dt><dd><p>&#22914;&#26524;&#20320;&#24076;&#26395;Subversion&#21487;&#20197;&#33258;&#21160;&#30456;&#20449;OpenSSL&#25658;&#24102;&#30340;&#32570;&#30465;&#30340;CA&#65292;&#21487;&#20197;&#35774;&#32622;&#20026;<code class="literal">yes</code>&#12290;</p></dd><dt><span class="term">
+                <code class="literal">ssl-client-cert-file</code>
+              </span></dt><dd><p>&#22914;&#26524;&#19968;&#20010;&#20027;&#26426;(&#25110;&#26159;&#19968;&#20123;&#20027;&#26426;)&#38656;&#35201;&#19968;&#20010;SSL&#23458;&#25143;&#31471;&#35777;&#20070;&#65292;&#20320;&#20250;&#25910;&#21040;&#19968;&#20010;&#25552;&#31034;&#35828;&#38656;&#35201;&#35777;&#20070;&#30340;&#36335;&#24452;&#12290;&#36890;&#36807;&#35774;&#32622;&#36825;&#20010;&#36335;&#24452;&#20320;&#30340;Subversion&#23458;&#25143;&#31471;&#21487;&#20197;&#33258;&#21160;&#25214;&#21040;&#20320;&#30340;&#35777;&#20070;&#32780;&#19981;&#20250;&#25171;&#25200;&#20320;&#12290;&#27809;&#26377;&#26631;&#20934;&#30340;&#23384;&#25918;&#20301;&#32622;&#65307;Subversion&#20250;&#20174;&#20219;&#20309;&#20320;&#25351;&#23450;&#30340;&#36335;&#24452;&#24471;&#21040;&#36825;&#20010;&#25991;&#20214;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">ssl-client-cert-password</code>
+              </span></dt><dd><p>&#22914;&#26524;&#20320;&#30340;SSL&#23458;&#25143;&#31471;&#35777;&#20070;&#25991;&#20214;&#26159;&#29992;&#23494;&#30721;&#21152;&#23494;&#30340;&#65292;Subversion&#20250;&#22312;&#27599;&#27425;&#20351;&#29992;&#35777;&#20070;&#26102;&#35831;&#20320;&#36755;&#20837;&#23494;&#30721;&#65292;&#22914;&#26524;&#20320;&#21457;&#29616;&#36825;&#24456;&#35752;&#21388;(&#24182;&#19988;&#19981;&#20171;&#24847;&#25226;&#23494;&#30721;&#23384;&#25918;&#22312;<code class="filename">servers</code>&#25991;&#20214;&#20013;)&#65292;&#20320;&#21487;&#20197;&#35774;&#32622;&#36825;&#20010;&#21442;&#25968;&#20026;&#35777;&#20070;&#30340;&#23494;&#30721;&#65292;&#36825;&#26679;&#23601;&#19981;&#20250;&#20877;&#25910;&#21040;&#23494;&#30721;&#36755;&#20837;&#25552;&#31034;&#20102;&#12290;</p></dd></dl></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.advanced.confarea.opts.config"></a>&#37197;&#32622;</h4></div></div></div><p>The <code class="filename">config</code> file contains the rest
+          of the currently available Subversion runtime
+          options&#8212;those not related to networking.  There are
+          only a few options in use as of this writing, but they are
+          again grouped into sections in expectation of future
+          additions.</p><p>The <code class="literal">auth</code> section contains settings
+          related to Subversion's authentication and authorization
+          against the repository.  It contains the following:</p><div class="variablelist"><dl><dt><span class="term">
+                <code class="literal">store-passwords</code>
+              </span></dt><dd><p>&#36825;&#21578;&#35785;Subversion&#26159;&#21542;&#32531;&#23384;&#26381;&#21153;&#22120;&#35748;&#35777;&#35201;&#27714;&#26102;&#29992;&#25143;&#25552;&#20379;&#30340;&#23494;&#30721;&#65292;&#32570;&#30465;&#20540;&#26159;<code class="literal">yes</code>&#12290;&#35774;&#32622;&#20026;<code class="literal">no</code>&#21487;&#20197;&#20851;&#38381;&#22312;&#23384;&#30424;&#30340;&#23494;&#30721;&#32531;&#23384;&#65292;&#20320;&#21487;&#20197;&#36890;&#36807;<span class="command"><strong>svn</strong></span>&#30340;<code class="option">--no-auth-cache</code>&#21629;&#20196;&#34892;&#21442;&#25968;(&#37027;&#20123;&#25903;&#25345;&#36825;&#20010;&#21442;&#25968;&#30340;&#23376;&#21629;&#20196;)&#26469;&#35206;&#30422;&#36825;&#20010;&#35774;&#32622;&#65292;&#35814;&#32454;&#20449;&#24687;&#35831;&#35265;<a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;">&#8220;&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;&#8221;&#19968;&#33410;</a>&#12290;</p></dd><dt><span class="term">
+                <code class="literal">store-auth-creds</code>
+              </span></dt><dd><p>&#36825;&#20010;&#35774;&#32622;&#19982;<code class="literal">store-passwords</code>&#30456;&#20284;&#65292;&#19981;&#36807;&#35774;&#32622;&#20102;&#36825;&#20010;&#36873;&#39033;&#23558;&#20250;&#20445;&#23384;<span class="emphasis"><em>&#25152;&#26377;</em></span>&#35748;&#35777;&#20449;&#24687;&#65292;&#22914;&#29992;&#25143;&#21517;&#12289;&#23494;&#30721;&#12289;&#26381;&#21153;&#22120;&#35777;&#20070;&#65292;&#20197;&#21450;&#20854;&#20182;&#20219;&#20309;&#31867;&#22411;&#30340;&#21487;&#20197;&#32531;&#23384;&#30340;&#20973;&#35777;&#12290;</p></dd></dl></div><p><code class="literal">helpers</code>&#23567;&#33410;&#25511;&#21046;&#23436;&#25104;Subversion&#20219;&#21153;&#30340;&#22806;&#37096;&#31243;&#24207;&#65292;&#27491;&#30830;&#30340;&#36873;&#39033;&#21253;&#25324;&#65306;</p><div class="variablelist"><dl><dt><span class="term">
+                <code class="literal">editor-cmd</code>
+              </span></dt><dd><p>This specifies the program Subversion will use to
+                query the user for certain types of textual metadata
+                or when interactively resolving conflicts.  See
+                <a class="xref" href="svn.advanced.externaleditors.html" title="Using External Editors">&#8220;Using External Editors&#8221;&#19968;&#33410;</a> for
+                more details on using external text editors with
+                Subversion.</p></dd><dt><span class="term">
+                <code class="literal">diff-cmd</code>
+              </span></dt><dd><p>This specifies the absolute path of a differencing
+                program, used when Subversion generates
+                &#8220;<span class="quote">diff</span>&#8221; output (such as when using the
+                <span class="command"><strong>svn diff</strong></span> command).  By default,
+                Subversion uses an internal differencing
+                library&#8212;setting this option will cause it to
+                perform this task using an external program.  See
+                <a class="xref" href="svn.advanced.externaldifftools.html" title="Using External Differencing and Merge Tools">&#8220;Using External Differencing and Merge Tools&#8221;&#19968;&#33410;</a> for
+                more details on using such programs.</p></dd><dt><span class="term">
+                <code class="literal">diff3-cmd</code>
+              </span></dt><dd><p>This specifies the absolute path of a three-way
+                differencing program.  Subversion uses this program to
+                merge changes made by the user with those received
+                from the repository.  By default, Subversion uses an
+                internal differencing library&#8212;setting this
+                option will cause it to perform this task using an
+                external program.  See <a class="xref" href="svn.advanced.externaldifftools.html" title="Using External Differencing and Merge Tools">&#8220;Using External Differencing and Merge Tools&#8221;&#19968;&#33410;</a> for more
+                details on using such programs.</p></dd><dt><span class="term">
+                <code class="literal">diff3-has-program-arg</code>
+              </span></dt><dd><p>&#22914;&#26524;<code class="literal">diff3-cmd</code>&#36873;&#39033;&#35774;&#32622;&#30340;&#31243;&#24207;&#25509;&#21463;&#19968;&#20010;<code class="option">--diff-program</code>&#21629;&#20196;&#34892;&#21442;&#25968;&#65292;&#36825;&#20010;&#26631;&#35760;&#24517;&#39035;&#35774;&#32622;&#20026;<code class="literal">true</code>&#12290;</p></dd><dt><span class="term">
+                <code class="literal">merge-tool-cmd</code>
+              </span></dt><dd><p>This specifies the program that Subversion will
+                use to perform three-way merge operations on your
+                versioned files.  See <a class="xref" href="svn.advanced.externaldifftools.html" title="Using External Differencing and Merge Tools">&#8220;Using External Differencing and Merge Tools&#8221;&#19968;&#33410;</a> for more
+                details on using such programs.</p></dd></dl></div><p><code class="literal">tunnels</code>&#23567;&#33410;&#20801;&#35768;&#20320;&#23450;&#20041;&#19968;&#20010;<span class="command"><strong>svnserve</strong></span>&#21644;<code class="literal">svn://</code>&#23458;&#25143;&#31471;&#36830;&#25509;&#20351;&#29992;&#30340;&#31649;&#36947;&#27169;&#24335;&#65292;&#26356;&#22810;&#32454;&#33410;&#35265;<a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.sshauth" title="SSH &#38567;&#36947;">&#8220;SSH &#38567;&#36947;&#8221;&#19968;&#33410;</a>&#12290;</p><p><code class="literal">miscellany</code>&#23567;&#33410;&#26159;&#19968;&#20123;&#27809;&#27861;&#24402;&#21040;&#21035;&#22788;&#30340;&#36873;&#39033;&#12290; <sup>[<a name="d0e14765" href="#ftn.d0e14765" class="footnote">48</a>]</sup>&#22312;&#26412;&#23567;&#33410;&#65292;&#20320;&#20250;&#25214;&#21040;&#65306;</p><div class="variablelist"><dl><dt><span class="term">
+                <code class="literal">global-ignores</code>
+              </span></dt><dd><p>When running the <span class="command"><strong>svn status</strong></span>
+                command, Subversion lists unversioned files and
+                directories along with the versioned ones, annotating
+                them with a <code class="literal">?</code> character (see <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;">&#8220;&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;&#8221;&#19968;&#33410;</a>).  Sometimes, it can
+                be annoying to see uninteresting, unversioned
+                items&#8212;for example, object files that result from
+                a program's compilation&#8212;in this display.  The
+                <code class="literal">global-ignores</code> option is a list of
+                whitespace-delimited globs that describe the names of
+                files and directories that Subversion should not
+                display unless they are versioned.  The default value
+                is <code class="literal">*.o *.lo *.la #*# .*.rej *.rej .*~ *~
+                .#* .DS_Store</code>.</p><p>As well as <span class="command"><strong>svn status</strong></span>, the
+                <span class="command"><strong>svn add</strong></span> and <span class="command"><strong>svn import</strong></span>
+                commands also ignore files that match the list
+                when they are scanning a directory.  You can override this
+                behavior for a single instance of any of these commands
+                by explicitly specifying the filename, or by using
+                the <code class="option">--no-ignore</code> command-line flag.</p><p>For information on more fine-grained control of ignored items, see <a class="xref" href="svn.advanced.props.special.ignore.html" title="&#24573;&#30053;&#26410;&#29256;&#26412;&#25511;&#21046;&#30340;&#26465;&#30446;">&#8220;&#24573;&#30053;&#26410;&#29256;&#26412;&#25511;&#21046;&#30340;&#26465;&#30446;&#8221;&#19968;&#33410;</a>.</p></dd><dt><span class="term">
+                <code class="literal">enable-auto-props</code>
+              </span></dt><dd><p>This instructs Subversion to automatically set
+                properties on newly added or imported files.  The
+                default value is <code class="literal">no</code>, so set this to
+                <code class="literal">yes</code> to enable this feature.
+                The <code class="literal">auto-props</code> section of this file
+                specifies which properties are to be set on which files.</p></dd><dt><span class="term">
+                <code class="literal">log-encoding</code>
+              </span></dt><dd><p>This variable sets the default character set
+                encoding for commit log messages.  It's a permanent
+                form of the <code class="option">--encoding</code> option (see
+                <a class="xref" href="svn.ref.html#svn.ref.svn.sw" title="svn&#36873;&#39033;">&#8220;<span class="command"><strong>svn</strong></span>&#36873;&#39033;&#8221;&#19968;&#33410;</a>).  The Subversion
+                repository stores log messages in UTF-8 and assumes
+                that your log message is written using your operating
+                system's native locale.  You should specify a
+                different encoding if your commit messages are written
+                in any other encoding.</p></dd><dt><span class="term">
+                <code class="literal">use-commit-times</code>
+              </span></dt><dd><p>&#36890;&#24120;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#25991;&#20214;&#20250;&#26377;&#26368;&#21518;&#19968;&#27425;&#34987;&#36827;&#31243;&#35775;&#38382;&#30340;&#26102;&#38388;&#25139;&#65292;&#19981;&#31649;&#26159;&#20320;&#33258;&#24049;&#30340;&#32534;&#36753;&#22120;&#36824;&#26159;&#29992;<span class="command"><strong>svn</strong></span>&#23376;&#21629;&#20196;&#12290;&#36825;&#36890;&#24120;&#23545;&#20154;&#20204;&#24320;&#21457;&#36719;&#20214;&#25552;&#20379;&#20102;&#20415;&#21033;&#65292;&#22240;&#20026;&#32534;&#35793;&#31995;&#32479;&#36890;&#24120;&#20250;&#36890;&#36807;&#26597;&#30475;&#26102;&#38388;&#25139;&#26469;&#20915;&#23450;&#37027;&#20123;&#25991;&#20214;&#38656;&#35201;&#37325;&#26032;&#32534;&#35793;&#12290;</p><p>&#22312;&#20854;&#20182;&#24773;&#24418;&#65292;&#26377;&#26102;&#20505;&#22914;&#26524;&#24037;&#20316;&#25335;&#36125;&#30340;&#25991;&#20214;&#26102;&#38388;&#25139;&#21453;&#26144;&#20102;&#19978;&#19968;&#27425;&#22312;&#29256;&#26412;&#24211;&#20013;&#26356;&#25913;&#30340;&#26102;&#38388;&#20250;&#38750;&#24120;&#22909;&#65292;<span class="command"><strong>svn export</strong></span>&#21629;&#20196;&#20250;&#19968;&#30452;&#25918;&#32622;&#36825;&#20123;&#8220;<span class="quote">&#19978;&#27425;&#25552;&#20132;&#30340;&#26102;&#38388;&#25139;</span>&#8221;&#25918;&#21040;&#23427;&#21019;&#24314;&#30340;&#30446;&#24405;&#26641;&#12290;&#36890;&#36807;&#35774;&#32622;&#36825;&#20010;config&#21442;&#25968;&#20026;<code class="literal">yes</code>&#65292;<span class="command"><strong>svn checkout</strong></span>&#12289;<span class="command"><strong>svn update</strong></span>&#12289; <span class="command"><strong>svn switch</strong></span>&#21644;<span class="command"><strong>svn revert</strong></span>&#21629;&#20196;&#20063;&#20250;&#20026;&#23427;&#20204;&#25805;&#20316;&#30340;&#25991;&#20214;&#35774;&#32622;&#19978;&#27425;&#25552;&#20132;&#30340;&#26102;&#38388;&#25139;&#12290;</p></dd><dt><span class="term">
+                <code class="literal">mime-types-file</code>
+              </span></dt><dd><p>This option, new to Subversion 1.5, specifies the
+                path of a MIME types mapping file, such as the
+                <code class="filename">mime.types</code> file provided by the
+                Apache HTTP Server.  Subversion uses this file to
+                assign MIME types to newly added or imported files.
+                See <a class="xref" href="svn.advanced.props.html#svn.advanced.props.auto" title="&#33258;&#21160;&#35774;&#32622;&#23646;&#24615;">&#8220;&#33258;&#21160;&#35774;&#32622;&#23646;&#24615;&#8221;&#19968;&#33410;</a> and
+                <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.mime-type" title="&#25991;&#20214;&#20869;&#23481;&#31867;&#22411;">&#8220;&#25991;&#20214;&#20869;&#23481;&#31867;&#22411;&#8221;&#19968;&#33410;</a> for more about Subversion's detection and use of
+                file content types.</p></dd><dt><span class="term">
+                <code class="literal">preserved-conflict-file-exts</code>
+              </span></dt><dd><p>The value of this option is a space-delimited list
+                of file extensions that Subversion should preserve
+                when generating conflict filenames.  By default, the
+                list is empty.  This option is new to Subversion
+                1.5.</p><p>When Subversion detects conflicting file content
+                changes, it defers resolution of that conflict to the
+                user.  To assist in the resolution, Subversion keeps
+                pristine copies of the various competing versions of
+                the file in the working copy.  By default, those
+                conflict files have names constructed by appending to
+                the original filename a custom extension such as
+                <code class="filename">.mine</code> or
+                <code class="filename">.<em class="replaceable"><code>REV</code></em></code>
+                (where <em class="replaceable"><code>REV</code></em> is a revision
+                number).  A mild annoyance with this naming scheme is
+                that on operating systems where a file's extension
+                determines the default application used to open and
+                edit that file, appending a custom extension prevents
+                the file from being easily opened by its native
+                application.  For example, if the file
+                <code class="filename">ReleaseNotes.pdf</code> was conflicted,
+                the conflict files might be named
+                <code class="filename">ReleaseNotes.pdf.mine</code> or
+                <code class="filename">ReleaseNotes.pdf.r4231</code>.  While
+                your system might be configured to use Adobe's Acrobat
+                Reader to open files whose extensions are
+                <code class="filename">.pdf</code>, there probably isn't an
+                application configured on your system to open all
+                files whose extensions are
+                <code class="filename">.r4231</code>.</p><p>You can fix this annoyance by using this
+                configuration option, though.  For files with one of
+                the specified extensions, Subversion will append to
+                the conflict file names the custom extension just as
+                before, but then also re-append the file's original
+                extension.  Using the previous example, and assuming
+                that <code class="filename">pdf</code> is one of the extensions
+                configured in this list thereof, the conflict files
+                generated for <code class="filename">ReleaseNotes.pdf</code>
+                would instead be named
+                <code class="filename">ReleaseNotes.pdf.mine.pdf</code> and
+                <code class="filename">ReleaseNotes.pdf.r4231.pdf</code>.
+                Because each of these files end in
+                <code class="filename">.pdf</code>, the correct default
+                application will be used to view them.</p></dd><dt><span class="term">
+                <code class="literal">interactive-conflicts</code>
+              </span></dt><dd><p>This is a boolean option that specifies whether
+                Subversion should try to resolve conflicts
+                interactively.  If its value is <code class="literal">yes</code>
+                (which is the default value), Subversion will prompt
+                the user for how to handle conflicts in the manner
+                demonstrated in <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.resolve" title="&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)">&#8220;&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)&#8221;&#19968;&#33410;</a>.  Otherwise, it will simply flag the conflict and
+                continue its operation, postponing resolution to a later
+                time.</p></dd><dt><span class="term">
+                <code class="literal">no-unlock</code>
+              </span></dt><dd><p>This boolean option corresponds to <span class="command"><strong>svn
+                commit</strong></span>'s <code class="option">--no-unlock</code>
+                option, which tells Subversion not to release locks on
+                files you've just committed.  If this runtime option
+                is set to <code class="literal">yes</code>, Subversion will
+                never release locks automatically, leaving you to run
+                <span class="command"><strong>svn unlock</strong></span> explicitly.  It defaults
+                to <code class="literal">no</code>.</p></dd></dl></div><p>The <code class="literal">auto-props</code> section controls
+          the Subversion client's ability to automatically set
+          properties on files when they are added or imported.
+          It contains any number of key-value pairs in the
+          format <code class="literal">PATTERN = PROPNAME=PROPVALUE</code>,
+          where <code class="literal">PATTERN</code> is a file pattern
+          that matches a set of filenames and the rest of the
+          line is the property and its value.  Multiple matches
+          on a file will result in multiple propsets for that
+          file; however, there is no guarantee that auto-props
+          will be applied in the order in which they are listed
+          in the config file, so you can't have one rule
+          &#8220;<span class="quote">override</span>&#8221; another.  You can find several
+          examples of auto-props usage in the
+          <code class="filename">config</code> file.  Lastly, don't
+          forget to set <code class="literal">enable-auto-props</code> to
+          <code class="literal">yes</code> in the <code class="literal">miscellany</code>
+          section if you want to enable auto-props.</p></div></div></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e14252" href="#d0e14252" class="para">47</a>] </sup><code class="literal">APPDATA</code>&#29615;&#22659;&#21464;&#37327;&#25351;&#21521;<code class="filename">Application Data</code>&#30446;&#24405;&#65292;&#25152;&#20197;&#20320;&#21487;&#20197;&#36890;&#36807;<code class="filename">%APPDATA%\Subversion</code>&#24341;&#29992;&#29992;&#25143;&#37197;&#32622;&#21306;&#30446;&#24405;&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e14765" href="#d0e14765" class="para">48</a>] </sup>&#23601;&#26159;&#19968;&#20010;&#22823;&#26434;&#28905;&#65311;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.serverconfig.multimethod.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.l10n.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#26412;&#22320;&#21270;</td></tr></table></div></body></html>

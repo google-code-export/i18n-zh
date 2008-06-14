@@ -1,0 +1,65 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.serverconfig.html" title="&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;"><link rel="prev" href="svn.serverconfig.pathbasedauthz.html" title="&#22522;&#20110;&#36335;&#24452;&#30340;&#25480;&#26435;"><link rel="next" href="svn.customization.html" title="&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340;Subversion&#20307;&#39564;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.serverconfig.pathbasedauthz.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.customization.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.serverconfig.multimethod"></a>&#25903;&#25345;&#22810;&#31181;&#29256;&#26412;&#24211;&#35775;&#38382;&#26041;&#27861;</h2></div></div></div><p>&#20320;&#24050;&#32463;&#30475;&#21040;&#20102;&#19968;&#20010;&#29256;&#26412;&#24211;&#21487;&#20197;&#29992;&#22810;&#31181;&#26041;&#24335;&#35775;&#38382;&#65292;&#20294;&#26159;&#21487;&#20197;&#8212;&#25110;&#32773;&#35828;&#23433;&#20840;&#30340;&#8212;&#29992;&#20960;&#31181;&#26041;&#24335;&#21516;&#26102;&#24182;&#34892;&#30340;&#35775;&#38382;&#20320;&#30340;&#29256;&#26412;&#24211;&#21527;&#65311;&#22238;&#31572;&#26159;&#21487;&#20197;&#65292;&#20504;&#33509;&#20320;&#26377;&#19968;&#20123;&#28145;&#35851;&#36828;&#34385;&#30340;&#20351;&#29992;&#12290;</p><p>&#22312;&#20219;&#20309;&#32473;&#23450;&#30340;&#26102;&#38388;&#65292;&#36825;&#20123;&#36827;&#31243;&#20250;&#35201;&#27714;&#35835;&#25110;&#32773;&#20889;&#35775;&#38382;&#20320;&#30340;&#29256;&#26412;&#24211;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>Regular system users using a Subversion client (as
+          themselves) to access the repository directly via
+          <code class="literal">file://</code> URLs</p></li><li><p>Regular system users connecting to SSH-spawned private
+          <span class="command"><strong>svnserve</strong></span> processes (running as
+          themselves), which access the repository</p></li><li><p>An <span class="command"><strong>svnserve</strong></span> process&#8212;either a
+          daemon or one launched by
+          <span class="command"><strong>inetd</strong></span>&#8212;running as a particular fixed
+          user</p></li><li><p>An Apache <span class="command"><strong>httpd</strong></span> process, running as a
+          particular fixed user</p></li></ul></div><p>The most common problem administrators run into is
+      repository ownership and permissions.  Does every process (or
+      user) in the previous list have the rights to read and write the
+      repository's underlying data files?  Assuming you have a
+      Unix-like operating system, a straightforward approach might be
+      to place every potential repository user into a
+      new <code class="literal">svn</code> group, and make the repository wholly
+      owned by that group.  But even that's not enough, because a
+      process may write to the database files using an unfriendly
+      umask&#8212;one that prevents access by other users.</p><p>&#25152;&#20197;&#19979;&#19968;&#27493;&#25105;&#20204;&#19981;&#36873;&#25321;&#20026;&#27599;&#20010;&#29256;&#26412;&#24211;&#29992;&#25143;&#35774;&#32622;&#19968;&#20010;&#20849;&#21516;&#30340;&#32452;&#30340;&#26041;&#27861;&#65292;&#32780;&#26159;&#24378;&#21046;&#27599;&#20010;&#29256;&#26412;&#24211;&#35775;&#38382;&#36827;&#31243;&#20351;&#29992;&#19968;&#20010;&#20581;&#20840;&#30340;umask&#12290;&#23545;&#30452;&#25509;&#35775;&#38382;&#29256;&#26412;&#24211;&#30340;&#29992;&#25143;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svn</strong></span>&#30340;&#21253;&#35065;&#33050;&#26412;&#26469;&#39318;&#20808;&#35774;&#32622;<span class="command"><strong>umask 002</strong></span>&#65292;&#28982;&#21518;&#36816;&#34892;&#30495;&#23454;&#30340;<span class="command"><strong>svn</strong></span>&#23458;&#25143;&#31471;&#31243;&#24207;&#65292;&#20320;&#21487;&#20197;&#20026;<span class="command"><strong>svnserve</strong></span>&#20889;&#30456;&#21516;&#30340;&#33050;&#26412;&#65292;&#24182;&#19988;&#22686;&#21152;<span class="command"><strong>umask 002</strong></span>&#21629;&#20196;&#21040;Apache&#33258;&#24049;&#30340;&#21551;&#21160;&#33050;&#26412;<code class="filename">apachectl</code>&#20013;&#12290;&#20363;&#22914;&#65306;</p><pre class="screen">
+$ cat /usr/bin/svn
+
+#!/bin/sh
+
+umask 002
+/usr/bin/svn-real "$@"
+
+</pre><p>Another common problem is often encountered on Unix-like
+      systems.  If your repository is backed by Berkeley DB, for
+      example, it occasionally creates new log files to journal its
+      actions.  Even if the Berkeley DB repository is wholly owned by
+      the <span class="command"><strong>svn</strong></span> group, these newly created log files
+      won't necessarily be owned by that same group, which then
+      creates more permissions problems for your users.  A good
+      workaround is to set the group SUID bit on the
+      repository's <code class="filename">db</code> directory. This causes all
+      newly created log files to have the same group owner as the
+      parent directory.</p><p>&#19968;&#26086;&#20320;&#36339;&#36807;&#20102;&#36825;&#20123;&#38556;&#30861;&#65292;&#20320;&#30340;&#29256;&#26412;&#24211;&#19968;&#23450;&#26159;&#21487;&#20197;&#36890;&#36807;&#21508;&#31181;&#21487;&#33021;&#30340;&#25163;&#27573;&#35775;&#38382;&#20102;&#65292;&#36825;&#30475;&#36215;&#26469;&#26377;&#28857;&#20940;&#20081;&#21644;&#22797;&#26434;&#65292;&#20294;&#26159;&#36825;&#20010;&#35753;&#22810;&#20010;&#29992;&#25143;&#20998;&#20139;&#23545;&#19968;&#20010;&#25991;&#20214;&#30340;&#20889;&#26435;&#38480;&#30340;&#38382;&#39064;&#26159;&#19968;&#20010;&#32463;&#20856;&#38382;&#39064;&#65292;&#24182;&#19988;&#32463;&#24120;&#26159;&#27809;&#26377;&#20248;&#38597;&#30340;&#35299;&#20915;&#12290;</p><p>Fortunately, most repository administrators will never
+      <span class="emphasis"><em>need</em></span> to have such a complex configuration.
+      Users who wish to access repositories that live on the same
+      machine are not limited to using <code class="literal">file://</code>
+      access URLs&#8212;they can typically contact the Apache HTTP
+      server or <span class="command"><strong>svnserve</strong></span> using
+      <code class="literal">localhost</code> for the server name in their
+      <code class="literal">http://</code> or <code class="literal">svn://</code> URLs.
+      And maintaining multiple server processes for your Subversion
+      repositories is likely to be more of a headache than necessary.
+      We recommend you choose a single server that best meets your
+      needs and stick with it!</p><div class="sidebar"><p class="title"><b>The svn+ssh:// Server Checklist</b></p><p>It can be quite tricky to get a bunch of users with
+        existing SSH accounts to share a repository without
+        permissions problems.  If you're confused about all the things
+        that you (as an administrator) need to do on a Unix-like
+        system, here's a quick checklist that resummarizes some of
+        topics discussed in this section:</p><div class="itemizedlist"><ul type="disc"><li><p>All of your SSH users need to be able to read and
+            write to the repository, so put all the SSH users into a
+            single group.</p></li><li><p>&#35753;&#37027;&#20010;&#32452;&#25317;&#26377;&#25972;&#20010;&#29256;&#26412;&#24211;&#12290;</p></li><li><p>&#35774;&#32622;&#32452;&#30340;&#35775;&#38382;&#35768;&#21487;&#20026;&#35835;/&#20889;&#12290;</p></li><li><p>Your users need to use a sane umask when accessing the
+            repository, so make sure that <span class="command"><strong>svnserve</strong></span>
+            (<code class="filename">/usr/bin/svnserve</code>, or wherever it
+            lives in <code class="literal">$PATH</code>) is actually a wrapper
+            script that sets <span class="command"><strong>umask 002</strong></span> and
+            executes the real <span class="command"><strong>svnserve</strong></span>
+            binary.</p></li><li><p>Take similar measures when using
+            <span class="command"><strong>svnlook</strong></span> and
+            <span class="command"><strong>svnadmin</strong></span>.  Either run them with a sane
+            umask or wrap them as just described.</p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.serverconfig.pathbasedauthz.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.serverconfig.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.customization.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#22522;&#20110;&#36335;&#24452;&#30340;&#25480;&#26435;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340;Subversion&#20307;&#39564;</td></tr></table></div></body></html>

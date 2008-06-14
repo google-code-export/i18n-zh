@@ -1,0 +1,91 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#29256;&#26412;&#27169;&#22411;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.basic.html" title="&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;"><link rel="prev" href="svn.basic.html" title="&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;"><link rel="next" href="svn.basic.in-action.html" title="Subversion&#23454;&#36341;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#29256;&#26412;&#27169;&#22411;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.basic.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.basic.in-action.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.basic.vsn-models"></a>&#29256;&#26412;&#27169;&#22411;</h2></div></div></div><p>&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#30340;&#26680;&#24515;&#20219;&#21153;&#26159;&#23454;&#29616;&#21327;&#20316;&#32534;&#36753;&#21644;&#25968;&#25454;&#20849;&#20139;&#65292;&#20294;&#26159;&#19981;&#21516;&#30340;&#31995;&#32479;&#20351;&#29992;&#19981;&#21516;&#30340;&#31574;&#30053;&#23454;&#29616;&#36825;&#20010;&#30446;&#30340;&#12290;&#25105;&#20204;&#26377;&#35768;&#22810;&#29702;&#30001;&#35201;&#21435;&#29702;&#35299;&#36825;&#20123;&#31574;&#30053;&#30340;&#21306;&#21035;&#65292;&#39318;&#20808;&#65292;&#22914;&#26524;&#20320;&#36935;&#21040;&#20102;&#20854;&#20182;&#31867;&#20284;Subversion&#30340;&#31995;&#32479;&#65292;&#21487;&#20197;&#24110;&#21161;&#20320;&#27604;&#36739;&#29616;&#26377;&#30340;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#12290;&#27492;&#22806;&#65292;&#21487;&#20197;&#24110;&#21161;&#20320;&#26356;&#26377;&#25928;&#30340;&#20351;&#29992;Subversion&#65292;&#22240;&#20026;Subversion&#26412;&#36523;&#25903;&#25345;&#19981;&#21516;&#30340;&#24037;&#20316;&#26041;&#24335;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.vsn-models.problem-sharing"></a>The Problem of File Sharing</h3></div></div></div><p>&#25152;&#26377;&#30340;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#37117;&#38656;&#35201;&#35299;&#20915;&#36825;&#26679;&#19968;&#20010;&#22522;&#30784;&#38382;&#39064;&#65306;&#24590;&#26679;&#35753;&#31995;&#32479;&#20801;&#35768;&#29992;&#25143;&#20849;&#20139;&#20449;&#24687;&#65292;&#32780;&#19981;&#20250;&#35753;&#20182;&#20204;&#22240;&#24847;&#22806;&#32780;&#20114;&#30456;&#24178;&#25200;&#65311;&#29256;&#26412;&#24211;&#37324;&#24847;&#22806;&#35206;&#30422;&#21035;&#20154;&#30340;&#26356;&#25913;&#38750;&#24120;&#30340;&#23481;&#26131;&#12290;</p><p>Consider the scenario shown in <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.problem-sharing.dia-1" title="&#22270;&nbsp;1.2.&nbsp;&#38656;&#35201;&#36991;&#20813;&#30340;&#38382;&#39064;">&#22270;&nbsp;1.2 &#8220;&#38656;&#35201;&#36991;&#20813;&#30340;&#38382;&#39064;&#8221;</a>.
+        Suppose we have two coworkers, Harry and Sally.  They each
+        decide to edit the same repository file at the same time.  If
+        Harry saves his changes to the repository first, then it's
+        possible that (a few moments later) Sally could accidentally
+        overwrite them with her own new version of the file.  While
+        Harry's version of the file won't be lost forever (because the
+        system remembers every change), any changes Harry made
+        <span class="emphasis"><em>won't</em></span> be present in Sally's newer version
+        of the file, because she never saw Harry's changes to begin
+        with.  Harry's work is still effectively lost&#8212;or at
+        least missing from the latest version of the file&#8212;and
+        probably by accident.  This is definitely a situation we want
+        to avoid!</p><div class="figure"><a name="svn.basic.vsn-models.problem-sharing.dia-1"></a><p class="title"><b>&#22270;&nbsp;1.2.&nbsp;&#38656;&#35201;&#36991;&#20813;&#30340;&#38382;&#39064;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia2.png"></div></div></div><br class="figure-break"></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.vsn-models.lock-unlock"></a>&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145; &#26041;&#26696;</h3></div></div></div><p>Many version control systems use a
+        <em class="firstterm">lock-modify-unlock</em> model to address the
+        problem of many authors clobbering each other's work.  In this
+        model, the repository allows only one person to change a file
+        at a time.  This exclusivity policy is managed using locks.
+        Harry must &#8220;<span class="quote">lock</span>&#8221; a file before he can begin
+        making changes to it.  If Harry has locked a file, then Sally
+        cannot also lock it, and therefore cannot make any changes to
+        that file.  All she can do is read the file and wait for
+        Harry to finish his changes and release his lock.  After Harry
+        unlocks the file, Sally can take her turn by locking and
+        editing the file.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.lock-unlock.dia-1" title="&#22270;&nbsp;1.3.&nbsp;&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145; &#26041;&#26696;">&#22270;&nbsp;1.3 &#8220;&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145; &#26041;&#26696;&#8221;</a>
+        demonstrates this simple solution.</p><div class="figure"><a name="svn.basic.vsn-models.lock-unlock.dia-1"></a><p class="title"><b>&#22270;&nbsp;1.3.&nbsp;&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145; &#26041;&#26696;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia3.png"></div></div></div><br class="figure-break"><p>The problem with the lock-modify-unlock model is that it's
+        a bit restrictive and often becomes a roadblock for
+        users:</p><div class="itemizedlist"><ul type="disc"><li><p><span class="emphasis"><em>&#38145;&#23450;&#21487;&#33021;&#23548;&#33268;&#31649;&#29702;&#38382;&#39064;&#12290;</em></span>&#26377;&#26102;&#20505;Harry&#20250;&#38145;&#20303;&#25991;&#20214;&#28982;&#21518;&#24536;&#20102;&#27492;&#20107;&#65292;&#36825;&#23601;&#26159;&#35828;Sally&#19968;&#30452;&#31561;&#24453;&#35299;&#38145;&#26469;&#32534;&#36753;&#36825;&#20123;&#25991;&#20214;&#65292;&#22905;&#22312;&#36825;&#37324;&#20725;&#20303;&#20102;&#12290;&#28982;&#21518;Harry&#21435;&#26053;&#34892;&#20102;&#65292;&#29616;&#22312;Sally&#21482;&#22909;&#21435;&#25214;&#31649;&#29702;&#21592;&#25918;&#24320;&#38145;&#65292;&#36825;&#31181;&#24773;&#20917;&#20250;&#23548;&#33268;&#19981;&#24517;&#35201;&#30340;&#32829;&#25601;&#21644;&#26102;&#38388;&#28010;&#36153;&#12290;</p></li><li><p><span class="emphasis"><em>&#38145;&#23450;&#21487;&#33021;&#23548;&#33268;&#19981;&#24517;&#35201;&#30340;&#32447;&#24615;&#21270;&#24320;&#21457;&#12290;</em></span>&#22914;&#26524;Harry&#32534;&#36753;&#19968;&#20010;&#25991;&#20214;&#30340;&#24320;&#22987;&#65292;Sally&#24819;&#32534;&#36753;&#21516;&#19968;&#20010;&#25991;&#20214;&#30340;&#32467;&#23614;&#65292;&#36825;&#31181;&#20462;&#25913;&#19981;&#20250;&#20914;&#31361;&#65292;&#35774;&#24819;&#20462;&#25913;&#21487;&#20197;&#27491;&#30830;&#30340;&#21512;&#24182;&#21040;&#19968;&#36215;&#65292;&#20182;&#20204;&#21487;&#20197;&#36731;&#26494;&#30340;&#24182;&#34892;&#24037;&#20316;&#32780;&#27809;&#26377;&#22826;&#22810;&#30340;&#22351;&#22788;&#65292;&#27809;&#26377;&#24517;&#35201;&#35753;&#20182;&#20204;&#36718;&#27969;&#24037;&#20316;&#12290;</p></li><li><p><span class="emphasis"><em>Locking may create a false sense of
+            security.</em></span>
+
+            Suppose Harry locks and edits file A, while Sally
+            simultaneously locks and edits file B.  But what if A and
+            B depend on one another, and the changes made to each are
+            semantically incompatible?  Suddenly A and B don't work
+            together anymore.  The locking system was powerless to
+            prevent the problem&#8212;yet it somehow provided a false
+            sense of security.  It's easy for Harry and Sally to
+            imagine that by locking files, each is beginning a safe,
+            insulated task, and thus they need not bother discussing
+            their incompatible changes early on.  Locking often
+            becomes a substitute for real communication.</p></li></ul></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.vsn-models.copy-merge"></a>&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;</h3></div></div></div><p>Subversion, CVS, and many other version control systems
+        use a <em class="firstterm">copy-modify-merge</em> model as an
+        alternative to locking.  In this model, each user's client
+        contacts the project repository and creates a personal
+        <em class="firstterm">working copy</em>&#8212;a local reflection
+        of the repository's files and directories.  Users then work
+        simultaneously and independently, modifying their private
+        copies.  Finally, the private copies are merged together into
+        a new, final version.  The version control system often
+        assists with the merging, but ultimately, a human being is
+        responsible for making it happen correctly.</p><p>Here's an example.  Say that Harry and Sally each create
+        working copies of the same project, copied from the
+        repository.  They work concurrently and make changes to the
+        same file A within their copies.  Sally saves her changes to
+        the repository first.  When Harry attempts to save his changes
+        later, the repository informs him that his file A is
+        <em class="firstterm">out-of-date</em>.  In other words, that file
+        A in the repository has somehow changed since he last copied
+        it.  So Harry asks his client to <em class="firstterm">merge</em>
+        any new changes from the repository into his working copy of
+        file A.  Chances are that Sally's changes don't overlap with
+        his own; once he has both sets of changes integrated, he
+        saves his working copy back to the repository.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-1" title="&#22270;&nbsp;1.4.&nbsp;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;">&#22270;&nbsp;1.4 &#8220;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;&#8221;</a> and <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-2" title="&#22270;&nbsp;1.5.&nbsp;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;(&#32493;)">&#22270;&nbsp;1.5 &#8220;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;(&#32493;)&#8221;</a> show this
+        process.</p><div class="figure"><a name="svn.basic.vsn-models.copy-merge.dia-1"></a><p class="title"><b>&#22270;&nbsp;1.4.&nbsp;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia4.png"></div></div></div><br class="figure-break"><div class="figure"><a name="svn.basic.vsn-models.copy-merge.dia-2"></a><p class="title"><b>&#22270;&nbsp;1.5.&nbsp;&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182; &#26041;&#26696;(&#32493;)</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia5.png"></div></div></div><br class="figure-break"><p>But what if Sally's changes <span class="emphasis"><em>do</em></span> overlap
+        with Harry's changes?  What then?  This situation is called a
+        <em class="firstterm">conflict</em>, and it's usually not much of
+        a problem.  When Harry asks his client to merge the latest
+        repository changes into his working copy, his copy of file A
+        is somehow flagged as being in a state of conflict: he'll be
+        able to see both sets of conflicting changes and manually
+        choose between them.  Note that software can't automatically
+        resolve conflicts; only humans are capable of understanding
+        and making the necessary intelligent choices.  Once Harry has
+        manually resolved the overlapping changes&#8212;perhaps after
+        a discussion with Sally&#8212;he can safely save the
+        merged file back to the repository.</p><p>&#25335;&#36125;-&#20462;&#25913;-&#21512;&#24182;&#27169;&#22411;&#24863;&#35273;&#26377;&#19968;&#28857;&#28151;&#20081;&#65292;&#20294;&#22312;&#23454;&#36341;&#20013;&#65292;&#36890;&#24120;&#36816;&#34892;&#30340;&#24456;&#24179;&#31283;&#65292;&#29992;&#25143;&#21487;&#20197;&#24182;&#34892;&#30340;&#24037;&#20316;&#65292;&#19981;&#24517;&#31561;&#24453;&#21035;&#20154;&#65292;&#24403;&#24037;&#20316;&#22312;&#21516;&#19968;&#20010;&#25991;&#20214;&#19978;&#26102;&#65292;&#20063;&#24456;&#23569;&#20250;&#26377;&#20132;&#36845;&#21457;&#29983;&#65292;&#20914;&#31361;&#24182;&#19981;&#39057;&#32321;&#65292;&#22788;&#29702;&#20914;&#31361;&#30340;&#26102;&#38388;&#36828;&#27604;&#31561;&#24453;&#35299;&#38145;&#33457;&#36153;&#30340;&#26102;&#38388;&#23569;&#12290;</p><p>&#26368;&#21518;&#65292;&#19968;&#20999;&#37117;&#35201;&#24402;&#32467;&#21040;&#19968;&#26465;&#37325;&#35201;&#30340;&#22240;&#32032;&#65306;&#29992;&#25143;&#20132;&#27969;&#12290;&#24403;&#29992;&#25143;&#20132;&#27969;&#36139;&#20047;&#65292;&#35821;&#27861;&#21644;&#35821;&#20041;&#30340;&#20914;&#31361;&#23601;&#20250;&#22686;&#21152;&#65292;&#27809;&#26377;&#31995;&#32479;&#21487;&#20197;&#24378;&#21046;&#29992;&#25143;&#23436;&#32654;&#30340;&#20132;&#27969;&#65292;&#27809;&#26377;&#31995;&#32479;&#21487;&#20197;&#26816;&#27979;&#35821;&#20041;&#19978;&#30340;&#20914;&#31361;&#65292;&#25152;&#20197;&#27809;&#26377;&#20219;&#20309;&#35777;&#25454;&#33021;&#22815;&#25215;&#35834;&#38145;&#23450;&#31995;&#32479;&#21487;&#20197;&#38450;&#27490;&#20914;&#31361;&#65292;&#23454;&#36341;&#20013;&#65292;&#38145;&#23450;&#38500;&#20102;&#32422;&#26463;&#20102;&#29983;&#20135;&#21147;&#65292;&#24182;&#27809;&#26377;&#20570;&#20160;&#20040;&#20107;&#12290;</p><div class="sidebar"><a name="svn.basic.vsn-models.copy-merge.sb-1"></a><p class="title"><b>When Locking Is Necessary</b></p><p>&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145;&#27169;&#22411;&#34987;&#35748;&#20026;&#19981;&#21033;&#20110;&#21327;&#20316;&#65292;&#20294;&#26377;&#26102;&#20505;&#38145;&#23450;&#20250;&#26356;&#22909;&#12290;</p><p>The copy-modify-merge model is based on the assumption
+          that files are contextually mergeable&#8212;that is, that the
+          majority of the files in the repository are line-based text
+          files (such as program source code).  But for files with
+          binary formats, such as artwork or sound, it's often
+          impossible to merge conflicting changes.  In these
+          situations, it really is necessary to users to take strict
+          turns when changing the file.  Without serialized access,
+          somebody ends up wasting time on changes that are ultimately
+          discarded.</p><p>While Subversion is primarily a copy-modify-merge
+          system, it still recognizes the need to lock an occasional
+          file, and thus provides mechanisms for this.  This feature is
+          discussed later in this book in
+          <a class="xref" href="svn.advanced.locking.html" title="&#38145;&#23450;">&#8220;&#38145;&#23450;&#8221;&#19968;&#33410;</a>.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.basic.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.basic.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.basic.in-action.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Subversion&#23454;&#36341;</td></tr></table></div></body></html>

@@ -1,0 +1,48 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.tour.html" title="&#31532;&nbsp;2&nbsp;&#31456;&nbsp;&#22522;&#26412;&#20351;&#29992;"><link rel="prev" href="svn.tour.history.html" title="&#26816;&#39564;&#21382;&#21490;"><link rel="next" href="svn.tour.summary.html" title="&#24635;&#32467;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.tour.history.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;2&nbsp;&#31456;&nbsp;&#22522;&#26412;&#20351;&#29992;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.tour.summary.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.tour.cleanup"></a>&#26377;&#26102;&#20320;&#21482;&#38656;&#35201;&#28165;&#29702;</h2></div></div></div><p>Now that we've covered the day-to-day tasks that you'll
+      frequently use Subversion for, we'll review a few administrative
+      tasks relating to your working copy.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.tour.cleanup.disposal"></a>Disposing of a Working Copy</h3></div></div></div><p>Subversion doesn't track either the state or existence of
+        working copies on the server, so there's no server overhead to
+        keeping working copies around.  Likewise, there's no need to
+        let the server know that you're going to delete a working
+        copy.</p><p>If you're likely to use a working copy again, there's
+        nothing wrong with just leaving it on disk until you're ready
+        to use it again, at which point all it takes is an
+        <span class="command"><strong>svn update</strong></span> to bring it up to date and ready
+        for use.</p><p>However, if you're definitely not going to use a working
+        copy again, you can safely delete the entire thing, but you'd
+        be well served to take a look through the working copy for
+        unversioned files.  To find these files, run <span class="command"><strong>svn
+        status</strong></span> and review any files that are prefixed by a
+        <code class="literal">?</code> to make certain that they're not of
+        importance.  After you're done reviewing, you can safely
+        delete your working copy.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.tour.cleanup.interruption"></a>Recovering from an Interruption</h3></div></div></div><p>When Subversion modifies your working copy (or any
+        information within <code class="filename">.svn</code>), it tries to do
+        so as safely as possible.  Before changing the working copy,
+        Subversion writes its intentions to a log file.  Next, it
+        executes the commands in the log file to apply the requested
+        change, holding a lock on the relevant part of the working
+        copy while it works&#8212;to prevent other Subversion clients
+        from accessing the working copy mid-change.  Finally,
+        Subversion removes the log file.  Architecturally, this is
+        similar to a journaled filesystem.  If a Subversion operation
+        is interrupted (if the process is killed or if the machine
+        crashes, for example), the log files remain on disk.  By
+        re-executing the log files, Subversion can complete the
+        previously started operation, and your working copy can get
+        itself back into a consistent state.</p><p>And this is exactly what <span class="command"><strong>svn cleanup</strong></span>
+        does: it searches your working copy and runs any leftover
+        logs, removing working copy locks in the process.
+        If Subversion ever tells you that some part of your working copy
+        is &#8220;<span class="quote">locked,</span>&#8221; then this is the command that you
+        should run.  Also, <span class="command"><strong>svn status</strong></span> will display
+        an <code class="literal">L</code> next to locked items:</p><pre class="screen">
+$ svn status
+  L    somedir
+M      somedir/foo.c
+
+$ svn cleanup
+$ svn status
+M      somedir/foo.c
+</pre><p>&#19981;&#35201;&#23558;&#24037;&#20316;&#25335;&#36125;&#38145;&#19982;Subversion&#29992;&#25143;&#20351;&#29992;&#24182;&#21457;&#29256;&#26412;&#25511;&#21046;&#30340;&#8220;<span class="quote">&#38145;&#23450;-&#20462;&#25913;-&#35299;&#38145;</span>&#8221;&#27169;&#22411;&#21019;&#24314;&#30340;&#38145;&#28151;&#28102;&#65307;&#26356;&#22810;&#32454;&#33410;&#35265;<a class="xref" href="svn.advanced.locking.html#svn.advanced.locking.meanings" title="The Three Meanings of &#8220;Lock&#8221;">The Three Meanings of &#8220;<span class="quote">Lock</span>&#8221;</a>&#12290;</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.tour.history.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.tour.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.tour.summary.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#26816;&#39564;&#21382;&#21490;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#24635;&#32467;</td></tr></table></div></body></html>

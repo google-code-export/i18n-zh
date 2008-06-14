@@ -1,0 +1,71 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#24120;&#29992;&#20998;&#25903;&#27169;&#24335;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.branchmerge.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;"><link rel="prev" href="svn.branchmerge.maint.html" title="&#20998;&#25903;&#32500;&#25252;"><link rel="next" href="svn.advanced.vendorbr.html" title="Vendor Branches"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#24120;&#29992;&#20998;&#25903;&#27169;&#24335;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.branchmerge.maint.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.vendorbr.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.branchmerge.commonpatterns"></a>&#24120;&#29992;&#20998;&#25903;&#27169;&#24335;</h2></div></div></div><p>There are many different uses for branching and <span class="command"><strong>svn
+        merge</strong></span>, and this section describes the most
+        common.</p><p>&#29256;&#26412;&#25511;&#21046;&#22312;&#36719;&#20214;&#24320;&#21457;&#20013;&#24191;&#27867;&#20351;&#29992;&#65292;&#36825;&#37324;&#26159;&#22242;&#38431;&#37324;&#31243;&#24207;&#21592;&#26368;&#24120;&#29992;&#30340;&#20004;&#31181;&#20998;&#25903;/&#21512;&#24182;&#27169;&#24335;&#30340;&#20171;&#32461;&#65292;&#22914;&#26524;&#20320;&#19981;&#26159;&#20351;&#29992;Subversion&#36719;&#20214;&#24320;&#21457;&#65292;&#21487;&#38543;&#24847;&#36339;&#36807;&#26412;&#23567;&#33410;&#65292;&#22914;&#26524;&#20320;&#26159;&#31532;&#19968;&#27425;&#20351;&#29992;&#29256;&#26412;&#25511;&#21046;&#30340;&#36719;&#20214;&#24320;&#21457;&#32773;&#65292;&#35831;&#26356;&#21152;&#27880;&#24847;&#65292;&#20197;&#19979;&#27169;&#24335;&#34987;&#35768;&#22810;&#32769;&#20853;&#24403;&#20316;&#26368;&#20339;&#23454;&#36341;&#65292;&#36825;&#20010;&#36807;&#31243;&#24182;&#19981;&#21482;&#26159;&#38024;&#23545;Subversion&#65292;&#22312;&#20219;&#20309;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#20013;&#37117;&#19968;&#26679;&#65292;&#20294;&#26159;&#22312;&#36825;&#37324;&#20351;&#29992;Subversion&#26415;&#35821;&#20250;&#24863;&#35273;&#26356;&#26041;&#20415;&#19968;&#28857;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.commonpatterns.release"></a>&#21457;&#24067;&#20998;&#25903;</h3></div></div></div><p>Most software has a typical lifecycle: code, test,
+        release, repeat.  There are two problems with this process.
+        First, developers need to keep writing new features while
+        quality-assurance teams take time to test supposedly stable
+        versions of the software.  New work cannot halt while the
+        software is tested.  Second, the team almost always needs to
+        support older, released versions of software; if a bug is
+        discovered in the latest code, it most likely exists in
+        released versions as well, and customers will want to get
+        that bugfix without having to wait for a major new
+        release.</p><p>&#36825;&#26159;&#29256;&#26412;&#25511;&#21046;&#21487;&#20197;&#20570;&#30340;&#24110;&#21161;&#65292;&#20856;&#22411;&#30340;&#36807;&#31243;&#22914;&#19979;&#65306;</p><div class="orderedlist"><ol type="1"><li><p><span class="emphasis"><em>&#24320;&#21457;&#32773;&#25552;&#20132;&#25152;&#26377;&#30340;&#26032;&#29305;&#24615;&#21040;&#20027;&#24178;&#12290;</em></span> &#27599;&#26085;&#30340;&#20462;&#25913;&#25552;&#20132;&#21040;<code class="filename">/trunk</code>&#65306;&#26032;&#29305;&#24615;&#65292;bug&#20462;&#27491;&#21644;&#20854;&#20182;&#12290;</p></li><li><p><span class="emphasis"><em>&#36825;&#20010;&#20027;&#24178;&#34987;&#25335;&#36125;&#21040;&#8220;<span class="quote">&#21457;&#24067;</span>&#8221;&#20998;&#25903;&#12290;</em></span> &#24403;&#23567;&#32452;&#35748;&#20026;&#36719;&#20214;&#24050;&#32463;&#20570;&#22909;&#21457;&#24067;&#30340;&#20934;&#22791;(&#22914;&#65292;&#29256;&#26412;1.0)&#28982;&#21518;<code class="filename">/trunk</code>&#20250;&#34987;&#25335;&#36125;&#21040;<code class="filename">/branches/1.0</code>&#12290;</p></li><li><p><span class="emphasis"><em>&#39033;&#30446;&#32452;&#32487;&#32493;&#24182;&#34892;&#24037;&#20316;&#65292;</em></span>&#19968;&#20010;&#23567;&#32452;&#24320;&#22987;&#23545;&#20998;&#25903;&#36827;&#34892;&#20005;&#37239;&#30340;&#27979;&#35797;&#65292;&#21516;&#26102;&#21478;&#19968;&#20010;&#23567;&#32452;&#22312;<code class="filename">/trunk</code>&#32487;&#32493;&#26032;&#30340;&#24037;&#20316;(&#22914;&#65292;&#20934;&#22791;2.0)&#65292;&#22914;&#26524;&#19968;&#20010;bug&#22312;&#20219;&#20309;&#19968;&#20010;&#20301;&#32622;&#34987;&#21457;&#29616;&#65292;&#38169;&#35823;&#20462;&#27491;&#38656;&#35201;&#26469;&#22238;&#36816;&#36865;&#12290;&#28982;&#32780;&#36825;&#20010;&#36807;&#31243;&#26377;&#26102;&#20505;&#20063;&#20250;&#32467;&#26463;&#65292;&#20363;&#22914;&#20998;&#25903;&#24050;&#32463;&#20026;&#21457;&#24067;&#21069;&#30340;&#26368;&#32456;&#27979;&#35797;&#8220;<span class="quote">&#20572;&#28382;</span>&#8221;&#20102;&#12290;</p></li><li><p><span class="emphasis"><em>&#20998;&#25903;&#24050;&#32463;&#20316;&#20102;&#26631;&#31614;&#24182;&#19988;&#21457;&#24067;&#65292;</em></span>&#24403;&#27979;&#35797;&#32467;&#26463;&#65292;<code class="filename">/branches/1.0</code>&#20316;&#20026;&#24341;&#29992;&#24555;&#29031;&#24050;&#32463;&#25335;&#36125;&#21040;<code class="filename">/tags/1.0.0</code>&#65292;&#36825;&#20010;&#26631;&#31614;&#34987;&#25171;&#21253;&#21457;&#24067;&#32473;&#23458;&#25143;&#12290;</p></li><li><p><span class="emphasis"><em>&#20998;&#25903;&#22810;&#27425;&#32500;&#25252;&#12290;</em></span>&#24403;&#32487;&#32493;&#22312;<code class="filename">/trunk</code>&#19978;&#20026;&#29256;&#26412;2.0&#24037;&#20316;&#65292;bug&#20462;&#27491;&#32487;&#32493;&#20174;<code class="filename">/trunk</code>&#36816;&#36865;&#21040;<code class="filename">/branches/1.0</code>&#65292;&#22914;&#26524;&#31215;&#32047;&#20102;&#36275;&#22815;&#30340;bug&#20462;&#27491;&#65292;&#31649;&#29702;&#37096;&#38376;&#20915;&#23450;&#21457;&#24067;1.0.1&#29256;&#26412;&#65306;&#25335;&#36125;<code class="filename">/branches/1.0</code>&#21040;<code class="filename">/tags/1.0.1</code>&#65292;&#26631;&#31614;&#34987;&#25171;&#21253;&#21457;&#24067;&#12290;</p></li></ol></div><p>&#25972;&#20010;&#36807;&#31243;&#38543;&#30528;&#36719;&#20214;&#30340;&#25104;&#29087;&#19981;&#26029;&#37325;&#22797;&#65306;&#24403;2.0&#23436;&#25104;&#65292;&#19968;&#20010;&#26032;&#30340;2.0&#20998;&#25903;&#34987;&#21019;&#24314;&#65292;&#27979;&#35797;&#12289;&#25171;&#26631;&#31614;&#21644;&#26368;&#32456;&#21457;&#24067;&#65292;&#32463;&#36807;&#35768;&#22810;&#24180;&#65292;&#29256;&#26412;&#24211;&#32467;&#26463;&#20102;&#35768;&#22810;&#29256;&#26412;&#21457;&#24067;&#65292;&#36827;&#20837;&#20102;&#8220;<span class="quote">&#32500;&#25252;</span>&#8221;&#27169;&#24335;&#65292;&#35768;&#22810;&#26631;&#31614;&#20195;&#34920;&#20102;&#26368;&#32456;&#30340;&#21457;&#24067;&#29256;&#26412;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.commonpatterns.feature"></a>&#29305;&#24615;&#20998;&#25903;</h3></div></div></div><p>A <em class="firstterm">feature branch</em> is the sort of
+        branch that's been the dominant example in this chapter (the
+        one you've been working on while Sally continues to work on
+        <code class="filename">/trunk</code>).  It's a temporary branch created
+        to work on a complex change without interfering with the
+        stability of <code class="filename">/trunk</code>.  Unlike release
+        branches (which may need to be supported forever), feature
+        branches are born, used for a while, merged back to the trunk,
+        then ultimately deleted.  They have a finite span of
+        usefulness.</p><p>Again, project policies vary widely concerning exactly
+        when it's appropriate to create a feature branch.  Some
+        projects never use feature branches at all: commits to
+        <code class="filename">/trunk</code> are a free-for-all.  The
+        advantage to this system is that it's simple&#8212;nobody
+        needs to learn about branching or merging.  The disadvantage
+        is that the trunk code is often unstable or unusable.  Other
+        projects use branches to an extreme: no change is
+        <span class="emphasis"><em>ever</em></span> committed to the trunk directly.
+        Even the most trivial changes are created on a short-lived
+        branch, carefully reviewed, and merged to the trunk.  Then
+        the branch is deleted.  This system guarantees an
+        exceptionally stable and usable trunk at all times, but at
+        the cost of tremendous process overhead.</p><p>Most projects take a middle-of-the-road approach.  They
+        commonly insist that <code class="filename">/trunk</code> compile and
+        pass regression tests at all times.  A feature branch is
+        only required when a change requires a large number of
+        destabilizing commits.  A good rule of thumb is to ask this
+        question: if the developer worked for days in isolation and
+        then committed the large change all at once (so that
+        <code class="filename">/trunk</code> were never destabilized), would it
+        be too large a change to review?  If the answer to that
+        question is &#8220;<span class="quote">yes,</span>&#8221; then the change should be
+        developed on a feature branch.  As the developer commits
+        incremental changes to the branch, they can be easily reviewed
+        by peers.</p><p>&#26368;&#32456;&#65292;&#26377;&#19968;&#20010;&#38382;&#39064;&#23601;&#26159;&#24590;&#26679;&#20445;&#25345;&#19968;&#20010;&#29305;&#24615;&#20998;&#25903;&#8220;<span class="quote">&#21516;&#27493;</span>&#8221;&#20110;&#24037;&#20316;&#20013;&#30340;&#20027;&#24178;&#65292;&#22312;&#21069;&#38754;&#25552;&#21040;&#36807;&#65292;&#22312;&#19968;&#20010;&#20998;&#25903;&#19978;&#24037;&#20316;&#25968;&#21608;&#25110;&#20960;&#20010;&#26376;&#26159;&#24456;&#26377;&#39118;&#38505;&#30340;&#65292;&#20027;&#24178;&#30340;&#20462;&#25913;&#20063;&#35768;&#20250;&#25345;&#32493;&#28044;&#20837;&#65292;&#22240;&#20026;&#36825;&#19968;&#28857;&#65292;&#20004;&#26465;&#32447;&#30340;&#24320;&#21457;&#20250;&#21306;&#21035;&#24040;&#22823;&#65292;&#21512;&#24182;&#20998;&#25903;&#22238;&#21040;&#20027;&#24178;&#20250;&#25104;&#20026;&#19968;&#20010;&#22121;&#26790;&#12290;</p><p>This situation is best avoided by regularly merging trunk
+        changes to the branch.  Make up a policy: once a week, merge
+        the last week's worth of trunk changes to the branch.</p><p>At some point, you'll be ready to merge the
+        &#8220;<span class="quote">synchronized</span>&#8221; feature branch back to the trunk.
+        To do this, begin by doing a final merge of the latest trunk
+        changes to the branch.  When that's done, the latest versions
+        of branch and trunk will be absolutely identical except for
+        your branch changes.  You would then merge back with
+        the <code class="option">--reintegrate</code> option:</p><pre class="screen">
+$ cd trunk-working-copy
+
+$ svn update
+At revision 1910.
+
+$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/mybranch
+--- Merging differences between repository URLs into '.':
+U    real.c
+U    integer.c
+A    newdirectory
+A    newdirectory/newfile
+ U   .
+&#8230;
+</pre><p>&#21487;&#20197;&#29992;&#21478;&#19968;&#31181;&#32771;&#34385;&#36825;&#31181;&#27169;&#24335;&#65292;&#20320;&#27599;&#21608;&#25353;&#26102;&#21516;&#27493;&#20998;&#25903;&#21040;&#20027;&#24178;&#65292;&#31867;&#20284;&#20110;&#22312;&#24037;&#20316;&#25335;&#36125;&#25191;&#34892;<span class="command"><strong>svn update</strong></span>&#30340;&#21629;&#20196;&#65292;&#26368;&#32456;&#30340;&#21512;&#24182;&#25805;&#20316;&#31867;&#20284;&#20110;&#22312;&#24037;&#20316;&#25335;&#36125;&#36816;&#34892;<span class="command"><strong>svn commit</strong></span>&#65292;&#27605;&#31455;&#65292;&#24037;&#20316;&#25335;&#36125;&#19981;&#23601;&#26159;&#19968;&#20010;&#38750;&#24120;&#27973;&#30340;&#20998;&#25903;&#21527;&#65311;&#21482;&#26159;&#23427;&#19968;&#27425;&#21482;&#21487;&#20197;&#20445;&#23384;&#19968;&#20010;&#20462;&#25913;&#12290;</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.branchmerge.maint.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.vendorbr.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#20998;&#25903;&#32500;&#25252;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;Vendor Branches</td></tr></table></div></body></html>

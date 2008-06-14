@@ -1,0 +1,229 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Subversion&#23454;&#36341;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.basic.html" title="&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;"><link rel="prev" href="svn.basic.vsn-models.html" title="&#29256;&#26412;&#27169;&#22411;"><link rel="next" href="svn.basic.summary.html" title="&#24635;&#32467;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Subversion&#23454;&#36341;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.basic.vsn-models.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.basic.summary.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.basic.in-action"></a>Subversion&#23454;&#36341;</h2></div></div></div><p>&#26159;&#26102;&#20505;&#20174;&#25277;&#35937;&#36716;&#21040;&#20855;&#20307;&#20102;&#65292;&#22312;&#26412;&#23567;&#33410;&#65292;&#25105;&#20204;&#20250;&#23637;&#31034;&#19968;&#20010;Subversion&#30495;&#23454;&#20351;&#29992;&#30340;&#20363;&#23376;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.advanced.reposurls"></a>Subversion&#29256;&#26412;&#24211;URL</h3></div></div></div><p>&#27491;&#22914;&#25105;&#20204;&#22312;&#25972;&#26412;&#20070;&#37324;&#25551;&#36848;&#30340;&#65292;Subversion&#20351;&#29992;URL&#26469;&#35782;&#21035;Subversion&#29256;&#26412;&#24211;&#20013;&#30340;&#29256;&#26412;&#21270;&#36164;&#28304;&#65292;&#36890;&#24120;&#24773;&#20917;&#19979;&#65292;&#36825;&#20123;URL&#20351;&#29992;&#26631;&#20934;&#30340;&#35821;&#27861;&#65292;&#20801;&#35768;&#26381;&#21153;&#22120;&#21517;&#31216;&#21644;&#31471;&#21475;&#20316;&#20026;URL&#30340;&#19968;&#37096;&#20998;&#65306;</p><pre class="screen">
+$ svn checkout http://svn.example.com:9834/repos
+&#8230;
+</pre><p>&#20294;&#26159;Subversion&#22788;&#29702;URL&#30340;&#19968;&#20123;&#32454;&#24494;&#30340;&#19981;&#21516;&#20043;&#22788;&#38656;&#35201;&#27880;&#24847;&#65292;&#20363;&#22914;&#65292;&#20351;&#29992;<code class="literal">file:</code>&#35775;&#38382;&#26041;&#27861;&#30340;URL(&#29992;&#26469;&#35775;&#38382;&#26412;&#22320;&#29256;&#26412;&#24211;)&#24517;&#39035;&#19982;&#20064;&#24815;&#19968;&#33268;&#65292;&#21487;&#20197;&#21253;&#25324;&#19968;&#20010;<code class="literal">localhost</code>&#26381;&#21153;&#22120;&#21517;&#25110;&#32773;&#27809;&#26377;&#26381;&#21153;&#22120;&#21517;&#65306;</p><pre class="screen">
+$ svn checkout file:///var/svn/repos
+&#8230;
+$ svn checkout file://localhost/var/svn/repos
+&#8230;
+</pre><p>Also, users of the <code class="literal">file://</code> scheme on
+        Windows platforms will need to use an unofficially
+        &#8220;<span class="quote">standard</span>&#8221; syntax for accessing repositories
+        that are on the same machine, but on a different drive than
+        the client's current working drive.  Either of the two
+        following URL path syntaxes will work, where
+        <code class="literal">X</code> is the drive on which the repository
+        resides:</p><pre class="screen">
+C:\&gt; svn checkout file:///X:/var/svn/repos
+&#8230;
+C:\&gt; svn checkout "file:///X|/var/svn/repos"
+&#8230;
+</pre><p>&#22312;&#31532;&#20108;&#20010;&#35821;&#27861;&#37324;&#65292;&#20320;&#38656;&#35201;&#20351;&#29992;&#24341;&#21495;&#21253;&#21547;&#25972;&#20010;URL&#65292;&#36825;&#26679;&#31446;&#32447;&#23383;&#31526;&#25165;&#19981;&#20250;&#34987;&#35299;&#37322;&#20026;&#31649;&#36947;&#12290;&#24403;&#28982;&#65292;&#20063;&#35201;&#27880;&#24847;URL&#20351;&#29992;&#26222;&#36890;&#30340;&#26012;&#32447;&#32780;&#19981;&#26159;Windows&#26412;&#22320;(&#19981;&#26159;URL)&#30340;&#21453;&#26012;&#32447;&#12290;</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#27880;&#24847;</h3><p>&#20063;&#24517;&#39035;&#24847;&#35782;&#21040;Subversion&#30340;<code class="literal">file:</code> URL&#19981;&#33021;&#22312;&#26222;&#36890;&#30340;web&#26381;&#21153;&#22120;&#20013;&#24037;&#20316;&#12290;&#24403;&#20320;&#23581;&#35797;&#22312;web&#26381;&#21153;&#22120;&#26597;&#30475;&#19968;&#20010;<code class="literal">file:</code>&#30340;URL&#26102;&#65292;&#23427;&#20250;&#36890;&#36807;&#30452;&#25509;&#26816;&#27979;&#25991;&#20214;&#31995;&#32479;&#35835;&#21462;&#21644;&#26174;&#31034;&#37027;&#20010;&#20301;&#32622;&#30340;&#25991;&#20214;&#20869;&#23481;&#65292;&#20294;&#26159;Subversion&#30340;&#36164;&#28304;&#23384;&#22312;&#20110;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;(&#35265;<a class="xref" href="svn.developer.html#svn.developer.layerlib.repos" title="&#29256;&#26412;&#24211;&#23618;">&#8220;&#29256;&#26412;&#24211;&#23618;&#8221;&#19968;&#33410;</a>)&#20013;&#65292;&#20320;&#30340;&#27983;&#35272;&#22120;&#19981;&#20250;&#29702;&#35299;&#24590;&#26679;&#35835;&#21462;&#36825;&#20010;&#25991;&#20214;&#31995;&#32479;&#12290;</p></div><p>Finally, it should be noted that the Subversion client will
+        automatically encode URLs as necessary, just like a web browser
+        does.  For example, if a URL contains a space or upper-ASCII
+        character as in the following:</p><pre class="screen">
+$ svn checkout "http://host/path with space/project/espa&ntilde;a"
+</pre><p>then Subversion will escape the unsafe characters
+        and behave as if you had typed:</p><pre class="screen">
+$ svn checkout http://host/path%20with%20space/project/espa%C3%B1a
+</pre><p>&#22914;&#26524;URL&#21253;&#21547;&#31354;&#26684;&#65292;&#19968;&#23450;&#35201;&#20351;&#29992;&#24341;&#21495;&#65292;&#36825;&#26679;&#20320;&#30340;&#33050;&#26412;&#25165;&#20250;&#25226;&#23427;&#20570;&#19968;&#20010;&#21333;&#29420;&#30340;<span class="command"><strong>svn</strong></span>&#21442;&#25968;&#12290;</p><div class="sidebar"><a name="svn.basic.in-action.wc.sb-1"></a><p class="title"><b>&#29256;&#26412;&#24211;&#30340;URL</b></p><p>Subversion repositories can be accessed through many
+          different methods&#8212;on local disk or through various
+          network protocols, depending on how your administrator has
+          set things up for you.  A repository location, however, is
+          always a URL.
+          <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.tbl-1" title="&#34920;&nbsp;1.1.&nbsp;">&#34920;&nbsp;1.1 &#8220;&#8221;</a> describes how
+          different URL schemes map to the available access
+          methods.</p><div class="table"><a name="svn.basic.in-action.wc.tbl-1"></a><p class="title"><b>&#34920;&nbsp;1.1.&nbsp;</b></p><div class="table-contents"><table border="1"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>&#27169;&#24335;</th><th>Access method</th></tr></thead><tbody><tr><td>
+                    <code class="literal">file:///</code>
+                  </td><td>Direct repository access (on local disk)</td></tr><tr><td>
+                    <code class="literal">http://</code>
+                  </td><td>Access via WebDAV protocol to Subversion-aware
+                  Apache server</td></tr><tr><td>
+                    <code class="literal">https://</code>
+                  </td><td>Same as <code class="literal">http://</code>, but with
+                  SSL encryption.</td></tr><tr><td>
+                    <code class="literal">svn://</code>
+                  </td><td>Access via custom protocol to an
+                  <code class="literal">svnserve</code> server</td></tr><tr><td>
+                    <code class="literal">svn+ssh://</code>
+                  </td><td>Same as <code class="literal">svn://</code>, but through
+                  an SSH tunnel.</td></tr></tbody></table></div></div><br class="table-break"><p>&#20851;&#20110;Subversion&#35299;&#26512;URL&#30340;&#26356;&#22810;&#20449;&#24687;&#65292;&#35265;<a class="xref" href="svn.basic.in-action.html#svn.advanced.reposurls" title="Subversion&#29256;&#26412;&#24211;URL">&#8220;Subversion&#29256;&#26412;&#24211;URL&#8221;&#19968;&#33410;</a>&#12290;&#20851;&#20110;&#19981;&#21516;&#30340;&#32593;&#32476;&#26381;&#21153;&#22120;&#31867;&#22411;&#65292;&#35265;<a class="xref" href="svn.serverconfig.html" title="&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;">&#31532;&nbsp;6&nbsp;&#31456; <i>&#26381;&#21153;&#37197;&#32622;</i></a>&#12290;</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.in-action.wc"></a>&#24037;&#20316;&#25335;&#36125;</h3></div></div></div><p>&#20320;&#24050;&#32463;&#38405;&#35835;&#36807;&#20102;&#20851;&#20110;&#24037;&#20316;&#25335;&#36125;&#30340;&#20869;&#23481;&#65307;&#29616;&#22312;&#25105;&#20204;&#35201;&#35762;&#19968;&#35762;&#23458;&#25143;&#31471;&#24590;&#26679;&#24314;&#31435;&#21644;&#20351;&#29992;&#23427;&#12290;</p><p>&#19968;&#20010;Subversion&#24037;&#20316;&#25335;&#36125;&#26159;&#20320;&#26412;&#22320;&#26426;&#22120;&#19978;&#30340;&#19968;&#20010;&#26222;&#36890;&#30446;&#24405;&#65292;&#20445;&#23384;&#30528;&#19968;&#20123;&#25991;&#20214;&#65292;&#20320;&#21487;&#20197;&#20219;&#24847;&#30340;&#32534;&#36753;&#25991;&#20214;&#65292;&#32780;&#19988;&#22914;&#26524;&#26159;&#28304;&#20195;&#30721;&#25991;&#20214;&#65292;&#20320;&#21487;&#20197;&#20687;&#24179;&#24120;&#19968;&#26679;&#32534;&#35793;&#65292;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#26159;&#20320;&#30340;&#31169;&#26377;&#24037;&#20316;&#21306;&#65292;&#22312;&#20320;&#26126;&#30830;&#30340;&#20570;&#20102;&#29305;&#23450;&#25805;&#20316;&#20043;&#21069;&#65292;Subversion&#19981;&#20250;&#25226;&#20320;&#30340;&#20462;&#25913;&#19982;&#20854;&#20182;&#20154;&#30340;&#21512;&#24182;&#65292;&#20063;&#19981;&#20250;&#25226;&#20320;&#30340;&#20462;&#25913;&#23637;&#31034;&#32473;&#21035;&#20154;&#65292;&#20320;&#29978;&#33267;&#21487;&#20197;&#25317;&#26377;&#21516;&#19968;&#20010;&#39033;&#30446;&#30340;&#22810;&#20010;&#24037;&#20316;&#25335;&#36125;&#12290;</p><p>After you've made some changes to the files in your
+        working copy and verified that they work properly, Subversion
+        provides you with commands to &#8220;<span class="quote">publish</span>&#8221; your
+        changes to the other people working with you on your project
+        (by writing to the repository).  If other people publish their
+        own changes, Subversion provides you with commands to merge
+        those changes into your working copy (by reading from the
+        repository).</p><p>A working copy also contains some extra files, created and
+        maintained by Subversion, to help it carry out these commands.
+        In particular, each directory in your working copy contains a
+        subdirectory named <code class="filename">.svn</code>, also known as
+        the working copy's <em class="firstterm">administrative
+        directory</em>.  The files in each administrative
+        directory help Subversion recognize which files contain
+        unpublished changes, and which files are out of date with
+        respect to others' work.</p><p>&#19968;&#20010;&#20856;&#22411;&#30340;Subversion&#30340;&#29256;&#26412;&#24211;&#32463;&#24120;&#21253;&#21547;&#35768;&#22810;&#39033;&#30446;&#30340;&#25991;&#20214;(&#25110;&#32773;&#35828;&#28304;&#20195;&#30721;)&#65292;&#36890;&#24120;&#27599;&#19968;&#20010;&#39033;&#30446;&#37117;&#26159;&#29256;&#26412;&#24211;&#30340;&#23376;&#30446;&#24405;&#65292;&#22312;&#36825;&#31181;&#24067;&#23616;&#19979;&#65292;&#19968;&#20010;&#29992;&#25143;&#30340;&#24037;&#20316;&#25335;&#36125;&#24448;&#24448;&#23545;&#24212;&#29256;&#26412;&#24211;&#30340;&#30340;&#19968;&#20010;&#23376;&#30446;&#24405;&#12290;</p><p>&#20030;&#19968;&#20010;&#20363;&#23376;&#65292;&#20320;&#30340;&#29256;&#26412;&#24211;&#21253;&#21547;&#20004;&#20010;&#36719;&#20214;&#39033;&#30446;&#65292;<code class="literal">paint</code>&#21644;<code class="literal">calc</code>&#12290;&#27599;&#20010;&#39033;&#30446;&#22312;&#23427;&#20204;&#21508;&#33258;&#30340;&#39030;&#32423;&#23376;&#30446;&#24405;&#19979;&#65292;&#35265;<a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.dia-1" title="&#22270;&nbsp;1.6.&nbsp;&#29256;&#26412;&#24211;&#30340;&#25991;&#20214;&#31995;&#32479;">&#22270;&nbsp;1.6 &#8220;&#29256;&#26412;&#24211;&#30340;&#25991;&#20214;&#31995;&#32479;&#8221;</a>&#12290;</p><div class="figure"><a name="svn.basic.in-action.wc.dia-1"></a><p class="title"><b>&#22270;&nbsp;1.6.&nbsp;&#29256;&#26412;&#24211;&#30340;&#25991;&#20214;&#31995;&#32479;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia6.png"></div></div></div><br class="figure-break"><p>To get a working copy, you must <em class="firstterm">check
+        out</em> some subtree of the repository.  (The term
+        <span class="emphasis"><em>check out</em></span> may sound like it has something to do
+        with locking or reserving resources, but it doesn't; it simply
+        creates a private copy of the project for you.) For example,
+        if you check out <code class="filename">/calc</code>, you will get a
+        working copy like this:</p><pre class="screen">
+$ svn checkout http://svn.example.com/repos/calc
+A    calc/Makefile
+A    calc/integer.c
+A    calc/button.c
+Checked out revision 56.
+
+$ ls -A calc
+Makefile  button.c integer.c .svn/
+</pre><p>The list of letter <code class="literal">A</code>s in the left
+        margin indicates that Subversion is adding a number of items
+        to your working copy.  You now have a personal copy of the
+        repository's <code class="filename">/calc</code> directory, with one
+        additional entry&#8212;<code class="filename">.svn</code>&#8212;which
+        holds the extra information needed by Subversion, as mentioned
+        earlier.</p><p>&#20551;&#23450;&#20320;&#20462;&#25913;&#20102;<code class="filename">button.c</code>&#65292;&#22240;&#20026;<code class="filename">.svn</code>&#30446;&#24405;&#35760;&#24405;&#30528;&#25991;&#20214;&#30340;&#20462;&#25913;&#26085;&#26399;&#21644;&#21407;&#22987;&#20869;&#23481;&#65292;Subversion&#21487;&#20197;&#21578;&#35785;&#20320;&#24050;&#32463;&#20462;&#25913;&#20102;&#25991;&#20214;&#65292;&#28982;&#32780;&#65292;&#22312;&#20320;&#26126;&#30830;&#21578;&#35785;&#23427;&#20043;&#21069;&#65292;Subversion&#19981;&#20250;&#23558;&#20320;&#30340;&#25913;&#21464;&#20844;&#24320;&#65292;&#23558;&#25913;&#21464;&#20844;&#24320;&#30340;&#25805;&#20316;&#34987;&#21483;&#20570;&#25552;&#20132;(<em class="firstterm">committing</em>&#65292;&#25110;&#32773;&#26159;<em class="firstterm">checking in</em>)&#20462;&#25913;&#21040;&#29256;&#26412;&#24211;&#12290;</p><p>&#23558;&#20320;&#30340;&#20462;&#25913;&#21457;&#24067;&#32473;&#21035;&#20154;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;Subversion&#30340;&#25552;&#20132;(<span class="command"><strong>commit</strong></span>)&#21629;&#20196;&#12290;</p><pre class="screen">
+$ svn commit button.c -m "Fixed a typo in button.c."
+Sending        button.c
+Transmitting file data .
+Committed revision 57.
+</pre><p>&#36825;&#26102;&#20320;&#23545;<code class="filename">button.c</code>&#30340;&#20462;&#25913;&#24050;&#32463;&#25552;&#20132;&#21040;&#20102;&#29256;&#26412;&#24211;&#65292;&#20854;&#20013;&#21253;&#21547;&#20102;&#20851;&#20110;&#27492;&#27425;&#25552;&#20132;&#30340;&#26085;&#24535;&#20449;&#24687;(&#20363;&#22914;&#26159;&#20462;&#25913;&#20102;&#25340;&#20889;&#38169;&#35823;)&#12290;&#22914;&#26524;&#20854;&#20182;&#20154;&#21462;&#20986;&#20102;<code class="filename">/calc</code>&#30340;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#65292;&#20182;&#20204;&#20250;&#30475;&#21040;&#36825;&#20010;&#25991;&#20214;&#26368;&#26032;&#30340;&#29256;&#26412;&#12290;</p><p>Suppose you have a collaborator, Sally, who checked out a
+        working copy of <code class="filename">/calc</code> at the same time
+        you did.  When you commit your change to
+        <code class="filename">button.c</code>, Sally's working copy is left
+        unchanged; Subversion modifies working copies only at the
+        user's request.</p><p>To bring her project up to date, Sally can ask Subversion
+        to <em class="firstterm">update</em> her working copy, by using
+        the <span class="command"><strong>update</strong></span> command.  This will incorporate
+        your changes into her working copy, as well as any others that
+        have been committed since she checked it out.</p><pre class="screen">
+$ pwd
+/home/sally/calc
+
+$ ls -A
+Makefile button.c integer.c .svn/
+
+$ svn update
+U    button.c
+Updated to revision 57.
+</pre><p>The output from the <span class="command"><strong>svn update</strong></span> command
+        indicates that Subversion updated the contents of
+        <code class="filename">button.c</code>.  Note that Sally didn't need to
+        specify which files to update; Subversion uses the information
+        in the <code class="filename">.svn</code> directory as well as further
+        information in the repository, to decide which files need to
+        be brought up to date.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.in-action.revs"></a>&#20462;&#35746;&#29256;&#26412;</h3></div></div></div><p>An <span class="command"><strong>svn commit</strong></span> operation publishes
+        changes to any number of files and directories as a single
+        atomic transaction.  In your working copy, you can change
+        files' contents; create, delete, rename, and copy files and
+        directories; then commit a complete set of changes as an
+        atomic transaction.</p><p>By atomic transaction, we mean simply this: either all of
+        the changes happen in the repository, or none of them happen.
+        Subversion tries to retain this atomicity in the face of
+        program crashes, system crashes, network problems, and other
+        users' actions.</p><p>Each time the repository accepts a commit, this creates a
+        new state of the filesystem tree, called a
+        <em class="firstterm">revision</em>.  Each revision is assigned a
+        unique natural number, one greater than the number of the
+        previous revision.  The initial revision of a freshly created
+        repository is numbered 0 and consists of nothing but an
+        empty root directory.</p><p><a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.revs.dia-1" title="&#22270;&nbsp;1.7.&nbsp;&#29256;&#26412;&#24211;">&#22270;&nbsp;1.7 &#8220;&#29256;&#26412;&#24211;&#8221;</a>&#21487;&#20197;&#26356;&#24418;&#35937;&#30340;&#25551;&#36848;&#29256;&#26412;&#24211;&#65292;&#24819;&#35937;&#26377;&#19968;&#32452;&#20462;&#35746;&#21495;&#65292;&#20174;0&#24320;&#22987;&#65292;&#20174;&#24038;&#21040;&#21491;&#65292;&#27599;&#19968;&#20010;&#20462;&#35746;&#21495;&#26377;&#19968;&#20010;&#30446;&#24405;&#26641;&#25346;&#22312;&#23427;&#19979;&#38754;&#65292;&#27599;&#19968;&#20010;&#26641;&#22909;&#20687;&#26159;&#19968;&#27425;&#25552;&#20132;&#21518;&#30340;&#29256;&#26412;&#24211;&#8220;<span class="quote">&#24555;&#29031;</span>&#8221;&#12290;</p><div class="figure"><a name="svn.basic.in-action.revs.dia-1"></a><p class="title"><b>&#22270;&nbsp;1.7.&nbsp;&#29256;&#26412;&#24211;</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/ch02dia7.png"></div></div></div><br class="figure-break"><div class="sidebar"><p class="title"><b>&#20840;&#23616;&#29256;&#26412;&#21495;</b></p><p>&#19981;&#20687;&#20854;&#20182;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#65292;Subversion&#30340;&#20462;&#35746;&#21495;&#26159;&#38024;&#23545;&#25972;&#20010;<span class="emphasis"><em>&#30446;&#24405;&#26641;</em></span>&#30340;&#65292;&#32780;&#19981;&#26159;&#21333;&#20010;&#25991;&#20214;&#12290;&#27599;&#19968;&#20010;&#20462;&#35746;&#21495;&#20195;&#34920;&#20102;&#19968;&#27425;&#25552;&#20132;&#21518;&#29256;&#26412;&#24211;&#25972;&#20010;&#30446;&#24405;&#26641;&#30340;&#29305;&#23450;&#29366;&#24577;&#65292;&#21478;&#19968;&#31181;&#29702;&#35299;&#26159;&#20462;&#35746;&#21495;N&#20195;&#34920;&#29256;&#26412;&#24211;&#24050;&#32463;&#32463;&#36807;&#20102;N&#27425;&#25552;&#20132;&#12290;&#24403;Subversion&#29992;&#25143;&#35752;&#35770;&#8220;<span class="quote"><code class="filename">foo.c</code>&#30340;&#20462;&#35746;&#21495;5</span>&#8221;&#26102;&#65292;&#20182;&#20204;&#30340;&#23454;&#38469;&#24847;&#24605;&#26159;&#8220;<span class="quote">&#22312;&#20462;&#35746;&#21495;5&#26102;&#30340;<code class="filename">foo.c</code></span>&#8221;&#12290;&#38656;&#35201;&#27880;&#24847;&#30340;&#26159;&#65292;&#19968;&#20010;&#25991;&#20214;&#30340;&#20462;&#35746;&#29256;&#26412;N&#21644;M&#24182;<span class="emphasis"><em>&#19981;&#24517;</em></span>&#26377;&#25152;&#19981;&#21516;&#12290;&#35768;&#22810;&#20854;&#23427;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#20351;&#29992;&#27599;&#25991;&#20214;&#19968;&#20010;&#20462;&#35746;&#21495;&#30340;&#31574;&#30053;&#65292;&#25152;&#20197;&#20250;&#24863;&#35273;&#36825;&#20123;&#27010;&#24565;&#26377;&#28857;&#19981;&#19968;&#26679;&#12290;(&#20197;&#21069;&#30340;CVS&#29992;&#25143;&#21487;&#33021;&#24076;&#26395;&#23519;&#30475;<a class="xref" href="svn.forcvs.html" title="&#38468;&#24405;&nbsp;B.&nbsp;CVS&#29992;&#25143;&#30340;Subversion&#25351;&#21335;">&#38468;&#24405;&nbsp;B, <i>CVS&#29992;&#25143;&#30340;Subversion&#25351;&#21335;</i></a>&#26469;&#24471;&#21040;&#26356;&#22810;&#32454;&#33410;&#12290;)</p></div><p>&#38656;&#35201;&#29305;&#21035;&#27880;&#24847;&#30340;&#26159;&#65292;&#24037;&#20316;&#25335;&#36125;&#24182;&#19981;&#19968;&#23450;&#23545;&#24212;&#29256;&#26412;&#24211;&#20013;&#30340;&#21333;&#20010;&#20462;&#35746;&#29256;&#26412;&#65292;&#20182;&#20204;&#21487;&#33021;&#21253;&#21547;&#22810;&#20010;&#20462;&#35746;&#29256;&#26412;&#30340;&#25991;&#20214;&#12290;&#20030;&#20010;&#20363;&#23376;&#65292;&#20320;&#20174;&#29256;&#26412;&#24211;&#26816;&#20986;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#65292;&#26368;&#36817;&#30340;&#20462;&#35746;&#21495;&#26159;4&#65306;</p><pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:4
+</pre><p>&#27492;&#21051;&#65292;&#24037;&#20316;&#30446;&#24405;&#19982;&#29256;&#26412;&#24211;&#30340;&#20462;&#35746;&#29256;&#26412;4&#23436;&#20840;&#23545;&#24212;&#65292;&#28982;&#32780;&#65292;&#20320;&#20462;&#25913;&#20102;<code class="filename">button.c</code>&#24182;&#19988;&#25552;&#20132;&#20043;&#21518;&#65292;&#20551;&#35774;&#27809;&#26377;&#21035;&#30340;&#25552;&#20132;&#20986;&#29616;&#65292;&#20320;&#30340;&#25552;&#20132;&#20250;&#22312;&#29256;&#26412;&#24211;&#24314;&#31435;&#20462;&#35746;&#29256;&#26412;5&#65292;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#20250;&#26159;&#36825;&#20010;&#26679;&#23376;&#30340;&#65306;</p><pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:5
+</pre><p>&#20551;&#35774;&#27492;&#21051;&#65292;Sally&#25552;&#20132;&#20102;&#23545;<code class="filename">integer.c</code>&#30340;&#20462;&#25913;&#65292;&#24314;&#31435;&#20462;&#35746;&#29256;&#26412;6&#65292;&#22914;&#26524;&#20320;&#20351;&#29992;<span class="command"><strong>svn update</strong></span>&#26469;&#26356;&#26032;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#65292;&#20320;&#20250;&#30475;&#21040;&#65306;</p><pre class="screen">
+calc/Makefile:6
+     integer.c:6
+     button.c:6
+</pre><p>Sally&#23545;<code class="filename">integer.c</code>&#30340;&#25913;&#21464;&#20250;&#20986;&#29616;&#22312;&#20320;&#30340;&#24037;&#20316;&#25335;&#36125;&#65292;&#20320;&#23545;<code class="filename">button.c</code>&#30340;&#25913;&#21464;&#36824;&#22312;&#65292;&#22312;&#36825;&#20010;&#20363;&#23376;&#37324;&#65292;<code class="filename">Makefile</code>&#22312;4&#12289;5&#12289;6&#20462;&#35746;&#29256;&#26412;&#37117;&#26159;&#19968;&#26679;&#30340;&#65292;&#20294;&#26159;Subversion&#20250;&#25226;&#20182;&#30340;<code class="filename">Makefile</code>&#30340;&#20462;&#35746;&#21495;&#35774;&#20026;6&#26469;&#34920;&#26126;&#23427;&#26159;&#26368;&#26032;&#30340;&#65292;&#25152;&#20197;&#20320;&#22312;&#24037;&#20316;&#25335;&#36125;&#39030;&#32423;&#30446;&#24405;&#20316;&#19968;&#27425;&#24178;&#20928;&#30340;&#26356;&#26032;&#65292;&#20250;&#20351;&#24471;&#25152;&#26377;&#20869;&#23481;&#23545;&#24212;&#29256;&#26412;&#24211;&#30340;&#21516;&#19968;&#20462;&#35746;&#29256;&#26412;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.in-action.track-repos"></a>&#24037;&#20316;&#25335;&#36125;&#24590;&#26679;&#36319;&#36394;&#29256;&#26412;&#24211;</h3></div></div></div><p>&#23545;&#20110;&#24037;&#20316;&#25335;&#36125;&#30340;&#27599;&#19968;&#20010;&#25991;&#20214;&#65292;Subversion&#22312;&#31649;&#29702;&#21306;&#22495;<code class="filename">.svn/</code>&#35760;&#24405;&#20004;&#39033;&#20851;&#38190;&#30340;&#20449;&#24687;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>What revision your working file is based on (this is
+            called the file's <em class="firstterm">working
+            revision</em>) and</p></li><li><p>A timestamp recording of when the local copy was last
+            updated by the repository</p></li></ul></div><p>&#32473;&#23450;&#36825;&#20123;&#20449;&#24687;&#65292;&#36890;&#36807;&#19982;&#29256;&#26412;&#24211;&#36890;&#35759;&#65292;Subversion&#21487;&#20197;&#21578;&#35785;&#25105;&#20204;&#24037;&#20316;&#25991;&#20214;&#26159;&#22788;&#20110;&#22914;&#19979;&#22235;&#31181;&#29366;&#24577;&#30340;&#37027;&#19968;&#31181;&#65306;</p><div class="variablelist"><dl><dt><span class="term">&#26410;&#20462;&#25913;&#19988;&#26159;&#24403;&#21069;&#30340;</span></dt><dd><p>&#25991;&#20214;&#22312;&#24037;&#20316;&#30446;&#24405;&#37324;&#27809;&#26377;&#20462;&#25913;&#65292;&#22312;&#24037;&#20316;&#20462;&#35746;&#29256;&#26412;&#20043;&#21518;&#27809;&#26377;&#20462;&#25913;&#25552;&#20132;&#21040;&#29256;&#26412;&#24211;&#12290;<span class="command"><strong>svn commit</strong></span>&#25805;&#20316;&#19981;&#20570;&#20219;&#20309;&#20107;&#24773;&#65292;<span class="command"><strong>svn update</strong></span>&#19981;&#20570;&#20219;&#20309;&#20107;&#24773;&#12290;</p></dd><dt><span class="term">&#26412;&#22320;&#24050;&#20462;&#25913;&#19988;&#26159;&#24403;&#21069;&#30340;</span></dt><dd><p>&#22312;&#24037;&#20316;&#30446;&#24405;&#24050;&#32463;&#20462;&#25913;&#65292;&#20174;&#22522;&#26412;&#20462;&#35746;&#29256;&#26412;&#20043;&#21518;&#27809;&#26377;&#20462;&#25913;&#25552;&#20132;&#21040;&#29256;&#26412;&#24211;&#12290;&#26412;&#22320;&#20462;&#25913;&#27809;&#26377;&#25552;&#20132;&#65292;&#22240;&#27492;<span class="command"><strong>svn commit</strong></span>&#20250;&#25104;&#21151;&#25552;&#20132;&#65292;<span class="command"><strong>svn update</strong></span>&#19981;&#20570;&#20219;&#20309;&#20107;&#24773;&#12290;</p></dd><dt><span class="term">&#26410;&#20462;&#25913;&#19988;&#19981;&#26159;&#24403;&#21069;&#30340;&#20102;</span></dt><dd><p>The file has not been changed in the working
+              directory, but it has been changed in the repository.
+              The file should eventually be updated in order to make
+              it current with the latest public revision.
+              An <span class="command"><strong>svn commit</strong></span> of the file will do
+              nothing, and an
+              <span class="command"><strong>svn update</strong></span> of the file will fold the
+              latest changes into your working copy.</p></dd><dt><span class="term">&#26412;&#22320;&#24050;&#20462;&#25913;&#19988;&#19981;&#26159;&#26368;&#26032;&#30340;</span></dt><dd><p>The file has been changed both in the working
+              directory and in the repository.  An <span class="command"><strong>svn
+              commit</strong></span> of the file will fail with an
+              &#8220;<span class="quote">out-of-date</span>&#8221; error.  The file should be
+              updated first; an <span class="command"><strong>svn update</strong></span> command
+              will attempt to merge the public changes with the local
+              changes.  If Subversion can't complete the merge in a
+              plausible way automatically, it leaves it to the user to
+              resolve the conflict.</p></dd></dl></div><p>&#36825;&#30475;&#36215;&#26469;&#38656;&#35201;&#35760;&#24405;&#24456;&#22810;&#20107;&#24773;&#65292;&#20294;&#26159;<span class="command"><strong>svn status</strong></span>&#21629;&#20196;&#21487;&#20197;&#21578;&#35785;&#20320;&#24037;&#20316;&#25335;&#36125;&#20013;&#25991;&#20214;&#30340;&#29366;&#24577;&#65292;&#20851;&#20110;&#27492;&#21629;&#20196;&#26356;&#22810;&#30340;&#20449;&#24687;&#65292;&#35831;&#30475;<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;">&#8220;&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;&#8221;&#19968;&#33410;</a>&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.basic.in-action.mixedrevs"></a>&#28151;&#21512;&#20462;&#35746;&#29256;&#26412;&#30340;&#24037;&#20316;&#25335;&#36125;</h3></div></div></div><p>&#20316;&#20026;&#19968;&#20010;&#26222;&#36941;&#21407;&#29702;&#65292;Subversion&#21162;&#21147;&#20570;&#21040;&#23613;&#21487;&#33021;&#30340;&#28789;&#27963;&#65292;&#19968;&#20010;&#29305;&#27530;&#30340;&#28789;&#27963;&#29305;&#24615;&#23601;&#26159;&#35753;&#24037;&#20316;&#25335;&#36125;&#21253;&#21547;&#19981;&#21516;&#24037;&#20316;&#20462;&#35746;&#29256;&#26412;&#30340;&#25991;&#20214;&#21644;&#30446;&#24405;&#65292;&#19981;&#24184;&#30340;&#26159;&#65292;&#36825;&#20010;&#28789;&#27963;&#24615;&#20250;&#35753;&#35768;&#22810;&#26032;&#29992;&#25143;&#24863;&#21040;&#36855;&#24785;&#12290;&#22914;&#26524;&#19978;&#19968;&#20010;&#28151;&#21512;&#20462;&#35746;&#29256;&#26412;&#30340;&#20363;&#23376;&#35753;&#20320;&#24863;&#21040;&#22256;&#24785;&#65292;&#36825;&#37324;&#26159;&#19968;&#20010;&#20026;&#20309;&#26377;&#36825;&#31181;&#29305;&#24615;&#21644;&#22914;&#20309;&#21033;&#29992;&#36825;&#20010;&#29305;&#24615;&#30340;&#22522;&#30784;&#20171;&#32461;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.basic.in-action.mixedrevs.update-commit"></a>Updates and commits are separate</h4></div></div></div><p>One of the fundamental rules of Subversion is that
+          a &#8220;<span class="quote">push</span>&#8221; action does not cause
+          a &#8220;<span class="quote">pull,</span>&#8221; nor the other way around.  Just
+          because you're ready to submit new changes to the repository
+          doesn't mean you're ready to receive changes from other
+          people.  And if you have new changes still in progress,
+          then <span class="command"><strong>svn update</strong></span> should gracefully merge
+          repository changes into your own, rather than forcing you to
+          publish them.</p><p>The main side effect of this rule is that it means a
+          working copy has to do extra bookkeeping to track mixed
+          revisions as well as be tolerant of the mixture.  It's made
+          more complicated by the fact that directories themselves are
+          versioned.</p><p>For example, suppose you have a working copy entirely at
+          revision 10.  You edit the
+          file <code class="filename">foo.html</code> and then perform
+          an <span class="command"><strong>svn commit</strong></span>, which creates revision 15
+          in the repository.  After the commit succeeds, many new
+          users would expect the working copy to be entirely at
+          revision 15, but that's not the case!  Any number of changes
+          might have happened in the repository between revisions 10
+          and 15.  The client knows nothing of those changes in the
+          repository, since you haven't yet run <span class="command"><strong>svn
+          update</strong></span>, and <span class="command"><strong>svn commit</strong></span> doesn't
+          pull down new changes.  If, on the other hand,
+          <span class="command"><strong>svn commit</strong></span> were to automatically download
+          the newest changes, then it would be possible to set the
+          entire working copy to revision 15&#8212;but then we'd be
+          breaking the fundamental rule of &#8220;<span class="quote">push</span>&#8221;
+          and &#8220;<span class="quote">pull</span>&#8221; remaining separate actions.
+          Therefore, the only safe thing the Subversion client can do
+          is mark the one
+          file&#8212;<code class="filename">foo.html</code>&#8212;as being at
+          revision 15.  The rest of the working copy remains at
+          revision 10.  Only by running <span class="command"><strong>svn update</strong></span>
+          can the latest changes be downloaded and the whole working
+          copy be marked as revision 15.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.basic.in-action.mixedrevs.normal"></a>&#28151;&#21512;&#20462;&#35746;&#29256;&#26412;&#24456;&#24120;&#35265;</h4></div></div></div><p>The fact is, <span class="emphasis"><em>every time</em></span> you run
+          <span class="command"><strong>svn commit</strong></span>, your working copy ends up
+          with some mixture of revisions.  The things you just
+          committed are marked as having larger working revisions than
+          everything else.  After several commits (with no updates
+          in between), your working copy will contain a whole mixture
+          of revisions.  Even if you're the only person using the
+          repository, you will still see this phenomenon.  To examine
+          your mixture of working revisions, use the <span class="command"><strong>svn
+          status --verbose</strong></span> command (see <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;">&#8220;&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#27010;&#20917;&#8221;&#19968;&#33410;</a> for more
+          information.)</p><p>&#36890;&#24120;&#65292;&#26032;&#29992;&#25143;&#23545;&#20110;&#24037;&#20316;&#25335;&#36125;&#30340;&#28151;&#21512;&#20462;&#35746;&#29256;&#26412;&#19968;&#26080;&#25152;&#30693;&#65292;&#36825;&#20250;&#35753;&#20154;&#31946;&#28034;&#65292;&#22240;&#20026;&#35768;&#22810;&#23458;&#25143;&#31471;&#21629;&#20196;&#23545;&#20110;&#25152;&#26816;&#39564;&#26465;&#30446;&#30340;&#20462;&#35746;&#29256;&#26412;&#24456;&#25935;&#24863;&#12290;&#20363;&#22914;<span class="command"><strong>svn log</strong></span>&#21629;&#20196;&#26174;&#31034;&#19968;&#20010;&#25991;&#20214;&#25110;&#30446;&#24405;&#30340;&#21382;&#21490;&#20462;&#25913;&#20449;&#24687;(&#35265;<a class="xref" href="svn.tour.history.html#svn.tour.history.log" title="Generating a List of Historical Changes">&#8220;Generating a List of Historical Changes&#8221;&#19968;&#33410;</a>)&#65292;&#24403;&#29992;&#25143;&#23545;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#23545;&#35937;&#35843;&#29992;&#36825;&#20010;&#21629;&#20196;&#65292;&#20182;&#20204;&#24076;&#26395;&#30475;&#21040;&#36825;&#20010;&#23545;&#35937;&#30340;&#25972;&#20010;&#21382;&#21490;&#20449;&#24687;&#12290;&#20294;&#26159;&#22914;&#26524;&#36825;&#20010;&#23545;&#35937;&#30340;&#20462;&#35746;&#29256;&#26412;&#24050;&#32463;&#30456;&#24403;&#32769;&#20102;(&#36890;&#24120;&#22240;&#20026;&#24456;&#38271;&#26102;&#38388;&#27809;&#26377;&#36816;&#34892;<span class="command"><strong>svn update</strong></span>)&#65292;&#27492;&#26102;&#20250;&#26174;&#31034;&#27604;&#36825;&#20010;&#23545;&#35937;<span class="emphasis"><em>&#26356;&#32769;&#30340;</em></span>&#21382;&#21490;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.basic.in-action.mixedrevs.useful"></a>&#28151;&#21512;&#29256;&#26412;&#24456;&#26377;&#29992;</h4></div></div></div><p>If your project is sufficiently complex, you'll discover
+          that it's sometimes nice to
+          forcibly <em class="firstterm">backdate</em> (or, update to a
+          revision older than the one you already have) portions of
+          your working copy to an earlier revision; you'll learn how
+          to do that in <a class="xref" href="svn.tour.html" title="&#31532;&nbsp;2&nbsp;&#31456;&nbsp;&#22522;&#26412;&#20351;&#29992;">&#31532;&nbsp;2&nbsp;&#31456; <i>&#22522;&#26412;&#20351;&#29992;</i></a>.  Perhaps you'd
+          like to test an earlier version of a submodule contained in
+          a subdirectory, or perhaps you'd like to figure out when a
+          bug first came into existence in a specific file.  This is
+          the &#8220;<span class="quote">time machine</span>&#8221; aspect of a version control
+          system&#8212;the feature that allows you to move any
+          portion of your working copy forward and backward in
+          history.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h4 class="title"><a name="svn.basic.in-action.mixedrevs.limits"></a>&#28151;&#21512;&#29256;&#26412;&#26377;&#38480;&#21046;</h4></div></div></div><p>&#26080;&#35770;&#20320;&#22914;&#20309;&#22312;&#24037;&#20316;&#25335;&#36125;&#20013;&#21033;&#29992;&#28151;&#21512;&#20462;&#35746;&#29256;&#26412;&#65292;&#36825;&#31181;&#28789;&#27963;&#24615;&#36824;&#26159;&#26377;&#38480;&#21046;&#30340;&#12290;</p><p>First, you cannot commit the deletion of a file or
+          directory that isn't fully up to date.  If a newer version
+          of the item exists in the repository, your attempt to delete
+          will be rejected in order to prevent you from accidentally
+          destroying changes you've not yet seen.</p><p>Second, you cannot commit a metadata change to a
+          directory unless it's fully up to date.  You'll learn about
+          attaching &#8220;<span class="quote">properties</span>&#8221; to items in <a class="xref" href="svn.advanced.html" title="&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;">&#31532;&nbsp;3&nbsp;&#31456; <i>&#39640;&#32423;&#20027;&#39064;</i></a>.  A directory's working revision
+          defines a specific set of entries and properties, and thus
+          committing a property change to an out-of-date directory may
+          destroy properties you've not yet seen.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.basic.vsn-models.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.basic.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.basic.summary.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#29256;&#26412;&#27169;&#22411;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#24635;&#32467;</td></tr></table></div></body></html>

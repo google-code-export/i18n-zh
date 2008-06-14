@@ -1,0 +1,61 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#38468;&#24405;&nbsp;C.&nbsp;WebDAV&#21644;&#33258;&#21160;&#29256;&#26412;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="prev" href="svn.forcvs.convert.html" title="&#36801;&#31227;CVS&#29256;&#26412;&#24211;&#21040;Subversion"><link rel="next" href="svn.webdav.autoversioning.html" title="&#33258;&#21160;&#29256;&#26412;&#21270;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#38468;&#24405;&nbsp;C.&nbsp;WebDAV&#21644;&#33258;&#21160;&#29256;&#26412;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.forcvs.convert.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.webdav.autoversioning.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="appendix" lang="zh-cn"><div class="titlepage"><div><div><h1 class="title"><a name="svn.webdav"></a>WebDAV&#21644;&#33258;&#21160;&#29256;&#26412;</h1></div></div></div><div class="toc"><p><b>&#30446;&#24405;</b></p><dl><dt><span class="section"><a href="svn.webdav.html#svn.webdav.basic">What Is WebDAV?</a></span></dt><dt><span class="section"><a href="svn.webdav.autoversioning.html">&#33258;&#21160;&#29256;&#26412;&#21270;</a></span></dt><dt><span class="section"><a href="svn.webdav.clients.html">&#23458;&#25143;&#31471;&#20132;&#20114;&#24615;</a></span></dt><dd><dl><dt><span class="section"><a href="svn.webdav.clients.html#svn.webdav.clients.standalone">Standalone WebDAV Applications</a></span></dt><dt><span class="section"><a href="svn.webdav.clients.html#svn.webdav.clients.file-explorer-extensions">File-Explorer WebDAV Extensions</a></span></dt><dt><span class="section"><a href="svn.webdav.clients.html#svn.webdav.clients.fs-impl">WebDAV Filesystem Implementation</a></span></dt></dl></dd></dl></div><p>WebDAV is an extension to HTTP, and it is growing more and more
+    popular as a standard for file sharing.  Today's operating systems
+    are becoming extremely Web-aware, and many now have built-in
+    support for mounting &#8220;<span class="quote">shares</span>&#8221; exported by WebDAV
+    servers.</p><p>&#22914;&#26524;&#20320;&#20351;&#29992;Apache/mod_dav_svn&#20316;&#20026;&#20320;&#30340;Subversion&#32593;&#32476;&#26381;&#21153;&#22120;&#65292;&#26576;&#31181;&#31243;&#24230;&#19978;&#65292;&#20320;&#20063;&#26159;&#22312;&#36816;&#34892;&#19968;&#20010;WebDAV&#26381;&#21153;&#22120;&#12290;&#36825;&#20010;&#38468;&#24405;&#25552;&#20379;&#20102;&#36825;&#31181;&#21327;&#35758;&#19968;&#20123;&#32972;&#26223;&#30693;&#35782;&#65292;Subversion&#22914;&#20309;&#20351;&#29992;&#23427;&#65292;Subversion&#22914;&#20309;&#21644;&#35748;&#35782;WebDAV&#30340;&#36719;&#20214;&#20132;&#20114;&#24037;&#20316;&#12290;</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.webdav.basic"></a>What Is WebDAV?</h2></div></div></div><p><em class="firstterm">DAV</em> stands for &#8220;<span class="quote">Distributed
+      Authoring and Versioning.</span>&#8221;  RFC 2518 defines a set of
+      concepts and accompanying extension methods to HTTP 1.1 that
+      make the Web into a more universal read/write medium.  The basic
+      idea is that a WebDAV-compliant web server can act like a
+      generic file server; clients can &#8220;<span class="quote">mount</span>&#8221; shared
+      folders over HTTP that behave much like other network
+      filesystems (such as NFS or SMB).</p><p>The tragedy, though, is that despite the acronym, the RFC
+      specification doesn't actually describe any sort of version
+      control.  Basic WebDAV clients and servers assume that only one
+      version of each file or directory exists, and that it can be
+      repeatedly overwritten.</p><p>Because RFC 2518 left out versioning concepts, another
+      committee was left with the responsibility of writing RFC 3253 a
+      few years later.  The new RFC adds versioning concepts to
+      WebDAV, placing the &#8220;<span class="quote">V</span>&#8221; back in
+      &#8220;<span class="quote">DAV</span>&#8221;&#8212;hence the term &#8220;<span class="quote">DeltaV.</span>&#8221;
+      WebDAV/DeltaV clients and servers are often called just
+      &#8220;<span class="quote">DeltaV</span>&#8221; programs, since DeltaV implies the
+      existence of basic WebDAV.</p><p>The original WebDAV standard has been widely successful.
+      Every modern computer operating system has a general WebDAV
+      client built in (details to follow), and a number of popular
+      standalone applications are also able to speak
+      WebDAV&#8212;Microsoft Office, Dreamweaver, and Photoshop to
+      name a few.  On the server end, Apache HTTP Server has been
+      able to provide WebDAV services since 1998 and is considered the
+      de-facto open source standard.  There are several other
+      commercial WebDAV servers available, including Microsoft's own
+      IIS.</p><p>DeltaV, unfortunately, has not been so successful.  It's
+      very difficult to find any DeltaV clients or servers.  The few
+      that do exist are relatively unknown commercial products, and
+      thus it's very difficult to test interoperability.  It's not
+      entirely clear as to why DeltaV has remained stagnant.  Some
+      opine that the specification is just too complex.  Others argue
+      that while WebDAV's features have mass appeal (even the least
+      technical users appreciate network file sharing), version
+      control features just aren't interesting or necessary for most
+      users.  Finally, some believe that DeltaV remains unpopular
+      because there's still no open source server product that
+      implements it well.</p><p>When Subversion was still in its design phase, it seemed
+      like a great idea to use Apache as a network server.  It already
+      had a module to provide WebDAV services.  DeltaV was a
+      relatively new specification.  The hope was that the Subversion
+      server module (<span class="command"><strong>mod_dav_svn</strong></span>) would eventually
+      evolve into an open source DeltaV reference implementation.
+      Unfortunately, DeltaV has a very specific versioning model that
+      doesn't quite line up with Subversion's model.  Some concepts
+      were mappable; others were not.</p><p>&#36825;&#26159;&#20160;&#20040;&#24847;&#24605;&#21602;&#65311;</p><p>First, the Subversion client is not a fully implemented
+      DeltaV client.  It needs certain types of things from the server
+      that DeltaV itself cannot provide, and thus is largely dependent
+      on a number of Subversion-specific
+      HTTP <code class="literal">REPORT</code> requests that
+      only <span class="command"><strong>mod_dav_svn</strong></span> understands.</p><p>Second, <span class="command"><strong>mod_dav_svn</strong></span> is not a
+      fully realized DeltaV server.  Many portions of the DeltaV
+      specification were irrelevant to Subversion, and thus left
+      unimplemented.</p><p>&#22312;&#24320;&#21457;&#32773;&#31038;&#21306;&#19968;&#30452;&#26377;&#36825;&#26679;&#30340;&#35752;&#35770;&#65292;&#26159;&#21542;&#20540;&#24471;&#24357;&#34917;&#36825;&#31181;&#24418;&#21183;&#12290;&#25913;&#21464;Subversion&#30340;&#35774;&#35745;&#26469;&#21305;&#37197;DeltaV&#30475;&#36215;&#26469;&#24182;&#19981;&#29616;&#23454;&#65292;&#25152;&#20197;&#21487;&#33021;&#27809;&#26377;&#21150;&#27861;&#35753;&#23458;&#25143;&#31471;&#20174;&#26222;&#36890;&#30340;DeltaV&#26381;&#21153;&#22120;&#19978;&#24471;&#21040;&#25152;&#26377;&#30340;&#19996;&#35199;&#12290;&#21478;&#19968;&#26041;&#38754;&#65292;mod_dav_svn<span class="emphasis"><em>&#21487;&#20197;</em></span>&#32487;&#32493;&#24320;&#21457;&#26469;&#23454;&#29616;&#25152;&#26377;&#30340;DeltaV&#65292;&#20294;&#32570;&#20047;&#36825;&#26679;&#20570;&#30340;&#21160;&#21147;&#8212;&#20960;&#20046;&#27809;&#26377;&#33021;&#19982;&#20043;&#20132;&#25143;&#30340;DeltaV&#23458;&#25143;&#31471;&#12290;</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.forcvs.convert.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.webdav.autoversioning.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#36801;&#31227;CVS&#29256;&#26412;&#24211;&#21040;Subversion&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#33258;&#21160;&#29256;&#26412;&#21270;</td></tr></table></div></body></html>

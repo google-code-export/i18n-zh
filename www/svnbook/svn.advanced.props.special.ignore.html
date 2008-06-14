@@ -1,0 +1,198 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#24573;&#30053;&#26410;&#29256;&#26412;&#25511;&#21046;&#30340;&#26465;&#30446;</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.advanced.html" title="&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;"><link rel="prev" href="svn.advanced.props.file-portability.html" title="&#25991;&#20214;&#31227;&#26893;&#24615;"><link rel="next" href="svn.advanced.props.special.keywords.html" title="&#20851;&#38190;&#23383;&#26367;&#25442;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#24573;&#30053;&#26410;&#29256;&#26412;&#25511;&#21046;&#30340;&#26465;&#30446;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.advanced.props.file-portability.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;3&nbsp;&#31456;&nbsp;&#39640;&#32423;&#20027;&#39064;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.props.special.keywords.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.advanced.props.special.ignore"></a>&#24573;&#30053;&#26410;&#29256;&#26412;&#25511;&#21046;&#30340;&#26465;&#30446;</h2></div></div></div><p>In any given working copy, there is a good chance that
+      alongside all those versioned files and directories are other
+      files and directories that are neither versioned nor intended
+      to be.  Text editors litter directories with backup files.
+      Software compilers generate intermediate&#8212;or even
+      final&#8212;files that you typically wouldn't bother to
+      version.  And users themselves drop various other files and
+      directories wherever they see fit, often in version control
+      working copies.</p><p>It's ludicrous to expect Subversion working copies to be
+      somehow impervious to this kind of clutter and impurity.  In
+      fact, Subversion counts it as a <span class="emphasis"><em>feature</em></span>
+      that its working copies are just typical directories, just like
+      unversioned trees.  But these not-to-be-versioned files and
+      directories can cause some annoyance for Subversion users.  For
+      example, because the <span class="command"><strong>svn add</strong></span> and <span class="command"><strong>svn
+      import</strong></span> commands act recursively by default and don't
+      know which files in a given tree you do and don't wish to
+      version, it's easy to accidentally add stuff to version control
+      that you didn't mean to.  And because <span class="command"><strong>svn
+      status</strong></span> reports, by default, every item of interest in
+      a working copy&#8212;including unversioned files and
+      directories&#8212;its output can get quite noisy where many of
+      these things exist.</p><p>So Subversion provides two ways for telling it which files
+      you would prefer for it to simply disregard.  One of the ways
+      involves the use of Subversion's runtime configuration system
+      (see <a class="xref" href="svn.customization.html#svn.advanced.confarea" title="&#36816;&#34892;&#37197;&#32622;&#21306;">&#8220;&#36816;&#34892;&#37197;&#32622;&#21306;&#8221;&#19968;&#33410;</a>), and therefore
+      applies to all the Subversion operations that make use of that
+      runtime configuration&#8212;generally those performed on a particular
+      computer or by a particular user of a computer.  The other way
+      makes use of Subversion's directory property support and is more
+      tightly bound to the versioned tree itself, and therefore
+      affects everyone who has a working copy of that tree.  Both of
+      the mechanisms use <em class="firstterm">file patterns</em> (strings
+      of literal and special wildcard characters used to match against
+      filenames) to decide which files to ignore.</p><p>The Subversion runtime configuration system provides an
+      option, <code class="literal">global-ignores</code>, whose value is a
+      whitespace-delimited collection of file patterns.  The
+      Subversion client checks these patterns against the names of the
+      files that are candidates for addition to version control, as
+      well as to unversioned files that the <span class="command"><strong>svn
+      status</strong></span> command notices.  If any file's name matches
+      one of the patterns, Subversion will basically act as if the
+      file didn't exist at all.  This is really useful for the kinds
+      of files that you almost never want to version, such as editor
+      backup files such as Emacs' <code class="literal">*~</code> and
+      <code class="literal">.*~</code> files.</p><div class="sidebar"><p class="title"><b>File Patterns in Subversion</b></p><p>File patterns (also called <em class="firstterm">globs</em> or
+        <em class="firstterm">shell wildcard patterns</em>) are strings of
+        characters that are intended to be matched against filenames,
+        typically for the purpose of quickly selecting some subset of
+        similar files from a larger grouping without having to
+        explicitly name each file.  The patterns contain two types of
+        characters:  regular characters, which are compared explicitly
+        against potential matches, and special wildcard characters,
+        which are interpreted differently for matching
+        purposes.</p><p>There are different types of file pattern syntaxes, but
+        Subversion uses the one most commonly found in Unix systems
+        implemented as the <code class="function">fnmatch</code> system
+        function.  It supports the following wildcards, described here
+        simply for your convenience:</p><div class="variablelist"><dl><dt><span class="term">
+              <code class="literal">?</code>
+            </span></dt><dd><p>Matches any single character.</p></dd><dt><span class="term">
+              <code class="literal">*</code>
+            </span></dt><dd><p>Matches any string of characters, including the
+              empty string.</p></dd><dt><span class="term">
+              <code class="literal">[</code>
+            </span></dt><dd><p>Begins a character class definition terminated by
+              <code class="literal">]</code>, used for matching a subset of
+              characters.</p></dd></dl></div><p>You can see this same pattern matching behavior at a Unix
+        shell prompt.  The following are some examples of patterns
+        being used for various things:</p><pre class="screen">
+$ ls   ### the book sources
+appa-quickstart.xml             ch06-server-configuration.xml
+appb-svn-for-cvs-users.xml      ch07-customizing-svn.xml
+appc-webdav.xml                 ch08-embedding-svn.xml
+book.xml                        ch09-reference.xml
+ch00-preface.xml                ch10-world-peace-thru-svn.xml
+ch01-fundamental-concepts.xml   copyright.xml
+ch02-basic-usage.xml            foreword.xml
+ch03-advanced-topics.xml        images/
+ch04-branching-and-merging.xml  index.xml
+ch05-repository-admin.xml       styles.css
+$ ls ch*   ### the book chapters
+ch00-preface.xml                ch06-server-configuration.xml
+ch01-fundamental-concepts.xml   ch07-customizing-svn.xml
+ch02-basic-usage.xml            ch08-embedding-svn.xml
+ch03-advanced-topics.xml        ch09-reference.xml
+ch04-branching-and-merging.xml  ch10-world-peace-thru-svn.xml
+ch05-repository-admin.xml
+$ ls ch?0-*   ### the book chapters whose numbers end in zero
+ch00-preface.xml  ch10-world-peace-thru-svn.xml
+$ ls ch0[3578]-*   ### the book chapters that Mike is responsible for
+ch03-advanced-topics.xml   ch07-customizing-svn.xml
+ch05-repository-admin.xml  ch08-embedding-svn.xml
+$
+</pre><p>File pattern matching is a bit more complex than what
+        we've described here, but this basic usage level tends to suit
+        the majority of Subversion users.</p></div><p>When found on a versioned directory, the
+      <code class="literal">svn:ignore</code> property is expected to contain a
+      list of newline-delimited file patterns that Subversion should
+      use to determine ignorable objects in that same directory.
+      These patterns do not override those found in the
+      <code class="literal">global-ignores</code> runtime configuration option,
+      but are instead appended to that list.  And it's worth noting
+      again that, unlike the <code class="literal">global-ignores</code> option,
+      the patterns found in the <code class="literal">svn:ignore</code>
+      property apply only to the directory on which that property is
+      set, and not to any of its subdirectories.  The
+      <code class="literal">svn:ignore</code> property is a good way to tell
+      Subversion to ignore files that are likely to be present in
+      every user's working copy of that directory, such as compiler
+      output or&#8212;to use an example more appropriate to this
+      book&#8212;the HTML, PDF, or PostScript files generated as the
+      result of a conversion of some source DocBook XML files to a
+      more legible output format.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#27880;&#24847;</h3><p>Subversion&#23545;&#20110;&#24573;&#30053;&#25991;&#20214;&#27169;&#24335;&#30340;&#25903;&#25345;&#20165;&#38480;&#20110;&#23558;&#26410;&#29256;&#26412;&#21270;&#25991;&#20214;&#21644;&#30446;&#24405;&#28155;&#21152;&#21040;&#29256;&#26412;&#25511;&#21046;&#26102;&#65292;&#22914;&#26524;&#19968;&#20010;&#25991;&#20214;&#24050;&#32463;&#22312;Subversion&#25511;&#21046;&#19979;&#65292;&#24573;&#30053;&#27169;&#24335;&#26426;&#21046;&#19981;&#20250;&#20877;&#26377;&#25928;&#26524;&#65292;&#19981;&#35201;&#26399;&#26395;Subversion&#20250;&#38459;&#27490;&#20320;&#25552;&#20132;&#19968;&#20010;&#31526;&#21512;&#24573;&#30053;&#26465;&#20214;&#30340;&#20462;&#25913;&#8212;Subversion&#19968;&#30452;&#35748;&#20026;&#23427;&#26159;&#29256;&#26412;&#21270;&#30340;&#23545;&#35937;&#12290;</p></div><div class="sidebar"><p class="title"><b>CVS &#29992;&#25143;&#30340;&#24573;&#30053;&#27169;&#24335;</b></p><p>Subversion&#30340;<code class="literal">svn:ignore</code>&#23646;&#24615;&#19982;CVS&#30340;<code class="filename">.cvsignore</code>&#25991;&#20214;&#30340;&#35821;&#27861;&#21644;&#21151;&#33021;&#38750;&#24120;&#31867;&#20284;&#65292;&#23454;&#38469;&#19978;&#65292;&#22914;&#26524;&#20320;&#31227;&#26893;&#19968;&#20010;CVS&#30340;&#24037;&#20316;&#25335;&#36125;&#21040;Subversion&#65292;&#20320;&#21487;&#20197;&#30452;&#25509;&#20351;&#29992;<code class="filename">.cvsignore</code>&#20316;&#20026;<span class="command"><strong>svn propset</strong></span>&#36755;&#20837;&#25991;&#20214;&#21442;&#25968;&#65306;</p><pre class="screen">
+$ svn propset svn:ignore -F .cvsignore .
+property 'svn:ignore' set on '.'
+$
+</pre><p>&#20294;&#26159;CVS&#21644;Subversion&#22788;&#29702;&#24573;&#30053;&#27169;&#24335;&#30340;&#26041;&#24335;&#26377;&#19968;&#20123;&#19981;&#21516;&#65292;&#36825;&#20004;&#20010;&#31995;&#32479;&#22312;&#19981;&#21516;&#30340;&#26102;&#20505;&#20351;&#29992;&#24573;&#30053;&#27169;&#24335;&#65292;&#24573;&#30053;&#27169;&#24335;&#24212;&#29992;&#30340;&#23545;&#35937;&#20063;&#30001;&#24494;&#23567;&#30340;&#19981;&#21516;&#65292;&#21478;&#22806;Subversion&#19981;&#21487;&#20197;&#20351;&#29992;<code class="literal">!</code>&#27169;&#24335;&#26469;&#21435;&#21462;&#28040;&#24573;&#30053;&#27169;&#24335;&#12290;</p></div><p>The global list of ignore patterns tends to be more a
+      matter of personal taste and ties more closely to a user's
+      particular tool chain than to the details of any particular
+      working copy's needs.  So, the rest of this section will focus
+      on the <code class="literal">svn:ignore</code> property and its
+      uses.</p><p>&#20551;&#23450;&#20320;&#30340;<span class="command"><strong>svn status</strong></span>&#26377;&#22914;&#19979;&#36755;&#20986;&#65306;</p><pre class="screen">
+$ svn status calc
+ M     calc/button.c
+?      calc/calculator
+?      calc/data.c
+?      calc/debug_log
+?      calc/debug_log.1
+?      calc/debug_log.2.gz
+?      calc/debug_log.3.gz
+</pre><p>In this example, you have made some property modifications
+      to <code class="filename">button.c</code>, but in your working copy, you
+      also have some unversioned files: the latest
+      <code class="filename">calculator</code> program that you've compiled
+      from your source code, a source file named
+      <code class="filename">data.c</code>, and a set of debugging output log
+      files.  Now, you know that your build system always results in
+      the <code class="filename">calculator</code> program being generated.
+      <sup>[<a name="d0e4685" href="#ftn.d0e4685" class="footnote">12</a>]</sup>
+      And you know that your test suite always leaves those debugging
+      log files lying around.  These facts are true for all working
+      copies of this project, not just your own.  And you know that
+      you aren't interested in seeing those things every time you run
+      <span class="command"><strong>svn status</strong></span>, and you are pretty sure that
+      nobody else is interested in them either.  So you use
+      <span class="command"><strong>svn propedit svn:ignore calc</strong></span> to add some
+      ignore patterns to the <code class="filename">calc</code> directory.  For
+      example, you might add this as the new value of the
+      <code class="literal">svn:ignore</code> property:</p><pre class="programlisting">
+calculator
+debug_log*
+</pre><p>&#24403;&#20320;&#28155;&#21152;&#23436;&#36825;&#20123;&#23646;&#24615;&#65292;&#20320;&#20250;&#22312;<code class="filename">calc</code>&#30446;&#24405;&#26377;&#19968;&#20010;&#26412;&#22320;&#20462;&#25913;&#65292;&#20294;&#26159;&#27880;&#24847;&#20320;&#30340;<span class="command"><strong>svn status</strong></span>&#36755;&#20986;&#26377;&#20160;&#20040;&#20854;&#20182;&#30340;&#19981;&#21516;&#65306;</p><pre class="screen">
+$ svn status
+ M     calc
+ M     calc/button.c
+?      calc/data.c
+</pre><p>Now, all that cruft is missing from the output!  Your
+      <code class="filename">calculator</code> compiled program and all those
+      logfiles are still in your working copy; Subversion just isn't
+      constantly reminding you that they are present and unversioned.
+      And now with all the uninteresting noise removed from the
+      display, you are left with more intriguing items&#8212;such as
+      that source code file <code class="filename">data.c</code> that you
+      probably forgot to add to version control.</p><p>&#24403;&#28982;&#65292;&#19981;&#20165;&#20165;&#21482;&#26377;&#36825;&#31181;&#31616;&#30053;&#30340;&#24037;&#20316;&#25335;&#36125;&#29366;&#24577;&#36755;&#20986;&#65292;&#22914;&#26524;&#24819;&#26597;&#30475;&#34987;&#24573;&#30053;&#30340;&#25991;&#20214;&#65292;&#21487;&#20197;&#20351;&#29992;Subversion&#30340;<code class="option">--no-ignore</code>&#36873;&#39033;&#65306;</p><pre class="screen">
+$ svn status --no-ignore
+ M     calc
+ M     calc/button.c
+I      calc/calculator
+?      calc/data.c
+I      calc/debug_log
+I      calc/debug_log.1
+I      calc/debug_log.2.gz
+I      calc/debug_log.3.gz
+</pre><p>&#25105;&#20204;&#22312;&#21069;&#38754;&#25552;&#21040;&#36807;&#65292;<span class="command"><strong>svn add</strong></span>&#21644;<span class="command"><strong>svn import</strong></span>&#20063;&#20250;&#20351;&#29992;&#36825;&#20010;&#24573;&#30053;&#27169;&#24335;&#21015;&#34920;&#65292;&#36825;&#20004;&#20010;&#25805;&#20316;&#37117;&#21253;&#25324;&#20102;&#35810;&#38382;Subversion&#26469;&#24320;&#22987;&#31649;&#29702;&#19968;&#32452;&#25991;&#20214;&#21644;&#30446;&#24405;&#12290;&#27604;&#24378;&#21046;&#29992;&#25143;&#25361;&#25315;&#30446;&#24405;&#26641;&#20013;&#37027;&#20010;&#25991;&#20214;&#35201;&#32435;&#20837;&#29256;&#26412;&#25511;&#21046;&#30340;&#26041;&#24335;&#26356;&#22909;&#65292;Subversion&#20351;&#29992;&#24573;&#30053;&#27169;&#24335;&#26469;&#26816;&#27979;&#37027;&#20010;&#25991;&#20214;&#19981;&#24212;&#35813;&#22312;&#22823;&#30340;&#36845;&#20195;&#28155;&#21152;&#21644;&#23548;&#20837;&#25805;&#20316;&#20013;&#36827;&#20837;&#29256;&#26412;&#25511;&#21046;&#31995;&#32479;&#12290;&#20877;&#27425;&#35828;&#26126;&#65292;&#25805;&#20316;Subversion&#25991;&#20214;&#21644;&#30446;&#24405;&#26102;&#20320;&#21487;&#20197;&#20351;&#29992;<code class="option">--no-ignore</code>&#36873;&#39033;&#24573;&#30053;&#36825;&#20010;&#24573;&#30053;&#21015;&#34920;&#12290;</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#25552;&#31034;</h3><p>Even if <code class="literal">svn:ignore</code> is set, you may run
+        into problems if you use shell wildcards in a command.  Shell
+        wildcards are expanded into an explicit list of targets before
+        Subversion operates on them, so running <span class="command"><strong>svn
+        <em class="replaceable"><code>SUBCOMMAND</code></em> *</strong></span> is just like
+        running <span class="command"><strong>svn <em class="replaceable"><code>SUBCOMMAND</code></em>
+        file1 file2 file3 &#8230;</strong></span>.  In the case of the
+        <span class="command"><strong>svn add</strong></span> command, this has an effect similar
+        to passing the <code class="option">--no-ignore</code> option.  So
+        instead of using a wildcard, use <span class="command"><strong>svn add --force
+        .</strong></span> to do a bulk scheduling of unversioned things for
+        addition.  The explicit target will ensure that the current
+        directory isn't overlooked because of being already under
+        version control, and the <code class="option">--force</code> option will
+        cause Subversion to crawl through that directory, adding
+        unversioned files while still honoring the
+        <code class="literal">svn:ignore</code> property and
+        <code class="literal">global-ignores</code> runtime configuration
+        variable.  Be sure to also provide the <code class="option">--depth
+        files</code> option to the <span class="command"><strong>svn add</strong></span>
+        command if you don't want a fully recursive crawl for things
+        to add.</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e4685" href="#d0e4685" class="para">12</a>] </sup>&#36825;&#19981;&#26159;&#32534;&#35793;&#31995;&#32479;&#30340;&#22522;&#26412;&#21151;&#33021;&#21527;&#65311;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.advanced.props.file-portability.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.advanced.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.advanced.props.special.keywords.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#25991;&#20214;&#31227;&#26893;&#24615;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#20851;&#38190;&#23383;&#26367;&#25442;</td></tr></table></div></body></html>
