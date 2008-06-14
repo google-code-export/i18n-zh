@@ -23,4 +23,4 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\saxon.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\saxoncatalog.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\saxon-dbxsl-extensions.jar
 
-"%JAVACMD%" -Xmx512m -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %*
+"%JAVACMD%" -Xmx1024m -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %*
