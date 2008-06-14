@@ -23,5 +23,5 @@ fi
 
 echo "ANT_HOME: $ANT_HOME"
 
-$JAVACMD -Xmx512m -cp $ANT_HOME/lib/ant-launcher.jar -Dant.home=$ANT_HOME \
+$JAVACMD -Xmx1024m -cp $ANT_HOME/lib/ant-launcher.jar -Dant.home=$ANT_HOME \
     org.apache.tools.ant.launch.Launcher -lib $ANT_HOME/lib "$@"

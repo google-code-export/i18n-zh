@@ -28,4 +28,4 @@ do
     fi
 done
 
-$JAVACMD -Xmx512m -classpath \"$LOCALCLASSPATH\" org.apache.fop.apps.Fop "$@"
+$JAVACMD -Xmx1024m -classpath \"$LOCALCLASSPATH\" org.apache.fop.apps.Fop "$@"

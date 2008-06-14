@@ -68,4 +68,4 @@ done
 LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
 LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=WARN
 
-$JAVACMD -Xmx512m $LOGCHOICE $LOGLEVEL -classpath $LOCALCLASSPATH org.apache.fop.cli.Main $@
+$JAVACMD -Xmx1024m $LOGCHOICE $LOGLEVEL -classpath $LOCALCLASSPATH org.apache.fop.cli.Main $@
