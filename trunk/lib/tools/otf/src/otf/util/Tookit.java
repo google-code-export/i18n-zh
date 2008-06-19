@@ -1,7 +1,14 @@
 package otf.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 
 import otf.pojo.FontHeader;
 import otf.pojo.NameHeader;
@@ -154,5 +161,43 @@ public class Tookit {
 		nr.offset = toShort(buf, offset + 10);
 		
 		return nr;
+	}
+	
+	public static List<NameRecord> loadNameRecord(String xmlfile) throws Exception {
+		List<NameRecord> nrs = new ArrayList<NameRecord>(31);
+		XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(xmlfile));
+		
+		int event; 
+		String value = "";
+		NameRecord nr = null;
+		
+			while(((event = r.next()) != XMLStreamConstants.END_DOCUMENT)) {
+				if(event == XMLStreamConstants.START_ELEMENT) {
+					if(r.getName().toString().equals("string")) {
+						nr = new NameRecord();
+						nr.platformID = Short.parseShort(r.getAttributeValue(null, "platformID"));
+						nr.encodingID = Short.parseShort(r.getAttributeValue(null, "encodingID"));
+						nr.languageID = Short.parseShort(r.getAttributeValue(null, "languageID"));
+						nr.nameID = Short.parseShort(r.getAttributeValue(null, "nameID"));						
+					}
+					if(r.getName().toString().equals("value")) value = "";					
+				}
+				if(event == XMLStreamConstants.END_ELEMENT) {
+					if(r.getName().toString().equals("string")) {
+						if(nr.platformID == 3 && nr.encodingID ==1 
+								&& (nr.languageID == 1033 || nr.languageID == 2052))
+							nrs.add(nr);
+					}
+					if(r.getName().toString().equals("value")) {
+						nr.value = value;	
+						nr.length = (short) value.getBytes("UTF-16BE").length;
+					}
+				}
+				if(event == XMLStreamConstants.CHARACTERS) value += r.getText();
+			}			
+			
+		r.close();
+		
+		return nrs;
 	}
 }
