@@ -6,6 +6,4 @@ public class TableDirectory {
     public int checkSum;    // CheckSum for this table
     public int offset;      // Offset from beginning of TrueType font file
     public int length;      // Length of this table
-
-    public String tagName;
 }
