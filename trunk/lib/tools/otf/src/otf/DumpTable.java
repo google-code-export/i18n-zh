@@ -16,7 +16,7 @@ public class DumpTable {
 
 	public static void main(String[] args) throws Exception {
 		
-		String fontfile = "C:/wc/ttf/MicrosoftYaHei.ttf";
+		// String fontfile = "C:/wc/ttf/MicrosoftYaHei.ttf";
 		// String fontfile = "C:/wc/ttf/MicrosoftYaHeiBold.ttf";
 		// String fontfile = "C:/wc/ttf/FZLangtingHei.ttf";
 		// String fontfile = "C:/wc/ttf/FZLangtingSong.ttf";
@@ -26,6 +26,10 @@ public class DumpTable {
 		// String fontfile = "C:/wc/ttf/FZKai.ttf";
 		// String fontfile = "C:/wc/ttf/FZHei.ttf";
 		// String fontfile = "C:/wc/ttf/FZSong.ttf";
+		// String fontfile = "C:/wc/ttf/AdobeSongStd-Light.otf";
+		// String fontfile = "C:/wc/ttf/AdobeMingStd-Light.otf";
+
+		String fontfile = "C:/wc/ttf/MicrosoftYaHeiBold.fixed.ttf";
 		
 		new DumpTable().run(fontfile);
 	}
@@ -80,7 +84,6 @@ public class DumpTable {
 		xmlw.writeStartDocument();
 		xmlw.writeStartElement("name");
 		for(int i = 0; i < nh.count; i++) {
-			file.read(buf, 0, 16);
 			nrs[i] = Tookit.getNameRecord(buf, 6 + i * 12);
 			
 			System.out.println(nrs[i].platformID + "\t\t" + nrs[i].encodingID
@@ -177,7 +180,7 @@ public class DumpTable {
 				if(nrs[i].platformID == 1)
 					xmlw.writeCharacters(new String(buf, nh.stringOffset + nrs[i].offset, nrs[i].length, "ISO-8859-1"));
 				else
-					xmlw.writeCharacters(new String(buf, nh.stringOffset + nrs[i].offset, nrs[i].length, "UTF-16"));
+					xmlw.writeCharacters(new String(buf, nh.stringOffset + nrs[i].offset, nrs[i].length, "UTF-16BE"));
 				xmlw.writeEndElement();
 				
 				xmlw.writeEndElement();

@@ -10,8 +10,8 @@ import otf.util.Tookit;
 public class CheckSum {
 
 	public static void main(String[] args) throws Exception {
-		
-		String fontfile = "C:/wc/ttf/MicrosoftYaHei.ttf";
+
+		// String fontfile = "C:/wc/ttf/MicrosoftYaHei.ttf";
 		// String fontfile = "C:/wc/ttf/MicrosoftYaHeiBold.ttf";
 		// String fontfile = "C:/wc/ttf/FZLangtingHei.ttf";
 		// String fontfile = "C:/wc/ttf/FZLangtingSong.ttf";
@@ -21,6 +21,10 @@ public class CheckSum {
 		// String fontfile = "C:/wc/ttf/FZKai.ttf";
 		// String fontfile = "C:/wc/ttf/FZHei.ttf";
 		// String fontfile = "C:/wc/ttf/FZSong.ttf";
+		// String fontfile = "C:/wc/ttf/AdobeSongStd-Light.otf";
+		// String fontfile = "C:/wc/ttf/AdobeMingStd-Light.otf";
+
+		String fontfile = "C:/wc/ttf/FZYaSongBold.fixed.ttf";
 		
 		new CheckSum().run(fontfile);
 	}
@@ -54,7 +58,7 @@ public class CheckSum {
 						 + " length: " + tds[i].length + "\toffset: " + tds[i].offset);
 				int sum = Tookit.calcTableChecksum(file, tds[i].offset, tds[i].length);
 				if(sum != tds[i].checkSum) {
-					System.err.println("Check sum fail!");
+					System.out.println("Check sum '" + tag + "' fail!");
 				}
 			}
 		}
@@ -70,9 +74,11 @@ public class CheckSum {
 		adj = 0xB1B0AFBA - adj;
 				
 		if(adj != fh.checkSumAdjustment) {
-			System.err.println("Check sum fail!");			
+			System.out.println("Check sum 'head' fail!");			
 		}
 		
 		file.close();
+
+		System.out.println("\nDONE!");	
 	}
 }
