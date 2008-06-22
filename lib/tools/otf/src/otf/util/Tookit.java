@@ -64,7 +64,6 @@ public class Tookit {
     }
 
     public static void copyTo(RandomAccessFile src, int offset, RandomAccessFile dst, int dstOffset, int length) throws IOException {
-        length = (length + 3) & ~3;
         byte[] buf = new byte[Math.min(65536, length)];
 
         src.seek(offset);
@@ -179,8 +178,6 @@ public class Tookit {
         td.offset = toInteger(buf, offset + 8);
         td.length = toInteger(buf, offset + 12);
 
-        td.tagName = toTag(td.tag);
-
         return td;
     }
 
@@ -252,13 +249,17 @@ public class Tookit {
             }
             if(event == XMLStreamConstants.END_ELEMENT) {
                 if(r.getName().toString().equals("string")) {
-                    if(nr.platformID == 3 && nr.encodingID ==1
-                            && (nr.languageID == 1033 || nr.languageID == 2052))
+                    if((nr.platformID == 3 && nr.encodingID == 1 && (nr.languageID == 1033 || nr.languageID == 2052))
+                            || (nr.platformID == 1 && nr.encodingID == 0 && nr.languageID == 0))
                         nrs.add(nr);
                 }
                 if(r.getName().toString().equals("value")) {
+                    if(nr.platformID == 3)
+                        nr.bytes = value.getBytes("UTF-16BE");
+                    else
+                        nr.bytes = value.getBytes("ISO-8859-1");
+
                     nr.value = value;
-                    nr.bytes = value.getBytes("UTF-16BE");
                     nr.length = (short) nr.bytes.length;
                 }
             }
