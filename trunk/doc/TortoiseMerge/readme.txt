@@ -5,6 +5,11 @@ Description:
     build.xml ..................... build file.
     build.properties .............. build configuration file.
 
+Before Commit:
+    msgmerge --width=80 -o TortoiseMerge-zh_CN_new.po TortoiseMerge-zh_CN.po TortoiseMerge.pot
+    mv -f TortoiseMerge-zh_CN_new.po TortoiseMerge-zh_CN.po
+    msgfmt --statistics -c TortoiseMerge-zh_CN.po
+
 Aim:
     Since the official pdf output broken for simplified chinese, we tried
     to fix it.
