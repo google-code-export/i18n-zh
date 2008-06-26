@@ -7,9 +7,9 @@
   <xsl:param name="hyphenate">false</xsl:param>
 
   <!-- Font related Settings -->
-  <xsl:param name="body.font.family">simsun</xsl:param>
-  <xsl:param name="dingbat.font.family">simhei</xsl:param>
-  <xsl:param name="monospace.font.family">simsun</xsl:param>
-  <xsl:param name="title.font.family">simhei</xsl:param>
+  <xsl:param name="title.font.family">zh_title</xsl:param>
+  <xsl:param name="body.font.family">zh_text</xsl:param>
+  <xsl:param name="dingbat.font.family">zh_text</xsl:param>
+  <xsl:param name="monospace.font.family">zh_verbatim</xsl:param>
 
 </xsl:stylesheet>
