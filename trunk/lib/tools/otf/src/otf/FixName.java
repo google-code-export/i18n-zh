@@ -2,6 +2,8 @@ package otf;
 
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import otf.pojo.OffsetTable;
@@ -23,10 +25,10 @@ public class FixName {
         // String fontfile = "C:/wc/ttf/FZSong.ttf";
         // String fontfile = "C:/wc/ttf/AdobeSongStd-Light.otf";
         // String fontfile = "C:/wc/ttf/AdobeMingStd-Light.otf";
-
-        String fontfile = "C:/wc/ttf/FZYaSongBold.ttf";
-        String outfile = "C:/wc/ttf/FZYaSongBold.fixed.ttf";
-        String xmlfile = "C:/wc/svn/i18n-zh/trunk/lib/tools/otf/xml/fixed/FZYaSongBold.xml";
+    	
+        String fontfile = "C:/wc/ttf/FzYaSongBold.ttf";
+        String outfile = "C:/wc/ttf/FzYaSongBold.fixed.ttf";
+        String xmlfile = "C:/wc/svn/i18n-zh/trunk/lib/tools/otf/xml/fixed/FzYaSongBold.xml";
 
         new FixName().run(fontfile, xmlfile, outfile);
     }
@@ -43,22 +45,21 @@ public class FixName {
             System.exit(1);
         }
 
-        int head = 0, name = 0;
-        List<TableDirectory> tds = new ArrayList<TableDirectory>(31);
+        TableDirectory head = null;
+        List<TableDirectory> tdl = new ArrayList<TableDirectory>(31);
         for(int i = 0; i < ot.numTables; i++) {
             src.read(buf, 0, 16);
             TableDirectory td = Tookit.getTableDirectory(buf, 0);
             if(!"DSIG".equals(Tookit.toTag(td.tag))) {
-                tds.add(td);
-                if("head".equals(Tookit.toTag(td.tag))) head = tds.size() - 1;
-                if("name".equals(Tookit.toTag(td.tag))) name = tds.size() - 1;
+                tdl.add(td);
+                if("head".equals(Tookit.toTag(td.tag))) head = td;
             } else {
                 System.out.println("Remove table 'DSIG' ... done");
             }
         }
 
         // 写入文件头
-        ot = Tookit.updateOffsetTable(ot, tds.size());
+        ot = Tookit.updateOffsetTable(ot, tdl.size());
         RandomAccessFile dst = new RandomAccessFile(outfile, "rw");
         dst.seek(0);
         dst.writeInt(ot.sfnt);
@@ -67,12 +68,21 @@ public class FixName {
         dst.writeShort(ot.entrySelector);
         dst.writeShort(ot.rangeShift);
 
-        int size = 12 + 16 * tds.size();
-        for(int i = 0; i < tds.size(); i++) {
-            TableDirectory td = tds.get(i);
+        // 按照原始偏移排序表
+        TableDirectory[] tds = tdl.toArray(new TableDirectory[tdl.size()]);
+        Arrays.sort(tds,  new Comparator<TableDirectory>() {
+            public int compare(final TableDirectory o1, final TableDirectory o2) {
+                if(o1.offset > o2.offset) return 1;
+                if(o1.offset < o2.offset) return -1;
+                return 0;
+            }});
 
-            // 复制表内容
-            if(i == name) {
+        // 复制表内容
+        int size = 12 + 16 * tds.length;
+        for(int i = 0; i < tds.length; i++) {
+            TableDirectory td = tds[i];
+
+            if("name".equals(Tookit.toTag(td.tag))) {
                 byte[] nameTable = Tookit.loadNameTable(xmlfile);
                 dst.seek(size);
                 dst.write(nameTable);
@@ -81,21 +91,26 @@ public class FixName {
                 Tookit.copyTo(src, td.offset, dst, size, td.length);
             }
 
-            if(i == head) { // 将表 head 的 checkSumAdjustment 置 0
+            if("head".equals(Tookit.toTag(td.tag))) { // 将表 head 的 checkSumAdjustment 置 0
                 dst.seek(size + 8);
-                dst.writeInt(0);
+                dst.writeInt(0);                
+
+                // 更新修改时间
+//            	GregorianCalendar c = new GregorianCalendar();
+//            	c.set(1904, 1 - 1, 1, 0 + 8, 0);
+//            	long t = c.getTimeInMillis();
+//            	c.set(1970, 1 - 1, 1, 0 + 8, 0);
+//            	t = c.getTimeInMillis() - t;            	
+//                
+//              t = (t + System.currentTimeMillis()) / 1000;
+//              dst.seek(size + 28);
+//              dst.writeLong(t);
             }
 
-            // 写入表索引
+            // 调节表索引
             td.checkSum = Tookit.calcTableChecksum(dst, size, td.length);
             td.offset = size;
             size += td.length;
-
-            dst.seek(12 + 16 * i);
-            dst.writeInt(td.tag);
-            dst.writeInt(td.checkSum);
-            dst.writeInt(td.offset);
-            dst.writeInt(td.length);
 
             // 按照 4 字节对齐文件
             if(size % 4 != 0) {
@@ -109,9 +124,26 @@ public class FixName {
                     + "' ... done");
         }
 
+        // 按照 tag 排序表
+        Arrays.sort(tds,  new Comparator<TableDirectory>() {
+            public int compare(final TableDirectory o1, final TableDirectory o2) {
+                if(o1.tag > o2.tag) return 1;
+                if(o1.tag < o2.tag) return -1;
+                return 0;
+            }});
+
+        // 写入表索引
+        dst.seek(12);
+        for(int i = 0; i < tds.length; i++) {
+          dst.writeInt(tds[i].tag);
+          dst.writeInt(tds[i].checkSum);
+          dst.writeInt(tds[i].offset);
+          dst.writeInt(tds[i].length);
+        }
+
         // checkSumAdjustment
         int sum = 0xB1B0AFBA - Tookit.calcTableChecksum(dst, 0, size);
-        dst.seek(tds.get(head).offset + 8);
+        dst.seek(head.offset + 8);
         dst.writeInt(sum);
 
         System.out.println("\nCalc font checksum ... done");

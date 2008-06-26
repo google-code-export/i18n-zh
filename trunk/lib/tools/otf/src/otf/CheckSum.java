@@ -24,7 +24,7 @@ public class CheckSum {
         // String fontfile = "C:/wc/ttf/AdobeSongStd-Light.otf";
         // String fontfile = "C:/wc/ttf/AdobeMingStd-Light.otf";
 
-        String fontfile = "C:/wc/ttf/FZYaSongBold.fixed.ttf";
+        String fontfile = "C:/wc/ttf/FzYaSongBold.fixed.ttf";
 
         new CheckSum().run(fontfile);
     }
