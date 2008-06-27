@@ -10,6 +10,7 @@
   <!-- Font related Settings -->
   <xsl:param name="title.font.family">zh_title</xsl:param>
   <xsl:param name="body.font.family">zh_text</xsl:param>
+  <xsl:param name="monospace.font.family">zh_verbatim</xsl:param>
   <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="title.font.size">14</xsl:param>
 
@@ -18,15 +19,5 @@
 
   <xsl:param name="callout.unicode.font">zh_title</xsl:param>
   <xsl:param name="callout.unicode.start.character">10102</xsl:param>
-
-<!--Font Families -->
-
-<xsl:param name="body.start.indent">
-  <xsl:choose>
-    <xsl:when test="$fop.extensions != 0">0pt</xsl:when>
-    <xsl:when test="$passivetex.extensions != 0">0pt</xsl:when>
-    <xsl:otherwise>0pc</xsl:otherwise>
-  </xsl:choose>
-</xsl:param>
 
 </xsl:stylesheet>
