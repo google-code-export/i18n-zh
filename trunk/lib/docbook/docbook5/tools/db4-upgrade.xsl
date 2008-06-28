@@ -14,7 +14,7 @@
 # Organization for the Advancement of Structured Information
 # Standards (OASIS).
 #
-# Release: $Id: db4-upgrade.xsl 7428 2007-09-02 16:36:15Z mzjn $
+# Release: $Id: db4-upgrade.xsl 7660 2008-02-06 13:48:36Z nwalsh $
 #
 # Permission to use, copy, modify and distribute this stylesheet
 # and its accompanying documentation for any purpose and without fee
@@ -31,7 +31,10 @@
 # ======================================================================
 -->
 
+<xsl:variable name="version" select="'1.0'"/>
+
 <xsl:output method="xml" encoding="utf-8" indent="no" omit-xml-declaration="yes"/>
+
 <xsl:preserve-space elements="*"/>
 <xsl:param name="rootid">
   <xsl:choose>
@@ -50,6 +53,12 @@
   <xsl:variable name="converted">
     <xsl:apply-templates/>
   </xsl:variable>
+  <xsl:comment>
+    <xsl:text> Converted by db4-upgrade version </xsl:text>
+    <xsl:value-of select="$version"/>
+    <xsl:text> </xsl:text>
+  </xsl:comment>
+  <xsl:text>&#10;</xsl:text>
   <xsl:apply-templates select="exsl:node-set($converted)/*" mode="addNS"/>
 </xsl:template>
 
@@ -352,6 +361,7 @@
             <xsl:apply-templates select="title" mode="copy"/>
             <xsl:apply-templates select="titleabbrev" mode="copy"/>
             <xsl:apply-templates select="subtitle" mode="copy"/>
+            <xsl:apply-templates select="abstract" mode="copy"/>
           </info>
         </xsl:if>
         <xsl:apply-templates/>
@@ -441,6 +451,7 @@
         <xsl:apply-templates select="title" mode="copy"/>
         <xsl:apply-templates select="titleabbrev" mode="copy"/>
         <xsl:apply-templates select="subtitle" mode="copy"/>
+        <xsl:apply-templates select="abstract" mode="copy"/>
       </info>
     </xsl:if>
     <xsl:apply-templates/>
@@ -451,14 +462,12 @@
 	      priority="200">
   <simplesect>
     <xsl:call-template name="copy.attributes"/>
-
-    <xsl:if test="not(sect1info|sect2info|sect3info|sect4info|sect5info|sectioninfo)">
-      <info>
-        <xsl:apply-templates select="title" mode="copy"/>
-        <xsl:apply-templates select="titleabbrev" mode="copy"/>
-        <xsl:apply-templates select="subtitle" mode="copy"/>
-      </info>
-    </xsl:if>
+    <info>
+      <xsl:apply-templates select="title" mode="copy"/>
+      <xsl:apply-templates select="titleabbrev" mode="copy"/>
+      <xsl:apply-templates select="subtitle" mode="copy"/>
+      <xsl:apply-templates select="abstract" mode="copy"/>
+    </info>
     <xsl:apply-templates/>
   </simplesect>
 </xsl:template>
@@ -472,6 +481,7 @@
         <xsl:apply-templates select="title" mode="copy"/>
         <xsl:apply-templates select="titleabbrev" mode="copy"/>
         <xsl:apply-templates select="subtitle" mode="copy"/>
+        <xsl:apply-templates select="abstract" mode="copy"/>
       </info>
     </xsl:if>
     <xsl:apply-templates/>
@@ -1081,6 +1091,16 @@
   <!-- nop -->
 </xsl:template>
 
+<xsl:template match="abstract" priority="300">
+  <xsl:if test="not(contains(name(parent::*),'info'))">
+    <xsl:call-template name="emit-message">
+      <xsl:with-param name="message">
+	<xsl:text>Check abstract; moved into info correctly?</xsl:text>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:if>
+</xsl:template>
+
 <xsl:template match="indexterm">
   <!-- don't copy the defaulted significance='normal' attribute -->
   <indexterm>
@@ -1110,9 +1130,36 @@
   </tocdiv>
 </xsl:template>
 
+<xsl:template match="action" priority="200">
+  <phrase remap="action">
+    <xsl:call-template name="copy.attributes"/>
+    <xsl:apply-templates/>
+  </phrase>
+</xsl:template>
+
+<xsl:template match="beginpage" priority="200">
+  <xsl:comment> beginpage pagenum=<xsl:value-of select="@pagenum"/> </xsl:comment>
+  <xsl:call-template name="emit-message">
+    <xsl:with-param name="message">
+      <xsl:text>Replacing beginpage with comment</xsl:text>
+    </xsl:with-param>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="structname|structfield" priority="200">
+  <varname remap="{local-name(.)}">
+    <xsl:call-template name="copy.attributes"/>
+    <xsl:apply-templates/>
+  </varname>
+</xsl:template>
 
 <!-- ====================================================================== -->
 
+<!-- 6 Feb 2008, ndw changed mode=copy so that it only copies the first level,
+     then it switches back to "normal" mode so that other rewriting templates
+     catch embedded fixes -->
+
+<!--
 <xsl:template match="ulink" priority="200" mode="copy">
   <xsl:choose>
     <xsl:when test="node()">
@@ -1152,17 +1199,20 @@
     <xsl:apply-templates/>
   </tag>
 </xsl:template>
+-->
 
 <xsl:template match="*" mode="copy">
   <xsl:copy>
     <xsl:call-template name="copy.attributes"/>
-    <xsl:apply-templates mode="copy"/>
+    <xsl:apply-templates/>
   </xsl:copy>
 </xsl:template>
 
+<!--
 <xsl:template match="comment()|processing-instruction()|text()" mode="copy">
   <xsl:copy/>
 </xsl:template>
+-->
 
 <!-- ====================================================================== -->
 
