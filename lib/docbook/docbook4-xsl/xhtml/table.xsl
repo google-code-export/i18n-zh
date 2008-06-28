@@ -6,7 +6,7 @@
 <xsl:include href="../common/table.xsl"/>
 
 <!-- ********************************************************************
-     $Id: table.xsl 7009 2007-07-11 09:42:54Z mzjn $
+     $Id: table.xsl 8010 2008-05-21 16:17:44Z abdelazer $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -166,6 +166,7 @@
       <!-- Otherwise, if there's a title, use that -->
       <xsl:when test="../title">
         <xsl:attribute name="summary">
+          <!-- This screws up on inline markup and footnotes, oh well... -->
           <xsl:value-of select="string(../title)"/>
         </xsl:attribute>
       </xsl:when>
@@ -397,11 +398,11 @@
     <xsl:apply-templates select="tfoot"/>
     <xsl:apply-templates select="tbody"/>
 
-    <xsl:if test=".//footnote">
+    <xsl:if test=".//footnote|../title//footnote">
       <tbody class="footnotes">
         <tr>
           <td colspan="{@cols}">
-            <xsl:apply-templates select=".//footnote" mode="table.footnote.mode"/>
+            <xsl:apply-templates select=".//footnote|../title//footnote" mode="table.footnote.mode"/>
           </td>
         </tr>
       </tbody>
@@ -675,7 +676,7 @@
   <xsl:variable name="rowsep">
     <xsl:choose>
       <!-- If this is the last row, rowsep never applies. -->
-      <xsl:when test="ancestor::entrytbl                       and not (ancestor-or-self::row[1]/following-sibling::row)">
+      <xsl:when test="ancestor::entrytbl                       and not (ancestor-or-self::row[1]/following-sibling::row)         and not (ancestor::thead)">
         <xsl:value-of select="0"/>
       </xsl:when>
       <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row                           or ancestor-or-self::thead/following-sibling::tbody                           or ancestor-or-self::tbody/preceding-sibling::tfoot)">

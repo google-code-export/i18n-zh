@@ -8,7 +8,7 @@
   version='1.0'>
 
 <!-- ********************************************************************
-     $Id: pi.xsl 7240 2007-08-14 12:30:49Z mzjn $
+     $Id: pi.xsl 8012 2008-05-23 16:08:05Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -19,7 +19,7 @@
 
 <doc:reference xmlns=""><info><title>FO Processing Instruction Reference</title>
     <releaseinfo role="meta">
-      $Id: pi.xsl 7240 2007-08-14 12:30:49Z mzjn $
+      $Id: pi.xsl 8012 2008-05-23 16:08:05Z mzjn $
     </releaseinfo>
   </info>
 
@@ -130,14 +130,14 @@
     </variablelist>
   </refparameter>
   <refsee role="params">
-    <para><parameter>sidebar.float.type parameter</parameter>,
-      <parameter>sidebar.float.width parameter</parameter>, 
-      <parameter>sidebar.properties attribute-set</parameter>,
-      <parameter>sidebar.title.properties</parameter>
+    <para><parameter>sidebar.float.type</parameter> (parameter),
+      <parameter>sidebar.float.width</parameter> (parameter), 
+      <parameter>sidebar.properties</parameter> (attribute-set),
+      <parameter>sidebar.title.properties</parameter> (attribute-set)
     </para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="SideFloats.html#SidebarFloats" >A sidebar as
+    <para><link role="tcg" xlink:href="SideFloats.html#SidebarFloats" >A sidebar as
         side float</link></para>
   </refsee>
 </doc:pi>
@@ -176,7 +176,7 @@
     <para><parameter>glossary.as.blocks</parameter></para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
+    <para><link role="tcg" xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
         formatting in print</link></para>
   </refsee>
 </doc:pi>
@@ -215,7 +215,7 @@
     <para><parameter>glosslist.as.blocks</parameter> </para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
+    <para><link role="tcg" xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
         formatting in print</link></para>
   </refsee>
 </doc:pi>
@@ -254,7 +254,7 @@
     </para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
+    <para><link role="tcg" xlink:href="Glossaries.html#GlossaryFormatPrint" >Glossary
         formatting in print</link></para>
   </refsee>
 </doc:pi>
@@ -268,13 +268,17 @@
 
 <doc:pi name="dbfo_keep-together" xmlns="">
   <refpurpose>Specifies “keep” behavior for a table, example,
-    figure, or equation</refpurpose>
+    figure, equation, procedure, or task</refpurpose>
   <refdescription>
     <para>Use the <tag class="xmlpi">dbfo keep-together</tag> PI as a child of a
       formal object (<tag>table</tag>, <tag>example</tag>,
-      <tag>figure</tag>, or <tag>equation</tag>) or their informal
-      equivalents) to specify “keep” behavior for the object (to
-      allow the object to “break” across a page).</para>
+      <tag>figure</tag>, <tag>equation</tag>, <tag>procedure</tag>, or
+      <tag>task</tag>) to specify “keep” behavior (to allow the object to 
+    “break” across a page).</para>
+    <para>The PI also works with <tag>informaltable</tag>, <tag>informalexample</tag>,
+      <tag>informalfigure</tag> and <tag>informalequation</tag>.
+    </para>
+
   </refdescription>
   <refsynopsisdiv>
     <synopsis><tag class="xmlpi">dbfo keep-together="auto"|"always"</tag></synopsis>
@@ -298,7 +302,7 @@
     <para>formal.object.properties</para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="PageBreaking.html#KeepTogetherPI"
+    <para><link role="tcg" xlink:href="PageBreaking.html#KeepTogetherPI"
         >Keep-together processing instruction</link></para>
   </refsee>
 </doc:pi>
@@ -311,10 +315,12 @@
 </xsl:template>
 
 <doc:pi name="dbfo_label-width" xmlns="">
-  <refpurpose>Specifies the label width for a qandaset</refpurpose>
+  <refpurpose>Specifies the label width for a qandaset, itemizedlist, orderedlist
+  or calloutlist</refpurpose>
   <refdescription>
     <para>Use the <tag class="xmlpi">dbfo label-width</tag> PI as a child of a
-      <tag>qandaset</tag> to specify the width of labels.</para>
+      <tag>qandaset</tag>, <tag>itemizedlist</tag>, <tag>orderedlist</tag>, 
+      or <tag>calloutlist</tag> to specify the width of labels.</para>
   </refdescription>
   <refsynopsisdiv>
     <synopsis><tag class="xmlpi">dbfo label-width="<replaceable>width</replaceable>"</tag></synopsis>
@@ -662,7 +668,7 @@
     </para>
   </refsee>
   <refsee role="tcg">
-    <para><link xlink:href="SideFloats.html#SidebarFloats" >A sidebar as
+    <para><link role="tcg" xlink:href="SideFloats.html#SidebarFloats" >A sidebar as
         side float</link></para>
   </refsee>
 </doc:pi>

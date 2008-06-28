@@ -3,7 +3,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: component.xsl 7000 2007-07-10 20:41:35Z mzjn $
+     $Id: component.xsl 7656 2008-02-02 00:29:28Z nwalsh $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -233,7 +233,8 @@
   </div>
 </xsl:template>
 
-<xsl:template match="chapter/title" mode="titlepage.mode" priority="2">
+<xsl:template match="chapter/title|chapter/chapterinfo/title"
+	      mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::chapter[1]"/>
   </xsl:call-template>
@@ -312,7 +313,8 @@
   </div>
 </xsl:template>
 
-<xsl:template match="appendix/title" mode="titlepage.mode" priority="2">
+<xsl:template match="appendix/title|appendix/appendixinfo/title"
+	      mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::appendix[1]"/>
   </xsl:call-template>

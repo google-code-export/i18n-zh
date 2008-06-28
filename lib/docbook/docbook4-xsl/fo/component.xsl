@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: component.xsl 7033 2007-07-15 19:52:52Z bobstayton $
+     $Id: component.xsl 7486 2007-09-30 16:32:58Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -696,6 +696,20 @@
       </fo:marker>
       <xsl:copy-of select="$title"/>
     </fo:block>
+
+    <xsl:variable name="toc.params">
+        <xsl:call-template name="find.path.params">
+          <xsl:with-param name="table" select="normalize-space($generate.toc)"/>
+        </xsl:call-template>
+      </xsl:variable>
+
+      <xsl:if test="contains($toc.params, 'toc')">
+        <xsl:call-template name="component.toc">
+          <xsl:with-param name="toc.title.p" 
+                          select="contains($toc.params, 'title')"/>
+        </xsl:call-template>
+        <xsl:call-template name="component.toc.separator"/>
+      </xsl:if>
 
     <xsl:apply-templates/>
   </fo:block>

@@ -4,7 +4,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: lists.xsl 6963 2007-07-07 08:15:38Z xmldoc $
+     $Id: lists.xsl 8002 2008-04-21 16:03:57Z kosek $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -236,44 +236,6 @@
       </fo:list-block>
     </xsl:otherwise>
   </xsl:choose>
-</xsl:template>
-
-<xsl:template match="orderedlist/listitem" mode="item-number">
-  <xsl:variable name="numeration">
-    <xsl:call-template name="list.numeration">
-      <xsl:with-param name="node" select="parent::orderedlist"/>
-    </xsl:call-template>
-  </xsl:variable>
-
-  <xsl:variable name="type">
-    <xsl:choose>
-      <xsl:when test="$numeration='arabic'">1.</xsl:when>
-      <xsl:when test="$numeration='loweralpha'">a.</xsl:when>
-      <xsl:when test="$numeration='lowerroman'">i.</xsl:when>
-      <xsl:when test="$numeration='upperalpha'">A.</xsl:when>
-      <xsl:when test="$numeration='upperroman'">I.</xsl:when>
-      <!-- What!? This should never happen -->
-      <xsl:otherwise>
-        <xsl:message>
-          <xsl:text>Unexpected numeration: </xsl:text>
-          <xsl:value-of select="$numeration"/>
-        </xsl:message>
-        <xsl:value-of select="1."/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-
-  <xsl:variable name="item-number">
-    <xsl:call-template name="orderedlist-item-number"/>
-  </xsl:variable>
-
-  <xsl:if test="parent::orderedlist/@inheritnum='inherit'
-                and ancestor::listitem[parent::orderedlist]">
-    <xsl:apply-templates select="ancestor::listitem[parent::orderedlist][1]"
-                         mode="item-number"/>
-  </xsl:if>
-
-  <xsl:number value="$item-number" format="{$type}"/>
 </xsl:template>
 
 <xsl:template match="orderedlist/listitem">
@@ -1154,6 +1116,10 @@
   <xsl:call-template name="object.id"/>
   </xsl:variable>
 
+  <xsl:variable name="pi-label-width">
+    <xsl:call-template name="pi.dbfo_label-width"/>
+  </xsl:variable>
+
   <fo:block id="{$id}"
             text-align="{$alignment}">
     <!-- The above restores alignment altered by image align attribute -->
@@ -1173,6 +1139,13 @@
                    space-before.maximum="1.2em"
                    provisional-distance-between-starts="2.2em"
                    provisional-label-separation="0.2em">
+
+      <xsl:if test="$pi-label-width != ''">
+      	<xsl:attribute name="provisional-distance-between-starts">
+	  <xsl:value-of select="$pi-label-width"/>
+	</xsl:attribute>
+      </xsl:if>
+      
       <xsl:apply-templates select="callout
                                 |comment()[preceding-sibling::callout]
                                 |processing-instruction()[preceding-sibling::callout]"/>
