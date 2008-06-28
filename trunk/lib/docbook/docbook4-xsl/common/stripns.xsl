@@ -9,7 +9,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: stripns.xsl 7267 2007-08-22 12:20:28Z xmldoc $
+     $Id: stripns.xsl 7604 2007-12-14 18:06:11Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -157,59 +157,6 @@
     <xsl:apply-templates select="db:title|ng:title" mode="stripNS"/>
   </xsl:if>
 
-</xsl:template>
-
-<xsl:template match="ng:link|db:link" mode="stripNS">
-  <xsl:variable xmlns:xlink="http://www.w3.org/1999/xlink"
-                name="href" select="@xlink:href|@href"/>
-  <xsl:choose>
-    <xsl:when test="$href != '' and not(starts-with($href,'#'))">
-      <ulink url="{$href}">
-        <xsl:for-each select="@*">
-          <xsl:if test="local-name(.) != 'href'
-                        and name(.) != 'version'
-                        and name(.) != 'xml:id'">
-            <xsl:copy/>
-          </xsl:if>
-        </xsl:for-each>
-        <xsl:if test="@xml:id">
-          <xsl:attribute name="id">
-            <xsl:value-of select="@xml:id"/>
-          </xsl:attribute>
-        </xsl:if>
-        <xsl:apply-templates mode="stripNS"/>
-      </ulink>
-    </xsl:when>
-    <xsl:when test="$href != '' and starts-with($href,'#')">
-      <link linkend="{substring-after($href,'#')}">
-        <xsl:for-each select="@*">
-          <xsl:if test="local-name(.) != 'href'
-                        and name(.) != 'version'
-                        and name(.) != 'xml:id'">
-            <xsl:copy/>
-          </xsl:if>
-        </xsl:for-each>
-        <xsl:if test="@xml:id">
-          <xsl:attribute name="id">
-            <xsl:value-of select="@xml:id"/>
-          </xsl:attribute>
-        </xsl:if>
-        <xsl:apply-templates mode="stripNS"/>
-      </link>
-    </xsl:when>
-    <xsl:otherwise>
-      <link>
-        <xsl:copy-of select="@*[not(name(.) = 'xml:id')
-                             and not(name(.) = 'version')]"/>
-        <xsl:if test="@xml:id">
-          <xsl:attribute name="id">
-            <xsl:value-of select="@xml:id"/>
-          </xsl:attribute>
-        </xsl:if>
-        <xsl:apply-templates mode="stripNS"/>
-      </link>
-    </xsl:otherwise>
-  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="ng:tag|db:tag" mode="stripNS">

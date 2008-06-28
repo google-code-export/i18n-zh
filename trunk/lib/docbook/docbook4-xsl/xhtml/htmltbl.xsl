@@ -4,7 +4,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: htmltbl.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: htmltbl.xsl 8000 2008-04-15 01:06:41Z abdelazer $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -29,28 +29,29 @@
 </xsl:template>
 
 <xsl:template match="caption" mode="htmlTable">
-  <xsl:copy>
+  <!-- do not use xsl:copy because of XHTML's needs -->
+  <caption>  
     <xsl:copy-of select="@*"/>
 
     <xsl:apply-templates select=".." mode="object.title.markup">
       <xsl:with-param name="allow-anchors" select="1"/>
     </xsl:apply-templates>
 
-  </xsl:copy>
+  </caption>
 </xsl:template>
 
 <xsl:template match="thead|tbody|tgroup|tr" mode="htmlTable">
-  <xsl:copy>
+  <xsl:element name="{name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:copy-of select="@*"/>
     <xsl:apply-templates mode="htmlTable"/>
-  </xsl:copy>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="th|td" mode="htmlTable">
-  <xsl:copy>
+  <xsl:element name="{name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:copy-of select="@*"/>
     <xsl:apply-templates/> <!-- *not* mode=htmlTable -->
-  </xsl:copy>
+  </xsl:element>
 </xsl:template>
 
 </xsl:stylesheet>

@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: refentry.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: refentry.xsl 7564 2007-11-19 18:38:43Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -563,7 +563,7 @@
 <!--     </xsl:call-template> -->
 <!-- -->
   <xsl:param name="section" 
-             select="(ancestor::refsynopsysdiv 
+             select="(ancestor::refsynopsisdiv 
                      |ancestor::refsection
                      |ancestor::refsect1
                      |ancestor::refsect2

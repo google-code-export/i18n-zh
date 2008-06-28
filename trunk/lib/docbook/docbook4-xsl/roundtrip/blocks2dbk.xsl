@@ -1,4 +1,4 @@
-<!DOCTYPE xsl:stylesheet SYSTEM "blocks2dbk.dtd">
+<!DOCTYPE xsl:stylesheet [
 <!-- External DTD defines entities:
      components :- QNames of component-level elements
      blocks :- QNames of block-level elements
@@ -7,12 +7,16 @@
      admonition :- XPath expression matching admonition styles
      admonition-title :- XPath expression matching admonition title styles
 -->
+<!ENTITY % ext SYSTEM "blocks2dbk.dtd">
+%ext;
+]>
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:dbk='http://docbook.org/ns/docbook'
-  xmlns:rnd='http://docbook.org/ns/docbook/roundtrip'>
+  xmlns:rnd='http://docbook.org/ns/docbook/roundtrip'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
 
-  <!-- $Id: blocks2dbk.xsl 7266 2007-08-22 11:58:42Z xmldoc $ -->
+  <!-- $Id: blocks2dbk.xsl 7978 2008-04-03 06:58:34Z balls $ -->
   <!-- Stylesheet to convert word processing docs to DocBook -->
   <!-- This stylesheet processes the output of sections2blocks.xsl -->
 
@@ -65,7 +69,7 @@
     <xsl:variable name='figure'
 		  select='preceding-sibling::dbk:para[dbk:inlinemediaobject and count(*) = 1 and normalize-space(.) = ""][1]'/>
     <xsl:variable name='caption'
-		  select='following-sibling::dbk:para[@rnd:style = "Caption"]'/>
+		  select='following-sibling::dbk:para[@rnd:style = "caption" or @rnd:style = "Caption"]'/>
 
     <xsl:choose>
       <!-- continue style paragraphs are handled in context -->
@@ -90,7 +94,7 @@
 		      @rnd:style = "figure-title" and
 		      following-sibling::*[1][self::dbk:para][dbk:inlinemediaobject and count(*) = 1 and normalize-space(.) = ""]'/>
       <xsl:when test='$suppress and
-		      @rnd:style = "Caption" and
+		      (@rnd:style = "caption" or @rnd:style = "Caption") and
 		      (preceding-sibling::*[self::dbk:informaltable] or
 		      preceding-sibling::*[self::dbk:para][dbk:inlinemediaobject and count(*) = 1 and normalize-space(.) = ""])'/>
 
@@ -121,6 +125,7 @@
                       @rnd:style = "" or
                       @rnd:style = "para-continue"'>
         <dbk:para>
+          <xsl:call-template name='rnd:attributes'/>
           <xsl:apply-templates/>
         </dbk:para>
       </xsl:when>
@@ -139,6 +144,7 @@
       <xsl:when test='&admonition-title;'>
         <xsl:element name='{substring-before(@rnd:style, "-title")}'
           namespace='http://docbook.org/ns/docbook'>
+          <xsl:call-template name='rnd:attributes'/>
           <dbk:title>
             <xsl:apply-templates/>
           </dbk:title>
@@ -154,7 +160,8 @@
                       starts-with(@rnd:style, "orderedlist")'>
 
         <xsl:variable name='stop.node'
-          select='following-sibling::dbk:para[not(starts-with(@rnd:style, "itemizedlist") or starts-with(@rnd:style, "orderedlist")) and @rnd:style != "para-continue"][1]'/>
+          select='following-sibling::dbk:para[not(@rnd:style) or
+                  (not(starts-with(@rnd:style, "itemizedlist") or starts-with(@rnd:style, "orderedlist")) and @rnd:style != "para-continue")][1]'/>
 
         <xsl:choose>
           <xsl:when test='translate(substring-after(@rnd:style, "list"), "0123456789", "") != "" or
@@ -220,6 +227,7 @@
       <xsl:when test='@rnd:style = "example-title"'>
         <xsl:element name='{substring-before(@rnd:style, "-title")}'
           namespace='http://docbook.org/ns/docbook'>
+          <xsl:call-template name='rnd:attributes'/>
           <dbk:title>
             <xsl:apply-templates/>
           </dbk:title>
@@ -236,6 +244,7 @@
 			      normalize-space(.) = ""][1]'/>
 
 	<dbk:sidebar>
+          <xsl:call-template name='rnd:attributes'/>
 	  <dbk:info>
 	    <dbk:title>
 	      <xsl:apply-templates/>
@@ -258,6 +267,7 @@
       <xsl:when test='&admonition;'>
         <xsl:element name='{@rnd:style}'
           namespace='http://docbook.org/ns/docbook'>
+          <xsl:call-template name='rnd:attributes'/>
           <dbk:para>
             <xsl:apply-templates/>
           </dbk:para>
@@ -271,11 +281,13 @@
 	-->
       <xsl:when test='@rnd:style = "bibliomixed"'>
 	<dbk:bibliomixed>
+          <xsl:call-template name='rnd:attributes'/>
 	  <xsl:apply-templates/>
 	</dbk:bibliomixed>
       </xsl:when>
       <xsl:when test='@rnd:style = "biblioentry-title"'>
 	<dbk:biblioentry>
+          <xsl:call-template name='rnd:attributes'/>
           <dbk:title>
             <xsl:apply-templates/>
           </dbk:title>
@@ -306,6 +318,7 @@
                       @rnd:style = "blockquote-attribution")][1]'/>
 
             <dbk:blockquote>
+              <xsl:call-template name='rnd:attributes'/>
 	      <xsl:if test='@rnd:style = "blockquote-title"'>
 		<dbk:info>
 		  <dbk:title>
@@ -369,13 +382,46 @@
       </xsl:when>
 
       <xsl:when test='@rnd:style = "informalfigure-imagedata"'>
-        <dbk:informalfigure>
-          <dbk:mediaobject>
-            <dbk:imageobject>
-              <dbk:imagedata fileref='{.}'/>
-            </dbk:imageobject>
-          </dbk:mediaobject>
-        </dbk:informalfigure>
+        <xsl:choose>
+          <xsl:when test='preceding-sibling::*[1][self::dbk:para][@rnd:style = "figure-title"]'>
+            <dbk:figure>
+              <xsl:call-template name='rnd:attributes'/>
+              <dbk:info>
+                <dbk:title>
+                  <xsl:apply-templates select='preceding-sibling::*[1]/node()'/>
+                </dbk:title>
+              </dbk:info>
+              <dbk:mediaobject>
+                <dbk:imageobject>
+                  <dbk:imagedata fileref='{.}'/>
+                </dbk:imageobject>
+              </dbk:mediaobject>
+              <xsl:apply-templates select='following-sibling::*[1][self::dbk:para][@rnd:style = "caption" or @rnd:style = "Caption"]'
+                mode='rnd:caption'/>
+            </dbk:figure>
+          </xsl:when>
+          <xsl:otherwise>
+            <dbk:informalfigure>
+              <xsl:call-template name='rnd:attributes'/>
+              <dbk:mediaobject>
+                <dbk:imageobject>
+                  <dbk:imagedata fileref='{.}'/>
+                </dbk:imageobject>
+              </dbk:mediaobject>
+              <xsl:apply-templates select='following-sibling::*[1][self::dbk:para][@rnd:style = "caption" or @rnd:style = "Caption"]'
+                mode='rnd:caption'/>
+            </dbk:informalfigure>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+
+      <xsl:when test='(@rnd:style = "caption" or @rnd:style = "Caption") and
+                      preceding-sibling::*[(self::dbk:para and contains(@rnd:style, "imagedata")) or self::dbk:informaltable]'/>
+      <xsl:when test='@rnd:style = "caption" or @rnd:style = "Caption"'>
+        <xsl:call-template name='rnd:error'>
+          <xsl:with-param name='code'>bad-caption</xsl:with-param>
+          <xsl:with-param name='message'>caption does not follow table or figure</xsl:with-param>
+        </xsl:call-template>
       </xsl:when>
 
       <xsl:when test='(contains(@rnd:style, "-title") or
@@ -398,6 +444,13 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match='dbk:para' mode='rnd:caption'>
+    <dbk:caption>
+      <xsl:call-template name='rnd:attributes'/>
+      <xsl:apply-templates/>
+    </dbk:caption>
+  </xsl:template>
+
   <xsl:template match='dbk:emphasis'>
     <xsl:choose>
       <xsl:when test='not(@rnd:style) and @role = "italic"'>
@@ -412,7 +465,29 @@
         </xsl:copy>
       </xsl:when>
 
-      <xsl:when test='@rnd:style = preceding-sibling::node()[self::dbk:emphasis]/@rnd:style'/>
+      <xsl:when test='@rnd:style = preceding-sibling::node()[1][self::dbk:emphasis]/@rnd:style'/>
+
+      <xsl:when test='@rnd:style = "emphasis"'>
+        <xsl:copy>
+          <xsl:call-template name='rnd:attributes'/>
+          <xsl:apply-templates mode='rnd:copy'/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:when test='@rnd:style = "emphasis-bold" or
+                      @rnd:style = "emphasis-strong"'>
+        <xsl:copy>
+          <xsl:attribute name='role'>bold</xsl:attribute>
+          <xsl:call-template name='rnd:attributes'/>
+          <xsl:apply-templates mode='rnd:copy'/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:when test='@rnd:style = "emphasis-underline"'>
+        <xsl:copy>
+          <xsl:attribute name='role'>underline</xsl:attribute>
+          <xsl:call-template name='rnd:attributes'/>
+          <xsl:apply-templates mode='rnd:copy'/>
+        </xsl:copy>
+      </xsl:when>
 
       <xsl:when test='@rnd:style = "citetitle" or
                       @rnd:style = "literal" or
@@ -430,6 +505,12 @@
 		      parent::dbk:link'>
 	<!-- This occurs in a hyperlink; parent should be dbk:link -->
 	<xsl:apply-templates/>
+      </xsl:when>
+      <xsl:when test='@rnd:style = "Hyperlink"'>
+        <!-- dbk:link is missing -->
+        <dbk:link xlink:href='{.}'>
+          <xsl:apply-templates/>
+        </dbk:link>
       </xsl:when>
 
       <xsl:otherwise>
@@ -471,7 +552,7 @@
 		      select='ancestor::dbk:para/following-sibling::*[self::dbk:informaltable or self::dbk:para[dbk:inlinemediaobject and count(*) = 1 and normalize-space() = ""]][1]'/>
 
 	<xsl:variable name='caption'
-		      select='ancestor::dbk:para/following-sibling::dbk:para[@rnd:style = "Caption"]'/>
+		      select='ancestor::dbk:para/following-sibling::dbk:para[@rnd:style = "caption" or @rnd:style = "Caption"]'/>
 
 	<xsl:variable name='metadata'>
 	  <xsl:apply-templates select='ancestor::dbk:para/following-sibling::*[1]'
@@ -522,7 +603,8 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='dbk:para[@rnd:style = "Caption"]' mode='rnd:caption'>
+  <xsl:template match='dbk:para[@rnd:style = "caption" or @rnd:style = "Caption"]'
+    mode='rnd:caption'>
     <dbk:caption>
       <dbk:para>
 	<xsl:apply-templates/>
@@ -626,6 +708,8 @@
 
   <xsl:template match='dbk:para' mode='rnd:metadata'>
     <xsl:choose>
+      <xsl:when test='@rnd:style = "biblioentry-title" and
+                      parent::dbk:bibliography|parent::dbk:bibliodiv'/>
       <xsl:when test='@rnd:style = "biblioentry-title"'>
         <xsl:call-template name='rnd:error'>
           <xsl:with-param name='code'>bad-metadata</xsl:with-param>
@@ -653,6 +737,28 @@
           mode='rnd:metadata'/>
       </xsl:when>
 
+      <xsl:when test='@rnd:style = "keyword"'>
+        <xsl:variable name='stop.node'
+          select='following-sibling::*[not(self::dbk:para) or
+                  (self::dbk:para and @rnd:style != "keyword")][1]'/>
+        <dbk:keywordset>
+          <xsl:choose>
+            <xsl:when test='$stop.node'>
+              <xsl:call-template name='rnd:keyword'>
+                <xsl:with-param name='nodes'
+                  select='.|following-sibling::dbk:para[@rnd:style = "keyword"][following-sibling::*[generate-id() = generate-id($stop.node)]]'/>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name='rnd:keyword'>
+                <xsl:with-param name='nodes'
+                  select='.|following-sibling::dbk:para[@rnd:style = "keyword"]'/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </dbk:keywordset>
+      </xsl:when>
+
       <xsl:when test='@rnd:style = "author"'>
         <dbk:author>
           <dbk:personname>
@@ -678,6 +784,7 @@
                       @rnd:style = "pagenums" or
                       @rnd:style = "issuenum" or
                       @rnd:style = "volumenum" or
+                      @rnd:style = "edition" or
                       @rnd:style = "editor" or
                       @rnd:style = "othercredit" or
                       @rnd:style = "biblioid" or
@@ -718,6 +825,12 @@
           select='substring-before(@rnd:style, "-title")'/>
 
         <xsl:choose>
+          <xsl:when test='$parent = "table" or
+                          $parent = "figure"'>
+            <dbk:title>
+              <xsl:apply-templates mode='rnd:metadata'/>
+            </dbk:title>
+          </xsl:when>
           <xsl:when test='$parent = local-name(..)'>
             <dbk:title>
               <xsl:apply-templates mode='rnd:metadata'/>
@@ -787,12 +900,58 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
+
+  <xsl:template name='rnd:keyword'>
+    <xsl:param name='nodes' select='/..'/>
+
+    <xsl:choose>
+      <xsl:when test='not($nodes)'/>
+      <xsl:otherwise>
+        <xsl:call-template name='rnd:keyword-phrases'>
+          <xsl:with-param name='text' select='$nodes[1]'/>
+        </xsl:call-template>
+        <xsl:call-template name='rnd:keyword'>
+          <xsl:with-param name='nodes' select='$nodes[position() != 1]'/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <xsl:template name='rnd:keyword-phrases'>
+    <xsl:param name='text'/>
+
+    <xsl:choose>
+      <xsl:when test='not($text)'/>
+      <xsl:when test='contains($text, ",")'>
+        <dbk:keyword>
+          <xsl:value-of select='normalize-space(substring-before($text, ","))'/>
+        </dbk:keyword>
+        <xsl:call-template name='rnd:keyword-phrases'>
+          <xsl:with-param name='text' select='substring-after($text, ",")'/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <dbk:keyword>
+          <xsl:value-of select='normalize-space($text)'/>
+        </dbk:keyword>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match='dbk:emphasis' mode='rnd:metadata'>
     <xsl:choose>
       <xsl:when test='not(@rnd:style)'>
         <xsl:copy>
           <xsl:apply-templates mode='rnd:metadata'/>
         </xsl:copy>
+      </xsl:when>
+      <xsl:when test='@rnd:style = "Hyperlink" and
+                      parent::dbk:link'>
+        <xsl:apply-templates mode='rnd:metadata'/>
+      </xsl:when>
+      <xsl:when test='@rnd:style = "Hyperlink"'>
+        <dbk:link xlink:href='{.}'>
+          <xsl:apply-templates mode='rnd:metadata'/>
+        </dbk:link>
       </xsl:when>
       <xsl:otherwise>
         <xsl:element name='{@rnd:style}'
@@ -801,6 +960,15 @@
         </xsl:element>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  <xsl:template match='dbk:link' mode='rnd:metadata'>
+    <xsl:copy>
+      <xsl:apply-templates select='@*' mode='rnd:copy'/>
+      <xsl:apply-templates mode='rnd:metadata'/>
+    </xsl:copy>
+  </xsl:template>
+  <xsl:template match='dbk:inlinemediaobject' mode='rnd:metadata'>
+    <xsl:call-template name='rnd:copy'/>
   </xsl:template>
   <xsl:template match='*' mode='rnd:metadata'/>
 
@@ -1030,7 +1198,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match='dbk:tgroup|dbk:tbody|dbk:row|dbk:colspec'>
+  <xsl:template match='dbk:tgroup|dbk:tbody|dbk:thead|dbk:tfoot|dbk:row|dbk:colspec'>
     <xsl:copy>
       <xsl:apply-templates select='@*' mode='rnd:copy'/>
       <xsl:apply-templates/>
@@ -1052,7 +1220,7 @@
   <!-- Find the caption associated with this table -->
   <xsl:template name='rnd:table-caption'>
     <xsl:variable name='candidate'
-		  select='following-sibling::dbk:para[@rnd:style = "Caption"][1]'/>
+		  select='following-sibling::dbk:para[@rnd:style = "caption" or @rnd:style = "Caption"][1]'/>
 
     <xsl:if test='$candidate != "" and
 		  generate-id($candidate/preceding-sibling::dbk:informaltable[1]) = generate-id(.)'>
@@ -1067,7 +1235,7 @@
   <!-- Find table associated text -->
   <xsl:template name='rnd:table-textobject'>
     <xsl:variable name='caption'
-		  select='following-sibling::dbk:para[@rnd:style = "Caption"][1]'/>
+		  select='following-sibling::dbk:para[@rnd:style = "caption" or @rnd:style = "Caption"][1]'/>
 
     <xsl:if test='generate-id($caption/preceding-sibling::dbk:informaltable[1]) = generate-id(.)'>
       <xsl:variable name='content'

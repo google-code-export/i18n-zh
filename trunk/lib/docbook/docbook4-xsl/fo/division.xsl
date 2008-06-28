@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: division.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: division.xsl 7634 2008-01-05 16:06:30Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -63,9 +63,9 @@
   </xsl:variable>
 
   <xsl:variable name="preamble"
-                select="*[not(self::book or self::setindex)]"/>
+                select="*[not(self::book or self::set or self::setindex)]"/>
 
-  <xsl:variable name="content" select="book|setindex"/>
+  <xsl:variable name="content" select="book|set|setindex"/>
 
   <xsl:variable name="titlepage-master-reference">
     <xsl:call-template name="select.pagemaster">
