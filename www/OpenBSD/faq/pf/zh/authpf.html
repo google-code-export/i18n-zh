@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>PF: Authpf: User Shell for Authenticating Gateways</title>
+<title>PF: Authpf: 认证网关</title>
 <link rev="made" href="mailto:www@openbsd.org">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="resource-type" content="document">
 <meta name="description"   content="the OpenBSD FAQ page">
 <meta name="keywords"      content="openbsd,faq,pf">
@@ -31,16 +31,16 @@ PERFORMANCE OF THIS DOCUMENTATION
 <!-- Passes validator.w3.org, please keep it this way;
 please, use a max of 72 chars per line -->
 
-<a href="../../index.html">
-<img alt="[OpenBSD]" height=30 width=141 src="../../images/smalltitle.gif" border="0">
+<a href="../../../zh/index.html">
+<img alt="[OpenBSD]" height=30 width=141
+    src="../../../images/smalltitle.gif" border="0">
 </a>
 <p>
-[<a href="ftp.html">Previous: Issues with FTP</a>]
-[<a href="index.html">Contents</a>]
-[<a href="carp.html">Next: Firewall Redundancy with CARP and pfsync</a>]
+[<a href="../ftp.html">上页: FTP 的问题</a>]
+[<a href="index.html">索引</a>]
+[<a href="../carp.html">下页: 使用 CARP 和 pfsync 构建冗余防火墙</a>]
 
-<h1><font color="#e00000">PF: Authpf: User Shell for Authenticating
-Gateways</font></h1>
+<h1><font color="#e00000">Authpf: 认证网关</font></h1>
 
 <hr>
 
@@ -48,14 +48,14 @@ Gateways</font></h1>
 <ul>
 <li><a href="#intro">Introduction</a>
 <li><a href="#config">Configuration</a>
-	<ul>
-	<li><a href="#enable">Enabling Authpf</a>
-	<li><a href="#linkmain">Linking Authpf into the Main Ruleset</a>
-	<li><a href="#loadrules">Configuring Loaded Rules</a>
-	<li><a href="#acl">Access Control Lists</a>
-	<li><a href="#message">Displaying a Login Message</a>
-	<li><a href="#shell">Assigning Authpf as a User's Shell</a>
-	</ul>
+        <ul>
+        <li><a href="#enable">Enabling Authpf</a>
+        <li><a href="#linkmain">Linking Authpf into the Main Ruleset</a>
+        <li><a href="#loadrules">Configuring Loaded Rules</a>
+        <li><a href="#acl">Access Control Lists</a>
+        <li><a href="#message">Displaying a Login Message</a>
+        <li><a href="#shell">Assigning Authpf as a User's Shell</a>
+        </ul>
 <li><a href="#loginclass">Creating an authpf Login Class</a>
 <li><a href="#wholog">Seeing Who is Logged In</a>
 <li><a href="#example">Example</a>
@@ -76,7 +76,7 @@ user's shell to
 >ksh(1)</a>,
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=csh&amp;sektion=1"
 >csh(1)</a>, etc) and the user logs in using SSH, authpf will make the
-necessary changes to the active  
+necessary changes to the active
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pf&amp;sektion=4&amp;manpath=OpenBSD+4.3"
 >pf(4)</a> ruleset so that the user's traffic is passed through the
 filter and/or translated using Network Address Translation or
@@ -84,11 +84,11 @@ redirection. Once the user logs out or their session is disconnected,
 authpf will remove any rules loaded for the user and kill any stateful
 connections the user has open. Because of this, the ability of the user
 to pass traffic through the gateway only exists while the user keeps
-their SSH session open. 
+their SSH session open.
 
 <p>
 Authpf loads a user's filter/NAT rules into a unique
-<a href="anchors.html">anchor point</a>. 
+<a href="anchors.html">anchor point</a>.
 The anchor is named by combining the user's UNIX username and the authpf
 process-id into the format "<tt>username(PID)</tt>".
 Each users' anchor is stored within the <tt>authpf</tt> anchor which is
@@ -156,7 +156,7 @@ The following configuration directives can be placed in
 <ul>
 <li><tt>anchor=<i>name</i></tt> - Use the specified
 <a href="anchors.html">anchor</a> name instead of "authpf".
-<li><tt>table=<i>name</i></tt> - Use the specified 
+<li><tt>table=<i>name</i></tt> - Use the specified
 <a href="tables.html">table</a> name instead of "authpf_users".
 </ul>
 
@@ -195,7 +195,7 @@ administrator -- requires a set of rules that is different than the
 default set.  The second file contains the default rules which are
 loaded for any user that doesn't have their own <tt>authpf.rules</tt>
 file. If the user-specific file exists, it will override the default
-file. At least one of the files must exist or authpf will not run. 
+file. At least one of the files must exist or authpf will not run.
 
 <p>
 Filter and translation rules have the same syntax as in any other PF
@@ -266,7 +266,7 @@ Hello charlie. You are authenticated from host "64.59.56.140"
 
 <p>
 This message can be supplemented by putting a custom message in
-<tt>/etc/authpf/authpf.message</tt>. 
+<tt>/etc/authpf/authpf.message</tt>.
 The contents of this file will be displayed after the default welcome
 message.
 
@@ -284,14 +284,14 @@ There are a couple ways of assigning authpf as a user's shell:
 <ol>
 <li>Manually for each user using
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=chsh&amp;sektion=1"
->chsh(1)</a>, 
+>chsh(1)</a>,
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=vipw&amp;sektion=8"
 >vipw(8)</a>,
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=useradd&amp;sektion=8"
 >useradd(8)</a>,
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=usermod&amp;sektion=8"
 >usermod(8)</a>, etc.
-<li>By assigning users to a login class and changing the class's 
+<li>By assigning users to a login class and changing the class's
 <tt>shell</tt> option in
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=login.conf&amp;sektion=5"
 ><tt>/etc/login.conf</tt></a>.
@@ -312,10 +312,10 @@ Some examples of what policies can be set:
 This can be used to force a user's shell to <tt>authpf</tt> regardless
 of the entry in the
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=passwd&amp;sektion=5"
->passwd(5)</a> database. 
+>passwd(5)</a> database.
 <li><b>welcome</b> - Specify which
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=motd&amp;sektion=5"
->motd(5)</a> file to display when a user logs in. 
+>motd(5)</a> file to display when a user logs in.
 This is useful for displaying messages that are relevant only to authpf
 users.
 </ul>
@@ -323,7 +323,7 @@ users.
 <p>
 Login classes are created in the
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=login.conf&amp;sektion=5"
->login.conf(5)</a> file. 
+>login.conf(5)</a> file.
 OpenBSD comes with an authpf login class defined as:
 
 <blockquote>
@@ -448,14 +448,14 @@ anchor "authpf/*" in on $wifi_if
 The ruleset is very simple and does the following:
 <ul>
 <li>Block everything (default deny).
-<li>Pass outgoing TCP, UDP, and ICMP traffic on the external interface 
+<li>Pass outgoing TCP, UDP, and ICMP traffic on the external interface
 from the wireless network and from the gateway itself.
 <li>Pass incoming SSH traffic from the wireless network destined for the
 gateway itself. This rule is necessary to permit users to log in.
 <li>Pass incoming DNS requests from all authenticated authpf users to
 the campus DNS servers.
 <li>Create the anchor point "authpf" for incoming traffic on the wireless
-interface. 
+interface.
 </ul>
 
 <p>
@@ -470,16 +470,20 @@ evaluate each named ruleset when a new connection passes through the
 gateway.
 
 <p>
-[<a href="ftp.html">Previous: Issues with FTP</a>]
-[<a href="index.html">Contents</a>]
-[<a href="carp.html">Next: Firewall Redundancy with CARP and pfsync</a>]
+[<a href="../ftp.html">上页: FTP 的问题</a>]
+[<a href="index.html">索引</a>]
+[<a href="../carp.html">下页: 使用 CARP 和 pfsync 构建冗余防火墙</a>]
 
 <p>
 <hr>
-<a href="index.html"><img height="24" width="24" src="../../images/back.gif" border="0" alt="[back]"></a> 
+<a href="index.html"><img height="24" width="24" src="../../../images/back.gif" border="0" alt="[back]"></a>
 <a href="mailto:www@openbsd.org">www@openbsd.org</a>
 <br>
 <small>$OpenBSD: authpf.html,v 1.23 2008/07/27 17:13:47 nick Exp $</small>
 
 </body>
-</html> 
+</html>
+<!--
+Originally [OpenBSD: authpf.html,v 1.23]<br>
+$Translation: authpf.html,v 1.2 2008/08/05 04:10:02 dongsheng Exp $<br>
+-->
