@@ -1,0 +1,1239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 4. Upgrades from previous releases</title><link rel="stylesheet" href="debian.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.73.2" /><link rel="start" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="up" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="prev" href="ch-installing.zh_CN.html" title="第 3 章 安装环境" /><link rel="next" href="ch-information.zh_CN.html" title="第 5 章 lenny 中需要注意的问题" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Upgrades from previous releases</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="ch-upgrading"></a>Chapter 4. Upgrades from previous releases</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#backup">4.1. Preparing for the upgrade</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#data-backup">4.1.1. Back up any data or configuration information</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#inform-users">4.1.2. Inform users in advance</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#recovery">4.1.3. Prepare for recovery</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-preparations">4.1.4. Prepare a safe environment for the upgrade</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#id2855800">4.1.5. Prepare initramfs for 
+<acronym title="Linux 加载器">LILO</acronym></a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#system-status">4.2. Checking system status</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#review-actions">4.2.1. Review actions pending in package manager</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#disable-apt-pinning">4.2.2. Disabling APT pinning</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#package-status">4.2.3. Checking packages status</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#userbackports">4.2.4. Unofficial sources and backports</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#handle-conflict">4.3. Manually unmarking packages</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-process">4.4. Preparing sources for APT</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#network">4.4.1. Adding APT Internet sources</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#localmirror">4.4.2. Adding APT sources for a local mirror</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#cdroms">4.4.3. Adding APT source from CD-ROM or DVD</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgradingpackages">4.5. Upgrading packages</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#record-session">4.5.1. Recording the session</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#updating-lists">4.5.2. Updating the package list</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#sufficient-space">4.5.3. Make sure you have sufficient space for the upgrade</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#minimal-upgrade">4.5.4. Minimal system upgrade</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-kernel">4.5.5. Upgrading the kernel</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-other">4.5.6. Upgrading the rest of the system</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#get-signatures">4.5.7. Getting package signatures</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#trouble">4.5.8. Possible issues during upgrade</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#newkernel">4.6. Upgrading your kernel and related packages</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#kernel-metapackage">4.6.1. Installing the kernel metapackage</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.6">4.6.2. Upgrading from a 2.6 kernel</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.4">4.6.3. Upgrading from a 2.4 kernel</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#device-reorder">4.6.4. Device enumeration reordering</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#boot-timing">4.6.5. Boot timing issues</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#nownownow">4.7. Things to do before rebooting</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#convert-devfs">4.7.1. Converting from devfs</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#rerunlilo">4.7.2. Rerun lilo</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#mdadm">4.7.3. Upgrading mdadm</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#id2859362">4.8. System boot hangs on <code class="literal">Waiting for root file system</code></a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading">4.8.1. How to avoid the problem before upgrading</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#how-to-recover">4.8.2. How to recover from the problem after the upgrade</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#for-next">4.9. Preparing for the next release</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#deprecated">4.10. Deprecated packages</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#obsolete">4.11. Obsolete packages</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#dummy">4.11.1. Dummy packages</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#plans-for-nigel">4.12. Plans for the next Debian release</a></span></dt></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="backup"></a>4.1. Preparing for the upgrade</h2></div></div></div><p>
+We suggest that before upgrading you also read the information in <a class="xref" href="ch-information.zh_CN.html" title="第 5 章 lenny 中需要注意的问题">第 5 章 <i>lenny 中需要注意的问题</i></a> .  That chapter covers potential issues not 
+directly related to the upgrade process but which could still be important 
+to know about before you begin.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="data-backup"></a>4.1.1. Back up any data or configuration information</h3></div></div></div><p>
+Before upgrading your system, it is strongly recommended that you make a 
+full backup, or at least back up any data or configuration information you 
+can't afford to lose.  The upgrade tools and process are quite reliable, but 
+a hardware failure in the middle of an upgrade could result in a severely 
+damaged system.
+</p><p>
+The main things you'll want to back up are the contents of 
+<code class="filename">/etc</code>, <code class="filename">/var/lib/dpkg</code>, 
+<code class="filename">/var/lib/aptitude/pkgstates</code> and the output of 
+<code class="literal">dpkg --get-selections *</code> (the quotes are important).
+</p><p>
+The upgrade process itself does not modify anything in the 
+<code class="filename">/home</code> directory.  However, some applications (e.g.  
+parts of the Mozilla suite, and the GNOME and KDE desktop environments) are 
+known to overwrite existing user settings with new defaults when a new 
+version of the application is first started by a user.  As a precaution, you 
+may want to make a backup of the hidden files and directories (dotfiles) in 
+users' home directories.  This backup may help to restore or recreate the 
+old settings.  You may also want to inform users about this.
+</p><p>
+Any package installation operation must be run with superuser privileges, so 
+either login as root or use <span class="command"><strong>su</strong></span> or <span class="command"><strong>sudo</strong></span> 
+to gain the necessary access rights.
+</p><p>
+The upgrade has a few preconditions; you should check them before actually 
+executing the upgrade.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="inform-users"></a>4.1.2. Inform users in advance</h3></div></div></div><p>
+It's wise to inform all users in advance of any upgrades you're planning, 
+although users accessing your system via an <span class="command"><strong>ssh</strong></span> 
+connection should notice little during the upgrade, and should be able to 
+continue working.
+</p><p>
+If you wish to take extra precautions, back up or unmount users' partitions 
+(<code class="filename">/home</code>) before upgrading.
+</p><p>
+You will probably have to do a kernel upgrade when upgrading to 
+lenny, so a reboot will normally be necessary.  Typically, this will 
+be done after the upgrade is finished.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="recovery"></a>4.1.3. Prepare for recovery</h3></div></div></div><p>
+Because of the many changes in the kernel between etch and 
+lenny regarding drivers, hardware discovery and the naming and 
+ordering of device files, there is a real risk that you may experience 
+problems rebooting your system after the upgrade.  A lot of known potential 
+issues are documented in this and the next chapters of these Release Notes.
+</p><p>
+For that reason it makes sense to ensure that you will be able to recover if 
+your system should fail to reboot or, for remotely managed systems, fail to 
+bring up networking.
+</p><p>
+If you are upgrading remotely via an <span class="command"><strong>ssh</strong></span> link it is 
+highly recommended that you take the necessary precautions to be able to 
+access the server through a remote serial terminal.  There is a chance that, 
+after upgrading the kernel and rebooting, some devices will be renamed (as 
+described in <a class="xref" href="ch-upgrading.zh_CN.html#device-reorder" title="4.6.4. Device enumeration reordering">Section 4.6.4, “Device enumeration reordering”</a> ) and you will have to fix the 
+system configuration through a local console.  Also, if the system is 
+rebooted accidentally in the middle of an upgrade there is a chance you will 
+need to recover using a local console.
+</p><p>
+The most obvious thing to try first is to reboot with your old kernel.  
+However, for various reasons documented elsewhere in this document, this is 
+not guaranteed to work.
+</p><p>
+If that fails, you will need an alternative way to boot your system so you 
+can access and repair it.  One option is to use a special rescue image or a 
+Linux live CD.  After booting from that, you should be able to mount your 
+root file system and <code class="literal">chroot</code> into it to investigate and 
+fix the problem.
+</p><p>
+Another option we'd like to recommend is to use the <span class="emphasis"><em>rescue 
+mode</em></span> of the lenny Debian Installer.  The advantage of 
+using the installer is that you can choose between its many installation 
+methods for one that best suits your situation.  For more information, 
+please consult the section Recovering a Broken System in chapter 8 of the 
+<a class="ulink" href="http://www.debian.org/releases/stable/installmanual" target="_top">Installation Guide</a> and the <a class="ulink" href="http://wiki.debian.org/DebianInstaller/FAQ" target="_top">Debian Installer FAQ</a>.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="recovery-initrd"></a>4.1.3.1. Debug shell during boot using initrd</h4></div></div></div><p>
+The <code class="systemitem">initramfs-tools</code> includes a debug 
+shell<sup>[<a id="id2855637" href="#ftn.id2855637" class="footnote">3</a>]</sup> in the initrds it generates.  If for example the initrd is 
+unable to mount your root file system, you will be dropped into this debug 
+shell which has basic commands available to help trace the problem and 
+possibly fix it.
+</p><p>
+Basic things to check are: presence of correct device files in 
+<code class="filename">/dev</code>; what modules are loaded (<code class="literal">cat 
+/proc/modules</code>); output of <span class="command"><strong>dmesg</strong></span> for errors 
+loading drivers.  The output of <span class="command"><strong>dmesg</strong></span> will also show what 
+device files have been assigned to which disks; you should check that 
+against the output of <code class="literal">echo $ROOT</code> to make sure that the 
+root file system is on the expected device.
+</p><p>
+If you do manage to fix the problem, typing <code class="literal">exit</code> will 
+quit the debug shell and continue the boot process at the point it failed.  
+Of course you will also need to fix the underlying problem and regenerate 
+the initrd so the next boot won't fail again.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="upgrade-preparations"></a>4.1.4. Prepare a safe environment for the upgrade</h3></div></div></div><p>
+The distribution upgrade should be done either locally from a textmode 
+virtual console (or a directly connected serial terminal), or remotely via 
+an <span class="command"><strong>ssh</strong></span> link.
+</p><p>
+In order to gain extra safety margin when upgrading remotely, we suggest 
+that you run upgrade processes in the virtual console provided by the 
+<span class="command"><strong>screen</strong></span> program, which enables safe reconnection and 
+ensures the upgrade process is not interrupted even if the remote connection 
+process fails.
+</p><p>
+<span class="strong"><strong>Important!</strong></span> You should 
+<span class="emphasis"><em>not</em></span> upgrade using <span class="command"><strong>telnet</strong></span>, 
+<span class="command"><strong>rlogin</strong></span>, <span class="command"><strong>rsh</strong></span>, or from an X session 
+managed by <span class="command"><strong>xdm</strong></span>, <span class="command"><strong>gdm</strong></span> or 
+<span class="command"><strong>kdm</strong></span> etc on the machine you are upgrading.  That is 
+because each of those services may well be terminated during the upgrade, 
+which can result in an <span class="emphasis"><em>inaccessible</em></span> system that is only 
+half-upgraded.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id2855800"></a>4.1.5. Prepare initramfs for 
+<acronym title="Linux 加载器">LILO</acronym><a id="id2855809" class="indexterm"></a></h3></div></div></div><p>
+    Users using the <acronym title="Linux 加载器">LILO</acronym> bootloader should note that the 
+default settings for <code class="systemitem">initramfs-tools</code> 
+now generate an initramfs that is too large for <acronym title="Linux 加载器">LILO</acronym> to 
+load. Such users should either switch to <code class="systemitem">grub</code>, or edit the file 
+<code class="filename">/etc/initramfs-tools/initramfs.conf</code>, changing the line </p><pre class="programlisting">MODULES=most</pre><p> to read
+    </p><pre class="programlisting">MODULES=dep</pre><p>
+    Note, however, that doing this will cause <code class="systemitem">initramfs-tools</code> to install only those modules 
+that are required for the particular hardware that it is run on, onto the 
+initramfs; as such, if you want to generate a boot medium that will work on 
+more hardware than just the one you're generating it on, you should leave 
+the setting to
+    </p><pre class="programlisting">MODULES=most</pre><p> and make sure you do not use <acronym title="Linux 加载器">LILO</acronym>.
+  </p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="system-status"></a>4.2. Checking system status</h2></div></div></div><p>
+The upgrade process described in this chapter has been designed for upgrades 
+from pure etch systems without third-party packages.  In 
+particular, there are known problems with third-party packages which install 
+programs under <code class="filename">/usr/X11R6/bin/</code> causing problems with 
+upgrades due to the X.Org transition (<a class="xref" href="ch-information.zh_CN.html#xorg" title="5.4. XFree86 到 X.Org 的迁移">第 5.4 节 “XFree86 到 X.Org 的迁移”</a>).  For greatest 
+reliability of the upgrade process, you may wish to remove third-party 
+packages from your system before you begin upgrading.
+</p><p>
+This procedure also assumes your system has been updated to the latest point 
+release of etch.  If you have not done this or are unsure, 
+follow the instructions in <a class="xref" href="ap-old-stuff.zh_CN.html#old-upgrade" title="A.1. 升级您的 etch 系统">第 A.1 节 “升级您的 etch 系统”</a> .
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="review-actions"></a>4.2.1. Review actions pending in package manager</h3></div></div></div><p>
+In some cases, the use of <span class="command"><strong>apt-get</strong></span> for installing packages 
+instead of <span class="command"><strong>aptitude</strong></span> might make 
+<span class="command"><strong>aptitude</strong></span> consider a package as unused and schedule it for 
+removal.  In general, you should make sure the system is fully up-to-date 
+and clean before proceeding with the upgrade.
+</p><p>
+Because of this you should review if there are any pending actions in the 
+package manager <span class="command"><strong>aptitude</strong></span>.  If a package is scheduled for 
+removal or update in the package manager, it might negatively impact the 
+upgrade procedure.  Note that correcting this is only possible if your 
+<code class="filename">sources.list</code> still points to 
+<span class="emphasis"><em>etch</em></span>; and not to 
+<span class="emphasis"><em>stable</em></span> or <span class="emphasis"><em>lenny</em></span>; see <a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a> .
+</p><p>
+To do this, you have to run <span class="command"><strong>aptitude</strong></span>'s user interface and 
+press <span class="keycap"><strong>g</strong></span> (Go).  If it shows any actions, you should review 
+them and either fix them or implement the suggested actions.  If no actions 
+are suggested you will be presented with a message saying No packages are 
+scheduled to be installed, removed, or upgraded.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="disable-apt-pinning"></a>4.2.2. Disabling APT pinning</h3></div></div></div><p>
+If you have configured APT to install certain packages from a distribution 
+other than stable (e.g.  from testing), you may have to change your APT 
+pinning configuration (stored in <code class="filename">/etc/apt/preferences</code>) 
+to allow the upgrade of packages to the versions in the new stable release.  
+Further information on APT pinning can be found in <span class="citerefentry"><span class="refentrytitle">apt_preferences</span>(5)</span>.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="package-status"></a>4.2.3. Checking packages status</h3></div></div></div><p>
+Regardless of the method used for upgrading, it is recommended that you 
+check the status of all packages first, and verify that all packages are in 
+an upgradable state.  The following command will show any packages which 
+have a status of Half-Installed or Failed-Config, and those with any error 
+status.
+</p><pre class="screen">
+# dpkg --audit
+</pre><p>
+You could also inspect the state of all packages on your system using 
+<span class="command"><strong>dselect</strong></span>, <span class="command"><strong>aptitude</strong></span>, or with commands 
+such as
+</p><pre class="screen">
+# dpkg -l | pager
+</pre><p>
+or
+</p><pre class="screen">
+# dpkg --get-selections * &gt; ~/curr-pkgs.txt
+</pre><p>
+It is desirable to remove any holds before upgrading.  If any package that 
+is essential for the upgrade is on hold, the upgrade will fail.
+</p><p>
+Note that <span class="command"><strong>aptitude</strong></span> uses a different method for 
+registering packages that are on hold than <span class="command"><strong>apt-get</strong></span> and 
+<span class="command"><strong>dselect</strong></span>.  You can identify packages on hold for 
+<span class="command"><strong>aptitude</strong></span> with
+</p><pre class="screen">
+# aptitude search ~ahold | grep ^.h
+</pre><p>
+If you want to check which packages you had on hold for 
+<span class="command"><strong>apt-get</strong></span>, you should use
+</p><pre class="screen">
+# dpkg --get-selections | grep hold
+</pre><p>
+If you changed and recompiled a package locally, and didn't rename it or put 
+an epoch in the version, you must put it on hold to prevent it from being 
+upgraded.
+</p><p>
+The hold package state for <span class="command"><strong>aptitude</strong></span> can be changed using:
+</p><pre class="screen">
+# aptitude hold <em class="replaceable"><code>package_name</code></em>
+</pre><p>
+Replace <code class="literal">hold</code> with <code class="literal">unhold</code> to unset the 
+hold state.
+</p><p>
+If there is anything you need to fix, it is best to make sure your 
+<code class="filename">sources.list</code> still refers to etch as 
+explained in <a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a> .
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="userbackports"></a>4.2.4. Unofficial sources and backports</h3></div></div></div><p>
+If you have any non-Debian packages on your system, you should be aware that 
+these may be removed during the upgrade because of conflicting 
+dependencies.  If these packages were installed by adding an extra package 
+archive in your <code class="filename">/etc/apt/sources.list</code>, you should check 
+if that archive also offers packages compiled for lenny and change 
+the source line accordingly at the same time as your source lines for Debian 
+packages.
+</p><p>
+Some users may have unofficial backported newer versions of packages that 
+<span class="emphasis"><em>are</em></span> in Debian installed on their etch 
+system.  Such packages are most likely to cause problems during an upgrade 
+as they may result in file conflicts<sup>[<a id="id2856267" href="#ftn.id2856267" class="footnote">4</a>]</sup>.  <a class="xref" href="ch-upgrading.zh_CN.html#trouble" title="4.5.8. Possible issues during upgrade">Section 4.5.8, “Possible issues during upgrade”</a> has some information on how to deal 
+with file conflicts if they should occur.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="handle-conflict"></a>4.3. Manually unmarking packages</h2></div></div></div><p>
+To prevent <span class="command"><strong>aptitude</strong></span> from removing some packages that were 
+pulled in through dependencies, you need to manually unmark them as 
+<span class="emphasis"><em>auto</em></span> packages.  This includes OpenOffice and Vim for 
+desktop installs:
+</p><pre class="screen">
+# aptitude unmarkauto openoffice.org vim
+</pre><p>
+And 2.6 kernel images if you have installed them using a kernel metapackage:
+</p><pre class="screen">
+# aptitude unmarkauto $(dpkg-query -W 'kernel-image-2.6.*' | cut -f1)
+</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+    You can review which packages are marked as <span class="emphasis"><em>auto</em></span> in 
+aptitude by running:
+  </p><pre class="screen">
+# aptitude search 'i~M &lt;package name&gt;'
+  </pre></td></tr></table></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="upgrade-process"></a>4.4. Preparing sources for APT</h2></div></div></div><p>
+Before starting the upgrade you must set up <code class="systemitem">apt</code>'s configuration file for package lists, 
+<code class="filename">/etc/apt/sources.list</code>.
+</p><p>
+<code class="systemitem">apt</code> will consider all packages that 
+can be found via any <code class="literal">deb</code> line, and install the package 
+with the highest version number, giving priority to the first mentioned 
+lines (that way, in case of multiple mirror locations, you'd typically first 
+name a local harddisk, then CD-ROMs, and then HTTP/FTP mirrors).
+</p><p>
+A release can often be referred to by both its codename (e.g.  
+etch, lenny) and by its status name (i.e.  oldstable, 
+stable, testing, unstable).  Referring to a release by its codename has the 
+advantage that you will never be surprised by a new release and for this 
+reason is the approach taken here.  It does of course mean that you will 
+have to watch out for release announcements yourself.  If you use the status 
+name instead, you will just see loads of updates for packages available as 
+soon as a release has happened.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="network"></a>4.4.1. Adding APT Internet sources</h3></div></div></div><p>
+The default configuration is set up for installation from main Debian 
+Internet servers, but you may wish to modify 
+<code class="filename">/etc/apt/sources.list</code> to use other mirrors, preferably 
+a mirror that is network-wise closest to you.
+</p><p>
+Debian HTTP or FTP mirror addresses can be found at <a class="ulink" href="http://www.debian.org/distrib/ftplist" target="_top">http://www.debian.org/distrib/ftplist</a> (look at the Full list of mirrors 
+section).  HTTP mirrors are generally speedier than FTP mirrors.
+</p><p>
+For example, suppose your closest Debian mirror is 
+<code class="literal">http://mirrors.kernel.org/debian</code>.  When inspecting that mirror with 
+a web browser or FTP program, you will notice that the main directories are 
+organized like this:
+</p><pre class="screen">
+http://mirrors.kernel.org/debian/dists/lenny/main/binary-i386/...
+http://mirrors.kernel.org/debian/dists/lenny/contrib/binary-i386/...
+</pre><p>
+To use this mirror with <span class="command"><strong>apt</strong></span>, you add this line to your 
+<code class="filename">sources.list</code> file:
+</p><pre class="screen">
+deb http://mirrors.kernel.org/debian/debian lenny main contrib
+</pre><p>
+Note that the `<code class="literal">dists</code>' is added implicitly, and the 
+arguments after the release name are used to expand the path into multiple 
+directories.
+</p><p>
+After adding your new sources, disable the previously existing 
+<code class="literal">deb</code> lines in <code class="filename">sources.list</code> by placing 
+a hash sign (<code class="literal">#</code>) in front of them.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="localmirror"></a>4.4.2. Adding APT sources for a local mirror</h3></div></div></div><p>
+Instead of using HTTP or FTP packages mirrors, you may wish to modify 
+<code class="filename">/etc/apt/sources.list</code> to use a mirror on a local disk 
+(possibly mounted over <acronym title="网络文件系统">NFS</acronym>).
+</p><p>
+For example, your packages mirror may be under 
+<code class="filename">/var/ftp/debian/</code>, and have main directories like this:
+</p><pre class="screen">
+/var/ftp/debian/dists/lenny/main/binary-i386/...
+/var/ftp/debian/dists/lenny/contrib/binary-i386/...
+</pre><p>
+To use this with <span class="command"><strong>apt</strong></span>, add this line to your 
+<code class="filename">sources.list</code> file:
+</p><pre class="screen">
+deb file:/var/ftp/debian lenny main contrib
+</pre><p>
+Note that the `<code class="literal">dists</code>' is added implicitly, and the 
+arguments after the release name are used to expand the path into multiple 
+directories.
+</p><p>
+After adding your new sources, disable the previously existing 
+<code class="literal">deb</code> lines in <code class="filename">sources.list</code> by placing 
+a hash sign (<code class="literal">#</code>) in front of them.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="cdroms"></a>4.4.3. Adding APT source from CD-ROM or DVD</h3></div></div></div><p>
+If you want to use CDs <span class="emphasis"><em>only</em></span>, comment out the existing 
+<code class="literal">deb</code> lines in <code class="filename">/etc/apt/sources.list</code> 
+by placing a hash sign (<code class="literal">#</code>) in front of them.
+</p><p>
+Make sure there is a line in <code class="filename">/etc/fstab</code> that enables 
+mounting your CD-ROM drive at the <code class="filename">/cdrom</code> mount point 
+(the exact <code class="filename">/cdrom</code> mount point is required for 
+<span class="command"><strong>apt-cdrom</strong></span>).  For example, if 
+<code class="filename">/dev/hdc</code> is your CD-ROM drive, 
+<code class="filename">/etc/fstab</code> should contain a line like:
+</p><pre class="screen">
+/dev/hdc /cdrom auto defaults,noauto,ro 0 0
+</pre><p>
+Note that there must be <span class="emphasis"><em>no spaces</em></span> between the words 
+<code class="literal">defaults,noauto,ro</code> in the fourth field.
+</p><p>
+To verify it works, insert a CD and try running
+</p><pre class="screen">
+# mount /cdrom    # this will mount the CD to the mount point
+# ls -alF /cdrom  # this should show the CD's root directory
+# umount /cdrom   # this will unmount the CD
+</pre><p>
+Next, run:
+</p><pre class="screen">
+# apt-cdrom add
+</pre><p>
+for each Debian Binary CD-ROM you have, to add the data about each CD to 
+APT's database.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="upgradingpackages"></a>4.5. Upgrading packages</h2></div></div></div><p>
+The recommended way to upgrade from previous Debian <acronym title="GNU's Not Unix 的递归缩写">GNU</acronym>/Linux releases is to use the 
+package management tool <span class="command"><strong>aptitude</strong></span>.  This program makes 
+safer decisions about package installations than running 
+<span class="command"><strong>apt-get</strong></span> directly.
+</p><p>
+Don't forget to mount all needed partitions (notably the root and 
+<code class="filename">/usr</code> partitions) read-write, with a command like:
+</p><pre class="screen">
+# mount -o remount,rw /<em class="replaceable"><code>mountpoint</code></em>
+</pre><p>
+Next you should double-check that the APT source entries (in 
+<code class="filename">/etc/apt/sources.list</code>) refer either to 
+<code class="literal">lenny</code> or to <code class="literal">stable</code>.  There 
+should not be any sources entries pointing to etch.
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+    Source lines for a CD-ROM will often refer to <code class="literal">unstable</code>; 
+although this may be confusing, you should <span class="emphasis"><em>not</em></span> change 
+it.
+  </p></td></tr></table></div><p>
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="record-session"></a>4.5.1. Recording the session</h3></div></div></div><p>
+It is strongly recommended that you use the 
+<span class="command"><strong>/usr/bin/script</strong></span> program to record a transcript of the 
+upgrade session.  Then if a problem occurs, you will have a log of what 
+happened, and if needed, can provide exact information in a bug report.  To 
+start the recording, type:
+</p><pre class="screen">
+# script -t 2&gt;~/upgrade-lenny.time -a ~/upgrade-lenny.script
+</pre><p>
+or similar.  Do not put the typescript file in a temporary directory such as 
+<code class="filename">/tmp</code> or <code class="filename">/var/tmp</code> (files in those 
+directories may be deleted during the upgrade or during any restart).
+</p><p>
+The typescript will also allow you to review information that has scrolled 
+off-screen.  Just switch to VT2 (using <code class="literal">Alt-F2</code>) and, after 
+logging in, use <code class="literal">less -R 
+~root/upgrade-lenny.script</code> to view the file.
+</p><p>
+After you have completed the upgrade, you can stop <span class="command"><strong>script</strong></span> 
+by typing <code class="literal">exit</code> at the prompt.
+</p><p>
+If you have used the <span class="emphasis"><em>-t</em></span> switch for 
+<span class="command"><strong>script</strong></span> you can use the <span class="command"><strong>scriptreplay</strong></span> 
+program to replay the whole session:
+</p><pre class="screen">
+# scriptreplay ~/upgrade-lenny.time ~/upgrade-lenny.script
+</pre></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="updating-lists"></a>4.5.2. Updating the package list</h3></div></div></div><p>
+First the list of available packages for the new release needs to be 
+fetched.  This is done by executing:
+</p><pre class="screen">
+# aptitude update
+</pre><p>
+Running this the first time new sources are updated will print out some 
+warnings related to the availability of the sources.  These warnings are 
+harmless and will not appear if you rerun the command again.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="sufficient-space"></a>4.5.3. Make sure you have sufficient space for the upgrade</h3></div></div></div><p>
+You have to make sure before upgrading your system that you have sufficient 
+hard disk space when you start the full system upgrade described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-other" title="4.5.6. Upgrading the rest of the system">Section 4.5.6, “Upgrading the rest of the system”</a> .  First, any package needed for installation 
+that is fetched from the network is stored in 
+<code class="filename">/var/cache/apt/archives</code> (and the 
+<code class="filename">partial/</code> subdirectory, during download), so you must 
+make sure you have enough space on the file system partition that holds 
+<code class="filename">/var/</code> to temporarily download the packages that will be 
+installed in your system.  After the download, you will probably need more 
+space in other file system partitions in order to both install upgraded 
+packages (which might contain bigger binaries or more data) and new packages 
+that will be pulled in for the upgrade.  If your system does not have 
+sufficient space you might end up with an incomplete upgrade that might be 
+difficult to recover from.
+</p><p>
+Both <span class="command"><strong>aptitude</strong></span> and <span class="command"><strong>apt</strong></span> will show you 
+detailed information of the disk space needed for the installation.  Before 
+executing the upgrade, you can see this estimate by running:
+</p><pre class="screen">
+# aptitude -y -s -f --with-recommends dist-upgrade
+[ ... ]
+XXX upgraded, XXX newly installed, XXX to remove and XXX not upgraded.
+Need to get xx.xMB/yyyMB of archives. After unpacking AAAMB will be used.
+Would download/install/remove packages.
+</pre><p>
+<sup>[<a id="id2857053" href="#ftn.id2857053" class="footnote">5</a>]</sup>
+</p><p>
+If you do not have enough space for the upgrade, make sure you free up space 
+beforehand.  You can:
+</p><div class="itemizedlist"><ul type="disc"><li><p>
+Remove packages that have been previously downloaded for installation (at 
+<code class="filename">/var/cache/apt/archive</code>).  Cleaning up the package cache 
+by running <span class="command"><strong>apt-get clean</strong></span> or <span class="command"><strong>aptitude 
+clean</strong></span> will remove all previously downloaded package files.
+</p></li><li><p>
+Remove old packages you no longer use.  If you have 
+<span class="command"><strong>popularity-contest</strong></span> installed, you can use 
+<span class="command"><strong>popcon-largest-unused</strong></span> to list the packages you do not use 
+in the system that occupy the most space.  You can also use 
+<span class="command"><strong>deborphan</strong></span> or <span class="command"><strong>debfoster</strong></span> to find 
+obsolete packages (see <a class="xref" href="ch-upgrading.zh_CN.html#obsolete" title="4.11. Obsolete packages">Section 4.11, “Obsolete packages”</a> ).  Alternatively you can 
+start <span class="command"><strong>aptitude</strong></span> in visual mode and find obsolete packages 
+under Obsolete and Locally Created Packages.
+</p></li><li><p>
+Remove packages taking up too much space, which are not currently needed 
+(you can always reinstall them after the upgrade).  You can list the 
+packages that take up most of the disk space with <span class="command"><strong>dpigs</strong></span> 
+(available in the <code class="systemitem">debian-goodies</code> 
+package) or with <span class="command"><strong>wajig</strong></span> (running <code class="literal">wajig 
+size</code>).
+</p></li><li><p>
+Temporarily move to another system, or permanently remove, system logs 
+residing under <code class="filename">/var/log/</code>.
+</p></li></ul></div><p>
+Note that in order to safely remove packages, it is advisable to switch your 
+<code class="filename">sources.list</code> back to etch as described in 
+<a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a> .
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="minimal-upgrade"></a>4.5.4. Minimal system upgrade</h3></div></div></div><p>
+Because of certain necessary package conflicts between etch and 
+lenny, running <code class="literal">aptitude dist-upgrade</code> directly 
+will often remove large numbers of packages that you will want to keep.  We 
+therefore recommend a two-part upgrade process, first a minimal upgrade to 
+overcome these conflicts, then a full <code class="literal">dist-upgrade</code>.
+</p><p>
+First, run:
+</p><pre class="screen">
+# aptitude upgrade
+</pre><p>
+This has the effect of upgrading those packages which can be upgraded 
+without requiring any other packages to be removed or installed.
+</p><p>
+Follow the minimal upgrade with:
+</p><p>
+This step will automatically upgrade <code class="systemitem">libc6</code> and <code class="systemitem">locales</code> and will pull in SELinux support 
+libraries (<code class="systemitem">libselinux1</code>).  At this 
+point, some running services will be restarted, including 
+<span class="command"><strong>xdm</strong></span>, <span class="command"><strong>gdm</strong></span> and <span class="command"><strong>kdm</strong></span>.  
+As a consequence, local X11 sessions will be disconnected.
+</p><p>
+The next step will vary depending on the set of packages that you have 
+installed.  These release notes give general advice about which method 
+should be used, but if in doubt, it is recommended that you examine the 
+package removals proposed by each method before proceeding.
+</p><p>
+Some common packages that are expected to be removed include <code class="systemitem">base-config</code>, <code class="systemitem">hotplug</code>, <code class="systemitem">xlibs</code>, <code class="systemitem">netkit-inetd</code>, <code class="systemitem">python2.3</code>, <code class="systemitem">xfree86-common</code>, and <code class="systemitem">xserver-common</code>.  For a more complete list of 
+packages obsoleted in lenny, see <a class="xref" href="ch-upgrading.zh_CN.html#obsolete" title="4.11. Obsolete packages">Section 4.11, “Obsolete packages”</a> .
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="minimal-upgrade-desktop"></a>4.5.4.1. Upgrading a desktop system</h4></div></div></div><p>
+This upgrade path has been verified to work on systems with the 
+etch <code class="literal">desktop</code> task installed.  It is probably 
+the method that will give the best results on systems with the 
+<code class="literal">desktop</code> task installed, or with the 
+<code class="literal">gnome</code> or <code class="literal">kde</code> packages installed.
+</p><p>
+It is probably <span class="emphasis"><em>not</em></span> the correct method to use if you do 
+not already have the <code class="systemitem">libfam0c102</code> and 
+<code class="systemitem">xlibmesa-glu</code> packages installed:
+</p><pre class="screen">
+# dpkg -l libfam0c102 | grep ^ii
+# dpkg -l xlibmesa-glu | grep ^ii
+</pre><p>
+If you do have a full desktop system installed, run:
+</p><pre class="screen">
+# aptitude install libfam0 xlibmesa-glu
+</pre></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="minimal-upgrade-x-server"></a>4.5.4.2. Upgrading a system with some X packages installed</h4></div></div></div><p>
+Systems with some X packages installed, but not the full 
+<code class="literal">desktop</code> task, require a different method.  This method 
+applies in general to systems with <code class="systemitem">xfree86-common</code> installed, including some server 
+systems which have <code class="systemitem">tasksel</code> server 
+tasks installed as some of these tasks include graphical management tools.  
+It is likely the correct method to use on systems which run X, but do not 
+have the full <code class="literal">desktop</code> task installed.
+</p><pre class="screen">
+# dpkg -l xfree86-common | grep ^ii
+</pre><p>
+First, check whether you have the <code class="systemitem">libfam0c102</code> and <code class="systemitem">xlibmesa-glu</code> packages installed.
+</p><pre class="screen">
+# dpkg -l libfam0c102 | grep ^ii
+# dpkg -l xlibmesa-glu | grep ^ii
+</pre><p>
+If you do not have <code class="systemitem">libfam0c102</code> 
+installed, do not include <code class="systemitem">libfam0</code> in 
+the following commandline.  If you do not have <code class="systemitem">xlibmesa-glu</code> installed, do not include it in the 
+following commandline.  <sup>[<a id="id2857587" href="#ftn.id2857587" class="footnote">6</a>]</sup>
+</p><pre class="screen">
+# aptitude install x11-common <em class="replaceable"><code>libfam0</code></em> <em class="replaceable"><code>xlibmesa-glu</code></em>
+</pre><p>
+Note that installing <code class="systemitem">libfam0</code> will 
+also install the File Alteration Monitor (<code class="systemitem">fam</code>) as well as the RPC portmapper (<code class="systemitem">portmap</code>) if not already available in your 
+system.  Both packages will enable a new network service in the system 
+although they can both be configured to be bound to the (internal) loopback 
+network device.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="minimal-upgrade-server"></a>4.5.4.3. Upgrading a system with no X support installed</h4></div></div></div><p>
+On a system with no X, no additional <code class="literal">aptitude install</code> 
+command should be required, and you can move on to the next step.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="upgrading-kernel"></a>4.5.5. Upgrading the kernel</h3></div></div></div><p>
+The <code class="systemitem">udev</code> version in lenny 
+does not support kernel versions earlier than 2.6.15 (which includes 
+etch 2.6.8 kernels), and the <code class="systemitem">udev</code> version in etch will not work 
+properly with the latest kernels.  In addition, installing the lenny 
+version of <code class="systemitem">udev</code> will force the 
+removal of <code class="systemitem">hotplug</code>, used by Linux 
+2.4 kernels.
+</p><p>
+As a consequence, the previous kernel package will probably not boot 
+properly after this upgrade.  Similarly, there is a time window during the 
+upgrade in which <code class="systemitem">udev</code> has been 
+upgraded but the latest kernel has not been installed.  If the system were 
+to be rebooted at this point, in the middle of the upgrade, it might not be 
+bootable because of drivers not being properly detected and loaded.  (See 
+<a class="xref" href="ch-upgrading.zh_CN.html#upgrade-preparations" title="4.1.4. Prepare a safe environment for the upgrade">Section 4.1.4, “Prepare a safe environment for the upgrade”</a> for recommendations on preparing for 
+this possibility if you are upgrading remotely.)
+</p><p>
+Unless your system has the <code class="literal">desktop</code> task installed, or 
+other packages that would cause an unacceptable number of package removals, 
+it is therefore recommended that you upgrade the kernel on its own at this 
+point.
+</p><p>
+To proceed with this kernel upgrade, run:
+</p><pre class="screen">
+# aptitude install linux-image-2.6-<em class="replaceable"><code>flavor</code></em>
+</pre><p>
+See <a class="xref" href="ch-upgrading.zh_CN.html#kernel-metapackage" title="4.6.1. Installing the kernel metapackage">Section 4.6.1, “Installing the kernel metapackage”</a> for help in determining which 
+flavor of kernel package you should install.
+</p><p>
+In the desktop case, it is unfortunately not possible to ensure the new 
+kernel package is installed immediately after the new <code class="systemitem">udev</code> is installed, so there is a window of 
+unknown length when your system will have no kernel installed with full 
+hotplug support.  See <a class="xref" href="ch-upgrading.zh_CN.html#newkernel" title="4.6. Upgrading your kernel and related packages">Section 4.6, “Upgrading your kernel and related packages”</a> for information on 
+configuring your system to not depend on hotplug for booting.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="upgrading-other"></a>4.5.6. Upgrading the rest of the system</h3></div></div></div><p>
+You are now ready to continue with the main part of the upgrade.  Execute:
+</p><pre class="screen">
+# aptitude dist-upgrade
+</pre><p>
+This will perform a complete upgrade of the system, i.e.  install the newest 
+available versions of all packages, and resolve all possible dependency 
+changes between packages in different releases.  If necessary, it will 
+install some new packages (usually new library versions, or renamed 
+packages), and remove any conflicting obsoleted packages.
+</p><p>
+When upgrading from a set of CD-ROMs, you will be asked to insert specific 
+CDs at several points during the upgrade.  You might have to insert the same 
+CD multiple times; this is due to inter-related packages that have been 
+spread out over the CDs.
+</p><p>
+New versions of currently installed packages that cannot be upgraded without 
+changing the install status of another package will be left at their current 
+version (displayed as held back).  This can be resolved by either using 
+<span class="command"><strong>aptitude</strong></span> to choose these packages for installation or by 
+trying <code class="literal">aptitude -f install 
+<em class="replaceable"><code>package</code></em></code>.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="get-signatures"></a>4.5.7. Getting package signatures</h3></div></div></div><p>
+After the upgrade, with the new version of <span class="command"><strong>apt</strong></span> you can 
+now update your package information, which will include the new package 
+signature checking mechanism:
+</p><pre class="screen">
+# aptitude update
+</pre><p>
+The upgrade will have already retrieved and enabled the signing keys for 
+Debian's package archives.  If you add other (unofficial) package sources, 
+<span class="command"><strong>apt</strong></span> will print warnings related to its inability to 
+confirm that packages downloaded from them are legitimate and have not been 
+tampered with.  For more information please see <a class="xref" href="ch-whats-new.zh_CN.html#pkgmgmt" title="2.1.1. 包管理">第 2.1.1 节 “包管理”</a> .
+</p><p>
+You will notice that, since you are using the new version of 
+<span class="command"><strong>apt</strong></span>, it will download package differences files 
+(<code class="literal">pdiff</code>) instead of the full package index list.  For more 
+information on this feature please read <a class="xref" href="ch-information.zh_CN.html#apt-pdiff" title="5.1.5. APT 软件包索引文件更新缓慢">第 5.1.5 节 “APT 软件包索引文件更新缓慢”</a> .
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="trouble"></a>4.5.8. Possible issues during upgrade</h3></div></div></div><p>
+If an operation using <span class="command"><strong>aptitude</strong></span>, 
+<span class="command"><strong>apt-get</strong></span>, or <span class="command"><strong>dpkg</strong></span> fails with the error
+</p><pre class="screen">
+E: Dynamic MMap ran out of room
+</pre><p>
+the default cache space is insufficient.  You can solve this by either 
+removing or commenting lines you don't need in 
+<code class="filename">/etc/apt/sources.list</code> or by increasing the cache size.  
+The cache size can be increased by setting 
+<code class="literal">APT::Cache-Limit</code> in 
+<code class="filename">/etc/apt/apt.conf</code>.  The following command will set it 
+to a value that should be sufficient for the upgrade:
+</p><pre class="screen">
+# echo 'APT::Cache-Limit 12500000;' &gt;&gt; /etc/apt/apt.conf
+</pre><p>
+This assumes that you do not yet have this variable set in that file.
+</p><p>
+Sometimes it's necessary to enable the 
+<code class="literal">APT::Force-LoopBreak</code> option in APT to be able to 
+temporarily remove an essential package due to a Conflicts/Pre-Depends 
+loop.  <span class="command"><strong>aptitude</strong></span> will alert you of this and abort the 
+upgrade.  You can work around that by specifying <code class="literal">-o 
+APT::Force-LoopBreak=1</code> option on <span class="command"><strong>aptitude</strong></span> 
+command line.
+</p><p>
+It is possible that a system's dependency structure can be so corrupt as to 
+require manual intervention.  Usually this means using 
+<span class="command"><strong>aptitude</strong></span> or
+</p><pre class="screen">
+# dpkg --remove <em class="replaceable"><code>package_name</code></em>
+</pre><p>
+to eliminate some of the offending packages, or
+</p><pre class="screen">
+# aptitude -f install
+# dpkg --configure --pending
+</pre><p>
+In extreme cases you might have to force re-installation with a command like
+</p><pre class="screen">
+# dpkg --install <em class="replaceable"><code>/path/to/package_name.deb</code></em>
+</pre><p>
+File conflicts should not occur if you upgrade from a pure etch 
+system, but can occur if you have unofficial backports installed.  A file 
+conflict will result in an error like:
+</p><pre class="screen">
+Unpacking <em class="replaceable"><code>&lt;package-foo&gt;</code></em> (from <em class="replaceable"><code>&lt;package-foo-file&gt;</code></em>) ...
+dpkg: error processing <em class="replaceable"><code>&lt;package-foo&gt;</code></em> (--install):
+ trying to overwrite `<em class="replaceable"><code>&lt;some-file-name&gt;</code></em>',
+ which is also in package <em class="replaceable"><code>&lt;package-bar&gt;</code></em>
+dpkg-deb: subprocess paste killed by signal (Broken pipe)
+ Errors were encountered while processing:
+ <em class="replaceable"><code>&lt;package-foo&gt;</code></em>
+</pre><p>
+You can try to solve a file conflict by forcibly removing the package 
+mentioned on the <span class="emphasis"><em>last</em></span> line of the error message:
+</p><pre class="screen">
+# dpkg -r --force-depends <em class="replaceable"><code>package_name</code></em>
+</pre><p>
+After fixing things up, you should be able to resume the upgrade by 
+repeating the previously described <code class="literal">aptitude</code> commands.
+</p><p>
+During the upgrade, you will be asked questions regarding the configuration 
+or re-configuration of several packages.  When you are asked if any file in 
+the <code class="filename">/etc/init.d</code> or <code class="filename">/etc/terminfo</code> 
+directories, or the <code class="filename">/etc/manpath.config</code> file should be 
+replaced by the package maintainer's version, it's usually necessary to 
+answer `yes' to ensure system consistency.  You can always revert to the old 
+versions, since they will be saved with a <code class="literal">.dpkg-old</code> 
+extension.
+</p><p>
+If you're not sure what to do, write down the name of the package or file 
+and sort things out at a later time.  You can search in the typescript file 
+to review the information that was on the screen during the upgrade.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="newkernel"></a>4.6. Upgrading your kernel and related packages</h2></div></div></div><p>
+This section explains how to upgrade your kernel and identifies potential 
+issues related to this upgrade.  You can either install one of the 
+<code class="systemitem">linux-image-*</code> packages provided by 
+Debian, or compile a customized kernel from source.
+</p><p>
+Note that a lot of information in this section is based on the assumption 
+that you will be using one of the modular Debian kernels, together with 
+<code class="systemitem">initramfs-tools</code> and <code class="systemitem">udev</code>.  If you choose to use a custom kernel that 
+does not require an initrd or if you use a different initrd generator, some 
+of the information may not be relevant for you.
+</p><p>
+Note also that if <code class="systemitem">udev</code> is 
+<span class="emphasis"><em>not</em></span> installed on your system, it is still possible to 
+use <code class="systemitem">hotplug</code> for hardware discovery.
+</p><p>
+If you are currently using a 2.4 kernel, you should also read <a class="xref" href="ch-information.zh_CN.html#upgrade-to-2.6" title="5.2. 升级到 2.6 内核">第 5.2 节 “升级到 2.6 内核”</a> carefully.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="kernel-metapackage"></a>4.6.1. Installing the kernel metapackage</h3></div></div></div><p>
+When you dist-upgrade from etch to lenny, it is strongly 
+recommended that you install a new linux-image-2.6-* metapackage.  This 
+package may be installed automatically by the dist-upgrade process.  You can 
+verify this by running:
+</p><pre class="screen">
+# dpkg -l linux-image* | grep ^ii
+</pre><p>
+If you do not see any output, then you will need to install a new 
+linux-image package by hand.  To see a list of available linux-image-2.6 
+metapackages, run:
+</p><pre class="screen">
+# apt-cache search linux-image-2.6- | grep -v transition
+</pre><p>
+If you are unsure about which package to select, run <code class="literal">uname 
+-r</code> and look for a package with a similar name.  For example, if 
+you see '2.4.27-3-686', it is recommended that you install <code class="systemitem">linux-image-2.6-686</code>.  (Note that the 386 flavor 
+no longer exists; if you are currently using the 386 kernel flavor, you 
+should install the 486 flavor instead.) You may also use 
+<span class="command"><strong>apt-cache</strong></span> to see a long description of each package in 
+order to help choose the best one available.  For example:
+</p><pre class="screen">
+# apt-cache show linux-image-2.6-686
+</pre><p>
+You should then use <code class="literal">aptitude install</code> to install it.  Once 
+this new kernel is installed you should reboot at the next available 
+opportunity to get the benefits provided by the new kernel version.
+</p><p>
+For the more adventurous there is an easy way to compile your own custom 
+kernel on Debian <acronym title="GNU's Not Unix 的递归缩写">GNU</acronym>/Linux.  Install the <code class="systemitem">kernel-package</code> tool and read the documentation 
+in <code class="filename">/usr/share/doc/kernel-package</code>.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="upgrade-from-2.6"></a>4.6.2. Upgrading from a 2.6 kernel</h3></div></div></div><p>
+If you are currently running a 2.6 series kernel from etch this 
+upgrade will take place automatically after you do a full upgrade of the 
+system packages (as described in <a class="xref" href="ch-upgrading.zh_CN.html#upgradingpackages" title="4.5. Upgrading packages">Section 4.5, “Upgrading packages”</a> ).
+</p><p>
+If possible, it is to your advantage to upgrade the kernel package 
+separately from the main <code class="literal">dist-upgrade</code> to reduce the 
+chances of a temporarily non-bootable system.  See <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-kernel" title="4.5.5. Upgrading the kernel">Section 4.5.5, “Upgrading the kernel”</a> for a description of this process.  Note that 
+this should only be done after the minimal upgrade process described in 
+<a class="xref" href="ch-upgrading.zh_CN.html#minimal-upgrade" title="4.5.4. Minimal system upgrade">Section 4.5.4, “Minimal system upgrade”</a> .
+</p><p>
+You can also take this step if you are using your own custom kernel and want 
+to use the kernel available in lenny.  If your kernel version is not 
+supported by <code class="systemitem">udev</code> then it is 
+recommended that you upgrade after the minimal upgrade.  If your version is 
+supported by <code class="systemitem">udev</code> you can safely 
+wait until after the full system upgrade.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="upgrade-from-2.4"></a>4.6.3. Upgrading from a 2.4 kernel</h3></div></div></div><p>
+If you have a 2.4 kernel installed, and your system relies on <code class="systemitem">hotplug</code> for its hardware detection you should 
+first upgrade to a 2.6 series kernel from etch before attempting 
+the upgrade.  Make sure that the 2.6 series kernel boots your system and all 
+your hardware is properly detected before you perform the upgrade.  The 
+<code class="systemitem">hotplug</code> package is removed from the 
+system (in favor of <code class="systemitem">udev</code>) when you 
+do a full system upgrade.  If you do not do the kernel upgrade before this 
+your system might not boot up properly from this point on.  Once you have 
+done an upgrade to a 2.6 series kernel in etch you can do a 
+kernel upgrade as described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrade-from-2.6" title="4.6.2. Upgrading from a 2.6 kernel">Section 4.6.2, “Upgrading from a 2.6 kernel”</a> .
+</p><p>
+If your system does not rely on <code class="systemitem">hotplug</code><sup>[<a id="id2858519" href="#ftn.id2858519" class="footnote">7</a>]</sup> you can delay the kernel upgrade to after you have done a full 
+system upgrade, as described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-other" title="4.5.6. Upgrading the rest of the system">Section 4.5.6, “Upgrading the rest of the system”</a> .  Once 
+your system has been upgraded you can then do the following (changing the 
+kernel package name to the one most suited to your system by substituting 
+<span class="emphasis"><em>&lt;flavor&gt;</em></span>):
+</p><pre class="screen">
+# aptitude install linux-image-2.6-&lt;flavor&gt;
+</pre></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="device-reorder"></a>4.6.4. Device enumeration reordering</h3></div></div></div><p>
+lenny features a more robust mechanism for hardware discovery than 
+previous releases.  However, this may cause changes in the order devices are 
+discovered on your system, affecting the order in which device names are 
+assigned.  For example, if you have two network adapters that are associated 
+with two different drivers, the devices eth0 and eth1 refer to may be 
+swapped.  Please note that the new mechanism means that if you e.g.  
+exchange ethernet adapters in a running lenny system, the new 
+adapter will also get a new interface name.
+</p><p>
+For network devices, you can avoid this reordering by using <code class="systemitem">udev</code> rules, more specifically, through the 
+definitions at 
+<code class="filename">/etc/udev/rules.d/z25_persistent-net.rules</code><sup>[<a id="id2858593" href="#ftn.id2858593" class="footnote">8</a>]</sup>.  Alternatively you can use the <span class="command"><strong>ifrename</strong></span> 
+utility to bind physical devices to specific names at boot time.  See 
+<span class="citerefentry"><span class="refentrytitle">ifrename</span>(8)</span> and <span class="citerefentry"><span class="refentrytitle">iftab</span>(5)</span> for more information.  The two alternatives (<code class="systemitem">udev</code> and <span class="command"><strong>ifrename</strong></span>) should not 
+be used at the same time.
+</p><p>
+For storage devices, you can avoid this reordering by using <code class="systemitem">initramfs-tools</code> and configuring it to load 
+storage device driver modules in the same order they are currently loaded.  
+To do this, identify the order the storage modules on your system were 
+loaded by looking at the output of <span class="command"><strong>lsmod</strong></span>.  
+<span class="command"><strong>lsmod</strong></span> lists modules in the reverse order that they were 
+loaded in, i.e., the first module in the list was the last one loaded.  Note 
+that this will only work for devices which the kernel enumerates in a stable 
+order (like PCI devices).
+</p><p>
+However, removing and reloading modules after initial boot will affect this 
+order.  Also, your kernel may have some drivers linked statically, and these 
+names will not appear in the output of <span class="command"><strong>lsmod</strong></span>.  You may be 
+able to decipher these driver names and load order from looking at 
+<code class="filename">/var/log/kern.log</code>, or the output of 
+<span class="command"><strong>dmesg</strong></span>.
+</p><p>
+Add these module names to <code class="filename">/etc/initramfs-tools/modules</code> 
+in the order they should be loaded at boot time.  Some module names may have 
+changed between etch and lenny.  For example, 
+sym53c8xx_2 has become sym53c8xx.
+</p><p>
+You will then need to regenerate your initramfs image(s) by executing 
+<code class="literal">update-initramfs -u -k all</code>.
+</p><p>
+Once you are running a lenny kernel and <code class="systemitem">udev</code>, you may reconfigure your system to access 
+disks by an alias that is not dependent upon driver load order.  These 
+aliases reside in the <code class="filename">/dev/disk/</code> hierarchy.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="boot-timing"></a>4.6.5. Boot timing issues</h3></div></div></div><p>
+If an initrd created with <code class="systemitem">initramfs-tools</code> is used to boot the system, in 
+some cases the creation of device files by <code class="systemitem">udev</code> can happen too late for the boot scripts to 
+act on.
+</p><p>
+The usual symptoms are that the boot will fail because the root file system 
+cannot be mounted and you are dropped into a debug shell, but that when you 
+check afterwards, all devices that are needed are present in 
+<code class="filename">/dev</code>.  This has been observed in cases where the root 
+file system is on a <acronym title="通用串行总线">USB</acronym> disk or on 
+<acronym title="独立冗余磁盘阵列">RAID</acronym>, especially if lilo is used.
+</p><p>
+A workaround for this issue is to use the boot parameter 
+<code class="literal">rootdelay=<em class="replaceable"><code>9</code></em></code>.  The value for 
+the timeout (in seconds) may need to be adjusted.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nownownow"></a>4.7. Things to do before rebooting</h2></div></div></div><p>
+When <code class="literal">aptitude dist-upgrade</code> has finished, the formal 
+upgrade is complete, but there are some other things that should be taken 
+care of <span class="emphasis"><em>before</em></span> the next reboot.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="convert-devfs"></a>4.7.1. Converting from devfs</h3></div></div></div><p>
+Debian kernels no longer include support for <code class="literal">devfs</code>, so 
+<code class="literal">devfs</code> users will need to convert their systems manually 
+before booting an lenny kernel.
+</p><p>
+If you see the string 'devfs' in <code class="filename">/proc/mounts</code>, you are 
+most likely using <code class="literal">devfs</code>.  Any configuration files that 
+reference <code class="literal">devfs</code>-style names will need to be adjusted to 
+use <code class="systemitem">udev</code>-style names.  Files that 
+are likely to refer to <code class="literal">devfs</code>-style device names include 
+<code class="filename">/etc/fstab</code>, <code class="filename">/etc/lilo.conf</code>, 
+<code class="filename">/boot/grub/menu.lst</code>, and 
+<code class="filename">/etc/inittab</code>.
+</p><p>
+More information about potential issues is available in bug report <a class="ulink" href="http://bugs.debian.org/341152" target="_top">#341152</a>.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="rerunlilo"></a>4.7.2. Rerun lilo</h3></div></div></div><p>
+If you are using <code class="systemitem">lilo</code> as your 
+bootloader (it is the default bootloader for some installations of 
+etch) it is strongly recommended that you rerun 
+<span class="command"><strong>lilo</strong></span> after the upgrade:
+</p><pre class="screen">
+# /sbin/lilo
+</pre><p>
+Notice this is needed even if you did not upgrade your system's kernel, as 
+<span class="command"><strong>lilo</strong></span>'s second stage will change due to the package 
+upgrade.
+</p><p>
+Also, review the contents of your <code class="filename">/etc/kernel-img.conf</code> 
+and make sure that you have <span class="emphasis"><em>do_bootloader = Yes</em></span> in it.  
+That way the bootloader will always be rerun after a kernel upgrade.
+</p><p>
+If you encounter any issues when running <span class="command"><strong>lilo</strong></span>, review the 
+symbolic links in <code class="filename">/</code> to <code class="filename">vmlinuz</code> and 
+<code class="filename">initrd</code> and the contents of your 
+<code class="filename">/etc/lilo.conf</code> for discrepancies.
+</p><p>
+If you forgot to rerun <span class="command"><strong>lilo</strong></span> before the reboot or the 
+system is accidentally rebooted before you could do this manually, your 
+system might fail to boot.  Instead of the lilo prompt, you will only see 
+<span class="emphasis"><em>LI</em></span> when booting the system<sup>[<a id="id2859294" href="#ftn.id2859294" class="footnote">9</a>]</sup>.  See <a class="xref" href="ch-upgrading.zh_CN.html#recovery" title="4.1.3. Prepare for recovery">Section 4.1.3, “Prepare for recovery”</a> for information on how to 
+recover from this.
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="mdadm"></a>4.7.3. Upgrading mdadm</h3></div></div></div><p>
+mdadm now needs a configuration file to assemble MD arrays 
+(<acronym title="独立冗余磁盘阵列">RAID</acronym>) from the initial ramdisk and during the system 
+initialisation sequence.  Please make sure to read and act upon the 
+instructions in 
+<code class="filename">/usr/share/doc/mdadm/README.upgrading-2.5.3.gz</code> after 
+the package has been upgraded <span class="strong"><strong>and before you 
+reboot</strong></span>.  The latest version of this file is available at <a class="ulink" href="http://svn.debian.org/wsvn/pkg-mdadm/mdadm/trunk/debian/README.upgrading-2.5.3?op=file" target="_top">http://svn.debian.org/wsvn/pkg-mdadm/mdadm/trunk/debian/README.upgrading-2.5.3?op=file</a>; 
+please consult it in case of problems.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id2859362"></a>4.8. System boot hangs on <code class="literal">Waiting for root file system</code></h2></div><div><h3 class="subtitle">Procedure to recover from <code class="filename">/dev/hda</code> became 
+<code class="filename">/dev/sda</code></h3></div></div></div><p>
+    Some users have reported that an upgrade could cause the kernel not finding 
+the system root partition after a system reboot.
+  </p><p>
+    In such case, the system boot will hang on the following message:
+    </p><pre class="screen">Waiting for root file system ...</pre><p>
+    and after a few seconds a bare busybox prompt will show.
+  </p><p>
+    This problem can occur when the upgrade of the kernel introduces the use of 
+the new generation of <acronym title="电子集成驱动器">IDE</acronym> drivers. The 
+<acronym title="电子集成驱动器">IDE</acronym> disk naming convention for the old drivers was 
+<code class="literal">hda</code>, <code class="literal">hdb</code>, <code class="literal">hdc</code>, 
+<code class="literal">hdd</code>. The new drivers will name the same disks 
+respectively <code class="literal">sda</code>, <code class="literal">sdb</code>, 
+<code class="literal">sdc</code>, <code class="literal">sdd</code>. The problem appears when the 
+upgrade does not generate a new <code class="filename">/boot/grub/menu.lst</code> 
+file to take the new naming convention into account. During the boot, Grub 
+will pass a system root partition to the kernel that the kernel doesn't 
+find.
+  </p><p>
+    If you have encountered this problem after upgrading, jump to <a class="xref" href="ch-upgrading.zh_CN.html#how-to-recover" title="4.8.2. How to recover from the problem after the upgrade">Section 4.8.2, “How to recover from the problem after the upgrade”</a>. To avoid the problem before upgrading, read 
+ahead.
+  </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="avoid-problems-before-upgrading"></a>4.8.1. How to avoid the problem before upgrading</h3></div></div></div><p>
+      One can avoid this problem entirely by using an identifier for the root 
+filesystem that does not change from one boot to the next. There are two 
+possible methods for doing this - labelling the filesystem, or using the 
+filesystem's universal unique identifier (<acronym title="通用惟一标识符">UUID</acronym>). These 
+methods are supported in Debian since the 'etch' release.
+    </p><p>
+      The two approaches have advantages and disadvantages. The labelling approach 
+is more readable, but there may be problems if another filesystem on your 
+machine has the same label. The uuid approach is uglier, but having two 
+clashing uuids is highly unlikely.
+    </p><p>
+      For the examples below we assume the root filesystem is on 
+<code class="filename">/dev/hda6</code>. We also assume your system has a working 
+udev installation and ext2 or ext3 filesystems.
+    </p><p>
+      To implement the labelling approach:
+      </p><div class="orderedlist"><ol type="1"><li><p>
+	    Label the filesystem (the name must be &lt; 16 characters)  by running the 
+command:
+	    </p><pre class="programlisting">e2label /dev/hda6 rootfilesys</pre><p>
+	  </p></li><li><p>
+	    Edit <code class="filename">/boot/grub/menu.lst</code> and change the line:
+	    </p><pre class="programlisting"># kopt=root=/dev/hda6 ro</pre><p>
+	    to
+	    </p><pre class="programlisting"># kopt=root=LABEL=rootfilesys ro</pre><p>
+	    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+		Do not remove the <code class="literal">#</code> at the start of the line, it needs to 
+be there.
+	      </p></td></tr></table></div><p>
+	  </p></li><li><p>
+	    Update the <code class="literal">kernel</code> lines in <code class="filename">menu.lst</code> 
+by running the command <span class="command"><strong>update-grub</strong></span>.
+	  </p></li><li><p>
+	    Edit <code class="filename">/etc/fstab</code> and change the line that mounts the 
+<code class="filename">/</code> partition, eg.:
+
+	    </p><pre class="programlisting">/dev/hda6     /     ext3  defaults,errors=remount-ro 0 1</pre><p>
+
+	    to
+
+	    </p><pre class="programlisting">LABEL=rootfilesys     /     ext3  defaults,errors=remount-ro 0 1</pre><p>
+
+	    The change that matters here is the first column, you don't need to modify 
+the other columns of this line.
+	  </p></li></ol></div><p>
+    </p><p>
+      To implement the uuid approach:
+      </p><div class="orderedlist"><ol type="1"><li><p>
+	    Find out the universal unique identifier of your filesystem by issuing: 
+<span class="command"><strong>ls -l /dev/disk/by-uuid | grep hda6</strong></span>
+	  </p><p>
+	    You should get a line similar to this one:
+	    </p><pre class="screen">lrwxrwxrwx 1 root root 24 2008-09-25 08:16 d0dfcc8a-417a-41e3-ad2e-9736317f2d8a -&gt; ../../hda6</pre><p>
+
+	    The <acronym title="通用惟一标识符">UUID</acronym> is the name of the symbolic link pointing to 
+<code class="filename">/dev/hda6</code> ie.: 
+<code class="literal">d0dfcc8a-417a-41e3-ad2e-9736317f2d8a</code>.
+	    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+		Your filesystem <acronym title="通用惟一标识符">UUID</acronym> will be a different string.
+	      </p></td></tr></table></div><p>
+	  </p></li><li><p>
+	    Edit <code class="filename">/boot/grub/menu.lst</code> and change the line
+
+	    </p><pre class="programlisting"># kopt=root=/dev/hda6 ro</pre><p>
+
+	    to
+
+	    </p><pre class="programlisting"># kopt=root=UUID=d0dfcc8a-417a-41e3-ad2e-9736317f2d8 ro</pre><p>
+
+	    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+		Do not remove the <code class="literal">#</code> at the start of the line, it needs to 
+be there.
+	      </p></td></tr></table></div><p>
+	  </p></li><li><p>
+	    Update the <code class="literal">kernel</code> lines in <code class="filename">menu.lst</code> 
+by running the command <span class="command"><strong>update-grub</strong></span>.
+	  </p></li><li><p>
+	    Edit <code class="filename">/etc/fstab</code> and change the line that mounts the 
+<code class="filename">/</code> partition, eg.:
+
+	    </p><pre class="programlisting">/dev/hda6     /     ext3  defaults,errors=remount-ro 0 1</pre><p>
+
+	    to
+
+	    </p><pre class="programlisting">UUID=d0dfcc8a-417a-41e3-ad2e-9736317f2d8  /  ext3  defaults,errors=remount-ro 0 1</pre><p>
+
+	    The change that matters here is the first column, you don't need to modify 
+the other columns of this line.
+	  </p></li></ol></div><p>
+    </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="how-to-recover"></a>4.8.2. How to recover from the problem after the upgrade</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="solution1"></a>4.8.2.1. Solution 1</h4></div></div></div><p>
+	This is applicable when Grub shows you the menu interface for selecting the 
+entry you want to boot from. If such menu does not appear, try pressing 
+<span class="keycap"><strong>Esc</strong></span> key before the kernel boots in order to make it 
+appear.  If you can't get into this menu, try <a class="xref" href="ch-upgrading.zh_CN.html#solution2" title="4.8.2.2. Solution 2">Section 4.8.2.2, “Solution 2”</a> or 
+<a class="xref" href="ch-upgrading.zh_CN.html#solution3" title="4.8.2.3. Solution 3">Section 4.8.2.3, “Solution 3”</a>.
+      </p><div class="orderedlist"><ol type="1"><li><p>
+	    In the Grub menu, highlight the entry you want to boot from. Press 
+<span class="keycap"><strong>e</strong></span> key to edit the options related to this entry. You will 
+see something like:
+
+	    </p><pre class="screen">root (hd0,0)
+kernel /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro
+initrd /initrd.img-2.6.26-1-686</pre><p>
+	  </p></li><li><p>
+	    Highlight the line
+
+	    </p><pre class="screen">kernel /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro</pre><p>
+
+	    press <span class="keycap"><strong>e</strong></span> key and replace <code class="literal">hdX</code> with 
+<code class="literal">sd<em class="replaceable"><code>X</code></em></code> 
+(<em class="replaceable"><code>X</code></em> being the letter <code class="literal">a</code>, 
+<code class="literal">b</code>, <code class="literal">c</code> or <code class="literal">d</code> depending 
+of your system), In my example the line becomes:
+
+	    </p><pre class="screen">kernel /vmlinuz-2.6.26-1-686 root=/dev/sda6 ro</pre><p>
+
+	    Then press <span class="keycap"><strong>Enter</strong></span> to save the modification. If other lines 
+show <code class="literal">hd<em class="replaceable"><code>X</code></em></code>, change these line 
+too. Don't modify the entry similar to <code class="literal">root (hd0,0)</code>.  
+Once all modifications are done, press <span class="keycap"><strong>b</strong></span> key. And your 
+system should now boot as usual.
+	  </p></li><li><p>
+	    Now that your system has booted, you need to fix this issue permanently.  
+Jump to <a class="xref" href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading" title="4.8.1. How to avoid the problem before upgrading">Section 4.8.1, “How to avoid the problem before upgrading”</a> and apply one of 
+the two proposed procedures.
+	  </p></li></ol></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="solution2"></a>4.8.2.2. Solution 2</h4></div></div></div><p>
+	Boot from a debian installation media 
+(<acronym title="光盘">CD</acronym>/<acronym title="数字通用光盘">DVD</acronym>) and when prompt, type 
+<code class="literal">rescue</code> to launch the rescue mode. Select your language, 
+location, keyboard mapping, let it configure the network no matter if it 
+success or not. After a while, you should be asked for selecting a partition 
+you want to use as root file system. The proposed choices will look 
+something like:
+
+	</p><pre class="screen">/dev/ide/host0/bus0/target0/lun0/part1
+/dev/ide/host0/bus0/target0/lun0/part2
+/dev/ide/host0/bus0/target0/lun0/part5
+/dev/ide/host0/bus0/target0/lun0/part6</pre><p>
+      </p><p>
+	If you know which partition is your root file system, choose the right 
+one. If you don't, just try with the first. If it complains about an invalid 
+root file system partition, try the next one, and so on. Trying one after 
+the other shouldn't arm your partitions and if you have only one system 
+installed on your disks, you should easily find the right root file system 
+partition. If you have many systems installed on your disks, it would be 
+better to know exactly which is the right partition.
+      </p><p>
+	Once you have choosen a partition, you will be proposed among several 
+actions.  Make the choice of executing a shell in the selected partition. If 
+it complains that it cannot do that then try with another partition.
+      </p><p>
+	Now you should have shell access as user root on your root file system 
+mounted on <code class="filename">/</code>. You need access to the 
+<code class="filename">/boot</code>, <code class="filename">/sbin</code> and 
+<code class="filename">/usr</code> directories content. If these directories need to 
+be mounted from other partitions, do it.  (see 
+<code class="filename">/etc/fstab</code> if you have no idea of which partition to 
+mount).
+      </p><p>
+	Jump to <a class="xref" href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading" title="4.8.1. How to avoid the problem before upgrading">Section 4.8.1, “How to avoid the problem before upgrading”</a> and apply one of 
+the two proposed procedures to fix the problem parmanently. Then type 
+<code class="literal">exit</code> to leave the rescue shell and select 
+<code class="literal">reboot</code> for rebooting the system as usual. (Don't forget 
+to remove the bootable media)
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="solution3"></a>4.8.2.3. Solution 3</h4></div></div></div><div class="orderedlist"><ol type="1"><li><p>
+	    Boot from your favorite LiveCD distribution (Debian Live, Knoppix, Ubuntu 
+Live and many other).
+	  </p></li><li><p>
+	    Mount the partition where your <code class="filename">/boot</code> directory is. If 
+you don't know which one it is, use the output of the command 
+<span class="command"><strong>dmesg</strong></span> to find whether your disk is known as 
+<code class="literal">hda</code>, <code class="literal">hdb</code>, <code class="literal">hdc</code>, 
+<code class="literal">hdd</code> or <code class="literal">sda</code>, <code class="literal">sdb</code>, 
+<code class="literal">sdc</code>, <code class="literal">sdd</code>. Once you know which disk to 
+work on, for example <code class="literal">sdb</code>, issue the following command to 
+see the partition table of the disk and to find the right partition 
+<span class="command"><strong>fdisk -l /dev/sdb</strong></span>
+	  </p></li><li><p>
+	    Assuming that you have mounted the right partition under 
+<code class="filename">/mnt</code> and that this partition contains the 
+<code class="filename">/boot</code> directory and its content, edit the 
+<code class="filename">/mnt/boot/grub/menu.lst</code> file.
+	  </p><p>
+	    Find the section similar to:
+	    </p><pre class="programlisting">## ## End Default Options ##
+
+title           Debian GNU/Linux, kernel 2.6.26-1-686
+root            (hd0,0)
+kernel          /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro
+initrd          /initrd.img-2.6.26-1-686
+
+title           Debian GNU/Linux, kernel 2.6.26-1-686 (single-user mode)
+root            (hd0,0)
+kernel          /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro single
+initrd          /initrd.img-2.6.26-1-686
+
+### END DEBIAN AUTOMAGIC KERNELS LIST</pre><p>
+
+	    and replace every <code class="literal">hda</code>, <code class="literal">hdb</code>, 
+<code class="literal">hdc</code>, <code class="literal">hdd</code> respectively with 
+<code class="literal">sda</code>, <code class="literal">sdb</code>, <code class="literal">sdc</code>, 
+<code class="literal">sdd</code>.  Don't modify the line similar to:
+
+	    </p><pre class="screen">root            (hd0,0)</pre><p>
+	  </p></li><li><p>
+	    Reboot the system, remove the LiveCD and your system should boot correctly.
+	  </p></li><li><p>
+	    When it has booted, apply one of the two proposed procedures under <a class="xref" href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading" title="4.8.1. How to avoid the problem before upgrading">Section 4.8.1, “How to avoid the problem before upgrading”</a> to fix the problem permanently.
+	  </p></li></ol></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="for-next"></a>4.9. Preparing for the next release</h2></div></div></div><p>
+After the upgrade there are several things you can do to prepare for the 
+next release.
+</p><div class="itemizedlist"><ul type="disc"><li><p>
+If using <span class="command"><strong>grub</strong></span>, edit 
+<code class="filename">/etc/kernel-img.conf</code> and adjust the location of the 
+<span class="command"><strong>update-grub</strong></span> program changing 
+<code class="filename">/sbin/update-grub</code> to 
+<code class="filename">/usr/sbin/update-grub</code>.
+</p></li><li><p>
+If the new kernel image metapackage was pulled in as a dependency of the old 
+one, it will be marked as automatically installed, which should be 
+corrected:
+</p><pre class="screen">
+# aptitude unmarkauto $(dpkg-query -W 'linux-image-2.6-*' | cut -f1)
+</pre></li><li><p>
+Remove etch's kernel metapackages by running:
+</p><pre class="screen">
+# aptitude purge kernel-image-2.6-&lt;flavor&gt;
+</pre></li><li><p>
+Move any configuration options from 
+<code class="filename">/etc/network/options</code> to 
+<code class="filename">/etc/sysctl.conf</code>.  Please see 
+<code class="filename">/usr/share/doc/netbase/README.Debian</code> for details.
+</p></li><li><p>
+Remove obsolete and unused packages as described in <a class="xref" href="ch-upgrading.zh_CN.html#obsolete" title="4.11. Obsolete packages">Section 4.11, “Obsolete packages”</a> .  You should review which configuration files they use 
+and consider purging the packages to remove their configuration files
+</p></li></ul></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="deprecated"></a>4.10. Deprecated packages</h2></div></div></div><p>
+With the release of <code class="literal">Lenny</code> a bigger number of server 
+packages will be deprecated, thus updating to newer versions of those now 
+will save you from trouble when updating to <code class="literal">Lenny</code>.
+</p><p>
+This includes the following packages:
+</p><div class="itemizedlist"><ul type="disc"><li><p>
+apache (1.x), successor is apache2
+</p></li><li><p>
+bind8, successor is bind9
+</p></li><li><p>
+php4, successor is php5
+</p></li><li><p>
+postgresql-7.4, successor is postgresql-8.1
+</p></li><li><p>
+exim 3, successor is exim4
+</p></li></ul></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="obsolete"></a>4.11. Obsolete packages</h2></div></div></div><p>
+Introducing several thousand new packages, lenny also retires and 
+omits more than two thousand old packages that were in etch.  It 
+provides no upgrade path for these obsolete packages.  While nothing 
+prevents you from continuing to use an obsolete package where desired, the 
+Debian project will usually discontinue security support for it a year after 
+lenny's release<sup>[<a id="id2860554" href="#ftn.id2860554" class="footnote">10</a>]</sup>, and will not normally provide other support in the meantime.  
+Replacing them with available alternatives, if any, is recommended.
+</p><p>
+There are many reasons why packages might have been removed from the 
+distribution: they are no longer maintained upstream; there is no longer a 
+Debian Developer interested in maintaining the packages; the functionality 
+they provide has been superseded by different software (or a new version); 
+or they are no longer considered suitable for lenny due to bugs in 
+them.  In the latter case, packages might still be present in the unstable 
+distribution.
+</p><p>
+Detecting which packages in an updated system are obsolete is easy since the 
+package management front-ends will mark them as such.  If you are using 
+<span class="command"><strong>aptitude</strong></span>, you will see a listing of these packages in the 
+Obsolete and Locally Created Packages entry.  <span class="command"><strong>dselect</strong></span> 
+provides a similar section but the listing it presents might differ.  Also, 
+if you have used <span class="command"><strong>aptitude</strong></span> to manually install packages in 
+etch it will have kept track of those packages you manually 
+installed and will be able to mark as obsolete those packages pulled in by 
+dependencies alone which are no longer needed if a package has been 
+removed.  Also, <span class="command"><strong>aptitude</strong></span>, unlike 
+<span class="command"><strong>deborphan</strong></span> will not mark as obsolete packages that you 
+manually installed, as opposed to those that were automatically installed 
+through dependencies.
+</p><p>
+There are additional tools you can use to find obsolete packages such as 
+<span class="command"><strong>deborphan</strong></span>, <span class="command"><strong>debfoster</strong></span> or 
+<span class="command"><strong>cruft</strong></span>.  <span class="command"><strong>deborphan</strong></span> is highly 
+recommended, although it will (in default mode) only report obsolete 
+libraries: packages in the libs or oldlibs sections that are not used by any 
+other packages.  Do not blindly remove the packages these tools present, 
+especially if you are using aggressive non-default options that are prone to 
+produce false positives.  It is highly recommended that you manually review 
+the packages suggested for removal (i.e.  their contents, size and 
+description) before you remove them.
+</p><p>
+The <a class="ulink" href="http://bugs.debian.org/" target="_top">Debian Bug Tracking System</a> often provides 
+additional information on why the package was removed.  You should review 
+both the archived bug reports for the package itself and the archived bug 
+reports for the <a class="ulink" href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=ftp.debian.org&amp;archive=yes" target="_top">ftp.debian.org 
+pseudo-package</a>.
+</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="dummy"></a>4.11.1. Dummy packages</h3></div></div></div><p>
+Some packages from etch have been split into several packages in 
+lenny, often to improve system maintainability.  To ease the upgrade 
+path in such cases, lenny often provides dummy packages: empty 
+packages that have the same name as the old package in etch with 
+dependencies that cause the new packages to be installed.  These dummy 
+packages are considered obsolete packages after the upgrade and can be 
+safely removed.
+</p><p>
+Most (but not all) dummy packages' descriptions indicate their purpose.  
+Package descriptions for dummy packages are not uniform, however, so you 
+might also find <span class="command"><strong>deborphan</strong></span> with the 
+<code class="literal">--guess</code> options useful to detect them in your system.  
+Note that some dummy packages are not intended to be removed after an 
+upgrade but are, instead, used to keep track of the current available 
+version of a program over time.
+</p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="plans-for-nigel"></a>4.12. Plans for the next Debian release</h2></div></div></div></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id2855637" href="#id2855637" class="para">3</a>] </sup> This feature can be disabled by adding the parameter 
+<code class="literal">panic=0</code> to your boot parameters.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id2856267" href="#id2856267" class="para">4</a>] </sup> Debian's package management system normally does not allow a package to 
+remove or replace a file owned by another package unless it has been defined 
+to replace that package.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id2857053" href="#id2857053" class="para">5</a>] </sup> Running this command at the beginning of the upgrade process may give an 
+error, for the reasons described in the next sections.  In that case you 
+will need to wait until you've done the minimal system upgrade as in <a class="xref" href="ch-upgrading.zh_CN.html#minimal-upgrade" title="4.5.4. Minimal system upgrade">Section 4.5.4, “Minimal system upgrade”</a> and upgraded your kernel as in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-kernel" title="4.5.5. Upgrading the kernel">Section 4.5.5, “Upgrading the kernel”</a> before running this command to estimate the 
+disk space.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id2857587" href="#id2857587" class="para">6</a>] </sup> This command will determine whether you need libfam0 and xlibmesa-glu 
+installed, and auto-select them for you:
+</p><pre class="screen"> # aptitude install x11-common \ $(dpkg-query --showformat
+'${Package} ${Status}\n' -W libfam0c102 xlibmesa-glu \ | grep 'ok installed$' |
+sed -e's/ .*//; s/c102//') </pre></div><div class="footnote"><p><sup>[<a id="ftn.id2858519" href="#id2858519" class="para">7</a>] </sup> You can have the kernel modules needed by your system loaded statically 
+through proper configuration of <code class="filename">/etc/modules</code> </p></div><div class="footnote"><p><sup>[<a id="ftn.id2858593" href="#id2858593" class="para">8</a>] </sup>
+The rules there are automatically generated by the script 
+<code class="filename">/etc/udev/rules.d/z45_persistent-net-generator.rules</code> to 
+have persistent names for network interfaces.  Delete this symlink to 
+disable persistent device naming for NICs by <code class="systemitem">udev</code>.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id2859294" href="#id2859294" class="para">9</a>] </sup> For more information on <span class="command"><strong>lilo</strong></span>'s boot error codes please 
+see <a class="ulink" href="http://tldp.org/HOWTO/Bootdisk-HOWTO/a1483.html" target="_top">The Linux 
+Bootdisk HOWTO</a>.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id2860554" href="#id2860554" class="para">10</a>] </sup> Or for as long as there is not another release in that time frame.  
+Typically only two stable releases are supported at any given time.  </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">第 3 章 安装环境 </td><td width="20%" align="center"><a accesskey="h" href="index.zh_CN.html">Home</a></td><td width="40%" align="right" valign="top"> 第 5 章 lenny 中需要注意的问题</td></tr></table></div></body></html>
