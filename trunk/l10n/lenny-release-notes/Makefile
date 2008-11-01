@@ -216,7 +216,7 @@ endif
 
 tidypo:
 	for po in $(wildcard */*.po); do \
-	    msgcat $$po > $$po.tmp && mv $$po.tmp $$po; \
+	    msgcat -w 80 $$po > $$po.tmp && mv $$po.tmp $$po; \
 	done
 
 ifndef LINGUA
