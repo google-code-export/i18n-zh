@@ -2,6 +2,11 @@
 # Makefile for the release notes, top-level
 #
 
+help:
+	@echo make html LINGUA=zh_CN architecture=i386
+	@echo make pdf LINGUA=zh_CN architecture=i386
+	@echo make txt LINGUA=zh_CN architecture=i386
+
 # TODO: Once #477458 is fixed in stable remove all committed sgml files
 # which are generated from a PO file (was a workaround for old po4a).
 
