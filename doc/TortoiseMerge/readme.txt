@@ -1,21 +1,7 @@
-Description:
-    xsl/ .......................... xsl & css files.
-    po/ ........................... pot & po files
-    xml2po.py & xml2po-modes ...... xml2po -- translate XML documents
-    build.xml ..................... build file.
-    build.properties .............. build configuration file.
 
-Before Commit:
-    msgmerge --width=80 -o TortoiseMerge-zh_CN_new.po TortoiseMerge-zh_CN.po TortoiseMerge.pot
-    mv -f TortoiseMerge-zh_CN_new.po TortoiseMerge-zh_CN.po
-    msgfmt --statistics -c TortoiseMerge-zh_CN.po
+    由于此工作长期是一个人维护，没有协作要求，所以已经删除，直接在官方版本库工作，
+地址是：
 
-Aim:
-    Since the official pdf output broken for simplified chinese, we tried
-    to fix it.
+http://tortoisesvn.tigris.org/svn/tortoisesvn/trunk/doc/po/TortoiseMerge_zh_CN.po
 
-Status:
-
-2007-05-15 Saimei Su <saimei.su@gmail.com>
-    * init directory structure
-    * import TortoiseMerge_zh_CN.po@r9363
+    如果有需要，请与 dongsheng@users.sourceforge.net 联系，重新启用此版本库。
