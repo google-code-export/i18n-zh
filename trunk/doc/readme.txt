@@ -1,11 +1,13 @@
 Description
 -----------
-    docbook/ .......... Translation "DocBook 5.0: The Definitive Guide" to simplified chinese.
-    examples/ ......... DocBook 4.5 & 5.0 examples.
-    subversion/ ....... Translation "Version Control with Subversion" to simplified chinese.
-    TortoiseMerge/ .... Translation TortoiseMerge manual to simplified chinese.
-    TortoiseSVN/ ...... Translation TortoiseSVN manual to simplified chinese.
+    defguide/ [1] ............. Translation "DocBook: The Definitive Guide" to simplified chinese.
+    defguide5/ [1] ............ Translation "DocBook 5.0: The Definitive Guide" to simplified chinese.
+    examples/ ................. DocBook 4.5 & 5.0 examples.
+    svnbook/ .................. Translation "Version Control with Subversion" to simplified chinese.
+    TortoiseMerge/ [1] ........ Translation TortoiseMerge manual to simplified chinese.
+    TortoiseSVN/ [1] .......... Translation TortoiseSVN manual to simplified chinese.
 
+    [1] Moved to official repository, if you want to help us, please contact dongsheng@users.sourceforge.net.
 
 Update translation
 ------------------
@@ -19,7 +21,7 @@ Check translation
 
 Format translation
 -----------------
-    msgmerge --width=96 -o zh_CN-new.po zh_CN.po example.pot
+    msgmerge --width=80 --sort-by-file -o zh_CN-new.po zh_CN.po example.pot
     mv -f zh_CN-new.po zh_CN.po
 
 
