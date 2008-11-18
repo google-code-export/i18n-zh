@@ -200,7 +200,7 @@ FORCE:
 else
 ifneq "$(LINGUA)" "en"
 $(LINGUA)/%.dbk:	en/%.dbk $(LINGUA)/%.po
-	$(TRANSLATE) --master $< --po $(@:.dbk=.po) --localized $@
+	$(TRANSLATE) -v --master $< --po $(@:.dbk=.po) --localized $@
 endif
 endif
 
