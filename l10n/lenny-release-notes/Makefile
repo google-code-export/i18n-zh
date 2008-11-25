@@ -7,6 +7,7 @@ help:
 	@echo make pdf LINGUA=zh_CN architecture=i386
 	@echo make txt LINGUA=zh_CN architecture=i386
 	@echo "make stat # output stat information for zh_CN"
+	@echo "make tidypo # clean .po files"
 
 stat:
 	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt  --statistics -c $$f; done)
