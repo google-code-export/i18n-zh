@@ -1,467 +1,311 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>第 4 章 从先前的发行版本升级</title><link rel="stylesheet" href="debian.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.73.2" /><link rel="start" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="up" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="prev" href="ch-installing.zh_CN.html" title="第 3 章 安装系统" /><link rel="next" href="ch-information.zh_CN.html" title="第 5 章 lenny 中需要注意的问题" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">第 4 章 从先前的发行版本升级</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">上一页</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">下一页</a></td></tr></table><hr /></div><div class="chapter" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title"><a id="ch-upgrading"></a>第 4 章 从先前的发行版本升级</h2></div></div></div><div class="toc"><p><b>目录</b></p><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#backup">4.1. 升级前的准备</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#data-backup">4.1.1. 备份数据和配置文件</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#inform-users">4.1.2. 提前告知用户</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#recovery">4.1.3. 准备恢复</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-preparations">4.1.4. 为升级准备安全环境</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#id3031833">4.1.5. 为 <acronym title="Linux 加载器">LILO</acronym> 准备
-initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#system-status">4.2. 检查系统状态</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#review-actions">4.2.1. 复审包管理器中未决的的操作</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#disable-apt-pinning">4.2.2. 禁用 APT 钉操作</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#package-status">4.2.3. 检查包状态</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#userbackports">4.2.4. 非官方源和 backports</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#handle-conflict">4.3. 手工删除包标记</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-process">4.4. 为 APT 准备源</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#network">4.4.1. 增加互联网 APT 源</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#localmirror">4.4.2. 增加本地镜像 APT 源</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#cdroms">4.4.3. 从 CD-ROM 或 DVD 增加 APT 源</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgradingpackages">4.5. 升级包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#record-session">4.5.1. 记录会话</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#updating-lists">4.5.2. 升级包列表</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#sufficient-space">4.5.3. 确认你有足够的空间升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#aptupgrade1st">4.5.4. 先升级 apt 和/或 aptitude</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#aptconvert">4.5.5. Using aptitude's list of automatically-installed packages with apt</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#minimal-upgrade">4.5.6. 最小系统升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-kernel">4.5.7. 升级内核</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-other">4.5.8. 升级系统的其它部分</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#get-signatures">4.5.9. 取得包签名</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#trouble">4.5.10. 升级期间可能遇到的问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#newkernel">4.6. 升级内核与相关包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#kernel-metapackage">4.6.1. 安装内核元数据包</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.6">4.6.2. 从 2.6 内核升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.4">4.6.3. 从 2.4 内核升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#device-reorder">4.6.4. 设备枚举的顺序</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#boot-timing">4.6.5. 引导期间的问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#nownownow">4.7. 在重启之前要做的事情</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#convert-devfs">4.7.1. 从 devfs 转变</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#rerunlilo">4.7.2. 重新运行 lilo</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#mdadm">4.7.3. 升级 mdadm</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#boot-hangs">4.8. 系统引导时在显示 <code class="literal">Waiting for root file system</code> 后挂起</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading">4.8.1. 如何在升级前避免此问题</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#how-to-recover">4.8.2. 如何在升级后解决此问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#for-next">4.9. 为下个发行版做准备</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#deprecated">4.10. 不赞成地包</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#obsolete">4.11. 过时的包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#dummy">4.11.1. 哑包</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#plans-for-nigel">4.12. 下个 Debian 发行版的计划</a></span></dt></dl></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="backup"></a>4.1. 升级前的准备</h2></div></div></div><p>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>第 4 章 从先前的发行版本升级</title><link rel="stylesheet" href="debian.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.73.2" /><link rel="start" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="up" href="index.zh_CN.html" title="Debian GNU/Linux 5.0 (&quot;lenny&quot;), Intel x86 的发行注记" /><link rel="prev" href="ch-installing.zh_CN.html" title="第 3 章 安装系统" /><link rel="next" href="ch-information.zh_CN.html" title="第 5 章 lenny 中需要注意的问题" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">第 4 章 从先前的发行版本升级</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">上一页</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">下一页</a></td></tr></table><hr /></div><div class="chapter" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title"><a id="ch-upgrading"></a>第 4 章 从先前的发行版本升级</h2></div></div></div><div class="toc"><p><b>目录</b></p><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#backup">4.1. 升级前的准备</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#data-backup">4.1.1. 备份数据和配置文件</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#inform-users">4.1.2. 提前告知用户</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#recovery">4.1.3. 准备恢复</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-preparations">4.1.4. 为升级准备安全环境</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#prepare-initramfs">4.1.5. 为 <acronym title="Linux 加载器">LILO</acronym> 准备
+initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#system-status">4.2. 检查系统状态</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#review-actions">4.2.1. 复审包管理器中未决的的操作</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#disable-apt-pinning">4.2.2. 禁用 APT pinning 操作</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#package-status">4.2.3. 检查包状态</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#userbackports">4.2.4. 非官方源和 backports</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#handle-conflict">4.3. 手工删除包标记</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-process">4.4. 为 APT 准备源</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#network">4.4.1. 添加互联网 APT 源</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#localmirror">4.4.2. 添加本地镜像 APT 源</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#cdroms">4.4.3. 从 CD-ROM 或 DVD 添加 APT 源</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgradingpackages">4.5. 升级包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#record-session">4.5.1. 记录会话</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#updating-lists">4.5.2. 更新包列表</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#sufficient-space">4.5.3. 确保你有足够的空间升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#aptupgrade1st">4.5.4. 先升级 apt 和/或 aptitude</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#aptconvert">4.5.5. 使用 aptitudes 记录的 apt 自动安装的软件包列表</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#minimal-upgrade">4.5.6. 最小系统升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-kernel">4.5.7. 升级内核</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrading-other">4.5.8. 升级系统的其它部分</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#get-signatures">4.5.9. 取得包签名</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#trouble">4.5.10. 升级期间可能遇到的问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#newkernel">4.6. 升级内核与相关包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#kernel-metapackage">4.6.1. 安装内核元数据包</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.6">4.6.2. 从 2.6 内核升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#upgrade-from-2.4">4.6.3. 从 2.4 内核升级</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#device-reorder">4.6.4. 设备枚举的顺序</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#boot-timing">4.6.5. 引导期间的问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#nownownow">4.7. 在重启之前要做的事情</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#rerunlilo">4.7.1. 重新运行 lilo</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#mdadm">4.7.2. 升级 mdadm</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#boot-hangs">4.8. 系统引导时在显示 <code class="literal">Waiting for root file system</code> 后挂起</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading">4.8.1. 如何在升级前避免此问题</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#how-to-recover">4.8.2. 如何在升级后解决此问题</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#for-next">4.9. 为下个发行版做准备</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#deprecated">4.10. 不赞成地包</a></span></dt><dt><span class="section"><a href="ch-upgrading.zh_CN.html#obsolete">4.11. 过时的包</a></span></dt><dd><dl><dt><span class="section"><a href="ch-upgrading.zh_CN.html#dummy">4.11.1. 哑包</a></span></dt></dl></dd><dt><span class="section"><a href="ch-upgrading.zh_CN.html#plans-for-nigel">4.12. 下个 Debian 发行版的计划</a></span></dt></dl></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="backup"></a>4.1. 升级前的准备</h2></div></div></div><p>
 我们建议您在升级前阅读<a class="xref" href="ch-information.zh_CN.html" title="第 5 章 lenny 中需要注意的问题">第 5 章 <i>lenny 中需要注意的问题</i></a>
 中的信息。那一章含有潜在的与升级过程间接相关的问题，但在开始升级前了解这些信息对您还是很重要的。
 </p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="data-backup"></a>4.1.1. 备份数据和配置文件</h3></div></div></div><p>
-Before upgrading your system, it is strongly recommended that you make a
-full backup, or at least back up any data or configuration information you
-can't afford to lose.  The upgrade tools and process are quite reliable, but
-a hardware failure in the middle of an upgrade could result in a severely
-damaged system.
+在升级系统前，强烈建议你进行一次完整的备份，或者至少备份你不愿意丢失的数据和配置信息。升级工具和流程是非常可信的，但升级过程中的硬件错误会对你的系统造成严重损害。
 </p><p>
-The main things you'll want to back up are the contents of
-<code class="filename">/etc</code>, <code class="filename">/var/lib/dpkg</code>,
-<code class="filename">/var/lib/aptitude/pkgstates</code> and the output of
-<code class="literal">dpkg --get-selections "*"</code> (the quotes are important).
+你需要备份的内容包括 <code class="filename">/etc</code>, <code class="filename">/var/lib/dpkg</code>,
+<code class="filename">/var/lib/aptitude/pkgstates</code> 下的文件以及 <code class="literal">dpkg
+--get-selections "*"</code> 的输出(命令行中的引号是必须的)。
 </p><p>
-The upgrade process itself does not modify anything in the
-<code class="filename">/home</code> directory.  However, some applications (e.g.
-parts of the Mozilla suite, and the GNOME and KDE desktop environments) are
-known to overwrite existing user settings with new defaults when a new
-version of the application is first started by a user.  As a precaution, you
-may want to make a backup of the hidden files and directories
-(“<span class="quote">dotfiles</span>”) in users' home directories.  This backup may help
-to restore or recreate the old settings.  You may also want to inform users
-about this.
+升级过程本身不会修改 <code class="filename">/home</code> 下的任何内容。但某些程序 (比如部分 Mozilla 套件，以及 GNOME
+和 KDE 桌面环境)
+会在新版本程序第一次启动时用新的缺省值来覆盖现有的用户设置。做为预防，你也许希望备份用户目录下的隐藏文件和目录(“<span class="quote">dotfiles</span>”)。该备份有助于你恢复或者重新创建旧设置。另外，你还需把该事项通知给用户。
 </p><p>
-Any package installation operation must be run with superuser privileges, so
-either login as root or use <span class="command"><strong>su</strong></span> or <span class="command"><strong>sudo</strong></span>
-to gain the necessary access rights.
+包安装过程需要超级用户权限，你可以用 root 登录, 使用 <span class="command"><strong>su</strong></span>, 或使用
+<span class="command"><strong>sudo</strong></span> 来获取必要的权限。
 </p><p>
-The upgrade has a few preconditions; you should check them before actually
-executing the upgrade.
+升级需要几个条件，你应当在真正执行升级前检查这些条件。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="inform-users"></a>4.1.2. 提前告知用户</h3></div></div></div><p>
-It's wise to inform all users in advance of any upgrades you're planning,
-although users accessing your system via an <span class="command"><strong>ssh</strong></span>
-connection should notice little during the upgrade, and should be able to
-continue working.
+提前通知所有用户您正在计划的任何升级将是明智的决定，即便通过 <span class="command"><strong>ssh</strong></span>
+连接访问您系统的用户可能在升级过程中不会注意到什么，而且应该可以继续工作。
 </p><p>
-If you wish to take extra precautions, back up or unmount users' partitions
-(<code class="filename">/home</code>) before upgrading.
+如果您希望采取更多的预防措施，请在升级前备份或者卸载用户的分区(<code class="filename">/home</code>)。
 </p><p>
-You will probably have to do a kernel upgrade when upgrading to
-lenny, so a reboot will normally be necessary.  Typically, this will
-be done after the upgrade is finished.
+当升级到 lenny 时您将可能需要进行内核升级，所以通常需要重启。一般说来，这将在升级完成后进行。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="recovery"></a>4.1.3. 准备恢复</h3></div></div></div><p>
-Because of the many changes in the kernel between etch and
-lenny regarding drivers, hardware discovery and the naming and
-ordering of device files, there is a real risk that you may experience
-problems rebooting your system after the upgrade.  A lot of known potential
-issues are documented in this and the next chapters of these Release Notes.
+由于 etch 和 lenny
+的内核在驱动、硬件探测与命名以及设备文件的命名和顺序等方面有很多变化，在更新后您将可能会在重启系统时遇到很大的问题。本章和发行注记下一章记录了很多已知的潜在问题。
 </p><p>
-For that reason it makes sense to ensure that you will be able to recover if
-your system should fail to reboot or, for remotely managed systems, fail to
-bring up networking.
+由于这个原因最好确保，如果您的系统重启失败，或者对于远程管理的系统，无法唤醒网络时，您能够将其恢复。
 </p><p>
-If you are upgrading remotely via an <span class="command"><strong>ssh</strong></span> link it is
-highly recommended that you take the necessary precautions to be able to
-access the server through a remote serial terminal.  There is a chance that,
-after upgrading the kernel and rebooting, some devices will be renamed (as
-described in <a class="xref" href="ch-upgrading.zh_CN.html#device-reorder" title="4.6.4. 设备枚举的顺序">第 4.6.4 节 “设备枚举的顺序”</a> ) and you will have to fix the
-system configuration through a local console.  Also, if the system is
-rebooted accidentally in the middle of an upgrade there is a chance you will
-need to recover using a local console.
+如果你通过 <span class="command"><strong>ssh</strong></span>
+远程连接进行升级，则强烈建议您采取必要的预防措施以能够通过远程串行终端来访问该服务器。因为在升级内核并重启后，有些设备有可能会被改名(如在 <a class="xref" href="ch-upgrading.zh_CN.html#device-reorder" title="4.6.4. 设备枚举的顺序">第 4.6.4 节 “设备枚举的顺序”</a>
+中所描述的情况)而且您将需要通过本地控制台修复系统配置。而且，如果系统在升级过程中意外重启您将可能需要使用本地终端进行修复。
 </p><p>
-The most obvious thing to try first is to reboot with your old kernel.
-However, for various reasons documented elsewhere in this document, this is
-not guaranteed to work.
+很明显首先要做的就是重启到您的旧内核。然而，由于本文档其他地方记录的各种各样的问题，这并不保证成功。
 </p><p>
-If that fails, you will need an alternative way to boot your system so you
-can access and repair it.  One option is to use a special rescue image or a
-Linux live CD.  After booting from that, you should be able to mount your
-root file system and <code class="literal">chroot</code> into it to investigate and
-fix the problem.
+如果失败了，您将需要采取替代方案来启动您的系统以便访问和修复她。一个选择是使用特制的急救盘或者 Linux live
+CD。从这些介质重启后，您应该可以挂载您的根文件系统并 <code class="literal">chroot</code> 到它里面来检查并修复问题。
 </p><p>
-Another option we'd like to recommend is to use the <span class="emphasis"><em>rescue
-mode</em></span> of the lenny Debian Installer.  The advantage of
-using the installer is that you can choose between its many installation
-methods for one that best suits your situation.  For more information,
-please consult the section “<span class="quote">Recovering a Broken System</span>” in
-chapter 8 of the <a class="ulink" href="http://www.debian.org/releases/stable/installmanual" target="_top">Installation
-Guide</a> and the <a class="ulink" href="http://wiki.debian.org/DebianInstaller/FAQ" target="_top">Debian
-Installer FAQ</a>.
-</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h4 class="title"><a id="recovery-initrd"></a>4.1.3.1. 使用 initrd 引导时的调试外壳</h4></div></div></div><p>
-The <code class="systemitem">initramfs-tools</code> includes a debug
-shell<sup>[<a id="id3031673" href="#ftn.id3031673" class="footnote">3</a>]</sup> in the initrds it generates.  If for example the initrd is
-unable to mount your root file system, you will be dropped into this debug
-shell which has basic commands available to help trace the problem and
-possibly fix it.
+我们推荐的另一个选择是使用 lenny Debian 安装程序的
+<span class="emphasis"><em>拯救模式</em></span>。使用安装程序的优点是您可以从它的很多安装方法中选择最适合您情况的一种。更多信息请查询 <a class="ulink" href="http://www.debian.org/releases/stable/installmanual" target="_top">安装手册</a> 第8章的 “<span class="quote">修复损坏的系统</span>” 小节以及
+<a class="ulink" href="http://wiki.debian.org/DebianInstaller/FAQ" target="_top">Debian Installer FAQ</a>。
+</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h4 class="title"><a id="recovery-initrd"></a>4.1.3.1. initrd 引导时使用调试环境</h4></div></div></div><p>
+<code class="systemitem">initramfs-tools</code> 在其生成的 initrd 中包含一个调试
+shell<sup>[<a id="id545891" href="#ftn.id545891" class="footnote">3</a>]</sup>假如 initrd 无法挂载您的根文件系统，您将会进入此调试 shell，里面可以使用基本的命令以帮助跟踪问题甚至有可能解决之。
 </p><p>
-Basic things to check are: presence of correct device files in
-<code class="filename">/dev</code>; what modules are loaded (<code class="literal">cat
-/proc/modules</code>); output of <span class="command"><strong>dmesg</strong></span> for errors
-loading drivers.  The output of <span class="command"><strong>dmesg</strong></span> will also show what
-device files have been assigned to which disks; you should check that
-against the output of <code class="literal">echo $ROOT</code> to make sure that the
-root file system is on the expected device.
+需要检查的几个基本项目：<code class="filename">/dev</code> 下是否存在正确的设备文件；加载了什么模块(<code class="literal">cat
+/proc/modules</code>)；<span class="command"><strong>dmesg</strong></span>
+的输出中有关驱动加载的错误信息。<span class="command"><strong>dmesg</strong></span> 的输出还会显式哪个设备文件被指定给哪个磁盘；您需要检查
+<code class="literal">echo $ROOT</code> 的输出以确保根文件系统在预想的设备上。
 </p><p>
-If you do manage to fix the problem, typing <code class="literal">exit</code> will
-quit the debug shell and continue the boot process at the point it failed.
-Of course you will also need to fix the underlying problem and regenerate
-the initrd so the next boot won't fail again.
+如果您确实打算修复错误，输入 <code class="literal">exit</code>
+会退出调试环境并从这一失败点开始继续启动过程。当然，您也需要修复后续的错误并重新生成 initrd
+，这样下一次启动时就不会再失败了。如果您确实修复了问题，键入 <code class="literal">exit</code> 会退出调试 shell
+并从先前失败的地方继续启动进程。当然您还需要修复先前的问题并重新生成 initrd 以使下次启动不再失败。
 </p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="upgrade-preparations"></a>4.1.4. 为升级准备安全环境</h3></div></div></div><p>
-The distribution upgrade should be done either locally from a textmode
-virtual console (or a directly connected serial terminal), or remotely via
-an <span class="command"><strong>ssh</strong></span> link.
+发行版升级应该在本地从文本模式虚拟终端(或者直连串行终端)，或者通过 <span class="command"><strong>ssh</strong></span> 远程连接进行。
 </p><p>
-In order to gain extra safety margin when upgrading remotely, we suggest
-that you run upgrade processes in the virtual console provided by the
-<span class="command"><strong>screen</strong></span> program, which enables safe reconnection and
-ensures the upgrade process is not interrupted even if the remote connection
-process fails.
+为了在远程升级时获得额外的可靠性保障，我们建议您在由 <span class="command"><strong>screen</strong></span>
+程序生成的虚拟控制台中执行升级过程。它能进行可靠的重新连接并确保，即使远程连接失败，升级过程也不会被打断
 </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[重要]" src="images/important.png" /></td><th align="left">重要</th></tr><tr><td align="left" valign="top"><p>
-    You should <span class="emphasis"><em>not</em></span> upgrade using <span class="command"><strong>telnet</strong></span>,
-<span class="command"><strong>rlogin</strong></span>, <span class="command"><strong>rsh</strong></span>, or from an X session
-managed by <span class="command"><strong>xdm</strong></span>, <span class="command"><strong>gdm</strong></span> or
-<span class="command"><strong>kdm</strong></span> etc on the machine you are upgrading.  That is
-because each of those services may well be terminated during the upgrade,
-which can result in an <span class="emphasis"><em>inaccessible</em></span> system that is only
-half-upgraded.
-  </p></td></tr></table></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="id3031833"></a>4.1.5. 为 <acronym title="Linux 加载器">LILO</acronym><a id="id3031842" class="indexterm"></a> 准备
+    您<span class="emphasis"><em>不应该</em></span>在您要升级的机器上使用
+<span class="command"><strong>telnet</strong></span>、<span class="command"><strong>rlogin</strong></span>、<span class="command"><strong>rsh</strong></span>
+之类的东西，或者从
+<span class="command"><strong>xdm</strong></span>、<span class="command"><strong>gdm</strong></span>、<span class="command"><strong>kdm</strong></span> 之类管理的 X
+会话中升级。因为那些服务中的任意一个在升级中都有可能被中止，进而导致出现一个<span class="emphasis"><em>不可访问</em></span>的只升级了一半的系统。
+  </p></td></tr></table></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="prepare-initramfs"></a>4.1.5. 为 <acronym title="Linux 加载器">LILO</acronym><a id="id546065" class="indexterm"></a> 准备
 initramfs</h3></div></div></div><p>
-    Users using the <acronym title="Linux 加载器">LILO</acronym> bootloader should note that the
-default settings for <code class="systemitem">initramfs-tools</code>
-now generate an initramfs that is too large for <acronym title="Linux 加载器">LILO</acronym> to
-load. Such users should either switch to <code class="systemitem">grub</code>, or edit the file
-<code class="filename">/etc/initramfs-tools/initramfs.conf</code>, changing the line </p><pre class="programlisting">MODULES=most</pre><p> to read
+    使用 <acronym title="Linux 加载器">LILO</acronym> 启动管理器的用户应该注意，<code class="systemitem">initramfs-tools</code> 的默认设置目前生成的 initramfs 对于
+<acronym title="Linux 加载器">LILO</acronym> 来说太大而无法加载。那样的用户要么把启动管理器换成 <code class="systemitem">grub</code>，要么就编辑
+<code class="filename">/etc/initramfs-tools/initramfs.conf</code> 文件，更改这行 </p><pre class="programlisting">MODULES=most</pre><p> 为
     </p><pre class="programlisting">MODULES=dep</pre><p>
-    Note, however, that doing this will cause <code class="systemitem">initramfs-tools</code> to install only those modules
-that are required for the particular hardware that it is run on, onto the
-initramfs; as such, if you want to generate a boot medium that will work on
-more hardware than just the one you're generating it on, you should leave
-the setting to
-    </p><pre class="programlisting">MODULES=most</pre><p> and make sure you do not use <acronym title="Linux 加载器">LILO</acronym>.
+    但是请注意，这么做会引起 <code class="systemitem">initramfs-tools</code>
+仅安装那些它运行所需特定硬件的模块至
+initramfs；如此说来，如果您想生成一个引导介质，它可以在更多的硬件上工作，而不是只在与您相同硬件的机器工作时，您应该保存设置为
+    </p><pre class="programlisting">MODULES=most</pre><p> 并保证不使用 <acronym title="Linux 加载器">LILO</acronym>。
   </p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="system-status"></a>4.2. 检查系统状态</h2></div></div></div><p>
-The upgrade process described in this chapter has been designed for upgrades
-from “<span class="quote">pure</span>” etch systems without third-party
-packages.  In particular, there are known problems with third-party packages
-which install programs under <code class="filename">/usr/X11R6/bin/</code> causing
-problems with upgrades due to the X.Org transition (<a class="xref" href="ch-information.zh_CN.html#xorg" title="5.4. XFree86 到 X.Org 的过渡">第 5.4 节 “XFree86 到 X.Org 的过渡”</a>).  For the greatest reliability of the upgrade process, you
-may wish to remove third-party packages from your system before you begin
-upgrading.
+此章所述的升级过程是按从“<span class="quote">纯粹的</span>” etch
+升级而安排的；系统中没有第三方的包。为得到最可靠的升级过程，您可能会希望在升级前，从系统中移除第三方的软件包。
 </p><p>
-This procedure also assumes your system has been updated to the latest point
-release of etch.  If you have not done this or are unsure,
-follow the instructions in <a class="xref" href="ap-old-stuff.zh_CN.html#old-upgrade" title="A.1. 升级您的 etch 系统">第 A.1 节 “升级您的 etch 系统”</a>.
+此过程也假定您的系统已经更新至 etch 的最新发行点。如果您还未做或是不确定，请按 <a class="xref" href="ap-old-stuff.zh_CN.html#old-upgrade" title="A.1. 升级您的 etch 系统">第 A.1 节 “升级您的 etch 系统”</a> 中的说明做。
 </p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="review-actions"></a>4.2.1. 复审包管理器中未决的的操作</h3></div></div></div><p>
-In some cases, the use of <span class="command"><strong>apt-get</strong></span> for installing packages
-instead of <span class="command"><strong>aptitude</strong></span> might make
-<span class="command"><strong>aptitude</strong></span> consider a package as “<span class="quote">unused</span>” and
-schedule it for removal.  In general, you should make sure the system is
-fully up-to-date and “<span class="quote">clean</span>” before proceeding with the
-upgrade.
+在某些情况下，使用 <span class="command"><strong>apt-get</strong></span> 代替 <span class="command"><strong>aptitude</strong></span>
+安装软件包时可能会让 <span class="command"><strong>aptitude</strong></span>
+认为包“<span class="quote">未被使用</span>”并安排它被移除。一般来说，在正式升级前您应该确保系统是最新的，且“<span class="quote">干净的</span>”。
 </p><p>
-Because of this you should review if there are any pending actions in the
-package manager <span class="command"><strong>aptitude</strong></span>.  If a package is scheduled for
-removal or update in the package manager, it might negatively impact the
-upgrade procedure.  Note that correcting this is only possible if your
-<code class="filename">sources.list</code> still points to
-<span class="emphasis"><em>etch</em></span>; and not to
-<span class="emphasis"><em>stable</em></span> or <span class="emphasis"><em>lenny</em></span>; see <a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a>.
+有鉴于此，您应该复查包管理器 <span class="command"><strong>aptitude</strong></span>
+中是否有未决操作。如果包管理器中有包被安排为移除或更新，那么这可能对升级过程有负面影响。注意，改正这一错误的唯一可能性就是，您仍然在
+<code class="filename">sources.list</code> 中指向
+<span class="emphasis"><em>etch</em></span>，而非 <span class="emphasis"><em>stable</em></span> 或是
+<span class="emphasis"><em>lenny</em></span>。参看<a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a>。
 </p><p>
-To do this, you have to run <span class="command"><strong>aptitude</strong></span> in “<span class="quote">visual
-mode</span>” and press <span class="keycap"><strong>g</strong></span> (“<span class="quote">Go</span>”).  If it shows
-any actions, you should review them and either fix them or implement the
-suggested actions.  If no actions are suggested you will be presented with a
-message saying “<span class="quote">No packages are scheduled to be installed, removed, or
-upgraded</span>”.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="disable-apt-pinning"></a>4.2.2. 禁用 APT 钉操作</h3></div></div></div><p>
-If you have configured APT to install certain packages from a distribution
-other than stable (e.g.  from testing), you may have to change your APT
-pinning configuration (stored in <code class="filename">/etc/apt/preferences</code>)
-to allow the upgrade of packages to the versions in the new stable release.
-Further information on APT pinning can be found in <span class="citerefentry"><span class="refentrytitle">apt_preferences</span>(5)</span>.
+要复查的话，您必须以“<span class="quote">图形模式</span>”运行 <span class="command"><strong>aptitude</strong></span> 并按下
+<span class="keycap"><strong>g</strong></span>（“<span class="quote">Go</span>”）。如果显示有任何未决操作，您都应该复查它们，然后要么修复，要么执行建议的操作。如果没有建议的操作，会有一条信息说
+“<span class="quote">No package are scheduled to be installed, removed, or ugraded</span>”
+出现。
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="disable-apt-pinning"></a>4.2.2. 禁用 APT pinning 操作</h3></div></div></div><p>
+如果已经设置 APT 从一个非 stable （如 testing）版安装特定包，您可能必须改变 APT pinning 设置（保存在
+<code class="filename">/etc/apt/preferences</code> 中）以允许升级至新的 stable 版中的包。更多有关 APT
+pinning 的信息可以在<span class="citerefentry"><span class="refentrytitle">apt_preferences</span>(5)</span> 中找到。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="package-status"></a>4.2.3. 检查包状态</h3></div></div></div><p>
-Regardless of the method used for upgrading, it is recommended that you
-check the status of all packages first, and verify that all packages are in
-an upgradable state.  The following command will show any packages which
-have a status of Half-Installed or Failed-Config, and those with any error
-status.
+不管用什么方法升级，我们都建议您先检查所有包的状态，并验证所有包都处于可升级状态。以下命令会显示任何半安装或是配置失败的包，还有那些有任何错误状态的包。
 </p><pre class="screen">
 # dpkg --audit
 </pre><p>
-You could also inspect the state of all packages on your system using
-<span class="command"><strong>dselect</strong></span>, <span class="command"><strong>aptitude</strong></span>, or with commands
-such as
+您也可以用 <span class="command"><strong>dselect</strong></span>、<span class="command"><strong>aptitude</strong></span>
+来审查系统中的所有包的状态，也可以用如下的命令来审查
 </p><pre class="screen">
 # dpkg -l | pager
 </pre><p>
-or
+或是
 </p><pre class="screen">
 # dpkg --get-selections "*" &gt; ~/curr-pkgs.txt
 </pre><p>
-It is desirable to remove any holds before upgrading.  If any package that
-is essential for the upgrade is on hold, the upgrade will fail.
+在升级前移除所有的 hold 状态是很有必要的。如果有任何对升级而言有重要意义的包处于 hold 状态，升级会失败。
 </p><p>
-Note that <span class="command"><strong>aptitude</strong></span> uses a different method for
-registering packages that are on hold than <span class="command"><strong>apt-get</strong></span> and
-<span class="command"><strong>dselect</strong></span>.  You can identify packages on hold for
-<span class="command"><strong>aptitude</strong></span> with
+注意 <span class="command"><strong>aptitude</strong></span> 使用一种与 <span class="command"><strong>apt-get</strong></span> 及
+<span class="command"><strong>dselect</strong></span> 不同的方法来注册 hold 状态的包。您可以用以下命令来确认
+<span class="command"><strong>aptitude</strong></span> 中处于 hold 状态的包。
 </p><pre class="screen">
 # aptitude search "~ahold" | grep "^.h"
 </pre><p>
-If you want to check which packages you had on hold for
-<span class="command"><strong>apt-get</strong></span>, you should use
+如果您想检查 <span class="command"><strong>apt-get</strong></span> 中哪些包设置了 hold 状态，可以用
 </p><pre class="screen">
 # dpkg --get-selections | grep hold
 </pre><p>
-If you changed and recompiled a package locally, and didn't rename it or put
-an epoch in the version, you must put it on hold to prevent it from being
-upgraded.
+如果您在本地更改并重编译了一个包，且并未重命名或是在版本号中放入新的纪元号，您就必须将它设为 hold 状态以防止它升级。
 </p><p>
-The “<span class="quote">hold</span>” package state for <span class="command"><strong>aptitude</strong></span> can be
-changed using:
+<span class="command"><strong>aptitude</strong></span> 中的 “<span class="quote">hold</span>” 状态的包能用以下命令更改：
 </p><pre class="screen">
 # aptitude hold <em class="replaceable"><code>package_name</code></em>
 </pre><p>
-Replace <code class="literal">hold</code> with <code class="literal">unhold</code> to unset the
-“<span class="quote">hold</span>” state.
+用 <code class="literal">unhold</code> 代替 <code class="literal">hold</code> 可清除
+“<span class="quote">hold</span>” 状态。
 </p><p>
-If there is anything you need to fix, it is best to make sure your
-<code class="filename">sources.list</code> still refers to etch as
-explained in <a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a>.
+如果有任何需要更正的东西，您最好确保 <code class="filename">sources.list</code> 仍然指向 etch
+，就像<a class="xref" href="ap-old-stuff.zh_CN.html#old-sources" title="A.2. 检查您的 sources list">第 A.2 节 “检查您的 sources list”</a>中所说的那样。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="userbackports"></a>4.2.4. 非官方源和 backports</h3></div></div></div><p>
-If you have any non-Debian packages on your system, you should be aware that
-these may be removed during the upgrade because of conflicting
-dependencies.  If these packages were installed by adding an extra package
-archive in your <code class="filename">/etc/apt/sources.list</code>, you should check
-if that archive also offers packages compiled for lenny and change
-the source line accordingly at the same time as your source lines for Debian
-packages.
+如果有任何非 Debian 的包装于您的系统，您应该意识到它们可能会在升级期间因为依赖性冲突而被移除。如果这些包是通过在
+<code class="filename">/etc/apt/source.list</code> 中添加一个额外的软件源而安装的，您应该检查那个软件源是否也提供
+lenny 下编译好的包并同时像您的 Debian 软件源那样更改相应的源。
 </p><p>
-Some users may have unofficial backported “<span class="quote">newer</span>” versions of
-packages that <span class="emphasis"><em>are</em></span> in Debian installed on their
-etch system.  Such packages are most likely to cause problems
-during an upgrade as they may result in file conflicts<sup>[<a id="id3032331" href="#ftn.id3032331" class="footnote">4</a>]</sup>.  <a class="xref" href="ch-upgrading.zh_CN.html#trouble" title="4.5.10. 升级期间可能遇到的问题">第 4.5.10 节 “升级期间可能遇到的问题”</a> has some information on how to deal
-with file conflicts if they should occur.
+某些用户可能有非官方的 backported “<span class="quote">较新的</span>” 包版本<span class="emphasis"><em>存在</em></span>于他们安装的
+Debian etch 系统中。升级期间那样的包是最可能引起问题的，因为它们可能会导致文件冲突<sup>[<a id="id546524" href="#ftn.id546524" class="footnote">4</a>]</sup>。<a class="xref" href="ch-upgrading.zh_CN.html#trouble" title="4.5.10. 升级期间可能遇到的问题">第 4.5.10 节 “升级期间可能遇到的问题”</a> 已经有一些关于如何处理将会出现的文件冲突的信息了。
 </p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="handle-conflict"></a>4.3. 手工删除包标记</h2></div></div></div><p>
-To prevent <span class="command"><strong>aptitude</strong></span> from removing some packages that were
-pulled in through dependencies, you need to manually unmark them as
-<span class="emphasis"><em>auto</em></span> packages.  This includes OpenOffice and Vim for
-desktop installs:
+要防止 <span class="command"><strong>aptitude</strong></span> 移除某些因依赖关系而安装的包，您需要手工删除它们这些包上的
+<span class="emphasis"><em>auto</em></span> 标记。对于桌面安装来说，包括有 OpenOffice 和 Vim：
 </p><pre class="screen">
 # aptitude unmarkauto openoffice.org vim
 </pre><p>
-And 2.6 kernel images if you have installed them using a kernel metapackage:
+如果您已经用内核元数据包安装了 2.6 内核镜像，那还要包括它：
 </p><pre class="screen">
 # aptitude unmarkauto $(dpkg-query -W 'kernel-image-2.6.*' | cut -f1)
 </pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png" /></td><th align="left">注意</th></tr><tr><td align="left" valign="top"><p>
-    You can review which packages are marked as <span class="emphasis"><em>auto</em></span> in
-aptitude by running:
+    您可以复查那些在 aptitude 中被标记为 <span class="emphasis"><em>auto</em></span> 的包，执行：
   </p><pre class="screen"># aptitude search 'i~M <em class="replaceable"><code>package_name</code></em>'</pre></td></tr></table></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="upgrade-process"></a>4.4. 为 APT 准备源</h2></div></div></div><p>
-Before starting the upgrade you must set up <code class="systemitem">apt</code>'s configuration file for package lists,
-<code class="filename">/etc/apt/sources.list</code>.
+在开始升级前，您必须在源列表 <code class="filename">/etc/apt/sources.list</code> 中设定 <code class="systemitem">apt</code> 的配置文件。
 </p><p>
-<code class="systemitem">apt</code> will consider all packages that
-can be found via any “<span class="quote"><code class="literal">deb</code></span>” line, and install
-the package with the highest version number, giving priority to the first
-mentioned lines (that way, in case of multiple mirror locations, you'd
-typically first name a local harddisk, then CD-ROMs, and then HTTP/FTP
-mirrors).
+<code class="systemitem">apt</code> 会照顾到所有通过任意
+“<span class="quote"><code class="literal">deb</code></span>”
+行找到的包，并安装带最高版本号的包，给于第一个引用到的行以优先权（那样，如果有多个镜像地址，您最好先命名本地硬盘，然后是 CD-ROM，最后是
+HTTP/FTP 镜像）。
 </p><p>
-A release can often be referred to by both its codename (e.g.
-<code class="literal">etch</code>, <code class="literal">lenny</code>) and
-by its status name (i.e.  <code class="literal">oldstable</code>,
+一个发行版通常既能通过它的代码名（如：<code class="literal">etch</code>,
+<code class="literal">lenny</code>）引用，也可以用它的状态名引用（如：<code class="literal">oldstable</code>,
 <code class="literal">stable</code>, <code class="literal">testing</code>,
-<code class="literal">unstable</code>).  Referring to a release by its codename has
-the advantage that you will never be surprised by a new release and for this
-reason is the approach taken here.  It does of course mean that you will
-have to watch out for release announcements yourself.  If you use the status
-name instead, you will just see loads of updates for packages available as
-soon as a release has happened.
-</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="network"></a>4.4.1. 增加互联网 APT 源</h3></div></div></div><p>
-The default configuration is set up for installation from main Debian
-Internet servers, but you may wish to modify
-<code class="filename">/etc/apt/sources.list</code> to use other mirrors, preferably
-a mirror that is network-wise closest to you.
+<code class="literal">unstable</code>）。引用发行版的代码名的好处在于，您绝对不会被新发行版问题困扰且被带至此处。当然，这绝对意味着您不得不自己关注新发行版的发行。如果转而使用状态名，如果有新版发行，您将只会看到一堆可用的软件包的更新。
+</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="network"></a>4.4.1. 添加互联网 APT 源</h3></div></div></div><p>
+默认配置用于从主 Debian 网络服务器上安装，但您可能希望修改 <code class="filename">/etc/apt/sources.list</code>
+以使用其它的镜像，离您最近的网络镜像是一个更佳的选择。
 </p><p>
-Debian HTTP or FTP mirror addresses can be found at <a class="ulink" href="http://www.debian.org/distrib/ftplist" target="_top">http://www.debian.org/distrib/ftplist</a> (look at the “<span class="quote">list of Debian
-mirrors</span>” section).  HTTP mirrors are generally speedier than FTP
-mirrors.
+Debian HTTP 或 FTP 镜像地址能在 <a class="ulink" href="http://www.debian.org/distrib/ftplist" target="_top">http://www.debian.org/distrib/ftplist</a>
+找到（参看“<span class="quote"> Debian 镜像列表</span>”一节）。HTTP 镜像通常比 FTP 镜像快。
 </p><p>
-For example, suppose your closest Debian mirror is
-<code class="literal">http://mirrors.kernel.org/debian</code>.  When inspecting that mirror with
-a web browser or FTP program, you will notice that the main directories are
-organized like this:
+例如，假设离您最近的 Debian 镜像是 <code class="literal">http://mirrors.kernel.org/debian</code>。当用网络浏览器或是
+FTP 程序检查那个镜像时，您会注意到主目录组织成了如下情况：
 </p><pre class="screen">
 http://mirrors.kernel.org/debian/dists/lenny/main/binary-i386/...
 http://mirrors.kernel.org/debian/dists/lenny/contrib/binary-i386/...
 </pre><p>
-To use this mirror with <code class="systemitem">apt</code>, you add
-this line to your <code class="filename">sources.list</code> file:
+要让 <code class="systemitem">apt</code> 使用这个镜像，您将此行添加至
+<code class="filename">sources.list</code> 文件：
 </p><pre class="screen">
-deb http://mirrors.kernel.org/debian/debian lenny main contrib
+deb http://mirrors.kernel.org/debian lenny main contrib
 </pre><p>
-Note that the `<code class="literal">dists</code>' is added implicitly, and the
-arguments after the release name are used to expand the path into multiple
-directories.
+注意明显加上去的‘<code class="literal">dists</code>’，这个发行版名字后的参数被用于将路径扩展成多个目录。
 </p><p>
-After adding your new sources, disable the previously existing
-“<span class="quote"><code class="literal">deb</code></span>” lines in
-<code class="filename">sources.list</code> by placing a hash sign
-(<code class="literal">#</code>) in front of them.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="localmirror"></a>4.4.2. 增加本地镜像 APT 源</h3></div></div></div><p>
-Instead of using HTTP or FTP packages mirrors, you may wish to modify
-<code class="filename">/etc/apt/sources.list</code> to use a mirror on a local disk
-(possibly mounted over <acronym title="网络文件系统">NFS</acronym>).
+添加新源后，在 <code class="filename">sources.list</code> 中通过在以前存在的
+“<span class="quote"><code class="literal">deb</code></span>” 行前加上一个井号（<code class="literal">#</code>）来禁用它们。
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="localmirror"></a>4.4.2. 添加本地镜像 APT 源</h3></div></div></div><p>
+不用 HTTP 或 FTP 包镜像，您可能希望修改 <code class="filename">/etc/apt/sources.list</code>
+来使用一个本地磁盘上的镜像（也许是通过 <acronym title="网络文件系统">NFS</acronym> 挂载的
 </p><p>
-For example, your packages mirror may be under
-<code class="filename">/var/ftp/debian/</code>, and have main directories like this:
+例如，假设您的包镜像位于 <code class="filename">/var/ftp/devian/</code> 下，并且有如下的主目录：
 </p><pre class="screen">
 /var/ftp/debian/dists/lenny/main/binary-i386/...
 /var/ftp/debian/dists/lenny/contrib/binary-i386/...
 </pre><p>
-To use this with <code class="systemitem">apt</code>, add this line
-to your <code class="filename">sources.list</code> file:
+要让 <code class="systemitem">apt</code> 使用它，就把这一行添加至
+<code class="filename">sources.list</code> 文件：
 </p><pre class="screen">
 deb file:/var/ftp/debian lenny main contrib
 </pre><p>
-Note that the `<code class="literal">dists</code>' is added implicitly, and the
-arguments after the release name are used to expand the path into multiple
-directories.
+注意明显加上去的‘<code class="literal">dists</code>’，这个发行版名字后的参数被用于将路径扩展成多个目录。
 </p><p>
-After adding your new sources, disable the previously existing
-“<span class="quote"><code class="literal">deb</code></span>” lines in
-<code class="filename">sources.list</code> by placing a hash sign
-(<code class="literal">#</code>) in front of them.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="cdroms"></a>4.4.3. 从 CD-ROM 或 DVD 增加 APT 源</h3></div></div></div><p>
-If you want to use CDs <span class="emphasis"><em>only</em></span>, comment out the existing
-“<span class="quote"><code class="literal">deb</code></span>” lines in
-<code class="filename">/etc/apt/sources.list</code> by placing a hash sign
-(<code class="literal">#</code>) in front of them.
+添加新源后，在 <code class="filename">sources.list</code> 中通过在以前存在的
+“<span class="quote"><code class="literal">deb</code></span>” 行前加上一个井号（<code class="literal">#</code>）来禁用它们。
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="cdroms"></a>4.4.3. 从 CD-ROM 或 DVD 添加 APT 源</h3></div></div></div><p>
+如果您<span class="emphasis"><em>只</em></span>想用 CD 安装，在
+<code class="filename">/etc/apt/sources.list</code> 中的
+“<span class="quote"><code class="literal">deb</code></span>” 行前放上井号（<code class="literal">#</code>）注释掉它们。
 </p><p>
-Make sure there is a line in <code class="filename">/etc/fstab</code> that enables
-mounting your CD-ROM drive at the <code class="filename">/cdrom</code> mount point
-(the exact <code class="filename">/cdrom</code> mount point is required for
-<span class="command"><strong>apt-cdrom</strong></span>).  For example, if
-<code class="filename">/dev/hdc</code> is your CD-ROM drive,
-<code class="filename">/etc/fstab</code> should contain a line like:
+确保在 <code class="filename">/etc/fstab</code> 中有一行允许挂载您的 CD-ROM 于
+<code class="filename">/cdrom</code> 挂载点（<span class="command"><strong>apt-cdrom</strong></span> 需要准确的
+<code class="filename">/cdrom</code> 挂载点）。例如，假设 <code class="filename">/dev/hdc</code> 就是您的
+CD-ROM，<code class="filename">/etc/fstab</code> 中应该带有一行：
 </p><pre class="screen">
 /dev/hdc /cdrom auto defaults,noauto,ro 0 0
 </pre><p>
-Note that there must be <span class="emphasis"><em>no spaces</em></span> between the words
-<code class="literal">defaults,noauto,ro</code> in the fourth field.
+注意在第四段 <code class="literal">defaults,noauto,ro</code> 之间不允许有<span class="emphasis"><em>空格</em></span>。
 </p><p>
-To verify it works, insert a CD and try running
+要验证它是否能正确工作，插入一片 CD 并试着运行
 </p><pre class="screen">
-# mount /cdrom    # this will mount the CD to the mount point
-# ls -alF /cdrom  # this should show the CD's root directory
-# umount /cdrom   # this will unmount the CD
+# mount /cdrom    # 挂载 CD 至挂载点
+# ls -alF /cdrom  # 显示 CD 的根目录
+# umount /cdrom   # 卸载 CD
 </pre><p>
-Next, run:
+下一步，运行：
 </p><pre class="screen">
 # apt-cdrom add
 </pre><p>
-for each Debian Binary CD-ROM you have, to add the data about each CD to
-APT's database.
+每一片您所拥有的 Debian 二进制 CD-ROM 都要这么做，以便将每片 CD 的数据添加至 APT 的数据库。
 </p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="upgradingpackages"></a>4.5. 升级包</h2></div></div></div><p>
-The recommended way to upgrade from previous Debian <acronym title="GNU's Not Unix 的递归缩写">GNU</acronym>/Linux releases is to use the
-package management tool <span class="command"><strong>aptitude</strong></span>.  This program makes
-safer decisions about package installations than running
-<span class="command"><strong>apt-get</strong></span> directly.
+推荐的从以前 Debian <acronym title="GNU's Not Unix 的递归缩写">GNU</acronym>/Linux 发行版升级的方法是使用包管理器 <span class="command"><strong>aptitude</strong></span>。此程序会对安装包采取比直接运行
+<span class="command"><strong>apt-get</strong></span> 更保守的选择。
 </p><p>
-Don't forget to mount all needed partitions (notably the root and
-<code class="filename">/usr</code> partitions) read-write, with a command like:
+不要忘记挂载所有必需的分区（尤其是根分区和 <code class="filename">/usr</code> 分区）为可读写状态，用以下命令：
 </p><pre class="screen">
 # mount -o remount,rw /<em class="replaceable"><code>mountpoint</code></em>
 </pre><p>
-Next you should double-check that the APT source entries (in
-<code class="filename">/etc/apt/sources.list</code>) refer either to
-“<span class="quote"><code class="literal">lenny</code></span>” or to
-“<span class="quote"><code class="literal">stable</code></span>”.  There should not be any sources
-entries pointing to etch.
+下一步您应该详细检查 APT 源记录（<code class="filename">/etc/apt/source.list</code>）要么指向
+“<span class="quote"><code class="literal">lenny</code></span>” 又或指向
+“<span class="quote"><code class="literal">stable</code></span>”。不应该有任何指向 etch 的源记录。
 </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png" /></td><th align="left">注意</th></tr><tr><td align="left" valign="top"><p>
-    Source lines for a CD-ROM will often refer to
-“<span class="quote"><code class="literal">unstable</code></span>”; although this may be confusing,
-you should <span class="emphasis"><em>not</em></span> change it.
+    CD-ROM 的源通常会指向
+“<span class="quote"><code class="literal">unstable</code></span>”。尽管这令人困惑，但您<span class="emphasis"><em>不应该</em></span>改变它。
   </p></td></tr></table></div><p>
 </p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="record-session"></a>4.5.1. 记录会话</h3></div></div></div><p>
-It is strongly recommended that you use the
-<span class="command"><strong>/usr/bin/script</strong></span> program to record a transcript of the
-upgrade session.  Then if a problem occurs, you will have a log of what
-happened, and if needed, can provide exact information in a bug report.  To
-start the recording, type:
+强烈推荐您使用 <span class="command"><strong>/usr/bin/script</strong></span>
+程序来记录升级会话中的交互信息。这样如果有问题了，您就有一份问题报告。而且如果需要的话，您也可以在错误报告中提供额外信息。要开始记录，输入：
 </p><pre class="screen">
 # script -t 2&gt;~/upgrade-lenny.time -a ~/upgrade-lenny.script
 </pre><p>
-or similar.  Do not put the typescript file in a temporary directory such as
-<code class="filename">/tmp</code> or <code class="filename">/var/tmp</code> (files in those
-directories may be deleted during the upgrade or during any restart).
+或是类似命令。不要将输出文件放在临时目录下，如 <code class="filename">/tmp</code> 或
+<code class="filename">/var/tmp</code>（这些目录下的文件可能会在升级时或重启时被删除）
 </p><p>
-The typescript will also allow you to review information that has scrolled
-off-screen.  Just switch to VT2 (using <span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F2</strong></span>)  and,
-after logging in, use <code class="literal">less -R
-~root/upgrade-lenny.script</code> to view the file.
+输出文件也可让您复查屏幕上滚动过去的信息。只要切换至虚拟终端 2（使用 <span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F2</strong></span>），在登入后，用
+<code class="literal">less -R ~root/upgrade-lenny.script</code> 查看文件。
 </p><p>
-After you have completed the upgrade, you can stop <span class="command"><strong>script</strong></span>
-by typing <code class="literal">exit</code> at the prompt.
+在完成升级后，您可以在提示符下输入 <code class="literal">exit</code> 停止 <span class="command"><strong>script</strong></span>。
 </p><p>
-If you have used the <span class="emphasis"><em>-t</em></span> switch for
-<span class="command"><strong>script</strong></span> you can use the <span class="command"><strong>scriptreplay</strong></span>
-program to replay the whole session:
+如果已经对 <span class="command"><strong>script</strong></span> 使用了 <span class="emphasis"><em>-t</em></span> 选项，您就可以用
+<span class="command"><strong>scriptplay</strong></span> 程序来回放整个过程：
 </p><pre class="screen">
 # scriptreplay ~/upgrade-lenny.time ~/upgrade-lenny.script
-</pre></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="updating-lists"></a>4.5.2. 升级包列表</h3></div></div></div><p>
-First the list of available packages for the new release needs to be
-fetched.  This is done by executing:
+</pre></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="updating-lists"></a>4.5.2. 更新包列表</h3></div></div></div><p>
+首先，需要获取新发行版的可用包列表。执行：
 </p><pre class="screen">
 # aptitude update
 </pre><p>
-Running this the first time new sources are updated will print out some
-warnings related to the availability of the sources.  These warnings are
-harmless and will not appear if you rerun the command again.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="sufficient-space"></a>4.5.3. 确认你有足够的空间升级</h3></div></div></div><p>
-You have to make sure before upgrading your system that you have sufficient
-hard disk space when you start the full system upgrade described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-other" title="4.5.8. 升级系统的其它部分">第 4.5.8 节 “升级系统的其它部分”</a>.  First, any package needed for installation
-that is fetched from the network is stored in
-<code class="filename">/var/cache/apt/archives</code> (and the
-<code class="filename">partial/</code> subdirectory, during download), so you must
-make sure you have enough space on the file system partition that holds
-<code class="filename">/var/</code> to temporarily download the packages that will be
-installed in your system.  After the download, you will probably need more
-space in other file system partitions in order to both install upgraded
-packages (which might contain bigger binaries or more data) and new packages
-that will be pulled in for the upgrade.  If your system does not have
-sufficient space you might end up with an incomplete upgrade that might be
-difficult to recover from.
+首次执行这个对新源进行更新会打印出一些有关源可用性的警告信息。这些警告没关系而且在您下一次执行时就没有了。
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="sufficient-space"></a>4.5.3. 确保你有足够的空间升级</h3></div></div></div><p>
+在升级系统前必须确保在进行如???中所述的完全系统升级时，您有足够的磁盘空间。首先，安装所需的任何从网络上取回的包都被保存在
+<code class="filename">/var/cache/apt/archives</code>（下载期间还会放在
+<code class="filename">partial/</code> 子目录下），因此您必须确保在文件系统分区
+<code class="filename">/var/</code>
+下有足够的空间，以便临时下载将会安装在系统中的包。下载之后，您可能在其它文件系统分区中需要更多的空间来同时安装升级包（可能会包含更大的二进制程序或更多数据）和升级中带入的新包。如果系统中没有足够的空间，您可能以一个未完成的升级结束，而这可能难以恢复。
 </p><p>
-Both <span class="command"><strong>aptitude</strong></span> and <code class="systemitem">apt</code> will show you detailed information of the
-disk space needed for the installation.  Before executing the upgrade, you
-can see this estimate by running:
+<span class="command"><strong>aptitude</strong></span> 和 <code class="systemitem">apt</code>
+都会给你显示安装所需磁盘空间的详细信息。在执行升级操作前，您可以运行以下命令来看到这个估计值：
 </p><pre class="screen">
 # aptitude -y -s -f --with-recommends dist-upgrade
 [ ... ]
-XXX upgraded, XXX newly installed, XXX to remove and XXX not upgraded.
-Need to get xx.xMB/yyyMB of archives. After unpacking AAAMB will be used.
-Would download/install/remove packages.
+XXX 个已升级，XXX 个刚装上，XXX 个待删除以及 XXX 个未升级。
+需要获取 xx.xMB/yyyMB。解开后，将占用 AAAMB。
+会下载/安装/删除包。
 </pre><p>
-<sup>[<a id="id3033404" href="#ftn.id3033404" class="footnote">5</a>]</sup>
+<sup>[<a id="id547504" href="#ftn.id547504" class="footnote">5</a>]</sup>
 </p><p>
-If you do not have enough space for the upgrade, make sure you free up space
-beforehand.  You can:
+如果没有足够空间来升级，确保您预先释放了空间。可以这样：
 </p><div class="itemizedlist"><ul type="disc"><li><p>
-Remove packages that have been previously downloaded for installation (at
-<code class="filename">/var/cache/apt/archive</code>).  Cleaning up the package cache
-by running <span class="command"><strong>apt-get clean</strong></span> or <span class="command"><strong>aptitude
-clean</strong></span> will remove all previously downloaded package files.
+删除以前安装时下载的包（位于 <code class="filename">/var/cache/apt/archive</code>）。用
+<span class="command"><strong>apt-get clean</strong></span> 或是 <span class="command"><strong>aptitude clean</strong></span>
+来清理包缓存，这会删除所有以前下载过的包文件。
 </p></li><li><p>
-Remove old packages you no longer use.  If you have <code class="systemitem">popularity-contest</code> installed, you can use
-<span class="command"><strong>popcon-largest-unused</strong></span> to list the packages you do not use
-in the system that occupy the most space.  You can also use
-<span class="command"><strong>deborphan</strong></span> or <span class="command"><strong>debfoster</strong></span> to find
-obsolete packages (see <a class="xref" href="ch-upgrading.zh_CN.html#obsolete" title="4.11. 过时的包">第 4.11 节 “过时的包”</a> ).  Alternatively you can
-start <span class="command"><strong>aptitude</strong></span> in “<span class="quote">visual mode</span>” and find
-obsolete packages under “<span class="quote">Obsolete and Locally Created
-Packages</span>”.
+删除您从来不用的旧包。如果您安装过 <code class="systemitem">popularity-contest</code>，可以用
+<span class="command"><strong>popcon-largest-unused</strong></span> 来列出系统中占用大量空间而又不用的那些包。您也可以用
+<span class="command"><strong>deborphan</strong></span> 或是 <span class="command"><strong>debfoster</strong></span> 来找出过时的包（参看<a class="xref" href="ch-upgrading.zh_CN.html#obsolete" title="4.11. 过时的包">第 4.11 节 “过时的包”</a>）。另一可选方案您可以“<span class="quote">图形模式</span>”运行
+<span class="command"><strong>aptitude</strong></span> 在 “<span class="quote">Obsolete and Locally Created
+Packages</span>” 下找到过时的包。
 </p></li><li><p>
-Remove packages taking up too much space, which are not currently needed
-(you can always reinstall them after the upgrade).  You can list the
-packages that take up most of the disk space with <span class="command"><strong>dpigs</strong></span>
-(available in the <code class="systemitem">debian-goodies</code>
-package) or with <span class="command"><strong>wajig</strong></span> (running <code class="literal">wajig
-size</code>).
+删除占用太多空间，目前不需要的包（您总是可以在升级后重装它们的）。您可以用 <span class="command"><strong>dpigs</strong></span>（可在
+<code class="systemitem">debian-goodies</code> 包中找到）或是用
+<span class="command"><strong>wajig</strong></span>（运行 <code class="literal">wajig size</code>）列出占用大量空间的包。
 </p></li><li><p>
 Temporarily move to another system, or permanently remove, system logs
 residing under <code class="filename">/var/log/</code>.
@@ -486,7 +330,7 @@ libraries (<code class="systemitem">libselinux1</code>).  At this
 point, some running services will be restarted, including
 <span class="command"><strong>xdm</strong></span>, <span class="command"><strong>gdm</strong></span> and <span class="command"><strong>kdm</strong></span>.
 As a consequence, local X11 sessions might be disconnected.
-  </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="aptconvert"></a>4.5.5. Using aptitude's list of automatically-installed packages with apt</h3></div></div></div><p>
+  </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="aptconvert"></a>4.5.5. 使用 aptitudes 记录的 apt 自动安装的软件包列表</h3></div></div></div><p>
     <code class="systemitem">aptitude</code> maintains a list of
 packages that were installed automatically (for instance, as dependencies of
 another package). In lenny, <code class="systemitem">apt</code> now has this feature as well.
@@ -556,7 +400,7 @@ First, check whether you have the <code class="systemitem">libfam0c102</code> an
 If you do not have <code class="systemitem">libfam0c102</code>
 installed, do not include <code class="systemitem">libfam0</code> in
 the following commandline.  If you do not have <code class="systemitem">xlibmesa-glu</code> installed, do not include it in the
-following commandline.  <sup>[<a id="id3034102" href="#ftn.id3034102" class="footnote">6</a>]</sup>
+following commandline.  <sup>[<a id="id548158" href="#ftn.id548158" class="footnote">6</a>]</sup>
 </p><pre class="screen">
 # aptitude install x11-common <em class="replaceable"><code>libfam0</code></em> <em class="replaceable"><code>xlibmesa-glu</code></em>
 </pre><p>
@@ -791,7 +635,7 @@ your system might not boot up properly from this point on.  Once you have
 done an upgrade to a 2.6 series kernel in etch you can do a
 kernel upgrade as described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrade-from-2.6" title="4.6.2. 从 2.6 内核升级">第 4.6.2 节 “从 2.6 内核升级”</a>.
 </p><p>
-If your system does not rely on <code class="systemitem">hotplug</code><sup>[<a id="id3035051" href="#ftn.id3035051" class="footnote">7</a>]</sup> you can delay the kernel upgrade to after you have done a full
+If your system does not rely on <code class="systemitem">hotplug</code><sup>[<a id="id549015" href="#ftn.id549015" class="footnote">7</a>]</sup> you can delay the kernel upgrade to after you have done a full
 system upgrade, as described in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-other" title="4.5.8. 升级系统的其它部分">第 4.5.8 节 “升级系统的其它部分”</a>.  Once
 your system has been upgraded you can then do the following (changing the
 kernel package name to the one most suited to your system by substituting
@@ -810,7 +654,7 @@ adapter will also get a new interface name.
 </p><p>
 For network devices, you can avoid this reordering by using <code class="systemitem">udev</code> rules, more specifically, through the
 definitions at
-<code class="filename">/etc/udev/rules.d/z25_persistent-net.rules</code><sup>[<a id="id3035127" href="#ftn.id3035127" class="footnote">8</a>]</sup>.  Alternatively you can use the <span class="command"><strong>ifrename</strong></span>
+<code class="filename">/etc/udev/rules.d/z25_persistent-net.rules</code><sup>[<a id="id549081" href="#ftn.id549081" class="footnote">8</a>]</sup>.  Alternatively you can use the <span class="command"><strong>ifrename</strong></span>
 utility to bind physical devices to specific names at boot time.  See
 <span class="citerefentry"><span class="refentrytitle">ifrename</span>(8)</span> and <span class="citerefentry"><span class="refentrytitle">iftab</span>(5)</span> for more information.  The two alternatives (<code class="systemitem">udev</code> and <span class="command"><strong>ifrename</strong></span>) should not
 be used at the same time.
@@ -861,23 +705,7 @@ the timeout (in seconds) may need to be adjusted.
 When <code class="literal">aptitude dist-upgrade</code> has finished, the
 “<span class="quote">formal</span>” upgrade is complete, but there are some other things
 that should be taken care of <span class="emphasis"><em>before</em></span> the next reboot.
-</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="convert-devfs"></a>4.7.1. 从 devfs 转变</h3></div></div></div><p>
-Debian kernels no longer include support for <code class="literal">devfs</code>, so
-<code class="literal">devfs</code> users will need to convert their systems manually
-before booting an lenny kernel.
-</p><p>
-If you see the string '<code class="literal">devfs</code>' in
-<code class="filename">/proc/mounts</code>, you are most likely using
-<code class="literal">devfs</code>.  Any configuration files that reference
-<code class="literal">devfs</code>-style names will need to be adjusted to use
-<code class="systemitem">udev</code>-style names.  Files that are
-likely to refer to <code class="literal">devfs</code>-style device names include
-<code class="filename">/etc/fstab</code>, <code class="filename">/etc/lilo.conf</code>,
-<code class="filename">/boot/grub/menu.lst</code>, and
-<code class="filename">/etc/inittab</code>.
-</p><p>
-More information about potential issues is available in bug report <a class="ulink" href="http://bugs.debian.org/341152" target="_top">#341152</a>.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="rerunlilo"></a>4.7.2. 重新运行 lilo</h3></div></div></div><p>
+</p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="rerunlilo"></a>4.7.1. 重新运行 lilo</h3></div></div></div><p>
 If you are using <code class="systemitem">lilo</code> as your
 bootloader (it is the default bootloader for some installations of
 etch) it is strongly recommended that you rerun
@@ -901,9 +729,9 @@ symbolic links in <code class="filename">/</code> to <code class="filename">vmli
 If you forgot to rerun <span class="command"><strong>lilo</strong></span> before the reboot or the
 system is accidentally rebooted before you could do this manually, your
 system might fail to boot.  Instead of the lilo prompt, you will only see
-<code class="literal">LI</code> when booting the system<sup>[<a id="id3035613" href="#ftn.id3035613" class="footnote">9</a>]</sup>.  See <a class="xref" href="ch-upgrading.zh_CN.html#recovery" title="4.1.3. 准备恢复">第 4.1.3 节 “准备恢复”</a> for information on how to
+<code class="literal">LI</code> when booting the system<sup>[<a id="id549433" href="#ftn.id549433" class="footnote">9</a>]</sup>.  See <a class="xref" href="ch-upgrading.zh_CN.html#recovery" title="4.1.3. 准备恢复">第 4.1.3 节 “准备恢复”</a> for information on how to
 recover from this.
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="mdadm"></a>4.7.3. 升级 mdadm</h3></div></div></div><p>
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="mdadm"></a>4.7.2. 升级 mdadm</h3></div></div></div><p>
 mdadm now needs a configuration file to assemble MD arrays
 (<acronym title="独立冗余磁盘阵列">RAID</acronym>) from the initial ramdisk and during the system
 initialisation sequence.  Please make sure to read and act upon the
@@ -1119,7 +947,7 @@ see the partition table of the disk and to find the right partition
 <code class="filename">/boot</code> directory and its content, edit the
 <code class="filename">/mnt/boot/grub/menu.lst</code> file.
 	  </p><p>
-	    Find the section similar to:
+	    找到类似于以下的这一段：
 	    </p><pre class="programlisting">## ## End Default Options ##
 
 title           Debian GNU/Linux, kernel 2.6.26-1-686
@@ -1143,15 +971,15 @@ initrd          /initrd.img-2.6.26-1-686
 	  </p></li><li><p>
 	    重启系统，弹出 LiveCD，您的系统应该能正确的启动了。
 	  </p></li><li><p>
-	    When it has booted, apply one of the two proposed procedures under <a class="xref" href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading" title="4.8.1. 如何在升级前避免此问题">第 4.8.1 节 “如何在升级前避免此问题”</a> to fix the problem permanently.
+	    当系统引导时，使用 <a class="xref" href="ch-upgrading.zh_CN.html#avoid-problems-before-upgrading" title="4.8.1. 如何在升级前避免此问题">第 4.8.1 节 “如何在升级前避免此问题”</a>
+中所建议的两个处理过程中的一个来永久修复这个问题。
 	  </p></li></ol></div></div></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="for-next"></a>4.9. 为下个发行版做准备</h2></div></div></div><p>
 升级完成后，您可以为下个发行版做点事。
 </p><div class="itemizedlist"><ul type="disc"><li><p>
-If using <code class="systemitem">grub</code>, edit
-<code class="filename">/etc/kernel-img.conf</code> and adjust the location of the
-<span class="command"><strong>update-grub</strong></span> program changing
-<code class="filename">/sbin/update-grub</code> to
-<code class="filename">/usr/sbin/update-grub</code>.
+如果您使用 <code class="systemitem">grub</code>，那就编辑
+<code class="filename">/etc/kernel-img.conf</code> 并将 <span class="command"><strong>update-grub</strong></span>
+程序的位置从 <code class="filename">/sbin/update-grub</code> 改为
+<code class="filename">/usr/sbin/update-grub</code>。
 </p></li><li><p>
 如果新的内核镜像元数据包被当作旧镜像的依赖包而安装，那新镜像将被标记为自动安装，这应该被改正：
 </p><pre class="screen">
@@ -1185,72 +1013,50 @@ exim 3，由 exim4 替代
 </p></li></ul></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="obsolete"></a>4.11. 过时的包</h2></div></div></div><p>
 在带来几千个新软件包的同时，lenny 也清除了曾经存在于 etch
 中超过两千个的旧软件包。lenny 不提供这些过时包的升级。当然，在您需要的地方没什么可以阻止您继续使用这些过时的包，Debian
-计划通常会在 lenny 发行版<sup>[<a id="id3036900" href="#ftn.id3036900" class="footnote">10</a>]</sup>，且通常不会同时提供其它支持。推荐用可用的替代品代替它们。
+计划通常会在 lenny 发行版后的一年间不断的提供安全更新<sup>[<a id="id550623" href="#ftn.id550623" class="footnote">10</a>]</sup>，且通常不会同时提供其它支持。推荐用可用的替代品代替它们。
 </p><p>
-There are many reasons why packages might have been removed from the
-distribution: they are no longer maintained upstream; there is no longer a
-Debian Developer interested in maintaining the packages; the functionality
-they provide has been superseded by different software (or a new version);
-or they are no longer considered suitable for lenny due to bugs in
-them.  In the latter case, packages might still be present in the
-“<span class="quote">unstable</span>” distribution.
+为什么包会从发行版中移除？这有很多原因，如：它们不再被上游作者维护了；没有 Debian
+开发者对维护这个包感兴趣；这些包提供的功能被不同的软件（或新版本）替代了；或者由于它们自身的问题，因而被认为不适用于 lenny。
+最后一种情况下，这些包有可能仍然位于 “<span class="quote">unstable</span>” 版之下。
 </p><p>
-Detecting which packages in an updated system are “<span class="quote">obsolete</span>” is
-easy since the package management front-ends will mark them as such.  If you
-are using <span class="command"><strong>aptitude</strong></span>, you will see a listing of these
-packages in the “<span class="quote">Obsolete and Locally Created Packages</span>” entry.
-<span class="command"><strong>dselect</strong></span> provides a similar section but the listing it
-presents might differ.  Also, if you have used <span class="command"><strong>aptitude</strong></span>
-to manually install packages in etch it will have kept track of
-those packages you manually installed and will be able to mark as obsolete
-those packages pulled in by dependencies alone which are no longer needed if
-a package has been removed.  Also, <span class="command"><strong>aptitude</strong></span>, unlike
-<span class="command"><strong>deborphan</strong></span> will not mark as obsolete packages that you
-manually installed, as opposed to those that were automatically installed
-through dependencies.
+检测在已更新的系统中哪些包是“<span class="quote">过时</span>”的现在容易得很，因为包管理的前台程序会标记它们的。如果您使用的是
+<span class="command"><strong>aptitude</strong></span>，您将在 “<span class="quote">过期的和在本地创建的包</span>”
+条目中看到这些包。<span class="command"><strong>dselect</strong></span> 提供类似的条目，但它显示的列表有所不同。还有，如果您曾经用
+<span class="command"><strong>aptitude</strong></span> 手工在 etch 中安装过包，aptitude
+会保存那些您手工安装的记录。如果有某个包被移除并导致出现无依赖性，即不再需要那些包，aptitude 会那些包标记为过时的包。还有
+<span class="command"><strong>aptitude</strong></span>，不同于
+<span class="command"><strong>deborphan</strong></span>。<span class="command"><strong>deborphan</strong></span>
+不将您手工安装过的包，而非那些通过依赖性自动安装的软件包，标记为过时的包。
 </p><p>
-There are additional tools you can use to find obsolete packages such as
-<span class="command"><strong>deborphan</strong></span>, <span class="command"><strong>debfoster</strong></span> or
-<span class="command"><strong>cruft</strong></span>.  <span class="command"><strong>deborphan</strong></span> is highly
-recommended, although it will (in default mode) only report obsolete
-libraries: packages in the “<span class="quote"><code class="literal">libs</code></span>” or
-“<span class="quote"><code class="literal">oldlibs</code></span>” sections that are not used by any
-other packages.  Do not blindly remove the packages these tools present,
-especially if you are using aggressive non-default options that are prone to
-produce false positives.  It is highly recommended that you manually review
-the packages suggested for removal (i.e.  their contents, size and
-description) before you remove them.
+您可以用其它的工具来找出过时的包，例如
+<span class="command"><strong>deborphan</strong></span>，<span class="command"><strong>debfoster</strong></span> 或
+<span class="command"><strong>cruft</strong></span>。 推荐使用
+<span class="command"><strong>deborphan</strong></span>，尽管它（默认情况下）只报告过时的库，即
+“<span class="quote"><code class="literal">libs</code></span>” 或是
+“<span class="quote"><code class="literal">oldlibs</code></span>”
+部分中的未被其它包依赖的软件包。不要盲目的移除那些工具要用到的包，尤其是当您正在使用激进的非默认的选项，它们容易引起严重错误。极度推荐在您移除它们之前，手工核查那些建议移除的包（例如：它们的内容、大小以及描述信息）。
 </p><p>
 <a class="ulink" href="http://bugs.debian.org/" target="_top"> Debian
 错误跟踪系统</a>通常会提供额外信息，这些都是有关这个包为什么要被移除的信息。您应该既查看此包自身的归档错误报告，同时也要看一下 <a class="ulink" href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=ftp.debian.org&amp;archive=yes" target="_top">ftp.debian.org
 pseudo-package</a> 中的归档错误报告。
 </p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="dummy"></a>4.11.1. 哑包</h3></div></div></div><p>
-Some packages from etch have been split into several packages in
-lenny, often to improve system maintainability.  To ease the upgrade
-path in such cases, lenny often provides “<span class="quote">dummy</span>”
-packages: empty packages that have the same name as the old package in
-etch with dependencies that cause the new packages to be
-installed.  These “<span class="quote">dummy</span>” packages are considered obsolete
-packages after the upgrade and can be safely removed.
+来自 etch 的某些包在 lenny
+中已经被分为好几个包，通常这是为了改善系统的可维护性。在此情况下，为了能平滑升级，lenny
+通常提供“<span class="quote">哑</span>”包（即空包），它与 etch
+中的旧包名称相同，但有依赖性，促使它们安装新包。这些“<span class="quote">哑</span>”包在升级成功后就会被认为是过时的包，且能够被安全地移除。
 </p><p>
 绝大多数（并非所有）哑包的描述信息会显示它们的用途。但哑包的描述信息并不统一，因此你可能会发现带上<code class="literal"> --guess
 </code>选项的<span class="command"><strong> deborphan
 </strong></span>命令对于找出您系统中的哑包是很有用的。注意，某些哑包在升级后是不打算被系统移除的，相反它们被用于长期跟踪某程序的当前可用版本这样的目的。
-</p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="plans-for-nigel"></a>4.12. 下个 Debian 发行版的计划</h2></div></div></div></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id3031673" href="#id3031673" class="para">3</a>] </sup> This feature can be disabled by adding the parameter
-<code class="literal">panic=0</code> to your boot parameters.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id3032331" href="#id3032331" class="para">4</a>] </sup> Debian's package management system normally does not allow a package to
-remove or replace a file owned by another package unless it has been defined
-to replace that package.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id3033404" href="#id3033404" class="para">5</a>] </sup> Running this command at the beginning of the upgrade process may give an
-error, for the reasons described in the next sections.  In that case you
-will need to wait until you've done the minimal system upgrade as in <a class="xref" href="ch-upgrading.zh_CN.html#minimal-upgrade" title="4.5.6. 最小系统升级">第 4.5.6 节 “最小系统升级”</a> and upgraded your kernel as in <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-kernel" title="4.5.7. 升级内核">第 4.5.7 节 “升级内核”</a> before running this command to estimate the
-disk space.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id3034102" href="#id3034102" class="para">6</a>] </sup> This command will determine whether you need libfam0 and xlibmesa-glu
+</p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="plans-for-nigel"></a>4.12. 下个 Debian 发行版的计划</h2></div></div></div></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id545891" href="#id545891" class="para">3</a>] </sup> 此功能可以通过在您的启动参数中添加参数 <code class="literal">panic=0</code> 来禁用。  </p></div><div class="footnote"><p><sup>[<a id="ftn.id546524" href="#id546524" class="para">4</a>] </sup> Debian 的包管理系统正常情况下不允许一个包移除或是替换另一个包所拥有的文件，除非已经被设定为替换那个包。  </p></div><div class="footnote"><p><sup>[<a id="ftn.id547504" href="#id547504" class="para">5</a>] </sup> 由于下一节将要谈到的问题，在开始更新时执行这条命令可能会给出一个错误。如果那样的话，您需要等至已经如<a class="xref" href="ch-upgrading.zh_CN.html#minimal-upgrade" title="4.5.6. 最小系统升级">第 4.5.6 节 “最小系统升级”</a>所述的那样做过最小系统升级并且如 <a class="xref" href="ch-upgrading.zh_CN.html#upgrading-kernel" title="4.5.7. 升级内核">第 4.5.7 节 “升级内核”</a>中所述的那样升级过内核后，这样，您才可以运行这条命令来估计所需的磁盘空间。  </p></div><div class="footnote"><p><sup>[<a id="ftn.id548158" href="#id548158" class="para">6</a>] </sup> This command will determine whether you need libfam0 and xlibmesa-glu
 installed, and auto-select them for you:
 </p><pre class="screen"> # aptitude install x11-common \ $(dpkg-query --showformat
 '${Package} ${Status}\n' -W libfam0c102 xlibmesa-glu \ | grep 'ok installed$' |
-sed -e's/ .*//; s/c102//') </pre></div><div class="footnote"><p><sup>[<a id="ftn.id3035051" href="#id3035051" class="para">7</a>] </sup> You can have the kernel modules needed by your system loaded statically
-through proper configuration of <code class="filename">/etc/modules</code>.</p></div><div class="footnote"><p><sup>[<a id="ftn.id3035127" href="#id3035127" class="para">8</a>] </sup>
+sed -e's/ .*//; s/c102//') </pre></div><div class="footnote"><p><sup>[<a id="ftn.id549015" href="#id549015" class="para">7</a>] </sup> You can have the kernel modules needed by your system loaded statically
+through proper configuration of <code class="filename">/etc/modules</code>.</p></div><div class="footnote"><p><sup>[<a id="ftn.id549081" href="#id549081" class="para">8</a>] </sup>
 The rules there are automatically generated by the script
 <code class="filename">/etc/udev/rules.d/z45_persistent-net-generator.rules</code> to
 have persistent names for network interfaces.  Delete this symlink to
-disable persistent device naming for NICs by <code class="systemitem">udev</code>.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id3035613" href="#id3035613" class="para">9</a>] </sup> For more information on <span class="command"><strong>lilo</strong></span>'s boot error codes please
+disable persistent device naming for NICs by <code class="systemitem">udev</code>.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id549433" href="#id549433" class="para">9</a>] </sup> For more information on <span class="command"><strong>lilo</strong></span>'s boot error codes please
 see <a class="ulink" href="http://tldp.org/HOWTO/Bootdisk-HOWTO/a1483.html" target="_top">The Linux
-Bootdisk HOWTO</a>.  </p></div><div class="footnote">后的一年间不断的提供安全更新。<p><sup>[<a id="ftn.id3036900" href="#id3036900" class="para">10</a>] </sup> 或者只要在那段时间内没有另外的发行版释出。在任意给定时间内，仅明确支持两个 stable 发行版。  </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">上一页</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">下一页</a></td></tr><tr><td width="40%" align="left" valign="top">第 3 章 安装系统 </td><td width="20%" align="center"><a accesskey="h" href="index.zh_CN.html">起始页</a></td><td width="40%" align="right" valign="top"> 第 5 章 lenny 中需要注意的问题</td></tr></table></div></body></html>
+Bootdisk HOWTO</a>.  </p></div><div class="footnote"><p><sup>[<a id="ftn.id550623" href="#id550623" class="para">10</a>] </sup> 否则只要在那段时间内没有另外的发行版释出。在任意给定时间内，一般仅提供两个 stable 发行版的安装更新。  </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-installing.zh_CN.html">上一页</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch-information.zh_CN.html">下一页</a></td></tr><tr><td width="40%" align="left" valign="top">第 3 章 安装系统 </td><td width="20%" align="center"><a accesskey="h" href="index.zh_CN.html">起始页</a></td><td width="40%" align="right" valign="top"> 第 5 章 lenny 中需要注意的问题</td></tr></table></div></body></html>
