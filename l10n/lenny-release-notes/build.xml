@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="lenny-release-notes" default="amd64">
+
+    <property file="build.properties"/>
+
+    <path id="lib.classpath">
+        <fileset dir="${ant.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${fop.home}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${usr.share.java}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${usr.share.java}"/>
+    </path>
+
+    <target name="usage">
+        <echo message="Use the -projecthelp option instead"/>
+    </target>
+
+    <target name="clean" description="Clean the build directory">
+        <delete dir="build"/>
+    </target>
+
+    <target name="init" description="Check runtime configuration">
+        <echo message="java.version: ${java.version}"/>
+
+        <fail>
+            <condition>
+                <not><available file="build.properties"/></not>
+            </condition>
+            Please create your build.properties from build.properties.tmpl !
+        </fail>
+        
+        <fail>
+            <condition>
+                <not><available classname="com.icl.saxon.StyleSheet" classpathref="lib.classpath"/></not>
+            </condition>
+            Saxon 6.5 Support NOT Present !
+        </fail>
+    </target>
+
+    <target name="amd64" description="Generate document - amd64">
+        <antcall target="pdf">
+            <param name="arch" value="amd64" />  
+        </antcall>
+    </target>
+
+    <target name="i386" description="Generate document - i386">
+        <antcall target="pdf">
+            <param name="arch" value="i386" />  
+        </antcall>
+    </target>
+    
+    <target name="all" description="Generate document - amd64,i386" depends="amd64,i386">
+    </target>
+
+    <target name="pdf.init">
+        <fail>
+            <condition>
+                <not><available file="zh_CN/release-notes.${arch}.xml"/></not>
+            </condition>
+File 'zh_CN/release-notes.${arch}.xml' NOT Present !
+Maybe you should run 'make html LINGUA=zh_CN architecture=${arch}' first !
+        </fail>
+        
+        <uptodate property="pdf.isUpToDate" targetfile="build/lenny-release-notes.${arch}.pdf">
+            <srcfiles dir="zh_CN" includes="release-notes.${arch}.xml"/>
+        </uptodate>
+    </target>
+
+    <!-- Total time: 16 minutes 14 seconds -->
+    <target name="pdf" depends="init,pdf.init" unless="pdf.isUpToDate">
+        <copy todir="build/pdf/images">
+            <fileset dir="${docbook-xsl.images.dir}" includes="**/*.png"/>
+        </copy>
+        <copy todir="build/pdf">
+            <fileset dir="${fonts.dir}">
+                <include name="*.ttf"/>
+                <include name="*.ttc"/>
+            </fileset>
+            <fileset dir="${fop.home}/conf">
+                <include name="*.xml"/>
+            </fileset>
+        </copy>
+
+        <echo message="Making fo ..."/>
+        <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/pdf">
+            <classpath refid="lib.classpath"/>
+            <arg value="-x"/>
+            <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+            <arg value="-y"/>
+            <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+            <arg value="-r"/>
+            <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
+            <arg value="-o"/>
+            <arg value="release-notes.${arch}.fo"/>
+            <arg value="../../zh_CN/release-notes.${arch}.xml"/>
+            <arg value="../../fop.xsl"/>
+        </java>
+
+        <echo message="Making pdf ..."/>
+        <java classname="${fop.class}" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/pdf">
+            <classpath refid="lib.classpath"/>
+            <arg value="-c"/>
+            <arg value="userconfig.xml"/>
+            <arg value="release-notes.${arch}.fo"/>
+            <arg value="../lenny-release-notes.${arch}.pdf"/>
+        </java>
+        <delete dir="build/pdf"/>
+    </target>
+
+</project>
