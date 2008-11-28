@@ -19,8 +19,9 @@
   <xsl:param name="draft.mode" select="no"/>
 
   <xsl:param name="admon.graphics" select="1" />
-  <xsl:param name="admon.graphics.path">images/</xsl:param>
-  <xsl:param name="admon.graphics.extension">.png</xsl:param>
+  <xsl:param name="admon.graphics.extension">.svg</xsl:param>
+  <xsl:param name="callout.graphics" select="1" />
+  <xsl:param name="callout.graphics.extension">.svg</xsl:param>
 
   <!-- Prevent blank pages in output -->
   <xsl:template name="book.titlepage.before.verso">

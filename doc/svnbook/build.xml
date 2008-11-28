@@ -13,6 +13,7 @@
     <fileset dir="${usr.share.java}">
       <include name="**/*.jar"/>
     </fileset>
+    <pathelement location="${usr.share.java}"/>
   </path>
 
   <target name="usage">
@@ -209,16 +210,6 @@
     <mkdir dir="build/zh_CN/pdf"/>
 
     <echo message="Making fo ..."/>
-    <!--java classname="org.apache.xalan.xslt.Process" fork="true" maxmemory="1024m"
-                failonerror="true" dir="${basedir}">
-            <classpath refid="lib.classpath"/>
-            <arg value="-out"/>
-            <arg value="build/zh_CN/pdf/book-tmp.fo"/>
-            <arg value="-in"/>
-            <arg value="build/zh_CN/book.xml"/>
-            <arg value="-xsl"/>
-            <arg value="stylesheets/zh_CN/fo.xsl"/>
-        </java-->
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
       <arg value="-o"/>
@@ -247,9 +238,11 @@
 
   <!--Total time: 23 seconds-->
   <target name="pdf" depends="fo,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
-    <copy todir="build/zh_CN/pdf/images">
+    <copy todir="build/zh_CN/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook5.xsl}/images" includes="**/*.png"/>
+    </copy>
+    <copy todir="build/zh_CN/pdf/images">
+      <fileset dir="${docbook5.xsl}/images" includes="**/*.svg"/>
     </copy>
     <copy todir="build/zh_CN/pdf">
       <fileset dir="${fop.home}/conf">
@@ -273,5 +266,6 @@
       <arg value="../svnbook.pdf"/>
     </java>
     <delete dir="build/zh_CN/pdf"/>
+    <delete dir="build/zh_CN/images"/>
   </target>
 </project>
