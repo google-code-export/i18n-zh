@@ -5,23 +5,47 @@
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
 
-  <xsl:param name="paper.type" select="'A4'"></xsl:param>
+  <xsl:param name="draft.mode" select="no"/>
+
+  <xsl:param name="hyphenate">false</xsl:param>
 
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
-  <xsl:param name="tablecolumns.extension">1</xsl:param>
   <xsl:param name="callouts.extension">1</xsl:param>
+  <xsl:param name="linenumbering.extension">1</xsl:param>
+  <xsl:param name="tablecolumns.extension">1</xsl:param>
   <xsl:param name="textinsert.extension">1</xsl:param>
-
-  <xsl:param name="fop.extensions">0</xsl:param>
-  <xsl:param name="fop1.extensions">1</xsl:param>
-
-  <xsl:param name="draft.mode" select="no"/>
 
   <xsl:param name="admon.graphics" select="1" />
   <xsl:param name="admon.graphics.extension">.svg</xsl:param>
   <xsl:param name="callout.graphics" select="1" />
   <xsl:param name="callout.graphics.extension">.svg</xsl:param>
+
+  <xsl:param name="section.autolabel" select="1" />
+  <xsl:param name="section.label.includes.component.label">1</xsl:param>
+
+  <xsl:param name="fop.extensions">0</xsl:param>                <!-- fo only -->
+  <xsl:param name="fop1.extensions">1</xsl:param>               <!-- fo only -->
+  <xsl:param name="variablelist.as.blocks" select="1" />        <!-- fo only -->
+  <xsl:param name="paper.type" select="'A4'"></xsl:param>       <!-- fo only -->
+
+  <!-- Font related Settings -->
+  <xsl:param name="body.font.family">serif</xsl:param>
+  <xsl:param name="dingbat.font.family">serif</xsl:param>
+  <xsl:param name="monospace.font.family">monospace</xsl:param>
+  <xsl:param name="sans.font.family">sans-serif</xsl:param>
+  <xsl:param name="title.font.family">sans-serif</xsl:param>
+  <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
+
+  <xsl:param name="body.font.size">12</xsl:param>
+  <xsl:param name="title.font.size">14</xsl:param>
+  
+  <!-- Page related Settings -->
+  <xsl:param name="page.margin.inner">1.5cm</xsl:param>
+  <xsl:param name="page.margin.outer">1.5cm</xsl:param>
+  <xsl:param name="title.margin.left">0pt</xsl:param>
+  <xsl:param name="body.start.indent">24pt</xsl:param>
+  <xsl:param name="body.end.indent">0pt</xsl:param>
 
   <!-- Prevent blank pages in output -->
   <xsl:template name="book.titlepage.before.verso">
@@ -30,12 +54,6 @@
   </xsl:template>
   <xsl:template name="book.titlepage.separator">
   </xsl:template>
-
-  <!-- Font related Settings -->
-  <xsl:param name="body.font.family">sans-serif</xsl:param>
-  <xsl:param name="dingbat.font.family">sans</xsl:param>
-  <xsl:param name="monospace.font.family">monospace</xsl:param>
-  <xsl:param name="title.font.family">sans</xsl:param>
 
   <xsl:attribute-set name="xref.properties">
     <xsl:attribute name="color">

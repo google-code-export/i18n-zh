@@ -59,7 +59,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 34 seconds-->
   <target name="pot" depends="pot.init" unless="pot.isUpToDate" description="Generate POTemplate">
     <echo message="Making pot ..."/>
     <exec dir="${basedir}/po" executable="python" failonerror="true">
@@ -71,7 +70,6 @@
 
     <echo message="Merging zh_CN.po ..."/>
     <exec dir="${basedir}/po" executable="msgmerge">
-      <!-- arg value="- -no-fuzzy-matching"/ -->
       <arg value="--sort-by-file"/>
       <arg value="--width=80"/>
       <arg value="-o"/>
@@ -90,7 +88,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 36 second-->
   <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
     <mkdir dir="build/zh_CN"/>
     <echo message="Translating to zh_CN ..."/>
@@ -123,7 +120,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 43 seconds-->
   <target name="html" depends="translate,html.init" unless="html.isUpToDate" description="Generate document - html">
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
     <copy file="stylesheets/html-import.tmpl.xsl" tofile="stylesheets/html-import.xsl" filtering="true" overwrite="true"/>
@@ -154,7 +150,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 53 seconds-->
   <target name="chm" depends="translate,chm.init" unless="chm.isUpToDate" description="Generate document - chm">
     <fail>
       <condition>
@@ -203,7 +198,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 17 seconds-->
   <target name="fo" depends="translate,fo.init" unless="fo.isUpToDate">
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
     <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
@@ -236,7 +230,6 @@
     </uptodate>
   </target>
 
-  <!--Total time: 23 seconds-->
   <target name="pdf" depends="fo,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
     <copy todir="build/zh_CN/images">
       <fileset dir="source/images" includes="*.png"/>
@@ -267,5 +260,40 @@
     </java>
     <delete dir="build/zh_CN/pdf"/>
     <delete dir="build/zh_CN/images"/>
+  </target>
+
+  <target name="svnbook.init">
+    <uptodate property="svnbook.isUpToDate" targetfile="build/en/svnbook.pdf">
+      <srcfiles dir="source" includes="book.xml"/>
+    </uptodate>
+  </target>
+
+  <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate" description="Generate document - svnbook(pdf)">
+    <copy todir="build/en/images">
+      <fileset dir="source/images" includes="*.png"/>
+      <fileset dir="${docbook5.xsl}/images" includes="**/*.svg"/>
+    </copy>
+    <copy file='source/book.xml' todir="build/en"/>
+    
+    <echo message="Making fo ..."/>
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
+      <classpath refid="lib.classpath"/>
+      <arg value="-o"/>
+      <arg value="svnbook.fo"/>
+      <arg value="book.xml"/>
+      <arg value="../../stylesheets/fo.xsl"/>
+    </java>
+
+    <echo message="Making pdf ..."/>
+    <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+      <classpath refid="lib.classpath"/>
+      <arg value="svnbook.fo"/>
+      <arg value="svnbook.pdf"/>
+    </java>
+
+    <delete>
+      <fileset dir="build/en" excludes="**/*.pdf"/>
+    </delete>
+
   </target>
 </project>
