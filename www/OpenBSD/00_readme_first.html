@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.2.6" />
+<meta name="generator" content="AsciiDoc 8.2.7" />
 <style type="text/css">
 /* Debug borders */
 p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
@@ -165,13 +165,25 @@ div.listingblock > div.content {
   padding: 0.5em;
 }
 
-div.quoteblock > div.content {
+div.quoteblock {
   padding-left: 2.0em;
 }
-
-div.attribution {
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
   text-align: right;
 }
+
+div.verseblock {
+  padding-left: 2.0em;
+}
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
 div.verseblock + div.attribution {
   text-align: left;
 }
@@ -192,10 +204,6 @@ div.admonitionblock td.content {
 div.exampleblock > div.content {
   border-left: 2px solid silver;
   padding: 0.5em;
-}
-
-div.verseblock div.content {
-  white-space: pre;
 }
 
 div.imageblock div.content { padding-left: 0; }
@@ -302,8 +310,17 @@ div.listingblock div.content {
   padding: 0.5em;
 }
 
-div.quoteblock-content {
-  padding-left: 2.0em;
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
 }
 
 div.exampleblock-content {
@@ -402,8 +419,8 @@ function generateToc(toclevels) {
 <div id="header">
 <h1>翻译 OpenBSD 文档的方法</h1>
 <div id="toc">
-  <div id="toctitle">目录</div>
-  <noscript><p><b>为了显示目录，你的浏览器必须启用 JavaScript。</b></p></noscript>
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
 </div>
 </div>
 <h2 id="_">1. 安装工具</h2>
@@ -551,20 +568,22 @@ $ validate -w --charset=utf-8 example.html</tt></pre>
 </div>
 <h2 id="__7">3. 版本控制</h2>
 <div class="sectionbody">
-<h3 id="__8">3.1. 中文翻译版本库</h3><div style="clear:left"></div>
 <div class="para"><p>中文翻译小组使用 <a href="http://hg.sharesource.org/g11n/">sharesource</a> 作为主要版本库，
 定期同步到 <a href="http://code.google.com/p/i18n-zh/">i18n-zh</a>
-和 <a href="http://code.google.com/p/openbsdonly/">openbsdonly</a> 的版本库中。</p></div>
+和 <a href="http://code.google.com/p/openbsdonly/">openbsdonly</a>。</p></div>
 <div class="para"><p>在完成翻译，通过各种检查后，由 <a href="http://code.google.com/p/i18n-zh/">i18n-zh</a>
-小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库，然后回写 CVS 标签到
+小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库(steelix-www)，然后回写 CVS 标签到
 <a href="http://hg.sharesource.org/g11n/">sharesource</a>，可能还有
 <a href="http://code.google.com/p/i18n-zh/">i18n-zh</a> 和
-<a href="http://code.google.com/p/openbsdonly/">openbsdonly</a> 的版本库中。<br /></p></div>
-<div class="para"><p>从匿名 CVS 服务器更新 sharesource 的英文版本：</p></div>
+<a href="http://code.google.com/p/openbsdonly/">openbsdonly</a>。</p></div>
+<div class="para"><p>目前官方版本库(openbsd-www)不对翻译人员开放。在 steelix.kd85.com 有一个不对外提供匿名
+CVS 服务的翻译版本库(steelix-www)。翻译人员与翻译协调者联系，取得账户后，
+可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方版本库中。</p></div>
+<h3 id="_cvs">3.1. 从匿名 CVS 服务器更新</h3><div style="clear:left"></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>WC_CVS=/usr/www
-WC_HG=/home/dongsheng/wc/hg/g11n
+WC_HG=/home/dongsheng/var/hg/g11n
 
 # for i in . faq faq/pf openbgpd opencvs openntpd openssh papers porting spamd; do
 #     /bin/rm ${WC_CVS}/${i}/*.html
@@ -578,22 +597,17 @@ done
 cd ${WC_HG}/os/OpenBSD/www/ &amp;&amp; hg purge -f .
 # cd ${WC_HG}/os/OpenBSD/www/ &amp;&amp; hg ci -m "Sync with AnonCVS" .</tt></pre>
 </div></div>
-<h3 id="_openbsd">3.2. OpenBSD 翻译版本库</h3><div style="clear:left"></div>
-<div class="para"><p>目前官方版本库不对翻译人员开放。</p></div>
-<div class="para"><p>在 steelix.kd85.com 有一个不对外提供匿名 CVS 服务的翻译版本库。翻译人员在取得
-账户后，可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方
-版本库中。</p></div>
-<h3 id="_steelix">3.3. 从 steelix 检出</h3><div style="clear:left"></div>
+<h3 id="_steelix">3.2. 从 steelix 检出</h3><div style="clear:left"></div>
 <div class="para"><p>对于 steelix 的文档，不需要全部检出，只检出我们需要的部分即可。首先执行非递归检出，例如：</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><tt>cd /home/dongsheng/wc
+<pre><tt>cd /home/dongsheng/var/cvs
 cvs -d dongsheng@steelix.kd85.com:/cvs co -l -d steelix-www www</tt></pre>
 </div></div>
 <div class="para"><p>然后就可以执行非递归更新了，例如只检出/更新当前翻译相关部分：</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><tt>cd /home/dongsheng/wc/steelix-www
+<pre><tt>cd /home/dongsheng/var/cvs/steelix-www
 
 cvs up -l images
 cvs up -l zh
@@ -608,12 +622,12 @@ cvs up -l faq/pf/zh
 cvs up -l spamd
 cvs up -l spamd/zh</tt></pre>
 </div></div>
-<h3 id="_steelix_2">3.4. 提交到 steelix</h3><div style="clear:left"></div>
+<h3 id="_steelix_2">3.3. 提交到 steelix</h3><div style="clear:left"></div>
 <div class="para"><p>从 sharesource 提交到 steelix 后，再向 sharesource 同步 CVS 标签。</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><tt>WC_CVS=/home/dongsheng/wc/steelix-www
-WC_HG=/home/dongsheng/wc/hg/g11n
+<pre><tt>WC_CVS=/home/dongsheng/var/cvs/steelix-www
+WC_HG=/home/dongsheng/var/hg/g11n
 
 for i in zh opencvs/zh faq/zh faq/pf/zh spamd/zh; do
     /bin/cp ${WC_HG}/os/OpenBSD/www/${i}/*.html ${WC_CVS}/${i}
@@ -628,7 +642,7 @@ done
 cd ${WC_HG} &amp;&amp; hg ci -m "Sync CVS Tags"</tt></pre>
 </div></div>
 </div>
-<h2 id="__9">4. 加入我们</h2>
+<h2 id="__8">4. 加入我们</h2>
 <div class="sectionbody">
 <div class="para"><p>如果大家发现问题，请先检查 <a href="http://hg.sharesource.org/g11n/">sharesource</a>
 中的文件。如果发现 <a href="http://hg.sharesource.org/g11n/">sharesource</a>
@@ -636,12 +650,13 @@ cd ${WC_HG} &amp;&amp; hg ci -m "Sync CVS Tags"</tt></pre>
 中的版本信息，将问题或补丁发给 <a href="http://code.google.com/p/i18n-zh/">i18n-zh</a>
 的<a href="http://groups.google.com/group/i18n-zh/">讨论组</a>或译者。</p></div>
 <div class="para"><p>如果你有兴趣参加，请在 <a href="http://code.google.com/p/i18n-zh/">i18n-zh</a>
-的<a href="http://groups.google.com/group/i18n-zh/">讨论组</a>发言。在提交数个网页的合
-格翻译后，会被授予 <a href="http://hg.sharesource.org/g11n/">sharesource</a> 的写权限。</p></div>
+的<a href="http://groups.google.com/group/i18n-zh/">讨论组</a>发言。
+在提交数个网页的合格翻译后，会被授予 <a href="http://hg.sharesource.org/g11n/">sharesource</a>
+的写权限。</p></div>
 </div>
 <div id="footer">
 <div id="footer-text">
-最后更新于 2008-04-30 02:48:31 +0000
+Last updated 2008-11-15 15:45:37 CST
 </div>
 </div>
 </body>

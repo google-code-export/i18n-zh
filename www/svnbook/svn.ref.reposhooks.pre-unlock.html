@@ -1,14 +1,32 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>pre-unlock</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.ref.reposhooks.html" title="&#29256;&#26412;&#24211;&#38057;&#23376;"><link rel="prev" href="svn.ref.reposhooks.post-lock.html" title="post-lock"><link rel="next" href="svn.ref.reposhooks.post-unlock.html" title="post-unlock"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">pre-unlock</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-lock.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#29256;&#26412;&#24211;&#38057;&#23376;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.ref.reposhooks.post-unlock.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="refentry" lang="zh-cn"><a name="svn.ref.reposhooks.pre-unlock"></a><div class="titlepage"></div><a class="indexterm" name="d0e24964"></a><div class="refnamediv"><h2>&#21517;&#31216;</h2><p>pre-unlock &#8212; &#36335;&#24452;&#35299;&#38145;&#23581;&#35797;&#30340;&#36890;&#30693;&#12290;</p></div><div class="refsection" lang="zh-cn"><a name="d0e24976"></a><h2>&#25551;&#36848;</h2><p>The <code class="literal">pre-unlock</code> hook runs whenever
-          someone attempts to remove a lock on a file.  It can be used
-          to create policies that specify which users are allowed to
-          unlock particular paths.  It's particularly important for
-          determining policies about lock breakage.  If user A locks a
-          file, is user B allowed to break the lock?  What if the lock
-          is more than a week old?  These sorts of things can be
-          decided and enforced by the hook.</p><p>If the <code class="literal">pre-unlock</code> hook program
+   <title>pre-unlock</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_8167"><link rel="home" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.ref.reposhooks.html" title="&#29256;&#26412;&#24211;&#38057;&#23376;"><link rel="prev" href="svn.ref.reposhooks.post-lock.html" title="post-lock"><link rel="next" href="svn.ref.reposhooks.post-unlock.html" title="post-unlock"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">pre-unlock</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-lock.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#29256;&#26412;&#24211;&#38057;&#23376;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.ref.reposhooks.post-unlock.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="refentry" lang="zh-cn"><a name="svn.ref.reposhooks.pre-unlock"></a><div class="titlepage"></div>
+        <a class="indexterm" name="d4e13002"></a>
+        <div class="refnamediv"><h2>&#21517;&#31216;</h2><p>
+          pre-unlock
+           &#8212; &#36335;&#24452;&#35299;&#38145;&#23581;&#35797;&#30340;&#36890;&#30693;&#12290;
+        </p></div>
+        <div class="refsection" lang="zh-cn"><a name="d4e13009"></a><h2>&#25551;&#36848;</h2>
+          
+          <p><code class="literal">pre-unlock</code>&#38057;&#23376;&#22312;&#26576;&#20154;&#20225;&#22270;&#21024;&#38500;&#19968;&#20010;&#25991;&#20214;&#19978;&#30340;&#38057;&#23376;&#26102;&#21457;&#29983;&#65292;&#21487;&#20197;&#29992;&#26469;&#21046;&#23450;&#21738;&#20123;&#29992;&#25143;&#21487;&#20197;&#35299;&#38500;&#25991;&#20214;&#38145;&#23450;&#30340;&#31574;&#30053;&#12290;&#21046;&#23450;&#30772;&#22351;&#38145;&#23450;&#30340;&#31574;&#30053;&#38750;&#24120;&#37325;&#35201;&#65292;&#22914;&#26524;&#19968;&#20010;&#29992;&#25143;A&#38145;&#23450;&#20102;&#19968;&#20010;&#25991;&#20214;&#65292;&#20801;&#35768;&#29992;&#25143;B&#25171;&#24320;&#36825;&#20010;&#38145;&#65311;&#22914;&#26524;&#36825;&#20010;&#38145;&#24050;&#32463;&#19968;&#21608;&#20102;&#21602;&#65311;&#36825;&#31181;&#20107;&#24773;&#21487;&#20197;&#36890;&#36807;&#38057;&#23376;&#20915;&#23450;&#24182;&#25191;&#34892;&#12290;</p>
+          <p>If the <code class="literal">pre-unlock</code> hook program
           returns a nonzero exit value, the unlock action is aborted
-          and anything printed to stderr is marshalled back to the
-          client.</p></div><div class="refsection" lang="zh-cn"><a name="d0e24990"></a><h2>&#36755;&#20837;&#21442;&#25968;</h2><p>&#20256;&#36882;&#32473;&#20320;&#38057;&#23376;&#31243;&#24207;&#30340;&#21629;&#20196;&#34892;&#21442;&#25968;&#65292;&#25353;&#29031;&#39034;&#24207;&#26159;&#65306;</p><div class="orderedlist"><ol type="1"><li><p>Repository path</p></li><li><p>Versioned path which is to be locked</p></li><li><p>Authenticated username of the person attempting the 
-              lock</p></li></ol></div></div><div class="refsection" lang="zh-cn"><a name="d0e25006"></a><h2>&#26222;&#36890;&#29992;&#25143;</h2><p>Access control</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-lock.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.ref.reposhooks.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.ref.reposhooks.post-unlock.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">post-lock&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;post-unlock</td></tr></table></div></body></html>
+          and anything printed to <code class="filename">stderr</code> is marshalled back to the
+          client.</p>
+        </div>
+        <div class="refsection" lang="zh-cn"><a name="d4e13018"></a><h2>&#36755;&#20837;&#21442;&#25968;</h2>
+          
+          <p>&#20256;&#36882;&#32473;&#20320;&#38057;&#23376;&#31243;&#24207;&#30340;&#21629;&#20196;&#34892;&#21442;&#25968;&#65292;&#25353;&#29031;&#39034;&#24207;&#26159;&#65306;</p>
+          <div class="orderedlist"><ol type="1"><li>
+              <p>&#29256;&#26412;&#24211;&#36335;&#24452;</p>
+            </li><li>
+              <p>&#23558;&#35201;&#38145;&#23450;&#30340;&#29256;&#26412;&#21270;&#36335;&#24452;</p>
+            </li><li>
+              <p>&#23581;&#35797;&#38145;&#23450;&#30340;&#35748;&#35777;&#29992;&#25143;&#21517;</p>
+            </li></ol></div>
+        </div>
+        <div class="refsection" lang="zh-cn"><a name="d4e13030"></a><h2>&#26222;&#36890;&#29992;&#25143;</h2>
+          
+          <p>&#35775;&#38382;&#25511;&#21046;</p>
+        </div>
+      </div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-lock.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.ref.reposhooks.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.ref.reposhooks.post-unlock.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">post-lock&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;post-unlock</td></tr></table></div></body></html>

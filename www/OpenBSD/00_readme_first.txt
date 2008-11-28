@@ -119,21 +119,26 @@ $ linkchecker -r 1 example.html
 
 == 版本控制
 
-=== 中文翻译版本库
 中文翻译小组使用 http://hg.sharesource.org/g11n/[sharesource] 作为主要版本库，
 定期同步到 http://code.google.com/p/i18n-zh/[i18n-zh]
-和 http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。
+和 http://code.google.com/p/openbsdonly/[openbsdonly]。
+
 
 在完成翻译，通过各种检查后，由 http://code.google.com/p/i18n-zh/[i18n-zh]
-小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库，然后回写 CVS 标签到
+小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库(steelix-www)，然后回写 CVS 标签到
 http://hg.sharesource.org/g11n/[sharesource]，可能还有
 http://code.google.com/p/i18n-zh/[i18n-zh] 和
-http://code.google.com/p/openbsdonly/[openbsdonly] 的版本库中。 +
+http://code.google.com/p/openbsdonly/[openbsdonly]。
 
-从匿名 CVS 服务器更新 sharesource 的英文版本：
+
+目前官方版本库(openbsd-www)不对翻译人员开放。在 steelix.kd85.com 有一个不对外提供匿名
+CVS 服务的翻译版本库(steelix-www)。翻译人员与翻译协调者联系，取得账户后，
+可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方版本库中。
+
+=== 从匿名 CVS 服务器更新
 ----------------------------------------------------------------
 WC_CVS=/usr/www
-WC_HG=/home/dongsheng/wc/hg/g11n
+WC_HG=/home/dongsheng/var/hg/g11n
 
 # for i in . faq faq/pf openbgpd opencvs openntpd openssh papers porting spamd; do
 #     /bin/rm ${WC_CVS}/${i}/*.html
@@ -148,23 +153,16 @@ cd ${WC_HG}/os/OpenBSD/www/ && hg purge -f .
 # cd ${WC_HG}/os/OpenBSD/www/ && hg ci -m "Sync with AnonCVS" .
 ----------------------------------------------------------------
 
-=== OpenBSD 翻译版本库
-目前官方版本库不对翻译人员开放。
-
-在 steelix.kd85.com 有一个不对外提供匿名 CVS 服务的翻译版本库。翻译人员在取得
-账户后，可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方
-版本库中。
-
 === 从 steelix 检出
 对于 steelix 的文档，不需要全部检出，只检出我们需要的部分即可。首先执行非递归检出，例如：
 ----------------------------------------------------------------
-cd /home/dongsheng/wc
+cd /home/dongsheng/var/cvs
 cvs -d dongsheng@steelix.kd85.com:/cvs co -l -d steelix-www www
 ----------------------------------------------------------------
 
 然后就可以执行非递归更新了，例如只检出/更新当前翻译相关部分：
 ----------------------------------------------------------------
-cd /home/dongsheng/wc/steelix-www
+cd /home/dongsheng/var/cvs/steelix-www
 
 cvs up -l images
 cvs up -l zh
@@ -184,8 +182,8 @@ cvs up -l spamd/zh
 
 从 sharesource 提交到 steelix 后，再向 sharesource 同步 CVS 标签。
 ----------------------------------------------------------------
-WC_CVS=/home/dongsheng/wc/steelix-www
-WC_HG=/home/dongsheng/wc/hg/g11n
+WC_CVS=/home/dongsheng/var/cvs/steelix-www
+WC_HG=/home/dongsheng/var/hg/g11n
 
 for i in zh opencvs/zh faq/zh faq/pf/zh spamd/zh; do
     /bin/cp ${WC_HG}/os/OpenBSD/www/${i}/*.html ${WC_CVS}/${i}
@@ -208,5 +206,6 @@ cd ${WC_HG} && hg ci -m "Sync CVS Tags"
 的http://groups.google.com/group/i18n-zh/[讨论组]或译者。
 
 如果你有兴趣参加，请在 http://code.google.com/p/i18n-zh/[i18n-zh]
-的http://groups.google.com/group/i18n-zh/[讨论组]发言。在提交数个网页的合
-格翻译后，会被授予 http://hg.sharesource.org/g11n/[sharesource] 的写权限。
+的http://groups.google.com/group/i18n-zh/[讨论组]发言。
+在提交数个网页的合格翻译后，会被授予 http://hg.sharesource.org/g11n/[sharesource]
+的写权限。

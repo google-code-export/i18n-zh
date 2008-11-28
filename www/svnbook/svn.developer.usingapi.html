@@ -1,17 +1,20 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>&#20351;&#29992;API</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.developer.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837;Subversion"><link rel="prev" href="svn.developer.insidewc.html" title="&#36827;&#20837;&#24037;&#20316;&#25335;&#36125;&#30340;&#31649;&#29702;&#21306;"><link rel="next" href="svn.ref.html" title="&#31532;&nbsp;9&nbsp;&#31456;&nbsp;Subversion &#23436;&#20840;&#21442;&#32771;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#20351;&#29992;API</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.developer.insidewc.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837;Subversion</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.ref.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.developer.usingapi"></a>&#20351;&#29992;API</h2></div></div></div><p>Developing applications against the Subversion library APIs
+   <title>&#20351;&#29992; API</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_8167"><link rel="home" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.developer.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion"><link rel="prev" href="svn.developer.insidewc.html" title="&#36827;&#20837;&#24037;&#20316;&#21103;&#26412;&#30340;&#31649;&#29702;&#21306;"><link rel="next" href="svn.developer.summary.html" title="&#24635;&#32467;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#20351;&#29992; API</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.developer.insidewc.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;&#23884;&#20837; Subversion</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.developer.summary.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.developer.usingapi"></a>&#20351;&#29992; API</h2></div></div></div>
+      
+      <p>Developing applications against the Subversion library APIs
       is fairly straightforward.  Subversion is primarily a set of C
       libraries, with header (<code class="filename">.h</code>) files that live
       in the <code class="filename">subversion/include</code> directory of the
       source tree.  These headers are copied into your system
-      locations (for example, <code class="filename">/usr/local/include</code>)
+      locations (e.g., <code class="filename">/usr/local/include</code>)
       when you build and install Subversion itself from source.  These
       headers represent the entirety of the functions and types meant
       to be accessible by users of the Subversion libraries.  The
       Subversion developer community is meticulous about ensuring that
-      the public API is well-documented&#8212;refer directly to the
-      header files for that documentation.</p><p>When examining the public header files, the first thing you
+      the public API is well documented&#8212;refer directly to the
+      header files for that documentation.</p>
+      <p>When examining the public header files, the first thing you
       might notice is that Subversion's datatypes and functions are
       namespace-protected.  That is, every public Subversion symbol
       name begins with <code class="literal">svn_</code>, followed by a short
@@ -19,7 +22,7 @@
       <code class="literal">wc</code>, <code class="literal">client</code>,
       <code class="literal">fs</code>, etc.), followed by a single underscore
       (<code class="literal">_</code>), and then the rest of the symbol name.
-      Semi-public functions (used among source files of a given
+      Semipublic functions (used among source files of a given
       library but not by code outside that library, and found inside
       the library directories themselves) differ from this naming
       scheme in that instead of a single underscore after the library
@@ -28,15 +31,20 @@
       a given source file have no special prefixing and are declared
       <code class="literal">static</code>.  Of course, a compiler isn't
       interested in these naming conventions, but they help to clarify
-      the scope of a given function or datatype.</p><p>Another good source of information about programming against
+      the scope of a given function or datatype.</p>
+      <p>Another good source of information about programming against
       the Subversion APIs is the project's own hacking guidelines,
-      which can be found at <code class="uri">http://subversion.tigris.org/hacking.html</code>.  This
+      which you can find at <code class="uri">http://subversion.tigris.org/hacking.html</code>.  This
       document contains useful information, which, while aimed at
       developers and would-be developers of Subversion itself, is
       equally applicable to folks developing against Subversion as a
       set of third-party libraries.
-      <sup>[<a name="d0e15984" href="#ftn.d0e15984" class="footnote">51</a>]</sup>
-    </p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.apr"></a>Apache&#21487;&#31227;&#26893;&#36816;&#34892;&#24211;</h3></div></div></div><p>Along with Subversion's own datatypes, you will see many
+      <sup>[<a name="d4e7393" href="#ftn.d4e7393" class="footnote">51</a>]</sup>
+    </p>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.apr"></a>Apache &#21487;&#31227;&#26893;&#36816;&#34892;&#24211;</h3></div></div></div>
+        
+        <p>Along with Subversion's own datatypes, you will see many
         references to datatypes that begin with
         <code class="literal">apr_</code>&#8212;symbols from the Apache Portable
         Runtime (APR) library.  APR is Apache's portability library,
@@ -49,11 +57,12 @@
         developers immediately recognized the value of using APR as
         well.  This means that there is practically no OS-specific
         code in Subversion itself.  Also, it means that the Subversion
-        client compiles and runs anywhere that Apache HTTP Server
-        does.  Currently this list includes all flavors of Unix,
-        Win32, BeOS, OS/2, and Mac OS X.</p><p>In addition to providing consistent implementations of
+        client compiles and runs anywhere that the Apache HTTP Server
+        does.  Currently, this list includes all flavors of Unix,
+        Win32, BeOS, OS/2, and Mac OS X.</p>
+        <p>In addition to providing consistent implementations of
         system calls that differ across operating systems,
-        <sup>[<a name="d0e16000" href="#ftn.d0e16000" class="footnote">52</a>]</sup>
+        <sup>[<a name="d4e7402" href="#ftn.d4e7402" class="footnote">52</a>]</sup>
         APR gives Subversion immediate access to many custom
         datatypes, such as dynamic arrays and hash tables.  Subversion
         uses these types extensively.  But
@@ -63,9 +72,9 @@
         Subversion uses pools internally for all its memory allocation
         needs (unless an external library requires a different memory
         management mechanism for data passed through its API),
-        <sup>[<a name="d0e16007" href="#ftn.d0e16007" class="footnote">53</a>]</sup>
+        <sup>[<a name="d4e7405" href="#ftn.d4e7405" class="footnote">53</a>]</sup>
         and while a person coding against the Subversion APIs is not
-        required to do the same, they <span class="emphasis"><em>are</em></span>
+        required to do the same, she <span class="emphasis"><em>is</em></span>
         required to provide pools to the API functions that need them.
         This means that users of the Subversion API must also link
         against APR, must call <code class="function">apr_initialize()</code>
@@ -73,30 +82,18 @@
         manage pools for use with Subversion API calls, typically by
         using <code class="function">svn_pool_create()</code>,
         <code class="function">svn_pool_clear()</code>, and
-        <code class="function">svn_pool_destroy()</code>.</p><div class="sidebar"><p class="title"><b>&#20351;&#29992;&#20869;&#23384;&#27744;&#32534;&#31243;</b></p><p>&#20960;&#20046;&#27599;&#19968;&#20010;&#20351;&#29992;&#36807;C&#35821;&#35328;&#30340;&#24320;&#21457;&#32773;&#26366;&#32463;&#24863;&#21497;&#20196;&#20154;&#30031;&#32553;&#30340;&#20869;&#23384;&#31649;&#29702;&#65292;&#20998;&#37197;&#36275;&#22815;&#30340;&#20869;&#23384;&#65292;&#24182;&#19988;&#36861;&#36394;&#20869;&#23384;&#30340;&#20998;&#37197;&#65292;&#22312;&#19981;&#38656;&#35201;&#26102;&#37322;&#25918;&#20869;&#23384;&#8212;&#36825;&#20010;&#20219;&#21153;&#20250;&#38750;&#24120;&#22797;&#26434;&#12290;&#24403;&#28982;&#65292;&#22914;&#26524;&#27809;&#26377;&#27491;&#30830;&#22320;&#20570;&#21040;&#36825;&#19968;&#28857;&#20250;&#23548;&#33268;&#31243;&#24207;&#27585;&#25481;&#33258;&#24049;&#65292;&#25110;&#32773;&#26356;&#21152;&#20005;&#37325;&#19968;&#28857;&#65292;&#25226;&#30005;&#33041;&#25630;&#30251;&#12290;</p><p>Higher-level languages, on the other hand, either take
-          the job of memory management away from you completely or
-          make it something you toy with only when doing extremely
-          tight program optimization.  Languages such as Java and
-          Python use <em class="firstterm">garbage collection</em>,
-          allocating memory for objects when needed, and automatically
-          freeing that memory when the object is no longer in
-          use.</p><p>APR provides a middle-ground approach called
-          <em class="firstterm">pool-based memory management</em>.  It
-          allows the developer to control memory usage at a lower
-          resolution&#8212;per chunk (or &#8220;<span class="quote">pool</span>&#8221;) of
-          memory, instead of per allocated object.  Rather than using
-          <code class="function">malloc()</code> and friends to allocate enough
-          memory for a given object, you ask APR to allocate the
-          memory from a memory pool.  When you're finished using the
-          objects you've created in the pool, you destroy the entire
-          pool, effectively de-allocating the memory consumed by
-          <span class="emphasis"><em>all</em></span> the objects you allocated from it.
-          Thus, rather than keeping track of individual objects that
-          need to be de-allocated, your program simply considers the
-          general lifetimes of those objects and allocates the objects
-          in a pool whose lifetime (the time between the pool's
-          creation and its deletion) matches the object's
-          needs.</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.urlpath"></a>URL &#21644;&#36335;&#24452;&#38656;&#27714;</h3></div></div></div><p>With remote version control operation as the whole point
+        <code class="function">svn_pool_destroy()</code>.</p>
+        <div class="sidebar"><p class="title"><b>&#20351;&#29992;&#20869;&#23384;&#27744;&#32534;&#31243;</b></p>
+          
+          <p>&#20960;&#20046;&#27599;&#19968;&#20010;&#20351;&#29992;&#36807;C&#35821;&#35328;&#30340;&#24320;&#21457;&#32773;&#26366;&#32463;&#24863;&#21497;&#20196;&#20154;&#30031;&#32553;&#30340;&#20869;&#23384;&#31649;&#29702;&#65292;&#20998;&#37197;&#36275;&#22815;&#30340;&#20869;&#23384;&#65292;&#24182;&#19988;&#36861;&#36394;&#20869;&#23384;&#30340;&#20998;&#37197;&#65292;&#22312;&#19981;&#38656;&#35201;&#26102;&#37322;&#25918;&#20869;&#23384;&#8212;&#36825;&#20010;&#20219;&#21153;&#20250;&#38750;&#24120;&#22797;&#26434;&#12290;&#24403;&#28982;&#65292;&#22914;&#26524;&#27809;&#26377;&#27491;&#30830;&#22320;&#20570;&#21040;&#36825;&#19968;&#28857;&#20250;&#23548;&#33268;&#31243;&#24207;&#27585;&#25481;&#33258;&#24049;&#65292;&#25110;&#32773;&#26356;&#21152;&#20005;&#37325;&#19968;&#28857;&#65292;&#25226;&#30005;&#33041;&#25630;&#30251;&#12290;</p>
+          <p>&#21478;&#19968;&#26041;&#38754;&#39640;&#32423;&#35821;&#35328;&#20351;&#24320;&#21457;&#32773;&#23436;&#20840;&#25670;&#33073;&#20102;&#20869;&#23384;&#31649;&#29702;&#65292;<span style="color: red">&lt;placeholder-1&gt;&lt;/placeholder-1&gt;</span>Java&#21644;Python&#20043;&#31867;&#30340;&#35821;&#35328;&#20351;&#29992;<em class="firstterm">&#22403;&#22334;&#25910;&#38598;</em>&#21407;&#29702;&#65292;&#22312;&#38656;&#35201;&#30340;&#26102;&#20505;&#20998;&#37197;&#23545;&#35937;&#20869;&#23384;&#65292;&#22312;&#19981;&#20351;&#29992;&#26102;&#36827;&#34892;&#28165;&#29702;&#12290;</p>
+          <p>APR&#25552;&#20379;&#20102;&#19968;&#31181;&#21483;&#20570;&#27744;&#22522;&#30784;&#30340;&#20013;&#31561;&#30340;&#20869;&#23384;&#31649;&#29702;&#26041;&#27861;&#65292;&#20801;&#35768;&#24320;&#21457;&#32773;&#20197;&#19968;&#31181;&#20302;&#20998;&#36776;&#29575;&#30340;&#26041;&#24335;&#25511;&#21046;&#20869;&#23384;&#8212;&#27599;&#22359;(&#25110;&#27744;&#8220;<span class="quote">pool</span>&#8221;)&#30340;&#20869;&#23384;&#65292;&#32780;&#19981;&#26159;&#27599;&#20010;&#23545;&#35937;&#12290;&#19981;&#26159;&#20351;&#29992;<code class="function">malloc()</code>&#21644;&#20854;&#20182;&#25353;&#29031;&#23545;&#35937;&#20998;&#37197;&#20869;&#23384;&#30340;&#26041;&#24335;&#65292;&#20320;&#35201;&#27714;APR&#20174;&#20869;&#23384;&#21019;&#24314;&#19968;&#27573;&#20869;&#23384;&#27744;&#65292;&#24403;&#20320;&#32467;&#26463;&#20351;&#29992;&#22312;&#27744;&#20013;&#21019;&#24314;&#30340;&#23545;&#35937;&#65292;&#20320;&#38144;&#27585;&#27744;&#65292;&#21487;&#20197;&#26377;&#25928;&#22320;&#21462;&#28040;&#20854;&#20013;&#30340;&#23545;&#35937;&#28040;&#32791;&#30340;&#20869;&#23384;&#12290;&#36890;&#36807;&#27744;&#65292;&#20320;&#19981;&#38656;&#35201;&#36319;&#36394;&#27599;&#20010;&#23545;&#35937;&#30340;&#20869;&#23384;&#37322;&#25918;&#65292;&#20320;&#30340;&#31243;&#24207;&#21482;&#38656;&#35201;&#36319;&#36394;&#36825;&#20123;&#23545;&#35937;&#65292;&#23558;&#23545;&#35937;&#20998;&#37197;&#21040;&#27744;&#20013;&#65292;&#32780;&#27744;&#30340;&#29983;&#21629;&#21608;&#26399;(&#27744;&#30340;&#21019;&#24314;&#21644;&#21024;&#38500;&#20043;&#38388;&#30340;&#26102;&#38388;)&#28385;&#36275;&#25152;&#26377;&#23545;&#35937;&#30340;&#38656;&#35201;&#12290;</p>
+        </div>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.urlpath"></a>URL &#21644;&#36335;&#24452;&#38656;&#27714;</h3></div></div></div>
+        
+        <p>With remote version control operation as the whole point
         of Subversion's existence, it makes sense that some attention
         has been paid to internationalization (i18n) support.  After
         all, while &#8220;<span class="quote">remote</span>&#8221; might mean &#8220;<span class="quote">across the
@@ -110,20 +107,28 @@
         <code class="filename">libsvn_client</code> interface needs to first
         convert paths from the locale-specific encoding to UTF-8
         before passing those paths to the Subversion libraries, and
-        then re-convert any resultant output paths from Subversion
+        then reconvert any resultant output paths from Subversion
         back into the locale's encoding before using those paths for
         non-Subversion purposes.  Fortunately, Subversion provides a
         suite of functions (see
-        <code class="filename">subversion/include/svn_utf.h</code>) that can be
-        used by any program to do these conversions.</p><p>Also, Subversion APIs require all URL parameters to be
-        properly URI-encoded.  So, instead of passing
-        <code class="uri">file:///home/username/My File.txt</code> as the URL of a
-        file named <code class="filename">My File.txt</code>, you need to pass
-        <code class="uri">file:///home/username/My%20File.txt</code>.  Again,
-        Subversion supplies helper functions that your application can
-        use&#8212;<code class="function">svn_path_uri_encode()</code> and
-        <code class="function">svn_path_uri_decode()</code>, for URI encoding
-        and decoding, respectively.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.otherlangs"></a>&#20351;&#29992; C &#21644; C++ &#20197;&#22806;&#30340;&#35821;&#35328;</h3></div></div></div><p>&#38500;C&#35821;&#35328;&#20197;&#22806;&#65292;&#22914;&#26524;&#20320;&#23545;&#20351;&#29992;&#20854;&#20182;&#35821;&#35328;&#32467;&#21512;Subversion&#24211;&#24863;&#20852;&#36259;&#8212;&#22914;Python&#33050;&#26412;&#25110;&#26159;Java&#24212;&#29992;&#8212;Subversion&#36890;&#36807;&#31616;&#21333;&#21253;&#35065;&#29983;&#25104;&#22120;(SWIG)&#25552;&#20379;&#20102;&#26368;&#21021;&#30340;&#25903;&#25345;&#12290;Subversion&#30340;SWIG&#32465;&#23450;&#20301;&#20110;<code class="filename">subversion/bindings/swig</code>&#65292;&#24182;&#19988;&#24930;&#24930;&#30340;&#36208;&#21521;&#25104;&#29087;&#36827;&#20837;&#21487;&#29992;&#29366;&#24577;&#12290;&#36825;&#20010;&#32465;&#23450;&#20801;&#35768;&#20320;&#30452;&#25509;&#35843;&#29992;Subversion&#30340;API&#26041;&#27861;&#65292;&#20351;&#29992;&#21253;&#35065;&#22120;&#20250;&#25226;&#33050;&#26412;&#25968;&#25454;&#31867;&#22411;&#36716;&#21270;&#20026;Subversion&#38656;&#35201;&#30340;C&#35821;&#35328;&#24211;&#31867;&#22411;&#12290;</p><p>Significant efforts have been made towards creating
+        <code class="filename">subversion/include/svn_utf.h</code>) that 
+        any program can use to do these conversions.</p>
+        <p>&#21516;&#26679;&#65292;Subversion&#30340;API&#38656;&#35201;&#25152;&#26377;&#30340;URL&#21442;&#25968;&#26159;&#27491;&#30830;&#30340;URI&#32534;&#30721;&#65292;&#25152;&#20197;&#65292;&#25105;&#20204;&#19981;&#20250;&#20256;&#36882;<code class="uri">file:///home/username/My File.txt</code>&#20316;&#20026;<code class="filename">My File.txt</code>&#30340;URL&#65292;&#32780;&#35201;&#20256;&#36882;<code class="uri">file:///home/username/My%20File.txt</code>&#12290;&#20877;&#27425;&#65292;Subversion&#25552;&#20379;&#20102;&#19968;&#20123;&#20320;&#21487;&#20197;&#20351;&#29992;&#30340;&#21161;&#25163;&#26041;&#27861;&#8212;<code class="function">svn_path_uri_encode()</code>&#21644;<code class="function">svn_path_uri_decode()</code>&#65292;&#20998;&#21035;&#29992;&#26469;URI&#30340;&#32534;&#30721;&#21644;&#35299;&#30721;&#12290;</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.otherlangs"></a>&#20351;&#29992; C &#21644; C++ &#20197;&#22806;&#30340;&#35821;&#35328;</h3></div></div></div>
+        
+        <p>If you are interested in using the Subversion libraries in
+        conjunction with something other than a C program&#8212;say, a
+        Python or Perl script&#8212;Subversion has some support for this
+        via the Simplified Wrapper and Interface Generator (SWIG).  The
+        SWIG bindings for Subversion are located in
+        <code class="filename">subversion/bindings/swig</code>.  They are still
+        maturing, but they are usable.  These bindings allow you
+        to call Subversion API functions indirectly, using wrappers that
+        translate the datatypes native to your scripting language into
+        the datatypes needed by Subversion's C libraries.</p>
+        <p>Significant efforts have been made toward creating
         functional SWIG-generated bindings for Python, Perl, and Ruby.
         To some extent, the work done preparing the SWIG interface
         files for these languages is reusable in efforts to generate
@@ -132,20 +137,10 @@
         among others).  However, some extra programming is required to
         compensate for complex APIs that SWIG needs some help
         translating between languages.  For more information on SWIG
-        itself, see the project's web site at <code class="uri">http://www.swig.org/</code>.</p><p>Subversion also has language bindings for Java.  The
-        javahl bindings (located in
-        <code class="filename">subversion/bindings/java</code> in the
-        Subversion source tree) aren't SWIG-based, but are instead a
-        mixture of Java and hand-coded JNI.  Javahl covers most
-        Subversion client-side APIs and is specifically targeted at
-        implementors of Java-based Subversion clients and IDE
-        integrations.</p><p>Subversion's language bindings tend to lack the level of
-        developer attention given to the core Subversion modules, but
-        can generally be trusted as production-ready.  A number of
-        scripts and applications, alternative Subversion GUI clients,
-        and other third-party tools are successfully using
-        Subversion's language bindings today to accomplish their
-        Subversion integrations.</p><p>It's worth noting here that there are other options for
+        itself, see the project's web site at <code class="uri">http://www.swig.org/</code>.</p>
+        <p>Subversion&#20063;&#26377;Java&#30340;&#35821;&#35328;&#32465;&#23450;&#65292;javahl&#32465;&#23450;(&#20301;&#20110;Subversion&#28304;&#30446;&#24405;&#26641;&#30340;<code class="filename">subversion/bindings/java</code>)&#19981;&#26159;&#22522;&#20110;SWIG&#30340;&#65292;&#32780;&#26159;javah&#21644;&#25163;&#20889;JNI&#30340;&#28151;&#21512;&#65292;JavaHL&#20960;&#20046;&#35206;&#30422;Subversion&#23458;&#25143;&#31471;&#30340;API&#65292;&#30446;&#26631;&#26159;&#20316;&#20026;Java&#22522;&#30784;&#30340;Subversion&#23458;&#25143;&#31471;&#21644;&#38598;&#25104;IDE&#30340;&#23454;&#29616;&#12290;</p>
+        <p>Subversion&#30340;&#35821;&#35328;&#32465;&#23450;&#32570;&#20047;Subversion&#26680;&#24515;&#27169;&#22359;&#30340;&#20851;&#27880;&#65292;&#20294;&#26159;&#36890;&#24120;&#21487;&#20197;&#20316;&#20026;&#19968;&#20010;&#20135;&#21697;&#20449;&#36182;&#12290;&#22823;&#37327;&#33050;&#26412;&#12289;&#24212;&#29992;&#12289;Subversion&#30340;GUI&#23458;&#25143;&#31471;&#21644;&#20854;&#20182;&#31532;&#19977;&#26041;&#24037;&#20855;&#29616;&#22312;&#24050;&#32463;&#25104;&#21151;&#22320;&#36816;&#29992;&#20102;Subversion&#35821;&#35328;&#32465;&#23450;&#26469;&#23436;&#25104;Subversion&#30340;&#38598;&#25104;&#12290;</p>
+        <p>It's worth noting here that there are other options for
         interfacing with Subversion using other languages:  alternative
         bindings for Subversion that aren't provided by the
         Subversion development community at all.  You can find links
@@ -156,14 +151,18 @@
         binding with Python.  PySVN boasts of a more Pythonic
         interface than the more C-like APIs provided by Subversion's
         own Python bindings.  And if you're looking for a pure Java
-        implementation of Subversion, check out SVNKit (<code class="uri">http://svnkit.com/</code>), which is Subversion re-written
-        from the ground up in Java.</p><div class="sidebar"><p class="title"><b>SVNKit versus javahl</b></p><p>In 2005, a small company called TMate announced the
+        implementation of Subversion, check out SVNKit (<code class="uri">http://svnkit.com/</code>), which is Subversion rewritten
+        from the ground up in Java.</p>
+        <div class="sidebar"><p class="title"><b>SVNKit &#19982; javahl</b></p>
+          
+          <p>In 2005, a small company called TMate announced the
           1.0.0 release of JavaSVN&#8212;a pure Java implementation of
           Subversion.  Since then, the project has been renamed to
           SVNKit (available at <code class="uri">http://svnkit.com/</code>)
           and has seen great success as a provider of Subversion
           functionality to various Subversion clients, IDE
-          integrations, and other third-party tools.</p><p>The SVNKit library is interesting in that, unlike the
+          integrations, and other third-party tools.</p>
+          <p>The SVNKit library is interesting in that, unlike the
           javahl library, it is not merely a wrapper around the
           official Subversion core libraries.  In fact, it shares no
           code with Subversion at all.  But while it is easy to
@@ -180,14 +179,24 @@
           already happened once&#8212;SVNKit cannot access BDB-backed
           Subversion repositories via the <code class="literal">file://</code>
           protocol because there's no pure Java implementation of
-          Berkeley DB that is file format-compatible with the native
-          implementation of that library.</p><p>That said, SVNKit has a well-established track record of
+          Berkeley DB that is file-format-compatible with the native
+          implementation of that library.</p>
+          <p>That said, SVNKit has a well-established track record of
           reliability.  And a pure Java solution is much more robust
           in the face of programming errors&#8212;a bug in SVNKit
-          might raise an Exception, but a bug in the Subversion core
+          might raise a catchable Java Exception, but a bug in the Subversion core
           libraries as accessed via javahl can bring down your entire
           Java Runtime Environment.  So, weigh the costs when choosing
-          a Java-based Subversion implementation.</p></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.codesamples"></a>&#20195;&#30721;&#26679;&#20363;</h3></div></div></div><p><a class="xref" href="svn.developer.usingapi.html#svn.developer.layerlib.repos.ex-1" title="&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.1 &#8220;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;&#8221;</a>&#21253;&#21547;&#20102;&#19968;&#27573;C&#20195;&#30721;(C&#32534;&#20889;)&#25551;&#36848;&#20102;&#25105;&#20204;&#35752;&#35770;&#30340;&#27010;&#24565;&#65292;&#23427;&#20351;&#29992;&#20102;&#29256;&#26412;&#24211;&#21644;&#25991;&#20214;&#31995;&#32479;&#25509;&#21475;(&#21487;&#20197;&#36890;&#36807;&#26041;&#27861;&#21517;<code class="literal">svn_repos_</code>&#21644;<code class="literal">svn_fs_</code>&#20998;&#36776;)&#21019;&#24314;&#20102;&#19968;&#20010;&#28155;&#21152;&#30446;&#24405;&#30340;&#20462;&#35746;&#29256;&#26412;&#12290;&#20320;&#21487;&#20197;&#30475;&#21040;APR&#24211;&#30340;&#20351;&#29992;&#65292;&#20026;&#20102;&#20869;&#23384;&#20998;&#37197;&#32780;&#20256;&#36882;&#65292;&#36825;&#20123;&#20195;&#30721;&#20063;&#25581;&#24320;&#20102;&#19968;&#20123;&#20851;&#20110;Subversion&#38169;&#35823;&#22788;&#29702;&#30340;&#26214;&#28073;&#20107;&#23454;&#8212;&#25152;&#26377;&#30340;Subversion&#38169;&#35823;&#24517;&#39035;&#38656;&#35201;&#26126;&#30830;&#30340;&#22788;&#29702;&#20197;&#38450;&#27490;&#20869;&#23384;&#27844;&#38706;(&#22312;&#26576;&#20123;&#24773;&#20917;&#19979;&#65292;&#24212;&#29992;&#22833;&#36133;)&#12290;</p><div class="example"><a name="svn.developer.layerlib.repos.ex-1"></a><p class="title"><b>&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;</b></p><div class="example-contents"><pre class="programlisting">
+          a Java-based Subversion implementation.</p>
+        </div>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.developer.usingapi.codesamples"></a>&#20195;&#30721;&#26679;&#20363;</h3></div></div></div>
+        
+        <p><a class="xref" href="svn.developer.usingapi.html#svn.developer.layerlib.repos.ex-1" title="&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.1 &#8220;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;&#8221;</a>&#21253;&#21547;&#20102;&#19968;&#27573;C&#20195;&#30721;(C&#32534;&#20889;)&#25551;&#36848;&#20102;&#25105;&#20204;&#35752;&#35770;&#30340;&#27010;&#24565;&#65292;&#23427;&#20351;&#29992;&#20102;&#29256;&#26412;&#24211;&#21644;&#25991;&#20214;&#31995;&#32479;&#25509;&#21475;(&#21487;&#20197;&#36890;&#36807;&#26041;&#27861;&#21517;<code class="literal">svn_repos_</code>&#21644;<code class="literal">svn_fs_</code>&#20998;&#36776;)&#21019;&#24314;&#20102;&#19968;&#20010;&#28155;&#21152;&#30446;&#24405;&#30340;&#20462;&#35746;&#29256;&#26412;&#12290;&#20320;&#21487;&#20197;&#30475;&#21040;APR&#24211;&#30340;&#20351;&#29992;&#65292;&#20026;&#20102;&#20869;&#23384;&#20998;&#37197;&#32780;&#20256;&#36882;&#65292;&#36825;&#20123;&#20195;&#30721;&#20063;&#25581;&#24320;&#20102;&#19968;&#20123;&#20851;&#20110;Subversion&#38169;&#35823;&#22788;&#29702;&#30340;&#26214;&#28073;&#20107;&#23454;&#8212;&#25152;&#26377;&#30340;Subversion&#38169;&#35823;&#24517;&#39035;&#38656;&#35201;&#26126;&#30830;&#30340;&#22788;&#29702;&#20197;&#38450;&#27490;&#20869;&#23384;&#27844;&#38706;(&#22312;&#26576;&#20123;&#24773;&#20917;&#19979;&#65292;&#24212;&#29992;&#22833;&#36133;)&#12290;</p>
+        <div class="example"><a name="svn.developer.layerlib.repos.ex-1"></a><p class="title"><b>&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;</b></p><div class="example-contents">
+          
+          <pre class="programlisting">
 /* Convert a Subversion error into a simple boolean error code.
  *
  * NOTE:  Subversion errors must be cleared (using svn_error_clear())
@@ -209,7 +218,7 @@
  * repository located at REPOS_PATH.  Perform all memory allocation in
  * POOL.  This function will create a new revision for the addition of
  * NEW_DIRECTORY.  Return zero if the operation completes
- * successfully, non-zero otherwise.
+ * successfully, nonzero otherwise.
  */
 static int
 make_new_directory(const char *repos_path,
@@ -289,23 +298,26 @@ make_new_directory(const char *repos_path,
 
   INT_ERR(err);
 } 
-</pre></div></div><br class="example-break"><p>Note that in <a class="xref" href="svn.developer.usingapi.html#svn.developer.layerlib.repos.ex-1" title="&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.1 &#8220;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;&#8221;</a>, the code could
+</pre>
+        </div></div><br class="example-break">
+        <p>Note that in <a class="xref" href="svn.developer.usingapi.html#svn.developer.layerlib.repos.ex-1" title="&#20363;&nbsp;8.1.&nbsp;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.1 &#8220;&#20351;&#29992;&#29256;&#26412;&#24211;&#23618;&#8221;</a>, the code could
         just as easily have committed the transaction using
         <code class="function">svn_fs_commit_txn()</code>.  But the filesystem
         API knows nothing about the repository library's hook
         mechanism.  If you want your Subversion repository to
         automatically perform some set of non-Subversion tasks every
-        time you commit a transaction (for example, sending an
+        time you commit a transaction (e.g., sending an
         email that describes all the changes made in that transaction
         to your developer mailing list), you need to use the
         <code class="filename">libsvn_repos</code>-wrapped version of that
         function, which adds the hook triggering
         functionality&#8212;in this case,
         <code class="function">svn_repos_fs_commit_txn()</code>.  (For more
-        information regarding Subversion's repository hooks, see <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;">&#8220;&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;&#8221;&#19968;&#33410;</a>.)</p><p>Now let's switch languages.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.2 &#8220;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;&#8221;</a> is a
-        sample program that uses Subversion's SWIG Python bindings to
-        recursively crawl the youngest repository revision, and to
-        print the various paths reached during the crawl.</p><div class="example"><a name="svn.developer.usingapi.otherlangs.ex-1"></a><p class="title"><b>&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;</b></p><div class="example-contents"><pre class="programlisting">
+        information regarding Subversion's repository hooks, see <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;">&#8220;&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;&#8221;&#19968;&#33410;</a>.)</p>
+        <p>&#29616;&#22312;&#25105;&#20204;&#36716;&#25442;&#19968;&#19979;&#35821;&#35328;&#65292;<a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.2 &#8220;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;&#8221;</a>&#26159;&#20351;&#29992;Subversion SWIG&#30340;Python&#32465;&#23450;&#23454;&#29616;&#20102;&#36890;&#36807;&#36941;&#21382;&#29256;&#26412;&#24211;&#33719;&#21462;&#26368;&#26032;&#29256;&#26412;&#24211;&#20462;&#35746;&#29256;&#26412;&#65292;&#24182;&#19988;&#25171;&#21360;&#36941;&#21382;&#35775;&#38382;&#36335;&#24452;&#30340;&#21151;&#33021;&#12290;</p>
+        <div class="example"><a name="svn.developer.usingapi.otherlangs.ex-1"></a><p class="title"><b>&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;</b></p><div class="example-contents">
+          
+          <pre class="programlisting">
 #!/usr/bin/python
 
 """Crawl a repository, printing versioned object path names."""
@@ -369,26 +381,20 @@ if __name__ == "__main__":
 
     # Do the real work.
     crawl_youngest(repos_path)
-</pre></div></div><br class="example-break"><p>This same program in C would need to deal with APR's
-        memory pool system.  But Python handles memory usage
-        automatically, and Subversion's Python bindings adhere to that
-        convention.  In C, you'd be working with custom datatypes
-        (such as those provided by the APR library) for representing
-        the hash of entries and the list of paths, but Python has
-        hashes (called &#8220;<span class="quote">dictionaries</span>&#8221;) and lists as
-        built-in datatypes, and it provides a rich collection of
-        functions for operating on those types.  So SWIG (with the
-        help of some customizations in Subversion's language bindings
-        layer) takes care of mapping those custom datatypes into the
-        native datatypes of the target language.  This provides a more
-        intuitive interface for users of that language.</p><p>The Subversion Python bindings can be used for working
+</pre>
+        </div></div><br class="example-break">
+        <p>&#21516;&#26679;&#30340;C&#31243;&#24207;&#38656;&#35201;&#22788;&#29702;APR&#20869;&#23384;&#27744;&#31995;&#32479;&#65292;&#20294;&#26159;Python&#33258;&#24049;&#22788;&#29702;&#20869;&#23384;&#65292;Subversion&#30340;Python&#32465;&#23450;&#20063;&#36981;&#24490;&#36825;&#31181;&#20064;&#24815;&#12290;&#22312;C&#35821;&#35328;&#20013;&#65292;&#20026;&#34920;&#31034;&#36335;&#24452;&#21644;&#26465;&#30446;&#30340;hash&#38656;&#35201;&#22788;&#29702;&#33258;&#23450;&#20041;&#30340;&#25968;&#25454;&#31867;&#22411;(&#20363;&#22914;APR&#25552;&#20379;&#30340;&#24211;)&#65292;&#20294;&#26159;Python&#26377;hash(&#21483;&#20570;&#8220;<span class="quote">dictionaries</span>&#8221;)&#65292;&#24182;&#19988;&#26159;&#20869;&#32622;&#25968;&#25454;&#31867;&#22411;&#65292;&#32780;&#19988;&#36824;&#25552;&#20379;&#20102;&#19968;&#31995;&#21015;&#25805;&#20316;&#36825;&#20123;&#31867;&#22411;&#30340;&#20989;&#25968;&#65292;&#25152;&#20197;SWIG(&#36890;&#36807;Subversion&#30340;&#35821;&#35328;&#32465;&#23450;&#23618;&#30340;&#33258;&#23450;&#20041;&#24110;&#21161;)&#35201;&#23567;&#24515;&#30340;&#23558;&#36825;&#20123;&#33258;&#23450;&#20041;&#25968;&#25454;&#31867;&#22411;&#26144;&#23556;&#21040;&#30446;&#26631;&#35821;&#35328;&#30340;&#25968;&#25454;&#31867;&#22411;&#65292;&#36825;&#20026;&#30446;&#26631;&#35821;&#35328;&#30340;&#29992;&#25143;&#25552;&#20379;&#20102;&#19968;&#20010;&#26356;&#21152;&#30452;&#35266;&#30340;&#25509;&#21475;&#12290;</p>
+        <p>The Subversion Python bindings can be used for working
         copy operations, too.  In the previous section of this
         chapter, we mentioned the <code class="filename">libsvn_client</code>
         interface and how it exists for the sole purpose of
-        simplifying the process of writing a Subversion client.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-2" title="&#20363;&nbsp;8.3.&nbsp;A Python status crawler">&#20363;&nbsp;8.3 &#8220;A Python status crawler&#8221;</a> is a brief
+        simplifying the process of writing a Subversion client.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-2" title="&#20363;&nbsp;8.3.&nbsp;&#19968;&#20010; Python &#29366;&#24577;&#29228;&#34411;">&#20363;&nbsp;8.3 &#8220;&#19968;&#20010; Python &#29366;&#24577;&#29228;&#34411;&#8221;</a> is a brief
         example of how that library can be accessed via the SWIG
-        Python bindings to recreate a scaled-down version of the
-        <span class="command"><strong>svn status</strong></span> command.</p><div class="example"><a name="svn.developer.usingapi.otherlangs.ex-2"></a><p class="title"><b>&#20363;&nbsp;8.3.&nbsp;A Python status crawler</b></p><div class="example-contents"><pre class="programlisting">
+        Python bindings to re-create a scaled-down version of the
+        <span class="command"><strong>svn status</strong></span> command.</p>
+        <div class="example"><a name="svn.developer.usingapi.otherlangs.ex-2"></a><p class="title"><b>&#20363;&nbsp;8.3.&nbsp;&#19968;&#20010; Python &#29366;&#24577;&#29228;&#34411;</b></p><div class="example-contents">
+          
+          <pre class="programlisting">
 #!/usr/bin/env python
 
 """Crawl a working copy directory, printing status information."""
@@ -472,9 +478,11 @@ if __name__ == '__main__':
     except svn.core.SubversionException, e:
         sys.stderr.write("Error (%d): %s\n" % (e.apr_err, e.message))
         sys.exit(1)
-</pre></div></div><br class="example-break"><p>As was the case in <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.2 &#8220;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;&#8221;</a>, this
+</pre>
+        </div></div><br class="example-break">
+        <p>As was the case in <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="&#20363;&nbsp;8.2.&nbsp;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;">&#20363;&nbsp;8.2 &#8220;&#20351;&#29992; Python &#22788;&#29702;&#29256;&#26412;&#24211;&#23618;&#8221;</a>, this
         program is pool-free and uses, for the most part, normal
-        Python data types.  The call to
+        Python datatypes.  The call to
         <code class="function">svn_client_ctx_t()</code> is deceiving because
         the public Subversion API has no such function&#8212;this just
         happens to be a case where SWIG's automatic language
@@ -486,4 +494,6 @@ if __name__ == '__main__':
         <span class="emphasis"><em>not</em></span> do so runs the risk of triggering the
         underlying Subversion C library's assertions about such
         things, which translates into rather immediate and
-        unceremonious program abortion.</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e15984" href="#d0e15984" class="para">51</a>] </sup>&#24403;&#28982;&#65292;Subversion&#20351;&#29992;Subversion&#30340;API&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e16000" href="#d0e16000" class="para">52</a>] </sup>Subversion&#20351;&#29992;&#23613;&#21487;&#33021;&#22810;ANSI&#31995;&#32479;&#35843;&#29992;&#21644;&#25968;&#25454;&#31867;&#22411;&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e16007" href="#d0e16007" class="para">53</a>] </sup>Neon&#21644;Berkeley DB&#23601;&#26159;&#36825;&#31181;&#24211;&#30340;&#20363;&#23376;&#12290;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.developer.insidewc.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.developer.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.ref.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#36827;&#20837;&#24037;&#20316;&#25335;&#36125;&#30340;&#31649;&#29702;&#21306;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#31532;&nbsp;9&nbsp;&#31456;&nbsp;Subversion &#23436;&#20840;&#21442;&#32771;</td></tr></table></div></body></html>
+        unceremonious program abortion.</p>
+      </div>
+    <div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d4e7393" href="#d4e7393" class="para">51</a>] </sup>&#24403;&#28982;&#65292;Subversion&#20351;&#29992;Subversion&#30340;API&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d4e7402" href="#d4e7402" class="para">52</a>] </sup>Subversion&#20351;&#29992;&#23613;&#21487;&#33021;&#22810;ANSI&#31995;&#32479;&#35843;&#29992;&#21644;&#25968;&#25454;&#31867;&#22411;&#12290;</p></div><div class="footnote"><p><sup>[<a name="ftn.d4e7405" href="#d4e7405" class="para">53</a>] </sup>Neon&#21644;Berkeley DB&#23601;&#26159;&#36825;&#31181;&#24211;&#30340;&#20363;&#23376;&#12290;</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.developer.insidewc.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.developer.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.developer.summary.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#36827;&#20837;&#24037;&#20316;&#21103;&#26412;&#30340;&#31649;&#29702;&#21306;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#24635;&#32467;</td></tr></table></div></body></html>

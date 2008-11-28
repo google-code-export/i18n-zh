@@ -1,15 +1,21 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>Advanced Merging</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.73.2"><link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.branchmerge.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;"><link rel="prev" href="svn.branchmerge.basicmerging.html" title="Basic Merging"><link rel="next" href="svn.branchmerge.switchwc.html" title="&#20351;&#29992;&#20998;&#25903;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Advanced Merging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.branchmerge.basicmerging.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.branchmerge.switchwc.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.branchmerge.advanced"></a>Advanced Merging</h2></div></div></div><p>Here ends the automated magic.  Sooner or later, once you
+   <title>&#39640;&#32423;&#21512;&#24182;</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_8167"><link rel="home" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;"><link rel="up" href="svn.branchmerge.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;"><link rel="prev" href="svn.branchmerge.basicmerging.html" title="&#22522;&#26412;&#21512;&#24182;"><link rel="next" href="svn.branchmerge.switchwc.html" title="&#20351;&#29992;&#20998;&#25903;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#39640;&#32423;&#21512;&#24182;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.branchmerge.basicmerging.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.branchmerge.switchwc.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="svn.branchmerge.advanced"></a>&#39640;&#32423;&#21512;&#24182;</h2></div></div></div>
+      
+      <p>Here ends the automated magic.  Sooner or later, once you
       get the hang of branching and merging, you're going to have to
       ask Subversion to merge <span class="emphasis"><em>specific</em></span> changes
-      from one place to another.  In order to do this, you're going to
+      from one place to another.  To do this, you're going to
       have to start passing more complicated arguments to <span class="command"><strong>svn
-      merge</strong></span>.  This next section describes the fully expanded
+      merge</strong></span>.  The next section describes the fully expanded
       syntax of the command and discusses a number of common
-      scenarios that require it.</p><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.cherrypicking"></a>Cherrypicking</h3></div></div></div><p>Just as the term &#8220;<span class="quote">changeset</span>&#8221; is often used in
+      scenarios that require it.</p>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.cherrypicking"></a>&#25688;&#24405;&#21512;&#24182;</h3></div></div></div>
+        
+        <p>Just as the term &#8220;<span class="quote">changeset</span>&#8221; is often used in
         version control systems, so is the term
-        of <em class="firstterm">cherrypicking</em>.  This word refers to
+        <em class="firstterm">cherrypicking</em>.  This word refers to
         the act of choosing <span class="emphasis"><em>one</em></span> specific
         changeset from a branch and replicating it to another.
         Cherrypicking may also refer to the act of duplicating a
@@ -17,18 +23,20 @@
         from one branch to another.  This is in contrast to more
         typical merging scenarios, where the &#8220;<span class="quote">next</span>&#8221;
         contiguous range of revisions is duplicated
-        automatically.</p><p>Why would people want to replicate just a single change?
+        automatically.</p>
+        <p>Why would people want to replicate just a single change?
         It comes up more often than you'd think.  For example, let's
         go back in time and imagine that you haven't yet merged your
-        private feature-branch back to the trunk.  At the
+        private feature branch back to the trunk.  At the
         water cooler, you get word that Sally made an interesting
         change to <code class="filename">integer.c</code> on the trunk.
         Looking over the history of commits to the trunk, you see that
         in revision 355 she fixed a critical bug that directly
         impacts the feature you're working on.  You might not be ready
         to merge all the trunk changes to your branch just yet, but
-        you certainly need that particular bugfix in order to continue
-        your work.</p><pre class="screen">
+        you certainly need that particular bug fix in order to continue
+        your work.</p>
+        <pre class="screen">
 $ svn diff -c 355 http://svn.example.com/repos/calc/trunk
 
 Index: integer.c
@@ -44,21 +52,25 @@ Index: integer.c
      case 10:  sprintf(info-&gt;operating_system, "TOPS-20"); break;
      case 11:  sprintf(info-&gt;operating_system, "NTFS (Windows NT)"); break;
      case 12:  sprintf(info-&gt;operating_system, "QDOS"); break;
-</pre><p>Just as you used <span class="command"><strong>svn diff</strong></span> in the prior
+</pre>
+        <p>Just as you used <span class="command"><strong>svn diff</strong></span> in the prior
         example to examine revision 355, you can pass the same option
-        to <span class="command"><strong>svn merge</strong></span>:</p><pre class="screen">
+        to <span class="command"><strong>svn merge</strong></span>:</p>
+        <pre class="screen">
 $ svn merge -c 355 http://svn.example.com/repos/calc/trunk
 U    integer.c
 
 $ svn status
 M      integer.c
-</pre><p>You can now go through the usual testing procedures before
+</pre>
+        <p>You can now go through the usual testing procedures before
         committing this change to your branch.  After the commit,
-        Subversion marks r355 as having been merged to the branch, so
+        Subversion marks r355 as having been merged to the branch so
         that future &#8220;<span class="quote">magic</span>&#8221; merges that synchronize your
         branch with the trunk know to skip over r355.  (Merging the
         same change to the same branch almost always results in a
-        conflict!)</p><pre class="screen">
+        conflict!)</p>
+        <pre class="screen">
 $ cd my-calc-branch
 
 $ svn propget svn:mergeinfo .
@@ -87,82 +99,97 @@ U    Makefile
  U   .
 U    integer.c
 U    button.c
-</pre><p>This use-case of replicating
-        (or <em class="firstterm">backporting</em>) bugfixes from one
+</pre>
+        <p>This use case of replicating
+        (or <em class="firstterm">backporting</em>) bug fixes from one
         branch to another is perhaps the most popular reason for
         cherrypicking changes; it comes up all the time, for example,
         when a team is maintaining a &#8220;<span class="quote">release branch</span>&#8221; of
         software.  (We discuss this pattern in
-        <a class="xref" href="svn.branchmerge.commonpatterns.html#svn.branchmerge.commonpatterns.release" title="&#21457;&#24067;&#20998;&#25903;">&#8220;&#21457;&#24067;&#20998;&#25903;&#8221;&#19968;&#33410;</a>.)</p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#35686;&#21578;</h3><p>Did you notice how, in the last example, the merge
+        <a class="xref" href="svn.branchmerge.commonpatterns.html#svn.branchmerge.commonpatterns.release" title="&#21457;&#24067;&#20998;&#25903;">&#8220;&#21457;&#24067;&#20998;&#25903;&#8221;&#19968;&#33410;</a>.)</p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">&#35686;&#21578;</h3>
+          <p>Did you notice how, in the last example, the merge
           invocation caused two distinct ranges of merges to be
           applied?  The <span class="command"><strong>svn merge</strong></span> command applied
-          two independent patches to your working copy in order to
+          two independent patches to your working copy to
           skip over changeset 355, which your branch already
           contained.  There's nothing inherently wrong with this,
           except that it has the potential to make conflict resolution
-          more tricky.  If the first range of changes creates
+          trickier.  If the first range of changes creates
           conflicts, you <span class="emphasis"><em>must</em></span> resolve them
-          interactively in order for the merge process to continue and
+          interactively for the merge process to continue and
           apply the second range of changes.  If you postpone a
           conflict from the first wave of changes, the whole merge
           command will bail out with an error message.
-          <sup>[<a name="d0e7658" href="#ftn.d0e7658" class="footnote">21</a>]</sup> 
-        </p></div><p>A word of warning: while <span class="command"><strong>svn diff</strong></span> and
+          <sup>[<a name="d4e3506" href="#ftn.d4e3506" class="footnote">22</a>]</sup> 
+        </p>
+        </div>
+        <p>A word of warning: while <span class="command"><strong>svn diff</strong></span> and
         <span class="command"><strong>svn merge</strong></span> are very similar in concept, they
         do have different syntax in many cases.  Be sure to read about
         them in <a class="xref" href="svn.ref.html" title="&#31532;&nbsp;9&nbsp;&#31456;&nbsp;Subversion &#23436;&#20840;&#21442;&#32771;">&#31532;&nbsp;9&nbsp;&#31456; <i>Subversion &#23436;&#20840;&#21442;&#32771;</i></a> for details, or ask
         <span class="command"><strong>svn help</strong></span>.  For example, <span class="command"><strong>svn
-        merge</strong></span> requires a working-copy path as a target, i.e.,
+        merge</strong></span> requires a working copy path as a target, that is,
         a place where it should apply the generated patch.  If the
         target isn't specified, it assumes you are trying to perform
-        one of the following common operations:</p><div class="itemizedlist"><ul type="disc"><li><p>&#20320;&#24076;&#26395;&#21512;&#24182;&#30446;&#24405;&#20462;&#25913;&#21040;&#24037;&#20316;&#25335;&#36125;&#30340;&#24403;&#21069;&#30446;&#24405;&#12290;</p></li><li><p>You want to merge the changes in a specific file into
-            a file by the same name that exists in your current working
-            directory.</p></li></ul></div><p>If you are merging a directory and haven't specified a
-        target path, <span class="command"><strong>svn merge</strong></span> assumes the first
-        case and tries to apply the changes into your current
-        directory.  If you are merging a file, and that file (or a
-        file by the same name) exists in your current working
-        directory,
-        <span class="command"><strong>svn merge</strong></span> assumes the second case and tries
-        to apply the changes to a local file with the same name.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.advancedsyntax"></a>Merge Syntax:  Full Disclosure</h3></div></div></div><p>You've now seen some examples of the <span class="command"><strong>svn
-        merge</strong></span> command, and you're about to see several more.
-        If you're feeling confused about exactly how merging works,
-        you're not alone.  Many users (especially those new to version
-        control) are initially perplexed about the proper syntax of
-        the command and about how and when the feature should be
-        used.  But fear not, this command is actually much simpler
-        than you think!  There's a very easy technique for
-        understanding exactly how <span class="command"><strong>svn merge</strong></span>
-        behaves.</p><p>&#36855;&#24785;&#30340;&#20027;&#35201;&#21407;&#22240;&#26159;&#36825;&#20010;&#21629;&#20196;&#30340;<span class="emphasis"><em>&#21517;&#31216;</em></span>&#65292;&#26415;&#35821;&#8220;<span class="quote">&#21512;&#24182;</span>&#8221;&#19981;&#30693;&#20160;&#20040;&#21407;&#22240;&#34987;&#29992;&#26469;&#34920;&#26126;&#20998;&#25903;&#30340;&#32452;&#21512;&#65292;&#25110;&#32773;&#26159;&#20854;&#20182;&#20160;&#20040;&#31070;&#22855;&#30340;&#25968;&#25454;&#28151;&#21512;&#65292;&#36825;&#19981;&#26159;&#20107;&#23454;&#65292;&#19968;&#20010;&#26356;&#22909;&#30340;&#21517;&#31216;&#24212;&#35813;&#26159;<span class="command"><strong>svn diff-and-apply</strong></span>&#65292;&#36825;&#26159;&#21457;&#29983;&#30340;&#25152;&#26377;&#20107;&#20214;&#65306;&#39318;&#20808;&#20004;&#20010;&#29256;&#26412;&#24211;&#26641;&#27604;&#36739;&#65292;&#28982;&#21518;&#23558;&#21306;&#21035;&#24212;&#29992;&#21040;&#26412;&#22320;&#25335;&#36125;&#12290;</p><p>If you're using <span class="command"><strong>svn merge</strong></span> to do basic
+        one of the following common operations:</p>
+        <div class="itemizedlist"><ul type="disc"><li>
+            <p>&#20320;&#24076;&#26395;&#21512;&#24182;&#30446;&#24405;&#20462;&#25913;&#21040;&#24037;&#20316;&#25335;&#36125;&#30340;&#24403;&#21069;&#30446;&#24405;&#12290;</p>
+          </li><li>
+            <p>&#20320;&#24076;&#26395;&#21512;&#24182;&#20462;&#25913;&#21040;&#20320;&#30340;&#24403;&#21069;&#24037;&#20316;&#30446;&#24405;&#30340;&#30456;&#21516;&#25991;&#20214;&#21517;&#30340;&#25991;&#20214;&#12290;</p>
+          </li></ul></div>
+        <p>&#22914;&#26524;&#20320;&#21512;&#24182;&#19968;&#20010;&#30446;&#24405;&#32780;&#27809;&#26377;&#25351;&#23450;&#29305;&#23450;&#30340;&#30446;&#26631;&#65292;<span class="command"><strong>svn merge</strong></span>&#20551;&#23450;&#31532;&#19968;&#31181;&#24773;&#20917;&#65292;&#22312;&#20320;&#30340;&#24403;&#21069;&#30446;&#24405;&#24212;&#29992;&#20462;&#25913;&#12290;&#22914;&#26524;&#20320;&#21512;&#24182;&#19968;&#20010;&#25991;&#20214;&#65292;&#32780;&#36825;&#20010;&#25991;&#20214;(&#25110;&#26159;&#19968;&#20010;&#26377;&#30456;&#21516;&#30340;&#21517;&#23383;&#25991;&#20214;)&#22312;&#20320;&#30340;&#24403;&#21069;&#24037;&#20316;&#30446;&#24405;&#23384;&#22312;&#65292;<span class="command"><strong>svn merge</strong></span>&#20551;&#23450;&#31532;&#20108;&#31181;&#24773;&#20917;&#65292;&#20320;&#24819;&#23545;&#36825;&#20010;&#21516;&#21517;&#25991;&#20214;&#20351;&#29992;&#21512;&#24182;&#12290;</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.advancedsyntax"></a>&#21512;&#24182;&#30340;&#35821;&#27861;&#65306;&#23436;&#25972;&#30340;&#25551;&#36848;</h3></div></div></div>
+        
+        <p>&#20320;&#24050;&#32463;&#30475;&#21040;&#20102;<span class="command"><strong>svn merge</strong></span>&#21629;&#20196;&#30340;&#20363;&#23376;&#65292;&#20320;&#23558;&#20250;&#30475;&#21040;&#26356;&#22810;&#65292;&#22914;&#26524;&#20320;&#23545;&#21512;&#24182;&#26159;&#22914;&#20309;&#24037;&#20316;&#30340;&#24863;&#21040;&#36855;&#24785;&#65292;&#36825;&#24182;&#19981;&#22855;&#24618;&#65292;&#24456;&#22810;&#20154;&#21644;&#20320;&#19968;&#26679;&#12290;&#35768;&#22810;&#26032;&#29992;&#25143;(&#29305;&#21035;&#26159;&#23545;&#29256;&#26412;&#25511;&#21046;&#24456;&#38476;&#29983;&#30340;&#29992;&#25143;)&#20250;&#23545;&#36825;&#20010;&#21629;&#20196;&#30340;&#27491;&#30830;&#35821;&#27861;&#24863;&#21040;&#19981;&#30693;&#25152;&#25514;&#65292;&#19981;&#30693;&#36947;&#24590;&#26679;&#21644;&#20160;&#20040;&#26102;&#20505;&#20351;&#29992;&#36825;&#20010;&#29305;&#24615;&#65292;&#19981;&#35201;&#23475;&#24597;&#65292;&#36825;&#20010;&#21629;&#20196;&#23454;&#38469;&#19978;&#27604;&#20320;&#24819;&#35937;&#30340;&#31616;&#21333;&#65281;&#26377;&#19968;&#20010;&#31616;&#21333;&#30340;&#25216;&#24039;&#26469;&#24110;&#21161;&#20320;&#29702;&#35299;<span class="command"><strong>svn merge</strong></span>&#30340;&#34892;&#20026;&#12290;</p>
+        <p>The main source of confusion is the
+        <span class="emphasis"><em>name</em></span> of the command.  The term
+        &#8220;<span class="quote">merge</span>&#8221; somehow denotes that branches are
+        combined together, or that some sort of mysterious
+        blending of data is going on.  That's not the case.  A better
+        name for the command might have been <span class="command"><strong>svn
+        diff-and-apply</strong></span>, because that's all that happens:
+        two repository trees are compared, and the differences are
+        applied to a working copy.</p>
+        <p>If you're using <span class="command"><strong>svn merge</strong></span> to do basic
         copying of changes between branches, it will generally do the
-        right thing automatically.  For example, a command like the
-        following:</p><pre class="screen">
+        right thing automatically.  For example, a command such as the
+        following:</p>
+        <pre class="screen">
 $ svn merge http://svn.example.com/repos/calc/some-branch
-</pre><p>will attempt to duplicate any changes made
+</pre>
+        <p>will attempt to duplicate any changes made
         on <code class="filename">some-branch</code> into your current working
         directory, which is presumably a working copy that shares some
         historical connection to the branch.  The command is smart
         enough to only duplicate changes that your working copy
         doesn't yet have.  If you repeat this command once a week, it
         will only duplicate the &#8220;<span class="quote">newest</span>&#8221; branch changes
-        that happened since you last merged.</p><p>If you choose to use the <span class="command"><strong>svn merge</strong></span>
+        that happened since you last merged.</p>
+        <p>If you choose to use the <span class="command"><strong>svn merge</strong></span>
         command in all its full glory by giving it specific revision
-        ranges to duplicate, then the command takes three main
-        arguments:</p><div class="orderedlist"><ol type="1"><li><p>An initial repository tree (often called the
-        <em class="firstterm">left side</em> of the
-        comparison)</p></li><li><p>A final repository tree (often called the
-        <em class="firstterm">right side</em> of the
-        comparison)</p></li><li><p>A working copy to accept the differences as
-        local changes (often called the <em class="firstterm">target</em>
-        of the merge)</p></li></ol></div><p>Once these three arguments are specified, the two trees
-        are compared, and the resulting differences are applied to the
+        ranges to duplicate, the command takes three main
+        arguments:</p>
+        <div class="orderedlist"><ol type="1"><li>
+            <p>&#21021;&#22987;&#30340;&#29256;&#26412;&#26641;(&#36890;&#24120;&#21483;&#20570;&#27604;&#36739;&#30340;<em class="firstterm">&#24038;&#36793;</em>)&#65292;</p>
+          </li><li>
+            <p>&#26368;&#32456;&#30340;&#29256;&#26412;&#26641;(&#36890;&#24120;&#21483;&#20570;&#27604;&#36739;&#30340;<em class="firstterm">&#21491;&#36793;</em>)&#65292;</p>
+          </li><li>
+            <p>&#19968;&#20010;&#25509;&#25910;&#21306;&#21035;&#30340;&#24037;&#20316;&#25335;&#36125;(&#36890;&#24120;&#21483;&#20570;&#21512;&#24182;&#30340;<em class="firstterm">&#30446;&#26631;</em>)&#12290;</p>
+          </li></ol></div>
+        <p>Once these three arguments are specified, the two trees
+        are compared, and the differences are applied to the
         target working copy as local modifications.  When the command
         is done, the results are no different than if you had
         hand-edited the files or run various <span class="command"><strong>svn
         add</strong></span> or <span class="command"><strong>svn delete</strong></span> commands
         yourself.  If you like the results, you can commit them.  If
         you don't like the results, you can simply <span class="command"><strong>svn
-        revert</strong></span> all of the changes.</p><p><span class="command"><strong>svn merge</strong></span>&#30340;&#35821;&#27861;&#20801;&#35768;&#38750;&#24120;&#28789;&#27963;&#30340;&#25351;&#23450;&#19977;&#20010;&#24517;&#35201;&#30340;&#21442;&#25968;&#65292;&#22914;&#19979;&#26159;&#19968;&#20123;&#20363;&#23376;&#65306;</p><pre class="screen">
+        revert</strong></span> all of the changes.</p>
+        <p><span class="command"><strong>svn merge</strong></span>&#30340;&#35821;&#27861;&#20801;&#35768;&#38750;&#24120;&#28789;&#27963;&#30340;&#25351;&#23450;&#19977;&#20010;&#24517;&#35201;&#30340;&#21442;&#25968;&#65292;&#22914;&#19979;&#26159;&#19968;&#20123;&#20363;&#23376;&#65306;</p>
+        <pre class="screen">
 $ svn merge http://svn.example.com/repos/branch1@150 \
             http://svn.example.com/repos/branch2@212 \
             my-working-copy
@@ -170,57 +197,81 @@ $ svn merge http://svn.example.com/repos/branch1@150 \
 $ svn merge -r 100:200 http://svn.example.com/repos/trunk my-working-copy
 
 $ svn merge -r 100:200 http://svn.example.com/repos/trunk
-</pre><p>&#31532;&#19968;&#31181;&#35821;&#27861;&#20351;&#29992;<span class="emphasis"><em>URL@REV</em></span>&#30340;&#24418;&#24335;&#30452;&#25509;&#21015;&#20986;&#20102;&#25152;&#26377;&#21442;&#25968;&#65292;&#31532;&#20108;&#31181;&#35821;&#27861;&#21487;&#20197;&#29992;&#26469;&#20316;&#20026;&#27604;&#36739;&#21516;&#19968;&#20010;URL&#30340;&#19981;&#21516;&#29256;&#26412;&#30340;&#31616;&#30053;&#20889;&#27861;&#65292;&#26368;&#21518;&#19968;&#31181;&#35821;&#27861;&#34920;&#31034;&#24037;&#20316;&#25335;&#36125;&#26159;&#21487;&#36873;&#30340;&#65292;&#22914;&#26524;&#30465;&#30053;&#65292;&#40664;&#35748;&#26159;&#24403;&#21069;&#30446;&#24405;&#12290;</p><p>While the first example shows the &#8220;<span class="quote">full</span>&#8221;
+</pre>
+        <p>The first syntax lays out all three arguments explicitly,
+        naming each tree in the form <span class="emphasis"><em>URL@REV</em></span> and
+        naming the working copy target.  The second syntax can be used
+        as a shorthand for situations when you're comparing two
+        different revisions of the same URL.  The last syntax shows
+        how the working copy argument is optional; if omitted, it
+        defaults to the current directory.</p>
+        <p>While the first example shows the &#8220;<span class="quote">full</span>&#8221;
         syntax of <span class="command"><strong>svn merge</strong></span>, it needs to be used
         very carefully;  it can result in merges which do not record
         any <code class="literal">svn:mergeinfo</code> metadata at all.  The
-        next section talks a bit more about this.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.nomergedata"></a>Merges Without Mergeinfo</h3></div></div></div><p>Subversion tries to generate merge metadata whenever it
+        next section talks a bit more about this.</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.nomergedata"></a>&#19981;&#20351;&#29992;&#21512;&#24182;&#20449;&#24687;&#30340;&#21512;&#24182;</h3></div></div></div>
+        
+        <p>Subversion tries to generate merge metadata whenever it
         can, to make future invocations of <span class="command"><strong>svn
         merge</strong></span> smarter.  There are still situations, however,
         where <code class="literal">svn:mergeinfo</code> data is not created or
-        changed.  Remember to be a bit wary of these scenarios:</p><div class="itemizedlist"><ul type="disc"><li><p><span class="emphasis"><em>Merging unrelated sources</em></span>.  If you
+        changed.  Remember to be a bit wary of these scenarios:</p>
+        <div class="variablelist"><dl><dt><span class="term">&#21512;&#24182;&#26080;&#20851;&#30340;&#28304;</span></dt><dd>
+              <p>If you
             ask <span class="command"><strong>svn merge</strong></span> to compare two URLs that
             aren't related to each other, a patch will still be
             generated and applied to your working copy, but no merging
             metadata will be created.  There's no common history
             between the two sources, and future &#8220;<span class="quote">smart</span>&#8221;
-            merges depend on that common history.</p></li><li><p><span class="emphasis"><em>Merging from foreign
-            repositories</em></span>.  While it's possible to run a
-            command such as <span class="command"><strong>svn merge -r 100:200
-            http://svn.foreignproject.com/repos/trunk</strong></span>, the
-            resulting patch will also lack any historical merge
-            metadata.  At time of writing, Subversion has no way of
+            merges depend on that common history.</p>
+            </dd><dt><span class="term">Merging from foreign repositories</span></dt><dd>
+              <p>While it's possible to run a
+            command such as <strong class="userinput"><code>svn merge -r 100:200
+            <em class="replaceable"><code>http://svn.foreignproject.com/repos/trunk</code></em></code></strong>, the
+            resultant patch will also lack any historical merge
+            metadata.  At time of this writing, Subversion has no way of
             representing different repository URLs within
-            the <code class="literal">svn:mergeinfo</code> property.</p></li><li><p><span class="emphasis"><em>Using <code class="option">--ignore-ancestry</code></em></span>.
-          If this option is passed to <span class="command"><strong>svn merge</strong></span>, it
-          causes the merging logic to mindlessly generate differences
-          the same way that <span class="command"><strong>svn diff</strong></span> does, ignoring
-          any historical relationships.  We discuss this later in the
-          chapter in
-          <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.ancestry" title="&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;">&#8220;&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;&#8221;&#19968;&#33410;</a>.</p></li><li><p><span class="emphasis"><em>Applying reverse merges to a target's
-          natural history</em></span>.  In a prior section
-          (<a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.undo" title="&#21462;&#28040;&#20462;&#25913;">&#8220;&#21462;&#28040;&#20462;&#25913;&#8221;&#19968;&#33410;</a>) we
-          discussed how to use <span class="command"><strong>svn merge</strong></span> to apply
-          a &#8220;<span class="quote">reverse patch</span>&#8221; as a way of rolling back
-          changes.  If this technique is used to undo a change to a
-          object's personal history (e.g., commit r5 to the trunk,
-          then immediately roll back r5 using <span class="command"><strong>svn merge -c
-          -5</strong></span>), this sort of merge doesn't affect the
-          recorded mergeinfo.
-            <sup>[<a name="d0e7856" href="#ftn.d0e7856" class="footnote">22</a>]</sup>
-          </p></li></ul></div></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.mergeconflicts"></a>More on Merge Conflicts</h3></div></div></div><p>&#23601;&#20687;<span class="command"><strong>svn update</strong></span>&#21629;&#20196;&#65292;<span class="command"><strong>svn merge</strong></span>&#20250;&#25226;&#20462;&#25913;&#24212;&#29992;&#21040;&#24037;&#20316;&#25335;&#36125;&#65292;&#22240;&#27492;&#23427;&#20063;&#20250;&#36896;&#25104;&#20914;&#31361;&#65292;&#22240;&#20026;<span class="command"><strong>svn merge</strong></span>&#36896;&#25104;&#30340;&#20914;&#31361;&#26377;&#26102;&#20505;&#20250;&#26377;&#20123;&#19981;&#21516;&#65292;&#26412;&#23567;&#33410;&#20250;&#35299;&#37322;&#36825;&#20123;&#21306;&#21035;&#12290;</p><p>&#20316;&#20026;&#24320;&#22987;&#65292;&#25105;&#20204;&#20551;&#23450;&#26412;&#22320;&#27809;&#26377;&#20462;&#25913;&#65292;&#24403;&#20320;<span class="command"><strong>svn update</strong></span>&#21040;&#19968;&#20010;&#29305;&#23450;&#20462;&#35746;&#29256;&#26412;&#26102;&#65292;&#20462;&#25913;&#20250;&#8220;<span class="quote">&#24178;&#20928;&#30340;</span>&#8221;&#24212;&#29992;&#21040;&#24037;&#20316;&#25335;&#36125;&#65292;&#26381;&#21153;&#22120;&#20135;&#29983;&#27604;&#36739;&#20004;&#26641;&#30340;&#22686;&#37327;&#25968;&#25454;&#65306;&#19968;&#20010;&#24037;&#20316;&#25335;&#36125;&#21644;&#20320;&#20851;&#27880;&#30340;&#29256;&#26412;&#26641;&#30340;&#34394;&#25311;&#24555;&#29031;&#65292;&#22240;&#20026;&#27604;&#36739;&#30340;&#24038;&#36793;&#21516;&#20320;&#25317;&#26377;&#30340;&#23436;&#20840;&#30456;&#21516;&#65292;&#22686;&#37327;&#25968;&#25454;&#30830;&#20445;&#20320;&#25226;&#24037;&#20316;&#25335;&#36125;&#36716;&#21270;&#21040;&#21491;&#36793;&#30340;&#26641;&#12290;</p><p>But <span class="command"><strong>svn merge</strong></span> has no such guarantees
-        and can be much more chaotic: the advanced user can ask the
-        server to compare <span class="emphasis"><em>any</em></span> two trees at all,
-        even ones that are unrelated to the working copy!  This means
-        there's large potential for human error.  Users will sometimes
-        compare the wrong two trees, creating a delta that doesn't
-        apply cleanly.  <span class="command"><strong>svn merge</strong></span> will do its best
-        to apply as much of the delta as possible, but some parts may
-        be impossible.  Just as the Unix
-        <span class="command"><strong>patch</strong></span> command sometimes complains about
-        &#8220;<span class="quote">failed hunks,</span>&#8221; <span class="command"><strong>svn merge</strong></span> will
-        similarly complain about &#8220;<span class="quote">skipped
-        targets</span>&#8221;:</p><pre class="screen">
+            the <code class="literal">svn:mergeinfo</code> property.</p>
+            </dd><dt><span class="term">Using <code class="option">--ignore-ancestry</code></span></dt><dd>
+              <p>If this option is passed to <span class="command"><strong>svn
+            merge</strong></span>, it causes the merging logic to mindlessly
+            generate differences the same way that <span class="command"><strong>svn
+            diff</strong></span> does, ignoring any historical
+            relationships.  We discuss this later in the chapter in
+            <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.ancestry" title="&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;">&#8220;&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;&#8221;&#19968;&#33410;</a>.</p>
+            </dd><dt><span class="term">Applying reverse merges to a target's natural history</span></dt><dd>
+              <p>Earlier in this chapter 
+                (<a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.undo" title="&#21462;&#28040;&#20462;&#25913;">&#8220;&#21462;&#28040;&#20462;&#25913;&#8221;&#19968;&#33410;</a>)
+                we discussed how to use <span class="command"><strong>svn merge</strong></span>
+                to apply a &#8220;<span class="quote">reverse patch</span>&#8221; as a way of
+                rolling back changes.  If this technique is used to
+                undo a change to an object's personal history (e.g.,
+                commit r5 to the trunk, then immediately roll back r5
+                using <strong class="userinput"><code>svn merge . -c -5</code></strong>), this
+                sort of merge doesn't affect the recorded mergeinfo.
+            <sup>[<a name="d4e3601" href="#ftn.d4e3601" class="footnote">23</a>]</sup>
+            </p>
+            </dd></dl></div>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.mergeconflicts"></a>&#21512;&#24182;&#20914;&#31361;</h3></div></div></div>
+        
+        <p>&#23601;&#20687;<span class="command"><strong>svn update</strong></span>&#21629;&#20196;&#65292;<span class="command"><strong>svn merge</strong></span>&#20250;&#25226;&#20462;&#25913;&#24212;&#29992;&#21040;&#24037;&#20316;&#25335;&#36125;&#65292;&#22240;&#27492;&#23427;&#20063;&#20250;&#36896;&#25104;&#20914;&#31361;&#65292;&#22240;&#20026;<span class="command"><strong>svn merge</strong></span>&#36896;&#25104;&#30340;&#20914;&#31361;&#26377;&#26102;&#20505;&#20250;&#26377;&#20123;&#19981;&#21516;&#65292;&#26412;&#23567;&#33410;&#20250;&#35299;&#37322;&#36825;&#20123;&#21306;&#21035;&#12290;</p>
+        <p>To begin with, assume that your working copy has no
+        local edits.  When you <span class="command"><strong>svn update</strong></span> to a
+        particular revision, the changes sent by the server will
+        always apply &#8220;<span class="quote">cleanly</span>&#8221; to your working copy.
+        The server produces the delta by comparing two trees: a
+        virtual snapshot of your working copy, and the revision tree
+        you're interested in.  Because the left hand side of the
+        comparison is exactly equal to what you already have, the
+        delta is guaranteed to correctly convert your working copy
+        into the right hand tree.</p>
+        <p>&#20294;&#26159;<span class="command"><strong>svn merge</strong></span>&#27809;&#26377;&#36825;&#26679;&#30340;&#20445;&#35777;&#65292;&#20250;&#23548;&#33268;&#24456;&#22810;&#30340;&#28151;&#20081;&#65306;&#29992;&#25143;&#21487;&#20197;&#35810;&#38382;&#26381;&#21153;&#22120;&#27604;&#36739;<span class="emphasis"><em>&#20219;&#20309;</em></span>&#20004;&#20010;&#26641;&#65292;&#21363;&#20351;&#19968;&#20010;&#19982;&#24037;&#20316;&#25335;&#36125;&#27627;&#19981;&#30456;&#20851;&#30340;&#65281;&#36825;&#24847;&#21619;&#30528;&#26377;&#28508;&#22312;&#30340;&#20154;&#20026;&#38169;&#35823;&#65292;&#29992;&#25143;&#26377;&#26102;&#20505;&#20250;&#27604;&#36739;&#20004;&#20010;&#38169;&#35823;&#30340;&#26641;&#65292;&#21019;&#24314;&#30340;&#22686;&#37327;&#25968;&#25454;&#19981;&#20250;&#24178;&#20928;&#30340;&#24212;&#29992;&#65292;<span class="command"><strong>svn merge</strong></span>&#20250;&#23613;&#21147;&#24212;&#29992;&#26356;&#22810;&#30340;&#22686;&#37327;&#25968;&#25454;&#65292;&#20294;&#26159;&#26377;&#19968;&#20123;&#37096;&#20998;&#20063;&#35768;&#20250;&#38590;&#20197;&#23436;&#25104;&#65292;&#23601;&#20687;Unix&#19979;<span class="command"><strong>patch</strong></span>&#21629;&#20196;&#26377;&#26102;&#20505;&#20250;&#25253;&#21578;&#8220;<span class="quote">failed hunks</span>&#8221;&#38169;&#35823;&#65292;<span class="command"><strong>svn merge</strong></span>&#20250;&#25253;&#21578;&#8220;<span class="quote">skipped targets</span>&#8221;&#65306;</p>
+        <pre class="screen">
 $ svn merge -r 1288:1351 http://svn.example.com/repos/branch
 U    foo.c
 U    bar.c
@@ -231,36 +282,70 @@ U    sputter.h
 Conflict discovered in 'glorb.h'.
 Select: (p) postpone, (df) diff-full, (e) edit,
         (h) help for more options:
-</pre><p>In the previous example it might be the case that
+</pre>
+        <p>In the previous example, it might be the case that
         <code class="filename">baz.c</code> exists in both snapshots of the
-        branch being compared, and the resulting delta wants to
+        branch being compared, and the resultant delta wants to
         change the file's contents, but the file doesn't exist in
         the working copy.  Whatever the case, the
         &#8220;<span class="quote">skipped</span>&#8221; message means that the user is most
-        likely comparing the wrong two trees; they're the classic
+        likely comparing the wrong two trees; it's the classic
         sign of user error.  When this happens, it's easy to
         recursively revert all the changes created by the merge
-        (<span class="command"><strong>svn revert --recursive</strong></span>), delete any
+        (<strong class="userinput"><code>svn revert . --recursive</code></strong>), delete any
         unversioned files or directories left behind after the
         revert, and rerun <span class="command"><strong>svn merge</strong></span> with
-        different arguments.</p><p>&#20063;&#24212;&#24403;&#27880;&#24847;&#21069;&#19968;&#20010;&#20363;&#23376;&#26174;&#31034;<code class="filename">glorb.h</code>&#21457;&#29983;&#20102;&#20914;&#31361;&#65292;&#25105;&#20204;&#24050;&#32463;&#35268;&#23450;&#26412;&#22320;&#25335;&#36125;&#27809;&#26377;&#20462;&#25913;&#65306;&#20914;&#31361;&#24590;&#20040;&#20250;&#21457;&#29983;&#21602;&#65311;&#22240;&#20026;&#29992;&#25143;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svn merge</strong></span>&#23558;&#36807;&#21435;&#30340;&#20219;&#20309;&#21464;&#21270;&#24212;&#29992;&#21040;&#24403;&#21069;&#24037;&#20316;&#25335;&#36125;&#65292;&#21464;&#21270;&#21253;&#21547;&#30340;&#25991;&#26412;&#20462;&#25913;&#20063;&#35768;&#24182;&#19981;&#33021;&#24178;&#20928;&#30340;&#24212;&#29992;&#21040;&#24037;&#20316;&#25335;&#36125;&#25991;&#20214;&#65292;&#21363;&#20351;&#36825;&#20123;&#25991;&#20214;&#27809;&#26377;&#26412;&#22320;&#20462;&#25913;&#12290;</p><p>&#21478;&#19968;&#20010;<span class="command"><strong>svn update</strong></span>&#21644;<span class="command"><strong>svn merge</strong></span>&#30340;&#23567;&#21306;&#21035;&#26159;&#20914;&#31361;&#20135;&#29983;&#30340;&#25991;&#20214;&#30340;&#21517;&#23383;&#19981;&#21516;&#65292;&#22312;<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.resolve" title="&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)">&#8220;&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)&#8221;&#19968;&#33410;</a>&#65292;&#25105;&#20204;&#30475;&#21040;&#36807;&#26356;&#26032;&#20135;&#29983;&#30340;&#25991;&#20214;&#21517;&#23383;&#20026;<code class="filename">filename.mine</code>&#12289;<code class="filename">filename.rOLDREV</code>&#21644;<code class="filename">filename.rNEWREV</code>&#65292;&#24403;<span class="command"><strong>svn merge</strong></span>&#20135;&#29983;&#20914;&#31361;&#26102;&#65292;&#23427;&#20135;&#29983;&#30340;&#19977;&#20010;&#25991;&#20214;&#20998;&#21035;&#20026; <code class="filename">filename.working</code>&#12289;<code class="filename">filename.left</code>&#21644;<code class="filename">filename.right</code>&#12290;&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#26415;&#35821;&#8220;<span class="quote">left</span>&#8221;&#21644;&#8220;<span class="quote">right</span>&#8221;&#34920;&#31034;&#20102;&#20004;&#26869;&#26641;&#27604;&#36739;&#26102;&#30340;&#20004;&#36793;&#65292;&#22312;&#20004;&#31181;&#24773;&#20917;&#19979;&#65292;&#19981;&#21516;&#30340;&#21517;&#23383;&#20250;&#24110;&#21161;&#20320;&#21306;&#20998;&#20914;&#31361;&#26159;&#22240;&#20026;&#26356;&#26032;&#36896;&#25104;&#30340;&#36824;&#26159;&#21512;&#24182;&#36896;&#25104;&#30340;&#12290;</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.blockchanges"></a>Blocking Changes</h3></div></div></div><p>Sometimes there's a particular changeset that you don't
+        different arguments.</p>
+        <p>Also notice that the preceding example shows a conflict
+        happening on <code class="filename">glorb.h</code>.  We already
+        stated that the working copy has no local edits: how can a
+        conflict possibly happen?  Again, because the user can use
+        <span class="command"><strong>svn merge</strong></span> to define and apply any old
+        delta to the working copy, that delta may contain textual
+        changes that don't cleanly apply to a working file, even if
+        the file has no local modifications.</p>
+        <p>Another small difference between <span class="command"><strong>svn
+          update</strong></span> and <span class="command"><strong>svn merge</strong></span> is the
+        names of the full-text files created when a conflict
+        happens.  In <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.resolve" title="&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)">&#8220;&#35299;&#20915;&#20914;&#31361;(&#21512;&#24182;&#21035;&#20154;&#30340;&#20462;&#25913;)&#8221;&#19968;&#33410;</a>, we saw
+        that an update produces files named
+        <code class="filename">filename.mine</code>,
+        <code class="filename">filename.rOLDREV</code>, and
+        <code class="filename">filename.rNEWREV</code>.  When <span class="command"><strong>svn
+          merge</strong></span> produces a conflict, though, it creates
+        three files named <code class="filename">filename.working</code>,
+        <code class="filename">filename.left</code>, and
+        <code class="filename">filename.right</code>.  In this case, the
+        terms &#8220;<span class="quote">left</span>&#8221; and &#8220;<span class="quote">right</span>&#8221; are
+        describing which side of the double-tree comparison the file
+        came from.  In any case, these differing names will help you
+        distinguish between conflicts that happened as a result of an
+        update and ones that happened as a result of a
+        merge.</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.blockchanges"></a>&#38459;&#22622;&#20462;&#25913;</h3></div></div></div>
+        
+        <p>Sometimes there's a particular changeset that you don't
         want to be automatically merged.  For example, perhaps your
         team's policy is to do new development work on
         <code class="filename">/trunk</code>, but to be more conservative about
         backporting changes to a stable branch you use for releasing
         to the public.  On one extreme, you can manually cherrypick
-        single changesets from trunk to the branch&#8212;just the
+        single changesets from the trunk to the branch&#8212;just the
         changes that are stable enough to pass muster.  Maybe things
         aren't quite that strict, though; perhaps most of the time
         you'd like to just let <span class="command"><strong>svn merge</strong></span>
         automatically merge most changes from trunk to branch.  In
         this case, you'd like a way to mask a few specific changes
-        out, i.e. prevent them from ever being automatically
-        merged.</p><p>In Subversion 1.5, the only way to block a changeset is to
+        out, that is, prevent them from ever being automatically
+        merged.</p>
+        <p>In Subversion 1.5, the only way to block a changeset is to
         make the system believe that the change has
         <span class="emphasis"><em>already</em></span> been merged.  To do this, one can
         invoke a merge command with the <code class="option">--record-only</code>
-        option:</p><pre class="screen">
+        option:</p>
+        <pre class="screen">
 $ cd my-calc-branch
 
 $ svn propget svn:mergeinfo .
@@ -277,9 +362,10 @@ $ svn propget svn:mergeinfo .
 
 $ svn commit -m "Block r3328 from being merged to the branch."
 &#8230;
-</pre><p>This technique works, but it's also a little bit
+</pre>
+        <p>This technique works, but it's also a little bit
         dangerous.  The main problem is that we're not clearly
-        differentiating between the ideas of &#8220;<span class="quote">I don't want this
+        differentiating between the ideas of &#8220;<span class="quote">I already have this
         change</span>&#8221; and &#8220;<span class="quote">I don't have this change.</span>&#8221;
         We're effectively lying to the system, making it think that
         the change was previously merged.  This puts the
@@ -287,21 +373,28 @@ $ svn commit -m "Block r3328 from being merged to the branch."
         the change wasn't actually merged, it just wasn't wanted.
         There's no way to ask Subversion for a list of &#8220;<span class="quote">blocked
         changelists.</span>&#8221; If you want to track them (so that you
-        can unblock them someday.) you'll need to record them in a
+        can unblock them someday). you'll need to record them in a
         text file somewhere, or perhaps in an invented property.  In
         Subversion 1.5, unfortunately, this is the only way to manage
         blocked revisions; the plans are to make a better interface
-        for this in future versions.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.logblame"></a>Merge-Sensitive Logs and Annotations</h3></div></div></div><p>One of the main features of any version control system is
+        for this in future versions.</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.logblame"></a>&#24863;&#30693;&#21512;&#24182;&#30340;&#26085;&#24535;&#21644;&#27880;&#35299;</h3></div></div></div>
+        
+        <p>One of the main features of any version control system is
         to keep track of who changed what, and when they did it.
         The <span class="command"><strong>svn log</strong></span> and <span class="command"><strong>svn
         blame</strong></span> commands are just the tools for this: when
         invoked on individual files, they show not only the history of
-        changesets that affected the file, but exactly which user
-        wrote which line of code, and when they did it.</p><p>When changes start getting replicated between branches,
+        changesets that affected the file, but also exactly which user
+        wrote which line of code, and when she did it.</p>
+        <p>When changes start getting replicated between branches,
         however, things start to get complicated.  For example, if you
         were to ask <span class="command"><strong>svn log</strong></span> about the history of
-        your feature branch, it shows exactly every revision that ever
-        affected the branch:</p><pre class="screen">
+        your feature branch, it would show exactly every revision that ever
+        affected the branch:</p>
+        <pre class="screen">
 $ cd my-calc-branch
 $ svn log -q
 ------------------------------------------------------------------------
@@ -323,12 +416,14 @@ r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines
 ------------------------------------------------------------------------
 r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines
 ------------------------------------------------------------------------
-</pre><p>But is this really an accurate picture of all the changes
+</pre>
+        <p>But is this really an accurate picture of all the changes
         that happened on the branch?  What's being left out here is
         the fact that revisions 390, 381, and 357 were actually the
-        results of merging changes from trunk.  If you look at a one
+        results of merging changes from the trunk.  If you look at one
         of these logs in detail, the multiple trunk changesets that
-        comprised the branch change are nowhere to be seen.</p><pre class="screen">
+        comprised the branch change are nowhere to be seen:</p>
+        <pre class="screen">
 $ svn log -v -r 390
 ------------------------------------------------------------------------
 r390 | user | 2002-11-22 11:01:57 -0600 (Fri, 22 Nov 2002) | 1 line
@@ -337,12 +432,14 @@ Changed paths:
    M /branches/my-calc-branch/README
 
 Final merge of trunk changes to my-calc-branch.
-</pre><p>We happen to know that this merge to the branch was
+</pre>
+        <p>We happen to know that this merge to the branch was
         nothing but a merge of trunk changes.  How can we see those
         trunk changes as well?  The answer is to use the
         <code class="option">--use-merge-history</code> (<code class="option">-g</code>)
         option.  This option expands those &#8220;<span class="quote">child</span>&#8221;
-        changes that were part of the merge.</p><pre class="screen">
+        changes that were part of the merge.</p>
+        <pre class="screen">
 $ svn log -v -r 390 -g
 ------------------------------------------------------------------------
 r390 | user | 2002-11-22 11:01:57 -0600 (Fri, 22 Nov 2002) | 1 line
@@ -365,92 +462,87 @@ Changed paths:
 Merged via: r390
 
 Document my last fix in README.
-</pre><p>By making the log operation use merge history, we see not
-        just the revision we queried (r390), but the two revisions
+</pre>
+        <p>By making the log operation use merge history, we see not
+        just the revision we queried (r390), but also the two revisions
         that came along on the ride with it&#8212;a couple of changes
         made by Sally to the trunk.  This is a much more complete
-        picture of history!</p><p>The <span class="command"><strong>svn blame</strong></span> command also takes the
+        picture of history!</p>
+        <p>The <span class="command"><strong>svn blame</strong></span> command also takes the
         <code class="option">--use-merge-history</code> (<code class="option">-g</code>)
-        option.  If this option is neglected, then somebody looking at
+        option.  If this option is neglected, somebody looking at
         a line-by-line annotation of <code class="filename">button.c</code> may
         get the mistaken impression that you were responsible for the
-        lines that fixed a certain error:</p><pre class="screen">
+        lines that fixed a certain error:</p>
+        <pre class="screen">
 $ svn blame button.c
 &#8230;
    390    user    retval = inverse_func(button, path);
    390    user    return retval;
    390    user    }
 &#8230;
-</pre><p>And while it's true that you did actually commit those
+</pre>
+        <p>And while it's true that you did actually commit those
         three lines in revision 390, two of them were actually written
-        by Sally back in revision 383:</p><pre class="screen">
+        by Sally back in revision 383:</p>
+        <pre class="screen">
 $ svn blame button.c -g
 &#8230;
 G    383    sally   retval = inverse_func(button, path);
 G    383    sally   return retval;
      390    user    }
 &#8230;
-</pre><p>Now we know who to <span class="emphasis"><em>really</em></span> blame for
-        those two lines of code!</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.ancestry"></a>&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;</h3></div></div></div><p>&#24403;&#19982;Subversion&#24320;&#21457;&#32773;&#20132;&#35848;&#26102;&#20320;&#19968;&#23450;&#20250;&#21548;&#21040;&#25552;&#21450;&#26415;&#35821;<em class="firstterm">&#31062;&#20808;</em>&#65292;&#36825;&#20010;&#35789;&#26159;&#29992;&#26469;&#25551;&#36848;&#20004;&#20010;&#23545;&#35937;&#30340;&#20851;&#31995;&#65306;&#22914;&#26524;&#20182;&#20204;&#20114;&#30456;&#20851;&#32852;&#65292;&#19968;&#20010;&#23545;&#35937;&#23601;&#26159;&#21478;&#19968;&#20010;&#30340;&#31062;&#20808;&#65292;&#25110;&#32773;&#30456;&#21453;&#12290;</p><p>For example, suppose you commit revision 100, which
-        includes a change to a file <code class="filename">foo.c</code>.
-        Then <code class="filename">foo.c@99</code> is an
-        &#8220;<span class="quote">ancestor</span>&#8221; of <code class="filename">foo.c@100</code>.
-        On the other hand, suppose you commit the deletion of
-        <code class="filename">foo.c</code> in revision 101, and then add a
-        new file by the same name in revision 102.  In this case,
-        <code class="filename">foo.c@99</code> and
-        <code class="filename">foo.c@102</code> may appear to be related
-        (they have the same path), but in fact are completely
-        different objects in the repository.  They share no history
-        or &#8220;<span class="quote">ancestry.</span>&#8221;</p><p>The reason for bringing this up is to point out an
-        important difference between <span class="command"><strong>svn diff</strong></span> and
-        <span class="command"><strong>svn merge</strong></span>.  The former command ignores
-        ancestry, while the latter command is quite sensitive to it.
-        For example, if you asked <span class="command"><strong>svn diff</strong></span> to
-        compare revisions 99 and 102 of <code class="filename">foo.c</code>,
-        you would see line-based diffs; the <span class="command"><strong>diff</strong></span>
-        command is blindly comparing two paths.  But if you asked
-        <span class="command"><strong>svn merge</strong></span> to compare the same two objects,
-        it would notice that they're unrelated and first attempt to
-        delete the old file, then add the new file;  the output would
-        indicate a deletion followed by an add:</p><pre class="screen">
+</pre>
+        <p>Now we know who to <span class="emphasis"><em>really</em></span> blame for
+        those two lines of code!</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.ancestry"></a>&#20851;&#27880;&#36824;&#26159;&#24573;&#35270;&#31062;&#20808;</h3></div></div></div>
+        
+        <p>When conversing with a Subversion developer, you might
+        very likely hear reference to the term
+        <em class="firstterm">ancestry</em>.  This word is used to
+        describe the relationship between two objects in a
+        repository: if they're related to each other, one
+        object is said to be an ancestor of the other.</p>
+        <p>&#20030;&#20010;&#20363;&#23376;&#65292;&#20551;&#35774;&#20320;&#25552;&#20132;&#29256;&#26412;100&#65292;&#21253;&#25324;&#23545;<code class="filename">foo.c</code>&#30340;&#20462;&#25913;&#65292;&#21017;foo.c@99&#26159;foo.c@100&#30340;&#19968;&#20010;&#8220;<span class="quote">&#31062;&#20808;</span>&#8221;&#65292;&#21478;&#19968;&#26041;&#38754;&#65292;&#20551;&#35774;&#20320;&#22312;&#29256;&#26412;101&#21024;&#38500;&#36825;&#20010;&#25991;&#20214;&#65292;&#32780;&#22312;102&#29256;&#26412;&#25552;&#20132;&#19968;&#20010;&#21516;&#21517;&#30340;&#25991;&#20214;&#65292;&#22312;&#36825;&#20010;&#24773;&#20917;&#19979;&#65292;<code class="filename">foo.c@99</code>&#19982;<code class="filename">foo.c@102</code>&#30475;&#36215;&#26469;&#26159;&#20851;&#32852;&#30340;(&#26377;&#21516;&#26679;&#30340;&#36335;&#24452;)&#65292;&#20294;&#26159;&#20107;&#23454;&#19978;&#20182;&#20204;&#26159;&#23436;&#20840;&#19981;&#21516;&#30340;&#23545;&#35937;&#65292;&#23427;&#20204;&#24182;&#19981;&#20849;&#20139;&#21516;&#19968;&#20010;&#21382;&#21490;&#25110;&#32773;&#35828;&#8220;<span class="quote">&#31062;&#20808;</span>&#8221;&#12290;</p>
+        <p>&#25351;&#20986;<span class="command"><strong>svn diff</strong></span>&#21644;<span class="command"><strong>svn merge</strong></span>&#21306;&#21035;&#30340;&#37325;&#35201;&#24615;&#22312;&#20110;&#65292;&#21069;&#19968;&#20010;&#21629;&#20196;&#24573;&#30053;&#31062;&#20808;&#65292;&#22914;&#26524;&#20320;&#35810;&#38382;<span class="command"><strong>svn diff</strong></span>&#26469;&#27604;&#36739;&#25991;&#20214;<code class="filename">foo.c</code>&#30340;&#29256;&#26412;99&#21644;102&#65292;&#20320;&#20250;&#30475;&#21040;&#34892;&#20026;&#22522;&#30784;&#30340;&#21306;&#21035;&#65292;<code class="literal">diff</code>&#21629;&#20196;&#21482;&#26159;&#30450;&#30446;&#30340;&#27604;&#36739;&#20004;&#26465;&#36335;&#24452;&#65292;&#20294;&#26159;&#22914;&#26524;&#20320;&#20351;&#29992;<span class="command"><strong>svn merge</strong></span>&#26159;&#27604;&#36739;&#21516;&#26679;&#30340;&#20004;&#20010;&#23545;&#35937;&#65292;&#23427;&#20250;&#27880;&#24847;&#21040;&#20182;&#20204;&#26159;&#19981;&#20851;&#32852;&#30340;&#65292;&#32780;&#19988;&#39318;&#20808;&#23581;&#35797;&#21024;&#38500;&#26087;&#25991;&#20214;&#65292;&#28982;&#21518;&#28155;&#21152;&#26032;&#25991;&#20214;&#65292;&#36755;&#20986;&#20250;&#26159;&#19968;&#20010;&#21024;&#38500;&#32039;&#25509;&#30528;&#19968;&#20010;&#22686;&#21152;&#65306;</p>
+        <pre class="screen">
 D    foo.c
 A    foo.c
-      </pre><p>Most merges involve comparing trees that are ancestrally
-        related to one another; therefore, <span class="command"><strong>svn
-        merge</strong></span> defaults to this behavior.  Occasionally,
-        however, you may want the <span class="command"><strong>merge</strong></span> command to
-        compare two unrelated trees.  For example, you may have
-        imported two source-code trees representing different vendor
-        releases of a software project (see
-        <a class="xref" href="svn.advanced.vendorbr.html" title="Vendor Branches">&#8220;Vendor Branches&#8221;&#19968;&#33410;</a>).  If you ask
-        <span class="command"><strong>svn merge</strong></span> to compare the two trees, you'd
-        see the entire first tree being deleted, followed by an add
-        of the entire second tree!  In these situations, you'll want
-        <span class="command"><strong>svn merge</strong></span> to do a path-based comparison
-        only, ignoring any relations between files and directories.
-        Add the <code class="option">--ignore-ancestry</code> option to your
-        <span class="command"><strong>merge</strong></span> command, and it will behave just
-          like <span class="command"><strong>svn diff</strong></span>.  (And conversely, the
-        <code class="option">--notice-ancestry</code> option will cause
-        <span class="command"><strong>svn diff</strong></span> to behave like the
-        <span class="command"><strong>svn merge</strong></span> command.)</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.moves"></a>&#21512;&#24182;&#21644;&#31227;&#21160;</h3></div></div></div><p>&#19968;&#20010;&#26222;&#36941;&#30340;&#24895;&#26395;&#26159;&#37325;&#26500;&#28304;&#31243;&#24207;&#65292;&#29305;&#21035;&#26159;Java&#36719;&#20214;&#39033;&#30446;&#12290;&#22312;&#25913;&#21517;&#20013;&#25991;&#20214;&#21644;&#30446;&#24405;&#21464;&#20081;&#65292;&#36890;&#24120;&#23548;&#33268;&#27599;&#20010;&#39033;&#30446;&#25104;&#21592;&#30340;&#26497;&#22823;&#30772;&#22351;&#12290;&#21548;&#36215;&#26469;&#22909;&#20687;&#24212;&#35813;&#20351;&#29992;&#20998;&#25903;&#65292;&#19981;&#26159;&#21527;&#65311;&#21482;&#26159;&#21019;&#24314;&#20998;&#25903;&#65292;&#21464;&#20081;&#20107;&#24773;&#65292;&#28982;&#21518;&#21512;&#24182;&#22238;&#20027;&#24178;&#65292;&#19981;&#23545;&#21527;&#65311;</p><p>Alas, this scenario doesn't work so well right now and
+      </pre>
+        <p>&#22823;&#22810;&#25968;&#21512;&#24182;&#21253;&#25324;&#27604;&#36739;&#21253;&#25324;&#31062;&#20808;&#20851;&#32852;&#30340;&#20004;&#26465;&#26641;&#65292;&#22240;&#27492;<span class="command"><strong>svn merge</strong></span>&#36825;&#26679;&#36816;&#20316;&#65292;&#28982;&#32780;&#65292;&#20320;&#20063;&#35768;&#20250;&#24076;&#26395;<code class="literal">merge</code>&#21629;&#20196;&#33021;&#22815;&#27604;&#36739;&#20004;&#20010;&#19981;&#30456;&#20851;&#30340;&#30446;&#24405;&#26641;&#65292;&#20030;&#20010;&#20363;&#23376;&#65292;&#20320;&#26377;&#20004;&#20010;&#30446;&#24405;&#26641;&#20998;&#21035;&#20195;&#34920;&#20102;&#20379;&#24212;&#26041;&#36719;&#20214;&#39033;&#30446;&#30340;&#19981;&#21516;&#29256;&#26412;(&#35265;<a class="xref" href="svn.advanced.vendorbr.html" title="&#20379;&#26041;&#20998;&#25903;">&#8220;&#20379;&#26041;&#20998;&#25903;&#8221;&#19968;&#33410;</a>)&#65292;&#22914;&#26524;&#20320;&#20351;&#29992;<span class="command"><strong>svn merge</strong></span>&#36827;&#34892;&#27604;&#36739;&#65292;&#20320;&#20250;&#30475;&#21040;&#31532;&#19968;&#20010;&#30446;&#24405;&#26641;&#34987;&#21024;&#38500;&#65292;&#32780;&#31532;&#20108;&#20010;&#26641;&#28155;&#21152;&#19978;&#65281;&#22312;&#36825;&#20010;&#24773;&#20917;&#19979;&#65292;&#20320;&#20165;&#20165;&#26159;&#24076;&#26395;<span class="command"><strong>svn merge</strong></span>&#20197;&#36335;&#24452;&#20026;&#22522;&#30784;&#27604;&#36739;&#20004;&#26869;&#26641;&#65292;&#32780;&#24573;&#30053;&#25991;&#20214;&#21644;&#30446;&#24405;&#30340;&#19981;&#30456;&#20851;&#24615;&#65292;&#24403;&#20026;&#21512;&#24182;&#21629;&#20196;&#28155;&#21152;<code class="option">--ignore-ancestry</code>&#36873;&#39033;&#26102;&#65292;&#23601;&#20250;&#20687;<span class="command"><strong>svn diff</strong></span>&#19968;&#26679;&#24037;&#20316;&#12290;(&#30456;&#21453;&#65292;<code class="option">--notice-ancestry</code>&#20250;&#23548;&#33268;<span class="command"><strong>svn diff</strong></span>&#20687;<code class="literal">merge</code>&#21629;&#20196;&#19968;&#26679;&#24037;&#20316;&#12290;)</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.moves"></a>&#21512;&#24182;&#21644;&#31227;&#21160;</h3></div></div></div>
+        
+        <p>A common desire is to refactor source code, especially
+        in Java-based software projects.  Files and directories are
+        shuffled around and renamed, often causing great disruption
+        to everyone working on the project.  Sounds like a perfect
+        case to use a branch, doesn't it?  Just create a branch,
+        shuffle things around, and then merge the branch back to the
+        trunk, right?</p>
+        <p>Alas, this scenario doesn't work so well right now and
         is considered one of Subversion's current weak spots.  The
-        problem is that Subversion's <span class="command"><strong>update</strong></span>
+        problem is that Subversion's <span class="command"><strong>svn update</strong></span>
         command isn't as robust as it should be, particularly when
-        dealing with copy and move operations.</p><p>When you use <span class="command"><strong>svn copy</strong></span> to duplicate a
+        dealing with copy and move operations.</p>
+        <p>When you use <span class="command"><strong>svn copy</strong></span> to duplicate a
         file, the repository remembers where the new file came from,
         but it fails to transmit that information to the client which
         is running <span class="command"><strong>svn update</strong></span> or <span class="command"><strong>svn
         merge</strong></span>.  Instead of telling the client, &#8220;<span class="quote">Copy
         that file you already have to this new location,</span>&#8221; it
-        instead sends down an entirely new file.  This can lead to
+        sends down an entirely new file.  This can lead to
         problems, especially because the same thing happens with
         renamed files.  A lesser-known fact about Subversion is that
         it lacks &#8220;<span class="quote">true renames</span>&#8221;&#8212;the <span class="command"><strong>svn
         move</strong></span> command is nothing more than an aggregation
         of <span class="command"><strong>svn copy</strong></span> and <span class="command"><strong>svn
-        delete</strong></span>.</p><p>&#20363;&#22914;&#65292;&#20551;&#23450;&#25105;&#20204;&#22312;&#19968;&#20010;&#31169;&#26377;&#20998;&#25903;&#24037;&#20316;&#65292;&#20320;&#23558;<code class="filename">integer.c</code>&#25913;&#21517;&#20026;<code class="filename">whole.c</code>&#65292;&#20320;&#36825;&#26159;&#22312;&#20998;&#25903;&#19978;&#21019;&#24314;&#20102;&#21407;&#26469;&#25991;&#20214;&#30340;&#19968;&#20010;&#25335;&#36125;&#65292;&#24182;&#19988;&#21024;&#38500;&#20102;&#21407;&#26469;&#30340;&#25991;&#20214;&#12290;&#21516;&#26102;&#65292;&#22238;&#21040;<code class="filename">trunk</code>&#65292;Sally&#25552;&#20132;&#20102;&#19968;&#20123;<code class="filename">integer.c</code>&#30340;&#20462;&#25913;&#65292;&#25152;&#20197;&#20320;&#38656;&#35201;&#23558;&#20998;&#25903;&#21512;&#24182;&#21040;&#20027;&#24178;&#65306;</p><pre class="screen">
+        delete</strong></span>.</p>
+        <p>&#20363;&#22914;&#65292;&#20551;&#23450;&#25105;&#20204;&#22312;&#19968;&#20010;&#31169;&#26377;&#20998;&#25903;&#24037;&#20316;&#65292;&#20320;&#23558;<code class="filename">integer.c</code>&#25913;&#21517;&#20026;<code class="filename">whole.c</code>&#65292;&#20320;&#36825;&#26159;&#22312;&#20998;&#25903;&#19978;&#21019;&#24314;&#20102;&#21407;&#26469;&#25991;&#20214;&#30340;&#19968;&#20010;&#25335;&#36125;&#65292;&#24182;&#19988;&#21024;&#38500;&#20102;&#21407;&#26469;&#30340;&#25991;&#20214;&#12290;&#21516;&#26102;&#65292;&#22238;&#21040;<code class="filename">trunk</code>&#65292;Sally&#25552;&#20132;&#20102;&#19968;&#20123;<code class="filename">integer.c</code>&#30340;&#20462;&#25913;&#65292;&#25152;&#20197;&#20320;&#38656;&#35201;&#23558;&#20998;&#25903;&#21512;&#24182;&#21040;&#20027;&#24178;&#65306;</p>
+        <pre class="screen">
 $ cd calc/trunk
 
 $ svn merge --reintegrate http://svn.example.com/repos/calc/branches/my-calc-branch
@@ -458,22 +550,20 @@ $ svn merge --reintegrate http://svn.example.com/repos/calc/branches/my-calc-bra
 D   integer.c
 A   whole.c
 U   .
-      </pre><p>This doesn't look so bad at first glance, but it's also
-        probably not what you or Sally expected.  The merge operation
-        has deleted the latest version of
-        the <code class="filename">integer.c</code> file (the one containing
-        Sally's latest changes), and blindly added your
-        new <code class="filename">whole.c</code> file&#8212;which is a
-        duplicate of the <span class="emphasis"><em>older</em></span> version
-        of <code class="filename">integer.c</code>.  The net effect is that
-        merging your &#8220;<span class="quote">rename</span>&#8221; to the branch has removed
-        Sally's recent changes from the latest revision!</p><p>This isn't true data loss; Sally's changes are still in
+      </pre>
+        <p>&#31532;&#19968;&#30524;&#30475;&#36215;&#26469;&#19981;&#26159;&#24456;&#24046;&#65292;&#20294;&#26159;&#24456;&#21487;&#33021;&#36825;&#19981;&#26159;&#20320;&#21644;Sally&#24076;&#26395;&#30340;&#65292;&#21512;&#24182;&#25805;&#20316;&#24050;&#32463;&#21024;&#38500;&#20102;&#26368;&#26032;&#29256;&#26412;&#30340;<code class="filename">integer.c</code>(&#21253;&#21547;&#20102;Sally&#26368;&#26032;&#30340;&#20462;&#25913;)&#65292;&#32780;&#19988;&#30450;&#30446;&#30340;&#28155;&#21152;&#20102;&#20320;&#30340;<code class="filename">whole.c</code>&#25991;&#20214;&#8212;&#26159;&#26087;&#29256;&#26412;&#30340;<code class="filename">integer.c</code>&#22797;&#21046;&#21697;&#12290;&#26368;&#32456;&#30340;&#32467;&#26524;&#26159;&#23558;&#20320;&#30340;&#8220;<span class="quote">rename</span>&#8221;&#21512;&#24182;&#21040;&#20998;&#25903;&#65292;&#24182;&#19988;&#20174;&#26368;&#26032;&#20462;&#35746;&#29256;&#26412;&#21024;&#38500;&#20102;Sally&#26368;&#36817;&#30340;&#20462;&#25913;&#12290;</p>
+        <p>This isn't true data loss.  Sally's changes are still in
         the repository's history, but it may not be immediately
         obvious that this has happened.  The moral of this story is
         that until Subversion improves, be very careful about
         merging copies and renames from one branch to
-        another.</p></div><div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.pre1.5clients"></a>Blocking Merge-Unaware Clients</h3></div></div></div><p>If you've just upgraded your server to Subversion 1.5 or
-        later, then there's a significant risk that pre-1.5 Subversion
+        another.</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.pre1.5clients"></a>&#38459;&#22622;&#19981;&#30693;&#36947;&#21512;&#24182;&#30340;&#23458;&#25143;&#31471;</h3></div></div></div>
+        
+        <p>If you've just upgraded your server to Subversion 1.5 or
+        later, there's a significant risk that pre-1.5 Subversion
         clients can mess up your automated merge tracking.  Why is
         this?  When a pre-1.5 Subversion client performs <span class="command"><strong>svn
         merge</strong></span>, it doesn't modify the value of
@@ -483,8 +573,9 @@ U   .
         changes&#8212;that information is lost.  Later on,
         when &#8220;<span class="quote">merge-aware</span>&#8221; clients attempt automatic
         merging, they're likely to run into all sorts of conflicts
-        resulting from repeated merges.</p><p>If you and your team are relying on the merge-tracking
-        features of Subversion, then you may want to configure your
+        resulting from repeated merges.</p>
+        <p>If you and your team are relying on the merge-tracking
+        features of Subversion, you may want to configure your
         repository to prevent older clients from committing changes.
         The easy way to do this is by inspecting
         the &#8220;<span class="quote">capabilities</span>&#8221; parameter in
@@ -496,13 +587,78 @@ U   .
         next chapter; see
         <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;">&#8220;&#23454;&#29616;&#29256;&#26412;&#24211;&#38057;&#23376;&#8221;&#19968;&#33410;</a> and
         <a class="xref" href="svn.ref.reposhooks.start-commit.html" title="start-commit">start-commit</a> for
-        details.</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d0e7658" href="#d0e7658" class="para">21</a>] </sup>At least, this is true in Subversion 1.5 at the time
-              of writing.  This behavior may improve in future
-              versions of Subversion.</p></div><div class="footnote"><p><sup>[<a name="ftn.d0e7856" href="#d0e7856" class="para">22</a>] </sup>Interestingly, after rolling back a
-                revision like this, we wouldn't be able to re-apply
-                the revision using <span class="command"><strong>svn merge -c 5</strong></span>,
+        details.</p>
+      </div>
+      
+      <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.branchmerge.advanced.finalword"></a>&#21512;&#24182;&#36319;&#36394;&#30340;&#26368;&#32456;&#20449;&#24687;</h3></div></div></div>
+        
+        <p>The bottom line is that Subversion's merge-tracking
+        feature has an extremely complex internal implementation, and
+        the <code class="literal">svn:mergeinfo</code> property is the only
+        window the user has into the machinery.  Because the feature
+        is relatively new, a numbers of edge cases and
+        possible unexpected behaviors may pop up.</p>
+        <p>For example, sometimes mergeinfo will be generated when
+        running a simple <span class="command"><strong>svn copy</strong></span> or <span class="command"><strong>svn
+        move</strong></span> command.  Sometimes mergeinfo will appear on
+        files that you didn't expect to be touched by an operation.
+        Sometimes mergeinfo won't be generated at all, when you expect
+        it to.  Furthermore, the management of mergeinfo metadata has
+        a whole set of taxonomies and behaviors around it, such
+        as &#8220;<span class="quote">explicit</span>&#8221; versus &#8220;<span class="quote">implicit</span>&#8221;
+        mergeinfo, &#8220;<span class="quote">operative</span>&#8221;
+        versus &#8220;<span class="quote">inoperative</span>&#8221; revisions, specific
+        mechanisms of mergeinfo &#8220;<span class="quote">elision,</span>&#8221; and
+        even &#8220;<span class="quote">inheritance</span>&#8221; from parent to child
+        directories.</p>
+        <p>We've chosen not to cover these detailed topics in this
+        book for a couple of reasons.  First, the level of detail is
+        absolutely overwhelming for a typical user.  Second, as
+        Subversion continues to improve, we feel that a typical user
+        <span class="emphasis"><em>shouldn't</em></span> have to understand these
+        concepts; they'll eventually fade into the background as pesky
+        implementation details.  All that said, if you enjoy this sort
+        of thing, you can get a fantastic overview in a paper posted
+        at CollabNet's website: <code class="uri">http://www.collab.net/community/subversion/articles/merge-info.html</code>.</p>
+        <p>For now, if you want to steer clear of bugs and odd
+        behaviors in automatic merging, the CollabNet article
+        recommends that you stick to these simple best practices:</p>
+        <div class="itemizedlist"><ul type="disc"><li>
+            <p>For short-term feature branches, follow the simple
+            procedure described throughout
+            <a class="xref" href="svn.branchmerge.basicmerging.html" title="&#22522;&#26412;&#21512;&#24182;">&#8220;&#22522;&#26412;&#21512;&#24182;&#8221;&#19968;&#33410;</a>.</p>
+          </li><li>
+            <p>For long-lived release branches (as described in
+            <a class="xref" href="svn.branchmerge.commonpatterns.html" title="&#24120;&#29992;&#20998;&#25903;&#27169;&#24335;">&#8220;&#24120;&#29992;&#20998;&#25903;&#27169;&#24335;&#8221;&#19968;&#33410;</a>),
+            perform merges only on the root of the branch, not on
+            subdirectories.</p>
+          </li><li>
+            <p>Never merge into working copies with a mixture of
+            working revision numbers, or with
+            &#8220;<span class="quote">switched</span>&#8221; subdirectories (as described next
+            in <a class="xref" href="svn.branchmerge.switchwc.html" title="&#20351;&#29992;&#20998;&#25903;">&#8220;&#20351;&#29992;&#20998;&#25903;&#8221;&#19968;&#33410;</a>).  A merge
+            target should be a working copy which represents
+            a <span class="emphasis"><em>single</em></span> location in the repository
+            at a single point in time.</p>
+          </li><li>
+            <p>Don't ever edit the <code class="literal">svn:mergeinfo</code>
+            property directly; use <span class="command"><strong>svn
+            merge</strong></span> with the <code class="option">--record-only</code> option to effect a desired change
+            to the metadata (as demonstrated in
+            <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.blockchanges" title="&#38459;&#22622;&#20462;&#25913;">&#8220;&#38459;&#22622;&#20462;&#25913;&#8221;&#19968;&#33410;</a>).</p>
+          </li><li>
+            <p>Always make sure you have complete read access to
+            all of your merge sources, and that your target working
+            copy has no sparse directories.</p>
+          </li></ul></div>
+      </div>
+    <div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d4e3506" href="#d4e3506" class="para">22</a>] </sup>At least, this is true in Subversion 1.5 at the time
+              of this writing.  This behavior may improve in future
+              versions of Subversion.</p></div><div class="footnote"><p><sup>[<a name="ftn.d4e3601" href="#d4e3601" class="para">23</a>] </sup>Interestingly, after rolling back a
+                revision like this, we wouldn't be able to reapply
+                the revision using <strong class="userinput"><code>svn merge . -c 5</code></strong>,
                 since the mergeinfo would already list r5 as being
                 applied.  We would have to use
                 the <code class="option">--ignore-ancestry</code> option to make
                 the merge command ignore the existing
-                mergeinfo!</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.branchmerge.basicmerging.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.branchmerge.switchwc.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">Basic Merging&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#20351;&#29992;&#20998;&#25903;</td></tr></table></div></body></html>
+                mergeinfo!</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.branchmerge.basicmerging.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.branchmerge.switchwc.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#22522;&#26412;&#21512;&#24182;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#20351;&#29992;&#20998;&#25903;</td></tr></table></div></body></html>
