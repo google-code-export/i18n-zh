@@ -5,7 +5,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: param.xweb 7679 2008-02-17 13:26:47Z xmldoc $
+     $Id: param.xweb 8092 2008-07-18 21:26:36Z kosek $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -192,6 +192,7 @@ set       toc,title
 <xsl:param name="header.rule" select="1"/>
 <xsl:param name="highlight.default.language"/>
 <xsl:param name="highlight.source" select="0"/>
+<xsl:param name="highlight.xslthl.config"/>
 <xsl:param name="html.append"/>
 <xsl:param name="html.base"/>
 <xsl:param name="html.cellpadding"/>

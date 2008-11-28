@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="ASCII"?>
-<!--This file was created automatically by html2xhtml-->
-<!--from the HTML stylesheets.-->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0">
 
 <!-- ********************************************************************
-     $Id: htmltbl.xsl 8000 2008-04-15 01:06:41Z abdelazer $
+     $Id: htmltbl.xsl 8103 2008-08-04 11:37:01Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -40,15 +39,15 @@
   </caption>
 </xsl:template>
 
-<xsl:template match="thead|tbody|tgroup|tr" mode="htmlTable">
-  <xsl:element name="{name(.)}" namespace="http://www.w3.org/1999/xhtml">
+<xsl:template match="tbody|thead|tfoot|tr" mode="htmlTable">
+  <xsl:element name="{name(.)}">
     <xsl:copy-of select="@*"/>
     <xsl:apply-templates mode="htmlTable"/>
   </xsl:element>
 </xsl:template>
 
 <xsl:template match="th|td" mode="htmlTable">
-  <xsl:element name="{name(.)}" namespace="http://www.w3.org/1999/xhtml">
+  <xsl:element name="{name(.)}">
     <xsl:copy-of select="@*"/>
     <xsl:apply-templates/> <!-- *not* mode=htmlTable -->
   </xsl:element>

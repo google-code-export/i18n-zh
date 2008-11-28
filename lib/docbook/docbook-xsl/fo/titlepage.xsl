@@ -4,7 +4,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: titlepage.xsl 7677 2008-02-15 19:31:59Z mzjn $
+     $Id: titlepage.xsl 8162 2008-11-14 03:35:52Z dongsheng $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -738,7 +738,7 @@
               mode="titlepage.mode" priority="2">
   <fo:block>
     <xsl:call-template name="gentext">
-      <xsl:with-param name="key" select="'published'"/>
+      <xsl:with-param name="key" select="'pubdate'"/>
     </xsl:call-template>
     <xsl:text> </xsl:text>
     <xsl:apply-templates mode="titlepage.mode"/>

@@ -9,7 +9,7 @@
 <xsl:output method="xml" indent="no"/>
 
 <!-- ********************************************************************
-     $Id: docbook.xsl 7584 2007-12-03 17:43:24Z mzjn $
+     $Id: docbook.xsl 8113 2008-08-28 19:25:59Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -231,6 +231,7 @@
     </xsl:if>
 
     <xsl:if test="$fop1.extensions != 0">
+      <xsl:call-template name="fop1-document-information"/>
       <xsl:variable name="bookmarks">
         <xsl:apply-templates select="$document.element" mode="fop1.outline"/>
       </xsl:variable>
