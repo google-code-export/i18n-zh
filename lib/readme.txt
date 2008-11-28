@@ -21,6 +21,4 @@ applications.
 - required for create POT file & building the doc (translated) file
 
 * fonts
-- msyh.ttf (http://www.microsoft.com)
-- msyhbd.ttf (http://www.microsoft.com)
 - required for building the doc (pdf format)
