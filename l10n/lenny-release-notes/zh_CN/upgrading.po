@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: release-notes 5.0\n"
 "POT-Creation-Date: 2008-11-26 21:28+0800\n"
-"PO-Revision-Date: 2008-11-26 13:50+0800\n"
+"PO-Revision-Date: 2008-11-28 14:09+0800\n"
 "Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
 "Language-Team: i18n-zh <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -1422,6 +1422,7 @@ msgid ""
 "Temporarily move to another system, or permanently remove, system logs "
 "residing under <filename>/var/log/</filename>."
 msgstr ""
+"将 <filename>/var/log/</filename> 下的系统日志临时放到其它系统，或是永久删除。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:700
@@ -1430,11 +1431,13 @@ msgid ""
 "<filename>sources.list</filename> back to &oldreleasename; as described in "
 "<xref linkend=\"old-sources\"/>."
 msgstr ""
+"注意为了安全的移除包，建议您换回 &oldreleasename; 的 <filename>sources.list</"
+"filename>，就像 <xref linkend=\"old-sources\"/> 中描述的那样。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:707
 msgid "Upgrade apt and/or aptitude first"
-msgstr "先升级 apt 和/或 aptitude"
+msgstr "先升级 apt 和（或） aptitude"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:709
@@ -1450,12 +1453,20 @@ msgid ""
 "then required to upgrade those two packages before upgrading anything else. "
 "For <systemitem role=\"package\">apt</systemitem>, run:"
 msgstr ""
+"已经有几个错误报告说，etch 中的 <systemitem role=\"package\">aptitude</"
+"systemitem> 和 <systemitem role=\"package\">apt</systemitem> 版本通常无法处理"
+"升级至 &releasename;。在 &releasename; 中，<systemitem role=\"package\">apt</"
+"systemitem> 会更好的处理需要即时配置的复杂的安装包链，而 <systemitem role="
+"\"package\">aptitude</systemitem> 在搜索满足依赖关系的方案方面更智能。由于这两"
+"个程序在完全升级至 &releasename; 时会深深地绞在一起，因此在升级其它任何东西之"
+"前，都有必要先升级这两个包。对于 <systemitem role=\"package\">apt</"
+"systemitem>，执行："
 
 # type: Content of: <chapter><section><section><para><programlisting>
 #: en/upgrading.dbk:720
 #, no-wrap
 msgid "# apt-get install apt"
-msgstr ""
+msgstr "# apt-get install apt"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:721
@@ -1463,12 +1474,14 @@ msgid ""
 "and for <systemitem role=\"package\">aptitude</systemitem> (if you have it "
 "installed) run:"
 msgstr ""
+"对于 <systemitem role=\"package\">aptitude</systemitem>（如果您安装过的话）要"
+"执行："
 
 # type: Content of: <chapter><section><section><para><programlisting>
 #: en/upgrading.dbk:723
 #, no-wrap
 msgid "# aptitude install aptitude"
-msgstr ""
+msgstr "# aptitude install aptitude"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:726
@@ -1480,6 +1493,11 @@ msgid ""
 "including <command>xdm</command>, <command>gdm</command> and <command>kdm</"
 "command>.  As a consequence, local X11 sessions might be disconnected."
 msgstr ""
+"此步将自动升级 <systemitem role=\"package\">libc6</systemitem> 和 <systemitem "
+"role=\"package\">locales</systemitem>，并将引入 SELinux 支持库（<systemitem "
+"role=\"package\">libselinux1</systemitem>）。在此处，某些正在运行的服务会重"
+"启。这些服务包括 <command>xdm</command>，<command>gdm</command> 和 "
+"<command>kdm</command>。结果，本地 X11 会话可能会断开。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:736
@@ -1494,6 +1512,9 @@ msgid ""
 "another package). In &releasename;, <systemitem role=\"package\">apt</"
 "systemitem> now has this feature as well."
 msgstr ""
+"<systemitem role=\"package\">aptitude</systemitem> 维护了一个自动安装的包列表"
+"（就像另一个包的依赖一样）。在 &releasename; 中，<systemitem role=\"package"
+"\">apt</systemitem> 现在也有这个功能了。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:744
@@ -1506,12 +1527,18 @@ msgid ""
 "<systemitem role=\"package\">aptitude</systemitem> command to do the "
 "conversion. One way to do this is by searching for a non-existent package:"
 msgstr ""
+"首次运行 &releasename; 版本的 <systemitem role=\"package\">aptitude</"
+"systemitem> 时，它会先自动读入安装包的列表，然后再转换成 &releasename; "
+"<systemitem role=\"package\">apt</systemitem> 可用的版本。如果您安装了 "
+"<systemitem role=\"package\">aptitude</systemitem>，您至少应该先发出一条 "
+"<systemitem role=\"package\">aptitude</systemitem> 指令。一种方法搜索一个不存"
+"在的包："
 
 # type: Content of: <chapter><section><section><para><programlisting>
 #: en/upgrading.dbk:753
 #, no-wrap
 msgid "# aptitude search \"?false\""
-msgstr ""
+msgstr "# aptitude search \"?false\""
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:758
@@ -1527,11 +1554,15 @@ msgid ""
 "therefore recommend a two-part upgrade process, first a minimal upgrade to "
 "overcome these conflicts, then a full <literal>dist-upgrade</literal>."
 msgstr ""
+"由于在 &oldreleasename; 和 &releasename; 间有某些必需包存在冲突，因此直接运行 "
+"<literal>aptitude dist-upgrade</literal> 通常会删除大量您要想保留的包。因此我"
+"们推荐一种两步升级过程，首先做一次最小升级来解决这些冲突，然后做一次完全的 "
+"<literal>dist-upgrade</literal> 升级。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:767
 msgid "First, run:"
-msgstr ""
+msgstr "首先，运行："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:769
@@ -1540,13 +1571,15 @@ msgid ""
 "\n"
 "# aptitude upgrade\n"
 msgstr ""
+"\n"
+"# aptitude upgrade\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:773
 msgid ""
 "This has the effect of upgrading those packages which can be upgraded without "
 "requiring any other packages to be removed or installed."
-msgstr ""
+msgstr "这会升级那些不需要删除或安装其它任何包的软件。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:777
@@ -1556,6 +1589,8 @@ msgid ""
 "be used, but if in doubt, it is recommended that you examine the package "
 "removals proposed by each method before proceeding."
 msgstr ""
+"下一步会相当依赖于您安装过的包。这些发行注记会给出所用方法的通用建议，但如有疑"
+"问，推荐您在继续操作前检查每种方法建议的需要删除的包。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:783
@@ -1569,6 +1604,13 @@ msgid ""
 "For a more complete list of packages obsoleted in &releasename;, see <xref "
 "linkend=\"obsolete\"/>."
 msgstr ""
+"某些通用包要被删除，包括 <systemitem role=\"package\">base-config</"
+"systemitem>，<systemitem role=\"package\">hotplug</systemitem>，<systemitem "
+"role=\"package\">xlibs</systemitem>，<systemitem role=\"package\">netkit-"
+"inetd</systemitem>，<systemitem role=\"package\">python2.3</systemitem>，"
+"<systemitem role=\"package\">xfree86-common</systemitem> 和 <systemitem role="
+"\"package\">xserver-common</systemitem>。要看 &releasename; 中的更完整的废弃包"
+"列表，想参看 <xref linkend=\"obsolete\"/>。"
 
 # type: Content of: <chapter><section><section><section><title>
 #: en/upgrading.dbk:794
@@ -1584,6 +1626,9 @@ msgid ""
 "<literal>desktop</literal> task installed, or with the <literal>gnome</"
 "literal> or <literal>kde</literal> packages installed."
 msgstr ""
+"这种升级方法已经被运行于 &oldreleasename; 中安装的<literal>桌面</literal>环境"
+"验证过了。这可能是安装有<literal>桌面</literal>环境或是<literal>gnome</"
+"literal> 或 <literal>kde</literal> 包的系统所能给出的最佳方法。"
 
 # type: Content of: <chapter><section><section><section><para>
 #: en/upgrading.dbk:803
@@ -1592,6 +1637,9 @@ msgid ""
 "not already have the <systemitem role=\"package\">libfam0c102</systemitem> "
 "and <systemitem role=\"package\">xlibmesa-glu</systemitem> packages installed:"
 msgstr ""
+"如果您还未安装 <systemitem role=\"package\">libfam0c102</systemitem> 和 "
+"<systemitem role=\"package\">xlibmesa-glu</systemitem> 包的话，这可能"
+"<emphasis>不是</emphasis>正确的用法："
 
 # type: Content of: <chapter><section><section><section><screen>
 #: en/upgrading.dbk:807 en/upgrading.dbk:839
@@ -1601,11 +1649,14 @@ msgid ""
 "# dpkg -l libfam0c102 | grep ^ii\n"
 "# dpkg -l xlibmesa-glu | grep ^ii\n"
 msgstr ""
+"\n"
+"# dpkg -l libfam0c102 | grep ^ii\n"
+"# dpkg -l xlibmesa-glu | grep ^ii\n"
 
 # type: Content of: <chapter><section><section><section><para>
 #: en/upgrading.dbk:812
 msgid "If you do have a full desktop system installed, run:"
-msgstr ""
+msgstr "如果您确实已经安装了完整的桌面系统，那就运行："
 
 # type: Content of: <chapter><section><section><section><screen>
 #: en/upgrading.dbk:814
@@ -1614,6 +1665,8 @@ msgid ""
 "\n"
 "# aptitude install libfam0 xlibmesa-glu\n"
 msgstr ""
+"\n"
+"# aptitude install libfam0 xlibmesa-glu\n"
 
 # type: Content of: <chapter><section><section><section><title>
 #: en/upgrading.dbk:820
@@ -1632,6 +1685,11 @@ msgid ""
 "systems which run X, but do not have the full <literal>desktop</literal> task "
 "installed."
 msgstr ""
+"装有某些 X 包但没有完整<literal>桌面</literal>环境的系统需要不同的方法。这个方"
+"法通常应用于装有 <systemitem role=\"package\">xfree86-common</systemitem> 的系"
+"统，包括某些服务系统，它们装有 <systemitem role=\"package\">tasksel</"
+"systemitem> 管理组件，其中的一些带有图形管理工具。这可能是正确的方法，它适用于"
+"运行 X 的，不带完整<literal>桌面</literal>环境的系统。"
 
 # type: Content of: <chapter><section><section><section><screen>
 #: en/upgrading.dbk:831
@@ -1640,6 +1698,8 @@ msgid ""
 "\n"
 "# dpkg -l xfree86-common | grep ^ii\n"
 msgstr ""
+"\n"
+"# dpkg -l xfree86-common | grep ^ii\n"
 
 # type: Content of: <chapter><section><section><section><para>
 #: en/upgrading.dbk:835
@@ -1648,6 +1708,8 @@ msgid ""
 "systemitem> and <systemitem role=\"package\">xlibmesa-glu</systemitem> "
 "packages installed."
 msgstr ""
+"首先，检查您是否安装有 <systemitem role=\"package\">libfam0c102</systemitem> "
+"和 <systemitem role=\"package\">xlibmesa-glu</systemitem> 包。"
 
 # type: Content of: <chapter><section><section><section><para><footnote>
 #: en/upgrading.dbk:844
@@ -1658,6 +1720,10 @@ msgid ""
 "\">xlibmesa-glu</systemitem> installed, do not include it in the following "
 "commandline.  <footnote>"
 msgstr ""
+"如果您还没有安装 <systemitem role=\"package\">libfam0c102</systemitem>，不含下"
+"面命令行中的 <systemitem role=\"package\">libfam0</systemitem>。如果您还没有安"
+"装 <systemitem role=\"package\">xlibmesa-glu</systemitem>，未包含在下面的命令"
+"行中。<footnote>"
 
 # type: Content of: <chapter><section><section><section><para><footnote><para>
 #: en/upgrading.dbk:848
@@ -1665,6 +1731,7 @@ msgid ""
 "This command will determine whether you need libfam0 and xlibmesa-glu "
 "installed, and auto-select them for you:"
 msgstr ""
+"这条命令会测试您是否需要安装 libfam0 和 xlibmesa-glu，并为您自动安装它们："
 
 # type: Content of: <chapter><section><section><section><para><footnote><screen>
 #: en/upgrading.dbk:850
@@ -1674,6 +1741,9 @@ msgid ""
 "'${Package} ${Status}\\n' -W libfam0c102 xlibmesa-glu \\ | grep 'ok installed$' |\n"
 "sed -e's/ .*//; s/c102//') "
 msgstr ""
+" # aptitude install x11-common \\ $(dpkg-query --showformat\n"
+"'${Package} ${Status}\\n' -W libfam0c102 xlibmesa-glu \\ | grep 'ok installed$' |\n"
+"sed -e's/ .*//; s/c102//') "
 
 # type: Content of: <chapter><section><section><section><screen>
 #: en/upgrading.dbk:854
@@ -1682,6 +1752,8 @@ msgid ""
 "\n"
 "# aptitude install x11-common <replaceable>libfam0</replaceable> <replaceable>xlibmesa-glu</replaceable>\n"
 msgstr ""
+"\n"
+"# aptitude install x11-common <replaceable>libfam0</replaceable> <replaceable>xlibmesa-glu</replaceable>\n"
 
 # type: Content of: <chapter><section><section><section><para>
 #: en/upgrading.dbk:858
@@ -1693,6 +1765,11 @@ msgid ""
 "packages will enable a new network service in the system although they can "
 "both be configured to be bound to the (internal) loopback network device."
 msgstr ""
+"注意如果您的系统还没有 fam 和 protmap 的话，安装 <systemitem role=\"package"
+"\">libfam0</systemitem> 也会安装文件变化监视器（<systemitem role=\"package"
+"\">fam</systemitem>），以及 RPC 端口映射器（<systemitem role=\"package"
+"\">portmap</systemitem>）。尽管它们都能被绑定至（内部）回环（loopback）网络设"
+"备，这两个包还是会在系统中开启一个新的网络服务。"
 
 # type: Content of: <chapter><section><section><section><title>
 #: en/upgrading.dbk:868
@@ -1705,6 +1782,8 @@ msgid ""
 "On a system with no X, no additional <literal>aptitude install</literal> "
 "command should be required, and you can move on to the next step."
 msgstr ""
+"在不带 X 的系统上，不需要额外的 <literal>aptitude install</literal> 命令，您可"
+"以转入下一步。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:878
@@ -1722,6 +1801,12 @@ msgid ""
 "<systemitem role=\"package\">udev</systemitem> will force the removal of "
 "<systemitem role=\"package\">hotplug</systemitem>, used by Linux 2.4 kernels."
 msgstr ""
+"&releasename; 中的 <systemitem role=\"package\">udev</systemitem> 版本不支持早"
+"于 2.6.15（包括 &oldreleasename; 2.6.8 内核）版本的内核，且 &oldreleasename; "
+"中的 <systemitem role=\"package\">udev</systemitem> 版本无法在最新内核中正常运"
+"作。而且，安装 &releasename; 版的 <systemitem role=\"package\">udev</"
+"systemitem> 会强制删除 Linux 2.4 内核所用 的 <systemitem role=\"package"
+"\">hotplug</systemitem>。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:889
@@ -1735,6 +1820,11 @@ msgid ""
 "\"upgrade-preparations\"/> for recommendations on preparing for this "
 "possibility if you are upgrading remotely.)"
 msgstr ""
+"结果，以前的内核在此次升级后无法正常启动。类似的，在升级期间， <systemitem "
+"role=\"package\">udev</systemitem> 已经升级过而未安装最新内核时，会有一个 "
+"time window。假如系统要在此处重启的话（升级过程中），以后可能无法引导，因为未"
+"正确检测并载入驱动。（如果您正在远程升级，参看 <xref linkend=\"upgrade-"
+"preparations\"/> 找到用于处理此种可能性的推荐做法。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:899
@@ -1744,11 +1834,13 @@ msgid ""
 "it is therefore recommended that you upgrade the kernel on its own at this "
 "point."
 msgstr ""
+"除非您的系统中装有<literal>桌面</literal>环境，或是其它能引发大量不可接受的包"
+"移除的软件，在此我们推荐您升级内核本身。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:904
 msgid "To proceed with this kernel upgrade, run:"
-msgstr ""
+msgstr "要进行此次内核升级，执行："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:906 en/upgrading.dbk:1191
@@ -1757,6 +1849,8 @@ msgid ""
 "\n"
 "# aptitude install linux-image-2.6-<replaceable>flavor</replaceable>\n"
 msgstr ""
+"\n"
+"# aptitude install linux-image-2.6-<replaceable>flavor</replaceable>\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:910
@@ -1764,6 +1858,8 @@ msgid ""
 "See <xref linkend=\"kernel-metapackage\"/> for help in determining which "
 "flavor of kernel package you should install."
 msgstr ""
+"参看 <xref linkend=\"kernel-metapackage\"/> 来帮助您决定您应该安装哪个修订号的"
+"内核包。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:914
@@ -1775,6 +1871,10 @@ msgid ""
 "support.  See <xref linkend=\"newkernel\"/> for information on configuring "
 "your system to not depend on hotplug for booting."
 msgstr ""
+"在桌面环境下，很不幸地我们不可能保证在新 <systemitem role=\"package\">udev</"
+"systemitem> 安装后，立即安装新内核包，因此有一段未知的时间您的系统没有安装带有"
+"完整 hotplug 支持的内核。参看 <xref linkend=\"newkernel\"/> 来获取关于配置不依"
+"赖于 hotplug 就能引导的系统的信息。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:924
@@ -1785,7 +1885,7 @@ msgstr "升级系统的其它部分"
 #: en/upgrading.dbk:926
 msgid ""
 "You are now ready to continue with the main part of the upgrade.  Execute:"
-msgstr ""
+msgstr "现在，您准备继续主要部分的升级。执行："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:928
@@ -1794,6 +1894,8 @@ msgid ""
 "\n"
 "# aptitude dist-upgrade\n"
 msgstr ""
+"\n"
+"# aptitude dist-upgrade\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:932
@@ -1804,6 +1906,9 @@ msgid ""
 "install some new packages (usually new library versions, or renamed "
 "packages), and remove any conflicting obsoleted packages."
 msgstr ""
+"这将对系统进行一次全面的升级，例如：安装所有包的最新可用版本，解决不同发行版的"
+"包之间所有潜在的依赖性变动。如有必要，它会安装一些新包（通常是新库，或是重命名"
+"的包），并删除任何冲突的过时包。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:939
@@ -1813,6 +1918,9 @@ msgid ""
 "CD multiple times; this is due to inter-related packages that have been "
 "spread out over the CDs."
 msgstr ""
+"当从一叠 CD-ROM 升级时，您会在升级期间的某几个地方被要求插入指定的 CD 盘片。您"
+"可能不得不多次插入相同的盘片，这是因为互相依赖的包已经被分散到整个 CD 套件中去"
+"了。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:945
@@ -1824,6 +1932,10 @@ msgid ""
 "installation or by trying <literal>aptitude -f install <replaceable>package</"
 "replaceable></literal>."
 msgstr ""
+"不改变被定位于当前安装状态（显示为 <quote>held back</quote>）的另一个包，当前"
+"安装包的新版本无法升级。这个问题可以通过使用 <command>aptitude</command> 选择"
+"安装这些包或是用 <literal>aptitude -f install <replaceable>package</"
+"replaceable></literal>  来解决。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:955
@@ -1837,6 +1949,8 @@ msgid ""
 "systemitem> you can now update your package information, which will include "
 "the new package signature checking mechanism:"
 msgstr ""
+"升级后，您可以用新版的 <systemitem role=\"package\">apt</systemitem> 来更新您"
+"的包信息，它含有新包的签名验证机制："
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:965
@@ -1848,6 +1962,10 @@ msgid ""
 "and have not been tampered with.  For more information please see <xref "
 "linkend=\"pkgmgmt\"/>."
 msgstr ""
+"升级时已经取得并使用了 Debian 包的签名密钥。如果您添加其它（非官方）的包源， "
+"<systemitem role=\"package\">apt</systemitem> 会打印出无法确认从其它源下载的包"
+"是合法的并还未被窜改过的警告信息。要想了解更多信息请参看 <xref linkend="
+"\"pkgmgmt\"/>。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:972
@@ -1857,6 +1975,9 @@ msgid ""
 "(<literal>pdiff</literal>) instead of the full package index list.  For more "
 "information on this feature please read <xref linkend=\"apt-pdiff\"/>."
 msgstr ""
+"您会注意到，由于正在使用新版的 <systemitem role=\"package\">apt</systemitem>，"
+"它会下载包的差异文件（<literal>pdiff</literal>）而不是完整的包索引列表。要想了"
+"解有关此特性的更多信息，请看 <xref linkend=\"apt-pdiff\"/>。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:980
@@ -1869,6 +1990,8 @@ msgid ""
 "If an operation using <command>aptitude</command>, <command>apt-get</"
 "command>, or <command>dpkg</command> fails with the error"
 msgstr ""
+"如果使用 <command>aptitude</command>, <command>apt-get</command> 或 "
+"<command>dpkg</command> 操作时出现错误"
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:985
@@ -1877,6 +2000,8 @@ msgid ""
 "\n"
 "E: Dynamic MMap ran out of room\n"
 msgstr ""
+"\n"
+"E: Dynamic MMap ran out of room\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:989
@@ -1888,6 +2013,10 @@ msgid ""
 "apt/apt.conf</filename>.  The following command will set it to a value that "
 "should be sufficient for the upgrade:"
 msgstr ""
+"默认的缓存区空间不足。您可以通过删除或注释掉 <filename>/etc/apt/sources.list</"
+"filename> 中不需要的行，或是增加缓存大小来解决这个问题。缓存大小能通过在 "
+"<filename>/etc/apt/apt.conf</filename> 中设置 <literal>APT::Cache-Limit</"
+"literal> 来增加。下面的命令会将它设为一个足够升级大小的值："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:996
@@ -1896,11 +2025,13 @@ msgid ""
 "\n"
 "# echo 'APT::Cache-Limit \"12500000\";' &gt;&gt; /etc/apt/apt.conf\n"
 msgstr ""
+"\n"
+"# echo 'APT::Cache-Limit \"12500000\";' &gt;&gt; /etc/apt/apt.conf\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1000
 msgid "This assumes that you do not yet have this variable set in that file."
-msgstr ""
+msgstr "这里假设您还未在那个文件中对该变量进行设置。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1003
@@ -1912,6 +2043,10 @@ msgid ""
 "<literal>-o APT::Force-LoopBreak=1</literal> option on <command>aptitude</"
 "command> command line."
 msgstr ""
+"有时有必要在 APT 中开启 <literal>APT::Force-LoopBreak</literal> 选项使之能够临"
+"时移除一个重要的包，这是为了满足冲突或是预依赖循环。 <command>aptitude</"
+"command> 会警告您这一点并退出升级。您可以通过在 <command>aptitude</command> 命"
+"令行上指定 <literal>-o APT::Force-LoopBreak=1</literal> 选项来绕过这个问题。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1011
@@ -1920,6 +2055,8 @@ msgid ""
 "require manual intervention.  Usually this means using <command>aptitude</"
 "command> or"
 msgstr ""
+"有可能系统的依赖关系太乱了以至于需要手工干预。通常这意味着使用 "
+"<command>aptitude</command> 或"
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1015
@@ -1928,11 +2065,13 @@ msgid ""
 "\n"
 "# dpkg --remove <replaceable>package_name</replaceable>\n"
 msgstr ""
+"\n"
+"# dpkg --remove <replaceable>package_name</replaceable>\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1019
 msgid "to eliminate some of the offending packages, or"
-msgstr ""
+msgstr "来消除某些引起问题的包，或是"
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1021
@@ -1942,12 +2081,15 @@ msgid ""
 "# aptitude -f install\n"
 "# dpkg --configure --pending\n"
 msgstr ""
+"\n"
+"# aptitude -f install\n"
+"# dpkg --configure --pending\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1026
 msgid ""
 "In extreme cases you might have to force re-installation with a command like"
-msgstr ""
+msgstr "在极端情况下，您可能不得不像以下命令一样强制重新安装某个包"
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1028
@@ -1956,6 +2098,8 @@ msgid ""
 "\n"
 "# dpkg --install <replaceable>/path/to/package_name.deb</replaceable>\n"
 msgstr ""
+"\n"
+"# dpkg --install <replaceable>/path/to/package_name.deb</replaceable>\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1032
@@ -1964,6 +2108,8 @@ msgid ""
 "&oldreleasename; system, but can occur if you have unofficial backports "
 "installed.  A file conflict will result in an error like:"
 msgstr ""
+"如果您从<quote>干净的</quote> &oldreleasename; 系统升级就不会出现文件冲突，但"
+"如果您装有非官方的 backport 包就可能出现冲突。文件冲突会导致像以下这样的错误："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1036
@@ -1978,6 +2124,14 @@ msgid ""
 " Errors were encountered while processing:\n"
 " <replaceable>&lt;package-foo&gt;</replaceable>\n"
 msgstr ""
+"\n"
+"Unpacking <replaceable>&lt;package-foo&gt;</replaceable> (from <replaceable>&lt;package-foo-file&gt;</replaceable>) ...\n"
+"dpkg: error processing <replaceable>&lt;package-foo&gt;</replaceable> (--install):\n"
+" trying to overwrite `<replaceable>&lt;some-file-name&gt;</replaceable>',\n"
+" which is also in package <replaceable>&lt;package-bar&gt;</replaceable>\n"
+"dpkg-deb: subprocess paste killed by signal (Broken pipe)\n"
+" Errors were encountered while processing:\n"
+" <replaceable>&lt;package-foo&gt;</replaceable>\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1046
@@ -1985,6 +2139,8 @@ msgid ""
 "You can try to solve a file conflict by forcibly removing the package "
 "mentioned on the <emphasis>last</emphasis> line of the error message:"
 msgstr ""
+"您可以尝试用错误信息中的<emphasis>最后</emphasis>一行提示，强制删除包来解决文"
+"件冲突："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1049
@@ -1993,6 +2149,8 @@ msgid ""
 "\n"
 "# dpkg -r --force-depends <replaceable>package_name</replaceable>\n"
 msgstr ""
+"\n"
+"# dpkg -r --force-depends <replaceable>package_name</replaceable>\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1053
@@ -2000,6 +2158,8 @@ msgid ""
 "After fixing things up, you should be able to resume the upgrade by repeating "
 "the previously described <literal>aptitude</literal> commands."
 msgstr ""
+"在修复这些问题后，您应该可以通过重复前述的 <literal>aptitude</literal> 命令来"
+"继续升级。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1057
@@ -2013,6 +2173,11 @@ msgid ""
 "versions, since they will be saved with a <literal>.dpkg-old</literal> "
 "extension."
 msgstr ""
+"升级期间，您会被问到有关配置或是重新配置几个包的问题。如果您被问到是否任何存在"
+"于 <filename>/etc/init.d</filename> 或 <filename>/etc/terminfo</filename> 目"
+"录，或是 <filename>/etc/manpath.config</filename> 目录下的文件应该被包维护者的"
+"版本所替换时，通常有必要回答‘yes’来确保系统一致性。由于它们会被以 <literal>."
+"dpkg-old</literal> 为后缀的文件名保存，所以您总是可以恢复成老版本的配置文件。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1066
@@ -2021,6 +2186,8 @@ msgid ""
 "sort things out at a later time.  You can search in the typescript file to "
 "review the information that was on the screen during the upgrade."
 msgstr ""
+"如果您不确定该做什么，那就记下包或文件的名称，并稍后排出它们的顺序。您可以通过"
+"在记录文件（typescript file）中搜索来审查升级期间显示在屏幕上的信息。"
 
 # type: Content of: <chapter><section><title>
 #: en/upgrading.dbk:1075
@@ -2035,6 +2202,9 @@ msgid ""
 "<systemitem role=\"package\">linux-image-*</systemitem> packages provided by "
 "Debian, or compile a customized kernel from source."
 msgstr ""
+"这一节解释了如何升级您的内核，以及明确有关此次升级的潜在问题。您可以安装由 "
+"Debian 提供的 <systemitem role=\"package\">linux-image-*</systemitem> 包，或者"
+"从源码编译一个自定义的内核。"
 
 # type: Content of: <chapter><section><para>
 #: en/upgrading.dbk:1083
@@ -2046,6 +2216,10 @@ msgid ""
 "that does not require an initrd or if you use a different initrd generator, "
 "some of the information may not be relevant for you."
 msgstr ""
+"注意本节的很多信息基于假设，即您会使用一个模块化的 Debian 内核，以及"
+"<systemitem role=\"package\">initramfs-tools</systemitem> 和 <systemitem role="
+"\"package\">udev</systemitem>。如果您选择使用一个不需要 initrd 的自定义内核，"
+"或是您使用了一种不同的 initrd 生成器，对您来说某些信息可能会不一样。 "
 
 # type: Content of: <chapter><section><para>
 #: en/upgrading.dbk:1091
@@ -2054,6 +2228,9 @@ msgid ""
 "<emphasis>not</emphasis> installed on your system, it is still possible to "
 "use <systemitem role=\"package\">hotplug</systemitem> for hardware discovery."
 msgstr ""
+"同时注意，如果您的系统中<emphasis>没有</emphasis>安装 <systemitem role="
+"\"package\">udev</systemitem>，仍然有可能使用 <systemitem role=\"package"
+"\">hotplug</systemitem> 进行硬件查找。"
 
 # type: Content of: <chapter><section><para>
 #: en/upgrading.dbk:1096
@@ -2061,6 +2238,8 @@ msgid ""
 "If you are currently using a 2.4 kernel, you should also read <xref linkend="
 "\"upgrade-to-2.6\"/> carefully."
 msgstr ""
+"如果您目前正在使用 2.4 内核，您也应该仔细阅读 <xref linkend=\"upgrade-to-2.6"
+"\"/>。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:1100
@@ -2075,6 +2254,9 @@ msgid ""
 "package may be installed automatically by the dist-upgrade process.  You can "
 "verify this by running:"
 msgstr ""
+"当您从 &oldreleasename; 全面升级至 &releasename; 时，强烈推荐您安装新的 linux-"
+"image-2.6-* 元数据包。此包可能由 dist-upgrade 自动安装了。您可以验证此步，执"
+"行："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1106
@@ -2083,6 +2265,8 @@ msgid ""
 "\n"
 "# dpkg -l \"linux-image*\" | grep ^ii\n"
 msgstr ""
+"\n"
+"# dpkg -l \"linux-image*\" | grep ^ii\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1110
@@ -2091,6 +2275,8 @@ msgid ""
 "package by hand.  To see a list of available linux-image-2.6 metapackages, "
 "run:"
 msgstr ""
+"如果您没有看到任何输出，那么您需要手工安装一个新的 linux-image 包。要查看可用"
+"的 linux-image-2.6 的元数据包列表，执行："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1113
@@ -2099,6 +2285,8 @@ msgid ""
 "\n"
 "# apt-cache search linux-image-2.6- | grep -v transition\n"
 msgstr ""
+"\n"
+"# apt-cache search linux-image-2.6- | grep -v transition\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1117
@@ -2112,6 +2300,12 @@ msgid ""
 "<command>apt-cache</command> to see a long description of each package in "
 "order to help choose the best one available.  For example:"
 msgstr ""
+"如果您不确定要选哪个包，那就运行 <literal>uname -r</literal> 并查找带有类似名"
+"称的包。例如，如果您看到‘<literal>2.4.27-3-686</literal>’，那推荐您安装 "
+"<systemitem role=\"package\">linux-image-2.6-686</systemitem>。（注意不再有 "
+"386 版本；如果您当前正在用 386 内核，您应该安装 486 内核替换。）您也可以使用 "
+"<command>apt-cache</command> 来查看每个包的长长的描述，以帮助您选择最好用的那"
+"个。例如："
 
 # type: Content of: <chapter><section><section><screen>
 #: en/upgrading.dbk:1126
@@ -2120,6 +2314,8 @@ msgid ""
 "\n"
 "# apt-cache show linux-image-2.6-686\n"
 msgstr ""
+"\n"
+"# apt-cache show linux-image-2.6-686\n"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1130
@@ -2128,6 +2324,8 @@ msgid ""
 "this new kernel is installed you should reboot at the next available "
 "opportunity to get the benefits provided by the new kernel version."
 msgstr ""
+"然后您应该使用 <literal>aptitude install</literal> 来安装。一旦安装了这个新内"
+"核，您应该在下一次可行处重启机器以获取新内核所提供的优势。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1135
@@ -2137,6 +2335,9 @@ msgid ""
 "systemitem> tool and read the documentation in <filename>/usr/share/doc/"
 "kernel-package</filename>."
 msgstr ""
+"对于爱冒险的人，这里有个简单方法来编译您自己的自定义 &debian; 内核。安装 "
+"<systemitem role=\"package\">kernel-package</systemitem> 工具，然后阅读 "
+"<filename>/usr/share/doc/kernel-package</filename> 下的文档。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:1143
@@ -2150,6 +2351,9 @@ msgid ""
 "upgrade will take place automatically after you do a full upgrade of the "
 "system packages (as described in <xref linkend=\"upgradingpackages\"/> )."
 msgstr ""
+"如果您目前运行来自 &oldreleasename; 的 2.6 系列的内核，在您做了一次完整的系统"
+"包升级后，会自动发生这个升级（就像 <xref linkend=\"upgradingpackages\"/> 所描"
+"述的那样）。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1150
@@ -2160,6 +2364,10 @@ msgid ""
 "for a description of this process.  Note that this should only be done after "
 "the minimal upgrade process described in <xref linkend=\"minimal-upgrade\"/>."
 msgstr ""
+"如果有可能，把内核包的升级从主 <literal>dist-upgrade</literal> 中独立出来是有"
+"利的，这能减少出现一个不可引导的系统的机会。参看 <xref linkend=\"upgrading-"
+"kernel\"/> 获取此过程的描述。注意，这只能在最小升级 <xref linkend=\"minimal-"
+"upgrade\"/> 结束后才能做。"
 
 # type: Content of: <chapter><section><section><para>
 #: en/upgrading.dbk:1157
@@ -2171,6 +2379,9 @@ msgid ""
 "supported by <systemitem role=\"package\">udev</systemitem> you can safely "
 "wait until after the full system upgrade."
 msgstr ""
+"如果您正使用您自定义的内核并想使用 &releasename; 中可用的内核，您也可以进行此"
+"步操作。如果您的内核版本 <systemitem role=\"package\">udev</systemitem> 不支"
+"持，您可以安稳地等等直至整个系统升级完成。"
 
 # type: Content of: <chapter><section><section><title>
 #: en/upgrading.dbk:1167
@@ -3078,7 +3289,7 @@ msgid ""
 "only two stable releases are supported at any given time."
 msgstr ""
 "否则只要在那段时间内没有另外的发行版释出。在任意给定时间内，一般仅提供两个 "
-"stable 发行版的安装更新。"
+"stable 发行版的安全更新。"
 
 # type: Content of: <chapter><section><para>
 #: en/upgrading.dbk:1823
@@ -3121,14 +3332,14 @@ msgid ""
 "through dependencies."
 msgstr ""
 "检测在已更新的系统中哪些包是<quote>过时</quote>的现在容易得很，因为包管理的前"
-"台程序会标记它们的。如果您使用的是 <command>aptitude</command>，您将在 <quote>"
-"过期的和在本地创建的包</quote> 条目中看到这些包。<command>dselect</command> 提"
-"供类似的条目，但它显示的列表有所不同。还有，如果您曾经用 <command>aptitude</"
-"command> 手工在 &oldreleasename; 中安装过包，aptitude 会保存那些您手工安装的记"
-"录。如果有某个包被移除并导致出现无依赖性，即不再需要那些包，aptitude 会那些包"
-"标记为过时的包。还有 <command>aptitude</command>，不同于 <command>deborphan</"
-"command>。<command>deborphan</command> 不将您手工安装过的包，而非那些通过依赖"
-"性自动安装的软件包，标记为过时的包。"
+"台程序会标记它们的。如果您使用的是 <command>aptitude</command>，您将在 "
+"<quote>Obsolete and Locally Created Packages</quote> 条目中看到这些包。"
+"<command>dselect</command> 提供类似的条目，但它显示的列表有所不同。还有，如果"
+"您曾经用 <command>aptitude</command> 手工在 &oldreleasename; 中安装过包，"
+"aptitude 会保存那些您手工安装的记录。如果有某个包被移除并导致出现无依赖性，即"
+"不再需要那些包，aptitude 会那些包标记为过时的包。还有 <command>aptitude</"
+"command>，不同于 <command>deborphan</command>。<command>deborphan</command> 不"
+"将您手工安装过的包，而非那些通过依赖性自动安装的软件包，标记为过时的包。"
 
 # type: Content of: <chapter><section><para>
 #: en/upgrading.dbk:1850
