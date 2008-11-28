@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="ASCII"?>
-<!--This file was created automatically by html2xhtml-->
-<!--from the HTML stylesheets.-->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="exsl" version="1.0">
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:exsl="http://exslt.org/common"
+                exclude-result-prefixes="exsl"
+                version='1.0'>
 
 <!-- ********************************************************************
-     $Id: footnote.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: footnote.xsl 8126 2008-09-15 19:18:09Z dcramer $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -26,7 +27,7 @@
     <xsl:when test="ancestor::tgroup">
       <sup>
         <xsl:text>[</xsl:text>
-        <a id="{$name}" href="{$href}">
+        <a name="{$name}" href="{$href}">
           <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:apply-templates select="." mode="footnote.number"/>
         </a>
@@ -36,7 +37,7 @@
     <xsl:otherwise>
       <sup>
         <xsl:text>[</xsl:text>
-        <a id="{$name}" href="{$href}">
+        <a name="{$name}" href="{$href}">
           <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:apply-templates select="." mode="footnote.number"/>
         </a>
@@ -49,6 +50,15 @@
 <xsl:template match="footnoteref">
   <xsl:variable name="targets" select="key('id',@linkend)"/>
   <xsl:variable name="footnote" select="$targets[1]"/>
+
+  <xsl:if test="not(local-name($footnote) = 'footnote')">
+   <xsl:message terminate="yes">
+ERROR: A footnoteref element has a linkend that points to an element that is not a footnote. 
+Typically this happens when an id attribute is accidentally applied to the child of a footnote element. 
+target element: <xsl:value-of select="local-name($footnote)"/>
+linkend/id: <xsl:value-of select="@linkend"/>
+   </xsl:message>
+  </xsl:if>
 
   <xsl:variable name="target.href">
     <xsl:call-template name="href.target">
@@ -87,7 +97,8 @@
           <xsl:value-of select="substring($table.footnote.number.symbols, $tfnum, 1)"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:number level="any" from="tgroup" format="{$table.footnote.number.format}"/>
+          <xsl:number level="any" from="tgroup"
+                      format="{$table.footnote.number.format}"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:when>
@@ -133,9 +144,10 @@
     </xsl:if>
     <sup>
       <xsl:text>[</xsl:text>
-      <a id="{$name}" href="{$href}">
+      <a name="{$name}" href="{$href}">
         <xsl:apply-templates select="." mode="class.attribute"/>
-        <xsl:apply-templates select="ancestor::footnote" mode="footnote.number"/>
+        <xsl:apply-templates select="ancestor::footnote"
+                             mode="footnote.number"/>
       </a>
       <xsl:text>] </xsl:text>
     </sup>
@@ -161,9 +173,10 @@
   <xsl:variable name="footnote.mark">
     <sup>
       <xsl:text>[</xsl:text>
-      <a id="{$name}" href="{$href}">
+      <a name="{$name}" href="{$href}">
         <xsl:apply-templates select="." mode="class.attribute"/>
-        <xsl:apply-templates select="ancestor::footnote" mode="footnote.number"/>
+        <xsl:apply-templates select="ancestor::footnote"
+                             mode="footnote.number"/>
       </a>
       <xsl:text>] </xsl:text>
     </sup>
@@ -222,10 +235,11 @@
 
 <xsl:template name="process.footnotes">
   <xsl:variable name="footnotes" select=".//footnote"/>
-  <xsl:variable name="table.footnotes" select=".//tgroup//footnote"/>
+  <xsl:variable name="table.footnotes"
+                select=".//tgroup//footnote"/>
 
   <!-- Only bother to do this if there's at least one non-table footnote -->
-  <xsl:if test="count($footnotes)&gt;count($table.footnotes)">
+  <xsl:if test="count($footnotes)>count($table.footnotes)">
     <div class="footnotes">
       <br/>
       <hr width="100" align="left"/>
@@ -237,11 +251,12 @@
     <div class="annotation-list">
       <div class="annotation-nocss">
 	<p>The following annotations are from this essay. You are seeing
-	them here because your browser doesn&#8217;t support the user-interface
-	techniques used to make them appear as &#8216;popups&#8217; on modern browsers.</p>
+	them here because your browser doesn’t support the user-interface
+	techniques used to make them appear as ‘popups’ on modern browsers.</p>
       </div>
 
-      <xsl:apply-templates select="//annotation" mode="annotation-popup"/>
+      <xsl:apply-templates select="//annotation"
+			   mode="annotation-popup"/>
     </div>
   </xsl:if>
 </xsl:template>
@@ -282,7 +297,8 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="tgroup//footnote" mode="process.footnote.mode">
+<xsl:template match="tgroup//footnote"
+              mode="process.footnote.mode">
 </xsl:template>
 
 <xsl:template match="footnote" mode="table.footnote.mode">

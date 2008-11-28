@@ -10,7 +10,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: inline.xsl 7622 2007-12-21 16:28:18Z mzjn $
+     $Id: inline.xsl 8114 2008-09-01 09:33:17Z xmldoc $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -992,7 +992,20 @@
         <xsl:if test="not($email.delimiters.enabled = 0)">
           <xsl:text>&lt;</xsl:text>
         </xsl:if>
-        <xsl:apply-templates/>
+        <xsl:choose>
+          <xsl:when test="not($email.mailto.enabled = 0)">
+            <fo:basic-link xsl:use-attribute-sets="xref.properties"
+                           keep-together.within-line="always" hyphenate="false">
+              <xsl:attribute name="external-destination">
+                mailto:<xsl:value-of select="string(.)" />
+              </xsl:attribute>
+              <xsl:apply-templates/>
+            </fo:basic-link>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates/>
+          </xsl:otherwise>
+        </xsl:choose>
         <xsl:if test="not($email.delimiters.enabled = 0)">
           <xsl:text>&gt;</xsl:text>
         </xsl:if>

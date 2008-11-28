@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: autotoc.xsl 7634 2008-01-05 16:06:30Z mzjn $
+     $Id: autotoc.xsl 8040 2008-06-04 15:56:28Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -17,6 +17,7 @@
 <!-- ==================================================================== -->
 
 <xsl:template name="set.toc">
+
   <xsl:param name="toc-context" select="."/>
 
   <xsl:variable name="id">
@@ -29,7 +30,7 @@
     </xsl:call-template>
   </xsl:variable>
 
-  <xsl:variable name="nodes" select=".|book|set|setindex"/>
+  <xsl:variable name="nodes" select="book|set|setindex"/>
 
   <xsl:if test="$nodes">
     <fo:block id="toc...{$id}"
