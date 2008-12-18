@@ -5,18 +5,32 @@ an update from the previous version of Debian. It is written in
 DocBook XML which allows the creation of various output files in the
 formats HTML, text, PDF, ...
 
-To build it you need the package docbook-xsl and (dependent on the
-output format and language) dblatex and xmlroff. For PO file based
-translations you also need po4a and of course make, ...
+To build it you need these packages:
+ - docbook-xsl         (transformation stylesheets)
+ - libxml2-utils       (for xmllint)
+ - dblatex and xmlroff (depending on the output format and language)
+ - po4a                (for handling PO file based translations)
+ - make                (or you will type a lot)
+ - ttf-arphic-*        (fonts)
+ - texlive-*           (used by dblatex)
+ - w3m                 (to create the text version)
 
-Just call "make" to build it. It works also from a language directory
-but you need to add the architecture for which you want to create the
-document on the commandline, e.g.: "make architecture=i386".
+For etch, you need the lenny backports of dblatex and xmlroff.
+
+Just call "make" to build it. To build the release notes in a single
+format (html or txt or pdf) for a single language (e.g. zh_CN, en, es)
+and a single architecture (such as amd64, i386, powerpc), call e.g.:
+"make html LINGUA=es architecture=i386".
 
 Translations
 
 The document is available in many languages. po4a is currently used as
 the translation tool.
+
+Some translators prefer full-text translation without po. For this
+style of translations, the original English files are just copied
+into the language directory and the translators have to make sure,
+that the translation is up to date.
 
 To add a new translation, call "make updatepo LINGUA=xx" to create a
 new PO template file which you need to translate, with xx being the
@@ -24,7 +38,7 @@ language code of your translation.
 
 It is suggested that you now try to create the document for at least
 one architecture. This will detect possible syntax errors in your
-file.
+file. Furthermore you may call "make validate LINGUA=xx".
 
 Send your translation for inclusion to the public mailing list
 debian-doc@lists.debian.org.
