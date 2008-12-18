@@ -31,15 +31,17 @@
 
   <!-- Font related Settings -->
   <xsl:param name="body.font.family">serif</xsl:param>
-  <xsl:param name="dingbat.font.family">serif</xsl:param>
   <xsl:param name="monospace.font.family">monospace</xsl:param>
-  <xsl:param name="sans.font.family">sans-serif</xsl:param>
   <xsl:param name="title.font.family">sans-serif</xsl:param>
   <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
 
+  <xsl:param name="body.font.family.l10n">zh_text</xsl:param>
+  <xsl:param name="monospace.font.family.l10n">zh_verbatim</xsl:param>
+  <xsl:param name="title.font.family.l10n">zh_title</xsl:param>
+
   <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="title.font.size">14</xsl:param>
-  
+
   <!-- Page related Settings -->
   <xsl:param name="page.margin.inner">1.5cm</xsl:param>
   <xsl:param name="page.margin.outer">1.5cm</xsl:param>

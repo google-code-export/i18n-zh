@@ -5,11 +5,10 @@
 
   <xsl:param name="l10n.gentext.language" select="'zh_cn'"/>
 
-  <!-- Chinese font related settings -->
-  <xsl:param name="body.font.family">zh_text</xsl:param>
-  <xsl:param name="dingbat.font.family">zh_text</xsl:param>
-  <xsl:param name="monospace.font.family">zh_verbatim</xsl:param>
-  <xsl:param name="sans.font.family">zh_title</xsl:param>
-  <xsl:param name="title.font.family">zh_title</xsl:param>
+  <!-- Chinese font related settings
+  <xsl:param name="body.font.family.l10n">zh_text</xsl:param>
+  <xsl:param name="monospace.font.family.l10n">zh_verbatim</xsl:param>
+  <xsl:param name="title.font.family.l10n">zh_title</xsl:param>
+   -->
 
 </xsl:stylesheet>

@@ -273,12 +273,22 @@
     <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
     <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
 
+    <copy todir="build/en">
+      <fileset dir="${fop.home}/conf">
+        <include name="*.xml"/>
+      </fileset>
+      <fileset dir="${fonts.dir}">
+        <include name="*.ttf"/>
+        <include name="*.ttc"/>
+      </fileset>
+    </copy>
+
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook5.xsl}/images" includes="**/*.svg"/>
     </copy>
     <copy file='source/book.xml' todir="build/en"/>
-    
+
     <echo message="Making fo ..."/>
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
@@ -291,13 +301,15 @@
     <echo message="Making pdf ..."/>
     <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
+      <arg value="-c"/>
+      <arg value="userconfig.xml"/>
       <arg value="svnbook.fo"/>
       <arg value="svnbook.pdf"/>
     </java>
 
-    <delete>
+    <!--delete>
       <fileset dir="build/en" excludes="**/*.pdf"/>
-    </delete>
+    </delete-->
 
   </target>
 </project>
