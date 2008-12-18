@@ -2,15 +2,9 @@
 # Makefile for the release notes, top-level
 #
 
-help:
-	@echo make html LINGUA=zh_CN architecture=i386
-	@echo make pdf LINGUA=zh_CN architecture=i386
-	@echo make txt LINGUA=zh_CN architecture=i386
-	@echo "make stat # output stat information for zh_CN"
-	@echo "make tidypo # clean .po files"
-
-stat:
-	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt  --statistics -c $$f; done)
+# comment out this line when the release notes should go into
+# production mode
+DRAFT := 1
 
 # TODO: Once #477458 is fixed in stable remove all committed sgml files
 # which are generated from a PO file (was a workaround for old po4a).
@@ -31,8 +25,10 @@ endif
 LANGUAGES := en ca cs de es fi fr it ja pl pt_BR pt ro ru sv zh_TW
 # languages w/o .po files
 # (either original English or translators don't like .po)
-DBK_LANGUAGES := en pt_BR
-XMLROFF_LANGS=cs ja pl ro ru vi zh_CN
+DBK_LANGUAGES := en ca cs pt_BR
+XMLROFF_LANGS=cs ja pl ro ru vi zh_CN zh_TW
+# cairo backend of xmlroff 0.6.0 crashes on some languages (#492597)
+GPLIST=zh_TW
 
 LANGUAGES-publish := $(addsuffix -publish,$(LANGUAGES))
 LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
@@ -52,6 +48,9 @@ DBK2HTML1=$(CURDIR)/txt.xsl
 DBLATEX=dblatex --style=db2latex
 PROFILE=$(DOCBOOK_XSL)/profiling/profile.xsl
 XMLROFF=xmlroff --backend cairo
+XMLROFF_GP=xmlroff --backend gp
+
+FORMATS=html txt pdf ps
 
 ifeq "$(DRAFT)" "1"
     draftmode := yes
@@ -60,6 +59,8 @@ else
 endif
 
 # po4a stuff
+# The etch version of po4a does not have the --previous option
+#UPDATEPO=PERLLIB=lib/ po4a-updatepo --previous --format docbook
 UPDATEPO=PERLLIB=lib/ po4a-updatepo --format docbook
 # The "--keep 0" should be removed as soon as the translations are ready
 TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
@@ -67,10 +68,20 @@ TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
 .SUFFIXES: 
 .PHONY: publish all clean $(LANGUAGES) $(LANGUAGES-publish)
 
+help:
+	@echo make html LINGUA=zh_CN architecture=i386
+	@echo make pdf LINGUA=zh_CN architecture=i386
+	@echo make txt LINGUA=zh_CN architecture=i386
+	@echo "make stat # output stat information for zh_CN"
+	@echo "make tidypo # clean .po files"
+
+stat:
+	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt --statistics -c $$f; done)
+
 all:
 	for l in $(LANGUAGES); do \
 	    for a in $(arches); do \
-		$(MAKE) LINGUA=$$l architecture=$$l html txt pdf ps; \
+		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
 	    done; \
 	done
 
@@ -79,7 +90,7 @@ ifeq "$(architecture)" ""
 	@echo "architecture variable must be set, try one of: $(arches)"
 	exit 1
 else
-	-$(MAKE) LINGUA=$@ html txt pdf ps
+	-$(MAKE) LINGUA=$@ architecture=$$a $(FORMATS)
 endif
 
 publish: clean
@@ -114,21 +125,27 @@ publish: clean
 		&& tar czf $(PUBLISHDIR)/$(manual)-$$arch.tar.gz *); fi \
 	done
 
+ifeq "$(architecture)" ""
+$(FORMATS)::
+	@echo "architecture variable must be set, try one of: $(arches)"
+	exit 1
+endif
+
 ifdef LINGUA
-html:	$(LINGUA)/$(manual).$(architecture).html/index.html
+html::	$(LINGUA)/$(manual).$(architecture).html/index.html
 $(LINGUA)/$(manual).$(architecture).html/index.html: \
 		$(LINGUA)/$(manual).$(architecture).xml html.xsl
 	mkdir -p $(LINGUA)/$(manual).$(architecture).html/images
 	cp debian.css $(LINGUA)/$(manual).$(architecture).html
-	cp /usr/share/doc/docbook-xsl/doc/images/*.png \
+	cp /usr/share/xml/docbook/stylesheet/nwalsh/images/*.png \
 	    $(LINGUA)/$(manual).$(architecture).html/images
 	cd $(LINGUA) && $(XP) -o $(manual).$(architecture).html/ \
 	    --stringparam html.ext .$(LINGUA).html \
 	    --stringparam draft.mode $(draftmode) \
 	    $(DBK2HTML) $(manual).$(architecture).xml
 
-pdf:	$(LINGUA)/$(manual).$(architecture).pdf
-ps:	$(LINGUA)/$(manual).$(architecture).ps
+pdf::	$(LINGUA)/$(manual).$(architecture).pdf
+ps::	$(LINGUA)/$(manual).$(architecture).ps
 ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 $(LINGUA)/$(manual).$(architecture).pdf: \
 		$(LINGUA)/$(manual).$(architecture).fo
@@ -143,23 +160,39 @@ $(LINGUA)/$(manual).$(architecture).ps: \
 		$(LINGUA)/$(manual).$(architecture).xml
 endif
 
+ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 %.fo: %.xml
 	$(XP) -o $@ --stringparam draft.mode $(draftmode) fo.xsl $<
 
 %.pdf: %.fo
-	$(XMLROFF) -o $@ $<
-
+	USE_GP=`echo " $(GPLIST) " | grep " $$LINGUA "`; \
+	if [ -n "$$USE_GP" ]; then \
+	    $(XMLROFF_GP) -o $@ $<; \
+	else \
+	    $(XMLROFF) -o $@ $<; \
+	fi
+else
 %.pdf: %.xml
+	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
 	$(DBLATEX) --output=$@ --param=draft.mode=$(draftmode) $<
+endif
 
+ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 # Can't we just drop PS in favour of PDF?
 %.ps: %.fo
-	$(XMLROFF) --format postscript -o $@ $<
-
+	USE_GP=`echo " $(GPLIST) " | grep " $$LINGUA "`; \
+	if [ -n "$$USE_GP" ]; then \
+	    $(XMLROFF_GP) --format postscript -o $@ $<; \
+	else \
+	    $(XMLROFF) --format postscript -o $@ $<; \
+	fi
+else
 %.ps: %.xml
+	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
 	$(DBLATEX) --output=$@ --ps --param=draft.mode=$(draftmode) $<
+endif
 
-txt:	$(LINGUA)/$(manual).$(architecture).txt
+txt::	$(LINGUA)/$(manual).$(architecture).txt
 $(LINGUA)/$(manual).$(architecture).txt: \
 		$(LINGUA)/$(manual).$(architecture).xml txt.xsl
 	$(XP) --stringparam draft.mode $(draftmode) $(DBK2HTML1) $< \
@@ -201,7 +234,8 @@ FORCE:
 else
 ifneq "$(LINGUA)" "en"
 $(LINGUA)/%.dbk:	en/%.dbk $(LINGUA)/%.po
-	$(TRANSLATE) -v --master $< --po $(@:.dbk=.po) --localized $@
+	echo " $(DBK_LANGUAGES) " | grep -q " $$LINGUA " || \
+	$(TRANSLATE) --master $< --po $(@:.dbk=.po) --localized $@
 endif
 endif
 
@@ -209,16 +243,23 @@ ifdef LINGUA
 .PHONY:	updatepo
 updatepo:	$(patsubst en/%.dbk,$(LINGUA)/%.po,$(wildcard en/*.dbk))
 $(LINGUA)/%.po:		en/%.dbk
-	[ "$(LINGUA)" = "en" ] || $(UPDATEPO) --master $< --po $@
+	echo " $(DBK_LANGUAGES) " | grep -q " $$LINGUA " || \
+	$(UPDATEPO) --master $< --po $@
 
 validate:	$(patsubst en/%,$(LINGUA)/%,$(SOURCES))
 	$(XL) $(LINGUA)/$(manual).dbk
 endif
 
 tidypo:
+ifdef LINGUA
+	for po in $(wildcard $(LINGUA)/*.po); do \
+	    msgcat -w 80 $$po > $$po.tmp && mv $$po.tmp $$po; \
+	done
+else
 	for po in $(wildcard */*.po); do \
 	    msgcat -w 80 $$po > $$po.tmp && mv $$po.tmp $$po; \
 	done
+endif
 
 ifndef LINGUA
 %:
@@ -235,7 +276,7 @@ clean:: $(LANGUAGES-clean)
 $(LANGUAGES-clean):
 	cd $(subst -clean,,$@); \
 	rm -rf *~ .*~ $(manual).*.html $(manual).*.txt $(manual).*.pdf \
-	    $(manual).*.ps $(manual).*.xml
+	    $(manual).*.ps $(manual).*.xml ifxetex.sty
 
 printarches:
 	@echo $(arches)

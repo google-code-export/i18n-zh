@@ -58,4 +58,25 @@
     </td></tr></table></xsl:copy>
   </xsl:template>
 
+  <!-- put URLs behind the ulink in the text version -->
+  <xsl:template match="ulink">
+    <xsl:apply-imports/>
+    (<xsl:value-of select="@url"/>)
+  </xsl:template>
+
+  <!-- make clear where notes etc. begin and end -->
+  <xsl:template match="caution|important|note|tip|warning">
+    <table width="80%" border="1">
+      <colgroup>
+	<col align="justify"/>
+      </colgroup>
+      <tbody>
+	<tr>
+	  <td align="justify">
+	    <xsl:apply-imports/>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+  </xsl:template>
 </xsl:stylesheet>

@@ -5,6 +5,7 @@
     href="http://docbook.sourceforge.net/release/xsl/current/xhtml/chunk.xsl"/>
   <xsl:param name="admon.graphics">1</xsl:param>
   <xsl:param name="chunk.section.depth">0</xsl:param>
+  <xsl:param name="draft.watermark.image">images/draft.png</xsl:param>
   <xsl:param name="html.stylesheet">debian.css</xsl:param>
   <xsl:param name="section.autolabel">1</xsl:param>
   <xsl:param name="section.label.includes.component.label">1</xsl:param>
