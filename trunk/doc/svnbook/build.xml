@@ -81,7 +81,7 @@
     <fixcrlf srcdir="${basedir}" encoding="UTF-8" includes="source/book.xml,po/book.pot,po/zh_CN.po" eol="lf"/>
   </target>
 
-  <target name="translate.init" depends="pot">
+  <target name="translate.init">
     <uptodate property="translate.isUpToDate" targetfile="build/zh_CN/book.xml">
       <srcfiles dir="source" includes="book.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
@@ -269,6 +269,10 @@
   </target>
 
   <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate" description="Generate document - svnbook(pdf)">
+
+    <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
+    <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
+
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook5.xsl}/images" includes="**/*.svg"/>

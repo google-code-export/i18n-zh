@@ -98,15 +98,36 @@ Checked out revision 8810.
       <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.tour.initial.disabling-password-caching"></a>&#31105;&#29992;&#23494;&#30721;&#32531;&#23384;</h3></div></div></div>
         
         <p>When you perform a Subversion operation that requires you
-        to authenticate, by default Subversion caches your
-        authentication credentials on disk.  This is done for
-        convenience so that you don't have to continually reenter
-        your password for future operations.  If you're concerned
-        about caching your Subversion passwords,
-        <sup>[<a name="d4e948" href="#ftn.d4e948" class="footnote">3</a>]</sup>
-        you can disable caching either permanently or on a
-        case-by-case basis.</p>
-        <p>&#22312;&#26576;&#27425;&#21629;&#20196;&#20851;&#38381;&#23494;&#30721;&#32531;&#23384;&#21487;&#20197;&#22312;&#21629;&#20196;&#20013;&#20351;&#29992;<code class="option">--no-auth-cache</code>&#36873;&#39033;&#65292;&#22914;&#26524;&#24076;&#26395;&#27704;&#20037;&#20851;&#38381;&#32531;&#23384;&#65292;&#21487;&#20197;&#22312;&#26412;&#26426;&#30340;Subversion&#37197;&#32622;&#25991;&#20214;&#20013;&#28155;&#21152;<code class="literal">store-passwords = no</code>&#36825;&#19968;&#34892;&#65292;&#35814;&#24773;&#35831;&#35265;<a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;">&#8220;&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;&#8221;&#19968;&#33410;</a>&#12290;</p>
+        to authenticate, by default Subversion tries to cache your
+        authentication credentials on disk in encrypted form.
+        On some systems, Subversion may be unable to encrypt your
+        authentication data. You will then be asked whether you
+        want to cache your credentials to disk in plaintext.
+        You can choose to do so for convenience so that you don't have
+        to continually reenter your password for future operations.
+        If you're concerned about caching your Subversion passwords
+        in plaintext and do not want to be asked about it again and
+        again, you can disable caching of plaintext passwords either
+        permanently, or on a server-per-server basis.</p>
+        <p>To permanently disable caching of passwords in plaintext,
+        you can add the line
+        <code class="literal">store-plaintext-passwords = no</code>
+        to the global section in the <code class="filename">servers</code>
+        configuration file on the local machine.  To disable caching
+        of plaintext passwords for a particular server, use the same
+        setting in the appropriate group section in the
+        <code class="filename">servers</code> configuration file.
+        See <a class="xref" href="svn.customization.html#svn.advanced.confarea.opts" title="&#37197;&#32622;&#36873;&#39033;">&#8220;&#37197;&#32622;&#36873;&#39033;&#8221;&#19968;&#33410;</a>
+        in <a class="xref" href="svn.customization.html" title="&#31532;&nbsp;7&nbsp;&#31456;&nbsp;&#23450;&#21046;&#20320;&#30340; Subversion &#20307;&#39564;">&#31532;&nbsp;7&nbsp;&#31456; <i>&#23450;&#21046;&#20320;&#30340; Subversion &#20307;&#39564;</i></a> for details.</p>
+        <p>You can also disable caching of authentication credentials
+        entirely, regardless of whether the credentials are stored
+        in encrypted form or not.</p>
+        <p>To disable password caching entirely for a particular one-time
+        command, pass the <code class="option">--no-auth-cache</code> option on
+        the command line.  To permanently disable caching entirely,
+        you can add the line <code class="literal">store-passwords = no</code>
+        to your local machine's Subversion configuration file.  See <a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;">&#8220;&#23458;&#25143;&#31471;&#20973;&#35777;&#32531;&#23384;&#8221;&#19968;&#33410;</a> for
+        details.</p>
       </div>
       <div class="section" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="svn.tour.initial.different-user"></a>&#35748;&#35777;&#20026;&#20854;&#23427;&#29992;&#25143;</h3></div></div></div>
         
@@ -120,9 +141,4 @@ Checked out revision 8810.
         command line, and Subversion will attempt to authenticate as
         that user, prompting you for a password if necessary.</p>
       </div>
-    <div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.d4e948" href="#d4e948" class="para">3</a>] </sup>Of course, you're not terribly worried&#8212;first
-            because you know that you can't
-            <span class="emphasis"><em>really</em></span> delete anything from
-            Subversion, and second because your Subversion password
-            isn't the same as any of the other 3 million passwords
-            you have, right?  Right?</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.tour.importing.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.tour.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.tour.cycle.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#23548;&#20837;&#25968;&#25454;&#21040;&#20320;&#30340;&#29256;&#26412;&#24211;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#22522;&#26412;&#30340;&#24037;&#20316;&#24490;&#29615;</td></tr></table></div></body></html>
+    </div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.tour.importing.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="svn.tour.html">&#19978;&#19968;&#32423;</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.tour.cycle.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#23548;&#20837;&#25968;&#25454;&#21040;&#20320;&#30340;&#29256;&#26412;&#24211;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#22522;&#26412;&#30340;&#24037;&#20316;&#24490;&#29615;</td></tr></table></div></body></html>
