@@ -32,10 +32,12 @@
   </xsl:template>
 
   <!-- Font related Settings -->
-  <xsl:param name="body.font.family">sans-serif</xsl:param>
-  <xsl:param name="dingbat.font.family">sans</xsl:param>
-  <xsl:param name="monospace.font.family">monospace</xsl:param>
-  <xsl:param name="title.font.family">sans</xsl:param>
+  <xsl:param name="title.font.family">Arial</xsl:param>
+  <xsl:param name="body.font.family">Times New Roman</xsl:param>
+  <xsl:param name="sans.font.family">Arial</xsl:param>
+  <xsl:param name="dingbat.font.family">Times New Roman</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New</xsl:param>
+  <xsl:param name="symbol.font.family">Wingdings,Symbol,ZapfDingbats</xsl:param>
 
   <xsl:attribute-set name="xref.properties">
     <xsl:attribute name="color">

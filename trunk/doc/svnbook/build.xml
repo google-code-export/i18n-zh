@@ -192,7 +192,7 @@
   </target>
 
   <target name="fo.init">
-    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/svnbook.fo">
+    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/pdf/svnbook.fo">
       <srcfiles dir="source" includes="book.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
     </uptodate>
@@ -216,17 +216,17 @@
       <arg value="--nsclean"/>
       <arg value="--format"/>
       <arg value="--output"/>
-      <arg value="../svnbook.fo"/>
+      <arg value="svnbook.fo"/>
       <arg value="book-tmp.fo"/>
     </exec>
-    <delete dir="build/zh_CN/pdf"/>
+    <!--delete dir="build/zh_CN/pdf"/-->
   </target>
 
   <target name="pdf.init">
     <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook.pdf">
       <srcfiles dir="source" includes="book.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
-      <srcfiles dir="build/zh_CN" includes="svnbook.fo"/>
+      <srcfiles dir="build/zh_CN/pdf" includes="svnbook.fo"/>
     </uptodate>
   </target>
 
@@ -245,9 +245,6 @@
         <include name="*.ttf"/>
         <include name="*.ttc"/>
       </fileset>
-      <fileset dir="build/zh_CN">
-        <include name="svnbook.fo"/>
-      </fileset>
     </copy>
 
     <echo message="Making pdf ..."/>
@@ -258,8 +255,8 @@
       <arg value="svnbook.fo"/>
       <arg value="../svnbook.pdf"/>
     </java>
-    <delete dir="build/zh_CN/pdf"/>
-    <delete dir="build/zh_CN/images"/>
+    <!--delete dir="build/zh_CN/pdf"/-->
+    <!--delete dir="build/zh_CN/images"/-->
   </target>
 
   <target name="svnbook.init">
@@ -293,10 +290,18 @@
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-o"/>
-      <arg value="svnbook.fo"/>
+      <arg value="svnbook-tmp.fo"/>
       <arg value="book.xml"/>
       <arg value="../../stylesheets/fo.xsl"/>
     </java>
+
+    <exec dir="${basedir}/build/en" executable="xmllint">
+      <arg value="--nsclean"/>
+      <arg value="--format"/>
+      <arg value="--output"/>
+      <arg value="svnbook.fo"/>
+      <arg value="svnbook-tmp.fo"/>
+    </exec>
 
     <echo message="Making pdf ..."/>
     <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">

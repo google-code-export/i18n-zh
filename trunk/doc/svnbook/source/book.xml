@@ -3,7 +3,7 @@
 <book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="svn">
   <info>
     <title>Version Control with Subversion</title>
-    <subtitle>For Subversion 1.6(Compiled from r3381)</subtitle>
+    <subtitle>For Subversion 1.6(Compiled from r3383)</subtitle>
     <!-- Using revnumber would be more appropriate, but our stylesheets -->
     <!-- don't seem to render it. -->
     <edition>Second</edition>
@@ -1567,10 +1567,10 @@ C:\&gt; svn checkout "file:///X|/var/svn/repos"
           will not understand how to interact with that
           filesystem.</para>
         </note>
-        <para>Finally, it should be noted that the Subversion client will
-        automatically encode URLs as necessary, just like a web browser
-        does.  For example, if a URL contains a space or upper-ASCII
-        character as in the following:</para>
+        <para>The Subversion client will automatically encode URLs as
+        necessary, just like a web browser does.  For example, if a
+        URL contains a space or upper-ASCII character as in the
+        following:</para>
         <screen>
 $ svn checkout "http://host/path with space/project/espa&#xF1;a"
 </screen>
@@ -1582,6 +1582,18 @@ $ svn checkout http://host/path%20with%20space/project/espa%C3%B1a
         <para>If the URL contains spaces, be sure to place it within quotation
         marks so that your shell treats the whole thing as a single
         argument to the <command>svn</command> program.</para>
+        <para>In Subversion 1.6, a new carat (<command>^</command>)
+        notation was introduced as a shorthand for <quote>root of the
+        repository</quote>.  For example:</para>
+        <screen>
+$ svn list ^/tags/bigsandwich/
+</screen>
+        <para>In this example, we're specifying
+        the <filename>/tags/bigsandwich</filename> directory in the
+        root of the repository.  Note that this URL
+        syntax <emphasis>only</emphasis> works when you're sitting
+        within a working copy&#x2014;the commandline client infers the
+        repository's URL by looking at the working copy.</para>
         <sidebar xml:id="svn.basic.in-action.wc.sb-1">
           <info>
             <title>Repository URLs</title>
@@ -8458,19 +8470,23 @@ Changed paths:
 $ pwd
 /home/user/my-calc-branch
 
-$ svn merge http://svn.example.com/repos/calc/trunk
+$ svn merge ^/trunk
 --- Merging r345 through r356 into '.':
 U    button.c
 U    integer.c
 </screen>
         <para>This basic syntax&#x2014;<userinput>svn merge
-        <replaceable>URL</replaceable></userinput>&#x2014;tells Subversion to merge all recent
-        changes from the URL to the current working directory (which
-        is typically the root of your working copy).  After running
-        the prior example, your branch working copy now contains new
-        local modifications, and these edits are duplications of all
-        of the changes that have happened on the trunk since you first
-        created your branch:</para>
+        <replaceable>URL</replaceable></userinput>&#x2014;tells
+        Subversion to merge all recent changes from the URL to the
+        current working directory (which is typically the root of your
+        working copy).  Also notice that we're using the carat
+        (<command>^</command>) syntax<footnote><para>This was
+        introduced in svn 1.6.</para></footnote> to avoid having to
+        type out the entire <filename>/trunk</filename> URL.</para>
+        <para>After running the prior example, your branch working copy
+        now contains new local modifications, and these edits are
+        duplications of all of the changes that have happened on the
+        trunk since you first created your branch:</para>
         <screen>
 $ svn status
  M     .
@@ -8524,7 +8540,7 @@ Committed revision 357.
           For example:</para>
           <screen>
 $ cd my-calc-branch
-$ svn diff -r 341:HEAD http://svn.example.com/repos/calc/trunk &gt; patchfile
+$ svn diff -r 341:HEAD ^/trunk &gt; patchfile
 $ patch -p0  &lt; patchfile
 Patching file integer.c using Plan A...
 Hunk #1 succeeded at 147.
@@ -8566,7 +8582,7 @@ done
         yourself in sync.  Just run the same merge command
         again!</para>
         <screen>
-$ svn merge http://svn.example.com/repos/calc/trunk
+$ svn merge ^/trunk
 --- Merging r357 through r380 into '.':
 U    integer.c
 U    Makefile
@@ -8584,7 +8600,7 @@ A    README
         your branch in sync with the trunk again, just as you've been
         doing all along:</para>
         <screen>
-$ svn merge http://svn.example.com/repos/calc/trunk
+$ svn merge ^/trunk
 --- Merging r381 through r385 into '.':
 U    button.c
 U    README
@@ -8623,7 +8639,7 @@ $ pwd
 $ svn update  # (make sure the working copy is up to date)
 At revision 390.
 
-$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/my-calc-branch
+$ svn merge --reintegrate ^/branches/my-calc-branch
 --- Merging differences between repository URLs into '.':
 U    button.c
 U    integer.c
@@ -8671,7 +8687,7 @@ Committed revision 391.
         <para>Now that your private branch is merged to trunk, you may
         wish to remove it from the repository:</para>
         <screen>
-$ svn delete http://svn.example.com/repos/calc/branches/my-calc-branch \
+$ svn delete ^/branches/my-calc-branch \
       -m "Remove my-calc-branch."
 Committed revision 392.
 </screen>
@@ -8705,7 +8721,7 @@ Committed revision 393.
 
 $ cd my-calc-branch
 
-$ svn switch http://svn.example.com/repos/calc/branches/new-branch
+$ svn switch ^/branches/new-branch
 Updated to revision 393.
 </screen>
         <para>The final command in the prior example&#x2014;<command>svn
@@ -8752,7 +8768,7 @@ $ svn propget svn:mergeinfo .
 $ cd my-calc-branch
 
 # Which changes have already been merged from trunk to branch?
-$ svn mergeinfo http://svn.example.com/repos/calc/trunk
+$ svn mergeinfo ^/trunk
 r341
 r342
 r343
@@ -8762,7 +8778,7 @@ r389
 r390
 
 # Which changes are still eligible to merge from trunk to branch?
-$ svn mergeinfo http://svn.example.com/repos/calc/trunk --show-revs eligible
+$ svn mergeinfo ^/trunk --show-revs eligible
 r391
 r392
 r393
@@ -8782,7 +8798,7 @@ r395
         operation is to use the <option>--dry-run</option>
         option:</para>
         <screen>
-$ svn merge http://svn.example.com/repos/calc/trunk --dry-run
+$ svn merge ^/trunk --dry-run
 U    integer.c
 
 $ svn status
@@ -8852,7 +8868,7 @@ $ svn status
         specifying <option>--revision 303:302</option>, or by an
         equivalent <option>--change -303</option>.)</para>
         <screen>
-$ svn merge -c -303 http://svn.example.com/repos/calc/trunk
+$ svn merge -c -303 ^/trunk
 --- Reverse-merging r303 into 'integer.c':
 U    integer.c
 
@@ -8994,7 +9010,7 @@ Removed real.c because code now in double.c.
         revision and path <quote>coordinate pair</quote> from the
         repository to your working copy:</para>
         <screen>
-$ svn copy http://svn.example.com/repos/calc/trunk/real.c@807 ./real.c
+$ svn copy ^/trunk/real.c@807 ./real.c
 
 $ svn status
 A  +   real.c
@@ -9018,7 +9034,7 @@ Committed revision 1390.
         maintaining a historical link to the old file, this technique
         works just as well:</para>
         <screen>
-$ svn cat http://svn.example.com/repos/calc/trunk/real.c@807 &gt; ./real.c
+$ svn cat ^/trunk/real.c@807 &gt; ./real.c
 
 $ svn add real.c
 A         real.c
@@ -9034,8 +9050,7 @@ Committed revision 1390.
         have to happen in your working copy&#x2014;it can happen
         entirely in the repository:</para>
         <screen>
-$ svn copy http://svn.example.com/repos/calc/trunk/real.c@807 \
-           http://svn.example.com/repos/calc/trunk/ \
+$ svn copy ^/trunk/real.c@807 ^/trunk/ \
       -m "Resurrect real.c from revision 807."
 Committed revision 1390.
 
@@ -9089,7 +9104,7 @@ Updated to revision 1390.
         you certainly need that particular bug fix in order to continue
         your work.</para>
         <screen>
-$ svn diff -c 355 http://svn.example.com/repos/calc/trunk
+$ svn diff -c 355 ^/trunk
 
 Index: integer.c
 ===================================================================
@@ -9109,7 +9124,7 @@ Index: integer.c
         example to examine revision 355, you can pass the same option
         to <command>svn merge</command>:</para>
         <screen>
-$ svn merge -c 355 http://svn.example.com/repos/calc/trunk
+$ svn merge -c 355 ^/trunk
 U    integer.c
 
 $ svn status
@@ -9130,7 +9145,7 @@ $ svn propget svn:mergeinfo .
 
 # Notice that r355 isn't listed as "eligible" to merge, because
 # it's already been merged.
-$ svn mergeinfo http://svn.example.com/repos/calc/trunk --show-revs eligible
+$ svn mergeinfo ^/trunk --show-revs eligible
 r350
 r351
 r352
@@ -9142,7 +9157,7 @@ r358
 r359
 r360
 
-$ svn merge http://svn.example.com/repos/calc/trunk
+$ svn merge ^/trunk
 --- Merging r350 through r354 into '.':
  U   .
 U    integer.c
@@ -9236,7 +9251,7 @@ U    button.c
         right thing automatically.  For example, a command such as the
         following:</para>
         <screen>
-$ svn merge http://svn.example.com/repos/calc/some-branch
+$ svn merge ^/branches/some-branch
 </screen>
         <para>will attempt to duplicate any changes made
         on <filename>some-branch</filename> into your current working
@@ -9407,7 +9422,7 @@ $ svn merge -r 100:200 http://svn.example.com/repos/trunk
         similarly complain about <quote>skipped
         targets</quote>:</para>
         <screen>
-$ svn merge -r 1288:1351 http://svn.example.com/repos/branch
+$ svn merge -r 1288:1351 ^/branches/mybranch
 U    foo.c
 U    bar.c
 Skipped missing target: 'baz.c'
@@ -9489,7 +9504,7 @@ $ svn propget svn:mergeinfo .
 /trunk:1680-3305
 
 # Let's make the metadata list r3328 as already merged.
-$ svn merge -c 3328 --record-only http://svn.example.com/repos/calc/trunk
+$ svn merge -c 3328 --record-only ^/trunk
 
 $ svn status
 M     .
@@ -9735,7 +9750,7 @@ A    foo.c
         <screen>
 $ cd calc/trunk
 
-$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/my-calc-branch
+$ svn merge --reintegrate ^/branches/my-calc-branch
 --- Merging differences between repository URLs into '.':
 D   integer.c
 A   whole.c
@@ -9884,7 +9899,7 @@ $ cd calc
 $ svn info | grep URL
 URL: http://svn.example.com/repos/calc/trunk
 
-$ svn switch http://svn.example.com/repos/calc/branches/my-calc-branch
+$ svn switch ^/branches/my-calc-branch
 U   integer.c
 U   button.c
 U   Makefile
@@ -9992,7 +10007,7 @@ $ svn copy http://svn.example.com/repos/calc/trunk \
            http://svn.example.com/repos/calc/branches/newbranch \
       -m "Create branch 'newbranch'."
 Committed revision 353.
-$ svn switch http://svn.example.com/repos/calc/branches/newbranch
+$ svn switch ^/branches/newbranch
 At revision 353.
 </screen>
         <para>The <command>svn switch</command> command, like
@@ -10437,7 +10452,7 @@ $ cd trunk-working-copy
 $ svn update
 At revision 1910.
 
-$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/mybranch
+$ svn merge --reintegrate ^/branches/mybranch
 --- Merging differences between repository URLs into '.':
 U    real.c
 U    integer.c
@@ -10636,8 +10651,8 @@ $ svn copy http://svn.example.com/repos/vendor/libcomplex/1.0  \
         branch:</para>
         <screen>
 $ cd working-copies/calc
-$ svn merge http://svn.example.com/repos/vendor/libcomplex/1.0      \
-            http://svn.example.com/repos/vendor/libcomplex/current  \
+$ svn merge ^/vendor/libcomplex/1.0      \
+            ^/vendor/libcomplex/current  \
             libcomplex
 &#x2026; # resolve all the conflicts between their changes and our changes
 $ svn commit -m 'merging libcomplex-1.1 into the main branch'
