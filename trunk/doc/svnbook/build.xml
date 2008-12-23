@@ -22,9 +22,6 @@
 
   <target name="clean" description="Clean the build directory">
     <delete dir="build"/>
-    <delete file="stylesheets/html-import.xsl"/>
-    <delete file="stylesheets/chm-import.xsl"/>
-    <delete file="stylesheets/fo-import.xsl"/>
   </target>
 
   <target name="clean-svn">
@@ -121,8 +118,6 @@
   </target>
 
   <target name="html" depends="translate,html.init" unless="html.isUpToDate" description="Generate document - html">
-    <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
-    <copy file="stylesheets/html-import.tmpl.xsl" tofile="stylesheets/html-import.xsl" filtering="true" overwrite="true"/>
     <copy todir="build/zh_CN/svnbook/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook5.xsl}/images" includes="**/*.png"/>
@@ -137,6 +132,12 @@
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m"
           failonerror="true" dir="${basedir}/build/zh_CN/svnbook">
       <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="../book.xml"/>
       <arg value="../../../stylesheets/zh_CN/html.xsl"/>
     </java>
@@ -160,8 +161,6 @@
       This target only work on windows !
     </fail>
 
-    <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
-    <copy file="stylesheets/chm-import.tmpl.xsl" tofile="stylesheets/chm-import.xsl" filtering="true" overwrite="true"/>
     <copy todir="build/zh_CN/htmlhelp/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook5.xsl}/images" includes="**/*.png"/>
@@ -178,6 +177,8 @@
     </exec>
     <!--Must use GB18030 encoding and xsltproc for chm format !-->
     <exec dir="${basedir}/build/zh_CN" executable="xsltproc" failonerror="true">
+      <arg value="--nonet"/>
+      <arg value="--catalogs"/>
       <arg value="../../stylesheets/zh_CN/chm.xsl"/>
       <arg value="book-GB18030.xml"/>
     </exec>
@@ -199,13 +200,17 @@
   </target>
 
   <target name="fo" depends="translate,fo.init" unless="fo.isUpToDate">
-    <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
-    <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
     <mkdir dir="build/zh_CN/pdf"/>
 
     <echo message="Making fo ..."/>
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
       <arg value="build/zh_CN/pdf/book-tmp.fo"/>
       <arg value="build/zh_CN/book.xml"/>
@@ -223,7 +228,7 @@
   </target>
 
   <target name="pdf.init">
-    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook.pdf">
+    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook-zh.pdf">
       <srcfiles dir="source" includes="book.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
       <srcfiles dir="build/zh_CN/pdf" includes="svnbook.fo"/>
@@ -251,7 +256,7 @@
       <arg value="-c"/>
       <arg value="userconfig.xml"/>
       <arg value="svnbook.fo"/>
-      <arg value="../svnbook.pdf"/>
+      <arg value="../svnbook-zh.pdf"/>
     </java>
     <!--delete dir="build/zh_CN/pdf"/-->
     <!--delete dir="build/zh_CN/images"/-->
@@ -264,10 +269,6 @@
   </target>
 
   <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate" description="Generate document - svnbook(pdf)">
-
-    <filter token="docbook5.xsl.url" value="${docbook5.xsl.url}"/>
-    <copy file="stylesheets/fo-import.tmpl.xsl" tofile="stylesheets/fo-import.xsl" filtering="true" overwrite="true"/>
-
     <copy todir="build/en">
       <fileset dir="${fop.home}/conf">
         <include name="*.xml"/>
@@ -287,6 +288,12 @@
     <echo message="Making fo ..."/>
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
       <arg value="svnbook-tmp.fo"/>
       <arg value="book.xml"/>
