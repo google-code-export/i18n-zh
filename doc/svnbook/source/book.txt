@@ -1,21 +1,23 @@
 1. Fix URL of docbookx.dtd
-    vi book.xml
+/bin/cat book.xml | /bin/sed 's/.*DOCTYPE.*/<!DOCTYPE book SYSTEM "http:\/\/www.oasis-open.org\/docbook\/xml\/4.5\/docbookx.dtd"/' > svnbook.xml
+
+或
+    cp book.xml svnbook.xml
+    vi svnbook.xml
         file:///C:/var/svn/i18n-zh/trunk/lib/docbook/docbook4/docbookx.dtd
         <!DOCTYPE book SYSTEM "../../../lib/docbook/docbook4/docbookx.dtd"
 
-    vi version.xml
-        <!ENTITY svn.version "3384">
-        <!ENTITY svn.l10n_revision "r">
-        <!ENTITY svn.date "2008-12-19 22:19:20 +0800">
+2. Update version.xml
+vi version.xml
+    <!ENTITY svn.version "3384">
+    <!ENTITY svn.l10n_revision "r">
 
-2. Upgrade to DocBook v5
-    xsltproc -o book-v5-tmp.xml db4-upgrade.xsl book.xml
+3. XInclude processing, substitute entity references, reformat
 
-3. Clean up
-    vi book-v5-tmp.xml
-        <title>Version Control with Subversion</title>
-        <subtitle>For Subversion 1.6(Compiled from r3384)</subtitle>
+Windows:
+xmllint --nonet --catalogs --noent --postvalid --output svnbook-tmp.xml svnbook.xml
+xmllint --nonet --catalogs --format --postvalid --output svnbook.xml svnbook-tmp.xml
 
-    xmllint -o book-v5.xml --format book-v5-tmp.xml
-
-    java -jar jing.jar  docbook.rng book-v5.xml
+Linux:
+xmllint --nonet --noent --postvalid --output svnbook-tmp.xml svnbook.xml
+xmllint --nonet --format --postvalid --output svnbook.xml svnbook-tmp.xml
