@@ -7,8 +7,6 @@
 
   <xsl:param name="draft.mode" select="no"/>
 
-  <xsl:param name="hyphenate">false</xsl:param>
-
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
   <xsl:param name="callouts.extension">1</xsl:param>
@@ -27,15 +25,27 @@
   <xsl:param name="fop.extensions">0</xsl:param>                <!-- fo only -->
   <xsl:param name="fop1.extensions">1</xsl:param>               <!-- fo only -->
   <xsl:param name="variablelist.as.blocks" select="1" />        <!-- fo only -->
+  <xsl:param name="hyphenate">false</xsl:param>                 <!-- fo only -->
   <xsl:param name="paper.type" select="'A4'"></xsl:param>       <!-- fo only -->
 
-  <!-- Font related Settings -->
-  <xsl:param name="title.font.family">Arial</xsl:param>
-  <xsl:param name="body.font.family">Times New Roman</xsl:param>
-  <xsl:param name="sans.font.family">Arial</xsl:param>
-  <xsl:param name="dingbat.font.family">Times New Roman</xsl:param>
-  <xsl:param name="monospace.font.family">Courier New</xsl:param>
+  <!-- English font related Settings -->
+  <!--
+  <xsl:param name="title.font.family">sans-serif</xsl:param>
+  <xsl:param name="body.font.family">serif</xsl:param>
+  <xsl:param name="sans.font.family">sans-serif</xsl:param>
+  <xsl:param name="dingbat.font.family">serif</xsl:param>
+  <xsl:param name="monospace.font.family">monospace</xsl:param>
+  <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
+  -->
+  <xsl:param name="title.font.family">Arial,SimHei</xsl:param>
+  <xsl:param name="body.font.family">Times New Roman,SimSun</xsl:param>
+  <xsl:param name="sans.font.family">Arial,SimHei</xsl:param>
+  <xsl:param name="dingbat.font.family">Times New Roman,SimSun</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New,FangSong</xsl:param>
   <xsl:param name="symbol.font.family">Wingdings,Symbol,ZapfDingbats</xsl:param>
+
+  <xsl:param name="title.fontset">Arial,Wingdings,Symbol,ZapfDingbats,SimHei</xsl:param>
+  <xsl:param name="body.fontset">Times New Roman,Wingdings,Symbol,ZapfDingbats,SimSun</xsl:param>
 
   <!-- Page related Settings -->
   <xsl:param name="page.margin.inner">1.5cm</xsl:param>
