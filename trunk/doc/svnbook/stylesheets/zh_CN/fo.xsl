@@ -8,15 +8,15 @@
   <xsl:param name="l10n.gentext.language" select="'zh_cn'"/>
 
   <!-- Chinese font related settings -->
-  <xsl:param name="title.font.family">Arial,Wingdings,Symbol,ZapfDingbats,zh_title</xsl:param>
-  <xsl:param name="body.font.family">Times New Roman,Wingdings,Symbol,ZapfDingbats,zh_text</xsl:param>
-  <xsl:param name="sans.font.family">Arial,zh_title</xsl:param>
-  <xsl:param name="dingbat.font.family">Times New Roman,zh_text</xsl:param>
-  <xsl:param name="monospace.font.family">Courier New,zh_verbatim</xsl:param>
-  <xsl:param name="symbol.font.family">Wingdings,Symbol,ZapfDingbats</xsl:param>
+  <xsl:param name="title.font.family">Calibri,Arial,sans-serif,zh_title</xsl:param>
+  <xsl:param name="body.font.family">Cambria,Times New Roman,serif,zh_text</xsl:param>
+  <xsl:param name="sans.font.family">Calibri,Arial,sans-serif,zh_title</xsl:param>
+  <xsl:param name="dingbat.font.family">Cambria,Times New Roman,serif,zh_text</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New,monospace,zh_verbatim</xsl:param>
+  <xsl:param name="symbol.font.family">OpenSymbol,Symbol,ZapfDingbats</xsl:param>
 
-  <xsl:param name="title.fontset">Arial,Wingdings,Symbol,ZapfDingbats,zh_title</xsl:param>
-  <xsl:param name="body.fontset">Times New Roman,Wingdings,Symbol,ZapfDingbats,zh_text</xsl:param>
+  <xsl:param name="title.fontset">Calibri,Arial,sans-serif,OpenSymbol,Symbol,ZapfDingbats,zh_title</xsl:param>
+  <xsl:param name="body.fontset">Cambria,Times New Roman,serif,OpenSymbol,Symbol,ZapfDingbats,zh_text</xsl:param>
 
   <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="body.font.master">12</xsl:param>
