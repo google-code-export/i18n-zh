@@ -37,15 +37,15 @@
   <xsl:param name="monospace.font.family">monospace</xsl:param>
   <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
   -->
-  <xsl:param name="title.font.family">Calibri,Arial,sans-serif,SimHei</xsl:param>
-  <xsl:param name="body.font.family">Cambria,Times New Roman,serif,SimSun</xsl:param>
-  <xsl:param name="sans.font.family">Calibri,Arial,sans-serif,SimHei</xsl:param>
-  <xsl:param name="dingbat.font.family">Cambria,Times New Roman,serif,SimSun</xsl:param>
+  <xsl:param name="title.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="body.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
+  <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="dingbat.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
   <xsl:param name="monospace.font.family">Courier New,monospace,FangSong</xsl:param>
-  <xsl:param name="symbol.font.family">OpenSymbol,Symbol,ZapfDingbats</xsl:param>
+  <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
 
-  <xsl:param name="title.fontset">Calibri,Arial,sans-serif,OpenSymbol,Symbol,ZapfDingbats,SimHei</xsl:param>
-  <xsl:param name="body.fontset">Cambria,Times New Roman,serif,OpenSymbol,Symbol,ZapfDingbats,SimSun</xsl:param>
+  <xsl:param name="title.fontset">Arial,Calibri,sans-serif,Symbol,ZapfDingbats,SimHei</xsl:param>
+  <xsl:param name="body.fontset">Times New Roman,Cambria,Cambria Math,serif,Symbol,ZapfDingbats,SimSun</xsl:param>
 
   <!-- Page related Settings -->
   <xsl:param name="page.margin.inner">1.5cm</xsl:param>
