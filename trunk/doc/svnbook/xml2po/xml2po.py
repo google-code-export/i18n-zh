@@ -31,7 +31,7 @@ VERSION = "1.0.5"
 #   2.2 second stable release (release 2), and 2.2.* bugfix releases
 #   ...
 #
-import sys
+import sys, traceback
 import libxml2
 import gettext
 import os
@@ -121,22 +121,26 @@ msgstr ""
         self.outputHeader(out)
 
         for k in self.messages:
-            if k in self.comments:
-                out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
             references = ""
             tagstr = ""
             tags = []
             nt = 0
             nr = 0
+            verbatim = 0
             for reference in self.linenos[k]:
                 if nr < 4:
                     references += "%s:%d " % (reference[0], reference[2])
                     nr += 1
+                if(reference[1] in ["programlisting", "screen", "synopsis", "funcsynopsis", "command"]):
+                    verbatim += 1
                 if(reference[1] not in tags): 
                     tags.append(reference[1])
                     if nt < 4:
                         tagstr += "(" + str(reference[1]) + "), "
                         nt += 1
+            if verbatim > 0: continue
+            if k in self.comments:
+                out.write("#. %s\n" % (self.comments[k].replace("\n","\n#. ")))
             out.write("#.%s\n" % (tagstr[0 : len(tagstr) - 2]))
             out.write("#: %s\n" % (references[0 : len(references) - 1]))
             if k in self.nowrap and self.nowrap[k]:
@@ -687,6 +691,7 @@ def load_mode(modename):
         modeModule = '%sXmlMode' % modename
         return getattr(module, modeModule)
     except:
+        traceback.print_exc(file=sys.stderr)
         return None
 
 def xml_error_handler(arg, ctxt):
@@ -814,6 +819,7 @@ if len(filenames) > 1 and mode=='merge':
 try:
     CurrentXmlMode = load_mode(default_mode)()
 except:
+    traceback.print_exc(file=sys.stderr)
     CurrentXmlMode = None
     print >> sys.stderr, "Warning: cannot load module '%s', using automatic detection (-a)." % (default_mode)
     automatic = 1
