@@ -211,7 +211,7 @@ class docbookXmlMode:
                 if match.group(3):
                     copy.newChild(None, "year", match.group(3).encode('utf-8'))
                 if match.group(1) and match.group(2):
-                    holder = match.group(1)+"(%s)" % match.group(2)
+                    holder = match.group(1).strip()+" (%s)" % match.group(2).strip()
                 elif match.group(1):
                     holder = match.group(1)
                 elif match.group(2):
@@ -245,14 +245,14 @@ class docbookXmlMode:
                     if len(name) < 1:
                         copy.newChild(None, "firstname", "???")
                     elif name.find(" ") == -1:
-                        copy.newChild(None, "firstname", name.strip().encode('utf-8'))
+                        copy.newChild(None, "firstname", name.encode('utf-8'))
                     else:
                         firstname = name[:name.find(" ")]
                         surname = name[name.find(" "):].strip()
-                        copy.newChild(None, "firstname", firstname.strip().encode('utf-8'))
-                        copy.newChild(None, "surname", surname.strip().encode('utf-8'))
+                        copy.newChild(None, "firstname", firstname.encode('utf-8'))
+                        copy.newChild(None, "surname", surname.encode('utf-8'))
                 if match.group(2):
-                    copy.newChild(None, "email", match.group(2).strip().encode('utf-8'))
+                    copy.newChild(None, "email", match.group(2).encode('utf-8'))
 
 # Perform some tests when ran standalone
 if __name__ == '__main__':
