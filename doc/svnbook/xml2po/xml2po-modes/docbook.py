@@ -96,6 +96,17 @@ class docbookXmlMode:
             child = child.next
         return None
 
+    def _find_authorgroup(self, node):
+        if node.name == 'authorgroup':
+            return node
+        child = node.children
+        while child:
+            ret = self._find_authorgroup(child)
+            if ret:
+                return ret
+            child = child.next
+        return None
+
     def _find_lastcopyright(self, node):
         if not node.children:
             return None
@@ -103,6 +114,18 @@ class docbookXmlMode:
         tmp = last
         while tmp:
             if tmp.name == "copyright":
+                last = tmp
+                break
+            tmp = tmp.prev
+        return last
+
+    def _find_lastothercredit(self, node):
+        if not node.children:
+            return None
+        last = node.lastChild()
+        tmp = last
+        while tmp:
+            if tmp.name == "othercredit":
                 last = tmp
                 break
             tmp = tmp.prev
@@ -164,34 +187,72 @@ class docbookXmlMode:
         if translators == self.getStringForTranslators():
             return
         elif translators:
-            # Now, lets find 'articleinfo' (it can be something else, but this goes along with 'article')
-            ai = self._find_articleinfo(root)
-            if not ai:
-                return
+            self._append_copyright(root, translators)
+            self._append_othercredit(root, translators)
 
-            # Now, lets do one translator at a time
-            lines = translators.split("\n")
-            for line in lines:
-                line = line.strip()
-                match = re.match(r"^([^<,]+)\s*(?:<([^>,]+)>)?,\s*(.*)$", line)
-                if match:
-                    last = self._find_lastcopyright(ai)
-                    copy = libxml2.newNode("copyright")
-                    if last:
-                        copy = last.addNextSibling(copy)
+    def _append_copyright(self, root, translators):
+        # Now, lets find 'articleinfo' (it can be something else, but this goes along with 'article')
+        ai = self._find_articleinfo(root)
+        if not ai:
+            return
+
+        # Now, lets do one translator at a time
+        lines = translators.split("\n")
+        for line in lines:
+            line = line.strip()
+            match = re.match(r"^([^<,]+)\s*(?:<([^>,]+)>)?,\s*(.*)$", line)
+            if match:
+                last = self._find_lastcopyright(ai)
+                copy = libxml2.newNode("copyright")
+                if last:
+                    copy = last.addNextSibling(copy)
+                else:
+                    ai.addChild(copy)
+                if match.group(3):
+                    copy.newChild(None, "year", match.group(3).encode('utf-8'))
+                if match.group(1) and match.group(2):
+                    holder = match.group(1)+"(%s)" % match.group(2)
+                elif match.group(1):
+                    holder = match.group(1)
+                elif match.group(2):
+                    holder = match.group(2)
+                else:
+                    holder = "???"
+                copy.newChild(None, "holder", holder.encode('utf-8'))
+
+    def _append_othercredit(self, root, translators):
+        # Now, lets find 'articleinfo' (it can be something else, but this goes along with 'article')
+        ai = self._find_authorgroup(root)
+        if not ai:
+            return
+
+        # Now, lets do one translator at a time
+        lines = translators.split("\n")
+        for line in lines:
+            line = line.strip()
+            match = re.match(r"^([^<,]+)\s*(?:<([^>,]+)>)?,\s*(.*)$", line)
+            if match and (match.group(1) or match.group(2)):
+                last = self._find_lastothercredit(ai)
+                copy = libxml2.newNode("othercredit")
+                copy.setProp("class", "translator")
+                if last:
+                    copy = last.addNextSibling(copy)
+                else:
+                    ai.addChild(copy)
+
+                if match.group(1):
+                    name = match.group(1).strip()
+                    if len(name) < 1:
+                        copy.newChild(None, "firstname", "???")
+                    elif name.find(" ") == -1:
+                        copy.newChild(None, "firstname", name.strip().encode('utf-8'))
                     else:
-                        ai.addChild(copy)
-                    if match.group(3):
-                        copy.newChild(None, "year", match.group(3).encode('utf-8'))
-                    if match.group(1) and match.group(2):
-                        holder = match.group(1)+"(%s)" % match.group(2)
-                    elif match.group(1):
-                        holder = match.group(1)
-                    elif match.group(2):
-                        holder = match.group(2)
-                    else:
-                        holder = "???"
-                    copy.newChild(None, "holder", holder.encode('utf-8'))
+                        firstname = name[:name.find(" ")]
+                        surname = name[name.find(" "):].strip()
+                        copy.newChild(None, "firstname", firstname.strip().encode('utf-8'))
+                        copy.newChild(None, "surname", surname.strip().encode('utf-8'))
+                if match.group(2):
+                    copy.newChild(None, "email", match.group(2).strip().encode('utf-8'))
 
 # Perform some tests when ran standalone
 if __name__ == '__main__':

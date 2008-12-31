@@ -33,4 +33,10 @@
     </fo:block>
   </xsl:template>
 
+  <xsl:template match="section/para/*">
+    <fo:wrapper text-indent="0pt">
+      <xsl:apply-imports/>
+    </fo:wrapper>
+  </xsl:template>
+
 </xsl:stylesheet>

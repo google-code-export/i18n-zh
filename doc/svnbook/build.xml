@@ -51,7 +51,7 @@
   </target>
 
   <target name="pot.init" depends="init">
-    <uptodate property="pot.isUpToDate" targetfile="po/book.pot">
+    <uptodate property="pot.isUpToDate" targetfile="po/svnbook.pot">
       <srcfiles dir="source" includes="book.xml"/>
     </uptodate>
   </target>
@@ -95,7 +95,7 @@
       <arg value="-p"/>
       <arg value="../po/zh_CN.po"/>
       <arg value="-o"/>
-      <arg value="../build/zh_CN/book-tmp.xml"/>
+      <arg value="../build/zh_CN/book.xml"/>
       <arg value="../source/book.xml"/>
     </exec>
 
@@ -103,8 +103,8 @@
       <arg value="--nsclean"/>
       <arg value="--format"/>
       <arg value="--output"/>
+      <arg value="book-fmt.xml"/>
       <arg value="book.xml"/>
-      <arg value="book-tmp.xml"/>
     </exec>
     <delete file="xml2po/.xml2po.mo"/>
     <delete file="build/zh_CN/book-tmp.xml"/>
@@ -174,7 +174,6 @@
     <exec dir="${basedir}/build/zh_CN" executable="xmllint">
       <arg value="--encode"/>
       <arg value="GB18030"/>
-      <arg value="--format"/>
       <arg value="--output"/>
       <arg value="book-GB18030.xml"/>
       <arg value="book.xml"/>
@@ -218,7 +217,7 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="build/zh_CN/pdf/book-tmp.fo"/>
+      <arg value="build/zh_CN/pdf/svnbook.fo"/>
       <arg value="build/zh_CN/book.xml"/>
       <arg value="stylesheets/zh_CN/fo.xsl"/>
     </java>
@@ -227,8 +226,8 @@
       <arg value="--nsclean"/>
       <arg value="--format"/>
       <arg value="--output"/>
+      <arg value="svnbook-fmt.fo"/>
       <arg value="svnbook.fo"/>
-      <arg value="book-tmp.fo"/>
     </exec>
     <!--delete dir="build/zh_CN/pdf"/-->
   </target>
@@ -244,7 +243,7 @@
   <target name="pdf" depends="fo,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
     <copy todir="build/zh_CN/pdf/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.svg"/>
+      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
     <copy todir="build/zh_CN/pdf">
       <fileset dir="${fop.home}/conf">
@@ -302,7 +301,7 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="svnbook-tmp.fo"/>
+      <arg value="svnbook.fo"/>
       <arg value="book.xml"/>
       <arg value="../../stylesheets/fo.xsl"/>
     </java>
@@ -311,8 +310,8 @@
       <arg value="--nsclean"/>
       <arg value="--format"/>
       <arg value="--output"/>
+      <arg value="svnbook-fmt.fo"/>
       <arg value="svnbook.fo"/>
-      <arg value="svnbook-tmp.fo"/>
     </exec>
 
     <echo message="Making pdf ..."/>

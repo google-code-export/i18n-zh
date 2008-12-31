@@ -32,9 +32,9 @@ Introduction
 
 Software version requirements
 =============================
-*) GNU gettext 0.16.1
-*) Python 2.4.4
-*) translate-toolkit(pomerge & pofilter) 1.0.1
+*) GNU gettext 0.17
+*) Python 2.5.2
+*) translate-toolkit(pomerge & pofilter) 1.1.1
 
 
 Configuration
@@ -43,23 +43,41 @@ The flowwing is the sample configuration, please modify some fields.
 
 *) ~/.gitconfig
     [core]
-            compression = 9
+        compression = 9
 
     [diff]
         color = auto
 
     [pack]
-            window = 128
-            depth = 64
+        window = 1024
+        depth = 512
 
     [color]
-            branch = auto
-            diff = auto
-            status = auto
+        branch = auto
+        diff = auto
+        status = auto
 
     [user]
         # email = dongsheng.song@gmail.com
         # name = Dongsheng Song
+
+    [alias]
+        b = branch
+        t = tag
+        f = fetch
+        r = rebase
+        m = merge
+        st = status
+        ci = commit -a
+
+    [remote "origin"]
+        url = ssh://repo.or.cz/srv/git/i18n-zh.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+
+    [branch "master"]
+        remote = origin
+        merge = refs/heads/master
+
 
 *) ~/.ssh/config
     # Host repo.or.cz
@@ -90,7 +108,7 @@ Repository maintenance
 =====================
 *) pack
 
-    git-repack -a -d -f --window=128 --depth=64
+    git-repack -a -d -f --window=1024 --depth=512
 
 *) fsck
 
