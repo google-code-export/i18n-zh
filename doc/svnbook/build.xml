@@ -16,6 +16,12 @@
     <pathelement location="${usr.share.java}"/>
   </path>
 
+  <path id="xep.classpath">
+    <fileset dir="${xep.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
   <target name="usage">
     <echo message="Use the -projecthelp option instead"/>
   </target>
@@ -328,4 +334,41 @@
     </delete-->
 
   </target>
+
+  <target name="xep" description="Generate document - svnbook(pdf) - xep">
+    <copy todir="build/en/images">
+      <fileset dir="source/images" includes="*.png"/>
+      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
+    </copy>
+    <copy file='source/book.xml' todir="build/en"/>
+
+    <echo message="Making fo ..."/>
+    <java classname="com.icl.saxon.StyleSheet"
+          fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
+      <jvmarg value="-Xss512k"/>
+      <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
+      <arg value="-o"/>
+      <arg value="svnbook.fo"/>
+      <arg value="book.xml"/>
+      <arg value="../../stylesheets/xep.xsl"/>
+    </java>
+
+    <echo message="Making pdf ..."/>
+    <java classname="com.renderx.xep.XSLDriver"
+          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+      <jvmarg value="-Xss512k"/>
+      <classpath refid="xep.classpath"/>
+      <arg value="-DCONFIG=${xep.home}/xep.xml"/>
+      <arg value="-quiet"/>
+      <arg value="svnbook.fo"/>
+      <arg value="svnbook.pdf"/>
+    </java>
+  </target>
+
 </project>
