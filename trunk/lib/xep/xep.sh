@@ -14,7 +14,7 @@ fi
 
 echo "JAVACMD: $JAVACMD"
 
-[ -z "$XEP_HOME" ] && XEP_HOME=`dirname $0`/..
+[ -z "$XEP_HOME" ] && XEP_HOME=`dirname $0`
 if [ ! -e "$XEP_HOME/lib/xep.jar" ]
 then
     echo The XEP_HOME environment variable is not defined correctly

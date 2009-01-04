@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 rem   This batch file encapsulates a standard XEP call.
 
 if "%JAVA_HOME%" == "" goto noJavaHome
@@ -10,7 +10,7 @@ goto runXep
 if "%JAVACMD%" == "" set JAVACMD=java
 
 :runXep
-@set XEP_HOME=%~dp0..
+@set XEP_HOME=%~dp0
 
 set CP=%XEP_HOME%\lib\xep.jar;%XEP_HOME%\lib\saxon.jar;%XEP_HOME%\lib\xt.jar
 
