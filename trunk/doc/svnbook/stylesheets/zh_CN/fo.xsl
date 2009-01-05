@@ -8,9 +8,7 @@
   <xsl:param name="l10n.gentext.language" select="'zh_cn'"/>
 
   <!-- Chinese font related settings -->
-  <xsl:param name="body.font.size">12pt</xsl:param>
-  <xsl:param name="body.font.master">12pt</xsl:param>
-  <xsl:param name="title.font.size">14pt</xsl:param>
+  <xsl:param name="body.font.master">12</xsl:param>
 
   <xsl:attribute-set name="standard.para.spacing" use-attribute-sets="normal.para.spacing">
     <xsl:attribute name="text-indent">24pt</xsl:attribute>
