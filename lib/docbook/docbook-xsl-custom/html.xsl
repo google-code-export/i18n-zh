@@ -1,66 +1,29 @@
 <?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="1.0"
-                xmlns="http://www.w3.org/TR/xhtml1/transitional"
-                exclude-result-prefixes="#default">
+  <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl"/>
 
-<xsl:import href="../docbook4-xsl/html/docbook.xsl"/>
+  <xsl:param name="l10n.gentext.language" select="'zh_cn'"/>
+  <xsl:param name="draft.mode" select="no"/>
 
-<!--###################################################
-                     HTML Settings
-    ################################################### -->
+  <xsl:param name="use.extensions">1</xsl:param>
+  <xsl:param name="callouts.extension">1</xsl:param>
+  <xsl:param name="linenumbering.extension">1</xsl:param>
+  <xsl:param name="tablecolumns.extension">1</xsl:param>
+  <xsl:param name="textinsert.extension">1</xsl:param>
 
-    <xsl:param name="html.stylesheet">html.css</xsl:param>
+  <xsl:param name="admon.graphics" select="1" />
+  <xsl:param name="admon.graphics.extension">.png</xsl:param>
+  <xsl:param name="callout.graphics" select="1" />
+  <xsl:param name="callout.graphics.extension">.png</xsl:param>
 
-    <!-- These extensions are required for table printing and other stuff -->
-    <xsl:param name="use.extensions">1</xsl:param>
-    <xsl:param name="tablecolumns.extension">0</xsl:param>
-    <xsl:param name="callout.extensions">1</xsl:param>
-    <xsl:param name="graphicsize.extension">0</xsl:param>
+  <xsl:param name="section.autolabel" select="1" />
+  <xsl:param name="section.label.includes.component.label">1</xsl:param>
 
-<!--###################################################
-                      Table Of Contents
-    ################################################### -->
-
-    <!-- Generate the TOCs for named components only -->
-    <xsl:param name="generate.toc">
-        book   toc
-    </xsl:param>
-
-    <!-- Show only Sections up to level 5 in the TOCs -->
-    <xsl:param name="toc.section.depth">5</xsl:param>
-
-<!--###################################################
-                         Labels
-    ################################################### -->
-
-    <!-- Label Chapters and Sections (numbering) -->
-    <xsl:param name="chapter.autolabel">1</xsl:param>
-    <xsl:param name="section.autolabel" select="1"/>
-    <xsl:param name="section.label.includes.component.label" select="1"/>
-
-<!--###################################################
-                         Callouts
-    ################################################### -->
-
-    <!-- Don't use graphics, use a simple number style -->
-    <xsl:param name="callout.graphics">0</xsl:param>
-
-    <!-- Place callout marks at this column in annotated areas -->
-    <xsl:param name="callout.defaultcolumn">90</xsl:param>
-
-<!--###################################################
-                          Misc
-    ################################################### -->
-
-    <!-- Placement of titles -->
-    <xsl:param name="formal.title.placement">
-        figure after
-        example before
-        equation before
-        table before
-        procedure before
-    </xsl:param>
+  <xsl:output method="html" encoding="utf-8" indent="yes"/>     <!-- html only -->
+  <xsl:param name="use.id.as.filename">1</xsl:param>            <!-- html only -->
+  <xsl:param name="chunk.section.depth">0</xsl:param>           <!-- html only -->
+  <xsl:param name="chunker.output.indent">yes</xsl:param>       <!-- html only -->
+  <!-- xsl:param name="html.stylesheet">debian.css</xsl:param -->       <!-- html only -->
 
 </xsl:stylesheet>
