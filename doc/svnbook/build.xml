@@ -104,16 +104,7 @@
       <arg value="../build/zh_CN/book.xml"/>
       <arg value="../source/book.xml"/>
     </exec>
-
-    <exec dir="${basedir}/build/zh_CN" executable="xmllint">
-      <arg value="--nsclean"/>
-      <arg value="--format"/>
-      <arg value="--output"/>
-      <arg value="book-fmt.xml"/>
-      <arg value="book.xml"/>
-    </exec>
     <delete file="xml2po/.xml2po.mo"/>
-    <delete file="build/zh_CN/book-tmp.xml"/>
   </target>
 
   <target name="html.init">
@@ -226,16 +217,13 @@
       <arg value="build/zh_CN/pdf/svnbook.fo"/>
       <arg value="build/zh_CN/book.xml"/>
       <arg value="stylesheets/zh_CN/fo.xsl"/>
+      <arg value="fop1.extensions=1"/>
+      <arg value="title.font.family=${fop.title.font.family}"/>
+      <arg value="body.font.family=${fop.body.font.family}"/>
+      <arg value="sans.font.family=${fop.sans.font.family}"/>
+      <arg value="ingbat.font.family=${fop.ingbat.font.family}"/>
+      <arg value="monospace.font.family=${fop.monospace.font.family}"/>
     </java>
-
-    <exec dir="${basedir}/build/zh_CN/pdf" executable="xmllint">
-      <arg value="--nsclean"/>
-      <arg value="--format"/>
-      <arg value="--output"/>
-      <arg value="svnbook-fmt.fo"/>
-      <arg value="svnbook.fo"/>
-    </exec>
-    <!--delete dir="build/zh_CN/pdf"/-->
   </target>
 
   <target name="pdf.init">
@@ -251,26 +239,15 @@
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
-    <copy todir="build/zh_CN/pdf">
-      <fileset dir="${fop.home}/conf">
-        <include name="*.xml"/>
-      </fileset>
-      <fileset dir="${fonts.dir}">
-        <include name="*.ttf"/>
-        <include name="*.ttc"/>
-      </fileset>
-    </copy>
 
     <echo message="Making pdf ..."/>
     <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN/pdf">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
-      <arg value="userconfig.xml"/>
+      <arg value="${fop.home}/conf/userconfig.xml"/>
       <arg value="svnbook.fo"/>
       <arg value="../svnbook-zh.pdf"/>
     </java>
-    <!--delete dir="build/zh_CN/pdf"/-->
-    <!--delete dir="build/zh_CN/images"/-->
   </target>
 
   <target name="svnbook.init">
@@ -281,16 +258,6 @@
   </target>
 
   <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate" description="Generate document - svnbook(pdf)">
-    <copy todir="build/en">
-      <fileset dir="${fop.home}/conf">
-        <include name="*.xml"/>
-      </fileset>
-      <fileset dir="${fonts.dir}">
-        <include name="*.ttf"/>
-        <include name="*.ttc"/>
-      </fileset>
-    </copy>
-
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
@@ -310,32 +277,25 @@
       <arg value="svnbook.fo"/>
       <arg value="book.xml"/>
       <arg value="../../stylesheets/fo.xsl"/>
+      <arg value="fop1.extensions=1"/>
+      <arg value="title.font.family=${fop.title.font.family}"/>
+      <arg value="body.font.family=${fop.body.font.family}"/>
+      <arg value="sans.font.family=${fop.sans.font.family}"/>
+      <arg value="ingbat.font.family=${fop.ingbat.font.family}"/>
+      <arg value="monospace.font.family=${fop.monospace.font.family}"/>
     </java>
-
-    <exec dir="${basedir}/build/en" executable="xmllint">
-      <arg value="--nsclean"/>
-      <arg value="--format"/>
-      <arg value="--output"/>
-      <arg value="svnbook-fmt.fo"/>
-      <arg value="svnbook.fo"/>
-    </exec>
 
     <echo message="Making pdf ..."/>
     <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
-      <arg value="userconfig.xml"/>
+      <arg value="${fop.home}/conf/userconfig.xml"/>
       <arg value="svnbook.fo"/>
       <arg value="svnbook.pdf"/>
     </java>
-
-    <!--delete>
-      <fileset dir="build/en" excludes="**/*.pdf"/>
-    </delete-->
-
   </target>
 
-  <target name="xep" description="Generate document - svnbook(pdf) - xep">
+  <target name="svnbook-xep" description="Generate document - svnbook(pdf) - xep">
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
@@ -356,7 +316,8 @@
       <arg value="-o"/>
       <arg value="svnbook.fo"/>
       <arg value="book.xml"/>
-      <arg value="../../stylesheets/xep.xsl"/>
+      <arg value="../../stylesheets/fo.xsl"/>
+      <arg value="xep.extensions=1"/>
     </java>
 
     <echo message="Making pdf ..."/>
