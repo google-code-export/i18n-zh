@@ -819,7 +819,6 @@ if len(filenames) > 1 and mode=='merge':
 try:
     CurrentXmlMode = load_mode(default_mode)()
 except:
-    traceback.print_exc(file=sys.stderr)
     CurrentXmlMode = None
     print >> sys.stderr, "Warning: cannot load module '%s', using automatic detection (-a)." % (default_mode)
     automatic = 1

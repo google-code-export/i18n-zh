@@ -128,7 +128,7 @@
       <arg value="../../../stylesheets/zh_CN/html.xsl"/>
       <arg value="../book.xml"/>
     </exec -->
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m"
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
           failonerror="true" dir="${basedir}/build/zh_CN/svnbook">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
@@ -192,20 +192,22 @@
     <delete file="build/zh_CN/htmlhelp.hhp"/>
   </target>
 
-  <target name="fo.init">
-    <uptodate property="fo.isUpToDate" targetfile="build/zh_CN/pdf/svnbook.fo">
+
+  <target name="pdf.init">
+    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook-zh.pdf">
       <srcfiles dir="source" includes="book.xml"/>
       <srcfiles dir="po" includes="zh_CN.po"/>
-      <srcfiles dir="stylesheets" includes="fo.xsl"/>
-      <srcfiles dir="stylesheets/zh_CN" includes="fo.xsl"/>
     </uptodate>
   </target>
 
-  <target name="fo" depends="translate,fo.init" unless="fo.isUpToDate">
-    <mkdir dir="build/zh_CN/pdf"/>
+  <target name="pdf"  depends="translate,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
+    <copy todir="build/zh_CN/images">
+      <fileset dir="source/images" includes="*.png"/>
+      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
+    </copy>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -214,7 +216,7 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="build/zh_CN/pdf/svnbook.fo"/>
+      <arg value="build/zh_CN/svnbook.fo"/>
       <arg value="build/zh_CN/book.xml"/>
       <arg value="stylesheets/zh_CN/fo.xsl"/>
       <arg value="fop1.extensions=1"/>
@@ -224,40 +226,25 @@
       <arg value="ingbat.font.family=${fop.ingbat.font.family}"/>
       <arg value="monospace.font.family=${fop.monospace.font.family}"/>
     </java>
-  </target>
-
-  <target name="pdf.init">
-    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook-zh.pdf">
-      <srcfiles dir="source" includes="book.xml"/>
-      <srcfiles dir="po" includes="zh_CN.po"/>
-      <srcfiles dir="build/zh_CN/pdf" includes="svnbook.fo"/>
-    </uptodate>
-  </target>
-
-  <target name="pdf" depends="fo,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
-    <copy todir="build/zh_CN/pdf/images">
-      <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
-    </copy>
 
     <echo message="Making pdf ..."/>
-    <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN/pdf">
+    <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
       <arg value="${fop.home}/conf/userconfig.xml"/>
       <arg value="svnbook.fo"/>
-      <arg value="../svnbook-zh.pdf"/>
+      <arg value="svnbook-zh.pdf"/>
     </java>
   </target>
 
-  <target name="pdf-xep" depends="translate" description="Generate document - pdf - xep">
-    <copy todir="build/zh_CN/pdf/images">
+  <target name="pdf-xep" depends="translate,pdf.init" description="Generate document - pdf - xep">
+    <copy todir="build/zh_CN/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -266,7 +253,7 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="build/zh_CN/pdf/svnbook.fo"/>
+      <arg value="build/zh_CN/svnbook.fo"/>
       <arg value="build/zh_CN/book.xml"/>
       <arg value="stylesheets/zh_CN/fo.xsl"/>
       <arg value="xep.extensions=1"/>
@@ -274,13 +261,13 @@
 
     <echo message="Making pdf ..."/>
     <java classname="com.renderx.xep.XSLDriver"
-          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN/pdf">
+          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN">
       <jvmarg value="-Xss512k"/>
       <classpath refid="xep.classpath"/>
       <arg value="-DCONFIG=${xep.home}/xep.xml"/>
       <arg value="-quiet"/>
       <arg value="svnbook.fo"/>
-      <arg value="../svnbook-zh.pdf"/>
+      <arg value="svnbook-zh.pdf"/>
     </java>
   </target>
 
@@ -299,7 +286,7 @@
     <copy file='source/book.xml' todir="build/en"/>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -338,7 +325,7 @@
 
     <echo message="Making fo ..."/>
     <java classname="com.icl.saxon.StyleSheet"
-          fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/en">
+          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
       <jvmarg value="-Xss512k"/>
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
