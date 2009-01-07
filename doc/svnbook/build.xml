@@ -62,7 +62,8 @@
     </uptodate>
   </target>
 
-  <target name="pot" depends="pot.init" unless="pot.isUpToDate" description="Generate POTemplate">
+  <target name="pot" depends="pot.init" unless="pot.isUpToDate"
+        description="Generate POTemplate">
     <echo message="Making pot ..."/>
     <exec dir="${basedir}/po" executable="python" failonerror="true">
       <arg value="../xml2po/xml2po.py"/>
@@ -91,7 +92,8 @@
     </uptodate>
   </target>
 
-  <target name="translate" depends="translate.init" unless="translate.isUpToDate" description="Translate document">
+  <target name="translate" depends="translate.init" unless="translate.isUpToDate"
+        description="Translate document">
     <mkdir dir="build/zh_CN"/>
     <echo message="Translating to zh_CN ..."/>
     <exec dir="${basedir}/xml2po" executable="python" failonerror="true">
@@ -116,7 +118,8 @@
     </uptodate>
   </target>
 
-  <target name="html" depends="translate,html.init" unless="html.isUpToDate" description="Generate document - html">
+  <target name="html" depends="translate,html.init" unless="html.isUpToDate"
+        description="Generate document - html">
     <copy todir="build/zh_CN/svnbook/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
@@ -152,7 +155,8 @@
     </uptodate>
   </target>
 
-  <target name="chm" depends="translate,chm.init" unless="chm.isUpToDate" description="Generate document - chm">
+  <target name="chm" depends="translate,chm.init" unless="chm.isUpToDate"
+        description="Generate document - chm">
     <fail>
       <condition>
         <not>
@@ -200,14 +204,16 @@
     </uptodate>
   </target>
 
-  <target name="pdf"  depends="translate,pdf.init" unless="pdf.isUpToDate" description="Generate document - pdf">
+  <target name="pdf"  depends="translate,pdf.init" unless="pdf.isUpToDate"
+        description="Generate document - pdf">
     <copy todir="build/zh_CN/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -228,7 +234,8 @@
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN">
+    <java classname="${fop.class}" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/zh_CN">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
       <arg value="${fop.home}/conf/userconfig.xml"/>
@@ -237,14 +244,16 @@
     </java>
   </target>
 
-  <target name="pdf-xep" depends="translate,pdf.init" description="Generate document - pdf - xep">
+  <target name="pdf-xep" depends="translate,pdf.init" unless="pdf.isUpToDate"
+        description="Generate document - pdf - xep">
     <copy todir="build/zh_CN/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -260,8 +269,8 @@
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="com.renderx.xep.XSLDriver"
-          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/zh_CN">
+    <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/zh_CN">
       <jvmarg value="-Xss512k"/>
       <classpath refid="xep.classpath"/>
       <arg value="-DCONFIG=${xep.home}/xep.xml"/>
@@ -278,7 +287,8 @@
     </uptodate>
   </target>
 
-  <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate" description="Generate document - english(pdf)">
+  <target name="svnbook" depends="svnbook.init" unless="svnbook.isUpToDate"
+        description="Generate document - english(pdf)">
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
@@ -286,7 +296,8 @@
     <copy file='source/book.xml' todir="build/en"/>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -307,7 +318,8 @@
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="${fop.class}" fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+    <java classname="${fop.class}" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
       <arg value="${fop.home}/conf/userconfig.xml"/>
@@ -316,7 +328,8 @@
     </java>
   </target>
 
-  <target name="svnbook-xep" description="Generate document - english(pdf) - xep">
+  <target name="svnbook-xep" depends="svnbook.init" unless="svnbook.isUpToDate"
+        description="Generate document - english(pdf) - xep">
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
@@ -324,8 +337,8 @@
     <copy file='source/book.xml' todir="build/en"/>
 
     <echo message="Making fo ..."/>
-    <java classname="com.icl.saxon.StyleSheet"
-          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/en">
       <jvmarg value="-Xss512k"/>
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
@@ -342,8 +355,8 @@
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="com.renderx.xep.XSLDriver"
-          fork="true" maxmemory="512m" failonerror="true" dir="${basedir}/build/en">
+    <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+          failonerror="true" dir="${basedir}/build/en">
       <jvmarg value="-Xss512k"/>
       <classpath refid="xep.classpath"/>
       <arg value="-DCONFIG=${xep.home}/xep.xml"/>
