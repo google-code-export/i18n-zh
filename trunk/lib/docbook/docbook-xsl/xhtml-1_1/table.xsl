@@ -1,12 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-                xmlns:stbl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.Table"
-                xmlns:xtbl="xalan://com.nwalsh.xalan.Table"
-                xmlns:lxslt="http://xml.apache.org/xslt"
-                xmlns:ptbl="http://nwalsh.com/xslt/ext/xsltproc/python/Table"
-                exclude-result-prefixes="doc stbl xtbl lxslt ptbl"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns:stbl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.Table" xmlns:xtbl="xalan://com.nwalsh.xalan.Table" xmlns:lxslt="http://xml.apache.org/xslt" xmlns:ptbl="http://nwalsh.com/xslt/ext/xsltproc/python/Table" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="doc stbl xtbl lxslt ptbl" version="1.0">
 
 <xsl:include href="../common/table.xsl"/>
 
@@ -20,8 +15,7 @@
 
      ******************************************************************** -->
 
-<lxslt:component prefix="xtbl"
-                 functions="adjustColumnWidths"/>
+<lxslt:component prefix="xtbl" functions="adjustColumnWidths"/>
 
 <xsl:template name="empty.table.cell">
   <xsl:param name="colnum" select="0"/>
@@ -29,9 +23,7 @@
   <xsl:variable name="rowsep">
     <xsl:choose>
       <!-- If this is the last row, rowsep never applies. -->
-      <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row
-                          or ancestor-or-self::thead/following-sibling::tbody
-                          or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+      <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row                           or ancestor-or-self::thead/following-sibling::tbody                           or ancestor-or-self::tbody/preceding-sibling::tfoot)">
         <xsl:value-of select="0"/>
       </xsl:when>
       <xsl:otherwise>
@@ -91,12 +83,7 @@
   <!-- Note: Some browsers (mozilla) require at least a width and style. -->
 
   <xsl:choose>
-    <xsl:when test="($thickness != ''
-                     and $style != ''
-                     and $color != '')
-                    or ($thickness != ''
-                        and $style != '')
-                    or ($thickness != '')">
+    <xsl:when test="($thickness != ''                      and $style != ''                      and $color != '')                     or ($thickness != ''                         and $style != '')                     or ($thickness != '')">
       <!-- use the compound property if we can: -->
       <!-- it saves space and probably works more reliably -->
       <xsl:text>border-</xsl:text>
@@ -355,15 +342,13 @@
       </xsl:choose>
     </xsl:variable>
 
-    <xsl:if test="$default.table.width != ''
-                  or $explicit.table.width != ''">
+    <xsl:if test="$default.table.width != ''                   or $explicit.table.width != ''">
       <xsl:attribute name="width">
         <xsl:choose>
           <xsl:when test="contains($table.width, '%')">
             <xsl:value-of select="$table.width"/>
           </xsl:when>
-          <xsl:when test="$use.extensions != 0
-                          and $tablecolumns.extension != 0">
+          <xsl:when test="$use.extensions != 0                           and $tablecolumns.extension != 0">
             <xsl:choose>
               <xsl:when test="function-available('stbl:convertLength')">
                 <xsl:value-of select="stbl:convertLength($table.width)"/>
@@ -386,8 +371,7 @@
     </xsl:if>
 
     <xsl:choose>
-      <xsl:when test="$use.extensions != 0
-                      and $tablecolumns.extension != 0">
+      <xsl:when test="$use.extensions != 0                       and $tablecolumns.extension != 0">
         <xsl:choose>
           <xsl:when test="function-available('stbl:adjustColumnWidths')">
             <xsl:copy-of select="stbl:adjustColumnWidths($colgroup)"/>
@@ -439,14 +423,14 @@
   </xsl:if>
 </xsl:template>
 
-<xsl:template match="colspec"></xsl:template>
+<xsl:template match="colspec"/>
 
-<xsl:template match="spanspec"></xsl:template>
+<xsl:template match="spanspec"/>
 
 <xsl:template match="thead|tfoot">
-  <xsl:element name="{local-name(.)}">
+  <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:if test="@align">
-      <xsl:attribute name="align">
+      <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
         <xsl:value-of select="@align"/>
       </xsl:attribute>
     </xsl:if>
@@ -480,7 +464,7 @@
 <xsl:template match="tbody">
   <tbody>
     <xsl:if test="@align">
-      <xsl:attribute name="align">
+      <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
         <xsl:value-of select="@align"/>
       </xsl:attribute>
     </xsl:if>
@@ -584,7 +568,7 @@
     </xsl:if>
 
     <xsl:if test="$bgcolor != ''">
-      <xsl:attribute name="bgcolor">
+      <xsl:attribute name="style"><xsl:text>background-color: </xsl:text>
         <xsl:value-of select="$bgcolor"/>
       </xsl:attribute>
     </xsl:if>
@@ -606,7 +590,7 @@
     </xsl:if>
 
     <xsl:if test="@align">
-      <xsl:attribute name="align">
+      <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
         <xsl:value-of select="@align"/>
       </xsl:attribute>
     </xsl:if>
@@ -700,18 +684,13 @@
   <xsl:variable name="rowsep">
     <xsl:choose>
       <!-- If this is the last row, rowsep never applies. -->
-      <xsl:when test="ancestor::entrytbl
-                      and not (ancestor-or-self::row[1]/following-sibling::row)
-		      and not (ancestor::thead)">
+      <xsl:when test="ancestor::entrytbl                       and not (ancestor-or-self::row[1]/following-sibling::row)         and not (ancestor::thead)">
         <xsl:value-of select="0"/>
       </xsl:when>
-      <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row
-                          or ancestor-or-self::thead/following-sibling::tbody
-                          or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+      <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row                           or ancestor-or-self::thead/following-sibling::tbody                           or ancestor-or-self::tbody/preceding-sibling::tfoot)">
         <xsl:value-of select="0"/>
       </xsl:when>
-      <xsl:when test="@morerows and not(@morerows &lt; 
-                 count(ancestor-or-self::row[1]/following-sibling::row))">
+      <xsl:when test="@morerows and not(@morerows &lt;                   count(ancestor-or-self::row[1]/following-sibling::row))">
         <xsl:value-of select="0"/>
       </xsl:when>
       <xsl:otherwise>
@@ -793,9 +772,9 @@
         </xsl:if>
       </xsl:variable>
 
-      <xsl:element name="{$cellgi}">
+      <xsl:element name="{$cellgi}" namespace="http://www.w3.org/1999/xhtml">
         <xsl:if test="$bgcolor != ''">
-          <xsl:attribute name="bgcolor">
+          <xsl:attribute name="style"><xsl:text>background-color: </xsl:text>
             <xsl:value-of select="$bgcolor"/>
           </xsl:attribute>
         </xsl:if>
@@ -840,7 +819,7 @@
         </xsl:if>
 
         <xsl:if test="$align != ''">
-          <xsl:attribute name="align">
+          <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
             <xsl:value-of select="$align"/>
           </xsl:attribute>
         </xsl:if>
@@ -863,8 +842,7 @@
           </xsl:attribute>
         </xsl:if>
 
-        <xsl:if test="not(preceding-sibling::*) and 
-                    (ancestor::row[1]/@id or ancestor::row[1]/@xml:id)">
+        <xsl:if test="not(preceding-sibling::*) and                      (ancestor::row[1]/@id or ancestor::row[1]/@xml:id)">
           <xsl:call-template name="anchor">
             <xsl:with-param name="node" select="ancestor::row[1]"/>
           </xsl:call-template>
@@ -887,8 +865,7 @@
 
       <xsl:choose>
         <xsl:when test="following-sibling::entry|following-sibling::entrytbl">
-          <xsl:apply-templates select="(following-sibling::entry
-                                       |following-sibling::entrytbl)[1]">
+          <xsl:apply-templates select="(following-sibling::entry                                        |following-sibling::entrytbl)[1]">
             <xsl:with-param name="col" select="$col+$entry.colspan"/>
             <xsl:with-param name="spans" select="$following.spans"/>
           </xsl:apply-templates>
@@ -962,9 +939,7 @@
 
       <xsl:choose>
         <xsl:when test="following-sibling::entry|following-sibling::entrytbl">
-          <xsl:apply-templates select="(following-sibling::entry
-                                        |following-sibling::entrytbl)[1]"
-                               mode="span">
+          <xsl:apply-templates select="(following-sibling::entry                                         |following-sibling::entrytbl)[1]" mode="span">
             <xsl:with-param name="col" select="$col+$entry.colspan"/>
             <xsl:with-param name="spans" select="$following.spans"/>
           </xsl:apply-templates>
@@ -983,7 +958,7 @@
   <xsl:param name="cols" select="1"/>
   <xsl:param name="count" select="1"/>
   <xsl:choose>
-    <xsl:when test="$count &gt; $cols"></xsl:when>
+    <xsl:when test="$count &gt; $cols"/>
     <xsl:otherwise>
       <xsl:call-template name="generate.col">
         <xsl:with-param name="countcol" select="$count"/>
@@ -1003,7 +978,7 @@
   <xsl:param name="colnum">1</xsl:param>
 
   <xsl:choose>
-    <xsl:when test="$count>count($colspecs)">
+    <xsl:when test="$count&gt;count($colspecs)">
       <col/>
     </xsl:when>
     <xsl:otherwise>
@@ -1022,9 +997,7 @@
       <xsl:choose>
         <xsl:when test="$colspec.colnum=$countcol">
           <col>
-            <xsl:if test="$colspec/@colwidth
-                          and $use.extensions != 0
-                          and $tablecolumns.extension != 0">
+            <xsl:if test="$colspec/@colwidth                           and $use.extensions != 0                           and $tablecolumns.extension != 0">
               <xsl:attribute name="width">
 	        <xsl:choose>
 		  <xsl:when test="normalize-space($colspec/@colwidth) = '*'">
@@ -1039,13 +1012,13 @@
 
             <xsl:choose>
               <xsl:when test="$colspec/@align">
-                <xsl:attribute name="align">
+                <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
                   <xsl:value-of select="$colspec/@align"/>
                 </xsl:attribute>
               </xsl:when>
               <!-- Suggested by Pavel ZAMPACH <zampach@nemcb.cz> -->
               <xsl:when test="$colspecs/ancestor::tgroup/@align">
-                <xsl:attribute name="align">
+                <xsl:attribute name="style"><xsl:text>text-align: </xsl:text>
                   <xsl:value-of select="$colspecs/ancestor::tgroup/@align"/>
                 </xsl:attribute>
               </xsl:when>
@@ -1087,12 +1060,12 @@
 
 <xsl:template name="colspec.colwidth">
   <!-- when this macro is called, the current context must be an entry -->
-  <xsl:param name="colname"></xsl:param>
+  <xsl:param name="colname"/>
   <!-- .. = row, ../.. = thead|tbody, ../../.. = tgroup -->
   <xsl:param name="colspecs" select="../../../../tgroup/colspec"/>
   <xsl:param name="count">1</xsl:param>
   <xsl:choose>
-    <xsl:when test="$count>count($colspecs)"></xsl:when>
+    <xsl:when test="$count&gt;count($colspecs)"/>
     <xsl:otherwise>
       <xsl:variable name="colspec" select="$colspecs[$count=position()]"/>
       <xsl:choose>
@@ -1127,4 +1100,3 @@
 </xsl:template>
 
 </xsl:stylesheet>
-

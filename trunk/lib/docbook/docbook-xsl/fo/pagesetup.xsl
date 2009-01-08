@@ -17,34 +17,16 @@
 
 <xsl:param name="body.fontset">
   <xsl:value-of select="$body.font.family"/>
-
   <xsl:if test="$body.font.family != ''
-                and $symbol.font.family != ''">,</xsl:if>
+                and $symbol.font.family  != ''">,</xsl:if>
     <xsl:value-of select="$symbol.font.family"/>
-
-  <xsl:if test="$body.font.family != ''
-                and $body.font.family.l10n != ''">,</xsl:if>
-    <xsl:value-of select="$body.font.family.l10n"/>
 </xsl:param>
 
 <xsl:param name="title.fontset">
   <xsl:value-of select="$title.font.family"/>
-
   <xsl:if test="$title.font.family != ''
-                and $symbol.font.family != ''">,</xsl:if>
+                and $symbol.font.family  != ''">,</xsl:if>
     <xsl:value-of select="$symbol.font.family"/>
-
-  <xsl:if test="$title.font.family != ''
-                and $title.font.family.l10n != ''">,</xsl:if>
-    <xsl:value-of select="$title.font.family.l10n"/>
-</xsl:param>
-
-<xsl:param name="monospace.fontset">
-  <xsl:value-of select="$monospace.font.family"/>
-
-  <xsl:if test="$monospace.font.family != ''
-                and $monospace.font.family.l10n != ''">,</xsl:if>
-    <xsl:value-of select="$monospace.font.family.l10n"/>
 </xsl:param>
 
 <!-- PassiveTeX can't handle the math expression for

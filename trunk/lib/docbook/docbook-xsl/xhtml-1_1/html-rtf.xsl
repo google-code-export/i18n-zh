@@ -1,9 +1,7 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:set="http://exslt.org/sets"
-                exclude-result-prefixes="exsl set"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns:set="http://exslt.org/sets" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="exsl set" version="1.0">
 
 <!-- ********************************************************************
      $Id: html-rtf.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -44,8 +42,7 @@
   </xsl:copy>
 </xsl:template>
 
-<xsl:template xmlns:html="http://www.w3.org/1999/xhtml"
-              match="html:p|p" mode="insert.html.p">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:p|p" mode="insert.html.p">
   <xsl:param name="mark" select="'?'"/>
   <xsl:copy>
     <xsl:copy-of select="@*"/>
@@ -108,9 +105,7 @@
 <xsl:template name="unwrap.p">
   <xsl:param name="p"/>
   <xsl:choose>
-    <xsl:when test="function-available('exsl:node-set')
-                    and function-available('set:leading')
-                    and function-available('set:trailing')">
+    <xsl:when test="function-available('exsl:node-set')                     and function-available('set:leading')                     and function-available('set:trailing')">
       <xsl:apply-templates select="exsl:node-set($p)" mode="unwrap.p"/>
     </xsl:when>
     <xsl:otherwise>
@@ -119,16 +114,9 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template xmlns:html="http://www.w3.org/1999/xhtml"
-              match="html:p|p" mode="unwrap.p">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:p|p" mode="unwrap.p">
   <!-- xmlns:html is necessary for the xhtml stylesheet case -->
-  <xsl:variable name="blocks" xmlns:html="http://www.w3.org/1999/xhtml"
-                select="address|blockquote|div|hr|h1|h2|h3|h4|h5|h6
-                        |layer|p|pre|table|dl|menu|ol|ul|form
-                        |html:address|html:blockquote|html:div|html:hr
-                        |html:h1|html:h2|html:h3|html:h4|html:h5|html:h6
-                        |html:layer|html:p|html:pre|html:table|html:dl
-                        |html:menu|html:ol|html:ul|html:form"/>
+  <xsl:variable name="blocks" select="address|blockquote|div|hr|h1|h2|h3|h4|h5|h6                         |layer|p|pre|table|dl|menu|ol|ul|form                         |html:address|html:blockquote|html:div|html:hr                         |html:h1|html:h2|html:h3|html:h4|html:h5|html:h6                         |html:layer|html:p|html:pre|html:table|html:dl                         |html:menu|html:ol|html:ul|html:form"/>
   <xsl:choose>
     <xsl:when test="$blocks">
       <xsl:call-template name="unwrap.p.nodes">
@@ -168,16 +156,14 @@
   <!-- This template should never get called if these functions aren't available -->
   <!-- but this test is still necessary so that processors don't choke on the -->
   <!-- function calls if they don't support the set: functions -->
-  <xsl:if test="function-available('set:leading')
-                and function-available('set:trailing')">
+  <xsl:if test="function-available('set:leading')                 and function-available('set:trailing')">
     <xsl:choose>
       <xsl:when test="$blocks">
         <xsl:variable name="leading" select="set:leading($nodes,$block)"/>
         <xsl:variable name="trailing" select="set:trailing($nodes,$block)"/>
 
-        <xsl:if test="(($wrap/@id or $wrap/@xml:id) 
-                        and $first = 1) or $leading">
-          <xsl:element name="{local-name($wrap)}" namespace="{namespace-uri($wrap)}">
+        <xsl:if test="(($wrap/@id or $wrap/@xml:id)                          and $first = 1) or $leading">
+          <xsl:element name="{local-name($wrap)}" namespace="http://www.w3.org/1999/xhtml">
             <xsl:for-each select="$wrap/@*">
               <xsl:if test="$first != 0 or local-name(.) != 'id'">
                 <xsl:copy/>
@@ -200,7 +186,7 @@
 
       <xsl:otherwise>
         <xsl:if test="(($wrap/@id or $wrap/@xml:id) and $first = 1) or $nodes">
-          <xsl:element name="{local-name($wrap)}" namespace="{namespace-uri($wrap)}">
+          <xsl:element name="{local-name($wrap)}" namespace="http://www.w3.org/1999/xhtml">
             <xsl:for-each select="$wrap/@*">
               <xsl:if test="$first != 0 or local-name(.) != 'id'">
                 <xsl:copy/>
@@ -236,7 +222,7 @@
   <xsl:variable name="text" select="translate(., ' ', '&#160;')"/>
 
   <xsl:choose>
-    <xsl:when test="not(contains($text, '&#xA;'))">
+    <xsl:when test="not(contains($text, '&#10;'))">
       <xsl:value-of select="$text"/>
     </xsl:when>
 
@@ -245,7 +231,8 @@
 
       <xsl:choose>
         <xsl:when test="$len = 1">
-          <br/><xsl:text>&#xA;</xsl:text>
+          <br/><xsl:text>
+</xsl:text>
         </xsl:when>
 
         <xsl:otherwise>
@@ -254,8 +241,7 @@
             <xsl:with-param name="text" select="substring($text, 1, $half)"/>
           </xsl:call-template>
           <xsl:call-template name="make-verbatim-recursive">
-            <xsl:with-param name="text"
-                            select="substring($text, ($half + 1), $len)"/>
+            <xsl:with-param name="text" select="substring($text, ($half + 1), $len)"/>
           </xsl:call-template>
     	</xsl:otherwise>
       </xsl:choose>
@@ -267,7 +253,7 @@
   <xsl:param name="text" select="''"/>
 
   <xsl:choose>
-    <xsl:when test="not(contains($text, '&#xA;'))">
+    <xsl:when test="not(contains($text, '&#10;'))">
       <xsl:value-of select="$text"/>
     </xsl:when>
 
@@ -276,7 +262,8 @@
 
       <xsl:choose>
         <xsl:when test="$len = 1">
-          <br/><xsl:text>&#xA;</xsl:text>
+          <br/><xsl:text>
+</xsl:text>
         </xsl:when>
 
         <xsl:otherwise>
@@ -285,8 +272,7 @@
     	    <xsl:with-param name="text" select="substring($text, 1, $half)"/>
     	  </xsl:call-template>
     	  <xsl:call-template name="make-verbatim-recursive">
-    	    <xsl:with-param name="text"
-    			    select="substring($text, ($half + 1), $len)"/>
+    	    <xsl:with-param name="text" select="substring($text, ($half + 1), $len)"/>
     	  </xsl:call-template>
     	</xsl:otherwise>
       </xsl:choose>
@@ -310,8 +296,7 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template xmlns:html="http://www.w3.org/1999/xhtml"
-              match="html:p|p|html:div|div" mode="remove.empty.div">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:p|p|html:div|div" mode="remove.empty.div">
   <xsl:if test="node()">
     <xsl:copy>
       <xsl:copy-of select="@*"/>

@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: html.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: html.xsl 8181 2008-12-15 23:50:20Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -11,6 +12,33 @@
      copyright and other information.
 
      ******************************************************************** -->
+
+<!-- These variables set the align attribute value for HTML output based on
+     the writing-mode specified in the gentext file for the document's lang. -->
+
+<xsl:variable name="direction.align.start">
+  <xsl:choose>
+    <xsl:when test="starts-with($writing.mode, 'lr')">left</xsl:when>
+    <xsl:when test="starts-with($writing.mode, 'rl')">right</xsl:when>
+    <xsl:otherwise>left</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="direction.align.end">
+  <xsl:choose>
+    <xsl:when test="starts-with($writing.mode, 'lr')">right</xsl:when>
+    <xsl:when test="starts-with($writing.mode, 'rl')">left</xsl:when>
+    <xsl:otherwise>right</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="direction.mode">
+  <xsl:choose>
+    <xsl:when test="starts-with($writing.mode, 'lr')">ltr</xsl:when>
+    <xsl:when test="starts-with($writing.mode, 'rl')">rtl</xsl:when>
+    <xsl:otherwise>ltr</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 
 <!-- The generate.html.title template is currently used for generating HTML -->
 <!-- "title" attributes for some inline elements only, but not for any -->
@@ -58,11 +86,8 @@
   </xsl:variable>
 
   <xsl:variable name="gentext.title">
-    <xsl:if test="$is.title != 0 or
-                  $is.title-numbered != 0 or
-                  $is.title-unnumbered != 0">
-      <xsl:apply-templates select="."
-                           mode="object.title.markup.textonly"/>
+    <xsl:if test="$is.title != 0 or                   $is.title-numbered != 0 or                   $is.title-unnumbered != 0">
+      <xsl:apply-templates select="." mode="object.title.markup.textonly"/>
     </xsl:if>
   </xsl:variable>
 
@@ -112,7 +137,7 @@
     </xsl:call-template>
   </xsl:variable>
   <xsl:if test="$conditional = 0 or $node/@id or $node/@xml:id">
-    <a name="{$id}"/>
+    <a id="{$id}"/>
   </xsl:if>
 </xsl:template>
 
@@ -158,23 +183,23 @@
   <!-- isn't necessary anymore... -->
   <xsl:param name="dingbat">bullet</xsl:param>
   <xsl:choose>
-    <xsl:when test="$dingbat='bullet'">&#x2022;</xsl:when>
-    <xsl:when test="$dingbat='copyright'">&#x00A9;</xsl:when>
-    <xsl:when test="$dingbat='trademark'">&#x2122;</xsl:when>
-    <xsl:when test="$dingbat='trade'">&#x2122;</xsl:when>
-    <xsl:when test="$dingbat='registered'">&#x00AE;</xsl:when>
+    <xsl:when test="$dingbat='bullet'">&#8226;</xsl:when>
+    <xsl:when test="$dingbat='copyright'">&#169;</xsl:when>
+    <xsl:when test="$dingbat='trademark'">&#8482;</xsl:when>
+    <xsl:when test="$dingbat='trade'">&#8482;</xsl:when>
+    <xsl:when test="$dingbat='registered'">&#174;</xsl:when>
     <xsl:when test="$dingbat='service'">(SM)</xsl:when>
-    <xsl:when test="$dingbat='nbsp'">&#x00A0;</xsl:when>
-    <xsl:when test="$dingbat='ldquo'">&#x201C;</xsl:when>
-    <xsl:when test="$dingbat='rdquo'">&#x201D;</xsl:when>
-    <xsl:when test="$dingbat='lsquo'">&#x2018;</xsl:when>
-    <xsl:when test="$dingbat='rsquo'">&#x2019;</xsl:when>
-    <xsl:when test="$dingbat='em-dash'">&#x2014;</xsl:when>
-    <xsl:when test="$dingbat='mdash'">&#x2014;</xsl:when>
-    <xsl:when test="$dingbat='en-dash'">&#x2013;</xsl:when>
-    <xsl:when test="$dingbat='ndash'">&#x2013;</xsl:when>
+    <xsl:when test="$dingbat='nbsp'">&#160;</xsl:when>
+    <xsl:when test="$dingbat='ldquo'">&#8220;</xsl:when>
+    <xsl:when test="$dingbat='rdquo'">&#8221;</xsl:when>
+    <xsl:when test="$dingbat='lsquo'">&#8216;</xsl:when>
+    <xsl:when test="$dingbat='rsquo'">&#8217;</xsl:when>
+    <xsl:when test="$dingbat='em-dash'">&#8212;</xsl:when>
+    <xsl:when test="$dingbat='mdash'">&#8212;</xsl:when>
+    <xsl:when test="$dingbat='en-dash'">&#8211;</xsl:when>
+    <xsl:when test="$dingbat='ndash'">&#8211;</xsl:when>
     <xsl:otherwise>
-      <xsl:text>&#x2022;</xsl:text>
+      <xsl:text>&#8226;</xsl:text>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
@@ -186,9 +211,7 @@
         <xsl:when test="title">
           <xsl:value-of select="title[1]"/>
         </xsl:when>
-        <xsl:when test="substring(local-name(*[1]),
-                                  string-length(local-name(*[1])-3) = 'info')
-                        and *[1]/title">
+        <xsl:when test="substring(local-name(*[1]),                                   string-length(local-name(*[1])-3) = 'info')                         and *[1]/title">
           <xsl:value-of select="*[1]/title[1]"/>
         </xsl:when>
         <xsl:when test="refmeta/refentrytitle">
@@ -238,4 +261,3 @@
 </xsl:template>
 
 </xsl:stylesheet>
-

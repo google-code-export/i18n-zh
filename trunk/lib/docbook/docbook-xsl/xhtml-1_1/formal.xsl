@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: formal.xsl 8000 2008-04-15 01:06:41Z abdelazer $
@@ -69,8 +70,7 @@
   <xsl:choose>
     <xsl:when test="$floatstyle != ''">
       <xsl:call-template name="floater">
-        <xsl:with-param name="class"><xsl:value-of 
-                     select="$class"/>-float</xsl:with-param>
+        <xsl:with-param name="class"><xsl:value-of select="$class"/>-float</xsl:with-param>
         <xsl:with-param name="floatstyle" select="$floatstyle"/>
         <xsl:with-param name="content" select="$content"/>
       </xsl:call-template>
@@ -124,8 +124,7 @@
   <xsl:choose>
     <xsl:when test="$floatstyle != ''">
       <xsl:call-template name="floater">
-        <xsl:with-param name="class"><xsl:value-of 
-                     select="$class"/>-float</xsl:with-param>
+        <xsl:with-param name="class"><xsl:value-of select="$class"/>-float</xsl:with-param>
         <xsl:with-param name="floatstyle" select="$floatstyle"/>
         <xsl:with-param name="content" select="$content"/>
       </xsl:call-template>
@@ -157,9 +156,7 @@
 </xsl:template>
 
 <xsl:template match="figure">
-  <xsl:variable name="param.placement"
-                select="substring-after(normalize-space($formal.title.placement),
-                                        concat(local-name(.), ' '))"/>
+  <xsl:variable name="param.placement" select="substring-after(normalize-space($formal.title.placement),                                         concat(local-name(.), ' '))"/>
 
   <xsl:variable name="placement">
     <xsl:choose>
@@ -198,15 +195,11 @@
 </xsl:template>
 
 <xsl:template name="calsTable">
-  <xsl:if test="tgroup/tbody/tr
-                |tgroup/thead/tr
-                |tgroup/tfoot/tr">
+  <xsl:if test="tgroup/tbody/tr                 |tgroup/thead/tr                 |tgroup/tfoot/tr">
     <xsl:message terminate="yes">Broken table: tr descendent of CALS Table.</xsl:message>
   </xsl:if>
 
-  <xsl:variable name="param.placement"
-                select="substring-after(normalize-space($formal.title.placement),
-                                        concat(local-name(.), ' '))"/>
+  <xsl:variable name="param.placement" select="substring-after(normalize-space($formal.title.placement),                                         concat(local-name(.), ' '))"/>
 
   <xsl:variable name="placement">
     <xsl:choose>
@@ -237,9 +230,7 @@
 </xsl:template>
 
 <xsl:template name="htmlTable">
-  <xsl:if test="tgroup/tbody/row
-                |tgroup/thead/row
-                |tgroup/tfoot/row">
+  <xsl:if test="tgroup/tbody/row                 |tgroup/thead/row                 |tgroup/tfoot/row">
     <xsl:message terminate="yes">Broken table: row descendent of HTML table.</xsl:message>
   </xsl:if>
 
@@ -247,9 +238,7 @@
 </xsl:template>
 
 <xsl:template match="example">
-  <xsl:variable name="param.placement"
-             select="substring-after(normalize-space($formal.title.placement),
-                     concat(local-name(.), ' '))"/>
+  <xsl:variable name="param.placement" select="substring-after(normalize-space($formal.title.placement),                      concat(local-name(.), ' '))"/>
 
   <xsl:variable name="placement">
     <xsl:choose>
@@ -270,9 +259,7 @@
 </xsl:template>
 
 <xsl:template match="equation">
-  <xsl:variable name="param.placement"
-              select="substring-after(normalize-space($formal.title.placement),
-                                      concat(local-name(.), ' '))"/>
+  <xsl:variable name="param.placement" select="substring-after(normalize-space($formal.title.placement),                                       concat(local-name(.), ' '))"/>
 
   <xsl:variable name="placement">
     <xsl:choose>
@@ -292,15 +279,15 @@
 
 </xsl:template>
 
-<xsl:template match="figure/title"></xsl:template>
-<xsl:template match="figure/titleabbrev"></xsl:template>
-<xsl:template match="table/title"></xsl:template>
-<xsl:template match="table/titleabbrev"></xsl:template>
-<xsl:template match="table/textobject"></xsl:template>
-<xsl:template match="example/title"></xsl:template>
-<xsl:template match="example/titleabbrev"></xsl:template>
-<xsl:template match="equation/title"></xsl:template>
-<xsl:template match="equation/titleabbrev"></xsl:template>
+<xsl:template match="figure/title"/>
+<xsl:template match="figure/titleabbrev"/>
+<xsl:template match="table/title"/>
+<xsl:template match="table/titleabbrev"/>
+<xsl:template match="table/textobject"/>
+<xsl:template match="example/title"/>
+<xsl:template match="example/titleabbrev"/>
+<xsl:template match="equation/title"/>
+<xsl:template match="equation/titleabbrev"/>
 
 <xsl:template match="informalfigure">
   <xsl:call-template name="informal.object"/>
@@ -335,7 +322,7 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="informaltable/textobject"></xsl:template>
+<xsl:template match="informaltable/textobject"/>
 
 <xsl:template name="table.longdesc">
   <!-- HACK: This doesn't belong inside formal.objectt; it should be done by -->
@@ -353,8 +340,7 @@
     </xsl:call-template>
   </xsl:variable>
 
-  <xsl:if test="$html.longdesc != 0 and $html.longdesc.link != 0
-                and textobject[not(phrase)]">
+  <xsl:if test="$html.longdesc != 0 and $html.longdesc.link != 0                 and textobject[not(phrase)]">
     <xsl:call-template name="longdesc.link">
       <xsl:with-param name="longdesc.uri" select="$longdesc.uri"/>
     </xsl:call-template>

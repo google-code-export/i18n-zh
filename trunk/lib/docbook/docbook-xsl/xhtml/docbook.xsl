@@ -1,18 +1,12 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:ng="http://docbook.org/docbook-ng"
-                xmlns:db="http://docbook.org/ns/docbook"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:exslt="http://exslt.org/common"
-                exclude-result-prefixes="db ng exsl exslt"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ng="http://docbook.org/docbook-ng" xmlns:db="http://docbook.org/ns/docbook" xmlns:exsl="http://exslt.org/common" xmlns:exslt="http://exslt.org/common" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="db ng exsl exslt" version="1.0">
 
-<xsl:output method="html"
-            encoding="ISO-8859-1"
-            indent="no"/>
+<xsl:output method="xml" encoding="UTF-8" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <!-- ********************************************************************
-     $Id: docbook.xsl 7939 2008-03-23 04:32:34Z xmldoc $
+     $Id: docbook.xsl 8177 2008-12-15 22:21:16Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -75,7 +69,7 @@
 <xsl:include href="annotations.xsl"/>
 <xsl:include href="../common/stripns.xsl"/>
 
-<xsl:param name="stylesheet.result.type" select="'html'"/>
+<xsl:param name="stylesheet.result.type" select="'xhtml'"/>
 <xsl:param name="htmlhelp.output" select="0"/>
 
 <!-- ==================================================================== -->
@@ -114,12 +108,8 @@
   <xsl:value-of select="."/>
 </xsl:template>
 
-<xsl:template name="body.attributes">
-  <xsl:attribute name="bgcolor">white</xsl:attribute>
-  <xsl:attribute name="text">black</xsl:attribute>
-  <xsl:attribute name="link">#0000FF</xsl:attribute>
-  <xsl:attribute name="vlink">#840084</xsl:attribute>
-  <xsl:attribute name="alink">#0000FF</xsl:attribute>
+<xsl:template name="body.attributes"><xslo:if xmlns:xslo="http://www.w3.org/1999/XSL/Transform" test="starts-with($writing.mode, 'rl')"><xslo:attribute name="dir">rtl</xslo:attribute></xslo:if>
+<!-- no apply-templates; make it empty except for dir for rtl-->
 </xsl:template>
 
 <xsl:template name="head.content">
@@ -139,8 +129,7 @@
   </xsl:if>
 
   <xsl:if test="$link.mailto.url != ''">
-    <link rev="made"
-          href="{$link.mailto.url}"/>
+    <link rev="made" href="{$link.mailto.url}"/>
   </xsl:if>
 
   <xsl:if test="$html.base != ''">
@@ -150,22 +139,7 @@
   <meta name="generator" content="DocBook {$DistroTitle} V{$VERSION}"/>
 
   <xsl:if test="$generate.meta.abstract != 0">
-    <xsl:variable name="info" select="(articleinfo
-                                      |bookinfo
-                                      |prefaceinfo
-                                      |chapterinfo
-                                      |appendixinfo
-                                      |sectioninfo
-                                      |sect1info
-                                      |sect2info
-                                      |sect3info
-                                      |sect4info
-                                      |sect5info
-                                      |referenceinfo
-                                      |refentryinfo
-                                      |partinfo
-                                      |info
-                                      |docinfo)[1]"/>
+    <xsl:variable name="info" select="(articleinfo                                       |bookinfo                                       |prefaceinfo                                       |chapterinfo                                       |appendixinfo                                       |sectioninfo                                       |sect1info                                       |sect2info                                       |sect3info                                       |sect4info                                       |sect5info                                       |referenceinfo                                       |refentryinfo                                       |partinfo                                       |info                                       |docinfo)[1]"/>
     <xsl:if test="$info and $info/abstract">
       <meta name="description">
         <xsl:attribute name="content">
@@ -180,10 +154,7 @@
     </xsl:if>
   </xsl:if>
 
-  <xsl:if test="($draft.mode = 'yes' or
-                ($draft.mode = 'maybe' and
-                ancestor-or-self::*[@status][1]/@status = 'draft'))
-                and $draft.watermark.image != ''">
+  <xsl:if test="($draft.mode = 'yes' or                 ($draft.mode = 'maybe' and                 ancestor-or-self::*[@status][1]/@status = 'draft'))                 and $draft.watermark.image != ''">
     <style type="text/css"><xsl:text>
 body { background-image: url('</xsl:text>
 <xsl:value-of select="$draft.watermark.image"/><xsl:text>');
@@ -255,8 +226,7 @@ body { background-image: url('</xsl:text>
   <xsl:apply-templates select="docinfo/keywordset" mode="html.header"/>
   <xsl:apply-templates select="info/keywordset" mode="html.header"/>
 
-  <xsl:if test="$inherit.keywords != 0
-                and parent::*">
+  <xsl:if test="$inherit.keywords != 0                 and parent::*">
     <xsl:apply-templates select="parent::*" mode="head.keywords.content"/>
   </xsl:if>
 </xsl:template>
@@ -273,19 +243,24 @@ body { background-image: url('</xsl:text>
   <xsl:if test="$annotation.support != 0 and //annotation">
     <xsl:call-template name="add.annotation.links"/>
     <script type="text/javascript">
-      <xsl:text>&#10;// Create PopupWindow objects</xsl:text>
+      <xsl:text>
+// Create PopupWindow objects</xsl:text>
       <xsl:for-each select="//annotation">
-        <xsl:text>&#10;var popup_</xsl:text>
+        <xsl:text>
+var popup_</xsl:text>
         <xsl:value-of select="generate-id(.)"/>
         <xsl:text> = new PopupWindow("popup-</xsl:text>
         <xsl:value-of select="generate-id(.)"/>
-        <xsl:text>");&#10;</xsl:text>
+        <xsl:text>");
+</xsl:text>
         <xsl:text>popup_</xsl:text>
         <xsl:value-of select="generate-id(.)"/>
-        <xsl:text>.offsetY = 15;&#10;</xsl:text>
+        <xsl:text>.offsetY = 15;
+</xsl:text>
         <xsl:text>popup_</xsl:text>
         <xsl:value-of select="generate-id(.)"/>
-        <xsl:text>.autoHide();&#10;</xsl:text>
+        <xsl:text>.autoHide();
+</xsl:text>
       </xsl:for-each>
     </script>
 
@@ -338,10 +313,7 @@ body { background-image: url('</xsl:text>
          toss the namespace and continue.  Use the docbook5 namespaced
          stylesheets for DocBook5 if you don't want to use this feature.-->
     <!-- include extra test for Xalan quirk -->
-    <xsl:when test="(function-available('exsl:node-set') or
-                     contains(system-property('xsl:vendor'),
-                       'Apache Software Foundation'))
-                    and (*/self::ng:* or */self::db:*)">
+    <xsl:when test="(function-available('exsl:node-set') or                      contains(system-property('xsl:vendor'),                        'Apache Software Foundation'))                     and (*/self::ng:* or */self::db:*)">
       <xsl:call-template name="log.message">
         <xsl:with-param name="level">Note</xsl:with-param>
         <xsl:with-param name="source" select="$doc.title"/>
@@ -396,25 +368,20 @@ body { background-image: url('</xsl:text>
               </xsl:message>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:if test="$collect.xref.targets = 'yes' or
-                            $collect.xref.targets = 'only'">
-                <xsl:apply-templates select="key('id', $rootid)"
-                                     mode="collect.targets"/>
+              <xsl:if test="$collect.xref.targets = 'yes' or                             $collect.xref.targets = 'only'">
+                <xsl:apply-templates select="key('id', $rootid)" mode="collect.targets"/>
               </xsl:if>
               <xsl:if test="$collect.xref.targets != 'only'">
-                <xsl:apply-templates select="key('id',$rootid)"
-                                     mode="process.root"/>
+                <xsl:apply-templates select="key('id',$rootid)" mode="process.root"/>
                 <xsl:if test="$tex.math.in.alt != ''">
-                  <xsl:apply-templates select="key('id',$rootid)"
-                                       mode="collect.tex.math"/>
+                  <xsl:apply-templates select="key('id',$rootid)" mode="collect.tex.math"/>
                 </xsl:if>
               </xsl:if>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:if test="$collect.xref.targets = 'yes' or
-                        $collect.xref.targets = 'only'">
+          <xsl:if test="$collect.xref.targets = 'yes' or                         $collect.xref.targets = 'only'">
             <xsl:apply-templates select="/" mode="collect.targets"/>
           </xsl:if>
           <xsl:if test="$collect.xref.targets != 'only'">

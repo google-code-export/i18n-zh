@@ -1,19 +1,20 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
-<xsl:param name="prev.image"    select="'active/nav-prev.png'"/>
-<xsl:param name="next.image"    select="'active/nav-next.png'"/>
-<xsl:param name="up.image"      select="'active/nav-up.png'"/>
-<xsl:param name="toc.image"     select="'active/nav-toc.png'"/>
-<xsl:param name="home.image"    select="'active/nav-home.png'"/>
+<xsl:param name="prev.image" select="'active/nav-prev.png'"/>
+<xsl:param name="next.image" select="'active/nav-next.png'"/>
+<xsl:param name="up.image" select="'active/nav-up.png'"/>
+<xsl:param name="toc.image" select="'active/nav-toc.png'"/>
+<xsl:param name="home.image" select="'active/nav-home.png'"/>
 
 <xsl:param name="no.prev.image" select="'inactive/nav-prev.png'"/>
 <xsl:param name="no.next.image" select="'inactive/nav-next.png'"/>
-<xsl:param name="no.up.image"   select="'inactive/nav-up.png'"/>
-<xsl:param name="no.toc.image"  select="'inactive/nav-toc.png'"/>
+<xsl:param name="no.up.image" select="'inactive/nav-up.png'"/>
+<xsl:param name="no.toc.image" select="'inactive/nav-toc.png'"/>
 <xsl:param name="no.home.image" select="'inactive/nav-home.png'"/>
 
 <xsl:param name="css.stylesheet" select="'slides-plain.css'"/>
@@ -28,8 +29,7 @@
   <xsl:param name="toc" select="$toc.html"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left" width="45%">
           <span class="slidestitle">
@@ -181,8 +181,7 @@
   <xsl:param name="toc" select="$toc.html"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left" width="50%">
           <xsl:text>&#160;</xsl:text>
@@ -328,8 +327,7 @@
   <xsl:param name="toc"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left" width="50%">
           <xsl:text>&#160;</xsl:text>

@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: sections.xsl 7000 2007-07-10 20:41:35Z mzjn $
+     $Id: sections.xsl 8171 2008-12-05 19:19:24Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -24,7 +25,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
     <xsl:call-template name="section.titlepage"/>
 
     <xsl:variable name="toc.params">
@@ -33,8 +34,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $depth &lt;= $generate.section.toc.level">
+    <xsl:if test="contains($toc.params, 'toc')                   and $depth &lt;= $generate.section.toc.level">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -47,13 +47,7 @@
 
 <xsl:template name="section.title">
   <!-- the context node should be the title of a section when called -->
-  <xsl:variable name="section" select="(ancestor::section
-                                        |ancestor::simplesect
-                                        |ancestor::sect1
-                                        |ancestor::sect2
-                                        |ancestor::sect3
-                                        |ancestor::sect4
-                                        |ancestor::sect5)[last()]"/>
+  <xsl:variable name="section" select="(ancestor::section                                         |ancestor::simplesect                                         |ancestor::sect1                                         |ancestor::sect2                                         |ancestor::sect3                                         |ancestor::sect4                                         |ancestor::sect5)[last()]"/>
 
   <xsl:variable name="renderas">
     <xsl:choose>
@@ -90,10 +84,7 @@
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="section/title
-                    |section/info/title
-                    |sectioninfo/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="section/title                     |section/info/title                     |sectioninfo/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -105,7 +96,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
 
     <xsl:choose>
       <xsl:when test="@renderas = 'sect2'">
@@ -131,8 +122,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $generate.section.toc.level &gt;= 1">
+    <xsl:if test="contains($toc.params, 'toc')                   and $generate.section.toc.level &gt;= 1">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -143,10 +133,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="sect1/title
-                    |sect1/info/title
-                    |sect1info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="sect1/title                     |sect1/info/title                     |sect1info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -158,7 +145,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
 
     <xsl:choose>
       <xsl:when test="@renderas = 'sect1'">
@@ -184,8 +171,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $generate.section.toc.level &gt;= 2">
+    <xsl:if test="contains($toc.params, 'toc')                   and $generate.section.toc.level &gt;= 2">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -196,10 +182,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="sect2/title
-                    |sect2/info/title
-                    |sect2info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="sect2/title                     |sect2/info/title                     |sect2info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -211,7 +194,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
 
     <xsl:choose>
       <xsl:when test="@renderas = 'sect1'">
@@ -237,8 +220,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $generate.section.toc.level &gt;= 3">
+    <xsl:if test="contains($toc.params, 'toc')                   and $generate.section.toc.level &gt;= 3">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -249,10 +231,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="sect3/title
-                    |sect3/info/title
-                    |sect3info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="sect3/title                     |sect3/info/title                     |sect3info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -264,7 +243,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
 
     <xsl:choose>
       <xsl:when test="@renderas = 'sect1'">
@@ -290,8 +269,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $generate.section.toc.level &gt;= 4">
+    <xsl:if test="contains($toc.params, 'toc')                   and $generate.section.toc.level &gt;= 4">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -302,10 +280,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="sect4/title
-                    |sect4/info/title
-                    |sect4info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="sect4/title                     |sect4/info/title                     |sect4info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -317,7 +292,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
 
     <xsl:choose>
       <xsl:when test="@renderas = 'sect1'">
@@ -343,8 +318,7 @@
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="contains($toc.params, 'toc')
-                  and $generate.section.toc.level &gt;= 5">
+    <xsl:if test="contains($toc.params, 'toc')                   and $generate.section.toc.level &gt;= 5">
       <xsl:call-template name="section.toc">
         <xsl:with-param name="toc.title.p" select="contains($toc.params, 'title')"/>
       </xsl:call-template>
@@ -355,10 +329,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="sect5/title
-                    |sect5/info/title
-                    |sect5info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="sect5/title                     |sect5/info/title                     |sect5info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
@@ -370,57 +341,56 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
     <xsl:call-template name="simplesect.titlepage"/>
     <xsl:apply-templates/>
   </div>
 </xsl:template>
 
-<xsl:template match="simplesect/title|simplesect/info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="simplesect/title|simplesect/info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="section.title"/>
 </xsl:template>
 
-<xsl:template match="section/title"></xsl:template>
-<xsl:template match="section/titleabbrev"></xsl:template>
-<xsl:template match="section/subtitle"></xsl:template>
-<xsl:template match="sectioninfo"></xsl:template>
-<xsl:template match="section/info"></xsl:template>
+<xsl:template match="section/title"/>
+<xsl:template match="section/titleabbrev"/>
+<xsl:template match="section/subtitle"/>
+<xsl:template match="sectioninfo"/>
+<xsl:template match="section/info"/>
 
-<xsl:template match="sect1/title"></xsl:template>
-<xsl:template match="sect1/titleabbrev"></xsl:template>
-<xsl:template match="sect1/subtitle"></xsl:template>
-<xsl:template match="sect1info"></xsl:template>
-<xsl:template match="sect1/info"></xsl:template>
+<xsl:template match="sect1/title"/>
+<xsl:template match="sect1/titleabbrev"/>
+<xsl:template match="sect1/subtitle"/>
+<xsl:template match="sect1info"/>
+<xsl:template match="sect1/info"/>
 
-<xsl:template match="sect2/title"></xsl:template>
-<xsl:template match="sect2/subtitle"></xsl:template>
-<xsl:template match="sect2/titleabbrev"></xsl:template>
-<xsl:template match="sect2info"></xsl:template>
-<xsl:template match="sect2/info"></xsl:template>
+<xsl:template match="sect2/title"/>
+<xsl:template match="sect2/subtitle"/>
+<xsl:template match="sect2/titleabbrev"/>
+<xsl:template match="sect2info"/>
+<xsl:template match="sect2/info"/>
 
-<xsl:template match="sect3/title"></xsl:template>
-<xsl:template match="sect3/subtitle"></xsl:template>
-<xsl:template match="sect3/titleabbrev"></xsl:template>
-<xsl:template match="sect3info"></xsl:template>
-<xsl:template match="sect3/info"></xsl:template>
+<xsl:template match="sect3/title"/>
+<xsl:template match="sect3/subtitle"/>
+<xsl:template match="sect3/titleabbrev"/>
+<xsl:template match="sect3info"/>
+<xsl:template match="sect3/info"/>
 
-<xsl:template match="sect4/title"></xsl:template>
-<xsl:template match="sect4/subtitle"></xsl:template>
-<xsl:template match="sect4/titleabbrev"></xsl:template>
-<xsl:template match="sect4info"></xsl:template>
-<xsl:template match="sect4/info"></xsl:template>
+<xsl:template match="sect4/title"/>
+<xsl:template match="sect4/subtitle"/>
+<xsl:template match="sect4/titleabbrev"/>
+<xsl:template match="sect4info"/>
+<xsl:template match="sect4/info"/>
 
-<xsl:template match="sect5/title"></xsl:template>
-<xsl:template match="sect5/subtitle"></xsl:template>
-<xsl:template match="sect5/titleabbrev"></xsl:template>
-<xsl:template match="sect5info"></xsl:template>
-<xsl:template match="sect5/info"></xsl:template>
+<xsl:template match="sect5/title"/>
+<xsl:template match="sect5/subtitle"/>
+<xsl:template match="sect5/titleabbrev"/>
+<xsl:template match="sect5info"/>
+<xsl:template match="sect5/info"/>
 
-<xsl:template match="simplesect/title"></xsl:template>
-<xsl:template match="simplesect/subtitle"></xsl:template>
-<xsl:template match="simplesect/titleabbrev"></xsl:template>
-<xsl:template match="simplesect/info"></xsl:template>
+<xsl:template match="simplesect/title"/>
+<xsl:template match="simplesect/subtitle"/>
+<xsl:template match="simplesect/titleabbrev"/>
+<xsl:template match="simplesect/info"/>
 
 <!-- ==================================================================== -->
 
@@ -433,6 +403,12 @@
 
   <xsl:variable name="id">
     <xsl:choose>
+      <!-- Make sure the subtitle doesn't get the same id as the title -->
+      <xsl:when test="self::subtitle">
+        <xsl:call-template name="object.id">
+          <xsl:with-param name="object" select="."/>
+        </xsl:call-template>
+      </xsl:when>
       <!-- if title is in an *info wrapper, get the grandparent -->
       <xsl:when test="contains(local-name(..), 'info')">
         <xsl:call-template name="object.id">
@@ -458,7 +434,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  <xsl:element name="h{$hlevel}">
+  <xsl:element name="h{$hlevel}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
     <xsl:if test="$css.decoration != '0'">
       <xsl:if test="$hlevel&lt;3">
@@ -481,52 +457,15 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="bridgehead">
-  <xsl:variable name="container"
-                select="(ancestor::appendix
-                        |ancestor::article
-                        |ancestor::bibliography
-                        |ancestor::chapter
-                        |ancestor::glossary
-                        |ancestor::glossdiv
-                        |ancestor::index
-                        |ancestor::partintro
-                        |ancestor::preface
-                        |ancestor::refsect1
-                        |ancestor::refsect2
-                        |ancestor::refsect3
-                        |ancestor::sect1
-                        |ancestor::sect2
-                        |ancestor::sect3
-                        |ancestor::sect4
-                        |ancestor::sect5
-                        |ancestor::section
-                        |ancestor::setindex
-                        |ancestor::simplesect)[last()]"/>
+  <xsl:variable name="container" select="(ancestor::appendix                         |ancestor::article                         |ancestor::bibliography                         |ancestor::chapter                         |ancestor::glossary                         |ancestor::glossdiv                         |ancestor::index                         |ancestor::partintro                         |ancestor::preface                         |ancestor::refsect1                         |ancestor::refsect2                         |ancestor::refsect3                         |ancestor::sect1                         |ancestor::sect2                         |ancestor::sect3                         |ancestor::sect4                         |ancestor::sect5                         |ancestor::section                         |ancestor::setindex                         |ancestor::simplesect)[last()]"/>
 
   <xsl:variable name="clevel">
     <xsl:choose>
-      <xsl:when test="local-name($container) = 'appendix'
-                      or local-name($container) = 'chapter'
-                      or local-name($container) = 'article'
-                      or local-name($container) = 'bibliography'
-                      or local-name($container) = 'glossary'
-                      or local-name($container) = 'index'
-                      or local-name($container) = 'partintro'
-                      or local-name($container) = 'preface'
-                      or local-name($container) = 'setindex'">1</xsl:when>
+      <xsl:when test="local-name($container) = 'appendix'                       or local-name($container) = 'chapter'                       or local-name($container) = 'article'                       or local-name($container) = 'bibliography'                       or local-name($container) = 'glossary'                       or local-name($container) = 'index'                       or local-name($container) = 'partintro'                       or local-name($container) = 'preface'                       or local-name($container) = 'setindex'">1</xsl:when>
       <xsl:when test="local-name($container) = 'glossdiv'">
         <xsl:value-of select="count(ancestor::glossdiv)+1"/>
       </xsl:when>
-      <xsl:when test="local-name($container) = 'sect1'
-                      or local-name($container) = 'sect2'
-                      or local-name($container) = 'sect3'
-                      or local-name($container) = 'sect4'
-                      or local-name($container) = 'sect5'
-                      or local-name($container) = 'refsect1'
-                      or local-name($container) = 'refsect2'
-                      or local-name($container) = 'refsect3'
-                      or local-name($container) = 'section'
-                      or local-name($container) = 'simplesect'">
+      <xsl:when test="local-name($container) = 'sect1'                       or local-name($container) = 'sect2'                       or local-name($container) = 'sect3'                       or local-name($container) = 'sect4'                       or local-name($container) = 'sect5'                       or local-name($container) = 'refsect1'                       or local-name($container) = 'refsect2'                       or local-name($container) = 'refsect3'                       or local-name($container) = 'section'                       or local-name($container) = 'simplesect'">
         <xsl:variable name="slevel">
           <xsl:call-template name="section.level">
             <xsl:with-param name="node" select="$container"/>
@@ -552,7 +491,7 @@
     </xsl:choose>
   </xsl:variable>
 
-  <xsl:element name="h{$hlevel}">
+  <xsl:element name="h{$hlevel}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:call-template name="anchor">
       <xsl:with-param name="conditional" select="0"/>
     </xsl:call-template>
@@ -590,13 +529,7 @@
 
 <xsl:template name="section.subtitle">
   <!-- the context node should be the subtitle of a section when called -->
-  <xsl:variable name="section" select="(ancestor::section
-                                        |ancestor::simplesect
-                                        |ancestor::sect1
-                                        |ancestor::sect2
-                                        |ancestor::sect3
-                                        |ancestor::sect4
-                                        |ancestor::sect5)[last()]"/>
+  <xsl:variable name="section" select="(ancestor::section                                         |ancestor::simplesect                                         |ancestor::sect1                                         |ancestor::sect2                                         |ancestor::sect3                                         |ancestor::sect4                                         |ancestor::sect5)[last()]"/>
 
   <xsl:variable name="level">
     <xsl:call-template name="section.level">
@@ -619,4 +552,3 @@
 </xsl:template>
 
 </xsl:stylesheet>
-

@@ -1,9 +1,7 @@
-<?xml version='1.0'?>
-<!DOCTYPE xsl:stylesheet [
-<!ENTITY nbsp "&#160;">
-]>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: synop.xsl 8014 2008-05-27 15:54:46Z abdelazer $
@@ -156,7 +154,7 @@
     <xsl:variable name="id">
       <xsl:call-template name="object.id"/>
     </xsl:variable>
-    <a name="{$id}">
+    <a id="{$id}">
       <xsl:text>(</xsl:text>
       <xsl:value-of select="$snum"/>
       <xsl:text>)</xsl:text>
@@ -350,9 +348,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <!-- funcprototype: kr, tabular -->
 
 <xsl:template match="funcprototype" mode="kr-tabular">
-  <table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"
-    class="funcprototype-table"
-    >
+  <table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table">
     <tr>
       <td>
         <xsl:apply-templates select="funcdef" mode="kr-tabular"/>
@@ -445,8 +441,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <xsl:variable name="type">
     <xsl:choose>
       <xsl:when test="type">
-	<xsl:apply-templates select="type"
-			     mode="kr-tabular-funcsynopsis-mode"/>
+	<xsl:apply-templates select="type" mode="kr-tabular-funcsynopsis-mode"/>
       </xsl:when>
       <xsl:when test="normalize-space(parameter/preceding-sibling::node()[not(self::parameter)]) != ''">
 	<xsl:copy-of select="parameter/preceding-sibling::node()[not(self::parameter)]"/>
@@ -467,12 +462,10 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 	  <code>
 	    <xsl:choose>
 	      <xsl:when test="type">
-		<xsl:apply-templates select="type/following-sibling::*"
-				     mode="kr-tabular-funcsynopsis-mode"/>
+		<xsl:apply-templates select="type/following-sibling::*" mode="kr-tabular-funcsynopsis-mode"/>
 	      </xsl:when>
 	      <xsl:otherwise>
-		<xsl:apply-templates select="*"
-				     mode="kr-tabular-funcsynopsis-mode"/>
+		<xsl:apply-templates select="*" mode="kr-tabular-funcsynopsis-mode"/>
 	      </xsl:otherwise>
 	    </xsl:choose>
 	  </code>
@@ -490,17 +483,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:otherwise>
         <td>
 	  <code>
-	    <xsl:apply-templates select="parameter/preceding-sibling::node()[not(self::parameter)]"
-				 mode="kr-tabular-funcsynopsis-mode"/>
+	    <xsl:apply-templates select="parameter/preceding-sibling::node()[not(self::parameter)]" mode="kr-tabular-funcsynopsis-mode"/>
 	  </code>
           <xsl:text>&#160;</xsl:text>
         </td>
         <td>
 	  <code>
-	    <xsl:apply-templates select="parameter"
-				 mode="kr-tabular"/>
-	    <xsl:apply-templates select="parameter/following-sibling::*[not(self::parameter)]"
-				 mode="kr-tabular-funcsynopsis-mode"/>
+	    <xsl:apply-templates select="parameter" mode="kr-tabular"/>
+	    <xsl:apply-templates select="parameter/following-sibling::*[not(self::parameter)]" mode="kr-tabular-funcsynopsis-mode"/>
 	    <xsl:text>;</xsl:text>
 	  </code>
         </td>
@@ -608,9 +598,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <!-- funcprototype: ansi, tabular -->
 
 <xsl:template match="funcprototype" mode="ansi-tabular">
-  <table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"
-    class="funcprototype-table"
-    >
+  <table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table">
     <tr>
       <td>
         <xsl:apply-templates select="funcdef" mode="ansi-tabular"/>
@@ -703,11 +691,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 
 <xsl:variable name="default-classsynopsis-language">java</xsl:variable>
 
-<xsl:template match="classsynopsis
-                     |fieldsynopsis
-                     |methodsynopsis
-                     |constructorsynopsis
-                     |destructorsynopsis">
+<xsl:template match="classsynopsis                      |fieldsynopsis                      |methodsynopsis                      |constructorsynopsis                      |destructorsynopsis">
   <xsl:param name="language">
     <xsl:choose>
       <xsl:when test="@language">
@@ -740,19 +724,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 	<xsl:value-of select="$language"/>
       </xsl:message>
       <xsl:apply-templates select=".">
-	<xsl:with-param name="language"
-	  select="$default-classsynopsis-language"/>
+	<xsl:with-param name="language" select="$default-classsynopsis-language"/>
       </xsl:apply-templates>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 
 <xsl:template name="synop-break">
-  <xsl:if test="parent::classsynopsis
-                or (following-sibling::fieldsynopsis
-                    |following-sibling::methodsynopsis
-                    |following-sibling::constructorsynopsis
-                    |following-sibling::destructorsynopsis)">
+  <xsl:if test="parent::classsynopsis                 or (following-sibling::fieldsynopsis                     |following-sibling::methodsynopsis                     |following-sibling::constructorsynopsis                     |following-sibling::destructorsynopsis)">
     <br/>
   </xsl:if>
 </xsl:template>
@@ -769,7 +748,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="ooclass[preceding-sibling::*]" mode="java"/>
       <xsl:if test="oointerface|ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="oointerface">
@@ -777,20 +756,16 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="oointerface" mode="java"/>
       <xsl:if test="ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="ooexception">
       <xsl:text>throws</xsl:text>
       <xsl:apply-templates select="ooexception" mode="java"/>
     </xsl:if>
-    <xsl:text>&nbsp;{</xsl:text>
+    <xsl:text>&#160;{</xsl:text>
     <br/>
-    <xsl:apply-templates select="constructorsynopsis
-                                 |destructorsynopsis
-                                 |fieldsynopsis
-                                 |methodsynopsis
-                                 |classsynopsisinfo" mode="java"/>
+    <xsl:apply-templates select="constructorsynopsis                                  |destructorsynopsis                                  |fieldsynopsis                                  |methodsynopsis                                  |classsynopsisinfo" mode="java"/>
     <xsl:text>}</xsl:text>
   </pre>
 </xsl:template>
@@ -819,7 +794,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="java"/>
     <xsl:if test="following-sibling::*">
-      <xsl:text>&nbsp;</xsl:text>
+      <xsl:text>&#160;</xsl:text>
     </xsl:if>
   </span>
 </xsl:template>
@@ -858,7 +833,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates mode="java"/>
     <xsl:text>;</xsl:text>
@@ -870,7 +845,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="java"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -878,14 +853,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="java"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
 <xsl:template match="initializer" mode="java">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>=&nbsp;</xsl:text>
+    <xsl:text>=&#160;</xsl:text>
     <xsl:apply-templates mode="java"/>
   </span>
 </xsl:template>
@@ -893,7 +868,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <xsl:template match="void" mode="java">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>void&nbsp;</xsl:text>
+    <xsl:text>void&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -911,7 +886,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <br/>
     <xsl:if test="$indent &gt; 0">
       <xsl:call-template name="copy-string">
-	<xsl:with-param name="string">&nbsp;</xsl:with-param>
+	<xsl:with-param name="string">&#160;</xsl:with-param>
 	<xsl:with-param name="count" select="$indent + 1"/>
       </xsl:call-template>
     </xsl:if>
@@ -929,14 +904,13 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   </span>
 </xsl:template>
 
-<xsl:template mode="java"
-  match="constructorsynopsis|destructorsynopsis|methodsynopsis">
+<xsl:template mode="java" match="constructorsynopsis|destructorsynopsis|methodsynopsis">
   <xsl:variable name="start-modifiers" select="modifier[following-sibling::*[local-name(.) != 'modifier']]"/>
   <xsl:variable name="notmod" select="*[local-name(.) != 'modifier']"/>
   <xsl:variable name="end-modifiers" select="modifier[preceding-sibling::*[local-name(.) != 'modifier']]"/>
   <xsl:variable name="decl">
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="$start-modifiers" mode="java"/>
 
@@ -958,7 +932,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:text>)</xsl:text>
     <xsl:if test="exceptionname">
       <br/>
-      <xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;throws&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;&#160;&#160;throws&#160;</xsl:text>
       <xsl:apply-templates select="exceptionname" mode="java"/>
     </xsl:if>
     <xsl:if test="modifier[preceding-sibling::*[local-name(.) != 'modifier']]">
@@ -981,7 +955,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="ooclass[preceding-sibling::*]" mode="cpp"/>
       <xsl:if test="oointerface|ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="oointerface">
@@ -989,20 +963,16 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="oointerface" mode="cpp"/>
       <xsl:if test="ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="ooexception">
       <xsl:text> throws</xsl:text>
       <xsl:apply-templates select="ooexception" mode="cpp"/>
     </xsl:if>
-    <xsl:text>&nbsp;{</xsl:text>
+    <xsl:text>&#160;{</xsl:text>
     <br/>
-    <xsl:apply-templates select="constructorsynopsis
-                                 |destructorsynopsis
-                                 |fieldsynopsis
-                                 |methodsynopsis
-                                 |classsynopsisinfo" mode="cpp"/>
+    <xsl:apply-templates select="constructorsynopsis                                  |destructorsynopsis                                  |fieldsynopsis                                  |methodsynopsis                                  |classsynopsisinfo" mode="cpp"/>
     <xsl:text>}</xsl:text>
   </pre>
 </xsl:template>
@@ -1026,7 +996,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="cpp"/>
     <xsl:if test="following-sibling::*">
-      <xsl:text>&nbsp;</xsl:text>
+      <xsl:text>&#160;</xsl:text>
     </xsl:if>
   </span>
 </xsl:template>
@@ -1065,7 +1035,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates mode="cpp"/>
     <xsl:text>;</xsl:text>
@@ -1077,7 +1047,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="cpp"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1085,14 +1055,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="cpp"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
 <xsl:template match="initializer" mode="cpp">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>=&nbsp;</xsl:text>
+    <xsl:text>=&#160;</xsl:text>
     <xsl:apply-templates mode="cpp"/>
   </span>
 </xsl:template>
@@ -1100,7 +1070,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <xsl:template match="void" mode="cpp">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>void&nbsp;</xsl:text>
+    <xsl:text>void&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1128,8 +1098,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   </span>
 </xsl:template>
 
-<xsl:template mode="cpp"
-  match="constructorsynopsis|destructorsynopsis|methodsynopsis">
+<xsl:template mode="cpp" match="constructorsynopsis|destructorsynopsis|methodsynopsis">
   <xsl:variable name="start-modifiers" select="modifier[following-sibling::*[local-name(.) != 'modifier']]"/>
   <xsl:variable name="notmod" select="*[local-name(.) != 'modifier']"/>
   <xsl:variable name="end-modifiers" select="modifier[preceding-sibling::*[local-name(.) != 'modifier']]"/>
@@ -1137,7 +1106,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="$start-modifiers" mode="cpp"/>
 
@@ -1152,7 +1121,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:text>)</xsl:text>
     <xsl:if test="exceptionname">
       <br/>
-      <xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;throws&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;&#160;&#160;throws&#160;</xsl:text>
       <xsl:apply-templates select="exceptionname" mode="cpp"/>
     </xsl:if>
     <xsl:if test="modifier[preceding-sibling::*[local-name(.) != 'modifier']]">
@@ -1176,7 +1145,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="ooclass[preceding-sibling::*]" mode="idl"/>
       <xsl:if test="oointerface|ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="oointerface">
@@ -1184,20 +1153,16 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <xsl:apply-templates select="oointerface" mode="idl"/>
       <xsl:if test="ooexception">
         <br/>
-	<xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;</xsl:text>
+	<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
       </xsl:if>
     </xsl:if>
     <xsl:if test="ooexception">
       <xsl:text> throws</xsl:text>
       <xsl:apply-templates select="ooexception" mode="idl"/>
     </xsl:if>
-    <xsl:text>&nbsp;{</xsl:text>
+    <xsl:text>&#160;{</xsl:text>
     <br/>
-    <xsl:apply-templates select="constructorsynopsis
-                                 |destructorsynopsis
-                                 |fieldsynopsis
-                                 |methodsynopsis
-                                 |classsynopsisinfo" mode="idl"/>
+    <xsl:apply-templates select="constructorsynopsis                                  |destructorsynopsis                                  |fieldsynopsis                                  |methodsynopsis                                  |classsynopsisinfo" mode="idl"/>
     <xsl:text>}</xsl:text>
   </pre>
 </xsl:template>
@@ -1221,7 +1186,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="idl"/>
     <xsl:if test="following-sibling::*">
-      <xsl:text>&nbsp;</xsl:text>
+      <xsl:text>&#160;</xsl:text>
     </xsl:if>
   </span>
 </xsl:template>
@@ -1260,7 +1225,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates mode="idl"/>
     <xsl:text>;</xsl:text>
@@ -1272,7 +1237,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="idl"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1280,14 +1245,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="idl"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
 <xsl:template match="initializer" mode="idl">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>=&nbsp;</xsl:text>
+    <xsl:text>=&#160;</xsl:text>
     <xsl:apply-templates mode="idl"/>
   </span>
 </xsl:template>
@@ -1295,7 +1260,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <xsl:template match="void" mode="idl">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>void&nbsp;</xsl:text>
+    <xsl:text>void&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1323,15 +1288,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   </span>
 </xsl:template>
 
-<xsl:template mode="idl"
-  match="constructorsynopsis|destructorsynopsis|methodsynopsis">
+<xsl:template mode="idl" match="constructorsynopsis|destructorsynopsis|methodsynopsis">
   <xsl:variable name="start-modifiers" select="modifier[following-sibling::*[local-name(.) != 'modifier']]"/>
   <xsl:variable name="notmod" select="*[local-name(.) != 'modifier']"/>
   <xsl:variable name="end-modifiers" select="modifier[preceding-sibling::*[local-name(.) != 'modifier']]"/>
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="$start-modifiers" mode="idl"/>
 
@@ -1346,7 +1310,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:text>)</xsl:text>
     <xsl:if test="exceptionname">
       <br/>
-      <xsl:text>&nbsp;&nbsp;&nbsp;&nbsp;raises(</xsl:text>
+      <xsl:text>&#160;&#160;&#160;&#160;raises(</xsl:text>
       <xsl:apply-templates select="exceptionname" mode="idl"/>
       <xsl:text>)</xsl:text>
     </xsl:if>
@@ -1376,11 +1340,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
       <br/>
     </xsl:if>
 
-    <xsl:apply-templates select="constructorsynopsis
-                                 |destructorsynopsis
-                                 |fieldsynopsis
-                                 |methodsynopsis
-                                 |classsynopsisinfo" mode="perl"/>
+    <xsl:apply-templates select="constructorsynopsis                                  |destructorsynopsis                                  |fieldsynopsis                                  |methodsynopsis                                  |classsynopsisinfo" mode="perl"/>
   </pre>
 </xsl:template>
 
@@ -1403,7 +1363,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="perl"/>
     <xsl:if test="following-sibling::*">
-      <xsl:text>&nbsp;</xsl:text>
+      <xsl:text>&#160;</xsl:text>
     </xsl:if>
   </span>
 </xsl:template>
@@ -1442,7 +1402,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <code>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="parent::classsynopsis">
-      <xsl:text>&nbsp;&nbsp;</xsl:text>
+      <xsl:text>&#160;&#160;</xsl:text>
     </xsl:if>
     <xsl:apply-templates mode="perl"/>
     <xsl:text>;</xsl:text>
@@ -1454,7 +1414,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="perl"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1462,14 +1422,14 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="perl"/>
-    <xsl:text>&nbsp;</xsl:text>
+    <xsl:text>&#160;</xsl:text>
   </span>
 </xsl:template>
 
 <xsl:template match="initializer" mode="perl">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>=&nbsp;</xsl:text>
+    <xsl:text>=&#160;</xsl:text>
     <xsl:apply-templates mode="perl"/>
   </span>
 </xsl:template>
@@ -1477,7 +1437,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
 <xsl:template match="void" mode="perl">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:text>void&nbsp;</xsl:text>
+    <xsl:text>void&#160;</xsl:text>
   </span>
 </xsl:template>
 
@@ -1505,8 +1465,7 @@ paramdef      ::= (#PCDATA|type|replaceable|parameter|funcparams)*
   </span>
 </xsl:template>
 
-<xsl:template mode="perl"
-  match="constructorsynopsis|destructorsynopsis|methodsynopsis">
+<xsl:template mode="perl" match="constructorsynopsis|destructorsynopsis|methodsynopsis">
   <xsl:variable name="start-modifiers" select="modifier[following-sibling::*[local-name(.) != 'modifier']]"/>
   <xsl:variable name="notmod" select="*[local-name(.) != 'modifier']"/>
   <xsl:variable name="end-modifiers" select="modifier[preceding-sibling::*[local-name(.) != 'modifier']]"/>

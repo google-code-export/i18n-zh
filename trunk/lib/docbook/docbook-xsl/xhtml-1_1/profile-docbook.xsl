@@ -8,7 +8,7 @@
 <xsl:output method="xml" encoding="UTF-8" indent="no" doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"/>
 
 <!-- ********************************************************************
-     $Id: docbook.xsl 7939 2008-03-23 04:32:34Z xmldoc $
+     $Id: docbook.xsl 8177 2008-12-15 22:21:16Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.

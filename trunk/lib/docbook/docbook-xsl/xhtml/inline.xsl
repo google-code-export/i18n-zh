@@ -1,13 +1,7 @@
-<?xml version='1.0'?>
-<!DOCTYPE xsl:stylesheet [
-<!ENTITY % common.entities SYSTEM "../common/entities.ent">
-%common.entities;
-]>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xlink='http://www.w3.org/1999/xlink'
-                xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks"
-                exclude-result-prefixes="xlink suwl"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xlink suwl" version="1.0">
 
 <!-- ********************************************************************
      $Id: inline.xsl 8014 2008-05-27 15:54:46Z abdelazer $
@@ -31,25 +25,20 @@
     <xsl:choose>
       <xsl:when test="$node/@xlink:show = 'new'">_blank</xsl:when>
       <xsl:when test="$node/@xlink:show = 'replace'">_top</xsl:when>
-      <xsl:otherwise></xsl:otherwise>
+      <xsl:otherwise/>
     </xsl:choose>
   </xsl:variable>
 
   <xsl:variable name="link">
     <xsl:choose>
-      <xsl:when test="$xhref and 
-                      (not($node/@xlink:type) or 
-                           $node/@xlink:type='simple')">
+      <xsl:when test="$xhref and                        (not($node/@xlink:type) or                             $node/@xlink:type='simple')">
 
         <!-- Is it a local idref or a uri? -->
         <xsl:variable name="is.idref">
           <xsl:choose>
             <!-- if the href starts with # and does not contain an "(" -->
             <!-- or if the href starts with #xpointer(id(, it's just an ID -->
-            <xsl:when test="starts-with($xhref,'#')
-                            and (not(contains($xhref,'&#40;'))
-                            or starts-with($xhref,
-                                       '#xpointer&#40;id&#40;'))">1</xsl:when>
+            <xsl:when test="starts-with($xhref,'#')                             and (not(contains($xhref,'('))                             or starts-with($xhref,                                        '#xpointer(id('))">1</xsl:when>
             <xsl:otherwise>0</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -59,8 +48,7 @@
           <xsl:choose>
 	    <!-- If xlink:role="http://docbook.org/xlink/role/olink" -->
             <!-- and if the href contains # -->
-            <xsl:when test="contains($xhref,'#') and
-	         @xlink:role = $xolink.role">1</xsl:when>
+            <xsl:when test="contains($xhref,'#') and           @xlink:role = $xolink.role">1</xsl:when>
             <xsl:otherwise>0</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -107,8 +95,7 @@
                       </xsl:attribute>
                     </xsl:when>
                     <xsl:otherwise>
-                      <xsl:apply-templates select="$target"
-                                           mode="html.title.attribute"/>
+                      <xsl:apply-templates select="$target" mode="html.title.attribute"/>
                     </xsl:otherwise>
                   </xsl:choose>
 
@@ -213,7 +200,7 @@
   <!-- * something other than a Span, call the template with some value -->
   <!-- * for the 'wrapper-name' param -->
   <xsl:param name="wrapper-name">span</xsl:param>
-  <xsl:element name="{$wrapper-name}">
+  <xsl:element name="{$wrapper-name}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:attribute name="class">
       <xsl:value-of select="local-name(.)"/>
     </xsl:attribute>
@@ -259,10 +246,7 @@
 
     <!-- don't put <strong> inside figure, example, or table titles -->
     <xsl:choose>
-      <xsl:when test="local-name(..) = 'title'
-                      and (local-name(../..) = 'figure'
-                      or local-name(../..) = 'example'
-                      or local-name(../..) = 'table')">
+      <xsl:when test="local-name(..) = 'title'                       and (local-name(../..) = 'figure'                       or local-name(../..) = 'example'                       or local-name(../..) = 'table')">
         <xsl:copy-of select="$content"/>
       </xsl:when>
       <xsl:otherwise>
@@ -305,11 +289,7 @@
   <!-- don't put <strong> inside figure, example, or table titles -->
   <!-- or other titles that may already be represented with <strong>'s. -->
   <xsl:choose>
-    <xsl:when test="local-name(..) = 'title'
-                    and (local-name(../..) = 'figure'
-                         or local-name(../..) = 'example'
-                         or local-name(../..) = 'table'
-                         or local-name(../..) = 'formalpara')">
+    <xsl:when test="local-name(..) = 'title'                     and (local-name(../..) = 'figure'                          or local-name(../..) = 'example'                          or local-name(../..) = 'table'                          or local-name(../..) = 'formalpara')">
       <code>
         <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:call-template name="generate.html.title"/>
@@ -521,8 +501,7 @@
 
 <xsl:template match="function">
   <xsl:choose>
-    <xsl:when test="$function.parens != '0'
-                    and (parameter or function or replaceable)">
+    <xsl:when test="$function.parens != '0'                     and (parameter or function or replaceable)">
       <xsl:variable name="nodes" select="text()|*"/>
       <xsl:call-template name="inline.monoseq">
         <xsl:with-param name="content">
@@ -534,7 +513,7 @@
         </xsl:with-param>
       </xsl:call-template>
       <xsl:text>(</xsl:text>
-      <xsl:apply-templates select="$nodes[position()>1]"/>
+      <xsl:apply-templates select="$nodes[position()&gt;1]"/>
       <xsl:text>)</xsl:text>
     </xsl:when>
     <xsl:otherwise>
@@ -739,9 +718,7 @@
   <span>
     <xsl:choose>
       <!-- We don't want empty @class values, so do not propagate empty @roles -->
-      <xsl:when test="@role  and
-                      normalize-space(@role) != '' and
-                      $emphasis.propagates.style != 0">
+      <xsl:when test="@role  and                       normalize-space(@role) != '' and                       $emphasis.propagates.style != 0">
         <xsl:apply-templates select="." mode="class.attribute">
           <xsl:with-param name="class" select="@role"/>
         </xsl:apply-templates>
@@ -759,10 +736,7 @@
             <!-- backwards compatibility: make bold into b elements, but -->
             <!-- don't put bold inside figure, example, or table titles -->
             <xsl:choose>
-              <xsl:when test="local-name(..) = 'title'
-                              and (local-name(../..) = 'figure'
-                              or local-name(../..) = 'example'
-                              or local-name(../..) = 'table')">
+              <xsl:when test="local-name(..) = 'title'                               and (local-name(../..) = 'figure'                               or local-name(../..) = 'example'                               or local-name(../..) = 'table')">
                 <xsl:apply-templates/>
               </xsl:when>
               <xsl:otherwise>
@@ -803,9 +777,7 @@
       <xsl:call-template name="language.attribute"/>
     </xsl:if>
     <!-- We don't want empty @class values, so do not propagate empty @roles -->
-    <xsl:if test="@role and 
-                  normalize-space(@role) != '' and
-                  $phrase.propagates.style != 0">
+    <xsl:if test="@role and                    normalize-space(@role) != '' and                   $phrase.propagates.style != 0">
       <xsl:apply-templates select="." mode="class.attribute">
         <xsl:with-param name="class" select="@role"/>
       </xsl:apply-templates>
@@ -869,8 +841,7 @@
 <xsl:template match="trademark">
   <xsl:call-template name="inline.charseq"/>
   <xsl:choose>
-    <xsl:when test="@class = 'copyright'
-                    or @class = 'registered'">
+    <xsl:when test="@class = 'copyright'                     or @class = 'registered'">
       <xsl:call-template name="dingbat">
         <xsl:with-param name="dingbat" select="@class"/>
       </xsl:call-template>
@@ -914,7 +885,7 @@
           <a>
             <xsl:apply-templates select="." mode="class.attribute"/>
             <xsl:if test="@id or @xml:id">
-              <xsl:attribute name="name">
+              <xsl:attribute name="id">
                 <xsl:value-of select="(@id|@xml:id)[1]"/>
               </xsl:attribute>
             </xsl:if>
@@ -938,10 +909,7 @@
       </xsl:choose>
     </xsl:when>
 
-    <xsl:when test="not(@linkend)
-                    and ($firstterm.only.link = 0 or $firstterm = 1)
-                    and ($glossterm.auto.link != 0)
-                    and $glossary.collection != ''">
+    <xsl:when test="not(@linkend)                     and ($firstterm.only.link = 0 or $firstterm = 1)                     and ($glossterm.auto.link != 0)                     and $glossary.collection != ''">
       <xsl:variable name="term">
         <xsl:choose>
           <xsl:when test="@baseform"><xsl:value-of select="@baseform"/></xsl:when>
@@ -949,8 +917,7 @@
         </xsl:choose>
       </xsl:variable>
 
-      <xsl:variable name="cterm"
-           select="(document($glossary.collection,.)//glossentry[glossterm=$term])[1]"/>
+      <xsl:variable name="cterm" select="(document($glossary.collection,.)//glossentry[glossterm=$term])[1]"/>
 
       <!-- HACK HACK HACK! But it works... -->
       <!-- You'd need to do more work if you wanted to chunk on glossdiv, though -->
@@ -1008,9 +975,7 @@
       </xsl:choose>
     </xsl:when>
 
-    <xsl:when test="not(@linkend)
-                    and ($firstterm.only.link = 0 or $firstterm = 1)
-                    and $glossterm.auto.link != 0">
+    <xsl:when test="not(@linkend)                     and ($firstterm.only.link = 0 or $firstterm = 1)                     and $glossterm.auto.link != 0">
       <xsl:variable name="term">
         <xsl:choose>
           <xsl:when test="@baseform">
@@ -1021,9 +986,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
-      <xsl:variable name="targets"
-                    select="//glossentry[normalize-space(glossterm)=$term
-                              or normalize-space(glossterm/@baseform)=$term]"/>
+      <xsl:variable name="targets" select="//glossentry[normalize-space(glossterm)=$term                               or normalize-space(glossterm/@baseform)=$term]"/>
       <xsl:variable name="target" select="$targets[1]"/>
 
       <xsl:choose>
@@ -1039,7 +1002,7 @@
           <a>
             <xsl:apply-templates select="." mode="class.attribute"/>
             <xsl:if test="@id or @xml:id">
-              <xsl:attribute name="name">
+              <xsl:attribute name="id">
                 <xsl:value-of select="(@id|@xml:id)[1]"/>
               </xsl:attribute>
             </xsl:if>
@@ -1197,12 +1160,12 @@
       <xsl:when test="$action='press'">-</xsl:when>
       <xsl:when test="$action='click'">-</xsl:when>
       <xsl:when test="$action='double-click'">-</xsl:when>
-      <xsl:when test="$action='other'"></xsl:when>
+      <xsl:when test="$action='other'"/>
       <xsl:otherwise>+</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
   <xsl:for-each select="*">
-    <xsl:if test="position()>1"><xsl:value-of select="$joinchar"/></xsl:if>
+    <xsl:if test="position()&gt;1"><xsl:value-of select="$joinchar"/></xsl:if>
     <xsl:apply-templates select="."/>
   </xsl:for-each>
 </xsl:template>
@@ -1228,7 +1191,7 @@
   <xsl:param name="count" select="1"/>
 
   <xsl:choose>
-    <xsl:when test="$count>count($nodelist)"></xsl:when>
+    <xsl:when test="$count&gt;count($nodelist)"/>
     <xsl:when test="$count=1">
       <xsl:apply-templates select="$nodelist[$count=position()]"/>
       <xsl:call-template name="process.menuchoice">
@@ -1239,8 +1202,7 @@
     <xsl:otherwise>
       <xsl:variable name="node" select="$nodelist[$count=position()]"/>
       <xsl:choose>
-        <xsl:when test="local-name($node)='guimenuitem'
-                        or local-name($node)='guisubmenu'">
+        <xsl:when test="local-name($node)='guimenuitem'                         or local-name($node)='guisubmenu'">
           <xsl:value-of select="$menuchoice.menu.separator"/>
         </xsl:when>
         <xsl:otherwise>
@@ -1333,13 +1295,12 @@
 </xsl:template>
 
 <xsl:template match="biblioentry|bibliomixed" mode="citation">
-  <xsl:number from="bibliography" count="biblioentry|bibliomixed"
-	      level="any" format="1"/>
+  <xsl:number from="bibliography" count="biblioentry|bibliomixed" level="any" format="1"/>
 </xsl:template>
 
 <!-- ==================================================================== -->
 
-<xsl:template match="comment[&comment.block.parents;]|remark[&comment.block.parents;]">
+<xsl:template match="comment[parent::answer|parent::appendix|parent::article|parent::bibliodiv|&#10;                                parent::bibliography|parent::blockquote|parent::caution|parent::chapter|&#10;                                parent::glossary|parent::glossdiv|parent::important|parent::index|&#10;                                parent::indexdiv|parent::listitem|parent::note|parent::orderedlist|&#10;                                parent::partintro|parent::preface|parent::procedure|parent::qandadiv|&#10;                                parent::qandaset|parent::question|parent::refentry|parent::refnamediv|&#10;                                parent::refsect1|parent::refsect2|parent::refsect3|parent::refsection|&#10;                                parent::refsynopsisdiv|parent::sect1|parent::sect2|parent::sect3|parent::sect4|&#10;                                parent::sect5|parent::section|parent::setindex|parent::sidebar|&#10;                                parent::simplesect|parent::taskprerequisites|parent::taskrelated|&#10;                                parent::tasksummary|parent::warning]|remark[parent::answer|parent::appendix|parent::article|parent::bibliodiv|&#10;                                parent::bibliography|parent::blockquote|parent::caution|parent::chapter|&#10;                                parent::glossary|parent::glossdiv|parent::important|parent::index|&#10;                                parent::indexdiv|parent::listitem|parent::note|parent::orderedlist|&#10;                                parent::partintro|parent::preface|parent::procedure|parent::qandadiv|&#10;                                parent::qandaset|parent::question|parent::refentry|parent::refnamediv|&#10;                                parent::refsect1|parent::refsect2|parent::refsect3|parent::refsection|&#10;                                parent::refsynopsisdiv|parent::sect1|parent::sect2|parent::sect3|parent::sect4|&#10;                                parent::sect5|parent::section|parent::setindex|parent::sidebar|&#10;                                parent::simplesect|parent::taskprerequisites|parent::taskrelated|&#10;                                parent::tasksummary|parent::warning]">
   <xsl:if test="$show.comments != 0">
     <p class="remark"><i><xsl:call-template name="inline.charseq"/></i></p>
   </xsl:if>
@@ -1494,4 +1455,3 @@
 </xsl:template>
 
 </xsl:stylesheet>
-

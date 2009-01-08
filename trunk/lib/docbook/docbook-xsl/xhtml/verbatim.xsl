@@ -1,11 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:sverb="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.Verbatim"
-                xmlns:xverb="xalan://com.nwalsh.xalan.Verbatim"
-                xmlns:lxslt="http://xml.apache.org/xslt"
-                xmlns:exsl="http://exslt.org/common"
-                exclude-result-prefixes="sverb xverb lxslt exsl"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sverb="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.Verbatim" xmlns:xverb="xalan://com.nwalsh.xalan.Verbatim" xmlns:lxslt="http://xml.apache.org/xslt" xmlns:exsl="http://exslt.org/common" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="sverb xverb lxslt exsl" version="1.0">
 
 <!-- ********************************************************************
      $Id: verbatim.xsl 6946 2007-07-04 10:21:57Z xmldoc $
@@ -20,8 +16,7 @@
 <xsl:include href="../highlighting/common.xsl"/>
 <xsl:include href="highlight.xsl"/>
 
-<lxslt:component prefix="xverb"
-                 functions="numberLines"/>
+<lxslt:component prefix="xverb" functions="numberLines"/>
 
 <xsl:template match="programlisting|screen|synopsis">
   <xsl:param name="suppress-numbers" select="'0'"/>
@@ -44,10 +39,7 @@
   </xsl:if>
 
   <xsl:choose>
-    <xsl:when test="$suppress-numbers = '0'
-		    and @linenumbering = 'numbered'
-		    and $use.extensions != '0'
-		    and $linenumbering.extension != '0'">
+    <xsl:when test="$suppress-numbers = '0'       and @linenumbering = 'numbered'       and $use.extensions != '0'       and $linenumbering.extension != '0'">
       <xsl:variable name="rtf">
 	<xsl:call-template name="apply-highlighting"/>
       </xsl:variable>
@@ -87,10 +79,7 @@
   </xsl:if>
 
   <xsl:choose>
-    <xsl:when test="$suppress-numbers = '0'
-		    and @linenumbering = 'numbered'
-		    and $use.extensions != '0'
-		    and $linenumbering.extension != '0'">
+    <xsl:when test="$suppress-numbers = '0'       and @linenumbering = 'numbered'       and $use.extensions != '0'       and $linenumbering.extension != '0'">
       <xsl:choose>
 	<xsl:when test="@class='monospaced'">
           <pre>
@@ -143,10 +132,7 @@
   </xsl:variable>
 
   <xsl:choose>
-    <xsl:when test="$suppress-numbers = '0'
-                    and @linenumbering = 'numbered'
-                    and $use.extensions != '0'
-                    and $linenumbering.extension != '0'">
+    <xsl:when test="$suppress-numbers = '0'                     and @linenumbering = 'numbered'                     and $use.extensions != '0'                     and $linenumbering.extension != '0'">
       <div>
         <xsl:apply-templates select="." mode="class.attribute"/>
         <p>
@@ -175,14 +161,11 @@
   <xsl:param name="pi.context" select="."/>
 
   <!-- Save the global values -->
-  <xsl:variable name="global.linenumbering.everyNth"
-                select="$linenumbering.everyNth"/>
+  <xsl:variable name="global.linenumbering.everyNth" select="$linenumbering.everyNth"/>
 
-  <xsl:variable name="global.linenumbering.separator"
-                select="$linenumbering.separator"/>
+  <xsl:variable name="global.linenumbering.separator" select="$linenumbering.separator"/>
 
-  <xsl:variable name="global.linenumbering.width"
-                select="$linenumbering.width"/>
+  <xsl:variable name="global.linenumbering.width" select="$linenumbering.width"/>
 
   <!-- Extract the <?dbhtml linenumbering.*?> PI values -->
   <xsl:variable name="pi.linenumbering.everyNth">
@@ -247,32 +230,27 @@
           <xsl:choose>
             <xsl:when test="$pi.context/self::programlisting">
               <xsl:call-template name="lastLineNumber">
-                <xsl:with-param name="listings"
-                     select="preceding::programlisting[@linenumbering='numbered']"/>
+                <xsl:with-param name="listings" select="preceding::programlisting[@linenumbering='numbered']"/>
               </xsl:call-template>
             </xsl:when>
             <xsl:when test="$pi.context/self::screen">
               <xsl:call-template name="lastLineNumber">
-                <xsl:with-param name="listings"
-                     select="preceding::screen[@linenumbering='numbered']"/>
+                <xsl:with-param name="listings" select="preceding::screen[@linenumbering='numbered']"/>
               </xsl:call-template>
             </xsl:when>
             <xsl:when test="$pi.context/self::literallayout">
               <xsl:call-template name="lastLineNumber">
-                <xsl:with-param name="listings"
-                     select="preceding::literallayout[@linenumbering='numbered']"/>
+                <xsl:with-param name="listings" select="preceding::literallayout[@linenumbering='numbered']"/>
               </xsl:call-template>
             </xsl:when>
             <xsl:when test="$pi.context/self::address">
               <xsl:call-template name="lastLineNumber">
-                <xsl:with-param name="listings"
-                     select="preceding::address[@linenumbering='numbered']"/>
+                <xsl:with-param name="listings" select="preceding::address[@linenumbering='numbered']"/>
               </xsl:call-template>
             </xsl:when>
             <xsl:when test="$pi.context/self::synopsis">
               <xsl:call-template name="lastLineNumber">
-                <xsl:with-param name="listings"
-                     select="preceding::synopsis[@linenumbering='numbered']"/>
+                <xsl:with-param name="listings" select="preceding::synopsis[@linenumbering='numbered']"/>
               </xsl:call-template>
             </xsl:when>
             <xsl:otherwise>

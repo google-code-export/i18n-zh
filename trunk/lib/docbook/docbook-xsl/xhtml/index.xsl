@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: index.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -23,7 +24,7 @@
 
   <xsl:call-template name="id.warning"/>
 
-  <xsl:if test="count(*)>0 or $generate.index != '0'">
+  <xsl:if test="count(*)&gt;0 or $generate.index != '0'">
     <div>
       <xsl:apply-templates select="." mode="class.attribute"/>
       <xsl:if test="$generate.id.attributes != 0">
@@ -78,7 +79,7 @@
 
   <xsl:call-template name="id.warning"/>
 
-  <xsl:if test="count(*)>0 or $generate.index != '0'">
+  <xsl:if test="count(*)&gt;0 or $generate.index != '0'">
     <div>
       <xsl:apply-templates select="." mode="class.attribute"/>
       <xsl:if test="$generate.id.attributes != 0">
@@ -103,11 +104,11 @@
   </xsl:if>
 </xsl:template>
 
-<xsl:template match="index/indexinfo"></xsl:template>
-<xsl:template match="index/info"></xsl:template>
-<xsl:template match="index/title"></xsl:template>
-<xsl:template match="index/subtitle"></xsl:template>
-<xsl:template match="index/titleabbrev"></xsl:template>
+<xsl:template match="index/indexinfo"/>
+<xsl:template match="index/info"/>
+<xsl:template match="index/title"/>
+<xsl:template match="index/subtitle"/>
+<xsl:template match="index/titleabbrev"/>
 
 <!-- ==================================================================== -->
 
@@ -145,7 +146,7 @@
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <a class="indexterm" name="{$id}"/>
+  <a id="{$id}" class="indexterm"/>
 </xsl:template>
 
 <xsl:template match="primary|secondary|tertiary|see|seealso">
@@ -169,12 +170,10 @@
         </dl>
       </dd>
     </xsl:when>
-    <xsl:when test="following-sibling::seeie
-                    |following-sibling::seealsoie">
+    <xsl:when test="following-sibling::seeie                     |following-sibling::seealsoie">
       <dd>
         <dl>
-          <xsl:apply-templates select="following-sibling::seeie
-                                       |following-sibling::seealsoie"/>
+          <xsl:apply-templates select="following-sibling::seeie                                        |following-sibling::seealsoie"/>
         </dl>
       </dd>
     </xsl:when>
@@ -193,12 +192,10 @@
         </dl>
       </dd>
     </xsl:when>
-    <xsl:when test="following-sibling::seeie
-                    |following-sibling::seealsoie">
+    <xsl:when test="following-sibling::seeie                     |following-sibling::seealsoie">
       <dd>
         <dl>
-          <xsl:apply-templates select="following-sibling::seeie
-                                       |following-sibling::seealsoie"/>
+          <xsl:apply-templates select="following-sibling::seeie                                        |following-sibling::seealsoie"/>
         </dl>
       </dd>
     </xsl:when>
@@ -209,12 +206,10 @@
   <dt>
     <xsl:apply-templates/>
   </dt>
-  <xsl:if test="following-sibling::seeie
-                |following-sibling::seealsoie">
+  <xsl:if test="following-sibling::seeie                 |following-sibling::seealsoie">
     <dd>
       <dl>
-        <xsl:apply-templates select="following-sibling::seeie
-                                     |following-sibling::seealsoie"/>
+        <xsl:apply-templates select="following-sibling::seeie                                      |following-sibling::seealsoie"/>
       </dl>
     </dd>
   </xsl:if>

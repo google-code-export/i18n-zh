@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: refentry.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -22,7 +23,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
     <xsl:if test="$generate.id.attributes != 0">
       <xsl:attribute name="id">
         <xsl:call-template name="object.id"/>
@@ -48,11 +49,11 @@
   <xsl:number from="book" count="reference" format="I."/>
 </xsl:template>
 
-<xsl:template match="reference/docinfo"></xsl:template>
-<xsl:template match="reference/referenceinfo"></xsl:template>
-<xsl:template match="reference/title"></xsl:template>
-<xsl:template match="reference/subtitle"></xsl:template>
-<xsl:template match="reference/titleabbrev"></xsl:template>
+<xsl:template match="reference/docinfo"/>
+<xsl:template match="reference/referenceinfo"/>
+<xsl:template match="reference/title"/>
+<xsl:template match="reference/subtitle"/>
+<xsl:template match="reference/titleabbrev"/>
 
 <!-- ==================================================================== -->
 
@@ -74,7 +75,7 @@
       <xsl:when test="$refname">
         <xsl:apply-templates select="$refname[1]" mode="title"/>
       </xsl:when>
-      <xsl:otherwise></xsl:otherwise>
+      <xsl:otherwise/>
     </xsl:choose>
   </xsl:variable>
 
@@ -91,7 +92,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
     <xsl:if test="$refentry.separator != 0 and preceding-sibling::refentry">
       <div class="refentry.separator">
         <hr/>
@@ -106,8 +107,8 @@
   </div>
 </xsl:template>
 
-<xsl:template match="refentry/docinfo|refentry/refentryinfo"></xsl:template>
-<xsl:template match="refentry/info"></xsl:template>
+<xsl:template match="refentry/docinfo|refentry/refentryinfo"/>
+<xsl:template match="refentry/info"/>
 
 <xsl:template match="refentrytitle|refname|refdescriptor" mode="title">
   <xsl:apply-templates/>
@@ -218,8 +219,7 @@
     <h2>
       <xsl:choose>
         <xsl:when test="refsynopsisdiv/title|title">
-          <xsl:apply-templates select="(refsynopsisdiv/title|title)[1]"
-                               mode="titlepage.mode"/>
+          <xsl:apply-templates select="(refsynopsisdiv/title|title)[1]" mode="titlepage.mode"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:call-template name="gentext">
@@ -232,7 +232,7 @@
   </div>
 </xsl:template>
 
-<xsl:template match="refsynopsisdivinfo"></xsl:template>
+<xsl:template match="refsynopsisdivinfo"/>
 
 <xsl:template match="refsynopsisdiv/title">
 </xsl:template>
@@ -247,7 +247,7 @@
     <xsl:call-template name="dir">
       <xsl:with-param name="inherit" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="language.attribute"/>
+    <xsl:call-template name="xml.language.attribute"/>
     <xsl:call-template name="anchor">
       <xsl:with-param name="conditional" select="0"/>
     </xsl:call-template>
@@ -272,7 +272,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  <xsl:element name="h{$hlevel}">
+  <xsl:element name="h{$hlevel}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:apply-templates/>
   </xsl:element>
 </xsl:template>
@@ -298,10 +298,10 @@
   </h4>
 </xsl:template>
 
-<xsl:template match="refsectioninfo|refsection/info"></xsl:template>
-<xsl:template match="refsect1info|refsect1/info"></xsl:template>
-<xsl:template match="refsect2info|refsect2/info"></xsl:template>
-<xsl:template match="refsect3info|refsect3/info"></xsl:template>
+<xsl:template match="refsectioninfo|refsection/info"/>
+<xsl:template match="refsect1info|refsect1/info"/>
+<xsl:template match="refsect2info|refsect2/info"/>
+<xsl:template match="refsect3info|refsect3/info"/>
 
 
 <!-- ==================================================================== -->

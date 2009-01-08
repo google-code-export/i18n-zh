@@ -1,11 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-                exclude-result-prefixes="doc"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="doc" version="1.0">
 
 <!-- ********************************************************************
-     $Id: ebnf.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: ebnf.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -15,9 +14,9 @@
      ******************************************************************** -->
 
 <doc:reference xmlns="">
-<referenceinfo>
+<referenceinfo xmlns="http://www.w3.org/1999/xhtml">
 <releaseinfo role="meta">
-$Id: ebnf.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+$Id: ebnf.xsl 8178 2008-12-15 22:26:38Z bobstayton $
 </releaseinfo>
 <author><surname>Walsh</surname>
 <firstname>Norman</firstname></author>
@@ -25,9 +24,9 @@ $Id: ebnf.xsl 6910 2007-06-28 23:23:30Z xmldoc $
 <holder>Norman Walsh</holder>
 </copyright>
 </referenceinfo>
-<title>HTML EBNF Reference</title>
+<title xmlns="http://www.w3.org/1999/xhtml">HTML EBNF Reference</title>
 
-<partintro>
+<partintro xmlns="http://www.w3.org/1999/xhtml">
 <section><title>Introduction</title>
 
 <para>This is technical reference documentation for the DocBook XSL
@@ -73,7 +72,7 @@ to be incomplete. Don't forget to read the source, too :-)</para>
 
     <xsl:if test="title">
       <tr>
-        <th align="left" valign="top">
+        <th align="{$direction.align.start}" valign="top">
           <xsl:apply-templates select="." mode="class.attribute"/>
           <xsl:apply-templates select="title"/>
         </th>
@@ -105,12 +104,12 @@ to be incomplete. Don't forget to read the source, too :-)</para>
 <xsl:template match="production">
   <xsl:param name="recap" select="false()"/>
   <tr>
-    <td align="left" valign="top" width="3%">
+    <td align="{$direction.align.start}" valign="top" width="3%">
       <xsl:text>[</xsl:text>
       <xsl:number count="production" level="any"/>
       <xsl:text>]</xsl:text>
     </td>
-    <td align="right" valign="top" width="10%">
+    <td align="{$direction.align.end}" valign="top" width="10%">
       <xsl:choose>
         <xsl:when test="$recap">
           <a>
@@ -135,7 +134,7 @@ to be incomplete. Don't forget to read the source, too :-)</para>
       <xsl:apply-templates select="rhs"/>
       <xsl:copy-of select="$ebnf.statement.terminator"/>
     </td>
-    <td align="left" valign="top" width="30%">
+    <td align="{$direction.align.start}" valign="top" width="30%">
       <xsl:choose>
         <xsl:when test="rhs/lineannotation|constraint">
           <xsl:apply-templates select="rhs/lineannotation" mode="rhslo"/>
@@ -161,7 +160,7 @@ to be incomplete. Don't forget to read the source, too :-)</para>
     </xsl:message>
   </xsl:if>
 
-  <xsl:if test="count($targets)>1">
+  <xsl:if test="count($targets)&gt;1">
     <xsl:message>
       <xsl:text>Warning: multiple "IDs" for productionrecap linkend: </xsl:text>
       <xsl:value-of select="@linkend"/>

@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: block.xsl 6910 2007-06-28 23:23:30Z xmldoc $
+     $Id: block.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -124,8 +125,7 @@
 
   <b>
     <xsl:copy-of select="$titleStr"/>
-    <xsl:if test="$lastChar != ''
-                  and not(contains($runinhead.title.end.punct, $lastChar))">
+    <xsl:if test="$lastChar != ''                   and not(contains($runinhead.title.end.punct, $lastChar))">
       <xsl:value-of select="$runinhead.default.title.end.punct"/>
     </xsl:if>
     <xsl:text>&#160;</xsl:text>
@@ -142,25 +142,23 @@
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="@lang or @xml:lang">
-      <xsl:call-template name="language.attribute"/>
+      <xsl:call-template name="xml.language.attribute"/>
     </xsl:if>
     <xsl:call-template name="anchor"/>
 
     <xsl:choose>
       <xsl:when test="attribution">
-        <table border="0" width="100%"
-               cellspacing="0" cellpadding="0" class="blockquote"
-               summary="Block quote">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" class="blockquote" summary="Block quote">
           <tr>
-            <td width="10%" valign="top">&#160;</td>
-            <td width="80%" valign="top">
+            <td valign="top">&#160;</td>
+            <td valign="top">
               <xsl:apply-templates select="child::*[local-name(.)!='attribution']"/>
             </td>
-            <td width="10%" valign="top">&#160;</td>
+            <td valign="top">&#160;</td>
           </tr>
           <tr>
-            <td width="10%" valign="top">&#160;</td>
-            <td colspan="2" align="right" valign="top">
+            <td valign="top">&#160;</td>
+            <td colspan="2" align="{$direction.align.end}" valign="top">
               <xsl:text>--</xsl:text>
               <xsl:apply-templates select="attribution"/>
             </td>
@@ -329,7 +327,7 @@
     <xsl:apply-templates select="." mode="class.attribute"/>
     <table border="0" width="100%" summary="Revision history">
       <tr>
-        <th align="left" valign="top" colspan="3">
+        <th align="{$direction.align.start}" valign="top" colspan="3">
           <b>
             <xsl:call-template name="gentext">
               <xsl:with-param name="key" select="'RevHistory'"/>
@@ -344,11 +342,11 @@
 
 <xsl:template match="revhistory/revision">
   <xsl:variable name="revnumber" select="revnumber"/>
-  <xsl:variable name="revdate"   select="date"/>
+  <xsl:variable name="revdate" select="date"/>
   <xsl:variable name="revauthor" select="authorinitials|author"/>
   <xsl:variable name="revremark" select="revremark|revdescription"/>
   <tr>
-    <td align="left">
+    <td align="{$direction.align.start}">
       <xsl:if test="$revnumber">
         <xsl:call-template name="gentext">
           <xsl:with-param name="key" select="'Revision'"/>
@@ -357,19 +355,19 @@
         <xsl:apply-templates select="$revnumber"/>
       </xsl:if>
     </td>
-    <td align="left">
+    <td align="{$direction.align.start}">
       <xsl:apply-templates select="$revdate"/>
     </td>
     <xsl:choose>
       <xsl:when test="count($revauthor)=0">
-        <td align="left">
+        <td align="{$direction.align.start}">
           <xsl:call-template name="dingbat">
             <xsl:with-param name="dingbat">nbsp</xsl:with-param>
           </xsl:call-template>
         </td>
       </xsl:when>
       <xsl:otherwise>
-        <td align="left">
+        <td align="{$direction.align.start}">
           <xsl:for-each select="$revauthor">
             <xsl:apply-templates select="."/>
             <xsl:if test="position() != last()">
@@ -382,7 +380,7 @@
   </tr>
   <xsl:if test="$revremark">
     <tr>
-      <td align="left" colspan="3">
+      <td align="{$direction.align.start}" colspan="3">
         <xsl:apply-templates select="$revremark"/>
       </td>
     </tr>

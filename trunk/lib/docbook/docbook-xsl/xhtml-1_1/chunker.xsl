@@ -1,12 +1,7 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:saxon="http://icl.com/saxon"
-                xmlns:lxslt="http://xml.apache.org/xslt"
-                xmlns:redirect="http://xml.apache.org/xalan/redirect"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-		version="1.0"
-                exclude-result-prefixes="doc"
-                extension-element-prefixes="saxon redirect lxslt exsl">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:saxon="http://icl.com/saxon" xmlns:lxslt="http://xml.apache.org/xslt" xmlns:redirect="http://xml.apache.org/xalan/redirect" xmlns:exsl="http://exslt.org/common" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="doc" extension-element-prefixes="saxon redirect lxslt exsl">
 
 <!-- ********************************************************************
      $Id: chunker.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -24,13 +19,13 @@
 <!-- exsl:document, saxon:output, or Xalan's redirect:write -->
 <!-- Note: Only Saxon 6.4.2 or later is supported. -->
 
-<xsl:param name="chunker.output.method" select="'html'"/>
-<xsl:param name="chunker.output.encoding" select="'ISO-8859-1'"/>
+<xsl:param name="chunker.output.method" select="'xml'"/>
+<xsl:param name="chunker.output.encoding" select="'UTF-8'"/>
 <xsl:param name="chunker.output.indent" select="'no'"/>
 <xsl:param name="chunker.output.omit-xml-declaration" select="'no'"/>
 <xsl:param name="chunker.output.standalone" select="'no'"/>
-<xsl:param name="chunker.output.doctype-public" select="''"/>
-<xsl:param name="chunker.output.doctype-system" select="''"/>
+<xsl:param name="chunker.output.doctype-public" select="'-//W3C//DTD XHTML 1.1//EN'"/>
+<xsl:param name="chunker.output.doctype-system" select="'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'"/>
 <xsl:param name="chunker.output.media-type" select="''"/>
 <xsl:param name="chunker.output.cdata-section-elements" select="''"/>
 <xsl:param name="chunker.output.quiet" select="0"/>
@@ -83,14 +78,12 @@
   <xsl:param name="method" select="$chunker.output.method"/>
   <xsl:param name="encoding" select="$chunker.output.encoding"/>
   <xsl:param name="indent" select="$chunker.output.indent"/>
-  <xsl:param name="omit-xml-declaration"
-             select="$chunker.output.omit-xml-declaration"/>
+  <xsl:param name="omit-xml-declaration" select="$chunker.output.omit-xml-declaration"/>
   <xsl:param name="standalone" select="$chunker.output.standalone"/>
   <xsl:param name="doctype-public" select="$chunker.output.doctype-public"/>
   <xsl:param name="doctype-system" select="$chunker.output.doctype-system"/>
   <xsl:param name="media-type" select="$chunker.output.media-type"/>
-  <xsl:param name="cdata-section-elements"
-             select="$chunker.output.cdata-section-elements"/>
+  <xsl:param name="cdata-section-elements" select="$chunker.output.cdata-section-elements"/>
 
   <xsl:param name="content"/>
 
@@ -123,54 +116,22 @@
         <xsl:when test="$media-type != ''">
           <xsl:choose>
             <xsl:when test="$doctype-public != '' and $doctype-system != ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             media-type="{$media-type}"
-                             doctype-public="{$doctype-public}"
-                             doctype-system="{$doctype-system}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-public="{$doctype-public}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:when test="$doctype-public != '' and $doctype-system = ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             media-type="{$media-type}"
-                             doctype-public="{$doctype-public}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-public="{$doctype-public}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:when test="$doctype-public = '' and $doctype-system != ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             media-type="{$media-type}"
-                             doctype-system="{$doctype-system}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:otherwise><!-- $doctype-public = '' and $doctype-system = ''"> -->
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             media-type="{$media-type}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:otherwise>
@@ -179,50 +140,22 @@
         <xsl:otherwise>
           <xsl:choose>
             <xsl:when test="$doctype-public != '' and $doctype-system != ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             doctype-public="{$doctype-public}"
-                             doctype-system="{$doctype-system}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-public="{$doctype-public}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:when test="$doctype-public != '' and $doctype-system = ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             doctype-public="{$doctype-public}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-public="{$doctype-public}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:when test="$doctype-public = '' and $doctype-system != ''">
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             doctype-system="{$doctype-system}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:when>
             <xsl:otherwise><!-- $doctype-public = '' and $doctype-system = ''"> -->
-              <exsl:document href="{$filename}"
-                             method="{$method}"
-                             encoding="{$encoding}"
-                             indent="{$indent}"
-                             omit-xml-declaration="{$omit-xml-declaration}"
-                             cdata-section-elements="{$cdata-section-elements}"
-                             standalone="{$standalone}">
+              <exsl:document href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </exsl:document>
             </xsl:otherwise>
@@ -237,58 +170,22 @@
         <xsl:when test="$media-type != ''">
           <xsl:choose>
             <xsl:when test="$doctype-public != '' and $doctype-system != ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            media-type="{$media-type}"
-                            doctype-public="{$doctype-public}"
-                            doctype-system="{$doctype-system}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-public="{$doctype-public}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:when test="$doctype-public != '' and $doctype-system = ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            media-type="{$media-type}"
-                            doctype-public="{$doctype-public}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-public="{$doctype-public}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:when test="$doctype-public = '' and $doctype-system != ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            media-type="{$media-type}"
-                            doctype-system="{$doctype-system}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:otherwise><!-- $doctype-public = '' and $doctype-system = ''"> -->
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            media-type="{$media-type}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" media-type="{$media-type}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:otherwise>
@@ -297,54 +194,22 @@
         <xsl:otherwise>
           <xsl:choose>
             <xsl:when test="$doctype-public != '' and $doctype-system != ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            doctype-public="{$doctype-public}"
-                            doctype-system="{$doctype-system}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-public="{$doctype-public}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:when test="$doctype-public != '' and $doctype-system = ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            doctype-public="{$doctype-public}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-public="{$doctype-public}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:when test="$doctype-public = '' and $doctype-system != ''">
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            doctype-system="{$doctype-system}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" doctype-system="{$doctype-system}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:when>
             <xsl:otherwise><!-- $doctype-public = '' and $doctype-system = ''"> -->
-              <saxon:output saxon:character-representation="{$saxon.character.representation}"
-                            href="{$filename}"
-                            method="{$method}"
-                            encoding="{$encoding}"
-                            indent="{$indent}"
-                            omit-xml-declaration="{$omit-xml-declaration}"
-                            cdata-section-elements="{$cdata-section-elements}"
-                            standalone="{$standalone}">
+              <saxon:output saxon:character-representation="{$saxon.character.representation}" href="{$filename}" method="{$method}" encoding="{$encoding}" indent="{$indent}" omit-xml-declaration="{$omit-xml-declaration}" cdata-section-elements="{$cdata-section-elements}" standalone="{$standalone}">
                 <xsl:copy-of select="$content"/>
               </saxon:output>
             </xsl:otherwise>
@@ -378,14 +243,12 @@
   <xsl:param name="method" select="$chunker.output.method"/>
   <xsl:param name="encoding" select="$chunker.output.encoding"/>
   <xsl:param name="indent" select="$chunker.output.indent"/>
-  <xsl:param name="omit-xml-declaration"
-             select="$chunker.output.omit-xml-declaration"/>
+  <xsl:param name="omit-xml-declaration" select="$chunker.output.omit-xml-declaration"/>
   <xsl:param name="standalone" select="$chunker.output.standalone"/>
   <xsl:param name="doctype-public" select="$chunker.output.doctype-public"/>
   <xsl:param name="doctype-system" select="$chunker.output.doctype-system"/>
   <xsl:param name="media-type" select="$chunker.output.media-type"/>
-  <xsl:param name="cdata-section-elements"
-             select="$chunker.output.cdata-section-elements"/>
+  <xsl:param name="cdata-section-elements" select="$chunker.output.cdata-section-elements"/>
 
   <xsl:param name="content"/>
 

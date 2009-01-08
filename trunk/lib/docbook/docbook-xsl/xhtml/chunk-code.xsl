@@ -1,11 +1,7 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:cf="http://docbook.sourceforge.net/xmlns/chunkfast/1.0"
-                xmlns:ng="http://docbook.org/docbook-ng"
-                xmlns:db="http://docbook.org/ns/docbook"
-                exclude-result-prefixes="exsl cf ng db"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns:cf="http://docbook.sourceforge.net/xmlns/chunkfast/1.0" xmlns:ng="http://docbook.org/docbook-ng" xmlns:db="http://docbook.org/ns/docbook" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="exsl cf ng db" version="1.0">
 
 <!-- ********************************************************************
      $Id: chunk-code.xsl 6942 2007-07-04 04:42:17Z xmldoc $
@@ -109,7 +105,7 @@
         <xsl:value-of select="(@id|@xml:id)[1]"/>
         <xsl:value-of select="$html.ext"/>
       </xsl:when>
-      <xsl:otherwise></xsl:otherwise>
+      <xsl:otherwise/>
     </xsl:choose>
   </xsl:variable>
 
@@ -117,13 +113,13 @@
     <xsl:when test="$ischunk='0'">
       <!-- if called on something that isn't a chunk, walk up... -->
       <xsl:choose>
-        <xsl:when test="count(parent::*)>0">
+        <xsl:when test="count(parent::*)&gt;0">
           <xsl:apply-templates mode="recursive-chunk-filename" select="parent::*">
             <xsl:with-param name="recursive" select="$recursive"/>
           </xsl:apply-templates>
         </xsl:when>
         <!-- unless there is no up, in which case return "" -->
-        <xsl:otherwise></xsl:otherwise>
+        <xsl:otherwise/>
       </xsl:choose>
     </xsl:when>
 
@@ -282,12 +278,7 @@
       </xsl:if>
     </xsl:when>
 
-    <xsl:when test="self::sect1
-                    or self::sect2
-                    or self::sect3
-                    or self::sect4
-                    or self::sect5
-                    or self::section">
+    <xsl:when test="self::sect1                     or self::sect2                     or self::sect3                     or self::sect4                     or self::sect5                     or self::section">
       <xsl:apply-templates mode="recursive-chunk-filename" select="parent::*">
         <xsl:with-param name="recursive" select="true()"/>
       </xsl:apply-templates>
@@ -414,10 +405,7 @@
          toss the namespace and continue.  Use the docbook5 namespaced
 	 stylesheets for DocBook5 if you don't want to use this feature.-->
     <!-- include extra test for Xalan quirk -->
-    <xsl:when test="(function-available('exsl:node-set') or
-                     contains(system-property('xsl:vendor'),
-                       'Apache Software Foundation'))
-                    and (*/self::ng:* or */self::db:*)">
+    <xsl:when test="(function-available('exsl:node-set') or                      contains(system-property('xsl:vendor'),                        'Apache Software Foundation'))                     and (*/self::ng:* or */self::db:*)">
       <xsl:call-template name="log.message">
         <xsl:with-param name="level">Note</xsl:with-param>
         <xsl:with-param name="source" select="$doc.title"/>
@@ -462,17 +450,13 @@
               </xsl:message>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:if test="$collect.xref.targets = 'yes' or
-                            $collect.xref.targets = 'only'">
-                <xsl:apply-templates select="key('id', $rootid)"
-                                     mode="collect.targets"/>
+              <xsl:if test="$collect.xref.targets = 'yes' or                             $collect.xref.targets = 'only'">
+                <xsl:apply-templates select="key('id', $rootid)" mode="collect.targets"/>
               </xsl:if>
               <xsl:if test="$collect.xref.targets != 'only'">
-                <xsl:apply-templates select="key('id',$rootid)"
-                                     mode="process.root"/>
+                <xsl:apply-templates select="key('id',$rootid)" mode="process.root"/>
                 <xsl:if test="$tex.math.in.alt != ''">
-                  <xsl:apply-templates select="key('id',$rootid)"
-                                       mode="collect.tex.math"/>
+                  <xsl:apply-templates select="key('id',$rootid)" mode="collect.tex.math"/>
                 </xsl:if>
                 <xsl:if test="$generate.manifest != 0">
                   <xsl:call-template name="generate.manifest">
@@ -484,8 +468,7 @@
           </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:if test="$collect.xref.targets = 'yes' or
-                        $collect.xref.targets = 'only'">
+          <xsl:if test="$collect.xref.targets = 'yes' or                         $collect.xref.targets = 'only'">
             <xsl:apply-templates select="/" mode="collect.targets"/>
           </xsl:if>
           <xsl:if test="$collect.xref.targets != 'only'">
@@ -511,12 +494,7 @@
 
 <!-- ====================================================================== -->
 
-<xsl:template match="set|book|part|preface|chapter|appendix
-                     |article
-                     |reference|refentry
-                     |book/glossary|article/glossary|part/glossary
-                     |book/bibliography|article/bibliography|part/bibliography
-                     |colophon">
+<xsl:template match="set|book|part|preface|chapter|appendix                      |article                      |reference|refentry                      |book/glossary|article/glossary|part/glossary                      |book/bibliography|article/bibliography|part/bibliography                      |colophon">
   <xsl:choose>
     <xsl:when test="$onechunk != 0 and parent::*">
       <xsl:apply-imports/>
@@ -545,14 +523,11 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="setindex
-                     |book/index
-                     |article/index
-                     |part/index">
+<xsl:template match="setindex                      |book/index                      |article/index                      |part/index">
   <!-- some implementations use completely empty index tags to indicate -->
   <!-- where an automatically generated index should be inserted. so -->
   <!-- if the index is completely empty, skip it. -->
-  <xsl:if test="count(*)>0 or $generate.index != '0'">
+  <xsl:if test="count(*)&gt;0 or $generate.index != '0'">
     <xsl:call-template name="process-chunk-element"/>
   </xsl:if>
 </xsl:template>
@@ -583,15 +558,7 @@
 </xsl:template>
 
 <!-- ==================================================================== -->
-<xsl:template match="set|book|part|preface|chapter|appendix
-                     |article
-                     |reference|refentry
-                     |sect1|sect2|sect3|sect4|sect5
-                     |section
-                     |book/glossary|article/glossary|part/glossary
-                     |book/bibliography|article/bibliography|part/bibliography
-                     |colophon"
-              mode="enumerate-files">
+<xsl:template match="set|book|part|preface|chapter|appendix                      |article                      |reference|refentry                      |sect1|sect2|sect3|sect4|sect5                      |section                      |book/glossary|article/glossary|part/glossary                      |book/bibliography|article/bibliography|part/bibliography                      |colophon" mode="enumerate-files">
   <xsl:variable name="ischunk"><xsl:call-template name="chunk"/></xsl:variable>
   <xsl:if test="$ischunk='1'">
     <xsl:call-template name="make-relative-filename">
@@ -604,13 +571,13 @@
         <xsl:apply-templates mode="chunk-filename" select="."/>
       </xsl:with-param>
     </xsl:call-template>
-    <xsl:text>&#10;</xsl:text>
+    <xsl:text>
+</xsl:text>
   </xsl:if>
   <xsl:apply-templates select="*" mode="enumerate-files"/>
 </xsl:template>
 
-<xsl:template match="book/index|article/index|part/index"
-              mode="enumerate-files">
+<xsl:template match="book/index|article/index|part/index" mode="enumerate-files">
   <xsl:if test="$htmlhelp.output != 1">
     <xsl:variable name="ischunk"><xsl:call-template name="chunk"/></xsl:variable>
     <xsl:if test="$ischunk='1'">
@@ -624,7 +591,8 @@
           <xsl:apply-templates mode="chunk-filename" select="."/>
         </xsl:with-param>
       </xsl:call-template>
-      <xsl:text>&#10;</xsl:text>
+      <xsl:text>
+</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="*" mode="enumerate-files"/>
   </xsl:if>
@@ -643,15 +611,15 @@
         <xsl:apply-templates mode="chunk-filename" select="."/>
       </xsl:with-param>
     </xsl:call-template>
-    <xsl:text>&#10;</xsl:text>
+    <xsl:text>
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
 <xsl:template match="mediaobject[imageobject] | inlinemediaobject[imageobject]" mode="enumerate-files">
   <xsl:variable name="longdesc.uri">
     <xsl:call-template name="longdesc.uri">
-      <xsl:with-param name="mediaobject"
-                      select="."/>
+      <xsl:with-param name="mediaobject" select="."/>
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="mediaobject" select="."/>
@@ -660,7 +628,8 @@
     <xsl:call-template name="longdesc.uri">
       <xsl:with-param name="mediaobject" select="$mediaobject"/>
     </xsl:call-template>
-    <xsl:text>&#10;</xsl:text>
+    <xsl:text>
+</xsl:text>
   </xsl:if>
 </xsl:template>
 

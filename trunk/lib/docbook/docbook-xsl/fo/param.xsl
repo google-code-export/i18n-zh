@@ -82,7 +82,6 @@
 <xsl:attribute name="space-after.maximum">2em</xsl:attribute>
 </xsl:attribute-set>
 <xsl:param name="body.font.family">serif</xsl:param>
-<xsl:param name="body.font.family.l10n">SimSun</xsl:param>
 <xsl:param name="body.font.master">10</xsl:param>
 <xsl:param name="body.font.size">
  <xsl:value-of select="$body.font.master"/><xsl:text>pt</xsl:text>
@@ -355,7 +354,7 @@ set       toc,title
 <xsl:attribute-set name="itemizedlist.label.properties">
 </xsl:attribute-set>
     <xsl:param name="itemizedlist.label.width">1.0em</xsl:param>
-
+  
 
 <xsl:param name="keep.relative.image.uris" select="0"/>
 <xsl:param name="l10n.gentext.default.language">en</xsl:param>
@@ -404,7 +403,6 @@ set       toc,title
 <xsl:param name="menuchoice.menu.separator"> &#8594; </xsl:param>
 <xsl:param name="menuchoice.separator">+</xsl:param>
 <xsl:param name="monospace.font.family">monospace</xsl:param>
-<xsl:param name="monospace.font.family.l10n">FangSong</xsl:param>
 <xsl:attribute-set name="monospace.properties">
   <xsl:attribute name="font-family">
     <xsl:value-of select="$monospace.font.family"/>
@@ -420,7 +418,7 @@ set       toc,title
   <xsl:attribute name="space-before.minimum">0.8em</xsl:attribute>
   <xsl:attribute name="space-before.maximum">1.2em</xsl:attribute>
 </xsl:attribute-set>
-<xsl:param name="olink.doctitle">no</xsl:param>
+<xsl:param name="olink.doctitle">no</xsl:param> 
 <xsl:param name="olink.base.uri"/>
 <xsl:param name="olink.debug" select="0"/>
 <xsl:attribute-set name="olink.properties">
@@ -834,7 +832,6 @@ set       toc,title
 <xsl:param name="tex.math.in.alt"/>
   <xsl:param name="textinsert.extension" select="1"/>
 <xsl:param name="title.font.family">sans-serif</xsl:param>
-<xsl:param name="title.font.family.l10n">SimHei</xsl:param>
 <xsl:param name="title.margin.left">
   <xsl:choose>
     <xsl:when test="$fop.extensions != 0">-4pc</xsl:when>
@@ -865,7 +862,7 @@ set       toc,title
 <xsl:param name="ulink.hyphenate.chars">/</xsl:param>
 <xsl:param name="ulink.show" select="1"/>
 <xsl:param name="use.extensions" select="0"/>
-<xsl:param name="use.local.olink.style" select="0"/>
+<xsl:param name="use.local.olink.style" select="0"/> 
 <xsl:param name="use.role.as.xrefstyle" select="1"/>
 <xsl:param name="use.role.for.mediaobject" select="1"/>
 <xsl:param name="use.svg" select="1"/>

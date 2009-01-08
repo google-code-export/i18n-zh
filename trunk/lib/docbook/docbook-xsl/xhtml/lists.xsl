@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: lists.xsl 8002 2008-04-21 16:03:57Z kosek $
+     $Id: lists.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -23,12 +24,7 @@
     </xsl:if>
 
     <!-- Preserve order of PIs and comments -->
-    <xsl:apply-templates 
-        select="*[not(self::listitem
-                  or self::title
-                  or self::titleabbrev)]
-                |comment()[not(preceding-sibling::listitem)]
-                |processing-instruction()[not(preceding-sibling::listitem)]"/>
+    <xsl:apply-templates select="*[not(self::listitem                   or self::title                   or self::titleabbrev)]                 |comment()[not(preceding-sibling::listitem)]                 |processing-instruction()[not(preceding-sibling::listitem)]"/>
 
     <ul>
       <xsl:if test="$css.decoration != 0">
@@ -42,10 +38,7 @@
           <xsl:value-of select="@spacing"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates 
-            select="listitem
-                    |comment()[preceding-sibling::listitem]
-                    |processing-instruction()[preceding-sibling::listitem]"/>
+      <xsl:apply-templates select="listitem                     |comment()[preceding-sibling::listitem]                     |processing-instruction()[preceding-sibling::listitem]"/>
     </ul>
   </div>
 </xsl:template>
@@ -145,23 +138,14 @@
     </xsl:if>
 
     <!-- Preserve order of PIs and comments -->
-    <xsl:apply-templates 
-        select="*[not(self::listitem
-                  or self::title
-                  or self::titleabbrev)]
-                |comment()[not(preceding-sibling::listitem)]
-                |processing-instruction()[not(preceding-sibling::listitem)]"/>
+    <xsl:apply-templates select="*[not(self::listitem                   or self::title                   or self::titleabbrev)]                 |comment()[not(preceding-sibling::listitem)]                 |processing-instruction()[not(preceding-sibling::listitem)]"/>
 
     <xsl:choose>
       <xsl:when test="@inheritnum='inherit' and ancestor::listitem[parent::orderedlist]">
 	<table border="0">
-	  <col align="left" valign="top"/>
+	  <col align="{$direction.align.start}" valign="top"/>
           <tbody>
-	    <xsl:apply-templates 
-		mode="orderedlist-table"
-		select="listitem
-			|comment()[preceding-sibling::listitem]
-			|processing-instruction()[preceding-sibling::listitem]"/>
+	    <xsl:apply-templates mode="orderedlist-table" select="listitem    |comment()[preceding-sibling::listitem]    |processing-instruction()[preceding-sibling::listitem]"/>
           </tbody>
         </table>
       </xsl:when>
@@ -182,10 +166,7 @@
 	      <xsl:value-of select="@spacing"/>
 	    </xsl:attribute>
 	  </xsl:if>
-	  <xsl:apply-templates 
-		select="listitem
-			|comment()[preceding-sibling::listitem]
-			|processing-instruction()[preceding-sibling::listitem]"/>
+	  <xsl:apply-templates select="listitem    |comment()[preceding-sibling::listitem]    |processing-instruction()[preceding-sibling::listitem]"/>
 	</ol>
       </xsl:otherwise>
     </xsl:choose>
@@ -290,12 +271,7 @@
     <xsl:choose>
       <xsl:when test="$presentation = 'table'">
         <!-- Preserve order of PIs and comments -->
-        <xsl:apply-templates 
-          select="*[not(self::varlistentry
-                    or self::title
-                    or self::titleabbrev)]
-                  |comment()[not(preceding-sibling::varlistentry)]
-                  |processing-instruction()[not(preceding-sibling::varlistentry)]"/>
+        <xsl:apply-templates select="*[not(self::varlistentry                     or self::title                     or self::titleabbrev)]                   |comment()[not(preceding-sibling::varlistentry)]                   |processing-instruction()[not(preceding-sibling::varlistentry)]"/>
         <table border="0">
           <xsl:if test="$list-width != ''">
             <xsl:attribute name="width">
@@ -307,7 +283,7 @@
               <xsl:value-of select="$table-summary"/>
             </xsl:attribute>
           </xsl:if>
-          <col align="left" valign="top">
+          <col align="{$direction.align.start}" valign="top">
             <xsl:if test="$term-width != ''">
               <xsl:attribute name="width">
                 <xsl:value-of select="$term-width"/>
@@ -315,26 +291,15 @@
             </xsl:if>
           </col>
           <tbody>
-            <xsl:apply-templates mode="varlist-table"
-              select="varlistentry
-                      |comment()[preceding-sibling::varlistentry]
-                      |processing-instruction()[preceding-sibling::varlistentry]"/>
+            <xsl:apply-templates mode="varlist-table" select="varlistentry                       |comment()[preceding-sibling::varlistentry]                       |processing-instruction()[preceding-sibling::varlistentry]"/>
           </tbody>
         </table>
       </xsl:when>
       <xsl:otherwise>
         <!-- Preserve order of PIs and comments -->
-        <xsl:apply-templates 
-          select="*[not(self::varlistentry
-                    or self::title
-                    or self::titleabbrev)]
-                  |comment()[not(preceding-sibling::varlistentry)]
-                  |processing-instruction()[not(preceding-sibling::varlistentry)]"/>
+        <xsl:apply-templates select="*[not(self::varlistentry                     or self::title                     or self::titleabbrev)]                   |comment()[not(preceding-sibling::varlistentry)]                   |processing-instruction()[not(preceding-sibling::varlistentry)]"/>
         <dl>
-          <xsl:apply-templates 
-              select="varlistentry
-                      |comment()[preceding-sibling::varlistentry]
-                      |processing-instruction()[preceding-sibling::varlistentry]"/>
+          <xsl:apply-templates select="varlistentry                       |comment()[preceding-sibling::varlistentry]                       |processing-instruction()[preceding-sibling::varlistentry]"/>
         </dl>
       </xsl:otherwise>
     </xsl:choose>
@@ -362,8 +327,7 @@
        the <p> wrapper; this has the effect of creating an li
        with simple text content. -->
   <xsl:choose>
-    <xsl:when test="not(preceding-sibling::*)
-                    and not (following-sibling::*)">
+    <xsl:when test="not(preceding-sibling::*)                     and not (following-sibling::*)">
       <xsl:call-template name="anchor"/>
       <xsl:apply-templates/>
     </xsl:when>
@@ -638,8 +602,7 @@
   <xsl:param name="cols">1</xsl:param>
   <xsl:param name="cell">1</xsl:param>
   <xsl:param name="members" select="./member"/>
-  <xsl:param name="rows"
-             select="floor((count($members)+$cols - 1) div $cols)"/>
+  <xsl:param name="rows" select="floor((count($members)+$cols - 1) div $cols)"/>
 
   <xsl:if test="$cell &lt;= $rows">
     <tr>
@@ -704,9 +667,7 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="procedure">
-  <xsl:variable name="param.placement"
-                select="substring-after(normalize-space($formal.title.placement),
-                                        concat(local-name(.), ' '))"/>
+  <xsl:variable name="param.placement" select="substring-after(normalize-space($formal.title.placement),                                         concat(local-name(.), ' '))"/>
 
   <xsl:variable name="placement">
     <xsl:choose>
@@ -721,12 +682,7 @@
   </xsl:variable>
 
   <!-- Preserve order of PIs and comments -->
-  <xsl:variable name="preamble"
-        select="*[not(self::step
-                  or self::title
-                  or self::titleabbrev)]
-                |comment()[not(preceding-sibling::step)]
-                |processing-instruction()[not(preceding-sibling::step)]"/>
+  <xsl:variable name="preamble" select="*[not(self::step                   or self::title                   or self::titleabbrev)]                 |comment()[not(preceding-sibling::step)]                 |processing-instruction()[not(preceding-sibling::step)]"/>
 
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
@@ -748,10 +704,7 @@
     <xsl:choose>
       <xsl:when test="count(step) = 1">
         <ul>
-          <xsl:apply-templates 
-            select="step
-                    |comment()[preceding-sibling::step]
-                    |processing-instruction()[preceding-sibling::step]"/>
+          <xsl:apply-templates select="step                     |comment()[preceding-sibling::step]                     |processing-instruction()[preceding-sibling::step]"/>
         </ul>
       </xsl:when>
       <xsl:otherwise>
@@ -759,10 +712,7 @@
           <xsl:attribute name="type">
             <xsl:value-of select="substring($procedure.step.numeration.formats,1,1)"/>
           </xsl:attribute>
-          <xsl:apply-templates 
-            select="step
-                    |comment()[preceding-sibling::step]
-                    |processing-instruction()[preceding-sibling::step]"/>
+          <xsl:apply-templates select="step                     |comment()[preceding-sibling::step]                     |processing-instruction()[preceding-sibling::step]"/>
         </ol>
       </xsl:otherwise>
     </xsl:choose>
@@ -873,8 +823,7 @@
   <div class="seg">
     <strong>
       <span class="segtitle">
-        <xsl:apply-templates select="$segtitles[$segnum=position()]"
-                             mode="segtitle-in-seg"/>
+        <xsl:apply-templates select="$segtitles[$segnum=position()]" mode="segtitle-in-seg"/>
         <xsl:text>: </xsl:text>
       </span>
     </strong>
@@ -960,24 +909,17 @@
     </xsl:if>
 
     <!-- Preserve order of PIs and comments -->
-    <xsl:apply-templates 
-         select="*[not(self::callout or self::title or self::titleabbrev)]
-                   |comment()[not(preceding-sibling::callout)]
-		   |processing-instruction()[not(preceding-sibling::callout)]"/>
+    <xsl:apply-templates select="*[not(self::callout or self::title or self::titleabbrev)]                    |comment()[not(preceding-sibling::callout)]      |processing-instruction()[not(preceding-sibling::callout)]"/>
 
     <xsl:choose>
       <xsl:when test="$callout.list.table != 0">
         <table border="0" summary="Callout list">
-	  <xsl:apply-templates select="callout
-			        |comment()[preceding-sibling::callout]
-				|processing-instruction()[preceding-sibling::callout]"/>
+	  <xsl:apply-templates select="callout            |comment()[preceding-sibling::callout]     |processing-instruction()[preceding-sibling::callout]"/>
 	</table>
       </xsl:when>
       <xsl:otherwise>
 	<dl compact="compact">
-	  <xsl:apply-templates select="callout
-			        |comment()[preceding-sibling::callout]
-				|processing-instruction()[preceding-sibling::callout]"/>
+	  <xsl:apply-templates select="callout            |comment()[preceding-sibling::callout]     |processing-instruction()[preceding-sibling::callout]"/>
 	</dl>
       </xsl:otherwise>
     </xsl:choose>
@@ -997,7 +939,7 @@
           </xsl:with-param>
         </xsl:call-template>
 
-        <td width="5%" valign="top" align="left">
+        <td width="5%" valign="top" align="{$direction.align.start}">
           <p>
             <xsl:call-template name="anchor"/>
             <xsl:call-template name="callout.arearefs">
@@ -1005,7 +947,7 @@
             </xsl:call-template>
           </p>
         </td>
-        <td valign="top" align="left">
+        <td valign="top" align="{$direction.align.start}">
           <xsl:apply-templates/>
         </td>
       </tr>
@@ -1027,8 +969,7 @@
        the <p> wrapper; this has the effect of creating an li
        with simple text content. -->
   <xsl:choose>
-    <xsl:when test="not(preceding-sibling::*)
-                    and not (following-sibling::*)">
+    <xsl:when test="not(preceding-sibling::*)                     and not (following-sibling::*)">
       <xsl:call-template name="anchor"/>
       <xsl:apply-templates/>
     </xsl:when>
@@ -1048,7 +989,7 @@
 </xsl:template>
 
 <xsl:template name="callout.arearefs">
-  <xsl:param name="arearefs"></xsl:param>
+  <xsl:param name="arearefs"/>
   <xsl:if test="$arearefs!=''">
     <xsl:choose>
       <xsl:when test="substring-before($arearefs,' ')=''">
@@ -1058,20 +999,18 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="callout.arearef">
-          <xsl:with-param name="arearef"
-                          select="substring-before($arearefs,' ')"/>
+          <xsl:with-param name="arearef" select="substring-before($arearefs,' ')"/>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:call-template name="callout.arearefs">
-      <xsl:with-param name="arearefs"
-                      select="substring-after($arearefs,' ')"/>
+      <xsl:with-param name="arearefs" select="substring-after($arearefs,' ')"/>
     </xsl:call-template>
   </xsl:if>
 </xsl:template>
 
 <xsl:template name="callout.arearef">
-  <xsl:param name="arearef"></xsl:param>
+  <xsl:param name="arearef"/>
   <xsl:variable name="targets" select="key('id',$arearef)"/>
   <xsl:variable name="target" select="$targets[1]"/>
 
@@ -1105,8 +1044,7 @@
         <xsl:when test="$target/parent::areaset">
           <xsl:call-template name="callout-bug">
             <xsl:with-param name="conum">
-              <xsl:apply-templates select="$target/parent::areaset"
-                                   mode="conumber"/>
+              <xsl:apply-templates select="$target/parent::areaset" mode="conumber"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:when>

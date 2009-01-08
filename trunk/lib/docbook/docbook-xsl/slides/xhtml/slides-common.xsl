@@ -1,8 +1,9 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
-<xsl:import href="../../html/chunk.xsl"/>
+<xsl:import href="../../xhtml/chunk.xsl"/>
 <xsl:include href="../../VERSION"/>
 
 <xsl:include href="param.xsl"/>
@@ -10,7 +11,7 @@
 <xsl:include href="graphics.xsl"/>
 <xsl:include href="css.xsl"/>
 
-<xsl:output method="html"/>
+<xsl:output method="xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:strip-space elements="slides foil foilgroup"/>
 
@@ -36,8 +37,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table border="0" width="100%" cellspacing="0" cellpadding="0"
-           summary="Navigation table">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" summary="Navigation table">
       <tr>
         <td align="left" valign="bottom">
           <xsl:if test="$home">
@@ -204,12 +204,10 @@
 
   <div class="navfoot">
     <hr class="bottom-nav-sep"/>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0"
-           summary="Navigation table">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" summary="Navigation table">
       <tr>
         <td align="left" valign="top">
-          <xsl:apply-templates select="/slides/slidesinfo/copyright"
-                               mode="slide.footer.mode"/>
+          <xsl:apply-templates select="/slides/slidesinfo/copyright" mode="slide.footer.mode"/>
           <xsl:text>&#160;</xsl:text>
         </td>
 
@@ -830,12 +828,9 @@
   </xsl:variable>
 
   <xsl:variable name="home" select="/slides"/>
-  <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
-  <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                    |parent::foilgroup[1]
-                                    |/slides)[last()]"/>
+  <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
+  <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                     |parent::foilgroup[1]                                     |/slides)[last()]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -1160,8 +1155,7 @@
   <xsl:param name="prev"/>
   <xsl:param name="tocfile" select="$toc.html"/>
 
-  <xsl:apply-templates select="*[name(.) != 'foil'
-                                and name(.) != 'foilgroup']"/>
+  <xsl:apply-templates select="*[name(.) != 'foil'                                 and name(.) != 'foilgroup']"/>
 
   <xsl:if test="$foilgroup.toc != 0">
     <dl class="toc">
@@ -1283,7 +1277,7 @@
 <xsl:template match="processing-instruction('Pub')">
   <xsl:variable name="pidata"><xsl:value-of select="(.)"/></xsl:variable>
   <xsl:choose>
-    <xsl:when test="contains($pidata,'UDT')"></xsl:when>
+    <xsl:when test="contains($pidata,'UDT')"/>
     <xsl:when test="contains($pidata,'/_font')">
       <xsl:text disable-output-escaping="yes">&lt;/span&gt;</xsl:text>
     </xsl:when>
@@ -1327,8 +1321,7 @@
     <xsl:call-template name="copyright.years">
       <xsl:with-param name="years" select="year"/>
       <xsl:with-param name="print.ranges" select="$make.year.ranges"/>
-      <xsl:with-param name="single.year.ranges"
-                      select="$make.single.year.ranges"/>
+      <xsl:with-param name="single.year.ranges" select="$make.single.year.ranges"/>
     </xsl:call-template>
     <xsl:call-template name="gentext.space"/>
     <xsl:apply-templates select="holder" mode="titlepage.mode"/>
@@ -1347,7 +1340,7 @@
 <xsl:template match="ulink">
   <a>
     <xsl:if test="@id">
-      <xsl:attribute name="name"><xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
     </xsl:if>
     <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
     <xsl:if test="$ulink.target != ''">
@@ -1374,7 +1367,7 @@
 <xsl:template match="title/ulink">
   <a>
     <xsl:if test="@id">
-      <xsl:attribute name="name"><xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
     </xsl:if>
     <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
     <xsl:if test="$ulink.target != ''">
@@ -1442,13 +1435,13 @@
     <xsl:when test="$ischunk='0'">
       <!-- if called on something that isn't a chunk, walk up... -->
       <xsl:choose>
-        <xsl:when test="count(./parent::*)>0">
+        <xsl:when test="count(./parent::*)&gt;0">
           <xsl:apply-templates mode="chunk-filename" select="./parent::*">
             <xsl:with-param name="recursive" select="$recursive"/>
           </xsl:apply-templates>
         </xsl:when>
         <!-- unless there is no up, in which case return "" -->
-        <xsl:otherwise></xsl:otherwise>
+        <xsl:otherwise/>
       </xsl:choose>
     </xsl:when>
 
@@ -1516,8 +1509,8 @@
   </xsl:attribute>
 </xsl:template>
 
-<xsl:template match="html:*" xmlns:html='http://www.w3.org/1999/xhtml'>
-  <xsl:element name="{local-name(.)}" namespace="">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:*">
+  <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:apply-templates select="@*" mode="copy"/>
     <xsl:apply-templates/>
   </xsl:element>
