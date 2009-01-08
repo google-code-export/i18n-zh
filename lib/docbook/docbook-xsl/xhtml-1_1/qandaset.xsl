@@ -1,11 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-                exclude-result-prefixes="doc"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="doc" version="1.0">
 
 <!-- ********************************************************************
-     $Id: qandaset.xsl 6944 2007-07-04 08:41:53Z xmldoc $
+     $Id: qandaset.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -18,10 +17,7 @@
 
 <xsl:template match="qandaset">
   <xsl:variable name="title" select="(blockinfo/title|info/title|title)[1]"/>
-  <xsl:variable name="preamble" select="*[local-name(.) != 'title'
-                                          and local-name(.) != 'titleabbrev'
-                                          and local-name(.) != 'qandadiv'
-                                          and local-name(.) != 'qandaentry']"/>
+  <xsl:variable name="preamble" select="*[local-name(.) != 'title'                                           and local-name(.) != 'titleabbrev'                                           and local-name(.) != 'qandadiv'                                           and local-name(.) != 'qandaentry']"/>
   <xsl:variable name="toc">
     <xsl:call-template name="pi.dbhtml_toc"/>
   </xsl:variable>
@@ -35,8 +31,7 @@
   <div>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates select="$title"/>
-    <xsl:if test="((contains($toc.params, 'toc') and $toc != '0') or $toc = '1')
-                  and not(ancestor::answer and not($qanda.nested.in.toc=0))">
+    <xsl:if test="((contains($toc.params, 'toc') and $toc != '0') or $toc = '1')                   and not(ancestor::answer and not($qanda.nested.in.toc=0))">
       <xsl:call-template name="process.qanda.toc"/>
     </xsl:if>
     <xsl:apply-templates select="$preamble"/>
@@ -44,13 +39,11 @@
   </div>
 </xsl:template>
 
-<xsl:template match="qandaset/blockinfo/title|
-                     qandaset/info/title|
-                     qandaset/title">
+<xsl:template match="qandaset/blockinfo/title|                      qandaset/info/title|                      qandaset/title">
   <xsl:variable name="qalevel">
     <xsl:call-template name="qanda.section.level"/>
   </xsl:variable>
-  <xsl:element name="h{string(number($qalevel)+1)}">
+  <xsl:element name="h{string(number($qalevel)+1)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:attribute name="class">
       <xsl:value-of select="local-name(.)"/>
     </xsl:attribute>
@@ -68,14 +61,11 @@
 </xsl:template>
 
 <xsl:template match="qandadiv">
-  <xsl:variable name="preamble" select="*[local-name(.) != 'title'
-                                          and local-name(.) != 'titleabbrev'
-                                          and local-name(.) != 'qandadiv'
-                                          and local-name(.) != 'qandaentry']"/>
+  <xsl:variable name="preamble" select="*[local-name(.) != 'title'                                           and local-name(.) != 'titleabbrev'                                           and local-name(.) != 'qandadiv'                                           and local-name(.) != 'qandaentry']"/>
 
   <xsl:if test="blockinfo/title|info/title|title">
     <tr class="qandadiv">
-      <td align="left" valign="top" colspan="2">
+      <td align="{$direction.align.start}" valign="top" colspan="2">
         <xsl:apply-templates select="(blockinfo/title|info/title|title)[1]"/>
       </td>
     </tr>
@@ -93,14 +83,14 @@
 
   <xsl:if test="(contains($toc.params, 'toc') and $toc != '0') or $toc = '1'">
     <tr class="toc">
-      <td align="left" valign="top" colspan="2">
+      <td align="{$direction.align.start}" valign="top" colspan="2">
         <xsl:call-template name="process.qanda.toc"/>
       </td>
     </tr>
   </xsl:if>
   <xsl:if test="$preamble">
     <tr class="toc">
-      <td align="left" valign="top" colspan="2">
+      <td align="{$direction.align.start}" valign="top" colspan="2">
         <xsl:apply-templates select="$preamble"/>
       </td>
     </tr>
@@ -108,14 +98,12 @@
   <xsl:apply-templates select="qandadiv|qandaentry"/>
 </xsl:template>
 
-<xsl:template match="qandadiv/blockinfo/title|
-                     qandadiv/info/title|
-                     qandadiv/title">
+<xsl:template match="qandadiv/blockinfo/title|                      qandadiv/info/title|                      qandadiv/title">
   <xsl:variable name="qalevel">
     <xsl:call-template name="qandadiv.section.level"/>
   </xsl:variable>
 
-  <xsl:element name="h{string(number($qalevel)+1)}">
+  <xsl:element name="h{string(number($qalevel)+1)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:attribute name="class">
       <xsl:value-of select="local-name(.)"/>
     </xsl:attribute>
@@ -140,8 +128,7 @@
   <xsl:variable name="deflabel">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::*[@defaultlabel]">
-        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]
-                              /@defaultlabel"/>
+        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]                               /@defaultlabel"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="$qanda.defaultlabel"/>
@@ -151,7 +138,7 @@
 
   <tr>
     <xsl:apply-templates select="." mode="class.attribute"/>
-    <td align="left" valign="top">
+    <td align="{$direction.align.start}" valign="top">
       <xsl:call-template name="anchor">
         <xsl:with-param name="node" select=".."/>
         <xsl:with-param name="conditional" select="0"/>
@@ -173,7 +160,7 @@
         </b></p>
       </xsl:if>
     </td>
-    <td align="left" valign="top">
+    <td align="{$direction.align.start}" valign="top">
       <xsl:choose>
         <xsl:when test="$deflabel = 'none' and not(label)">
           <b><xsl:apply-templates select="*[local-name(.) != 'label']"/></b>
@@ -190,8 +177,7 @@
   <xsl:variable name="deflabel">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::*[@defaultlabel]">
-        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]
-                              /@defaultlabel"/>
+        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]                               /@defaultlabel"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="$qanda.defaultlabel"/>
@@ -200,7 +186,7 @@
   </xsl:variable>
 
   <tr class="{local-name(.)}">
-    <td align="left" valign="top">
+    <td align="{$direction.align.start}" valign="top">
       <xsl:call-template name="anchor"/>
       <xsl:variable name="answer.label">
         <xsl:apply-templates select="." mode="label.markup"/>
@@ -211,9 +197,8 @@
         </b></p>
       </xsl:if>
     </td>
-    <td align="left" valign="top">
-      <xsl:apply-templates select="*[local-name(.) != 'label'
-        and local-name(.) != 'qandaentry']"/>
+    <td align="{$direction.align.start}" valign="top">
+      <xsl:apply-templates select="*[local-name(.) != 'label'         and local-name(.) != 'qandaentry']"/>
       <!-- * handle nested answer/qandaentry instances -->
       <!-- * (bug 1509043 from Daniel Leidert) -->
       <xsl:if test="descendant::question">
@@ -243,9 +228,7 @@
   <dd><xsl:call-template name="process.qanda.toc"/></dd>
 </xsl:template>
 
-<xsl:template match="qandadiv/blockinfo/title|
-                     qandadiv/info/title|
-                     qandadiv/title" mode="qandatoc.mode">
+<xsl:template match="qandadiv/blockinfo/title|                      qandadiv/info/title|                      qandadiv/title" mode="qandatoc.mode">
   <xsl:variable name="qalevel">
     <xsl:call-template name="qandadiv.section.level"/>
   </xsl:variable>
@@ -285,8 +268,7 @@
   <xsl:variable name="deflabel">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::*[@defaultlabel]">
-        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]
-                              /@defaultlabel"/>
+        <xsl:value-of select="(ancestor-or-self::*[@defaultlabel])[last()]                               /@defaultlabel"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="$qanda.defaultlabel"/>
@@ -362,7 +344,7 @@
       </xsl:attribute>
     </xsl:if>
 
-    <col align="left">
+    <col align="{$direction.align.start}">
       <xsl:attribute name="width">
         <xsl:choose>
           <xsl:when test="$label-width != ''">

@@ -1,10 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:xlink='http://www.w3.org/1999/xlink'
-                exclude-result-prefixes="suwl exsl xlink"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" xmlns:exsl="http://exslt.org/common" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="suwl exsl xlink" version="1.0">
 
 <!-- ********************************************************************
      $Id: xref.xsl 7107 2007-07-22 10:22:06Z xmldoc $
@@ -17,8 +14,7 @@
      ******************************************************************** -->
 
 <!-- Use internal variable for olink xlink role for consistency -->
-<xsl:variable 
-      name="xolink.role">http://docbook.org/xlink/role/olink</xsl:variable>
+<xsl:variable name="xolink.role">http://docbook.org/xlink/role/olink</xsl:variable>
 
 <!-- ==================================================================== -->
 
@@ -32,9 +28,7 @@
   <xsl:param name="xhref" select="@xlink:href"/>
   <!-- is the @xlink:href a local idref link? -->
   <xsl:param name="xlink.idref">
-    <xsl:if test="starts-with($xhref,'#')
-                  and (not(contains($xhref,'&#40;'))
-                  or starts-with($xhref, '#xpointer&#40;id&#40;'))">
+    <xsl:if test="starts-with($xhref,'#')                   and (not(contains($xhref,'('))                   or starts-with($xhref, '#xpointer(id('))">
       <xsl:call-template name="xpointer.idref">
         <xsl:with-param name="xpointer" select="$xhref"/>
       </xsl:call-template>
@@ -46,8 +40,7 @@
 
   <xsl:variable name="xrefstyle">
     <xsl:choose>
-      <xsl:when test="@role and not(@xrefstyle) 
-                      and $use.role.as.xrefstyle != 0">
+      <xsl:when test="@role and not(@xrefstyle)                        and $use.role.as.xrefstyle != 0">
         <xsl:value-of select="@role"/>
       </xsl:when>
       <xsl:otherwise>
@@ -246,15 +239,9 @@
 <xsl:template match="*" mode="remove-ids">
   <xsl:choose>
     <!-- handle html or xhtml -->
-    <xsl:when test="local-name(.) = 'a'
-                    and (namespace-uri(.) = ''
-                         or namespace-uri(.) = 'http://www.w3.org/1999/xhtml')">
+    <xsl:when test="local-name(.) = 'a'                     and (namespace-uri(.) = ''                          or namespace-uri(.) = 'http://www.w3.org/1999/xhtml')">
       <xsl:choose>
-        <xsl:when test="(@name and count(@*) = 1)
-                        or (@id and count(@*) = 1)
-                        or (@xml:id and count(@*) = 1)
-                        or (@xml:id and @name and count(@*) = 2)
-                        or (@id and @name and count(@*) = 2)">
+        <xsl:when test="(@name and count(@*) = 1)                         or (@id and count(@*) = 1)                         or (@xml:id and count(@*) = 1)                         or (@xml:id and @name and count(@*) = 2)                         or (@id and @name and count(@*) = 2)">
           <xsl:message>suppress anchor</xsl:message>
           <!-- suppress the whole thing -->
         </xsl:when>
@@ -266,8 +253,7 @@
                   <xsl:copy/>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:message>removing <xsl:value-of 
-                             select="local-name(.)"/></xsl:message>
+                  <xsl:message>removing <xsl:value-of select="local-name(.)"/></xsl:message>
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:for-each>
@@ -284,8 +270,7 @@
               <xsl:copy/>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:message>removing <xsl:value-of 
-                        select="local-name(.)"/></xsl:message>
+              <xsl:message>removing <xsl:value-of select="local-name(.)"/></xsl:message>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:for-each>
@@ -342,14 +327,7 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="abstract|authorblurb|personblurb|bibliodiv|bibliomset
-                     |biblioset|blockquote|calloutlist|caution|colophon
-                     |constraintdef|formalpara|glossdiv|important|indexdiv
-                     |itemizedlist|legalnotice|lot|msg|msgexplan|msgmain
-                     |msgrel|msgset|msgsub|note|orderedlist|partintro
-                     |productionset|qandadiv|refsynopsisdiv|segmentedlist
-                     |set|setindex|sidebar|tip|toc|variablelist|warning"
-              mode="xref-to">
+<xsl:template match="abstract|authorblurb|personblurb|bibliodiv|bibliomset                      |biblioset|blockquote|calloutlist|caution|colophon                      |constraintdef|formalpara|glossdiv|important|indexdiv                      |itemizedlist|legalnotice|lot|msg|msgexplan|msgmain                      |msgrel|msgset|msgsub|note|orderedlist|partintro                      |productionset|qandadiv|refsynopsisdiv|segmentedlist                      |set|setindex|sidebar|tip|toc|variablelist|warning" mode="xref-to">
   <xsl:param name="referrer"/>
   <xsl:param name="xrefstyle"/>
   <xsl:param name="verbose" select="1"/>
@@ -468,14 +446,12 @@
     <xsl:when test="string(.) = ''">
       <xsl:variable name="bib" select="document($bibliography.collection,.)"/>
       <xsl:variable name="id" select="(@id|@xml:id)[1]"/>
-      <xsl:variable name="entry" select="$bib/bibliography/
-                                    *[@id=$id or @xml:id=$id][1]"/>
+      <xsl:variable name="entry" select="$bib/bibliography/                                     *[@id=$id or @xml:id=$id][1]"/>
       <xsl:choose>
         <xsl:when test="$entry">
           <xsl:choose>
             <xsl:when test="$bibliography.numbered != 0">
-              <xsl:number from="bibliography" count="biblioentry|bibliomixed"
-                          level="any" format="1"/>
+              <xsl:number from="bibliography" count="biblioentry|bibliomixed" level="any" format="1"/>
             </xsl:when>
             <xsl:when test="local-name($entry/*[1]) = 'abbrev'">
               <xsl:apply-templates select="$entry/*[1]"/>
@@ -499,8 +475,7 @@
     <xsl:otherwise>
       <xsl:choose>
         <xsl:when test="$bibliography.numbered != 0">
-          <xsl:number from="bibliography" count="biblioentry|bibliomixed"
-                      level="any" format="1"/>
+          <xsl:number from="bibliography" count="biblioentry|bibliomixed" level="any" format="1"/>
         </xsl:when>
         <xsl:when test="local-name(*[1]) = 'abbrev'">
           <xsl:apply-templates select="*[1]"/>
@@ -585,9 +560,7 @@
   </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template match="section|simplesect
-                     |sect1|sect2|sect3|sect4|sect5
-                     |refsect1|refsect2|refsect3|refsection" mode="xref-to">
+<xsl:template match="section|simplesect                      |sect1|sect2|sect3|sect4|sect5                      |refsect1|refsect2|refsect3|refsection" mode="xref-to">
   <xsl:param name="referrer"/>
   <xsl:param name="xrefstyle"/>
   <xsl:param name="verbose" select="1"/>
@@ -782,29 +755,7 @@
   <xsl:param name="xrefstyle"/>
   <xsl:param name="verbose" select="1"/>
 
-  <xsl:variable name="context" select="(ancestor::simplesect
-                                       |ancestor::section
-                                       |ancestor::sect1
-                                       |ancestor::sect2
-                                       |ancestor::sect3
-                                       |ancestor::sect4
-                                       |ancestor::sect5
-                                       |ancestor::refsection
-                                       |ancestor::refsect1
-                                       |ancestor::refsect2
-                                       |ancestor::refsect3
-                                       |ancestor::chapter
-                                       |ancestor::appendix
-                                       |ancestor::preface
-                                       |ancestor::partintro
-                                       |ancestor::dedication
-                                       |ancestor::colophon
-                                       |ancestor::bibliography
-                                       |ancestor::index
-                                       |ancestor::glossary
-                                       |ancestor::glossentry
-                                       |ancestor::listitem
-                                       |ancestor::varlistentry)[last()]"/>
+  <xsl:variable name="context" select="(ancestor::simplesect                                        |ancestor::section                                        |ancestor::sect1                                        |ancestor::sect2                                        |ancestor::sect3                                        |ancestor::sect4                                        |ancestor::sect5                                        |ancestor::refsection                                        |ancestor::refsect1                                        |ancestor::refsect2                                        |ancestor::refsect3                                        |ancestor::chapter                                        |ancestor::appendix                                        |ancestor::preface                                        |ancestor::partintro                                        |ancestor::dedication                                        |ancestor::colophon                                        |ancestor::bibliography                                        |ancestor::index                                        |ancestor::glossary                                        |ancestor::glossentry                                        |ancestor::listitem                                        |ancestor::varlistentry)[last()]"/>
 
   <xsl:apply-templates select="$context" mode="xref-to">
     <xsl:with-param name="purpose" select="'xref'"/>
@@ -961,7 +912,7 @@
     <a>
       <xsl:apply-templates select="." mode="class.attribute"/>
       <xsl:if test="@id or @xml:id">
-        <xsl:attribute name="name">
+        <xsl:attribute name="id">
           <xsl:value-of select="(@id|@xml:id)[1]"/>
         </xsl:attribute>
       </xsl:if>
@@ -1002,17 +953,14 @@
 
   <xsl:choose>
     <!-- olinks resolved by stylesheet and target database -->
-    <xsl:when test="@targetdoc or @targetptr or
-                    (@xlink:role=$xolink.role and
-                     contains(@xlink:href, '#') )" >
+    <xsl:when test="@targetdoc or @targetptr or                     (@xlink:role=$xolink.role and                      contains(@xlink:href, '#') )">
 
       <xsl:variable name="targetdoc.att">
         <xsl:choose>
           <xsl:when test="@targetdoc != ''">
             <xsl:value-of select="@targetdoc"/>
           </xsl:when>
-          <xsl:when test="@xlink:role=$xolink.role and
-                       contains(@xlink:href, '#')" >
+          <xsl:when test="@xlink:role=$xolink.role and                        contains(@xlink:href, '#')">
             <xsl:value-of select="substring-before(@xlink:href, '#')"/>
           </xsl:when>
         </xsl:choose>
@@ -1023,8 +971,7 @@
           <xsl:when test="@targetptr != ''">
             <xsl:value-of select="@targetptr"/>
           </xsl:when>
-          <xsl:when test="@xlink:role=$xolink.role and
-                       contains(@xlink:href, '#')" >
+          <xsl:when test="@xlink:role=$xolink.role and                        contains(@xlink:href, '#')">
             <xsl:value-of select="substring-after(@xlink:href, '#')"/>
           </xsl:when>
         </xsl:choose>
@@ -1044,8 +991,7 @@
         </xsl:call-template>
       </xsl:variable>
     
-      <xsl:variable name="target.database" 
-          select="document($target.database.filename,/)"/>
+      <xsl:variable name="target.database" select="document($target.database.filename,/)"/>
     
       <xsl:if test="$olink.debug != 0">
         <xsl:message>
@@ -1140,8 +1086,7 @@
           <xsl:when test="@linkmode">
             <!-- use the linkmode to get the base URI, use localinfo as fragid -->
             <xsl:variable name="modespec" select="key('id',@linkmode)"/>
-            <xsl:if test="count($modespec) != 1
-                          or local-name($modespec) != 'modespec'">
+            <xsl:if test="count($modespec) != 1                           or local-name($modespec) != 'modespec'">
               <xsl:message>Warning: olink linkmode pointer is wrong.</xsl:message>
             </xsl:if>
             <xsl:value-of select="$modespec"/>
@@ -1152,8 +1097,7 @@
           </xsl:when>
           <xsl:when test="@type = 'href'">
             <xsl:call-template name="olink.outline">
-              <xsl:with-param name="outline.base.uri"
-                              select="unparsed-entity-uri(@targetdocent)"/>
+              <xsl:with-param name="outline.base.uri" select="unparsed-entity-uri(@targetdocent)"/>
               <xsl:with-param name="localinfo" select="@localinfo"/>
               <xsl:with-param name="return" select="'href'"/>
             </xsl:call-template>
@@ -1198,17 +1142,14 @@
   <xsl:param name="localinfo"/>
   <xsl:param name="return" select="href"/>
 
-  <xsl:variable name="outline-file"
-                select="concat($outline.base.uri,
-                               $olink.outline.ext)"/>
+  <xsl:variable name="outline-file" select="concat($outline.base.uri,                                $olink.outline.ext)"/>
 
   <xsl:variable name="outline" select="document($outline-file,.)/div"/>
 
   <xsl:variable name="node-href">
     <xsl:choose>
       <xsl:when test="$localinfo != ''">
-        <xsl:variable name="node" select="$outline//
-                                   *[@id=$localinfo or @xml:id=$localinfo]"/>
+        <xsl:variable name="node" select="$outline//                                    *[@id=$localinfo or @xml:id=$localinfo]"/>
         <xsl:value-of select="$node/@href"/>
       </xsl:when>
       <xsl:otherwise>
@@ -1220,8 +1161,7 @@
   <xsl:variable name="node-xref">
     <xsl:choose>
       <xsl:when test="$localinfo != ''">
-        <xsl:variable name="node" select="$outline//
-                               *[@id=$localinfo or @xml:id=$localinfo]"/>
+        <xsl:variable name="node" select="$outline//                                *[@id=$localinfo or @xml:id=$localinfo]"/>
         <xsl:copy-of select="$node/xref"/>
       </xsl:when>
       <xsl:otherwise>

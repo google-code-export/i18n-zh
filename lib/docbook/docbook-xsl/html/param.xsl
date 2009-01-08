@@ -3,7 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!-- ********************************************************************
-     $Id: param.xweb 8092 2008-07-18 21:26:36Z kosek $
+     $Id: param.xweb 8177 2008-12-15 22:21:16Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -404,6 +404,16 @@ set       toc,title
 <xsl:param name="variablelist.as.table" select="0"/>
 <xsl:param name="variablelist.term.separator">, </xsl:param>
 <xsl:param name="variablelist.term.break.after">0</xsl:param>
+<xsl:param name="writing.mode">
+  <xsl:call-template name="gentext">
+    <xsl:with-param name="key">writing-mode</xsl:with-param>
+    <xsl:with-param name="lang">
+      <xsl:call-template name="l10n.language">
+        <xsl:with-param name="target" select="/*[1]"/>
+      </xsl:call-template>
+    </xsl:with-param>
+  </xsl:call-template>
+</xsl:param>
 <xsl:param name="xref.with.number.and.title" select="1"/>
 <xsl:param name="xref.label-title.separator">: </xsl:param>
 <xsl:param name="xref.label-page.separator"><xsl:text> </xsl:text></xsl:param>

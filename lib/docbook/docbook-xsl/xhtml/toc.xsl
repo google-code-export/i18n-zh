@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: toc.xsl 8096 2008-08-03 13:07:57Z mzjn $
@@ -19,7 +20,7 @@
     <xsl:when test="*">
       <xsl:if test="$process.source.toc != 0">
         <!-- if the toc isn't empty, process it -->
-        <xsl:element name="{$toc.list.type}">
+        <xsl:element name="{$toc.list.type}" namespace="http://www.w3.org/1999/xhtml">
           <xsl:apply-templates/>
         </xsl:element>
       </xsl:if>
@@ -27,27 +28,17 @@
     <xsl:otherwise>
       <xsl:if test="$process.empty.source.toc != 0">
         <xsl:choose>
-          <xsl:when test="parent::section
-                          or parent::sect1
-                          or parent::sect2
-                          or parent::sect3
-                          or parent::sect4
-                          or parent::sect5">
-            <xsl:apply-templates select="parent::*"
-                                 mode="toc.for.section"/>
+          <xsl:when test="parent::section                           or parent::sect1                           or parent::sect2                           or parent::sect3                           or parent::sect4                           or parent::sect5">
+            <xsl:apply-templates select="parent::*" mode="toc.for.section"/>
           </xsl:when>
           <xsl:when test="parent::article">
-            <xsl:apply-templates select="parent::*"
-                                 mode="toc.for.component"/>
+            <xsl:apply-templates select="parent::*" mode="toc.for.component"/>
           </xsl:when>
-          <xsl:when test="parent::book
-                          or parent::part">
-            <xsl:apply-templates select="parent::*"
-                                 mode="toc.for.division"/>
+          <xsl:when test="parent::book                           or parent::part">
+            <xsl:apply-templates select="parent::*" mode="toc.for.division"/>
           </xsl:when>
           <xsl:when test="parent::set">
-            <xsl:apply-templates select="parent::*"
-                                 mode="toc.for.set"/>
+            <xsl:apply-templates select="parent::*" mode="toc.for.set"/>
           </xsl:when>
           <!-- there aren't any other contexts that allow toc -->
           <xsl:otherwise>
@@ -61,20 +52,19 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="tocpart|tocchap
-                     |toclevel1|toclevel2|toclevel3|toclevel4|toclevel5">
+<xsl:template match="tocpart|tocchap                      |toclevel1|toclevel2|toclevel3|toclevel4|toclevel5">
   <xsl:variable name="sub-toc">
     <xsl:if test="tocchap|toclevel1|toclevel2|toclevel3|toclevel4|toclevel5">
       <xsl:choose>
         <xsl:when test="$toc.list.type = 'dl'">
           <dd>
-            <xsl:element name="{$toc.list.type}">
+            <xsl:element name="{$toc.list.type}" namespace="http://www.w3.org/1999/xhtml">
               <xsl:apply-templates select="tocchap|toclevel1|toclevel2|toclevel3|toclevel4|toclevel5"/>
             </xsl:element>
           </dd>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:element name="{$toc.list.type}">
+          <xsl:element name="{$toc.list.type}" namespace="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="tocchap|toclevel1|toclevel2|toclevel3|toclevel4|toclevel5"/>
           </xsl:element>
         </xsl:otherwise>

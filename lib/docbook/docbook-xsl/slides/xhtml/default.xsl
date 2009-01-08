@@ -1,10 +1,11 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
-<xsl:output method="html"/>
+<xsl:output method="xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:param name="css.stylesheet" select="'slides-default.css'"/>
 
@@ -16,8 +17,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <xsl:call-template name="generate.toc.hide.show"/>
         <td align="left" width="10%">
@@ -40,8 +40,7 @@
         </td>
         <td align="center" width="80%">
           <xsl:variable name="prestitle">
-            <xsl:value-of select="(/slides/slidesinfo/title
-                                  |/slides/title)[1]"/>
+            <xsl:value-of select="(/slides/slidesinfo/title                                   |/slides/title)[1]"/>
           </xsl:variable>
 
           <span class="navheader">
@@ -81,21 +80,16 @@
 
   <div class="navfoot">
     <hr class="bottom-nav-sep"/>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left" width="80%" valign="top">
           <span class="navfooter">
-            <xsl:apply-templates select="/slides/slidesinfo/copyright"
-                                 mode="slide.footer.mode"/>
+            <xsl:apply-templates select="/slides/slidesinfo/copyright" mode="slide.footer.mode"/>
           </span>
         </td>
         <td align="right" width="20%" valign="top">
           <span class="index">
-            <xsl:value-of select="count(preceding::foil)
-                                  + count(preceding::foilgroup)
-                                  + count(ancestor::foilgroup)
-                                  + 1"/>
+            <xsl:value-of select="count(preceding::foil)                                   + count(preceding::foilgroup)                                   + count(ancestor::foilgroup)                                   + 1"/>
           </span>
           <xsl:text>&#160;</xsl:text>
         </td>
@@ -114,8 +108,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left" width="10%">
           <span class="toclink">
@@ -145,21 +138,17 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navfoot">
-    <table width="100%" border="0"
-           cellspacing="0" cellpadding="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="Navigation">
       <tr>
         <td align="left" width="80%" valign="top">
           <span class="navfooter">
-            <xsl:apply-templates select="/slides/slidesinfo/copyright"
-                                 mode="slide.footer.mode"/>
+            <xsl:apply-templates select="/slides/slidesinfo/copyright" mode="slide.footer.mode"/>
           </span>
         </td>
         <td align="right" width="20%" valign="top">
           <a>
             <xsl:attribute name="href">
-              <xsl:apply-templates select="(following::foilgroup|following::foil)[1]"
-                                   mode="filename"/>
+              <xsl:apply-templates select="(following::foilgroup|following::foil)[1]" mode="filename"/>
             </xsl:attribute>
             <img alt="Next" border="0">
               <xsl:attribute name="src">
@@ -181,8 +170,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="Navigation">
       <tr>
         <td align="left">
           <xsl:text>&#160;</xsl:text>
@@ -194,14 +182,11 @@
 
 <xsl:template name="toc-bottom-nav">
   <div class="navfoot">
-    <table width="100%" border="0"
-           cellspacing="0" cellpadding="0"
-           summary="Navigation">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="Navigation">
       <tr>
         <td align="left" width="80%" valign="top">
           <span class="navfooter">
-            <xsl:apply-templates select="/slides/slidesinfo/copyright"
-                                 mode="slide.footer.mode"/>
+            <xsl:apply-templates select="/slides/slidesinfo/copyright" mode="slide.footer.mode"/>
           </span>
         </td>
         <td align="right" width="20%" valign="top">
@@ -249,8 +234,8 @@
   </xsl:attribute>
 </xsl:template>
 
-<xsl:template match="html:*" xmlns:html='http://www.w3.org/1999/xhtml'>
-  <xsl:element name="{local-name(.)}" namespace="">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:*">
+  <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:apply-templates select="@*" mode="copy"/>
     <xsl:apply-templates/>
   </xsl:element>

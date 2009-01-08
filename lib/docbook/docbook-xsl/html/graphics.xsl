@@ -11,7 +11,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: graphics.xsl 8120 2008-09-13 16:06:56Z mzjn $
+     $Id: graphics.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -1352,7 +1352,7 @@ valign: <xsl:value-of select="@valign"/></xsl:message>
     </xsl:call-template>
   </xsl:variable>
 
-  <div class="longdesc-link" align="right">
+  <div class="longdesc-link" align="{$direction.align.end}">
     <br clear="all"/>
     <span class="longdesc-link">
       <xsl:text>[</xsl:text>

@@ -1,6 +1,7 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
@@ -15,8 +16,7 @@
 <!-- ============================================================ -->
 
 <xsl:template name="foilgroup-body">
-  <table border="0" width="100%" summary="Navigation and body table"
-         cellpadding="0" cellspacing="0">
+  <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
     <tr>
       <td width="{$toc.width}" valign="top" align="left">
 	<xsl:if test="$toc.bg.color != ''">
@@ -36,8 +36,7 @@
 	  </xsl:attribute>
 	</xsl:if>
         <div class="{name(.)}">
-          <xsl:apply-templates select="*[name(.) != 'foil'
-                                         and name(.) != 'foilgroup']"/>
+          <xsl:apply-templates select="*[name(.) != 'foil'                                          and name(.) != 'foilgroup']"/>
         </div>
 
 	<xsl:if test="$foilgroup.toc != 0">
@@ -51,8 +50,7 @@
 </xsl:template>
 
 <xsl:template name="foil-body">
-  <table border="0" width="100%" summary="Navigation and body table"
-         cellpadding="0" cellspacing="0">
+  <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
     <tr>
       <td width="{$toc.width}" valign="top" align="left">
 	<xsl:if test="$toc.bg.color != ''">

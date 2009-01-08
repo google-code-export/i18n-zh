@@ -1,7 +1,7 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-		version="1.0"
-                exclude-result-prefixes="doc">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="doc">
 
 <!-- ********************************************************************
      $Id: chunktoc.xsl 6942 2007-07-04 04:42:17Z xmldoc $
@@ -74,12 +74,8 @@
   <xsl:variable name="chunks" select="document($chunk.toc,/)"/>
 
   <xsl:variable name="chunk" select="$chunks//tocentry[@linkend=$id]"/>
-  <xsl:variable name="prev-id"
-                select="($chunk/preceding::tocentry
-                         |$chunk/ancestor::tocentry)[last()]/@linkend"/>
-  <xsl:variable name="next-id"
-                select="($chunk/following::tocentry
-                         |$chunk/child::tocentry)[1]/@linkend"/>
+  <xsl:variable name="prev-id" select="($chunk/preceding::tocentry                          |$chunk/ancestor::tocentry)[last()]/@linkend"/>
+  <xsl:variable name="next-id" select="($chunk/following::tocentry                          |$chunk/child::tocentry)[1]/@linkend"/>
 
   <xsl:variable name="prev" select="key('id',$prev-id)"/>
   <xsl:variable name="next" select="key('id',$next-id)"/>
@@ -194,13 +190,11 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="setindex
-                     |book/index
-                     |article/index">
+<xsl:template match="setindex                      |book/index                      |article/index">
   <!-- some implementations use completely empty index tags to indicate -->
   <!-- where an automatically generated index should be inserted. so -->
   <!-- if the index is completely empty, skip it. -->
-  <xsl:if test="count(*)>0 or $generate.index != '0'">
+  <xsl:if test="count(*)&gt;0 or $generate.index != '0'">
     <xsl:call-template name="process-chunk"/>
   </xsl:if>
 </xsl:template>

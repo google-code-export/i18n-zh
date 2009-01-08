@@ -5,7 +5,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: footnote.xsl 8126 2008-09-15 19:18:09Z dcramer $
+     $Id: footnote.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -242,7 +242,7 @@ linkend/id: <xsl:value-of select="@linkend"/>
   <xsl:if test="count($footnotes)>count($table.footnotes)">
     <div class="footnotes">
       <br/>
-      <hr width="100" align="left"/>
+      <hr width="100" align="{$direction.align.start}"/>
       <xsl:apply-templates select="$footnotes" mode="process.footnote.mode"/>
     </div>
   </xsl:if>

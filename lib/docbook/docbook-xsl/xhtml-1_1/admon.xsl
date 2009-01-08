@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: admon.xsl 7072 2007-07-17 16:14:37Z xmldoc $
+     $Id: admon.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -78,16 +79,14 @@
       </xsl:attribute>
       <tr>
         <td rowspan="2" align="center" valign="top">
-          <xsl:attribute name="width">
-            <xsl:apply-templates select="." mode="admon.graphic.width"/>
-          </xsl:attribute>
+          
           <img alt="[{$alt}]">
             <xsl:attribute name="src">
               <xsl:call-template name="admon.graphic"/>
             </xsl:attribute>
           </img>
         </td>
-        <th align="left">
+        <th align="{$direction.align.start}">
           <xsl:call-template name="anchor"/>
           <xsl:if test="$admon.textlabel != 0 or title or info/title">
             <xsl:apply-templates select="." mode="object.title.markup"/>
@@ -95,7 +94,7 @@
         </th>
       </tr>
       <tr>
-        <td align="left" valign="top">
+        <td align="{$direction.align.start}" valign="top">
           <xsl:apply-templates/>
         </td>
       </tr>
@@ -123,10 +122,10 @@
   </div>
 </xsl:template>
 
-<xsl:template match="note/title"></xsl:template>
-<xsl:template match="important/title"></xsl:template>
-<xsl:template match="warning/title"></xsl:template>
-<xsl:template match="caution/title"></xsl:template>
-<xsl:template match="tip/title"></xsl:template>
+<xsl:template match="note/title"/>
+<xsl:template match="important/title"/>
+<xsl:template match="warning/title"/>
+<xsl:template match="caution/title"/>
+<xsl:template match="tip/title"/>
 
 </xsl:stylesheet>

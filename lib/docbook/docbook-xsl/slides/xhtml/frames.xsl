@@ -1,6 +1,7 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
@@ -85,7 +86,7 @@
   <xsl:variable name="toc.height" select="$toc.rows * $toc.row.height"/>
 
   <xsl:if test="$overlay != 0 and $multiframe != 0">
-    <xsl:message terminate='yes'>
+    <xsl:message terminate="yes">
       <xsl:text>Multiframe and overlay are mutually exclusive.</xsl:text>
     </xsl:message>
   </xsl:if>
@@ -145,9 +146,7 @@
           </xsl:if>
           <xsl:apply-templates select="/processing-instruction('dbhtml')" mode="css.pi"/>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0
-                        or $overlay.logo != ''">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0                         or $overlay.logo != ''">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -263,8 +262,7 @@ function init() {
 <!-- ====================================================================== -->
 
 <xsl:template match="slidesinfo">
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
 
   <xsl:variable name="doctype-public">
     <xsl:call-template name="doctype-public">
@@ -282,8 +280,7 @@ function init() {
     <xsl:with-param name="indent" select="$output.indent"/>
     <xsl:with-param name="doctype-public" select="$doctype-public"/>
     <xsl:with-param name="doctype-system" select="$doctype-system"/>
-    <xsl:with-param name="filename"
-                    select="concat($base.dir,$titlefoil.html)"/>
+    <xsl:with-param name="filename" select="concat($base.dir,$titlefoil.html)"/>
     <xsl:with-param name="content">
       <html>
         <head>
@@ -308,8 +305,7 @@ function init() {
             <xsl:with-param name="next" select="$next"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -397,8 +393,7 @@ function init() {
     <xsl:value-of select="$titlefoil.html"/>
   </xsl:variable>
 
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -427,8 +422,7 @@ function init() {
             <xsl:with-param name="next" select="$next"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -481,8 +475,7 @@ function init() {
     <xsl:value-of select="$titlefoil.html"/>
   </xsl:variable>
 
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -511,8 +504,7 @@ function init() {
             <xsl:with-param name="next" select="$next"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -555,8 +547,7 @@ function init() {
     <xsl:value-of select="$titlefoil.html"/>
   </xsl:variable>
 
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -585,8 +576,7 @@ function init() {
             <xsl:with-param name="next" select="$next"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -643,8 +633,7 @@ function init() {
     <xsl:call-template name="object.id"/>
   </xsl:variable>
 
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
 
   <body class="titlepage">
     <xsl:call-template name="body.attributes"/>
@@ -693,9 +682,7 @@ function init() {
           </xsl:otherwise>
         </xsl:choose>
 
-        <table width="100%" border="0"
-               cellspacing="0" cellpadding="0"
-               summary="Navigation">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="Navigation">
           <tr>
             <td align="left" width="80%" valign="top">
               <span class="navfooter">
@@ -735,8 +722,7 @@ function init() {
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table border="0" width="100%" cellspacing="0" cellpadding="0"
-           summary="Navigation table">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" summary="Navigation table">
       <tr>
         <td align="left" valign="bottom" width="10%">
           <xsl:choose>
@@ -806,12 +792,10 @@ function init() {
 
   <div class="navfoot">
     <hr class="bottom-nav-sep"/>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0"
-           summary="Navigation table">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" summary="Navigation table">
       <tr>
         <td align="left" valign="top">
-          <xsl:apply-templates select="/slides/slidesinfo/copyright"
-                               mode="slide.footer.mode"/>
+          <xsl:apply-templates select="/slides/slidesinfo/copyright" mode="slide.footer.mode"/>
           <xsl:text>&#160;</xsl:text>
         </td>
 
@@ -922,8 +906,7 @@ function init() {
 	    <xsl:with-param name="prev" select="$prev"/>
 	  </xsl:call-template>
 	  
-	  <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-		  or $dynamic.toc != 0 or $active.toc != 0">
+	  <xsl:if test="$overlay != 0 or $keyboard.nav != 0     or $dynamic.toc != 0 or $active.toc != 0">
 	    <script language="javascript" type="text/javascript">
 	      <xsl:text> </xsl:text>
 	    </script>
@@ -1045,8 +1028,7 @@ function init() {
             <xsl:with-param name="prev" select="$prev"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1130,8 +1112,7 @@ function init() {
             <xsl:with-param name="prev" select="$prev"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1213,8 +1194,7 @@ function init() {
             <xsl:with-param name="prev" select="$prev"/>
           </xsl:call-template>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1350,12 +1330,9 @@ function init() {
   </xsl:variable>
 
   <xsl:variable name="home" select="/slides"/>
-  <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
-  <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                    |parent::foilgroup[1]
-                                    |/slides)[last()]"/>
+  <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
+  <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                     |parent::foilgroup[1]                                     |/slides)[last()]"/>
 
   <xsl:variable name="doctype-public">
     <xsl:call-template name="doctype-public">
@@ -1399,8 +1376,7 @@ function init() {
 	    <xsl:with-param name="prev" select="$prev"/>
 	  </xsl:call-template>
 
-	  <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-		  or $dynamic.toc != 0 or $active.toc != 0">
+	  <xsl:if test="$overlay != 0 or $keyboard.nav != 0     or $dynamic.toc != 0 or $active.toc != 0">
 	    <script language="javascript" type="text/javascript">
 	      <xsl:text> </xsl:text>
 	    </script>
@@ -1489,12 +1465,9 @@ function init() {
   </xsl:variable>
 
   <xsl:variable name="home" select="/slides"/>
-  <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
-  <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                    |parent::foilgroup[1]
-                                    |/slides)[last()]"/>
+  <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
+  <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                     |parent::foilgroup[1]                                     |/slides)[last()]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -1517,8 +1490,7 @@ function init() {
           </xsl:if>
           <xsl:apply-templates select="/processing-instruction('dbhtml')" mode="css.pi"/>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javajcript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1593,8 +1565,7 @@ function init() {
           </xsl:if>
           <xsl:apply-templates select="/processing-instruction('dbhtml')" mode="css.pi"/>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1602,12 +1573,9 @@ function init() {
 
           <xsl:if test="$keyboard.nav != 0 or $dynamic.toc != 0 or $active.toc != 0">
             <xsl:variable name="home" select="/slides"/>
-            <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-            <xsl:variable name="next" select="(following::foil
-                                              |following::foilgroup)[1]"/>
-            <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                              |parent::foilgroup[1]
-                                              |/slides)[last()]"/>
+            <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+            <xsl:variable name="next" select="(following::foil                                               |following::foilgroup)[1]"/>
+            <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                               |parent::foilgroup[1]                                               |/slides)[last()]"/>
 
             <xsl:call-template name="links">
               <xsl:with-param name="home" select="$home"/>
@@ -1658,12 +1626,9 @@ function init() {
   </xsl:variable>
 
   <xsl:variable name="home" select="/slides"/>
-  <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
-  <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                    |parent::foilgroup[1]
-                                    |/slides)[last()]"/>
+  <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
+  <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                     |parent::foilgroup[1]                                     |/slides)[last()]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -1686,8 +1651,7 @@ function init() {
           </xsl:if>
           <xsl:apply-templates select="/processing-instruction('dbhtml')" mode="css.pi"/>
 
-          <xsl:if test="$overlay != 0 or $keyboard.nav != 0
-                        or $dynamic.toc != 0 or $active.toc != 0">
+          <xsl:if test="$overlay != 0 or $keyboard.nav != 0                         or $dynamic.toc != 0 or $active.toc != 0">
             <script language="javascript" type="text/javascript">
               <xsl:text> </xsl:text>
             </script>
@@ -1746,12 +1710,9 @@ function init() {
   </xsl:variable>
 
   <xsl:variable name="home" select="/slides"/>
-  <xsl:variable name="up"   select="(parent::slides|parent::foilgroup)[1]"/>
-  <xsl:variable name="next" select="(following::foil
-                                    |following::foilgroup)[1]"/>
-  <xsl:variable name="prev" select="(preceding-sibling::foil[1]
-                                    |parent::foilgroup[1]
-                                    |/slides)[last()]"/>
+  <xsl:variable name="up" select="(parent::slides|parent::foilgroup)[1]"/>
+  <xsl:variable name="next" select="(following::foil                                     |following::foilgroup)[1]"/>
+  <xsl:variable name="prev" select="(preceding-sibling::foil[1]                                     |parent::foilgroup[1]                                     |/slides)[last()]"/>
 
   <body class="foil">
     <xsl:call-template name="body.attributes"/>
@@ -1921,7 +1882,8 @@ function init() {
   </xsl:call-template>
 
   <xsl:text disable-output-escaping="yes">&lt;\/a&gt;&lt;\/div&gt;</xsl:text>
-  <xsl:text>');&#10;</xsl:text>
+  <xsl:text>');
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="foilgroup" mode="ns-toc">
@@ -1931,8 +1893,10 @@ function init() {
 
   <xsl:text>subList = new List(false, width, height, "</xsl:text>
 <xsl:value-of select="$toc.bg.color"/>
-<xsl:text>");&#10;</xsl:text>
-  <xsl:text>subList.setIndent(12);&#10;</xsl:text>
+<xsl:text>");
+</xsl:text>
+  <xsl:text>subList.setIndent(12);
+</xsl:text>
   <xsl:apply-templates select="foil" mode="ns-toc"/>
 
   <xsl:text>myList.addList(subList, '</xsl:text>
@@ -1961,7 +1925,8 @@ function init() {
   </xsl:call-template>
 
   <xsl:text disable-output-escaping="yes">&lt;\/a&gt;&lt;\/div&gt;</xsl:text>
-  <xsl:text>');&#10;</xsl:text>
+  <xsl:text>');
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="foil" mode="ns-toc">
@@ -2004,7 +1969,8 @@ function init() {
   </xsl:call-template>
 
   <xsl:text disable-output-escaping="yes">&lt;\/a&gt;&lt;\/div&gt;</xsl:text>
-  <xsl:text>');&#10;</xsl:text>
+  <xsl:text>');
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="speakernotes" mode="ns-toc">

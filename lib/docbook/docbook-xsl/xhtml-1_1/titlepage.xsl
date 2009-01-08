@@ -1,9 +1,10 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: titlepage.xsl 7441 2007-09-12 20:59:57Z mzjn $
+     $Id: titlepage.xsl 8178 2008-12-15 22:26:38Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -62,35 +63,23 @@
 <xsl:attribute-set name="section.titlepage.recto.style"/>
 <xsl:attribute-set name="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="sect1.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="sect1.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="sect1.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="sect1.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="sect2.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="sect2.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="sect2.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="sect2.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="sect3.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="sect3.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="sect3.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="sect3.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="sect4.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="sect4.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="sect4.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="sect4.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="sect5.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="sect5.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="sect5.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="sect5.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
-<xsl:attribute-set name="simplesect.titlepage.recto.style"
-                   use-attribute-sets="section.titlepage.recto.style"/>
-<xsl:attribute-set name="simplesect.titlepage.verso.style"
-                   use-attribute-sets="section.titlepage.verso.style"/>
+<xsl:attribute-set name="simplesect.titlepage.recto.style" use-attribute-sets="section.titlepage.recto.style"/>
+<xsl:attribute-set name="simplesect.titlepage.verso.style" use-attribute-sets="section.titlepage.verso.style"/>
 
 <xsl:attribute-set name="table.of.contents.titlepage.recto.style"/>
 <xsl:attribute-set name="table.of.contents.titlepage.verso.style"/>
@@ -152,10 +141,7 @@
   </xsl:variable>
 
   <xsl:choose>
-    <xsl:when test="$suppress-numbers = '0'
-                    and @linenumbering = 'numbered'
-                    and $use.extensions != '0'
-                    and $linenumbering.extension != '0'">
+    <xsl:when test="$suppress-numbers = '0'                     and @linenumbering = 'numbered'                     and $use.extensions != '0'                     and $linenumbering.extension != '0'">
       <div>
         <xsl:apply-templates select="." mode="class.attribute"/>
         <xsl:call-template name="paragraph">
@@ -227,12 +213,10 @@
     <xsl:if test="not($blurb.on.titlepage.enabled = 0)">
       <xsl:choose>
         <xsl:when test="$contrib.inline.enabled = 0">
-          <xsl:apply-templates mode="titlepage.mode"
-                               select="contrib|authorblurb|personblurb"/>
+          <xsl:apply-templates mode="titlepage.mode" select="contrib|authorblurb|personblurb"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates mode="titlepage.mode"
-                               select="authorblurb|personblurb"/>
+          <xsl:apply-templates mode="titlepage.mode" select="authorblurb|personblurb"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -367,8 +351,7 @@
     <xsl:call-template name="copyright.years">
       <xsl:with-param name="years" select="year"/>
       <xsl:with-param name="print.ranges" select="$make.year.ranges"/>
-      <xsl:with-param name="single.year.ranges"
-                      select="$make.single.year.ranges"/>
+      <xsl:with-param name="single.year.ranges" select="$make.single.year.ranges"/>
     </xsl:call-template>
     <xsl:call-template name="gentext.space"/>
     <xsl:apply-templates select="holder" mode="titlepage.mode"/>
@@ -578,7 +561,7 @@
     <xsl:otherwise>
       <div>
         <xsl:apply-templates select="." mode="class.attribute"/>
-        <a name="{$id}"/>
+        <a id="{$id}"/>
         <xsl:apply-templates mode="titlepage.mode"/>
       </div>
     </xsl:otherwise>
@@ -763,7 +746,7 @@
       <xsl:apply-templates select="." mode="class.attribute"/>
       <table border="1" width="100%" summary="Revision history">
         <tr>
-          <th align="left" valign="top" colspan="{$numcols}">
+          <th align="{$direction.align.start}" valign="top" colspan="{$numcols}">
             <b>
               <xsl:call-template name="gentext">
                 <xsl:with-param name="key" select="'RevHistory'"/>
@@ -822,7 +805,8 @@
               <xsl:copy-of select="$contents"/>
             </body>
           </html>
-          <xsl:text>&#x0a;</xsl:text>
+          <xsl:text>
+</xsl:text>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:when>
@@ -835,11 +819,11 @@
 <xsl:template match="revhistory/revision" mode="titlepage.mode">
   <xsl:param name="numcols" select="'3'"/>
   <xsl:variable name="revnumber" select="revnumber"/>
-  <xsl:variable name="revdate"   select="date"/>
+  <xsl:variable name="revdate" select="date"/>
   <xsl:variable name="revauthor" select="authorinitials|author"/>
   <xsl:variable name="revremark" select="revremark|revdescription"/>
   <tr>
-    <td align="left">
+    <td align="{$direction.align.start}">
       <xsl:if test="$revnumber">
         <xsl:call-template name="gentext">
           <xsl:with-param name="key" select="'Revision'"/>
@@ -848,12 +832,12 @@
         <xsl:apply-templates select="$revnumber[1]" mode="titlepage.mode"/>
       </xsl:if>
     </td>
-    <td align="left">
+    <td align="{$direction.align.start}">
       <xsl:apply-templates select="$revdate[1]" mode="titlepage.mode"/>
     </td>
     <xsl:choose>
       <xsl:when test="$revauthor">
-        <td align="left">
+        <td align="{$direction.align.start}">
           <xsl:for-each select="$revauthor">
             <xsl:apply-templates select="." mode="titlepage.mode"/>
             <xsl:if test="position() != last()">
@@ -865,12 +849,12 @@
       <xsl:when test="$numcols &gt; 2">
         <td>&#160;</td>
       </xsl:when>
-      <xsl:otherwise></xsl:otherwise>
+      <xsl:otherwise/>
     </xsl:choose>
   </tr>
   <xsl:if test="$revremark">
     <tr>
-      <td align="left" colspan="{$numcols}">
+      <td align="{$direction.align.start}" colspan="{$numcols}">
         <xsl:apply-templates select="$revremark[1]" mode="titlepage.mode"/>
       </td>
     </tr>
@@ -955,7 +939,7 @@
   <h1>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:if test="$generate.id.attributes = 0">
-      <a name="{$id}"/>
+      <a id="{$id}"/>
     </xsl:if>
     <xsl:choose>
       <xsl:when test="$show.revisionflag != 0 and @revisionflag">

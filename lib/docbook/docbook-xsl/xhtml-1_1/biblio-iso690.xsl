@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 
 <!-- ********************************************************************
@@ -197,7 +198,7 @@
   <!-- Edition -->
   <xsl:call-template name="iso690.edition"/>
   <!-- Place of publication, Publisher, Year/Date of publication, Date of update/revision, Date of citation -->
-  <xsl:call-template  name="iso690.paper.pub"/>
+  <xsl:call-template name="iso690.paper.pub"/>
   <!-- Numeration within host document [EL] -->
   <!-- Location within host -->
   <xsl:call-template name="iso690.location"/>
@@ -305,8 +306,7 @@
 </xsl:template>
 
 <xsl:template name="iso690.author.list">
-  <xsl:param name="person.list"
-             select="author|corpauthor|editor"/>
+  <xsl:param name="person.list" select="author|corpauthor|editor"/>
   <xsl:param name="person.count" select="count($person.list)"/>
   <xsl:param name="count" select="1"/>
   <xsl:param name="group" select="./authorgroup[@role='many']"/>
@@ -323,7 +323,7 @@
   </xsl:param>
 
   <xsl:choose>
-    <xsl:when test="$count &gt; $person.count"></xsl:when>
+    <xsl:when test="$count &gt; $person.count"/>
     <xsl:otherwise>
       <xsl:choose>
         <xsl:when test="$person.count &lt; 4 and not($group)">
@@ -829,7 +829,7 @@
   </xsl:param>
   <xsl:variable name="substr" select="substring(string(.),string-length(string(.)))"/>
   <xsl:if test="name(.)!='pubdate'">
-    <xsl:value-of select="'&#x00A9;'"/><!-- copyright -->
+    <xsl:value-of select="'&#169;'"/><!-- copyright -->
   </xsl:if>
   <xsl:apply-templates mode="iso690.mode"/>
   <xsl:call-template name="iso690.space">

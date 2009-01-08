@@ -1,20 +1,21 @@
-<?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
-<xsl:param name="but-fforward.png"  select="'active/but-fforward.png'"/>
-<xsl:param name="but-info.png"      select="'active/but-info.png'"/>
-<xsl:param name="but-next.png"      select="'active/but-next.png'"/>
-<xsl:param name="but-prev.png"      select="'active/but-prev.png'"/>
-<xsl:param name="but-rewind.png"    select="'active/but-rewind.png'"/>
+<xsl:param name="but-fforward.png" select="'active/but-fforward.png'"/>
+<xsl:param name="but-info.png" select="'active/but-info.png'"/>
+<xsl:param name="but-next.png" select="'active/but-next.png'"/>
+<xsl:param name="but-prev.png" select="'active/but-prev.png'"/>
+<xsl:param name="but-rewind.png" select="'active/but-rewind.png'"/>
 
 <xsl:param name="but-xfforward.png" select="'inactive/but-fforward.png'"/>
-<xsl:param name="but-xinfo.png"     select="'inactive/but-info.png'"/>
-<xsl:param name="but-xnext.png"     select="'inactive/but-next.png'"/>
-<xsl:param name="but-xprev.png"     select="'inactive/but-prev.png'"/>
-<xsl:param name="but-xrewind.png"   select="'inactive/but-rewind.png'"/>
+<xsl:param name="but-xinfo.png" select="'inactive/but-info.png'"/>
+<xsl:param name="but-xnext.png" select="'inactive/but-next.png'"/>
+<xsl:param name="but-xprev.png" select="'inactive/but-prev.png'"/>
+<xsl:param name="but-xrewind.png" select="'inactive/but-rewind.png'"/>
 
 <!-- overrides for this stylesheet -->
 <xsl:param name="titlefoil.html" select="concat('index', $html.ext)"/>
@@ -78,8 +79,7 @@
             </xsl:attribute>
           </xsl:if>
 
-          <table border="0" width="100%" summary="Navigation and body table"
-                 cellpadding="0" cellspacing="0">
+          <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
             <tr>
               <td>&#160;</td>
               <td><xsl:apply-templates select="." mode="header"/></td>
@@ -185,8 +185,7 @@
             </xsl:attribute>
           </xsl:if>
 
-          <table border="0" width="100%" summary="Navigation and body table"
-                 cellpadding="0" cellspacing="0">
+          <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
             <tr>
               <td>&#160;</td>
               <td><xsl:apply-templates select="." mode="header"/></td>
@@ -298,8 +297,7 @@
 	    </xsl:attribute>
 	  </xsl:if>
 
-	  <table border="0" width="100%" summary="Navigation and body table"
-		 cellpadding="0" cellspacing="0">
+	  <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
 	    <tr>
 	      <td>&#160;</td>
 	      <td><xsl:apply-templates select="." mode="header"/></td>
@@ -357,14 +355,11 @@
     <xsl:apply-templates select="." mode="filename"/>
   </xsl:variable>
 
-  <xsl:variable name="nextfoil" select="(following::foil
-                                        |following::foilgroup)[1]"/>
+  <xsl:variable name="nextfoil" select="(following::foil                                         |following::foilgroup)[1]"/>
 
   <xsl:variable name="lastfoil" select="following::foil[last()]"/>
 
-  <xsl:variable name="prevfoil" select="(preceding-sibling::foil[1]
-                                        |parent::foilgroup[1]
-                                        |/slides)[last()]"/>
+  <xsl:variable name="prevfoil" select="(preceding-sibling::foil[1]                                         |parent::foilgroup[1]                                         |/slides)[last()]"/>
 
   <xsl:call-template name="write.chunk">
     <xsl:with-param name="indent" select="$output.indent"/>
@@ -421,8 +416,7 @@
 	    </xsl:attribute>
 	  </xsl:if>
 
-	  <table border="0" width="100%" summary="Navigation and body table"
-		 cellpadding="0" cellspacing="0">
+	  <table border="0" width="100%" summary="Navigation and body table" cellpadding="0" cellspacing="0">
 	    <tr>
 	      <td>&#160;</td>
 	      <td><xsl:apply-templates select="." mode="header"/></td>
@@ -477,18 +471,13 @@
 
 <xsl:template match="foil|foilgroup" mode="header">
   <div class="navhead">
-    <table border="0" width="100%" summary="Header table"
-           cellpadding="0" cellspacing="0">
+    <table border="0" width="100%" summary="Header table" cellpadding="0" cellspacing="0">
       <tr>
         <td align="left">
-          <xsl:apply-templates select="/slides/slidesinfo/title"
-                               mode="slide.footer.mode"/>
+          <xsl:apply-templates select="/slides/slidesinfo/title" mode="slide.footer.mode"/>
         </td>
         <td align="right">
-          <xsl:value-of select="count(preceding::foil)
-                                + count(preceding::foilgroup)
-                                + count(ancestor::foilgroup)
-                                + 1"/>
+          <xsl:value-of select="count(preceding::foil)                                 + count(preceding::foilgroup)                                 + count(ancestor::foilgroup)                                 + 1"/>
         </td>
       </tr>
     </table>
@@ -503,15 +492,11 @@
 
 <xsl:template match="foil|foilgroup" mode="footer">
   <div class="navfoot">
-    <table border="0" width="100%" summary="Header table"
-           cellpadding="0" cellspacing="0">
+    <table border="0" width="100%" summary="Header table" cellpadding="0" cellspacing="0">
       <tr>
         <td align="center">
           <xsl:text>Slide </xsl:text>
-          <xsl:value-of select="count(preceding::foil)
-                                + count(preceding::foilgroup)
-                                + count(ancestor::foilgroup)
-                                + 1"/>
+          <xsl:value-of select="count(preceding::foil)                                 + count(preceding::foilgroup)                                 + count(ancestor::foilgroup)                                 + 1"/>
           <xsl:text> of </xsl:text>
           <xsl:value-of select="count(//foil) + count(//foilgroup)"/>
         </td>

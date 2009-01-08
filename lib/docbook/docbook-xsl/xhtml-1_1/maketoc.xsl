@@ -1,7 +1,7 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
-		version="1.0"
-                exclude-result-prefixes="doc">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0" xmlns="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="doc">
 
 <!-- ********************************************************************
      $Id: maketoc.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -18,7 +18,7 @@
 <xsl:import href="docbook.xsl"/>
 <xsl:import href="chunk.xsl"/>
 
-<xsl:output method="xml" indent="no" encoding='utf-8'/>
+<xsl:output method="xml" indent="no" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"/>
 
 <xsl:param name="toc.list.type" select="'tocentry'"/>
 
@@ -54,11 +54,13 @@
         <xsl:value-of select="$filename"/>
         <xsl:text>"</xsl:text>
       </xsl:processing-instruction>
-      <xsl:text>&#xA;</xsl:text>
+      <xsl:text>
+</xsl:text>
       <xsl:apply-templates mode="toc" select="$nodes"/>
       <xsl:call-template name="indent-spaces"/>
     </tocentry>
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:text>
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
@@ -75,12 +77,15 @@
 <!-- ==================================================================== -->
 
 <xsl:template match="/" priority="-1">
-  <xsl:text>&#xA;</xsl:text>
+  <xsl:text>
+</xsl:text>
   <toc role="chunk-toc">
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:text>
+</xsl:text>
     <xsl:apply-templates select="/" mode="toc"/>
   </toc>
-  <xsl:text>&#xA;</xsl:text>
+  <xsl:text>
+</xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>

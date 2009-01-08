@@ -1,8 +1,7 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:exsl="http://exslt.org/common"
-                xmlns:cf="http://docbook.sourceforge.net/xmlns/chunkfast/1.0"
-		version="1.0"
-                exclude-result-prefixes="exsl cf">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns:cf="http://docbook.sourceforge.net/xmlns/chunkfast/1.0" xmlns="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="exsl cf">
 
 <!-- ********************************************************************
      $Id: chunk-changebars.xsl 8130 2008-09-29 17:28:40Z mzjn $
@@ -29,7 +28,7 @@
     <xsl:choose>
 
       <xsl:when test="ancestor-or-self::*[@revisionflag] and $show.revisionflag != 0">
-	<xsl:variable name="revisionflag" select="ancestor-or-self::*[@revisionflag][1]/@revisionflag" />
+	<xsl:variable name="revisionflag" select="ancestor-or-self::*[@revisionflag][1]/@revisionflag"/>
 	<xsl:call-template name="block.or.inline.revision">
 	  <xsl:with-param name="revisionflag" select="$revisionflag"/>
 	</xsl:call-template>
@@ -48,12 +47,10 @@
 
       <xsl:variable name="div" select="$chunks[@id=$genid or @xml:id=$genid]"/>
 
-      <xsl:variable name="prevdiv"
-                    select="($div/preceding-sibling::cf:div|$div/preceding::cf:div|$div/parent::cf:div)[last()]"/>
+      <xsl:variable name="prevdiv" select="($div/preceding-sibling::cf:div|$div/preceding::cf:div|$div/parent::cf:div)[last()]"/>
       <xsl:variable name="prev" select="key('genid', ($prevdiv/@id|$prevdiv/@xml:id)[1])"/>
 
-      <xsl:variable name="nextdiv"
-                    select="($div/following-sibling::cf:div|$div/following::cf:div|$div/cf:div)[1]"/>
+      <xsl:variable name="nextdiv" select="($div/following-sibling::cf:div|$div/following::cf:div|$div/cf:div)[1]"/>
       <xsl:variable name="next" select="key('genid', ($nextdiv/@id|$nextdiv/@xml:id)[1])"/>
 
       <xsl:choose>

@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: keywords.xsl 6910 2007-06-28 23:23:30Z xmldoc $
@@ -12,8 +13,8 @@
 
      ******************************************************************** -->
 
-<xsl:template match="keywordset"></xsl:template>
-<xsl:template match="subjectset"></xsl:template>
+<xsl:template match="keywordset"/>
+<xsl:template match="subjectset"/>
 
 <!-- ==================================================================== -->
 

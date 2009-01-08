@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: division.xsl 7000 2007-07-10 20:41:35Z mzjn $
@@ -50,10 +51,10 @@
   </div>
 </xsl:template>
 
-<xsl:template match="set/setinfo"></xsl:template>
-<xsl:template match="set/title"></xsl:template>
-<xsl:template match="set/titleabbrev"></xsl:template>
-<xsl:template match="set/subtitle"></xsl:template>
+<xsl:template match="set/setinfo"/>
+<xsl:template match="set/title"/>
+<xsl:template match="set/titleabbrev"/>
+<xsl:template match="set/subtitle"/>
 
 <!-- ==================================================================== -->
 
@@ -95,11 +96,11 @@
   </div>
 </xsl:template>
 
-<xsl:template match="book/bookinfo"></xsl:template>
-<xsl:template match="book/info"></xsl:template>
-<xsl:template match="book/title"></xsl:template>
-<xsl:template match="book/titleabbrev"></xsl:template>
-<xsl:template match="book/subtitle"></xsl:template>
+<xsl:template match="book/bookinfo"/>
+<xsl:template match="book/info"/>
+<xsl:template match="book/title"/>
+<xsl:template match="book/titleabbrev"/>
+<xsl:template match="book/subtitle"/>
 
 <!-- ==================================================================== -->
 
@@ -140,12 +141,12 @@
   <xsl:call-template name="division.toc"/>
 </xsl:template>
 
-<xsl:template match="part/docinfo"></xsl:template>
-<xsl:template match="part/partinfo"></xsl:template>
-<xsl:template match="part/info"></xsl:template>
-<xsl:template match="part/title"></xsl:template>
-<xsl:template match="part/titleabbrev"></xsl:template>
-<xsl:template match="part/subtitle"></xsl:template>
+<xsl:template match="part/docinfo"/>
+<xsl:template match="part/partinfo"/>
+<xsl:template match="part/info"/>
+<xsl:template match="part/title"/>
+<xsl:template match="part/titleabbrev"/>
+<xsl:template match="part/subtitle"/>
 
 <xsl:template match="partintro">
   <xsl:call-template name="id.warning"/>
@@ -179,9 +180,9 @@
   </div>
 </xsl:template>
 
-<xsl:template match="partintro/title"></xsl:template>
-<xsl:template match="partintro/titleabbrev"></xsl:template>
-<xsl:template match="partintro/subtitle"></xsl:template>
+<xsl:template match="partintro/title"/>
+<xsl:template match="partintro/titleabbrev"/>
+<xsl:template match="partintro/subtitle"/>
 
 <xsl:template match="partintro/title" mode="partintro.title.mode">
   <h2>
@@ -225,4 +226,3 @@
 </xsl:template>
 
 </xsl:stylesheet>
-

@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: biblio.xsl 8009 2008-05-21 00:12:14Z abdelazer $
@@ -35,11 +36,11 @@
   </div>
 </xsl:template>
 
-<xsl:template match="bibliography/bibliographyinfo"></xsl:template>
-<xsl:template match="bibliography/info"></xsl:template>
-<xsl:template match="bibliography/title"></xsl:template>
-<xsl:template match="bibliography/subtitle"></xsl:template>
-<xsl:template match="bibliography/titleabbrev"></xsl:template>
+<xsl:template match="bibliography/bibliographyinfo"/>
+<xsl:template match="bibliography/info"/>
+<xsl:template match="bibliography/title"/>
+<xsl:template match="bibliography/subtitle"/>
+<xsl:template match="bibliography/titleabbrev"/>
 
 <!-- ==================================================================== -->
 
@@ -72,12 +73,7 @@
     <xsl:if test="blockinfo/title|info/title|title">
       <xsl:call-template name="formal.object.heading"/>
     </xsl:if>
-    <xsl:apply-templates select="*[not(self::blockinfo)
-                                   and not(self::info)
-                                   and not(self::title)
-                                   and not(self::titleabbrev)
-                                   and not(self::biblioentry)
-                                   and not(self::bibliomixed)]"/>
+    <xsl:apply-templates select="*[not(self::blockinfo)                                    and not(self::info)                                    and not(self::title)                                    and not(self::titleabbrev)                                    and not(self::biblioentry)                                    and not(self::bibliomixed)]"/>
     <xsl:apply-templates select="biblioentry|bibliomixed"/>
   </div>
 </xsl:template>
@@ -96,8 +92,7 @@
   <xsl:choose>
     <xsl:when test="string(.) = ''">
       <xsl:variable name="bib" select="document($bibliography.collection,.)"/>
-      <xsl:variable name="entry" select="$bib/bibliography//
-                                         *[@id=$id or @xml:id=$id][1]"/>
+      <xsl:variable name="entry" select="$bib/bibliography//                                          *[@id=$id or @xml:id=$id][1]"/>
       <xsl:choose>
         <xsl:when test="$entry">
           <xsl:choose>
@@ -166,8 +161,7 @@
   <xsl:choose>
     <xsl:when test="string(.) = ''">
       <xsl:variable name="bib" select="document($bibliography.collection,.)"/>
-      <xsl:variable name="entry" select="$bib/bibliography//
-                                         *[@id=$id or @xml:id=$id][1]"/>
+      <xsl:variable name="entry" select="$bib/bibliography//                                          *[@id=$id or @xml:id=$id][1]"/>
       <xsl:choose>
         <xsl:when test="$entry">
           <xsl:choose>
@@ -224,8 +218,7 @@
   <xsl:choose>
     <xsl:when test="$bibliography.numbered != 0">
       <xsl:text>[</xsl:text>
-      <xsl:number from="bibliography" count="biblioentry|bibliomixed"
-                  level="any" format="1"/>
+      <xsl:number from="bibliography" count="biblioentry|bibliomixed" level="any" format="1"/>
       <xsl:text>] </xsl:text>
     </xsl:when>
     <xsl:when test="local-name($node/child::*[1]) = 'abbrev'">
@@ -369,8 +362,7 @@
   </span>
 </xsl:template>
 
-<xsl:template match="biblioset/title|biblioset/citetitle" 
-              mode="bibliography.mode">
+<xsl:template match="biblioset/title|biblioset/citetitle" mode="bibliography.mode">
   <xsl:variable name="relation" select="../@relation"/>
   <xsl:choose>
     <xsl:when test="$relation='article' or @pubwork='article'">
@@ -798,8 +790,7 @@
   </span>
 </xsl:template>
 
-<xsl:template match="bibliocoverage|biblioid|bibliorelation|bibliosource"
-              mode="bibliography.mode">
+<xsl:template match="bibliocoverage|biblioid|bibliorelation|bibliosource" mode="bibliography.mode">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="bibliography.mode"/>
@@ -808,8 +799,7 @@
 </xsl:template>
 
 <!-- See FR #1934434 and http://doi.org -->
-<xsl:template match="biblioid[@class='doi']"
-              mode="bibliography.mode">
+<xsl:template match="biblioid[@class='doi']" mode="bibliography.mode">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <a href="{concat('http://dx.doi.org/', .)}">doi:<xsl:value-of select="."/></a>
@@ -914,8 +904,7 @@
   </span>
 </xsl:template>
 
-<xsl:template match="bibliomset/title|bibliomset/citetitle" 
-              mode="bibliomixed.mode">
+<xsl:template match="bibliomset/title|bibliomset/citetitle" mode="bibliomixed.mode">
   <xsl:variable name="relation" select="../@relation"/>
   <xsl:choose>
     <xsl:when test="$relation='article' or @pubwork='article'">
@@ -1225,8 +1214,7 @@
   </span>
 </xsl:template>
 
-<xsl:template match="bibliocoverage|biblioid|bibliorelation|bibliosource"
-              mode="bibliomixed.mode">
+<xsl:template match="bibliocoverage|biblioid|bibliorelation|bibliosource" mode="bibliomixed.mode">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <xsl:apply-templates mode="bibliomixed.mode"/>
@@ -1234,8 +1222,7 @@
 </xsl:template>
 
 <!-- See FR #1934434 and http://doi.org -->
-<xsl:template match="biblioid[@class='doi']"
-              mode="bibliomixed.mode">
+<xsl:template match="biblioid[@class='doi']" mode="bibliomixed.mode">
   <span>
     <xsl:apply-templates select="." mode="class.attribute"/>
     <a href="{concat('http://dx.doi.org/', .)}">doi:<xsl:value-of select="."/></a>

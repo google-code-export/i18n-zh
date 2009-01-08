@@ -1,8 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:mml="http://www.w3.org/1998/Math/MathML"
-                exclude-result-prefixes="mml"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="mml" version="1.0">
 
 <!-- ********************************************************************
      $Id: math.xsl 6961 2007-07-07 02:05:56Z xmldoc $
@@ -30,7 +29,7 @@
 
 <!-- "Support" for MathML -->
 
-<xsl:template match="mml:*" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<xsl:template match="mml:*">
   <xsl:copy>
     <xsl:copy-of select="@*"/>
     <xsl:apply-templates/>
@@ -70,11 +69,13 @@
 <!-- PlainTeX -->
 
 <xsl:template name="tex.math.plain.head">
-  <xsl:text>\nopagenumbers &#xA;</xsl:text>
+  <xsl:text>\nopagenumbers 
+</xsl:text>
 </xsl:template>
 
 <xsl:template name="tex.math.plain.tail">
-  <xsl:text>\bye &#xA;</xsl:text>
+  <xsl:text>\bye 
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="inlineequation" mode="collect.tex.math.plain">
@@ -99,15 +100,18 @@
   <xsl:if test="$tex">
     <xsl:text>\special{dvi2bitmap outputfile </xsl:text>
     <xsl:value-of select="$filename"/>
-    <xsl:text>} &#xA;</xsl:text>
+    <xsl:text>} 
+</xsl:text>
     <xsl:if test="$output.delims != 0">
       <xsl:text>$</xsl:text>
     </xsl:if>
     <xsl:value-of select="$tex"/>
     <xsl:if test="$output.delims != 0">
-      <xsl:text>$ &#xA;</xsl:text>
+      <xsl:text>$ 
+</xsl:text>
     </xsl:if>
-    <xsl:text>\vfill\eject &#xA;</xsl:text>
+    <xsl:text>\vfill\eject 
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
@@ -133,15 +137,18 @@
   <xsl:if test="$tex">
     <xsl:text>\special{dvi2bitmap outputfile </xsl:text>
     <xsl:value-of select="$filename"/>
-    <xsl:text>} &#xA;</xsl:text>
+    <xsl:text>} 
+</xsl:text>
     <xsl:if test="$output.delims != 0">
       <xsl:text>$$</xsl:text>
     </xsl:if>
     <xsl:value-of select="$tex"/>
     <xsl:if test="$output.delims != 0">
-      <xsl:text>$$ &#xA;</xsl:text>
+      <xsl:text>$$ 
+</xsl:text>
     </xsl:if>
-    <xsl:text>\vfill\eject &#xA;</xsl:text>
+    <xsl:text>\vfill\eject 
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
@@ -150,13 +157,17 @@
 <!-- LaTeX -->
 
 <xsl:template name="tex.math.latex.head">
-  <xsl:text>\documentclass{article} &#xA;</xsl:text>
-  <xsl:text>\pagestyle{empty} &#xA;</xsl:text>
-  <xsl:text>\begin{document} &#xA;</xsl:text>
+  <xsl:text>\documentclass{article} 
+</xsl:text>
+  <xsl:text>\pagestyle{empty} 
+</xsl:text>
+  <xsl:text>\begin{document} 
+</xsl:text>
 </xsl:template>
 
 <xsl:template name="tex.math.latex.tail">
-  <xsl:text>\end{document} &#xA;</xsl:text>
+  <xsl:text>\end{document} 
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="inlineequation" mode="collect.tex.math.latex">
@@ -181,15 +192,18 @@
   <xsl:if test="$tex">
     <xsl:text>\special{dvi2bitmap outputfile </xsl:text>
     <xsl:value-of select="$filename"/>
-    <xsl:text>} &#xA;</xsl:text>
+    <xsl:text>} 
+</xsl:text>
     <xsl:if test="$output.delims != 0">  
       <xsl:text>$</xsl:text>
     </xsl:if>
     <xsl:value-of select="$tex"/>
     <xsl:if test="$output.delims != 0">  
-      <xsl:text>$ &#xA;</xsl:text>
+      <xsl:text>$ 
+</xsl:text>
     </xsl:if>
-    <xsl:text>\newpage &#xA;</xsl:text>
+    <xsl:text>\newpage 
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
@@ -215,15 +229,18 @@
   <xsl:if test="$tex">
     <xsl:text>\special{dvi2bitmap outputfile </xsl:text>
     <xsl:value-of select="$filename"/>
-    <xsl:text>} &#xA;</xsl:text>
+    <xsl:text>} 
+</xsl:text>
     <xsl:if test="$output.delims != 0">
       <xsl:text>$$</xsl:text>
     </xsl:if>
     <xsl:value-of select="$tex"/>
     <xsl:if test="$output.delims != 0">
-      <xsl:text>$$ &#xA;</xsl:text>
+      <xsl:text>$$ 
+</xsl:text>
     </xsl:if>
-    <xsl:text>\newpage &#xA;</xsl:text>
+    <xsl:text>\newpage 
+</xsl:text>
   </xsl:if>
 </xsl:template>
 
@@ -232,9 +249,7 @@
 <!-- Extracting image filename from mediaobject and graphic elements -->
 
 <xsl:template name="select.mediaobject.filename">
-  <xsl:param name="olist"
-             select="imageobject|imageobjectco
-                     |videoobject|audioobject|textobject"/>
+  <xsl:param name="olist" select="imageobject|imageobjectco                      |videoobject|audioobject|textobject"/>
 
   <xsl:variable name="mediaobject.index">
     <xsl:call-template name="select.mediaobject.index">
@@ -245,8 +260,7 @@
 
   <xsl:if test="$mediaobject.index != ''">
     <xsl:call-template name="mediaobject.filename">
-      <xsl:with-param name="object"
-                      select="$olist[position() = $mediaobject.index]"/>
+      <xsl:with-param name="object" select="$olist[position() = $mediaobject.index]"/>
     </xsl:call-template>
   </xsl:if>
 </xsl:template>

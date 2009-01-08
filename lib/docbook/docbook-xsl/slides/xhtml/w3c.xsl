@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		version="1.0">
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <xsl:import href="slides-common.xsl"/>
 
@@ -52,8 +53,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table class="navbar" cellspacing="0" cellpadding="0" border="0" width="97%"
-           summary="Navigation buttons">
+    <table class="navbar" cellspacing="0" cellpadding="0" border="0" width="97%" summary="Navigation buttons">
       <tr>
         <td align="left" valign="top">
           <xsl:call-template name="logo"/>
@@ -66,8 +66,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$prev" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Previous" title="{$prev/title}">
+                  <img border="0" width="32" height="32" alt=" Previous" title="{$prev/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="prev.image"/>
                     </xsl:attribute>
@@ -86,8 +85,7 @@
             <xsl:choose>
               <xsl:when test="$tocfile != ''">
                 <a rel="contents" href="{$tocfile}" accesskey="C">
-                  <img border="0" width="32" height="32"
-                       alt=" Contents" title="Table of Contents">
+                  <img border="0" width="32" height="32" alt=" Contents" title="Table of Contents">
                     <xsl:attribute name="src">
                       <xsl:call-template name="toc.image"/>
                     </xsl:attribute>
@@ -95,8 +93,7 @@
                 </a>
               </xsl:when>
               <xsl:otherwise>
-                <img border="0" width="32" height="32"
-                     alt=" Contents" title="Table of Contents">
+                <img border="0" width="32" height="32" alt=" Contents" title="Table of Contents">
                   <xsl:attribute name="src">
                     <xsl:call-template name="no.toc.image"/>
                   </xsl:attribute>
@@ -110,8 +107,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$next" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Next" title="{$next/title}">
+                  <img border="0" width="32" height="32" alt=" Next" title="{$next/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="next.image"/>
                     </xsl:attribute>
@@ -145,12 +141,10 @@
 
   <div class="navfoot">
     <hr class="bottom-nav-sep"/>
-    <table class="footer" cellspacing="0" cellpadding="0" border="0" width="97%"
-           summary="footer">
+    <table class="footer" cellspacing="0" cellpadding="0" border="0" width="97%" summary="footer">
       <tr>
         <td align="left" valign="top">
-          <xsl:variable name="author" select="(/slides/slidesinfo//author
-                                              |/slides/slidesinfo//editor)"/>
+          <xsl:variable name="author" select="(/slides/slidesinfo//author                                               |/slides/slidesinfo//editor)"/>
           <xsl:for-each select="$author">
             <xsl:choose>
               <xsl:when test=".//email">
@@ -168,10 +162,7 @@
         </td>
         <td align="right" valign="top">
           <span class="index">
-            <xsl:value-of select="count(preceding::foil)
-                                  + count(preceding::foilgroup)
-                                  + count(ancestor::foilgroup)
-                                  + 1"/>
+            <xsl:value-of select="count(preceding::foil)                                   + count(preceding::foilgroup)                                   + count(ancestor::foilgroup)                                   + 1"/>
             <xsl:text> of </xsl:text>
             <xsl:value-of select="count(//foil|//foilgroup)"/>
           </span>
@@ -185,8 +176,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$prev" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Previous" title="{$prev/title}">
+                  <img border="0" width="32" height="32" alt=" Previous" title="{$prev/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="prev.image"/>
                     </xsl:attribute>
@@ -208,8 +198,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$next" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Next" title="{$next/title}">
+                  <img border="0" width="32" height="32" alt=" Next" title="{$next/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="next.image"/>
                     </xsl:attribute>
@@ -241,8 +230,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <div class="navhead">
-    <table class="navbar" cellspacing="0" cellpadding="0" border="0" width="97%"
-           summary="Navigation buttons">
+    <table class="navbar" cellspacing="0" cellpadding="0" border="0" width="97%" summary="Navigation buttons">
       <tr>
         <td align="left" valign="top">
           <xsl:call-template name="logo"/>
@@ -255,8 +243,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$prev" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Previous" title="{$prev/title}">
+                  <img border="0" width="32" height="32" alt=" Previous" title="{$prev/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="prev.image"/>
                     </xsl:attribute>
@@ -275,8 +262,7 @@
             <xsl:choose>
               <xsl:when test="$tocfile != ''">
                 <a rel="contents" href="{$tocfile}" accesskey="C">
-                  <img border="0" width="32" height="32"
-                       alt=" Contents" title="Table of Contents">
+                  <img border="0" width="32" height="32" alt=" Contents" title="Table of Contents">
                     <xsl:attribute name="src">
                       <xsl:call-template name="toc.image"/>
                     </xsl:attribute>
@@ -284,8 +270,7 @@
                 </a>
               </xsl:when>
               <xsl:otherwise>
-                <img border="0" width="32" height="32"
-                     alt=" Contents" title="Table of Contents">
+                <img border="0" width="32" height="32" alt=" Contents" title="Table of Contents">
                   <xsl:attribute name="src">
                     <xsl:call-template name="no.toc.image"/>
                   </xsl:attribute>
@@ -299,8 +284,7 @@
                   <xsl:attribute name="href">
                     <xsl:apply-templates select="$next" mode="filename"/>
                   </xsl:attribute>
-                  <img border="0" width="32" height="32"
-                       alt=" Next" title="{$next/title}">
+                  <img border="0" width="32" height="32" alt=" Next" title="{$next/title}">
                     <xsl:attribute name="src">
                       <xsl:call-template name="next.image"/>
                     </xsl:attribute>
@@ -345,9 +329,7 @@
   <xsl:param name="tocfile" select="$toc.html"/>
 
   <!-- skip the title -->
-  <xsl:apply-templates select="*[name(.) != 'title'
-                                and name(.) != 'foil'
-                                and name(.) != 'foilgroup']"/>
+  <xsl:apply-templates select="*[name(.) != 'title'                                 and name(.) != 'foil'                                 and name(.) != 'foilgroup']"/>
 
   <xsl:if test="$foilgroup.toc != 0">
     <dl class="toc">
@@ -364,8 +346,8 @@
   </xsl:attribute>
 </xsl:template>
 
-<xsl:template match="html:*" xmlns:html='http://www.w3.org/1999/xhtml'>
-  <xsl:element name="{local-name(.)}" namespace="">
+<xsl:template xmlns:html="http://www.w3.org/1999/xhtml" match="html:*">
+  <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:apply-templates select="@*" mode="copy"/>
     <xsl:apply-templates/>
   </xsl:element>

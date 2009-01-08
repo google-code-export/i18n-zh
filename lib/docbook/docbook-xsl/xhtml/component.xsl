@@ -1,6 +1,7 @@
-<?xml version='1.0'?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version='1.0'>
+<?xml version="1.0" encoding="ASCII"?>
+<!--This file was created automatically by html2xhtml-->
+<!--from the HTML stylesheets.-->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
      $Id: component.xsl 7656 2008-02-02 00:29:28Z nwalsh $
@@ -34,7 +35,7 @@
   <!-- Let's handle the case where a component (bibliography, for example)
        occurs inside a section; will we need parameters for this? -->
 
-  <xsl:element name="h{$level+1}">
+  <xsl:element name="h{$level+1}" namespace="http://www.w3.org/1999/xhtml">
     <xsl:attribute name="class">title</xsl:attribute>
     <xsl:if test="$generate.id.attributes = 0">
       <xsl:call-template name="anchor">
@@ -50,15 +51,7 @@
 
 <xsl:template name="component.subtitle">
   <xsl:param name="node" select="."/>
-  <xsl:variable name="subtitle"
-                select="($node/docinfo/subtitle
-                        |$node/info/subtitle
-                        |$node/prefaceinfo/subtitle
-                        |$node/chapterinfo/subtitle
-                        |$node/appendixinfo/subtitle
-                        |$node/articleinfo/subtitle
-                        |$node/artheader/subtitle
-                        |$node/subtitle)[1]"/>
+  <xsl:variable name="subtitle" select="($node/docinfo/subtitle                         |$node/info/subtitle                         |$node/prefaceinfo/subtitle                         |$node/chapterinfo/subtitle                         |$node/appendixinfo/subtitle                         |$node/articleinfo/subtitle                         |$node/artheader/subtitle                         |$node/subtitle)[1]"/>
 
   <xsl:if test="$subtitle">
     <h3 class="subtitle">
@@ -89,24 +82,22 @@
   </div>
 </xsl:template>
 
-<xsl:template match="dedication/title|dedication/info/title" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="dedication/title|dedication/info/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::dedication[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="dedication/subtitle|dedication/info/subtitle" 
-              mode="titlepage.mode" priority="2">
+<xsl:template match="dedication/subtitle|dedication/info/subtitle" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.subtitle">
     <xsl:with-param name="node" select="ancestor::dedication[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="dedication"></xsl:template> <!-- see mode="dedication" -->
-<xsl:template match="dedication/title"></xsl:template>
-<xsl:template match="dedication/subtitle"></xsl:template>
-<xsl:template match="dedication/titleabbrev"></xsl:template>
+<xsl:template match="dedication"/> <!-- see mode="dedication" -->
+<xsl:template match="dedication/title"/>
+<xsl:template match="dedication/subtitle"/>
+<xsl:template match="dedication/titleabbrev"/>
 
 <!-- ==================================================================== -->
 
@@ -134,9 +125,9 @@
   </div>
 </xsl:template>
 
-<xsl:template match="colophon/title"></xsl:template>
-<xsl:template match="colophon/subtitle"></xsl:template>
-<xsl:template match="colophon/titleabbrev"></xsl:template>
+<xsl:template match="colophon/title"/>
+<xsl:template match="colophon/subtitle"/>
+<xsl:template match="colophon/titleabbrev"/>
 
 <!-- ==================================================================== -->
 
@@ -181,21 +172,17 @@
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="preface/subtitle
-                     |preface/prefaceinfo/subtitle
-                     |preface/info/subtitle
-                     |preface/docinfo/subtitle"
-              mode="titlepage.mode" priority="2">
+<xsl:template match="preface/subtitle                      |preface/prefaceinfo/subtitle                      |preface/info/subtitle                      |preface/docinfo/subtitle" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.subtitle">
     <xsl:with-param name="node" select="ancestor::preface[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="preface/docinfo|prefaceinfo"></xsl:template>
-<xsl:template match="preface/info"></xsl:template>
-<xsl:template match="preface/title"></xsl:template>
-<xsl:template match="preface/titleabbrev"></xsl:template>
-<xsl:template match="preface/subtitle"></xsl:template>
+<xsl:template match="preface/docinfo|prefaceinfo"/>
+<xsl:template match="preface/info"/>
+<xsl:template match="preface/title"/>
+<xsl:template match="preface/titleabbrev"/>
+<xsl:template match="preface/subtitle"/>
 
 <!-- ==================================================================== -->
 
@@ -233,28 +220,23 @@
   </div>
 </xsl:template>
 
-<xsl:template match="chapter/title|chapter/chapterinfo/title"
-	      mode="titlepage.mode" priority="2">
+<xsl:template match="chapter/title|chapter/chapterinfo/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::chapter[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="chapter/subtitle
-                     |chapter/chapterinfo/subtitle
-                     |chapter/info/subtitle
-                     |chapter/docinfo/subtitle"
-              mode="titlepage.mode" priority="2">
+<xsl:template match="chapter/subtitle                      |chapter/chapterinfo/subtitle                      |chapter/info/subtitle                      |chapter/docinfo/subtitle" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.subtitle">
     <xsl:with-param name="node" select="ancestor::chapter[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="chapter/docinfo|chapterinfo"></xsl:template>
-<xsl:template match="chapter/info"></xsl:template>
-<xsl:template match="chapter/title"></xsl:template>
-<xsl:template match="chapter/titleabbrev"></xsl:template>
-<xsl:template match="chapter/subtitle"></xsl:template>
+<xsl:template match="chapter/docinfo|chapterinfo"/>
+<xsl:template match="chapter/info"/>
+<xsl:template match="chapter/title"/>
+<xsl:template match="chapter/titleabbrev"/>
+<xsl:template match="chapter/subtitle"/>
 
 <!-- ==================================================================== -->
 
@@ -313,28 +295,23 @@
   </div>
 </xsl:template>
 
-<xsl:template match="appendix/title|appendix/appendixinfo/title"
-	      mode="titlepage.mode" priority="2">
+<xsl:template match="appendix/title|appendix/appendixinfo/title" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.title">
     <xsl:with-param name="node" select="ancestor::appendix[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="appendix/subtitle
-                     |appendix/appendixinfo/subtitle
-                     |appendix/info/subtitle
-                     |appendix/docinfo/subtitle"
-              mode="titlepage.mode" priority="2">
+<xsl:template match="appendix/subtitle                      |appendix/appendixinfo/subtitle                      |appendix/info/subtitle                      |appendix/docinfo/subtitle" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.subtitle">
     <xsl:with-param name="node" select="ancestor::appendix[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="appendix/docinfo|appendixinfo"></xsl:template>
-<xsl:template match="appendix/info"></xsl:template>
-<xsl:template match="appendix/title"></xsl:template>
-<xsl:template match="appendix/titleabbrev"></xsl:template>
-<xsl:template match="appendix/subtitle"></xsl:template>
+<xsl:template match="appendix/docinfo|appendixinfo"/>
+<xsl:template match="appendix/info"/>
+<xsl:template match="appendix/title"/>
+<xsl:template match="appendix/titleabbrev"/>
+<xsl:template match="appendix/subtitle"/>
 
 <!-- ==================================================================== -->
 
@@ -381,23 +358,18 @@
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="article/subtitle
-                     |article/articleinfo/subtitle
-                     |article/info/subtitle
-                     |article/artheader/subtitle"
-              mode="titlepage.mode" priority="2">
+<xsl:template match="article/subtitle                      |article/articleinfo/subtitle                      |article/info/subtitle                      |article/artheader/subtitle" mode="titlepage.mode" priority="2">
   <xsl:call-template name="component.subtitle">
     <xsl:with-param name="node" select="ancestor::article[1]"/>
   </xsl:call-template>
 </xsl:template>
 
-<xsl:template match="article/artheader|article/articleinfo"></xsl:template>
-<xsl:template match="article/info"></xsl:template>
-<xsl:template match="article/title"></xsl:template>
-<xsl:template match="article/titleabbrev"></xsl:template>
-<xsl:template match="article/subtitle"></xsl:template>
+<xsl:template match="article/artheader|article/articleinfo"/>
+<xsl:template match="article/info"/>
+<xsl:template match="article/title"/>
+<xsl:template match="article/titleabbrev"/>
+<xsl:template match="article/subtitle"/>
 
 <!-- ==================================================================== -->
 
 </xsl:stylesheet>
-
