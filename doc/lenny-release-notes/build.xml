@@ -16,6 +16,12 @@
         <pathelement location="${usr.share.java}"/>
     </path>
 
+    <path id="xep.classpath">
+        <fileset dir="${xep.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
     <target name="usage">
         <echo message="Use the -projecthelp option instead"/>
     </target>
@@ -77,15 +83,6 @@ Maybe you should run 'make html LINGUA=zh_CN architecture=${arch}' first !
         <copy todir="build/pdf/images">
             <fileset dir="${docbook-xsl.images.dir}" includes="**/*.png"/>
         </copy>
-        <copy todir="build/pdf">
-            <fileset dir="${fonts.dir}">
-                <include name="*.ttf"/>
-                <include name="*.ttc"/>
-            </fileset>
-            <fileset dir="${fop.home}/conf">
-                <include name="*.xml"/>
-            </fileset>
-        </copy>
 
         <echo message="Making fo ..."/>
         <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/pdf">
@@ -100,17 +97,29 @@ Maybe you should run 'make html LINGUA=zh_CN architecture=${arch}' first !
             <arg value="release-notes.${arch}.fo"/>
             <arg value="../../zh_CN/release-notes.${arch}.xml"/>
             <arg value="../../fop.xsl"/>
+            <!--arg value="fop1.extensions=1"/-->
+            <arg value="xep.extensions=1"/>
         </java>
 
         <echo message="Making pdf ..."/>
-        <java classname="${fop.class}" fork="true" maxmemory="1024m" failonerror="true" dir="${basedir}/build/pdf">
+        <!--java classname="${fop.class}" fork="true" maxmemory="512m"
+                    failonerror="true" dir="${basedir}/build/pdf">
             <classpath refid="lib.classpath"/>
             <arg value="-c"/>
-            <arg value="userconfig.xml"/>
+            <arg value="${fop.home}/conf/userconfig.xml"/>
+            <arg value="release-notes.${arch}.fo"/>
+            <arg value="../lenny-release-notes.${arch}.pdf"/>
+        </java-->
+
+        <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+                    failonerror="true" dir="${basedir}/build/pdf">
+            <classpath refid="xep.classpath"/>
+            <arg value="-DCONFIG=${xep.home}/xep.xml"/>
+            <arg value="-quiet"/>
             <arg value="release-notes.${arch}.fo"/>
             <arg value="../lenny-release-notes.${arch}.pdf"/>
         </java>
-        <!--delete dir="build/pdf"/-->
+
     </target>
 
 </project>

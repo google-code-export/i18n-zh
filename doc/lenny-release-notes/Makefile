@@ -18,7 +18,7 @@ ifeq "$(OFFICIALWEBBUILD)" "true"
   install_file	:= install -m 2664 -p
   makedir	:= mkdir -p -m 2775
 else
-  install_file	:= install -m 644 -p
+  install_file	:= cp -r 
   makedir	:= mkdir -p -m 0755
 endif
 
@@ -27,6 +27,7 @@ LANGUAGES := en ca cs de es fi fr it ja pl pt_BR pt ro ru sv zh_TW
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
 XMLROFF_LANGS=cs ja pl ro ru vi zh_CN zh_TW
+DISABLED_PDF=zh_TW
 # cairo backend of xmlroff 0.6.0 crashes on some languages (#492597)
 GPLIST=zh_TW
 
@@ -68,6 +69,13 @@ TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
 .SUFFIXES: 
 .PHONY: publish all clean $(LANGUAGES) $(LANGUAGES-publish)
 
+all:
+	for l in $(LANGUAGES); do \
+	    for a in $(arches); do \
+		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
+	    done; \
+	done
+
 help:
 	@echo make html LINGUA=zh_CN architecture=i386
 	@echo make pdf LINGUA=zh_CN architecture=i386
@@ -78,13 +86,6 @@ help:
 stat:
 	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt --statistics -c $$f; done)
 
-all:
-	for l in $(LANGUAGES); do \
-	    for a in $(arches); do \
-		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
-	    done; \
-	done
-
 $(LANGUAGES):
 ifeq "$(architecture)" ""
 	@echo "architecture variable must be set, try one of: $(arches)"
@@ -93,7 +94,7 @@ else
 	-$(MAKE) LINGUA=$@ architecture=$$a $(FORMATS)
 endif
 
-publish: clean
+publish:
 	set -ex; \
 	for arch in $(arches); do \
 	  $(MAKE) architecture=$$arch; \
@@ -101,21 +102,21 @@ publish: clean
 	  $(makedir) $(manual)-$$arch; \
 	  for lang in $(LANGUAGES); do \
 	    $(makedir) $(manual)-$$arch/$$lang; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.html/* \
+	    $(install_file) $$lang/$(manual).$$arch.html/*.html \
 		$(PUBLISHDIR)/$$arch/$(manual)/; \
 	    $(install_file) $$lang/$(manual).$$arch.txt \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.txt; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.pdf \
+	    $(install_file) $$lang/$(manual).$$arch.pdf \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.pdf; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.ps \
+	    $(install_file) $$lang/$(manual).$$arch.ps \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.ps; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.html/* \
+	    $(install_file) $$lang/$(manual).$$arch.html/*.html \
 		$(manual)-$$arch/$$lang/; \
 	    $(install_file) $$lang/$(manual).$$arch.txt \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.txt; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.pdf \
+	    $(install_file) $$lang/$(manual).$$arch.pdf \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.pdf ; \
-	    $(install_file) $$lang/$(manual).$$lang.$$arch.ps \
+	    $(install_file) $$lang/$(manual).$$arch.ps \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.ps ; \
 	  done; \
 	  for i in $(PUBLISHDIR)/$$arch/$(manual)/*.en.html; do \
@@ -160,6 +161,10 @@ $(LINGUA)/$(manual).$(architecture).ps: \
 		$(LINGUA)/$(manual).$(architecture).xml
 endif
 
+ifneq "$(filter $(DISABLED_PDF),$(LINGUA))" ""
+%.pdf: %.xml
+	echo "PDF for $$LINGUA currently disabled." > $@
+else
 ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 %.fo: %.xml
 	$(XP) -o $@ --stringparam draft.mode $(draftmode) fo.xsl $<
@@ -175,6 +180,7 @@ else
 %.pdf: %.xml
 	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
 	$(DBLATEX) --output=$@ --param=draft.mode=$(draftmode) $<
+endif
 endif
 
 ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
@@ -276,7 +282,8 @@ clean:: $(LANGUAGES-clean)
 $(LANGUAGES-clean):
 	cd $(subst -clean,,$@); \
 	rm -rf *~ .*~ $(manual).*.html $(manual).*.txt $(manual).*.pdf \
-	    $(manual).*.ps $(manual).*.xml ifxetex.sty
+	    $(manual).*.ps $(manual).*.xml ifxetex.sty body.tmp head.tmp \
+	    release-notes.*.tpt
 
 printarches:
 	@echo $(arches)

@@ -24,26 +24,28 @@
   <xsl:param name="section.autolabel" select="1" />
   <xsl:param name="section.label.includes.component.label">1</xsl:param>
 
-  <xsl:param name="fop.extensions">0</xsl:param>                <!-- fo only -->
-  <xsl:param name="fop1.extensions">1</xsl:param>               <!-- fo only -->
   <xsl:param name="variablelist.as.blocks" select="1" />        <!-- fo only -->
   <xsl:param name="hyphenate">false</xsl:param>                 <!-- fo only -->
   <xsl:param name="paper.type" select="'A4'"></xsl:param>       <!-- fo only -->
 
-  <!-- Chinese font related settings -->
-  <xsl:param name="title.font.family">Arial,Calibri,sans-serif,zh_title</xsl:param>
-  <xsl:param name="body.font.family">Times New Roman,Cambria,Cambria Math,serif,zh_text</xsl:param>
-  <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,zh_title</xsl:param>
-  <xsl:param name="dingbat.font.family">Times New Roman,Cambria,Cambria Math,serif,zh_text</xsl:param>
-  <xsl:param name="monospace.font.family">Courier New,monospace,zh_verbatim</xsl:param>
+  <!-- Default font settings -->
+  <!--
+  <xsl:param name="title.font.family">sans-serif</xsl:param>
+  <xsl:param name="body.font.family">serif</xsl:param>
+  <xsl:param name="sans.font.family">sans-serif</xsl:param>
+  <xsl:param name="dingbat.font.family">serif</xsl:param>
+  <xsl:param name="monospace.font.family">monospace</xsl:param>
   <xsl:param name="symbol.font.family">Symbol,ZapfDingbats</xsl:param>
+  -->
 
-  <xsl:param name="title.fontset">Arial,Calibri,sans-serif,Symbol,ZapfDingbats,zh_title</xsl:param>
-  <xsl:param name="body.fontset">Times New Roman,Cambria,Cambria Math,serif,Symbol,ZapfDingbats,zh_text</xsl:param>
+  <!-- Chinese font settings - preferred truetype font -->
+  <xsl:param name="title.font.family">Arial,FZCuYaSong,sans-serif,SimHei</xsl:param>
+  <xsl:param name="body.font.family">Times New Roman,FZBoYaSong,serif,SimSun</xsl:param>
+  <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,zh_title</xsl:param>
+  <xsl:param name="dingbat.font.family">Times New Roman,FZBoYaSong,serif,SimSun</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New,FZFangSong,monospace,FangSong</xsl:param>
 
-  <xsl:param name="body.font.size">12</xsl:param>
   <xsl:param name="body.font.master">12</xsl:param>
-  <xsl:param name="title.font.size">14</xsl:param>
 
   <!-- Page related Settings -->
   <xsl:param name="page.margin.inner">1.5cm</xsl:param>
@@ -51,6 +53,15 @@
   <xsl:param name="title.margin.left">0pt</xsl:param>
   <xsl:param name="body.start.indent">24pt</xsl:param>
   <xsl:param name="body.end.indent">0pt</xsl:param>
+
+  <!-- Breaking long lines -->
+  <xsl:param name="hyphenate.verbatim">1</xsl:param>
+  <xsl:param name="hyphenate.verbatim.characters"></xsl:param>
+  <xsl:attribute-set name="monospace.verbatim.properties"
+                     use-attribute-sets="verbatim.properties monospace.properties">
+    <xsl:attribute name="wrap-option">wrap</xsl:attribute>
+    <xsl:attribute name="hyphenation-character">&#x25BA;</xsl:attribute>
+  </xsl:attribute-set>
 
   <!-- Prevent blank pages in output -->
   <xsl:template name="book.titlepage.before.verso">
@@ -81,6 +92,12 @@
       <xsl:call-template name="anchor"/>
       <xsl:apply-templates/>
     </fo:block>
+  </xsl:template>
+
+  <xsl:template match="section/para/*">
+    <fo:wrapper text-indent="0pt">
+      <xsl:apply-imports/>
+    </fo:wrapper>
   </xsl:template>
 
 </xsl:stylesheet>
