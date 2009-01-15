@@ -23,7 +23,7 @@ else
 endif
 
 LANGUAGES := en ca cs de es fi fr it ja pl pt_BR pt ro ru sv zh_TW
-# languages w/o .po files
+# languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
 XMLROFF_LANGS=cs ja pl ro ru vi zh_CN zh_TW
@@ -67,7 +67,7 @@ UPDATEPO=PERLLIB=lib/ po4a-updatepo --format docbook
 TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
 
 .SUFFIXES: 
-.PHONY: publish all clean $(LANGUAGES) $(LANGUAGES-publish)
+.PHONY: publish all clean $(LANGUAGES-publish)
 
 all:
 	for l in $(LANGUAGES); do \
@@ -102,7 +102,7 @@ publish:
 	  $(makedir) $(manual)-$$arch; \
 	  for lang in $(LANGUAGES); do \
 	    $(makedir) $(manual)-$$arch/$$lang; \
-	    $(install_file) $$lang/$(manual).$$arch.html/*.html \
+	    $(install_file) $$lang/$(manual).$$arch.html/* \
 		$(PUBLISHDIR)/$$arch/$(manual)/; \
 	    $(install_file) $$lang/$(manual).$$arch.txt \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.txt; \
@@ -110,7 +110,7 @@ publish:
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.pdf; \
 	    $(install_file) $$lang/$(manual).$$arch.ps \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.ps; \
-	    $(install_file) $$lang/$(manual).$$arch.html/*.html \
+	    $(install_file) $$lang/$(manual).$$arch.html/* \
 		$(manual)-$$arch/$$lang/; \
 	    $(install_file) $$lang/$(manual).$$arch.txt \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.txt; \
@@ -133,8 +133,8 @@ $(FORMATS)::
 endif
 
 ifdef LINGUA
-html::	$(LINGUA)/$(manual).$(architecture).html/index.html
-$(LINGUA)/$(manual).$(architecture).html/index.html: \
+html::	$(LINGUA)/$(manual).$(architecture).html/index.$(LINGUA).html
+$(LINGUA)/$(manual).$(architecture).html/index.$(LINGUA).html: \
 		$(LINGUA)/$(manual).$(architecture).xml html.xsl
 	mkdir -p $(LINGUA)/$(manual).$(architecture).html/images
 	cp debian.css $(LINGUA)/$(manual).$(architecture).html
@@ -202,7 +202,7 @@ txt::	$(LINGUA)/$(manual).$(architecture).txt
 $(LINGUA)/$(manual).$(architecture).txt: \
 		$(LINGUA)/$(manual).$(architecture).xml txt.xsl
 	$(XP) --stringparam draft.mode $(draftmode) $(DBK2HTML1) $< \
-	    | w3m -cols 70 -dump -no-graph -T text/html > $@
+	    | w3m -o display_charset=UTF-8 -cols 70 -dump -no-graph -T text/html > $@
 
 # profiling for architecture, needed by all output formats
 condition := ;
@@ -224,23 +224,22 @@ else
 endif
 
 $(LINGUA)/$(manual).$(architecture).xml: \
-		$(patsubst en/%,$(LINGUA)/%,$(SOURCES))
+		$(patsubst en/%,$(LINGUA)/%,$(SOURCES)) $(manual).ent
 	$(XP) --stringparam profile.arch "$(architecture)$(otherarchs)" \
 	      --stringparam profile.condition "$(condition)" \
 	    $(PROFILE) $(@D)/$(manual).dbk > $@
 endif
 
 # There must be an easier way than recursive make!
-.PRECIOUS:		%.dbk %.ent
+.PRECIOUS:		%.dbk
 ifndef LINGUA
-%.dbk %.ent: FORCE
+%.dbk: FORCE
 	$(MAKE) $@ LINGUA=`basename $(@D)`
 
 FORCE:
 else
-ifneq "$(LINGUA)" "en"
+ifeq "$(findstring $(LINGUA),$(DBK_LANGUAGES))" ""
 $(LINGUA)/%.dbk:	en/%.dbk $(LINGUA)/%.po
-	echo " $(DBK_LANGUAGES) " | grep -q " $$LINGUA " || \
 	$(TRANSLATE) --master $< --po $(@:.dbk=.po) --localized $@
 endif
 endif
@@ -250,7 +249,10 @@ ifdef LINGUA
 updatepo:	$(patsubst en/%.dbk,$(LINGUA)/%.po,$(wildcard en/*.dbk))
 $(LINGUA)/%.po:		en/%.dbk
 	echo " $(DBK_LANGUAGES) " | grep -q " $$LINGUA " || \
-	$(UPDATEPO) --master $< --po $@
+	( $(UPDATEPO) --master $< --po $@ && touch $@ )
+	@# po4a-updatepo doesn't update the timestamp of the target if nothing
+	@# is to do. That's why this make rule would always be restarted without
+	@# touch which slows down the build a lot.
 
 validate:	$(patsubst en/%,$(LINGUA)/%,$(SOURCES))
 	$(XL) $(LINGUA)/$(manual).dbk
