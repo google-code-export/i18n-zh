@@ -22,6 +22,18 @@ if [ -z "$hg_base" ]; then
   exit 1
 fi
 
+update_pot()
+{
+  cd $hg_base/hg && (
+    pygettext -d doc -p i18n --docstrings \
+    mercurial/commands.py hgext/*.py hgext/*/__init__.py
+    pygettext -d all -p i18n mercurial hgext doc
+    msgcat i18n/doc.pot i18n/all.pot > i18n/hg.pot
+
+    rm i18n/doc.pot i18n/all.pot
+  )
+}
+
 update_po()
 {
   (cd $hg_base/hg/i18n &&
@@ -31,6 +43,8 @@ update_po()
     mv -f tmp.po $i
   done )
 }
+
+update_pot
 
 if [ $# -eq 0 ]; then
   update_po \*
