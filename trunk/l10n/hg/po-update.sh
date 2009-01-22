@@ -24,13 +24,14 @@ fi
 
 update_pot()
 {
-  cd $hg_base/hg && (
+  (cd $hg_base/hg && (
     pygettext -d doc -p i18n --docstrings \
     mercurial/commands.py hgext/*.py hgext/*/__init__.py
     pygettext -d all -p i18n mercurial hgext doc
     msgcat i18n/doc.pot i18n/all.pot > i18n/hg.pot
 
     rm i18n/doc.pot i18n/all.pot
+    )
   )
 }
 
