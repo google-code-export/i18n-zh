@@ -22,7 +22,7 @@ else
   makedir	:= mkdir -p -m 0755
 endif
 
-LANGUAGES := en ca cs de es fi fr it ja pl pt_BR pt ro ru sv zh_CN zh_TW
+LANGUAGES := en ca cs da de es fi fr it ja ko nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
 # languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
@@ -49,6 +49,7 @@ DBK2HTML=$(CURDIR)/html.xsl
 DBK2HTML1=$(CURDIR)/txt.xsl
 DBLATEX=dblatex --style=db2latex
 PROFILE=$(DOCBOOK_XSL)/profiling/profile.xsl
+PREPROC=$(CURDIR)/preproc.xsl
 XMLROFF=xmlroff --backend cairo
 XMLROFF_GP=xmlroff --backend gp
 
@@ -220,7 +221,7 @@ $(LINGUA)/$(manual).$(architecture).xml: \
 		$(patsubst en/%,$(LINGUA)/%,$(SOURCES)) $(manual).ent
 	$(XP) --stringparam profile.arch "$(architecture)$(otherarchs)" \
 	      --stringparam profile.condition "$(condition)" \
-	    $(PROFILE) $(@D)/$(manual).dbk > $@
+	    $(PROFILE) $(@D)/$(manual).dbk | $(XP) $(PREPROC) - > $@
 endif
 
 FORCE:
@@ -240,6 +241,7 @@ endif
 
 ifdef LINGUA
 .PHONY:	updatepo
+update-po: updatepo
 updatepo:	$(patsubst en/%.dbk,$(LINGUA)/%.po-force,$(wildcard en/*.dbk))
 # The next is just a PHONY target and forcible updates the PO files
 $(LINGUA)/%.po-force: FORCE

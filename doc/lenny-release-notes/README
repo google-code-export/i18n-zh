@@ -27,6 +27,18 @@ Translations
 The document is available in many languages. po4a is currently used as
 the translation tool.
 
+To add a new language "new", do as follows:
+$ svn checkout svn+ssh://svn.debian.org/svn/ddp/manuals/trunk/release-notes
+(or whatever you do to get a fresh copy of the document sources)
+$ mkdir new (in the source directory, of course)
+$ make updatepo LINGUA=new
+(translate all po files in new/)
+$ make validate LINGUA=new
+(fix any XML validity problems)
+$ make html txt pdf LINGUA=new architecture=i386 (or any other arch)
+(proof-read and correct)
+$ svn commit
+
 Some translators prefer full-text translation without po. For this
 style of translations, the original English files are just copied
 into the language directory and the translators have to make sure,
@@ -38,7 +50,8 @@ language code of your translation.
 
 It is suggested that you now try to create the document for at least
 one architecture. This will detect possible syntax errors in your
-file. Furthermore you may call "make validate LINGUA=xx".
+file. Furthermore you really should call "make validate LINGUA=xx"
+and fix any issues before committing.
 
 Send your translation for inclusion to the public mailing list
 debian-doc@lists.debian.org.
