@@ -15,17 +15,17 @@ TODO:
 有时候，我们无法避免某些变化带来的副作用，或者我们在别的地方暴露了 Bug。我们在这里记录我们已知的问题。请您同时阅读勘误，相关软件包的文档，Bug
 报告以及在 <a class="xref" href="ch-moreinfo.zh_CN.html#morereading" title="6.1. 更多读物">第 6.1 节 “更多读物”</a> 中提到的其它信息。
 </p><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="udev"></a>5.1.1. 与 udev 相关的设备的问题</h3></div></div></div><p>
-虽然 <code class="systemitem">udev</code>
+虽然 <code class="systemitem">udev</code><a id="id458338" class="indexterm"></a>
 经过了大量的测试，您仍可能在使用某些设备时遇到问题，这些需要修复。最常见的情况是需要修改设备的访问许可和所有权。有些情况下设备可能不会被默认创建(比如
 <code class="filename">/dev/video</code> and <code class="filename">/dev/radio</code>)。
 </p><p>
-<code class="systemitem">udev</code> 提供配置机制以处理这些问题。请见 <span class="citerefentry"><span class="refentrytitle">udev</span>(8)</span>
+<code class="systemitem">udev</code><a id="id458371" class="indexterm"></a> 提供配置机制以处理这些问题。请见 <span class="citerefentry"><span class="refentrytitle">udev</span>(8)</span>
 和 <code class="filename">/etc/udev</code> 以获得更多信息。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="incompatible-2.4"></a>5.1.2. 某些应用程序可能无法在 2.4 内核下工作</h3></div></div></div><p>
 某些 lenny 中的程序可能无法在 2.4 内核下工作，例如有些需要 <code class="literal">epoll()</code> 支持，而
 2.4 内核中没有。这些程序可能根本无法工作或者工作不正常，除非系统重启并使用 2.6 内核。
 </p><p>
-一个例子是 HTTP 代理 <code class="systemitem">squid</code> 。
+一个例子是 HTTP 代理 <code class="systemitem">squid</code><a id="id458428" class="indexterm"></a> 。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="window-scaling"></a>5.1.3. 某些网站无法通过 TCP 进行连接</h3></div></div></div><p>
 从 2.6.17 开始，Linux 大量使用 RFC 1323 中描述的 TCP
 窗口缩放。某些服务器会有不正常的行为，并向他们自己宣布错误的窗口大小。更多细节，请参考 bug 报告 <a class="ulink" href="http://bugs.debian.org/381262" target="_top">#381262</a>, <a class="ulink" href="http://bugs.debian.org/395066" target="_top">#395066</a>, <a class="ulink" href="http://bugs.debian.org/401435" target="_top">#401435</a> 。
@@ -34,7 +34,7 @@ TODO:
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="poweroff"></a>5.1.4. 无法自动关机</h3></div></div></div><p>
 在一些旧系统中，<code class="literal">shutdown -h</code> 可能无法关闭机器(只是将其停止)。这是因为这里需要使用
 <acronym title="高级电源管理">APM</acronym>。将 <code class="literal">acpi=off apm=power_off</code>
-添加到内核命令行，比如添加在 <code class="systemitem">grub</code> 或者 <code class="systemitem">lilo</code> 的配置文件中，应该可以修正这个问题。请参见 bug <a class="ulink" href="http://bugs.debian.org/390547" target="_top">#390547</a> 以获取更多信息。
+添加到内核命令行，比如添加在 <code class="systemitem">grub</code><a id="id458519" class="indexterm"></a> 或者 <code class="systemitem">lilo</code><a id="id458533" class="indexterm"></a> 的配置文件中，应该可以修正这个问题。请参见 bug <a class="ulink" href="http://bugs.debian.org/390547" target="_top">#390547</a> 以获取更多信息。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="hp-acpi"></a>5.1.5. 在 lenny 内核中某些 HP 笔记本型号的 ACPI 支持被禁用</h3></div></div></div><pre class="programlisting">
 TODO: 此节可以删除，对吗？
 </pre><p>
@@ -56,24 +56,24 @@ nc6000 型号。
 </p><p>
 需要在这些系统上使用 ACPI 支持的用户可以安装 Linux 2.6.19 或者更新的内核。请参见 Debian bug <a class="ulink" href="http://bugs.debian.org/404143" target="_top">#404143</a> 和 <a class="ulink" href="http://bugs.debian.org/400488" target="_top">#400488</a>，以及 Linux 内核 bug <a class="ulink" href="http://bugzilla.kernel.org/show_bug.cgi?id=5534" target="_top">#5534</a> 和 <a class="ulink" href="http://bugzilla.kernel.org/show_bug.cgi?id=7122" target="_top">#7122</a> 以获取更多信息。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="asynchronous-network-start"></a>5.1.6. 异步网络初始化可能引起无法预测的情况</h3></div></div></div><p>
-在使用 <code class="systemitem">udev</code> 为网络接口加载驱动的系统上，因为
-<code class="systemitem">udev</code> 的异步天性，使得系统启动时网络驱动可能无法在
+在使用 <code class="systemitem">udev</code><a id="id458632" class="indexterm"></a> 为网络接口加载驱动的系统上，因为
+<code class="systemitem">udev</code><a id="id458647" class="indexterm"></a> 的异步天性，使得系统启动时网络驱动可能无法在
 <span class="command"><strong>/etc/init.d/networking</strong></span> 执行前加载完成。虽然在
 <code class="filename">/etc/network/interfaces</code> 中加入
 <code class="literal">allow-hotplug</code> (与 <code class="literal">auto</code>
 一起使用)能保证在网络接口可用才将其启用，这仍然无法保证在启动进程开始启动网络服务前完成，而这些网络服务可能因没有网络接口而无法正常运行。
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="wpa"></a>5.1.7. 使用 <acronym title="Wi-Fi 安全网络访问">WPA</acronym> 保护无线网络的问题</h3></div></div></div><a id="id363551" class="indexterm"></a><p>
-在 etch 中，<code class="systemitem">wpasupplicant</code>
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="wpa"></a>5.1.7. 使用 <acronym title="Wi-Fi 安全网络访问">WPA</acronym> 保护无线网络的问题</h3></div></div></div><a id="id458697" class="indexterm"></a><p>
+在 etch 中，<code class="systemitem">wpasupplicant</code><a id="id458713" class="indexterm"></a>
 软件包设置为系统服务，通过 <code class="filename">/etc/default/wpasupplicant</code> 和用户提供的
 <code class="filename">/etc/wpasupplicant.conf</code> 进行配置。
 </p><p>
 在 lenny 中，<code class="filename">/etc/init.d/wpasupplicant</code> 被抛弃，现在此
 Debian 软件包已经和 <code class="filename">/etc/network/interfaces</code> 集成，类似其它软件包如
-<code class="systemitem">wireless-tools</code>。这意味着 <code class="systemitem">wpasupplicant</code> 不再直接提供系统服务。
+<code class="systemitem">wireless-tools</code><a id="id458757" class="indexterm"></a>。这意味着 <code class="systemitem">wpasupplicant</code><a id="id458771" class="indexterm"></a> 不再直接提供系统服务。
 </p><p>
 更多有关配置 wpasupplicant 的信息请参考
 <code class="filename">/usr/share/doc/wpasupplicant/README.modes.gz</code>，里面有
-<code class="filename">/etc/network/interfaces</code> 文件的例子。Debian 中有关使用 <code class="systemitem">wpasupplicant</code> 软件包的更新信息可以在 <a class="ulink" href="http://wiki.debian.org/WPA" target="_top">Debian Wiki</a> 中找到。
+<code class="filename">/etc/network/interfaces</code> 文件的例子。Debian 中有关使用 <code class="systemitem">wpasupplicant</code><a id="id458802" class="indexterm"></a> 软件包的更新信息可以在 <a class="ulink" href="http://wiki.debian.org/WPA" target="_top">Debian Wiki</a> 中找到。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="partitionenc"></a>5.1.8. 文件名中使用非 ASCII 字符可能引起问题</h3></div></div></div><p>
 挂载 vfat，ntfs 或者 iso9660 文件系统时，如果其中有文件的名称包含非 ASCII 字符时，会在尝试使用这些文件名时失败，除非使用
 utf8 选项来挂载。迹象是可能会出现这样的失败：“<span class="quote">无效或不完整的多字节字符或宽字符</span>””。可行的解决方法是使用
@@ -105,11 +105,11 @@ ASCII 字符名称的文件。
 2.6 内核系列相比 2.4 系列包含大量的变化。很多模块被改名并且大量驱动被部分或者有些情况下完全重写。因此从较早的内核版本升级到 2.6
 内核并不是一个轻松的过程。本节旨在使您了解您可能会遇到的问题。
 </p><p>
-如果您从源代码编译您自己的内核，请确保您重启到这个 2.6 内核之前已经安装了 <code class="systemitem">module-init-tools</code>。这个软件包在 2.6 内核中代替了 <code class="systemitem">modutils</code>。如果您安装了 Debian <code class="systemitem">linux-image</code> 软件包中的一个，此软件包将会通过依赖关系自动被安装。
+如果您从源代码编译您自己的内核，请确保您重启到这个 2.6 内核之前已经安装了 <code class="systemitem">module-init-tools</code><a id="id459010" class="indexterm"></a>。这个软件包在 2.6 内核中代替了 <code class="systemitem">modutils</code><a id="id459025" class="indexterm"></a>。如果您安装了 Debian <code class="systemitem">linux-image</code><a id="id459039" class="indexterm"></a> 软件包中的一个，此软件包将会通过依赖关系自动被安装。
 </p><p>
-如果您使用 <span class="emphasis"><em><acronym title="逻辑卷管理器">LVM</acronym></em></span>，您应该在重启前安装 <code class="systemitem">lvm2</code> 因为 2.6 内核不直接支持 LVM1。要访问 LVM1 卷，会使用
-<code class="systemitem">lvm2</code> 的兼容层(dm-mod 模块)。您可以保留
-<code class="systemitem">lvm10</code>；启动脚本将检测使用了哪个内核并执行合适版本的脚本。
+如果您使用 <span class="emphasis"><em><acronym title="逻辑卷管理器">LVM</acronym></em></span>，您应该在重启前安装 <code class="systemitem">lvm2</code><a id="id459063" class="indexterm"></a> 因为 2.6 内核不直接支持 LVM1。要访问 LVM1 卷，会使用
+<code class="systemitem">lvm2</code><a id="id459078" class="indexterm"></a> 的兼容层(dm-mod 模块)。您可以保留
+<code class="systemitem">lvm10</code><a id="id459093" class="indexterm"></a>；启动脚本将检测使用了哪个内核并执行合适版本的脚本。
 </p><p>
 如果您的 <code class="filename">/etc/modules</code>
 文件(系统启动时自动加载的模块列表)中有内容，请注意有些模块可能已经改名。如果发生这种情况您需要更新这个文件以使用新的模块名。
@@ -117,7 +117,7 @@ ASCII 字符名称的文件。
 对于一些 SATA 磁盘控制器，指定给驱动器和它的分区的的设备文件可能会从 <code class="filename">/dev/hdX</code> 改名为
 <code class="filename">/dev/sdX</code>。如果发生这种情况，您需要修改您的
 <code class="filename">/etc/fstab</code>
-文件和启动加载器(bootloader)配置的相关部分。除非正确的修改这些设置，否则您的系统可能无法正确启动<sup>[<a id="id363934" href="#ftn.id363934" class="footnote">11</a>]</sup>。
+文件和启动加载器(bootloader)配置的相关部分。除非正确的修改这些设置，否则您的系统可能无法正确启动<sup>[<a id="id459138" href="#ftn.id459138" class="footnote">11</a>]</sup>。
 </p><p>
 一旦您安装好 2.6 内核，在重启之前，请确保您有恢复措施。首先，确保启动加载器(bootloader)配置同时包含新内核和旧的、可用的 2.4
 内核。您应该同时保证您手头有“<span class="quote">拯救</span>”软盘或者
@@ -148,26 +148,26 @@ xserver-xorg</code>，或者直接编辑 <code class="filename">/etc/X11/xorg.co
 		      架构因为所有的 PS/2 和大多数 <acronym title="通用串行总线">USB</acronym>
 键盘已经会配置成“<span class="quote">标准</span>” PC 键盘。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="l2.6-mouse"></a>5.2.2. 鼠标配置</h3></div></div></div><p>
-还是因为输入层的改变，如果更新到 2.6 内核后您的鼠标不工作，您可能需要重新配置 X Window 系统和 <code class="systemitem">gpm</code>。最可能出现的情况是获取鼠标数据的设备更改了。您可能还需要加载不同的模块。
+还是因为输入层的改变，如果更新到 2.6 内核后您的鼠标不工作，您可能需要重新配置 X Window 系统和 <code class="systemitem">gpm</code><a id="id459283" class="indexterm"></a>。最可能出现的情况是获取鼠标数据的设备更改了。您可能还需要加载不同的模块。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h3 class="title"><a id="l2.6-sound"></a>5.2.3. 声音配置</h3></div></div></div><p>
 从 2.6 系列内核开始 <acronym title="高级 Linux 声音架构">ALSA</acronym> 声音驱动是推荐的驱动，它取代了旧的
 <acronym title="开放声音系统">OSS</acronym> 声音驱动。<acronym title="高级 Linux 声音架构">ALSA</acronym>
 声音驱动默认通过模块形式提供。为了使声音能够工作，需要加载与您的声音硬件匹配的 <acronym title="高级 Linux 声音架构">ALSA</acronym>
-模块。通常情况下，如果您的系统在安装了 <code class="systemitem">alsa-base</code>
-软件包之外，还安装了 <code class="systemitem">hotplug</code> 软件包或者 <code class="systemitem">discover</code> 软件包中的一个，这将会自动完成。<code class="systemitem">alsa-base</code> 软件包还会将 <acronym title="开放声音系统">OSS</acronym>
+模块。通常情况下，如果您的系统在安装了 <code class="systemitem">alsa-base</code><a id="id459328" class="indexterm"></a>
+软件包之外，还安装了 <code class="systemitem">hotplug</code><a id="id459343" class="indexterm"></a> 软件包或者 <code class="systemitem">discover</code><a id="id459357" class="indexterm"></a> 软件包中的一个，这将会自动完成。<code class="systemitem">alsa-base</code><a id="id459372" class="indexterm"></a> 软件包还会将 <acronym title="开放声音系统">OSS</acronym>
 模块列入“<span class="quote">黑名单</span>”以避免 <span class="command"><strong>hotplug</strong></span> 和
 <span class="command"><strong>discover</strong></span> 加载他们。如果您在 <code class="filename">/etc/modules</code>
 文件中列有 <acronym title="开放声音系统">OSS</acronym> 模块，您需要移除它们。
 </p></div></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nfs-common"></a>5.3. <acronym title="网络文件系统">NFS</acronym> 挂载现在由 nfs-common 来处理</h2></div></div></div><p>
-    从 <code class="systemitem">util-linux</code> 2.13 开始
-<acronym title="网络文件系统">NFS</acronym> 挂载不再由 <code class="systemitem">util-linux</code> 本身处理，而是由 <code class="systemitem">nfs-common</code> 来处理。由于不是所有的系统都要挂载
-<acronym title="网络文件系统">NFS</acronym> 共享分区而且为了避免安装标准端口映射 <code class="systemitem">util-linux</code> 仅仅建议安装 <code class="systemitem">nfs-common</code>。如果您需要挂载 <acronym title="网络文件系统">NFS</acronym>
-共享分区，请确保在您的系统中安装 <code class="systemitem">nfs-common</code>。<code class="systemitem">mount</code> 软件包的预安装脚本会检查是否存在已挂载的
-<acronym title="网络文件系统">NFS</acronym> 分区，并且如果 <code class="systemitem">nfs-common</code> 中的
-<code class="filename">/usr/sbin/mount.nfs</code> 不存在或者 <code class="systemitem">nfs-common</code> 过时就会中止。此时，不是升级 <code class="systemitem">nfs-common</code> 就是在升级挂接之前卸下全部 <acronym title="网络文件系统">NFS</acronym>
+    从 <code class="systemitem">util-linux</code><a id="id459432" class="indexterm"></a> 2.13 开始
+<acronym title="网络文件系统">NFS</acronym> 挂载不再由 <code class="systemitem">util-linux</code><a id="id459450" class="indexterm"></a> 本身处理，而是由 <code class="systemitem">nfs-common</code><a id="id459465" class="indexterm"></a> 来处理。由于不是所有的系统都要挂载
+<acronym title="网络文件系统">NFS</acronym> 共享分区而且为了避免安装标准端口映射 <code class="systemitem">util-linux</code><a id="id459484" class="indexterm"></a> 仅仅建议安装 <code class="systemitem">nfs-common</code><a id="id459498" class="indexterm"></a>。如果您需要挂载 <acronym title="网络文件系统">NFS</acronym>
+共享分区，请确保在您的系统中安装 <code class="systemitem">nfs-common</code><a id="id459517" class="indexterm"></a>。<code class="systemitem">mount</code><a id="id459531" class="indexterm"></a> 软件包的预安装脚本会检查是否存在已挂载的
+<acronym title="网络文件系统">NFS</acronym> 分区，并且如果 <code class="systemitem">nfs-common</code><a id="id459550" class="indexterm"></a> 中的
+<code class="filename">/usr/sbin/mount.nfs</code> 不存在或者 <code class="systemitem">nfs-common</code><a id="id459570" class="indexterm"></a> 过时就会中止。此时，不是升级 <code class="systemitem">nfs-common</code><a id="id459585" class="indexterm"></a> 就是在升级挂接之前卸下全部 <acronym title="网络文件系统">NFS</acronym>
 挂接。
   </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="romanian-keyboard"></a>5.4. 罗马尼亚(ro)键盘布局的改变</h2></div></div></div><p>
-    由于在 lenny 中升级到 <code class="systemitem">xkb-data</code> 版本
+    由于在 lenny 中升级到 <code class="systemitem">xkb-data</code><a id="id459616" class="indexterm"></a> 版本
 1.3 默认的罗马尼亚(ro)布局变体现在可以产生正确的 șț 字符(注意下面的逗号)而不是 şţ
 (注意下面的下加符)。还有一些变体已经改名。旧的变体名字仍然可以工作，不过建议用户更新他们的
 <code class="filename">/etc/X11/xorg.conf</code>。因这个改变更多信息以及可能导致的副作用在 <a class="ulink" href="http://wiki.debian.org/L10N/Romanian/Lenny/Notes" target="_top"> wiki
@@ -185,7 +185,7 @@ xserver-xorg</code>，或者直接编辑 <code class="filename">/etc/X11/xorg.co
 start</strong></span> 启动 apache2，您需要使用 <span class="command"><strong>/etc/init.d/apache2</strong></span> 或者
 <span class="command"><strong>apache2ctl</strong></span>。
   </p><p>
-    Mod_suexec 所需要的 suexec 帮助程序现在通过单独的软件包 <code class="systemitem">apache2-suexec</code> 来发行，此软件包不会默认安装。
+    Mod_suexec 所需要的 suexec 帮助程序现在通过单独的软件包 <code class="systemitem">apache2-suexec</code><a id="id459725" class="indexterm"></a> 来发行，此软件包不会默认安装。
   </p><p>
     更多模块相关的配置从 <code class="filename">/etc/apache2/apache2.conf</code> 移到了
 <code class="filename">/etc/apache2/mods-available/*.conf</code>。
@@ -193,14 +193,14 @@ start</strong></span> 启动 apache2，您需要使用 <span class="command"><st
     要获取更多详细信息，请参见
 <code class="filename">/usr/share/doc/apache2.2-common/NEWS.Debian.gz</code> 和
 <code class="filename">/usr/share/doc/apache2.2-common/README.Debian.gz</code>。
-  </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nis"></a>5.6. <acronym title="网络信息服务">NIS</acronym> 和网络管理器</h2></div></div></div><a id="id364474" class="indexterm"></a><a id="id364480" class="indexterm"></a><p>
-在 lenny 中，<code class="systemitem">nis</code> 内的
+  </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nis"></a>5.6. <acronym title="网络信息服务">NIS</acronym> 和网络管理器</h2></div></div></div><a id="id459778" class="indexterm"></a><a id="id459784" class="indexterm"></a><p>
+在 lenny 中，<code class="systemitem">nis</code><a id="id459800" class="indexterm"></a> 内的
 <span class="command"><strong>ypbind</strong></span> 支持网络管理器。当网络管理器报告电脑从网络断开时，它会导致
 <span class="command"><strong>ypbind</strong></span> 禁用 <acronym title="网络信息服务">NIS</acronym>
 客户端功能。因为网络管理器通常会在不使用网络时发出此报告，<acronym title="网络信息服务">NIS</acronym> 客户系统的
 <acronym title="网络信息服务">NIS</acronym> 用户应确认禁用这些系统上的网络管理器支持。
 </p><p>
-要做到这一点可以通过卸载 <code class="systemitem">network-manager</code>
+要做到这一点可以通过卸载 <code class="systemitem">network-manager</code><a id="id459844" class="indexterm"></a>
 软件包，或者编辑 <code class="filename">/etc/default/nis</code> 并添加
 <code class="literal">-no-dbus</code> 到 <code class="literal">YPBINDARGS</code>。
 </p><p>
@@ -219,7 +219,7 @@ start</strong></span> 启动 apache2，您需要使用 <span class="command"><st
 <code class="filename">/usr/share/doc/php5</code>) 中的
 <code class="filename">README.Debian.security</code> 文件
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="mozilla-security"></a>5.8. Mozilla 产品的安全状态</h2></div></div></div><p>
-Mozilla 程序 <code class="systemitem">firefox</code>、<code class="systemitem">thunderbird</code>、<code class="systemitem">sunbird</code> 和 <code class="systemitem">seamonkey</code> (在 Debian 中分别更名为 <code class="systemitem">iceweasel</code>、<code class="systemitem">icedove</code>、<code class="systemitem">iceowl</code> 和 <code class="systemitem">iceape</code>)，对许多用户来说是重要的工具。不幸的是上游的安全策略是主张用户更新到新版本，而这与
+Mozilla 程序 <code class="systemitem">firefox</code><a id="id459976" class="indexterm"></a>、<code class="systemitem">thunderbird</code><a id="id459991" class="indexterm"></a>、<code class="systemitem">sunbird</code><a id="id460005" class="indexterm"></a> 和 <code class="systemitem">seamonkey</code><a id="id460019" class="indexterm"></a> (在 Debian 中分别更名为 <code class="systemitem">iceweasel</code><a id="id460033" class="indexterm"></a>、<code class="systemitem">icedove</code><a id="id460048" class="indexterm"></a>、<code class="systemitem">iceowl</code><a id="id460062" class="indexterm"></a> 和 <code class="systemitem">iceape</code><a id="id460076" class="indexterm"></a>)，对许多用户来说是重要的工具。不幸的是上游的安全策略是主张用户更新到新版本，而这与
 Debian 的“不在安全更新中发行大的功能改变”的策略相冲突。我们今天无法预测，但在 lenny 的生命周期中 Debian
 安全团队可能会遇到无法继续支持 Mozilla 产品，并宣布对 Mozilla 产品的安全支持的终止。在部署 Mozilla
 时，如果缺乏安全更新对您来说是一个问题，您需要考虑到这一点并可以考虑 Debian 中的替代品。
@@ -245,7 +245,7 @@ Notes</a> 中找到更多的信息。
 </p><p>
 lenny 版本中的GNOME 桌面环境相比 etch 中发行的版本有大量的变化，您可以在 <a class="ulink" href="http://library.gnome.org/misc/release-notes/2.22/" target="_top">GNOME 2.22
 发行说明</a> 找到更多信息。
-</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="no-unicode"></a>5.11. Emacs21* 默认不支持 Unicode</h2></div></div></div><a id="id364842" class="indexterm"></a><p>
+</p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="no-unicode"></a>5.11. Emacs21* 默认不支持 Unicode</h2></div></div></div><a id="id460204" class="indexterm"></a><p>
 Emacs21 和 emacs21-nox 默认不配置为支持 Unicode。更多信息和替代方案请参见 <a class="ulink" href="http://bugs.debian.org/419490" target="_top">Bug #419490</a>。
 </p></div><div class="section" lang="zh-CN" xml:lang="zh-CN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="openldapreplica"></a>5.12. slurpd/replica 已经被删除</h2></div></div></div><p>
     OpenLDAP 从版本 2.4.7 开始，不再支持通过 slurpd 服务执行 <acronym title="轻量级目录访问协议">LDAP</acronym>
@@ -260,7 +260,7 @@ Emacs21 和 emacs21-nox 默认不配置为支持 Unicode。更多信息和替代
   Option "Ignore" "true"
 EndSection</pre><p>
     更多信息请参考 bug <a class="ulink" href="http://bugs.debian.org//496169" target="_top">#496169</a>。
-  </p></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id363934" href="#id363934" class="para">11</a>] </sup> 内核可以启动但是尝试挂载 root 文件系统时会失败并输出错误信息 <span class="emphasis"><em>waiting for root file
+  </p></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id459138" href="#id459138" class="para">11</a>] </sup> 内核可以启动但是尝试挂载 root 文件系统时会失败并输出错误信息 <span class="emphasis"><em>waiting for root file
 system</em></span> 以及 <span class="emphasis"><em>unable to mount /dev/hdX ..not
 found</em></span> 后中止。在您通过内核启动信息或者通过检查 <code class="filename">/dev/disk/</code>
 的内容确定新分配的设备名后，您可以使用 <code class="literal">initramfs</code> shell 来修改这个问题。  </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-upgrading.zh_CN.html">上一页</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch-moreinfo.zh_CN.html">下一页</a></td></tr><tr><td width="40%" align="left" valign="top">第 4 章 从以前的发行版升级 </td><td width="20%" align="center"><a accesskey="h" href="index.zh_CN.html">起始页</a></td><td width="40%" align="right" valign="top"> 第 6 章 关于 Debian <acronym title="GNU's Not Unix 的递归缩写">GNU</acronym>/Linux 的更多信息</td></tr></table></div></body></html>

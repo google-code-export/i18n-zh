@@ -17,13 +17,13 @@ bugs somewhere else.  We document here the issues we are aware of.  Please also
 read the errata, the relevant packages' documentation, bug reports and other
 information mentioned in <a class="xref" href="ch-moreinfo.en.html#morereading" title="6.1. Further reading">Section 6.1, “Further reading”</a>.
 </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="udev"></a>5.1.1. Problems with devices related to udev</h3></div></div></div><p>
-Although <code class="systemitem">udev</code> has been tested
+Although <code class="systemitem">udev</code><a id="id352163" class="indexterm"></a> has been tested
 extensively, you may experience minor problems with some devices that will need
 to be fixed.  The most common problems are changed permission and/or ownership
 of a device.  In some cases a device may not be created by default (e.g.
 <code class="filename">/dev/video</code> and <code class="filename">/dev/radio</code>).
 </p><p>
-<code class="systemitem">udev</code> provides configuration mechanisms
+<code class="systemitem">udev</code><a id="id352194" class="indexterm"></a> provides configuration mechanisms
 to deal with these issues.  See <span class="citerefentry"><span class="refentrytitle">udev</span>(8)</span>
 and <code class="filename">/etc/udev</code> for further information.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="incompatible-2.4"></a>5.1.2. Some applications may no longer work with a 2.4 kernel</h3></div></div></div><p>
@@ -32,7 +32,7 @@ because they require <code class="literal">epoll()</code> support, which is not 
 in 2.4 kernels.  Such applications may either not work at all or not work
 correctly until the system has been rebooted with a 2.6 kernel.
 </p><p>
-One example is the HTTP proxy <code class="systemitem">squid</code>.
+One example is the HTTP proxy <code class="systemitem">squid</code><a id="id352249" class="indexterm"></a>.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="window-scaling"></a>5.1.3. Certain network sites cannot be reached by TCP</h3></div></div></div><p>
 Since 2.6.17, Linux aggressively uses TCP window scaling which is
 specified in RFC 1323.  Some servers have a broken behavior, and
@@ -49,8 +49,8 @@ On some older systems, <code class="literal">shutdown -h</code> may not power of
 system anymore (but just stop it).  This happens because
 <acronym title="Advanced Power Management">APM</acronym> needs to be used
 there.  Adding <code class="literal">acpi=off apm=power_off</code> to the kernel's
-command line, e.g. in <code class="systemitem">grub</code> or
-<code class="systemitem">lilo</code> configuration files should fix
+command line, e.g. in <code class="systemitem">grub</code><a id="id352335" class="indexterm"></a> or
+<code class="systemitem">lilo</code><a id="id352349" class="indexterm"></a> configuration files should fix
 this issue.  Please see bug <a class="ulink" href="http://bugs.debian.org/390547" target="_top">#390547</a> for additional information.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="hp-acpi"></a>5.1.5. ACPI support disabled for some HP laptop models in lenny kernel</h3></div></div></div><pre class="programlisting">
 TODO: This section can be removed, right?
@@ -79,9 +79,9 @@ later kernel.  Please see Debian bug <a class="ulink" href="http://bugs.debian.o
 <a class="ulink" href="http://bugzilla.kernel.org/show_bug.cgi?id=7122" target="_top">#7122</a> for
 additional information.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="asynchronous-network-start"></a>5.1.6. Asynchronous network initialization may cause unpredictable behavior</h3></div></div></div><p>
-On systems which use <code class="systemitem">udev</code> to load
+On systems which use <code class="systemitem">udev</code><a id="id352446" class="indexterm"></a> to load
 drivers for network interfaces, it is possible due to the asynchronous nature
-of <code class="systemitem">udev</code> that the network driver will
+of <code class="systemitem">udev</code><a id="id352461" class="indexterm"></a> that the network driver will
 not be loaded before <span class="command"><strong>/etc/init.d/networking</strong></span> runs on system
 boot.  Although including <code class="literal">allow-hotplug</code> to
 <code class="filename">/etc/network/interfaces</code> (in addition to
@@ -89,8 +89,8 @@ boot.  Although including <code class="literal">allow-hotplug</code> to
 it becomes available, there is no guarantee that this will finish before the
 boot sequence begins to start network services, some of which may not behave
 correctly in the absence of the network interface.
-</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="wpa"></a>5.1.7. Trouble when using <acronym title="Wi-Fi Protected Access">WPA</acronym> secured wireless networks</h3></div></div></div><a id="id309639" class="indexterm"></a><p>
-In etch, the <code class="systemitem">wpasupplicant</code> package was
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="wpa"></a>5.1.7. Trouble when using <acronym title="Wi-Fi Protected Access">WPA</acronym> secured wireless networks</h3></div></div></div><a id="id352508" class="indexterm"></a><p>
+In etch, the <code class="systemitem">wpasupplicant</code><a id="id352524" class="indexterm"></a> package was
 set up as a system service, configured via
 <code class="filename">/etc/default/wpasupplicant</code> and a user-provided
 <code class="filename">/etc/wpasupplicant.conf</code>.
@@ -98,13 +98,13 @@ set up as a system service, configured via
 In lenny, <code class="filename">/etc/init.d/wpasupplicant</code> has been dropped and
 the Debian package now integrates with
 <code class="filename">/etc/network/interfaces</code>, similar to other packages such as
-<code class="systemitem">wireless-tools</code>.  This means <code class="systemitem">wpasupplicant</code> no longer provides a system service
+<code class="systemitem">wireless-tools</code><a id="id352567" class="indexterm"></a>.  This means <code class="systemitem">wpasupplicant</code><a id="id352581" class="indexterm"></a> no longer provides a system service
 directly.
 </p><p>
 For information on configuring wpasupplicant please refer to
 <code class="filename">/usr/share/doc/wpasupplicant/README.modes.gz</code>, which gives
 examples for <code class="filename">/etc/network/interfaces</code> files.  Updated
-information about the usage of the <code class="systemitem">wpasupplicant</code> package in Debian can be found in the
+information about the usage of the <code class="systemitem">wpasupplicant</code><a id="id352612" class="indexterm"></a> package in Debian can be found in the
 <a class="ulink" href="http://wiki.debian.org/WPA" target="_top">Debian Wiki</a>.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="partitionenc"></a>5.1.8. Problems with non-ASCII characters in filenames</h3></div></div></div><p>
 Mounting vfat, ntfs or iso9660 file systems with files that include non-ASCII
@@ -145,15 +145,15 @@ completely rewritten.  Upgrading to a 2.6 kernel from an earlier version is
 therefore not a process to be undertaken lightly.  This section aims to make
 you aware of some of the issues you may face.
 </p><p>
-If you compile your own kernel from source, make sure you install <code class="systemitem">module-init-tools</code> before you reboot with the 2.6
-kernel.  This package replaces <code class="systemitem">modutils</code>
-for 2.6 kernels.  If you install one of the Debian <code class="systemitem">linux-image</code> packages, this package will be
+If you compile your own kernel from source, make sure you install <code class="systemitem">module-init-tools</code><a id="id352810" class="indexterm"></a> before you reboot with the 2.6
+kernel.  This package replaces <code class="systemitem">modutils</code><a id="id352824" class="indexterm"></a>
+for 2.6 kernels.  If you install one of the Debian <code class="systemitem">linux-image</code><a id="id352839" class="indexterm"></a> packages, this package will be
 installed automatically because of dependencies.
 </p><p>
-If you use <span class="emphasis"><em><acronym title="Logical Volume Manager">LVM</acronym></em></span>, you should also install <code class="systemitem">lvm2</code> before you reboot as the 2.6 kernel does not
+If you use <span class="emphasis"><em><acronym title="Logical Volume Manager">LVM</acronym></em></span>, you should also install <code class="systemitem">lvm2</code><a id="id352862" class="indexterm"></a> before you reboot as the 2.6 kernel does not
 directly support LVM1.  To access LVM1 volumes, the compatibility layer of
-<code class="systemitem">lvm2</code> (the dm-mod module) is used.  You
-can leave <code class="systemitem">lvm10</code> installed; the init
+<code class="systemitem">lvm2</code><a id="id352877" class="indexterm"></a> (the dm-mod module) is used.  You
+can leave <code class="systemitem">lvm10</code><a id="id352891" class="indexterm"></a> installed; the init
 scripts will detect which kernel is used and execute the appropriate version.
 </p><p>
 If you have entries in the <code class="filename">/etc/modules</code> file (the list of
@@ -166,7 +166,7 @@ partitions may change from <code class="filename">/dev/hdX</code> to
 <code class="filename">/dev/sdX</code>.  If this happens, you will have to modify your
 <code class="filename">/etc/fstab</code> and bootloader configuration accordingly.
 Unless these changes are made correctly, your system may not boot
-correctly<sup>[<a id="id310005" href="#ftn.id310005" class="footnote">11</a>]</sup>.
+correctly<sup>[<a id="id352933" href="#ftn.id352933" class="footnote">11</a>]</sup>.
 </p><p>
 Once you have installed your 2.6 kernel, but before you reboot, make sure you
 have a recovery method.  First, make sure that the bootloader configuration has
@@ -206,7 +206,7 @@ PS/2 and most <acronym title="Universal Serial Bus">USB</acronym> keyboards will
 keyboard.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="l2.6-mouse"></a>5.2.2. Mouse configuration</h3></div></div></div><p>
 Again because of the changes in the input layer, you may have to reconfigure
-the X Window System and <code class="systemitem">gpm</code> if your
+the X Window System and <code class="systemitem">gpm</code><a id="id353067" class="indexterm"></a> if your
 mouse is not working after upgrading to a 2.6 kernel.  The most likely cause is
 that the device which gets the data from the mouse has changed.  You may also
 need to load different modules.
@@ -215,27 +215,27 @@ For the 2.6 kernel series the <acronym title="Advanced Linux Sound Architecture"
 <acronym title="Open Sound System">OSS</acronym> sound drivers.  <acronym title="Advanced Linux Sound Architecture">ALSA</acronym> sound drivers are provided as modules by default.  In
 order for sound to work, the <acronym title="Advanced Linux Sound Architecture">ALSA</acronym> modules appropriate for your sound hardware
 need to be loaded.  In general this will happen automatically if you have, in
-addition to the <code class="systemitem">alsa-base</code> package,
-either the <code class="systemitem">hotplug</code> package or the
-<code class="systemitem">discover</code> package installed.  The
-<code class="systemitem">alsa-base</code> package also “<span class="quote">blacklists</span>” <acronym title="Open Sound System">OSS</acronym>
+addition to the <code class="systemitem">alsa-base</code><a id="id353111" class="indexterm"></a> package,
+either the <code class="systemitem">hotplug</code><a id="id353126" class="indexterm"></a> package or the
+<code class="systemitem">discover</code><a id="id353140" class="indexterm"></a> package installed.  The
+<code class="systemitem">alsa-base</code><a id="id353154" class="indexterm"></a> package also “<span class="quote">blacklists</span>” <acronym title="Open Sound System">OSS</acronym>
 modules to prevent <span class="command"><strong>hotplug</strong></span> and <span class="command"><strong>discover</strong></span>
 from loading them.  If you have <acronym title="Open Sound System">OSS</acronym> modules listed in
 <code class="filename">/etc/modules</code>, you should remove them.
 </p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nfs-common"></a>5.3. <acronym title="Network File System">NFS</acronym> mounts now handled by nfs-common</h2></div></div></div><p>
-    Since <code class="systemitem">util-linux</code> 2.13
-    <acronym title="Network File System">NFS</acronym> mounts are no longer handled by <code class="systemitem">util-linux</code> itself, but by <code class="systemitem">nfs-common</code>. Since not all systems
+    Since <code class="systemitem">util-linux</code><a id="id353212" class="indexterm"></a> 2.13
+    <acronym title="Network File System">NFS</acronym> mounts are no longer handled by <code class="systemitem">util-linux</code><a id="id353230" class="indexterm"></a> itself, but by <code class="systemitem">nfs-common</code><a id="id353244" class="indexterm"></a>. Since not all systems
     mount <acronym title="Network File System">NFS</acronym> shares and to avoid a standard
-    portmapper installation <code class="systemitem">util-linux</code> only suggests <code class="systemitem">nfs-common</code>. If you need to mount
-    <acronym title="Network File System">NFS</acronym> shares, make sure <code class="systemitem">nfs-common</code> is installed on your
-    system. The preinstallation script of the <code class="systemitem">mount</code> package checks, whether
+    portmapper installation <code class="systemitem">util-linux</code><a id="id353262" class="indexterm"></a> only suggests <code class="systemitem">nfs-common</code><a id="id353277" class="indexterm"></a>. If you need to mount
+    <acronym title="Network File System">NFS</acronym> shares, make sure <code class="systemitem">nfs-common</code><a id="id353294" class="indexterm"></a> is installed on your
+    system. The preinstallation script of the <code class="systemitem">mount</code><a id="id353309" class="indexterm"></a> package checks, whether
     <acronym title="Network File System">NFS</acronym> mounts exist and aborts if
-    <code class="filename">/usr/sbin/mount.nfs</code> from <code class="systemitem">nfs-common</code> is not present or if
-    <code class="systemitem">nfs-common</code> is
-    out-of-date. Either upgrade <code class="systemitem">nfs-common</code>, or unmount any
+    <code class="filename">/usr/sbin/mount.nfs</code> from <code class="systemitem">nfs-common</code><a id="id353333" class="indexterm"></a> is not present or if
+    <code class="systemitem">nfs-common</code><a id="id353347" class="indexterm"></a> is
+    out-of-date. Either upgrade <code class="systemitem">nfs-common</code><a id="id353361" class="indexterm"></a>, or unmount any
     <acronym title="Network File System">NFS</acronym> mounts prior to upgrading mount.
   </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="romanian-keyboard"></a>5.4. Change of Romanian (ro) keyboard layout</h2></div></div></div><p>
-    Because of the upgrade to <code class="systemitem">xkb-data</code> version 1.3 in lenny
+    Because of the upgrade to <code class="systemitem">xkb-data</code><a id="id353392" class="indexterm"></a> version 1.3 in lenny
     the default variant for Romanian (ro) layout is now producing the
     correct șț characters (comma below) instead of şţ (cedilla
     below). Also some of the variants have been renamed. The old
@@ -264,7 +264,7 @@ from loading them.  If you have <acronym title="Open Sound System">OSS</acronym>
     <span class="command"><strong>apache2ctl</strong></span>.
   </p><p>
     The suexec helper program needed for mod_suexec is now shipped in
-    a separate package, <code class="systemitem">apache2-suexec</code>, which is not installed
+    a separate package, <code class="systemitem">apache2-suexec</code><a id="id353499" class="indexterm"></a>, which is not installed
     by default.
   </p><p>
     More module specific configuration has been moved from
@@ -275,15 +275,15 @@ from loading them.  If you have <acronym title="Open Sound System">OSS</acronym>
     <code class="filename">/usr/share/doc/apache2.2-common/NEWS.Debian.gz</code>
     and
     <code class="filename">/usr/share/doc/apache2.2-common/README.Debian.gz</code>.
-  </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nis"></a>5.6. <acronym title="Network Information Service">NIS</acronym> and Network Manager</h2></div></div></div><a id="id310523" class="indexterm"></a><a id="id310530" class="indexterm"></a><p>
-The version of <span class="command"><strong>ypbind</strong></span> included with <code class="systemitem">nis</code> for lenny contains support for Network Manager.
+  </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nis"></a>5.6. <acronym title="Network Information Service">NIS</acronym> and Network Manager</h2></div></div></div><a id="id353551" class="indexterm"></a><a id="id353557" class="indexterm"></a><p>
+The version of <span class="command"><strong>ypbind</strong></span> included with <code class="systemitem">nis</code><a id="id353579" class="indexterm"></a> for lenny contains support for Network Manager.
 This support causes <span class="command"><strong>ypbind</strong></span> to disable <acronym title="Network Information Service">NIS</acronym> client
 functionality when Network Manager reports that the computer is disconnected
 from the network.  Since Network Manager will usually report that the computer
 is disconnected when it is not in use, <acronym title="Network Information Service">NIS</acronym> users with <acronym title="Network Information Service">NIS</acronym> client systems should
 ensure that Network Manager support is disabled on those systems.
 </p><p>
-This can be done by either uninstalling the <code class="systemitem">network-manager</code> package, or editing
+This can be done by either uninstalling the <code class="systemitem">network-manager</code><a id="id353616" class="indexterm"></a> package, or editing
 <code class="filename">/etc/default/nis</code> to add <code class="literal">-no-dbus</code> to
 <code class="literal">YPBINDARGS</code>.
 </p><p>
@@ -309,11 +309,11 @@ the <code class="filename">README.Debian.security</code> file in the PHP documen
 directory (<code class="filename">/usr/share/doc/php4</code>,
 <code class="filename">/usr/share/doc/php5</code>).
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="mozilla-security"></a>5.8. Security status of Mozilla products</h2></div></div></div><p>
-The Mozilla programs <code class="systemitem">firefox</code>, 
-<code class="systemitem">thunderbird</code>,
-<code class="systemitem">sunbird</code> and
-<code class="systemitem">seamonkey</code> (rebranded in Debian to
-<code class="systemitem">iceweasel</code>, <code class="systemitem">icedove</code>, <code class="systemitem">iceowl</code> and <code class="systemitem">iceape</code>, respectively), are important tools for
+The Mozilla programs <code class="systemitem">firefox</code><a id="id353742" class="indexterm"></a>, 
+<code class="systemitem">thunderbird</code><a id="id353756" class="indexterm"></a>,
+<code class="systemitem">sunbird</code><a id="id353770" class="indexterm"></a> and
+<code class="systemitem">seamonkey</code><a id="id353784" class="indexterm"></a> (rebranded in Debian to
+<code class="systemitem">iceweasel</code><a id="id353799" class="indexterm"></a>, <code class="systemitem">icedove</code><a id="id353812" class="indexterm"></a>, <code class="systemitem">iceowl</code><a id="id353826" class="indexterm"></a> and <code class="systemitem">iceape</code><a id="id353840" class="indexterm"></a>, respectively), are important tools for
 many users.  Unfortunately the upstream security policy is to urge users to
 update to new upstream versions, which conflicts with Debian's policy of not
 shipping large functional changes in security updates.  We cannot predict it
@@ -356,7 +356,7 @@ There have been many changes in the GNOME desktop environment from the version
 shipped in etch to the version in lenny, you can find more information in the
 <a class="ulink" href="http://library.gnome.org/misc/release-notes/2.22/" target="_top">GNOME 2.22 Release
 Notes</a>.
-</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="no-unicode"></a>5.11. No default support for Unicode in emacs21*</h2></div></div></div><a id="id310875" class="indexterm"></a><p>
+</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="no-unicode"></a>5.11. No default support for Unicode in emacs21*</h2></div></div></div><a id="id353961" class="indexterm"></a><p>
 Emacs21 and emacs21-nox are not configured to use Unicode by default.  For more
 information and a workaround please see <a class="ulink" href="http://bugs.debian.org/419490" target="_top">Bug #419490</a>.
 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="openldapreplica"></a>5.12. slurpd/replica will no longer work</h2></div></div></div><p>
@@ -377,7 +377,7 @@ information and a workaround please see <a class="ulink" href="http://bugs.debia
   Option "Ignore" "true"
 EndSection</pre><p>
     Please refer to the bug <a class="ulink" href="http://bugs.debian.org//496169" target="_top">#496169</a> for more informations.
-  </p></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id310005" href="#id310005" class="para">11</a>] </sup> It will boot the kernel but will fail when trying to
+  </p></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id352933" href="#id352933" class="para">11</a>] </sup> It will boot the kernel but will fail when trying to
 mount the root file system and will abort with an error <span class="emphasis"><em>waiting for
 root file system</em></span> followed by <span class="emphasis"><em>unable to mount /dev/hdX
 ..not found</em></span>.  You can use the <code class="literal">initramfs</code> shell to
