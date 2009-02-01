@@ -19,8 +19,8 @@ For etch, you need the lenny backports of dblatex and xmlroff.
 
 Just call "make" to build it. To build the release notes in a single
 format (html or txt or pdf) for a single language (e.g. zh_CN, en, es)
-and a single architecture (such as amd64, i386, powerpc), call e.g.:
-"make html LINGUA=es architecture=i386".
+and the "all" pseudo-architecture, call e.g.:
+"make html LINGUA=es architecture=all".
 
 Translations
 
@@ -28,14 +28,15 @@ The document is available in many languages. po4a is currently used as
 the translation tool.
 
 To add a new language "new", do as follows:
+
 $ svn checkout svn+ssh://svn.debian.org/svn/ddp/manuals/trunk/release-notes
-(or whatever you do to get a fresh copy of the document sources)
 $ mkdir new (in the source directory, of course)
 $ make updatepo LINGUA=new
-(translate all po files in new/)
-$ make validate LINGUA=new
+(now translate all po files in new/)
+$ make tidypo LINGUA=new (always before commit!)
+$ make validate LINGUA=new (always before commit!)
 (fix any XML validity problems)
-$ make html txt pdf LINGUA=new architecture=i386 (or any other arch)
+$ make html txt pdf LINGUA=new architecture=all
 (proof-read and correct)
 $ svn commit
 
@@ -43,15 +44,6 @@ Some translators prefer full-text translation without po. For this
 style of translations, the original English files are just copied
 into the language directory and the translators have to make sure,
 that the translation is up to date.
-
-To add a new translation, call "mkdir xx; make updatepo LINGUA=xx" to create
-new PO template files which you need to translate, with xx being the
-language code of your translation.
-
-It is suggested that you now try to create the document for at least
-one architecture. This will detect possible syntax errors in your
-file. Furthermore you really should call "make validate LINGUA=xx"
-and fix any issues before committing.
 
 Send your translation for inclusion to the public mailing list
 debian-doc@lists.debian.org.
