@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="lenny-release-notes" default="i386">
+<project name="lenny-release-notes" default="amd64">
 
     <property file="build.properties"/>
 
@@ -46,6 +46,12 @@
             </condition>
             Saxon 6.5 Support NOT Present !
         </fail>
+    </target>
+
+    <target name="blend" description="Generate document - blend">
+        <antcall target="pdf">
+            <param name="arch" value="all" />
+        </antcall>
     </target>
 
     <target name="amd64" description="Generate document - amd64">
@@ -105,10 +111,9 @@ Maybe you should run 'make html LINGUA=zh_CN architecture=${arch}' first !
         <!--java classname="${fop.class}" fork="true" maxmemory="512m"
                     failonerror="true" dir="${basedir}/build/pdf">
             <classpath refid="lib.classpath"/>
-            <arg value="-c"/>
-            <arg value="${fop.home}/conf/userconfig.xml"/>
-            <arg value="release-notes.${arch}.fo"/>
-            <arg value="../lenny-release-notes.${arch}.pdf"/>
+            <arg value="-c ${fop.home}/conf/userconfig.xml"/>
+            <arg value="-fo release-notes.${arch}.fo"/>
+            <arg value="-pdf ../lenny-release-notes.${arch}.pdf"/>
         </java-->
 
         <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
