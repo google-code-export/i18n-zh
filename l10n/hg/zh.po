@@ -7,15 +7,18 @@
 #
 # $Id$
 #
+# Please test your translation before commit:
+#    msgfmt --statistics -c i18n/zh.po
+#    python setup.py build_py -c -d . build_ext -i build_mo
+#    LC_ALL=zh_CN.UTF-8 ./hg
+#
 # Please format your translation before commit:
 #    msgcat --width=80 --sort-by-file -o zh_new.po zh.po
 #    mv -f zh_new.po zh.po
-#    msgfmt --statistics -c zh.po
 #
 # Please remove '#: filename:line' lines before submit to hg:
 #    msgcat --width=80 --no-location -o zh_new.po zh.po
 #    mv -f zh_new.po zh.po
-#    msgfmt --statistics -c zh.po
 #
 # Dictionary:
 # blame             追溯
@@ -9151,7 +9154,7 @@ msgstr ""
 
 #: mercurial/help.py:200
 msgid "Specifying Multiple Revisions"
-msgstr ""
+msgstr "指定多个版本"
 
 #: mercurial/help.py:201
 msgid ""
@@ -9173,10 +9176,23 @@ msgid ""
 "    gives 3, 4 and 5. Similarly, a range of 4:2 gives 4, 3, and 2.\n"
 "    "
 msgstr ""
+"\n"
+"    当水银接受多个版本时，它们可以单独给出，或者以字符 \":\" 分割的连续范围\n"
+"    格式提供。\n"
+"\n"
+"    范围的语法是 '[BEGIN]:[END]'，其中 'BEGIN' 和 'END' 是版本标识。'BEGIN'\n"
+"    和 'END' 都是可选的。'BEGIN' 默认是 0，'END' 默认是 'tip'。因此范围 \":\"\n"
+"    意味着全部版本。\n"
+"\n"
+"    如果 'BEGIN' 大于 'END'，版本视为反序。\n"
+"\n"
+"    范围是闭区间。即范围 '3:5' 是 '3'，'4'，'5'。同样，范围 '4:2' 是 '4'，\n"
+"    '3'，'2'。\n"
+"    "
 
 #: mercurial/help.py:219
 msgid "Diff Formats"
-msgstr ""
+msgstr "差异格式"
 
 #: mercurial/help.py:220
 msgid ""
@@ -9212,10 +9228,33 @@ msgid ""
 "    importing diffs in this format or using them in the mq extension.\n"
 "    "
 msgstr ""
+"\n"
+"    水银显示文件不同版本之间差异的格式与 GNU diff 标准格式兼容，可用于\n"
+"    GNU patch 和许多标准工具。\n"
+"\n"
+"    虽然标准格式在大多数情况下都能满足要求，但是它不包含下述信息:\n"
+"\n"
+"     - 可执行状态\n"
+"     - 复制或改名信息\n"
+"     - 二进制文件的修改\n"
+"     - 创建或删除空文件\n"
+"\n"
+"    水银也支持解决这些限制的 git 扩展差异格式。由于支持 git 差异格式的工具\n"
+"    很少，所以它不是默认格式。\n"
+"\n"
+"    这意味着当从水银版本库(例如 \"hg export\")产生差异时，在其它版本库应用标\n"
+"    准差异时，会丢失文件复制或改名等额外信息，所以你要小心处理。水银的内部\n"
+"    操作(例如 push 和 pull)在传达改变时，使用内部的二进制格式，所以不受影\n"
+"    响。\n"
+"\n"
+"    要让水银产生 git 扩展差异格式，可以对许多命令使用选项 '--git'，或者在\n"
+"    你的 hgrc 文件中的节 '[diff]' 中增加 'git = True'。当你从此格式导入时，\n"
+"    或在 mq 扩展中使用时，不需要设置此选项。\n"
+"    "
 
 #: mercurial/help.py:251
 msgid "Template Usage"
-msgstr ""
+msgstr "模版用法"
 
 #: mercurial/help.py:252
 msgid ""
@@ -9303,6 +9342,75 @@ msgid ""
 "    - user: Any text. Returns the user portion of an email address.\n"
 "    "
 msgstr ""
+"\n""    水银允许你通过模版定制命令的输出。你可以通过命令行选项 '--template'\n"
+"    来使用模版，或者选择已有的模版样式(--style)。\n"
+"\n"
+"    你可以定制任意输出与日志信息类似的命令，即: log，outgoing，incoming，\n"
+"    tip，parents，heads 和 glog 这些启用模版的命令。\n"
+"\n"
+"    水银中内置了 3 种样式: default (默认), compact 和 changelog。用法:\n"
+"\n"
+"        $ hg log -r1 --style changelog\n"
+"\n"
+"    模版是文本片断，其中的标记用于变量扩展:\n"
+"\n"
+"        $ hg log -r1 --template \"{node}\\n\"\n"
+"        b56ce7b07c52de7d5fd79fb89701ea538af65746\n"
+"\n"
+"    花括号中的字符串称为关键字。可用的关键字依赖于模版的上下文。下述关键字\n"
+"    可用于输出与日志信息类似的命令:\n"
+"\n"
+"    - author: 字符串。改变集的作者。\n"
+"    - branches: 字符串。改变集的分支。如果分支名称为 'default' 则为空。\n"
+"    - date: 日期信息。改变集的日期。\n"
+"    - desc: 字符串。改变集的描述。\n"
+"    - files: 字符串列表。改变集中被修改、增加和删除的全部文件。\n"
+"    - file_adds: 字符串列表。改变集中被增加的文件。\n"
+"    - file_mods: 字符串列表。改变集中被修改的文件\n"
+"    - file_dels: 字符串列表。改变集中被删除的文件\n"
+"    - node: 字符串。改变集的哈系标识，40 个字符的 16 进制字符串。\n"
+"    - parents: 字符串列表。改变集的父亲。\n"
+"    - rev: 整数。本地版本库的改变集的版本号。\n"
+"    - tags: 字符串列表。改变集的标签。\n"
+"\n"
+"    关键字 \"date\" 不产生人工可读的输出。如果你想在输出中使用日期，可以使用\n"
+"    过滤器来处理它。过滤器是根据输入变量返回字符串的函数。你还可以使用过滤\n"
+"    链来产生需要的输出:\n"
+"\n"
+"       $ hg tip --template \"{date|isodate}\\n\"\n"
+"       2008-08-21 18:22 +0000\n"
+"\n"
+"    过滤器列表:\n"
+"\n"
+"    - addbreaks: 输入任意文本。除了最后一行，在每行的结尾增加 XHTML 标签\n"
+"          \"<br />\"。\n"
+"    - age: 输入日期。返回指定日期的人工可读的字符串。\n"
+"    - basename: 输入任意文本。将输入视为路径，返回基础名称。例如\n"
+"          \"foo/bar/baz\" 成为 \"baz\"。\n"
+"    - date: 输入日期。返回指定日期的 Unix 命令 'date' 格式字符串，包含时\n"
+"          区，例如: \"Mon Sep 04 15:13:13 2006 0700\"。\n"
+"    - domain: 输入任意文本。找到第一个 email 地址，返回其域名。\n"
+"    - email: 输入任意文本。返回第一个 email 地址。\n"
+"    - escape: 输入任意文本。用 XML 实体来封装 XML/XHTML 的特殊字符 \"&\"，\n"
+"          \"<\" 和 \">\"。\n"
+"    - fill68: 输入任意文本。格式化为 68 列文本。\n"
+"    - fill76: 输入任意文本。格式化为 76 列文本。\n"
+"    - firstline: 输入任意文本。返回首行。\n"
+"    - hgdate: 输入日期。返回一对数字:\n"
+"          \"1157407993 25200\" (Unix 时戳，时区偏移)。\n"
+"    - isodate: 输入日期。返回 ISO 8601 格式的日期。\n"
+"    - obfuscate: 输入任意文本。返回其 XML 实体序列。\n"
+"    - person: 输入任意文本。返回 email 地址前的文本。\n"
+"    - rfc822date: 输入日期。返回 email 头部使用的日期格式。\n"
+"    - short: 改变集哈系。返回改变集哈系的短格式。例如 12 字符的 16 进制\n"
+"          字符串。\n"
+"    - shortdate: 输入日期。返回格式类似于 \"2006-09-04\"。\n"
+"    - strip: 输入任意文本。删除全部行首与行尾空白。\n"
+"    - tabindent: 输入任意文本。除了首行，在每行的开始增加制表符号。\n"
+"    - urlescape: 输入任意文本。封装全部特殊字符。例如\n"
+"          \"foo bar\" 成为 \"foo%20bar\"。\n"
+"    - user: 输入任意文本。返回 email 地址中的用户名称部分。\n"
+"    "
 
 #: mercurial/help.py:335
 msgid "Url Paths"
