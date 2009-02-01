@@ -22,7 +22,7 @@ else
   makedir	:= mkdir -p -m 0755
 endif
 
-LANGUAGES := en ca cs da de es fi fr it ja ko nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
+LANGUAGES := en ca cs da de es fi fr it ja ko ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
 # languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
@@ -216,6 +216,11 @@ ifneq "$(filter $(architecture),mips mipsel)" ""
 else
     initrd := $(condition);uses-initrd
 endif
+# pseudo-arch "all" to include all text, e.g. for proof-reading
+ifeq "$(architecture)" "all"
+    otherarchs := ;$(subst  $(space),$(semic),$(arches))$(otherarchs)
+    condition := $(condition);g-i;no-initrd;
+endif
 
 $(LINGUA)/$(manual).$(architecture).xml: \
 		$(patsubst en/%,$(LINGUA)/%,$(SOURCES)) $(manual).ent
@@ -277,7 +282,7 @@ updatepo:
 endif
 
 clean::
-	rm -f relnotes.tar.bz2 statistics 
+	rm -f relnotes.tar.bz2 statistics.txt messages.mo
 	find -maxdepth 1 -name '$(manual)-*' -type d -exec rm -fr {} \;
 clean:: $(LANGUAGES-clean)
 
@@ -287,7 +292,7 @@ $(LANGUAGES-clean):
 	echo $(DBK_LANGUAGES) | grep -q "$$LINGUA" || rm -f *.dbk; \
 	rm -rf *~ .*~ $(manual).*.html $(manual).*.txt $(manual).*.pdf \
 	    $(manual).*.ps $(manual).*.xml ifxetex.sty body.tmp head.tmp \
-	    release-notes.*.tpt
+	    release-notes.*.tpt release-notes.*.fo
 
 printarches:
 	@echo $(arches)
@@ -301,3 +306,4 @@ statistics.txt:
 	        msgcat $$l/*.po | msgfmt --statistics - 2>&1 ; \
 	    done; \
 	) > $@
+	./transcount $(DBK_LANGUAGES) >> $@
