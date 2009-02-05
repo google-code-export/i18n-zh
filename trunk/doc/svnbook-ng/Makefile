@@ -4,8 +4,8 @@
 
 FORMATS=html pdf
 
-PO_LANGUAGES := de zh
-DBK_LANGUAGES := en
+PO_LANGUAGES := zh
+DBK_LANGUAGES := en de
 LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
 XSLP =? xsltproc --nonet --novalid --xinclude
@@ -21,10 +21,11 @@ help:
 	@echo "  make html      [LINGUA=en|de|zh|...]"
 	@echo "  make pdf       [LINGUA=en|de|zh|...]"
 	@echo "  make validate  [LINGUA=en|de|zh|...] # always before commit!"
-	@echo "  make tidypo    [LINGUA=de|zh|...]    # always before commit!"
-	@echo "  make updatepo  [LINGUA=de|zh|...]    # update po files."
+	@echo "  make tidypo    [LINGUA=zh|...]       # always before commit!"
+	@echo "  make updatepo  [LINGUA=zh|...]       # update po files."
 	@echo "  make stat      # print statistics about po files."
 	@echo "  make all       # make html & pdf output of all languages."
+	@echo "  make clean     # Remove the build files."
 
 clean:
 	@rm -fr build en/version.xml po/*.mo
@@ -107,8 +108,8 @@ else
 build/$(LINGUA)/source/version.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po
 	mkdir -p build/$(LINGUA)/source
 	cp -r en/* build/$(LINGUA)/source
-	echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
-	echo '<!ENTITY svn.l10n_revision "(l10n r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`')">' >> $@
+	echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`']">' > $@
+	echo '<!ENTITY svn.l10n_revision "[r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po build/$(LINGUA)/source/version.xml
 	for f in en/*.xml; do \
