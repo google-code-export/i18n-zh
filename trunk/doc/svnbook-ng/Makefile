@@ -97,8 +97,8 @@ validate: build/$(LINGUA)/source/svnbook.xml
 
 ifneq "$(findstring $(LINGUA),$(DBK_LANGUAGES))" ""
 $(LINGUA)/version.xml: $(filter-out $(LINGUA)/version.xml, $(wildcard $(LINGUA)/*.xml))
-	echo '<!ENTITY svn.version "r'`LC_ALL=C svn info $(LINGUA) | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
-	echo '<!ENTITY svn.l10n_revision "">' >> $@
+	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info $(LINGUA) | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
+	@echo '<!ENTITY svn.l10n_revision "">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(wildcard $(LINGUA)/*.xml) $(LINGUA)/version.xml
 	mkdir -p build/$(LINGUA)/source
@@ -108,8 +108,8 @@ else
 build/$(LINGUA)/source/version.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po
 	mkdir -p build/$(LINGUA)/source
 	cp -r en/* build/$(LINGUA)/source
-	echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`']">' > $@
-	echo '<!ENTITY svn.l10n_revision "[r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
+	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`']">' > $@
+	@echo '<!ENTITY svn.l10n_revision "[r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po build/$(LINGUA)/source/version.xml
 	for f in en/*.xml; do \
