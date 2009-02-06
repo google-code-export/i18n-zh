@@ -18,14 +18,15 @@ UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 -f docbook
 TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 -f docbook -k 0
 
 help:
-	@echo "  make html      [LINGUA=en|de|zh|...]"
-	@echo "  make pdf       [LINGUA=en|de|zh|...]"
-	@echo "  make validate  [LINGUA=en|de|zh|...] # always before commit!"
-	@echo "  make tidypo    [LINGUA=zh|...]       # always before commit!"
-	@echo "  make updatepo  [LINGUA=zh|...]       # update po files."
-	@echo "  make stat      # print statistics about po files."
-	@echo "  make all       # make html & pdf output of all languages."
-	@echo "  make clean     # Remove the build files."
+	@echo "  make html         [LINGUA=en|de|zh|...]"
+	@echo "  make html-single  [LINGUA=en|de|zh|...]"
+	@echo "  make pdf          [LINGUA=en|de|zh|...]"
+	@echo "  make validate     [LINGUA=en|de|zh|...] # always before commit!"
+	@echo "  make tidypo       [LINGUA=zh|...]       # always before commit!"
+	@echo "  make updatepo     [LINGUA=zh|...]       # update po files."
+	@echo "  make stat         # print statistics about po files."
+	@echo "  make all          # make html & pdf output of all languages."
+	@echo "  make clean        # Remove the build files."
 
 clean:
 	@rm -fr build en/version.xml po/*.mo
@@ -88,7 +89,7 @@ endif
 
 ifndef LINGUA
 validate:
-	for l in $(PO_LANGUAGES); do \
+	for l in $(LANGUAGES); do \
 	    $(MAKE) $@ LINGUA=$$l; \
 	done
 else
@@ -118,4 +119,30 @@ build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*
 	xmllint --nonet --noent --xinclude --postvalid --output $@ build/$(LINGUA)/source/book.xml
 endif
 
+endif
+
+ifndef LINGUA
+html:
+	for l in $(LANGUAGES); do \
+	    $(MAKE) $@ LINGUA=$$l; \
+	done
+else
+html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html.xsl stylesheets/$(LINGUA)/html.xsl
+	mkdir -p build/$(LINGUA)/html
+	cp -r $(LINGUA)/images build/$(LINGUA)/html
+	xsltproc --output build/$(LINGUA)/html/ \
+	    stylesheets/$(LINGUA)/html.xsl build/$(LINGUA)/source/svnbook.xml
+endif
+
+ifndef LINGUA
+html-single:
+	for l in $(LANGUAGES); do \
+	    $(MAKE) $@ LINGUA=$$l; \
+	done
+else
+html-single: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html-single.xsl stylesheets/$(LINGUA)/html-single.xsl
+	mkdir -p build/$(LINGUA)/html-single
+	cp -r $(LINGUA)/images build/$(LINGUA)/html-single
+	xsltproc --output build/$(LINGUA)/html-single/svnbook.html \
+	    stylesheets/$(LINGUA)/html-single.xsl build/$(LINGUA)/source/svnbook.xml
 endif
