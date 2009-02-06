@@ -103,18 +103,20 @@ $(LINGUA)/version.xml: $(filter-out $(LINGUA)/version.xml, $(wildcard $(LINGUA)/
 
 build/$(LINGUA)/source/svnbook.xml: $(wildcard $(LINGUA)/*.xml) $(LINGUA)/version.xml
 	mkdir -p build/$(LINGUA)/source
-	cp -r $(LINGUA)/* build/$(LINGUA)/source
+	cp $(LINGUA)/*.xml build/$(LINGUA)/source
 	xmllint --nonet --noent --xinclude --postvalid --output $@ $(LINGUA)/book.xml
 else
 build/$(LINGUA)/source/version.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po
 	mkdir -p build/$(LINGUA)/source
-	cp -r en/* build/$(LINGUA)/source
-	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`']">' > $@
-	@echo '<!ENTITY svn.l10n_revision "[r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
+	cp en/*.xml build/$(LINGUA)/source
+	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
+	@echo '<!ENTITY svn.l10n_revision "r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po build/$(LINGUA)/source/version.xml
 	for f in en/*.xml; do \
-	    $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
+	    if [ $$f != "en/version.xml" ]; then \
+	        $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
+            fi \
 	done
 	xmllint --nonet --noent --xinclude --postvalid --output $@ build/$(LINGUA)/source/book.xml
 endif
@@ -127,9 +129,12 @@ html:
 	    $(MAKE) $@ LINGUA=$$l; \
 	done
 else
-html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html.xsl stylesheets/$(LINGUA)/html.xsl
-	mkdir -p build/$(LINGUA)/html
-	cp -r $(LINGUA)/images build/$(LINGUA)/html
+html: build/$(LINGUA)/html/index.html
+
+build/$(LINGUA)/html/index.html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html.xsl stylesheets/$(LINGUA)/html.xsl
+	mkdir -p build/$(LINGUA)/html/images
+	cp en/styles.css build/$(LINGUA)/html
+	cp en/images/*.png build/$(LINGUA)/html/images
 	xsltproc --output build/$(LINGUA)/html/ \
 	    stylesheets/$(LINGUA)/html.xsl build/$(LINGUA)/source/svnbook.xml
 endif
@@ -140,9 +145,12 @@ html-single:
 	    $(MAKE) $@ LINGUA=$$l; \
 	done
 else
-html-single: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html-single.xsl stylesheets/$(LINGUA)/html-single.xsl
-	mkdir -p build/$(LINGUA)/html-single
-	cp -r $(LINGUA)/images build/$(LINGUA)/html-single
+html-single: build/$(LINGUA)/html-single/svnbook.html
+
+build/$(LINGUA)/html-single/svnbook.html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html-single.xsl stylesheets/$(LINGUA)/html-single.xsl
+	mkdir -p build/$(LINGUA)/html-single/images
+	cp en/styles.css build/$(LINGUA)/html-single
+	cp en/images/*.png build/$(LINGUA)/html-single/images
 	xsltproc --output build/$(LINGUA)/html-single/svnbook.html \
 	    stylesheets/$(LINGUA)/html-single.xsl build/$(LINGUA)/source/svnbook.xml
 endif
