@@ -8,12 +8,6 @@ PO_LANGUAGES := zh
 DBK_LANGUAGES := en de
 LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
-XSLP =? xsltproc --nonet --novalid --xinclude
-# XSLP =? saxon
-
-FO2PDF =? fop
-# FO2PDF =? xep
-
 UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 -f docbook
 TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 -f docbook -k 0
 
@@ -102,8 +96,9 @@ $(LINGUA)/version.xml: $(filter-out $(LINGUA)/version.xml, $(wildcard $(LINGUA)/
 	@echo '<!ENTITY svn.l10n_revision "">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(wildcard $(LINGUA)/*.xml) $(LINGUA)/version.xml
-	mkdir -p build/$(LINGUA)/source
+	mkdir -p build/$(LINGUA)/source/images
 	cp $(LINGUA)/*.xml build/$(LINGUA)/source
+	cp $(LINGUA)/images/*.png build/$(LINGUA)/source/images
 	xmllint --nonet --noent --xinclude --postvalid --output $@ $(LINGUA)/book.xml
 else
 build/$(LINGUA)/source/version.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po
@@ -113,6 +108,8 @@ build/$(LINGUA)/source/version.xml: $(filter-out en/version.xml, $(wildcard en/*
 	@echo '<!ENTITY svn.l10n_revision "r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
 
 build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*.xml)) po/$(LINGUA).po build/$(LINGUA)/source/version.xml
+	mkdir -p build/$(LINGUA)/source/images
+	cp en/images/*.png build/$(LINGUA)/source/images
 	for f in en/*.xml; do \
 	    if [ $$f != "en/version.xml" ]; then \
 	        $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
@@ -131,7 +128,7 @@ html:
 else
 html: build/$(LINGUA)/html/index.html
 
-build/$(LINGUA)/html/index.html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html.xsl stylesheets/$(LINGUA)/html.xsl
+build/$(LINGUA)/html/index.html: build/$(LINGUA)/source/svnbook.xml stylesheets/html.xsl stylesheets/$(LINGUA)/html.xsl
 	mkdir -p build/$(LINGUA)/html/images
 	cp en/styles.css build/$(LINGUA)/html
 	cp en/images/*.png build/$(LINGUA)/html/images
@@ -147,10 +144,33 @@ html-single:
 else
 html-single: build/$(LINGUA)/html-single/svnbook.html
 
-build/$(LINGUA)/html-single/svnbook.html: build/$(LINGUA)/source/svnbook.xml stylesheets/$(LINGUA)/html-single.xsl stylesheets/$(LINGUA)/html-single.xsl
+build/$(LINGUA)/html-single/svnbook.html: build/$(LINGUA)/source/svnbook.xml stylesheets/html-single.xsl stylesheets/$(LINGUA)/html-single.xsl
 	mkdir -p build/$(LINGUA)/html-single/images
 	cp en/styles.css build/$(LINGUA)/html-single
 	cp en/images/*.png build/$(LINGUA)/html-single/images
 	xsltproc --output build/$(LINGUA)/html-single/svnbook.html \
 	    stylesheets/$(LINGUA)/html-single.xsl build/$(LINGUA)/source/svnbook.xml
+endif
+
+ifndef LINGUA
+pdf:
+	for l in $(LANGUAGES); do \
+	    $(MAKE) $@ LINGUA=$$l; \
+	done
+else
+pdf: build/$(LINGUA)/pdf/svnbook.pdf
+
+build/$(LINGUA)/pdf/svnbook.pdf: build/$(LINGUA)/source/svnbook.xml stylesheets/fo.xsl stylesheets/$(LINGUA)/fo.xsl
+	mkdir -p build/$(LINGUA)/pdf
+	java -classpath tools/fop/lib/saxon65.jar:tools/fop/lib/saxon65-dbxsl.jar:tools/fop/lib/xml-commons-resolver-1.2.jar:tools/fop/conf \
+	    com.icl.saxon.StyleSheet \
+	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
+	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
+	    -r org.apache.xml.resolver.tools.CatalogResolver \
+	    -o build/$(LINGUA)/source/svnbook.fo \
+	    build/$(LINGUA)/source/svnbook.xml \
+	    stylesheets/$(LINGUA)/fo.xsl \
+	    fop1.extensions=1
+
+	(cd build/$(LINGUA)/source && ../../../tools/fop/fop.sh svnbook.fo ../pdf/svnbook.pdf)
 endif
