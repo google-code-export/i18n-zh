@@ -37,13 +37,11 @@
   -->
 
   <!-- Custom font settings - preferred truetype font -->
-  <!--
   <xsl:param name="title.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
   <xsl:param name="body.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
   <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
   <xsl:param name="dingbat.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
   <xsl:param name="monospace.font.family">Courier New,monospace,FangSong</xsl:param>
-  -->
 
   <!-- Page related Settings -->
   <xsl:param name="page.margin.inner">1.5cm</xsl:param>
