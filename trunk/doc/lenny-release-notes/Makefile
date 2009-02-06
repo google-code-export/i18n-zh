@@ -6,6 +6,12 @@
 # production mode
 DRAFT := 1
 
+ifeq "$(DRAFT)" "1"
+    draftmode := yes
+else
+    draftmode := maybe
+endif
+
 # TODO: Once #477458 is fixed in stable remove all committed sgml files
 # which are generated from a PO file (was a workaround for old po4a).
 
@@ -22,15 +28,15 @@ else
   makedir	:= mkdir -p -m 0755
 endif
 
-LANGUAGES := en ca cs da de es fi fr it ja ko ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
+LANGUAGES := en ca cs da de es fi fr it ja ko lt ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
 # languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
 PO_LANGUAGES := $(filter-out $(DBK_LANGUAGES), $(LANGUAGES))
-XMLROFF_LANGS=cs ja pl ro ru vi zh_CN zh_TW
-DISABLED_PDF=zh_TW
+XMLROFF_LANGS=cs ja ml pl ro ru vi zh_CN zh_TW
+DISABLED_PDF=
 # cairo backend of xmlroff 0.6.0 crashes on some languages (#492597)
-GPLIST=zh_TW
+GPLIST=
 
 LANGUAGES-publish := $(addsuffix -publish,$(LANGUAGES))
 LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
@@ -38,7 +44,8 @@ LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
 SOURCES := $(wildcard en/*.dbk)
 
 # DocBook stuff
-XP=xsltproc --nonet --novalid --xinclude
+XP=xsltproc --nonet --novalid --xinclude \
+    --stringparam draft.mode $(draftmode)
 XL=xmllint --nonet --noout --postvalid --xinclude
 # XSL files and parameters
 # note: the URL is used as identifier, no HTTP is used!
@@ -47,29 +54,37 @@ DOCBOOK_XSL=http://docbook.sourceforge.net/release/xsl/current
 DBK2HTML=$(CURDIR)/html.xsl
 # all in one file for text output
 DBK2HTML1=$(CURDIR)/txt.xsl
-DBLATEX=dblatex --style=db2latex
+DBLATEX=dblatex --style=db2latex \
+    --xsl-user=hyphenation.xsl --param=lingua=$(LINGUA) \
+    --param=draft.mode=$(draftmode)
 PROFILE=$(DOCBOOK_XSL)/profiling/profile.xsl
 PREPROC=$(CURDIR)/preproc.xsl
+DBLATEXXSL=$(CURDIR)/dblatex.xsl
 XMLROFF=xmlroff --backend cairo
 XMLROFF_GP=xmlroff --backend gp
 
 FORMATS=html txt pdf ps
 
-ifeq "$(DRAFT)" "1"
-    draftmode := yes
-else
-    draftmode := maybe
-endif
-
 # po4a stuff
 # The etch version of po4a does not have the --previous option
-#UPDATEPO=PERLLIB=lib/ po4a-updatepo --previous --format docbook
-UPDATEPO=PERLLIB=lib/ po4a-updatepo --format docbook
+UPDATEPO=PERLLIB=lib/ po4a-updatepo --previous --format docbook
 # The "--keep 0" should be removed as soon as the translations are ready
 TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
 
 .SUFFIXES: 
 .PHONY: publish all clean $(LANGUAGES-publish)
+
+help:
+	@echo "    make html LINGUA=zh_CN architecture=all"
+	@echo "    make txt  LINGUA=zh_CN architecture=all"
+	@echo "    make pdf  LINGUA=zh_CN architecture=amd64"
+	@echo "    make updatepo LINGUA=zh_CN"
+	@echo "    make tidyepo LINGUA=zh_CN"
+	@echo "    make validate LINGUA=zh_CN"
+	@echo "    make stat # output stat information for zh_CN"
+
+stat:
+	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt --statistics -c $$f; done)
 
 all:
 	for l in $(LANGUAGES); do \
@@ -77,16 +92,6 @@ all:
 		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
 	    done; \
 	done
-
-help:
-	@echo make html LINGUA=zh_CN architecture=i386
-	@echo make pdf LINGUA=zh_CN architecture=i386
-	@echo make txt LINGUA=zh_CN architecture=i386
-	@echo "make stat # output stat information for zh_CN"
-	@echo "make tidypo # clean .po files"
-
-stat:
-	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt --statistics -c $$f; done)
 
 publish:
 	set -ex; \
@@ -136,7 +141,6 @@ $(LINGUA)/$(manual).$(architecture).html/index.$(LINGUA).html: \
 	    $(LINGUA)/$(manual).$(architecture).html/images
 	cd $(LINGUA) && $(XP) -o $(manual).$(architecture).html/ \
 	    --stringparam html.ext .$(LINGUA).html \
-	    --stringparam draft.mode $(draftmode) \
 	    $(DBK2HTML) $(manual).$(architecture).xml
 
 pdf::	$(LINGUA)/$(manual).$(architecture).pdf
@@ -161,7 +165,7 @@ ifneq "$(filter $(DISABLED_PDF),$(LINGUA))" ""
 else
 ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 %.fo: %.xml
-	$(XP) -o $@ --stringparam draft.mode $(draftmode) fo.xsl $<
+	$(XP) -o $@ fo.xsl $<
 
 %.pdf: %.fo
 	USE_GP=`echo " $(GPLIST) " | grep " $$LINGUA "`; \
@@ -173,7 +177,7 @@ ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 else
 %.pdf: %.xml
 	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
-	$(DBLATEX) --output=$@ --param=draft.mode=$(draftmode) $<
+	$(XP) $(DBLATEXXSL) $< | $(DBLATEX) --output=$@ -
 endif
 endif
 
@@ -189,13 +193,13 @@ ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 else
 %.ps: %.xml
 	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
-	$(DBLATEX) --output=$@ --ps --param=draft.mode=$(draftmode) $<
+	$(XP) $(DBLATEXXSL) $< | $(DBLATEX) --output=$@ --ps -
 endif
 
 txt::	$(LINGUA)/$(manual).$(architecture).txt
 $(LINGUA)/$(manual).$(architecture).txt: \
 		$(LINGUA)/$(manual).$(architecture).xml txt.xsl
-	$(XP) --stringparam draft.mode $(draftmode) $(DBK2HTML1) $< \
+	$(XP) $(DBK2HTML1) $< \
 	    | w3m -o display_charset=UTF-8 -cols 70 -dump -no-graph -T text/html > $@
 
 # profiling for architecture, needed by all output formats
@@ -238,7 +242,7 @@ ifndef LINGUA
 	$(MAKE) $@ LINGUA=`basename $(@D)`
 
 else
-ifeq "$(findstring $(LINGUA),$(DBK_LANGUAGES))" ""
+ifeq "$(findstring  $(LINGUA) , $(DBK_LANGUAGES) )" ""
 $(LINGUA)/%.dbk:	en/%.dbk $(LINGUA)/%.po
 	$(TRANSLATE) --master $< --po $(@:.dbk=.po) --localized $@
 endif
@@ -289,7 +293,7 @@ clean:: $(LANGUAGES-clean)
 $(LANGUAGES-clean):
 	LINGUA=$(subst -clean,,$@); \
 	cd $$LINGUA; \
-	echo $(DBK_LANGUAGES) | grep -q "$$LINGUA" || rm -f *.dbk; \
+	echo " $(DBK_LANGUAGES) " | grep -q " $$LINGUA " || rm -f *.dbk; \
 	rm -rf *~ .*~ $(manual).*.html $(manual).*.txt $(manual).*.pdf \
 	    $(manual).*.ps $(manual).*.xml ifxetex.sty body.tmp head.tmp \
 	    release-notes.*.tpt release-notes.*.fo
