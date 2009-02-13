@@ -103,27 +103,30 @@ Maybe you should run 'make html LINGUA=zh_CN architecture=${arch}' first !
             <arg value="release-notes.${arch}.fo"/>
             <arg value="../../zh_CN/release-notes.${arch}.xml"/>
             <arg value="../../fop.xsl"/>
-            <!--arg value="fop1.extensions=1"/-->
-            <arg value="xep.extensions=1"/>
+            <arg value="fop1.extensions=1"/>
+            <!--arg value="xep.extensions=1"/-->
         </java>
 
         <echo message="Making pdf ..."/>
-        <!--java classname="${fop.class}" fork="true" maxmemory="512m"
+        <java classname="${fop.class}" fork="true" maxmemory="512m"
                     failonerror="true" dir="${basedir}/build/pdf">
             <classpath refid="lib.classpath"/>
-            <arg value="-c ${fop.home}/conf/userconfig.xml"/>
-            <arg value="-fo release-notes.${arch}.fo"/>
-            <arg value="-pdf ../lenny-release-notes.${arch}.pdf"/>
-        </java-->
+            <arg value="-c"/>
+            <arg value="${fop.home}/conf/userconfig.xml"/>
+            <arg value="-fo"/>
+            <arg value="release-notes.${arch}.fo"/>
+            <arg value="-pdf"/>
+            <arg value="../lenny-release-notes.${arch}.pdf"/>
+        </java>
 
-        <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+        <!--java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
                     failonerror="true" dir="${basedir}/build/pdf">
             <classpath refid="xep.classpath"/>
             <arg value="-DCONFIG=${xep.home}/xep.xml"/>
             <arg value="-quiet"/>
             <arg value="release-notes.${arch}.fo"/>
             <arg value="../lenny-release-notes.${arch}.pdf"/>
-        </java>
+        </java-->
 
     </target>
 

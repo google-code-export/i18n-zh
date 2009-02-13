@@ -39,11 +39,11 @@
   -->
 
   <!-- Chinese font settings - preferred truetype font -->
-  <xsl:param name="title.font.family">Arial,FZCuYaSong,sans-serif,SimHei</xsl:param>
-  <xsl:param name="body.font.family">Times New Roman,FZBoYaSong,serif,SimSun</xsl:param>
-  <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,zh_title</xsl:param>
-  <xsl:param name="dingbat.font.family">Times New Roman,FZBoYaSong,serif,SimSun</xsl:param>
-  <xsl:param name="monospace.font.family">Courier New,FZFangSong,monospace,FangSong</xsl:param>
+  <xsl:param name="title.font.family">Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="body.font.family">Cambria,Cambria Math,serif,SimSun</xsl:param>
+  <xsl:param name="sans.font.family">Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="dingbat.font.family">Cambria,Cambria Math,serif,SimSun</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New,monospace,FangSong</xsl:param>
 
   <xsl:param name="body.font.master">12</xsl:param>
 
