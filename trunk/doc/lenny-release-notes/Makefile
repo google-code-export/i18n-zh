@@ -4,7 +4,7 @@
 
 # comment out this line when the release notes should go into
 # production mode
-DRAFT := 1
+#DRAFT := 1
 
 ifeq "$(DRAFT)" "1"
     draftmode := yes
@@ -28,12 +28,14 @@ else
   makedir	:= mkdir -p -m 0755
 endif
 
-LANGUAGES := en ca cs da de es fi fr it ja ko lt ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
+# disable, because translation is missing: da fi ko nl pl
+#LANGUAGES := en ca cs da de es fi fr it ja ko lt ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
+LANGUAGES := en ca cs de es fr it ja lt ml pt_BR pt ro ru sk sv vi zh_CN zh_TW
 # languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
 PO_LANGUAGES := $(filter-out $(DBK_LANGUAGES), $(LANGUAGES))
-XMLROFF_LANGS=cs ja ml pl ro ru vi zh_CN zh_TW
+XMLROFF_LANGS=ja ml pl vi zh_CN zh_TW
 DISABLED_PDF=
 # cairo backend of xmlroff 0.6.0 crashes on some languages (#492597)
 GPLIST=
@@ -55,19 +57,29 @@ DBK2HTML=$(CURDIR)/html.xsl
 # all in one file for text output
 DBK2HTML1=$(CURDIR)/txt.xsl
 DBLATEX=dblatex --style=db2latex \
-    --xsl-user=hyphenation.xsl --param=lingua=$(LINGUA) \
-    --param=draft.mode=$(draftmode)
+    --xsl-user=hyphenation.xsl \
+    --param=draft.mode=$(draftmode) \
+    --param=format=a4 \
+    --param=glossterm.auto.link=1 \
+    --param=latex.encoding=utf8 \
+    --param=latex.unicode.use=1 \
+    --param=lingua=$(LINGUA) \
+    --param=monoseq.hyphenation=nohyphen
 PROFILE=$(DOCBOOK_XSL)/profiling/profile.xsl
 PREPROC=$(CURDIR)/preproc.xsl
 DBLATEXXSL=$(CURDIR)/dblatex.xsl
 XMLROFF=xmlroff --backend cairo
 XMLROFF_GP=xmlroff --backend gp
 
-FORMATS=html txt pdf ps
+FORMATS=html txt pdf
 
 # po4a stuff
-# The etch version of po4a does not have the --previous option
-UPDATEPO=PERLLIB=lib/ po4a-updatepo --previous --format docbook
+# The etch version of po4a, 0.29, does not have the --previous option
+# while the lenny version, 0.34, has.
+PO4A_VERSION=$(shell LANG=C po4a --version | head -1 \
+	| sed 's/.*version \([0-9].*[0-9a-z]\)\.*/\1/')
+PREVIOUS=$(shell LANG=C dpkg --compare-versions "$(PO4A_VERSION)" ge 0.34 && echo --previous)
+UPDATEPO=PERLLIB=lib/ po4a-updatepo $(PREVIOUS) --format docbook
 # The "--keep 0" should be removed as soon as the translations are ready
 TRANSLATE=PERLLIB=lib/ po4a-translate --format docbook --keep 0
 
@@ -79,22 +91,23 @@ help:
 	@echo "    make txt  LINGUA=zh_CN architecture=all"
 	@echo "    make pdf  LINGUA=zh_CN architecture=amd64"
 	@echo "    make updatepo LINGUA=zh_CN"
-	@echo "    make tidyepo LINGUA=zh_CN"
+	@echo "    make tidypo LINGUA=zh_CN"
 	@echo "    make validate LINGUA=zh_CN"
 	@echo "    make stat # output stat information for zh_CN"
 
 stat:
 	@(cd zh_CN; for f in *.po; do printf "%s\t" $$f; msgfmt --statistics -c $$f; done)
 
-all:
+all: statistics.html
 	for l in $(LANGUAGES); do \
 	    for a in $(arches); do \
 		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
 	    done; \
 	done
 
-publish:
+publish: statistics.html
 	set -ex; \
+	$(install_file) statistics.html $(PUBLISHDIR)/; \
 	for arch in $(arches); do \
 	  $(MAKE) architecture=$$arch; \
 	  $(makedir) $(PUBLISHDIR)/$$arch/$(manual); \
@@ -107,16 +120,12 @@ publish:
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.txt; \
 	    $(install_file) $$lang/$(manual).$$arch.pdf \
 		$(PUBLISHDIR)/$$arch/$(manual).$$lang.pdf; \
-	    $(install_file) $$lang/$(manual).$$arch.ps \
-		$(PUBLISHDIR)/$$arch/$(manual).$$lang.ps; \
 	    $(install_file) $$lang/$(manual).$$arch.html/* \
 		$(manual)-$$arch/$$lang/; \
 	    $(install_file) $$lang/$(manual).$$arch.txt \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.txt; \
 	    $(install_file) $$lang/$(manual).$$arch.pdf \
 		$(manual)-$$arch/$$lang/$(manual).$$lang.pdf ; \
-	    $(install_file) $$lang/$(manual).$$arch.ps \
-		$(manual)-$$arch/$$lang/$(manual).$$lang.ps ; \
 	  done; \
 	  for i in $(PUBLISHDIR)/$$arch/$(manual)/*.en.html; do \
 	    ln -sf `basename $$i` $${i%.en.html}.html; \
@@ -286,7 +295,7 @@ updatepo:
 endif
 
 clean::
-	rm -f relnotes.tar.bz2 statistics.txt messages.mo
+	rm -f relnotes.tar.bz2 statistics.txt statistics.html messages.mo
 	find -maxdepth 1 -name '$(manual)-*' -type d -exec rm -fr {} \;
 clean:: $(LANGUAGES-clean)
 
@@ -310,4 +319,7 @@ statistics.txt:
 	        msgcat $$l/*.po | msgfmt --statistics - 2>&1 ; \
 	    done; \
 	) > $@
-	./transcount $(DBK_LANGUAGES) >> $@
+	LANG=C ./transcount $(DBK_LANGUAGES) >> $@
+
+statistics.html: statistics.txt
+	./statspage $< > $@

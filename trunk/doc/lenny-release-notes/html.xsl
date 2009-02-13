@@ -18,8 +18,8 @@
     <acronym xmlns="http://www.w3.org/1999/xhtml">
       <xsl:choose>
         <xsl:when test="string-length($title)=0">
-          <xsl:message>Warning: <xsl:value-of
-          select="$acronym"/> not defined!</xsl:message>
+          <xsl:message>Warning: Cannot find &quot;<xsl:value-of
+          select="$acronym"/>&quot; glossentry!</xsl:message>
         </xsl:when>
 	<xsl:otherwise>
 	  <xsl:attribute name="title">
