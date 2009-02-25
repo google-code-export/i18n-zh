@@ -28,9 +28,7 @@ else
   makedir	:= mkdir -p -m 0755
 endif
 
-# disable, because translation is missing: da fi ko nl pl
-#LANGUAGES := en ca cs da de es fi fr it ja ko lt ml nl pl pt_BR pt ro ru sk sv vi zh_CN zh_TW
-LANGUAGES := en ca cs de es fr it ja lt ml pt_BR pt ro ru sk sv vi zh_CN zh_TW
+LANGUAGES := en ca cs de es fr it ja lt ml nb pt_BR pt ro ru sk sv vi zh_CN zh_TW
 # languages without .po files
 # (either original English or translators don't like .po)
 DBK_LANGUAGES := en ca cs pt_BR
@@ -57,6 +55,7 @@ DBK2HTML=$(CURDIR)/html.xsl
 # all in one file for text output
 DBK2HTML1=$(CURDIR)/txt.xsl
 DBLATEX=dblatex --style=db2latex \
+    --xslt-opts=--nonet --no-external \
     --xsl-user=hyphenation.xsl \
     --param=draft.mode=$(draftmode) \
     --param=format=a4 \
@@ -101,13 +100,15 @@ stat:
 all: statistics.html
 	for l in $(LANGUAGES); do \
 	    for a in $(arches); do \
-		$(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
+	        echo "Creating documents for $$a, language: $$l"; \
+	        $(MAKE) LINGUA=$$l architecture=$$a $(FORMATS); \
 	    done; \
 	done
 
 publish: statistics.html
 	set -ex; \
 	$(install_file) statistics.html $(PUBLISHDIR)/; \
+	echo "AddCharset UTF-8 .txt" > $(PUBLISHDIR)/.htaccess; \
 	for arch in $(arches); do \
 	  $(MAKE) architecture=$$arch; \
 	  $(makedir) $(PUBLISHDIR)/$$arch/$(manual); \
@@ -185,7 +186,7 @@ ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 	fi
 else
 %.pdf: %.xml
-	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
+	export TEXINPUTS="$$(pwd)/$(@D):"; \
 	$(XP) $(DBLATEXXSL) $< | $(DBLATEX) --output=$@ -
 endif
 endif
@@ -201,7 +202,7 @@ ifneq "$(filter $(XMLROFF_LANGS),$(LINGUA))" ""
 	fi
 else
 %.ps: %.xml
-	[ -f $(@D)/ifxetex.sty ] || cp ifxetex.sty $(@D)/
+	export TEXINPUTS="$$(pwd)/$(@D):"; \
 	$(XP) $(DBLATEXXSL) $< | $(DBLATEX) --output=$@ --ps -
 endif
 
@@ -316,7 +317,7 @@ statistics.txt:
 	    LANG=C; export LANG; \
 	    for l in $(PO_LANGUAGES); do \
 		echo -n "$$l: "; \
-	        msgcat $$l/*.po | msgfmt --statistics - 2>&1 ; \
+	        msgcat --use-first $$l/*.po | msgfmt --statistics - 2>&1 ; \
 	    done; \
 	) > $@
 	LANG=C ./transcount $(DBK_LANGUAGES) >> $@
