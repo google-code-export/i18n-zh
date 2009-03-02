@@ -7,7 +7,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: common.xsl 8002 2008-04-21 16:03:57Z kosek $
+     $Id: common.xsl 8206 2009-01-10 12:05:42Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -20,7 +20,7 @@
   <info>
     <title>Common » Base Template Reference</title>
     <releaseinfo role="meta">
-      $Id: common.xsl 8002 2008-04-21 16:03:57Z kosek $
+      $Id: common.xsl 8206 2009-01-10 12:05:42Z mzjn $
     </releaseinfo>
   </info>
   <!-- * yes, partintro is a valid child of a reference... -->
@@ -572,14 +572,6 @@ Defaults to the context node.</para>
       <xsl:text> </xsl:text>
     </xsl:if>
     <xsl:apply-templates select="$node//othername[1]"/>
-  </xsl:if>
-
-  <xsl:if test="$node//orgname">
-    <xsl:if test="$node//honorific or $node//firstname
-                  or ($node//othername and $author.othername.in.middle != 0)">
-      <xsl:text> </xsl:text>
-    </xsl:if>
-    <xsl:apply-templates select="$node//orgname[1]"/>
   </xsl:if>
 
   <xsl:if test="$node//surname">
