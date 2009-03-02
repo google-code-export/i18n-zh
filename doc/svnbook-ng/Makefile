@@ -59,7 +59,7 @@ updatepo:
 else
 updatepo:
 ifneq "$(findstring $(LINGUA),$(PO_LANGUAGES))" ""
-	$(UPDATEPO) \
+	$(UPDATEPO) -o doctype='docbook' \
 		-m en/appa-quickstart.xml \
 		-m en/appb-svn-for-cvs-users.xml \
 		-m en/appc-webdav.xml \
@@ -112,7 +112,7 @@ build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*
 	cp en/images/*.png build/$(LINGUA)/source/images
 	for f in en/*.xml; do \
 	    if [ $$f != "en/version.xml" ]; then \
-	        $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
+	        $(TRANSLATE) -o doctype='docbook' -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
             fi \
 	done
 	xmllint --nonet --noent --xinclude --postvalid --output $@ build/$(LINGUA)/source/book.xml
