@@ -13,7 +13,7 @@
 <xsl:include href="../common/table.xsl"/>
 
 <!-- ********************************************************************
-     $Id: table.xsl 8147 2008-11-06 18:41:16Z bobstayton $
+     $Id: table.xsl 8244 2009-02-15 12:56:43Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -27,7 +27,7 @@
   <info>
     <title>Formatting Object Table Reference</title>
     <releaseinfo role="meta">
-      $Id: table.xsl 8147 2008-11-06 18:41:16Z bobstayton $
+      $Id: table.xsl 8244 2009-02-15 12:56:43Z mzjn $
     </releaseinfo>
   </info>
   <partintro xml:id="partintro">
@@ -97,6 +97,11 @@
       </xsl:if>
       <xsl:apply-templates select="."/>
     </fo:table>
+
+    <xsl:for-each select="mediaobject|graphic">
+      <xsl:apply-templates select="."/>
+    </xsl:for-each>
+
   </xsl:for-each>
 </xsl:template>
 
@@ -220,10 +225,12 @@
 
   <xsl:variable name="rowsep">
     <xsl:choose>
-      <!-- If this is the last row, rowsep never applies. -->
+      <!-- If this is the last row, rowsep never applies (except when 
+	   the ancestor tgroup has a following sibling tgroup) -->
       <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row
                           or ancestor-or-self::thead/following-sibling::tbody
-                          or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+                          or ancestor-or-self::tbody/preceding-sibling::tfoot)
+			  and not(ancestor::tgroup/following-sibling::tgroup)">
         <xsl:value-of select="0"/>
       </xsl:when>
       <xsl:otherwise>
@@ -797,19 +804,23 @@
 
   <xsl:variable name="rowsep">
     <xsl:choose>
-      <!-- If this is the last row, rowsep never applies. -->
+      <!-- If this is the last row, rowsep never applies (except when 
+	   the ancestor tgroup has a following sibling tgroup) -->
       <xsl:when test="not(ancestor-or-self::row[1]/following-sibling::row
                           or ancestor-or-self::thead/following-sibling::tbody
-                          or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+                          or ancestor-or-self::tbody/preceding-sibling::tfoot)
+			  and not(ancestor::tgroup/following-sibling::tgroup)">
         <xsl:value-of select="0"/>
       </xsl:when>
       <!-- Check for morerows too -->
       <xsl:when test="(@morerows and count(ancestor-or-self::row[1]/
                        following-sibling::row) = @morerows )
                       and not (ancestor-or-self::thead/following-sibling::tbody
-                       or ancestor-or-self::tbody/preceding-sibling::tfoot)">
+                       or ancestor-or-self::tbody/preceding-sibling::tfoot)
+		       and not(ancestor::tgroup/following-sibling::tgroup)">
         <xsl:value-of select="0"/>
       </xsl:when>
+
       <xsl:otherwise>
         <xsl:call-template name="inherited.table.attribute">
           <xsl:with-param name="entry" select="."/>

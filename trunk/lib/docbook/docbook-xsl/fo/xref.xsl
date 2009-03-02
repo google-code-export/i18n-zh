@@ -7,7 +7,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: xref.xsl 7442 2007-09-13 07:42:22Z xmldoc $
+     $Id: xref.xsl 8241 2009-02-13 11:31:02Z kosek $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -824,7 +824,9 @@
         </xsl:when>
         <!-- Use the xlink:href if no other text -->
         <xsl:when test="@xlink:href">
-          <xsl:value-of select="@xlink:href"/>
+	  <xsl:call-template name="hyphenate-url">
+	    <xsl:with-param name="url" select="@xlink:href"/>
+	  </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
           <xsl:message>
