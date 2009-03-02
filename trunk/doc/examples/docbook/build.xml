@@ -8,14 +8,14 @@
     <property file="build.properties"/>
 
     <!-- Set build directories for all formats. -->
-    <property name="build.dir"                  value="${base.dir}/build"/>
+    <property name="build.dir" value="${basedir}/build"/>
 
     <!-- Classpath for the build tools. -->
     <path id="lib.classpath">
-        <fileset dir="${fop.dir}/build">
+        <fileset dir="${fop.home}/build">
             <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="${fop.dir}/lib">
+        <fileset dir="${fop.home}/lib">
             <include name="**/*.jar"/>
         </fileset>
         <fileset dir="${usr.share.java}">
@@ -39,49 +39,34 @@
     <target name="pdf">
 
         <!-- Create the XSL/FO temporary file. -->
-        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${base.dir}" maxmemory="512m" >
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
             <arg value="-o"/>
             <arg value="${build.dir}/pdf/${doc.name}.fo"/>
-            <arg value="${base.dir}/book.xml"/>
-            <arg value="xsl/zh_CN/fo.xsl"/>
+            <arg value="${basedir}/book.xml"/>
+            <arg value="xsl/zh/fo.xsl"/>
         </java>
 
-        <!-- Copy all fonts to the output location, will be removed later. -->
-        <copy todir="${build.dir}/pdf">
-            <fileset dir="${fonts.dir}">
-                <include name="*.ttf"/>
-                <include name="*.ttc"/>
-            </fileset>
-            <fileset dir="${fop.dir}/conf">
-                <include name="*.xml"/>
-            </fileset>
-        </copy>
-
         <!-- Create a PDF from the XSL/FO, using customized fop userconfig.xml -->
-        <java classname="org.apache.fop.cli.Main" fork="true" dir="${build.dir}/pdf" maxmemory="512m" >
+        <java classname="${fop.class}" fork="true" dir="${build.dir}/pdf" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
-            <arg value="-c"/>
-            <arg value="userconfig.xml"/>
+      	 	<arg value="-c"/>
+      		<arg value="${fop.home}/conf/userconfig.xml"/>
             <arg value="${doc.name}.fo"/>
             <arg value="${doc.name}.pdf"/>
         </java>
-
-        <!-- House keeping, delete temporary files. -->
-        <delete>
-            <fileset dir="${build.dir}/pdf" excludes="**/*.pdf"/>
-        </delete>
-        <delete  dir="${build.dir}/pdf/images"/>
     </target>
 
     <target name="html">
 
         <!-- Make the output dir. -->
-        <mkdir dir="${build.dir}/html/"/>
+        <mkdir dir="${build.dir}/html"/>
 
         <!-- Create html files -->
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${build.dir}/html" maxmemory="512m" >
             <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="index.html"/>
             <arg value="../../book.xml"/>
             <arg value="../../xsl/html.xsl"/>
         </java>
