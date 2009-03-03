@@ -8,8 +8,12 @@ PO_LANGUAGES := zh
 DBK_LANGUAGES := en de
 LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
-UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 -f docbook
-TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 -f docbook -k 0
+UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 \
+	   -f docbook -o doctype='docbook' \
+	   -o untranslated='<programlisting> <screen>'
+TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 \
+	   -f docbook -o doctype='docbook' \
+	   -k 0
 
 help:
 	@echo "  make html         [LINGUA=en|de|zh|...]"
@@ -59,7 +63,7 @@ updatepo:
 else
 updatepo:
 ifneq "$(findstring $(LINGUA),$(PO_LANGUAGES))" ""
-	$(UPDATEPO) -o doctype='docbook' \
+	$(UPDATEPO) \
 		-m en/appa-quickstart.xml \
 		-m en/appb-svn-for-cvs-users.xml \
 		-m en/appc-webdav.xml \
@@ -112,7 +116,7 @@ build/$(LINGUA)/source/svnbook.xml: $(filter-out en/version.xml, $(wildcard en/*
 	cp en/images/*.png build/$(LINGUA)/source/images
 	for f in en/*.xml; do \
 	    if [ $$f != "en/version.xml" ]; then \
-	        $(TRANSLATE) -o doctype='docbook' -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
+	        $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/$(LINGUA)/source/`basename $$f`; \
             fi \
 	done
 	xmllint --nonet --noent --xinclude --postvalid --output $@ build/$(LINGUA)/source/book.xml
