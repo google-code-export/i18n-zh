@@ -1,0 +1,165 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>svn checkout</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.ref.html#svn.ref.svn.c" title="9.1.2. svn Subcommands">
+<link rel="prev" href="svn.ref.svn.c.changelist.html" title="svn changelist">
+<link rel="next" href="svn.ref.svn.c.cleanup.html" title="svn cleanup">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">svn checkout</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.changelist.html">Zurück</a> </td>
+<th width="60%" align="center">9.1.2. svn Subcommands</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svn.c.cleanup.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="refentry" lang="de">
+<a name="svn.ref.svn.c.checkout"></a><div class="titlepage"></div>
+<a class="indexterm" name="id414250"></a><div class="refnamediv">
+<h2>Name</h2>
+<p>svn checkout &#8212; Check out a working copy from a repository.</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414275"></a><h2>Synopsis</h2>
+<pre class="programlisting">svn checkout URL[@REV]... [PATH]</pre>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414288"></a><h2>Description</h2>
+<p>Check out a working copy from a repository.  If
+            <em class="replaceable"><code>PATH</code></em> is omitted, the
+            basename of the URL will be used as the destination.
+            If multiple URLs are given, each will be checked out into a
+            subdirectory of <em class="replaceable"><code>PATH</code></em>, with the
+            name of the subdirectory being the basename of the
+            URL.</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414308"></a><h2>Alternate names</h2>
+<p><span class="command"><strong>co</strong></span></p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414321"></a><h2>Changes</h2>
+<p>Creates a working copy</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414331"></a><h2>Accesses repository</h2>
+<p>Yes</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414341"></a><h2>Options</h2>
+<pre class="screen">
+--depth ARG
+--force
+--ignore-externals
+--quiet (-q)
+--revision (-r) REV
+</pre>
+</div>
+<div class="refsect1" lang="de">
+<a name="id414354"></a><h2>Examples</h2>
+<p>Check out a working copy into a directory called
+            <code class="filename">mine</code>:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos/test mine
+A  mine/a
+A  mine/b
+A  mine/c
+A  mine/d
+Checked out revision 20.
+$ ls
+mine
+</pre>
+<p>Check out two different directories into two separate
+            working copies:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos/test  file:///var/svn/repos/quiz
+A  test/a
+A  test/b
+A  test/c
+A  test/d
+Checked out revision 20.
+A  quiz/l
+A  quiz/m
+Checked out revision 13.
+$ ls
+quiz  test
+</pre>
+<p>Check out two different directories into two separate
+            working copies, but place both into a directory called
+            <code class="filename">working-copies</code>:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos/test  file:///var/svn/repos/quiz working-copies
+A  working-copies/test/a
+A  working-copies/test/b
+A  working-copies/test/c
+A  working-copies/test/d
+Checked out revision 20.
+A  working-copies/quiz/l
+A  working-copies/quiz/m
+Checked out revision 13.
+$ ls
+working-copies
+</pre>
+<p>If you interrupt a checkout (or something else
+            interrupts your checkout, such as loss of connectivity,
+            etc.), you can restart it either by issuing the identical
+            checkout command again or by updating the incomplete
+            working copy:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos/test mine
+A  mine/a
+A  mine/b
+^C
+svn: The operation was interrupted
+svn: caught SIGINT
+
+$ svn checkout file:///var/svn/repos/test mine
+A  mine/c
+^C
+svn: The operation was interrupted
+svn: caught SIGINT
+
+$ svn update mine
+A  mine/d
+Updated to revision 20.
+</pre>
+<p>If you wish to check out some revision other than the
+            most recent one, you can do so by providing the
+            <code class="option">--revision</code> (<code class="option">-r</code>) option
+            to the <span class="command"><strong>svn checkout</strong></span> command:</p>
+<pre class="screen">
+$ svn checkout -r 2 file:///var/svn/repos/test mine
+A  mine/a
+Checked out revision 2.
+</pre>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.changelist.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html#svn.ref.svn.c">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svn.c.cleanup.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svn changelist </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> svn cleanup</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

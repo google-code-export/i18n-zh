@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>svn delete</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Version Control with Subversion">
+<link rel="up" href="svn.ref.html#svn.ref.svn.c" title="9.1.2. svn Subcommands">
+<link rel="prev" href="svn.ref.svn.c.copy.html" title="svn copy">
+<link rel="next" href="svn.ref.svn.c.diff.html" title="svn diff">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">svn delete</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.copy.html">Prev</a> </td>
+<th width="60%" align="center">9.1.2. svn Subcommands</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svn.c.diff.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="refentry" lang="en">
+<a name="svn.ref.svn.c.delete"></a><div class="titlepage"></div>
+<a class="indexterm" name="id520212"></a><div class="refnamediv">
+<h2>Name</h2>
+<p>svn delete &#8212; Delete an item from a working copy
+            or the repository.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520238"></a><h2>Synopsis</h2>
+<pre class="programlisting">svn delete PATH...</pre>
+<pre class="programlisting">svn delete URL...</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520256"></a><h2>Description</h2>
+<p>Items specified by <em class="replaceable"><code>PATH</code></em> are
+            scheduled for deletion upon the next commit.  Files (and
+            directories that have not been committed) are immediately
+            removed from the working copy unless the
+            <code class="option">--keep-local</code> option is given.  The
+            command will not remove any unversioned or modified items;
+            use the <code class="option">--force</code> option to override this
+            behavior.</p>
+<p>Items specified by URL are deleted from
+            the repository via an immediate commit.  Multiple URLs are
+            committed atomically.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520285"></a><h2>Alternate names</h2>
+<p><span class="command"><strong>del</strong></span>, <span class="command"><strong>remove</strong></span>, <span class="command"><strong>rm</strong></span></p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520310"></a><h2>Changes</h2>
+<p>Working copy if operating on files; repository if
+            operating on URLs</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520320"></a><h2>Accesses repository</h2>
+<p>Only if operating on URLs</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520331"></a><h2>Options</h2>
+<pre class="screen">
+--editor-cmd EDITOR
+--encoding ENC
+--file (-F) FILE
+--force
+--force-log
+--keep-local
+--message (-m) TEXT
+--quiet (-q)
+--targets FILENAME
+--with-revprop ARG
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id520344"></a><h2>Examples</h2>
+<p>Using <span class="command"><strong>svn</strong></span> to delete a file from
+            your working copy deletes your local copy of the file, but
+            it merely schedules the file to be deleted from the
+            repository.  When you commit, the file is deleted in the
+            repository.</p>
+<pre class="screen">
+$ svn delete myfile
+D         myfile
+
+$ svn commit -m "Deleted file 'myfile'."
+Deleting       myfile
+Transmitting file data .
+Committed revision 14.
+</pre>
+<p>Deleting a URL, however, is immediate, so you have
+            to supply a log message:</p>
+<pre class="screen">
+$ svn delete -m "Deleting file 'yourfile'" \
+             file:///var/svn/repos/test/yourfile
+
+Committed revision 15.
+</pre>
+<p>Here's an example of how to force deletion of a file
+            that has local mods:</p>
+<pre class="screen">
+$ svn delete over-there 
+svn: Attempting restricted operation for modified resource
+svn: Use --force to override this restriction
+svn: 'over-there' has local modifications
+
+$ svn delete --force over-there 
+D         over-there
+</pre>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.copy.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html#svn.ref.svn.c">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svn.c.diff.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svn copy </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> svn diff</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

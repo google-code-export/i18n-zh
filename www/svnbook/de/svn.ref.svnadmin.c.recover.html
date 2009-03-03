@@ -1,0 +1,109 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>svnadmin recover</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.ref.html#svn.ref.svnadmin.c" title="9.2.2. svnadmin Subcommands">
+<link rel="prev" href="svn.ref.svnadmin.c.lstxns.html" title="svnadmin lstxns">
+<link rel="next" href="svn.ref.svnadmin.c.rmlocks.html" title="svnadmin rmlocks">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">svnadmin recover</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svnadmin.c.lstxns.html">Zurück</a> </td>
+<th width="60%" align="center">9.2.2. svnadmin Subcommands</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svnadmin.c.rmlocks.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="refentry" lang="de">
+<a name="svn.ref.svnadmin.c.recover"></a><div class="titlepage"></div>
+<a class="indexterm" name="id423591"></a><div class="refnamediv">
+<h2>Name</h2>
+<p>svnadmin recover &#8212; Bring a repository database back into a
+          consistent state (applies only to repositories using the
+          <code class="literal">bdb</code> backend).  In addition, if
+          <code class="filename">repos/conf/passwd</code> does not exist, it
+          will create a default passwordfile .</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id423629"></a><h2>Synopsis</h2>
+<pre class="programlisting">svnadmin recover REPOS_PATH</pre>
+</div>
+<div class="refsect1" lang="de">
+<a name="id423642"></a><h2>Description</h2>
+<p>Run this command if you get an error indicating that
+            your repository needs to be recovered.</p>
+</div>
+<div class="refsect1" lang="de">
+<a name="id423653"></a><h2>Options</h2>
+<pre class="screen">
+--wait
+</pre>
+</div>
+<div class="refsect1" lang="de">
+<a name="id423665"></a><h2>Examples</h2>
+<p>Recover a hung repository:</p>
+<pre class="screen">
+$ svnadmin recover /var/svn/repos/ 
+Repository lock acquired.
+Please wait; recovering the repository may take some time...
+
+Recovery completed.
+The latest repos revision is 34.
+</pre>
+<p>Recovering the database requires an exclusive lock on
+            the repository. (This is a &#8222;<span class="quote">database lock</span>&#8220;;
+            see the sidebar <a class="xref" href="svn.advanced.html#svn.advanced.locking.meanings" title="The Three Meanings of &#8222;Lock&#8220;">The Three Meanings of &#8222;<span class="quote">Lock</span>&#8220;</a>.)
+            If another process is accessing the repository,
+            then <span class="command"><strong>svnadmin recover</strong></span> will error:</p>
+<pre class="screen">
+$ svnadmin recover /var/svn/repos
+svn: Failed to get exclusive repository access; perhaps another process
+such as httpd, svnserve or svn has it open?
+
+$
+</pre>
+<p>The <code class="option">--wait</code> option, however, will
+            cause <span class="command"><strong>svnadmin recover</strong></span> to wait
+            indefinitely for other processes to disconnect:</p>
+<pre class="screen">
+$ svnadmin recover /var/svn/repos --wait
+Waiting on repository lock; perhaps another process has it open?
+
+### time goes by&#8230;
+
+Repository lock acquired.
+Please wait; recovering the repository may take some time...
+
+Recovery completed.
+The latest repos revision is 34.
+</pre>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svnadmin.c.lstxns.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html#svn.ref.svnadmin.c">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svnadmin.c.rmlocks.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svnadmin lstxns </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> svnadmin rmlocks</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

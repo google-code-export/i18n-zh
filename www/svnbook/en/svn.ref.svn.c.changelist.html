@@ -1,0 +1,121 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>svn changelist</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Version Control with Subversion">
+<link rel="up" href="svn.ref.html#svn.ref.svn.c" title="9.1.2. svn Subcommands">
+<link rel="prev" href="svn.ref.svn.c.cat.html" title="svn cat">
+<link rel="next" href="svn.ref.svn.c.checkout.html" title="svn checkout">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">svn changelist</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.cat.html">Prev</a> </td>
+<th width="60%" align="center">9.1.2. svn Subcommands</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svn.c.checkout.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="refentry" lang="en">
+<a name="svn.ref.svn.c.changelist"></a><div class="titlepage"></div>
+<a class="indexterm" name="id519120"></a><div class="refnamediv">
+<h2>Name</h2>
+<p>svn changelist &#8212; Associate (or deassociate) local paths with a
+            changelist.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519146"></a><h2>Synopsis</h2>
+<pre class="programlisting">changelist CLNAME TARGET...</pre>
+<pre class="programlisting">changelist --remove TARGET...</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519164"></a><h2>Description</h2>
+<p>Used for dividing files in a working copy into a
+            changelist (logical named grouping) in order to allow
+            users to easily work on multiple file collections within a
+            single working copy.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519176"></a><h2>Alternate names</h2>
+<p><span class="command"><strong>cl</strong></span></p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519190"></a><h2>Changes</h2>
+<p>Working copy</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519200"></a><h2>Accesses repository</h2>
+<p>No</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519210"></a><h2>Options</h2>
+<pre class="screen">
+--changelist ARG
+--depth ARG
+--quiet (-q)
+--recursive (-R)
+--remove
+--targets ARG
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id519223"></a><h2>Example</h2>
+<p>Edit three files, add them to a changelist, then
+            commit only files in that changelist:</p>
+<pre class="screen">
+$ svn cl issue1729 foo.c bar.c baz.c
+Path 'foo.c' is now a member of changelist 'issue1729'.
+Path 'bar.c' is now a member of changelist 'issue1729'.
+Path 'baz.c' is now a member of changelist 'issue1729'.
+
+$ svn status
+A      someotherfile.c
+A      test/sometest.c
+
+--- Changelist 'issue1729':
+A      foo.c
+A      bar.c
+A      baz.c
+
+$ svn commit --changelist issue1729 -m "Fixing Issue 1729."
+Adding         bar.c
+Adding         baz.c
+Adding         foo.c
+Transmitting file data ...
+Committed revision 2.
+
+$ svn status
+A      someotherfile.c
+A      test/sometest.c
+</pre>
+<p>Note that only the files in changelist
+            <em class="replaceable"><code>issue1729</code></em> were
+            committed.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.cat.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html#svn.ref.svn.c">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svn.c.checkout.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svn cat </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> svn checkout</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

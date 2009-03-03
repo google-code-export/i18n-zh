@@ -1,0 +1,515 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Versionskontrolle mit Subversion</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="next" href="svn.foreword.html" title="Geleitwort">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Versionskontrolle mit Subversion</th></tr>
+<tr>
+<td width="20%" align="left"> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.foreword.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="book" lang="de">
+<div class="titlepage">
+<div>
+<div><h1 class="title">
+<a name="svn"></a>Versionskontrolle mit Subversion</h1></div>
+<div><h2 class="subtitle">Für Subversion 1.5</h2></div>
+<div><h2 class="subtitle">(Übersetzt aus der r3441)</h2></div>
+<div><div class="authorgroup">
+<div class="author"><h3 class="author">
+<span class="firstname">Ben</span> <span class="surname">Collins-Sussman</span>
+</h3></div>
+<div class="author"><h3 class="author">
+<span class="firstname">Brian W.</span> <span class="surname">Fitzpatrick</span>
+</h3></div>
+<div class="author"><h3 class="author">
+<span class="firstname">C. Michael</span> <span class="surname">Pilato</span>
+</h3></div>
+</div></div>
+<div><p class="copyright">Copyright © 2002, 2003, 2004, 2005, 2006, 2007, 2008 Ben Collins-Sussman, Brian W. Fitzpatrick, C. Michael Pilato</p></div>
+<div><div class="legalnotice">
+<a name="id321650"></a><p>Dieses Werk steht unter der Lizenz der Creative
+      Commons Attribution License. Um eine Kopie dieser Lizenz
+      einzusehen, gehen Sie zu <a class="ulink" href="http://creativecommons.org/licenses/by/2.0/" target="_top">http://creativecommons.org/licenses/by/2.0/</a> oder
+      schreiben Sie an  Creative Commons, 559 Nathan Abbott Way,
+      Stanford, California 94305, USA.</p>
+</div></div>
+<div><p class="pubdate">(TBA)</p></div>
+</div>
+<hr>
+</div>
+<div class="toc">
+<p><b>Inhaltsverzeichnis</b></p>
+<dl>
+<dt><span class="preface"><a href="svn.foreword.html">Geleitwort</a></span></dt>
+<dt><span class="preface"><a href="svn.preface.html">Vorwort</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.audience">1. Publikum</a></span></dt>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.howread">2. Wie dieses Buch zu lesen ist</a></span></dt>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.conventions">3. Konventionen in diesem Buch</a></span></dt>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.organization">4. Aufbau dieses Buchs</a></span></dt>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.free">5. Dieses Buch ist frei</a></span></dt>
+<dt><span class="sect1"><a href="svn.preface.html#svn.preface.acks">6. Danksagungen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.preface.html#svn.preface.acks.sussman">6.1. Von Ben Collins-Sussman</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.preface.acks.fitz">6.2. Von Brian W. Fitzpatrick</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.preface.acks.cmpilato">6.3. Von C. Michael Pilato</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.preface.html#svn.intro.whatis">7. Was ist Subversion?</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.preface.html#svn.intro.righttool">7.1. Ist Subversion das richtige Werkzeug?</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.intro.history">7.2. Die Geschichte von Subversion</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.intro.architecture">7.3. Die Architektur von Subversion</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.intro.components">7.4. Die Komponenten von Subversion</a></span></dt>
+<dt><span class="sect2"><a href="svn.preface.html#svn.intro.whatsnew">7.5. Was gibt es Neues in Subversion</a></span></dt>
+</dl></dd>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.basic.html">1. Grundlegende Konzepte</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.repository">1.1. Das Repository</a></span></dt>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.vsn-models">1.2. Versionierungsmodelle</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.problem-sharing">1.2.1. Das Problem ??The Problem of File Sharing</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.lock-unlock">1.2.2. The Lock-Modify-Unlock Solution</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.copy-merge">1.2.3. Die &#8222;Kopieren &#8211; Ändern &#8211; Zusammenfassen&#8220; - Lösung</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.in-action">1.3. Subversion in Action</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.basic.html#svn.advanced.reposurls">1.3.1. Subversion-Repository-URLs</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.wc">1.3.2. Arbeitskopien</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.revs">1.3.3. Revisionen</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.track-repos">1.3.4. Wie Arbeitskopien das Repository verfolgen</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.mixedrevs">1.3.5. Arbeitskopien mit gemischten Revisionen</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.summary">1.4. Zusammenfassung</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.tour.html">2. Grundlegende Benutzung</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.help">2.1. Hilfe!</a></span></dt>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.importing">2.2. Wie Sie Daten in Ihr Repository bekommen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.importing.import">2.2.1. svn import</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.importing.layout">2.2.2. Empfohlene Repository Aufteilung</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.initial">2.3. Anfänglicher Checkout</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.initial.disabling-password-caching">2.3.1. Das Zwischenspeichern des Passwortes abstellen</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.initial.different-user">2.3.2. Authentifizierung als ein anderer Anwender</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.cycle">2.4. Der grundlegende Arbeitszyklus</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.update">2.4.1. Aktualisieren Sie Ihre Arbeitskopie</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.edit">2.4.2. Nehmen Sie Änderungen an Ihrer Arbeitskopie vor</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.examine">2.4.3. Untersuchen Sie Ihre Änderungen</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.revert">2.4.4. Zurücknehmen von Änderungen in der Arbeitskopie</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.resolve">2.4.5. Konflikte auflösen (Änderungen anderer einarbeiten)</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cycle.commit">2.4.6. Übergeben Ihrer Änderungen</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.history">2.5. Geschichtsforschung</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.history.log">2.5.1. Erzeugung einer Liste der Änderungsgeschichte</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.history.diff">2.5.2. Detaillierte Untersuchung der Änderungsgeschichte</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.history.browsing">2.5.3. Stöbern im Repository</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.history.snapshots">2.5.4. Bereitstellung älterer Repository-Schnappschüsse</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.cleanup">2.6. Manchmal müssen Sie einfach nur aufräumen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cleanup.disposal">2.6.1. Entsorgen einer Arbeitskopie</a></span></dt>
+<dt><span class="sect2"><a href="svn.tour.html#svn.tour.cleanup.interruption">2.6.2. Wiederherstellung nach einer Unterbrechung</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.tour.html#svn.tour.summary">2.7. Zusammenfassung</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.advanced.html">3. Advanced Topics</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.tour.revs.specifiers">3.1. Revision Specifiers</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.tour.revs.keywords">3.1.1. Revision Keywords</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.tour.revs.dates">3.1.2. Revision Dates</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.props">3.2. Properties</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.why">3.2.1. Why Properties?</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.manip">3.2.2. Manipulating Properties</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.workflow">3.2.3. Properties and the Subversion Workflow</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.auto">3.2.4. Automatic Property Setting</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.props.file-portability">3.3. File Portability</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.special.mime-type">3.3.1. File Content Type</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.special.executable">3.3.2. File Executability</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.props.special.eol-style">3.3.3. End-of-Line Character Sequences</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.props.special.ignore">3.4. Ignoring Unversioned Items</a></span></dt>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.props.special.keywords">3.5. Keyword Substitution</a></span></dt>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.sparsedirs">3.6. Sparse Directories</a></span></dt>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.locking">3.7. Locking</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.locking.creation">3.7.1. Creating Locks</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.locking.discovery">3.7.2. Discovering Locks</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.locking.break-steal">3.7.3. Breaking and Stealing Locks</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.locking.lock-communication">3.7.4. Lock Communication</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.externals">3.8. Externals Definitions</a></span></dt>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.pegrevs">3.9. Peg and Operative Revisions</a></span></dt>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.changelists">3.10. Changelists</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.changelists.creating">3.10.1. Creating and Modifying Changelists</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.changelists.asfilters">3.10.2. Changelists As Operation Filters</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.advanced.changelists.limitations">3.10.3. Changelist Limitations</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.serverconfig.netmodel">3.11. Network Model</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.serverconfig.netmodel.reqresp">3.11.1. Requests and Responses</a></span></dt>
+<dt><span class="sect2"><a href="svn.advanced.html#svn.serverconfig.netmodel.credcache">3.11.2. Client Credentials Caching</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.advanced.html#svn.advanced.summary">3.12. Summary</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.branchmerge.html">4. Verzweigen und Zusammenführen</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.whatis">4.1. Was ist ein Zweig?</a></span></dt>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.using">4.2. Verwenden von Zweigen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.using.create">4.2.1. Erzeugen eines Zweiges</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.using.work">4.2.2. Arbeiten mit Ihrem Zweig</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.using.concepts">4.2.3. Die Schlüsselkonzepte des Verzweigens</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.basicmerging">4.3. Grundlegendes Zusammenführen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.changesets">4.3.1. Änderungsmengen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchemerge.basicmerging.stayinsync">4.3.2. Einen Zweig synchron halten</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.basicmerging.mergeinfo">4.3.3. Mergeinfo und Vorschauen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.basicmerging.undo">4.3.4. Änderungen rückgängig machen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.basicmerging.resurrect">4.3.5. Zurückholen gelöschter Objekte</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.advanced">4.4. Fortgeschrittenes Zusammenführen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.cherrypicking">4.4.1. Die Rosinen herauspicken</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.advancedsyntax">4.4.2. Merge-Syntax: Die vollständige Enthüllung</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.nomergedata">4.4.3. Zusammenführen ohne Mergeinfo</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.mergeconflicts">4.4.4. Mehr über Konflikte beim Zusammenführen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.blockchanges">4.4.5. Änderungen blockieren</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.logblame">4.4.6. Protokolle und Anmerkungen, die Zusammenführungen anzeigen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.ancestry">4.4.7. Die Abstammung berücksichtigen oder ignorieren</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.moves">4.4.8. Zusammenführen und Verschieben</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.pre1.5clients">4.4.9. Abblocken von Clients, die Zusammenführungen nicht
+        ausreichend unterstützen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.advanced.finalword">4.4.10. Das abschließende Wort zur Zusammenführungs-Verfolgung</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.switchwc">4.5. Zweige durchlaufen</a></span></dt>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.tags">4.6. Tags</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.tags.mksimple">4.6.1. Erzeugen eines einfachen Tags</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.tags.mkcomplex">4.6.2. Erzeugen eines komplexen Tags</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.maint">4.7. Verwaltung von Zweigen</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.maint.layout">4.7.1. Aufbau des Repositorys</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.maint.lifetime">4.7.2. Lebensdauer von Daten</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.commonpatterns">4.8. Verbreitete Verzweigungsmuster</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.commonpatterns.release">4.8.1. Release-Zweige</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.branchmerge.commonpatterns.feature">4.8.2. Funktions-Zweige</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.advanced.vendorbr">4.9. Lieferanten-Zweige</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.advanced.vendorbr.general">4.9.1. Allgemeines Vorgehen für die Verwaltung von Lieferanten-Zweigen</a></span></dt>
+<dt><span class="sect2"><a href="svn.branchmerge.html#svn.advanced.vendorbr.svn_load_dirs">4.9.2. svn_load_dirs.pl</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.branchmerge.html#svn.branchmerge.summary">4.10. Zusammenfassung</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.reposadmin.html">5. Verwaltung des Repositorys</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.basics">5.1. Das Subversion Repository, Definition</a></span></dt>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.planning">5.2. Strategien für die Verwendung eines Repositorys</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.projects.chooselayout">5.2.1. Planung der Organisation Ihres Repositorys</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.basics.hosting">5.2.2. Entscheiden Sie, wo und wie Ihr Repository untergebracht
+        werden soll</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.basics.backends">5.2.3. Auswahl der Datenspeicherung</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.create">5.3. Anlegen und konfigurieren Ihres Repositorys</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.basics.creating">5.3.1. Anlegen des Repositorys</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.create.hooks">5.3.2. Erstellen von Repository-Hooks</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.create.bdb">5.3.3. Konfiguration von Berkeley DB</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.maint">5.4. Repository-Wartung</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.tk">5.4.1. Der Werkzeugkasten eines Administrators</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.setlog">5.4.2. Berichtigung des Protokolleintrags</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.diskspace">5.4.3. Plattenplatzverwaltung</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.recovery">5.4.4. Berkeley DB Recovery</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.migrate">5.4.5. Migrating Repository Data Elsewhere</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.filtering">5.4.6. Filtering Repository History</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.replication">5.4.7. Repository Replication</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.backup">5.4.8. Repository Backup</a></span></dt>
+<dt><span class="sect2"><a href="svn.reposadmin.html#svn.reposadmin.maint.uuids">5.4.9. Managing Repository UUIDs</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.maint.moving-and-removing">5.5. Moving and Removing Repositories</a></span></dt>
+<dt><span class="sect1"><a href="svn.reposadmin.html#svn.reposadmin.summary">5.6. Summary</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.serverconfig.html">6. Die Administration eines Subversion-Servers</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.overview">6.1. Überblick</a></span></dt>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.choosing">6.2. Auswahl einer Serverkonfiguration</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.choosing.svnserve">6.2.1. Der svnserve-Server</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.choosing.svn-ssh">6.2.2. svnserve über SSH</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.choosing.apache">6.2.3. Der Apache HTTP Server</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.choosing.recommendations">6.2.4. Empfehlungen</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.svnserve">6.3. svnserve, ein maßgefertigter Server</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.svnserve.invoking">6.3.1. Der Serverstart</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.svnserve.auth">6.3.2. Integrierte Authentifikation und Autorisation</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.svnserve.sasl">6.3.3. Using <span class="command"><strong>svnserve</strong></span> with SASL</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.svnserve.sshauth">6.3.4. Tunneling over SSH</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.svnserve.sshtricks">6.3.5. SSH configuration tricks</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.httpd">6.4. httpd, the Apache HTTP Server</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.httpd.prereqs">6.4.1. Prerequisites</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.httpd.basic">6.4.2. Basic Apache Configuration</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.httpd.authn">6.4.3. Authentication Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.httpd.authz">6.4.4. Authorization Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.serverconfig.html#svn.serverconfig.httpd.extra">6.4.5. Extra Goodies</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.pathbasedauthz">6.5. Path-Based Authorization</a></span></dt>
+<dt><span class="sect1"><a href="svn.serverconfig.html#svn.serverconfig.multimethod">6.6. Supporting Multiple Repository Access Methods</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.customization.html">7. Customizing Your Subversion Experience</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.confarea">7.1. Runtime Configuration Area</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.layout">7.1.1. Configuration Area Layout</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.windows-registry">7.1.2. Configuration and the Windows Registry</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.opts">7.1.3. Configuration Options</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.l10n">7.2. Localization</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.l10n.understanding">7.2.1. Understanding Locales</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.l10n.svnuse">7.2.2. Subversion's Use of Locales</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.externaleditors">7.3. Using External Editors</a></span></dt>
+<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.externaldifftools">7.4. Using External Differencing and Merge Tools</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.externaldifftools.diff">7.4.1. External diff</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.externaldifftools.diff3">7.4.2. External diff3</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.customization.html#svn.customization.summary">7.5. Summary</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.developer.html">8. Embedding Subversion</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.layerlib">8.1. Layered Library Design</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.repos">8.1.1. Repository Layer</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.ra">8.1.2. Repository Access Layer</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.client">8.1.3. Client Layer</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.insidewc">8.2. Inside the Working Copy Administration Area</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.insidewc.entries">8.2.1. The Entries File</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.insidewc.base-and-props">8.2.2. Pristine Copies and Property Files</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.usingapi">8.3. Using the APIs</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.apr">8.3.1. The Apache Portable Runtime Library</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.urlpath">8.3.2. URL and Path Requirements</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.otherlangs">8.3.3. Using Languages Other Than C and C++</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.codesamples">8.3.4. Code Samples</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.summary">8.4. Summary</a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="svn.ref.html">9. Subversion Complete Reference</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svn">9.1. The Subversion Command-Line Client: <span class="command"><strong>svn</strong></span></a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svn.sw">9.1.1. svn Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svn.c">9.1.2. svn Subcommands</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svnadmin">9.2. svnadmin</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnadmin.sw">9.2.1. <span class="command"><strong>svnadmin</strong></span> Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnadmin.c">9.2.2. svnadmin Subcommands</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svnlook">9.3. svnlook</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnlook.sw">9.3.1. svnlook Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnlook.c">9.3.2. svnlook Subcommands</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svnsync">9.4. svnsync</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnsync.sw">9.4.1. svnsync Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnsync.c">9.4.2. svnsync Subcommands</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svnserve">9.5. svnserve</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="svn.ref.html#svn.ref.svnserve.sw">9.5.1. svnserve Options</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svndumpfilter">9.6. svndumpfilter</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svndumpfilter.options">9.6.1. svndumpfilter Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.svndumpfilter.c">9.6.2. svndumpfilter Subcommands</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.svnversion">9.7. svnversion</a></span></dt>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.mod_dav_svn">9.8. mod_dav_svn</a></span></dt>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.mod_authz_svn">9.9. mod_authz_svn</a></span></dt>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.properties">9.10. Subversion Properties</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.properties.versioned-props">9.10.1. Versioned Properties</a></span></dt>
+<dt><span class="sect2"><a href="svn.ref.html#svn.ref.properties.unversioned-props">9.10.2. Unversioned Properties</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.ref.html#svn.ref.reposhooks">9.11. Repository Hooks</a></span></dt>
+</dl></dd>
+<dt><span class="appendix"><a href="svn.intro.html">A. Subversion Quick-Start Guide</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.intro.html#svn.intro.install">A.1. Installing Subversion</a></span></dt>
+<dt><span class="sect1"><a href="svn.intro.html#svn.intro.quickstart">A.2. High-Speed Tutorial</a></span></dt>
+</dl></dd>
+<dt><span class="appendix"><a href="svn.forcvs.html">B. Subversion for CVS Users</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.revnums">B.1. Revision Numbers Are Different Now</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.directories">B.2. Directory Versions</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.disconnected">B.3. More Disconnected Operations</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.status-vs-update">B.4. Distinction Between Status and Update</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.forcvs.html#svn.forcvs.status-vs-update.status">B.4.1. Status</a></span></dt>
+<dt><span class="sect2"><a href="svn.forcvs.html#svn.forcvs.status-vs-update.update">B.4.2. Update</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.branches-and-tags">B.5. Branches and Tags</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.properties">B.6. Metadata Properties</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.conflicts">B.7. Conflict Resolution</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.binary-and-trans">B.8. Binary Files and Translation</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.modules">B.9. Versioned Modules</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.auth">B.10. Authentication</a></span></dt>
+<dt><span class="sect1"><a href="svn.forcvs.html#svn.forcvs.convert">B.11. Converting a Repository from CVS to Subversion</a></span></dt>
+</dl></dd>
+<dt><span class="appendix"><a href="svn.webdav.html">C. WebDAV and Autoversioning</a></span></dt>
+<dd><dl>
+<dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.basic">C.1. What Is WebDAV?</a></span></dt>
+<dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.autoversioning">C.2. Autoversioning</a></span></dt>
+<dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.clients">C.3. Client Interoperability</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.standalone">C.3.1. Standalone WebDAV Applications</a></span></dt>
+<dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.file-explorer-extensions">C.3.2. File-Explorer WebDAV Extensions</a></span></dt>
+<dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.fs-impl">C.3.3. WebDAV Filesystem Implementation</a></span></dt>
+</dl></dd>
+</dl></dd>
+<dt><span class="appendix"><a href="svn.copyright.html">D. Copyright</a></span></dt>
+<dt><span class="index"><a href="svn.index.html">Stichwortverzeichnis</a></span></dt>
+</dl>
+</div>
+<div class="list-of-figures">
+<p><b>Abbildungsverzeichnis</b></p>
+<dl>
+<dt>1. <a href="svn.preface.html#svn.intro.architecture.dia-1">Die Architektur von Subversion</a>
+</dt>
+<dt>1.1. <a href="svn.basic.html#svn.basic.repository.dia-1">Ein typisches Client/Server System</a>
+</dt>
+<dt>1.2. <a href="svn.basic.html#svn.basic.vsn-models.problem-sharing.dia-1">The problem to avoid</a>
+</dt>
+<dt>1.3. <a href="svn.basic.html#svn.basic.vsn-models.lock-unlock.dia-1">Die Sperren - Ändern - Entsperren - Lösung veranschaulicht diese einfache Möglichkeit</a>
+</dt>
+<dt>1.4. <a href="svn.basic.html#svn.basic.vsn-models.copy-merge.dia-1">&#8222;Kopieren &#8211; Ändern &#8211; Zusammenfassen&#8220; - Lösung</a>
+</dt>
+<dt>1.5. <a href="svn.basic.html#svn.basic.vsn-models.copy-merge.dia-2">&#8222;Kopieren &#8211; Ändern &#8211; Zusammenfassen&#8220; - Lösung (Fortsetzung)</a>
+</dt>
+<dt>1.6. <a href="svn.basic.html#svn.basic.in-action.wc.dia-1">Das Dateisystem des Repositorys</a>
+</dt>
+<dt>1.7. <a href="svn.basic.html#svn.basic.in-action.revs.dia-1">Das Repository</a>
+</dt>
+<dt>4.1. <a href="svn.branchmerge.html#svn.branchmerge.whatis.dia-1">Entwicklungszweige</a>
+</dt>
+<dt>4.2. <a href="svn.branchmerge.html#svn.branchmerge.using.dia-1">Repository-Struktur zu Beginn</a>
+</dt>
+<dt>4.3. <a href="svn.branchmerge.html#svn.branchmerge.using.create.dia-1">Repository mit neuer Kopie</a>
+</dt>
+<dt>4.4. <a href="svn.branchmerge.html#svn.branchmerge.using.work.dia-1">Die Verzweigung der Geschichte einer Datei</a>
+</dt>
+<dt>8.1. <a href="svn.developer.html#svn.developer.layerlib.repos.dia-1">Files and directories in two dimensions</a>
+</dt>
+<dt>8.2. <a href="svn.developer.html#svn.developer.layerlib.repos.dia-2">Versioning time&#8212;the third dimension!</a>
+</dt>
+</dl>
+</div>
+<div class="list-of-tables">
+<p><b>Tabellenverzeichnis</b></p>
+<dl>
+<dt>1.1. <a href="svn.basic.html#svn.basic.in-action.wc.tbl-1">Repository-Zugriffs-URLs</a>
+</dt>
+<dt>4.1. <a href="svn.branchmerge.html#svn.branchemerge.summary.tbl-1">Befehle zum Verzweigen und Zusammenführen</a>
+</dt>
+<dt>5.1. <a href="svn.reposadmin.html#svn.reposadmin.basics.backends.tbl-1">Vergleich der Repository-Datenspeicherung</a>
+</dt>
+<dt>6.1. <a href="svn.serverconfig.html#svn.serverconfig.overview.tbl-1">Vergleich der Serveroptionen für Subversion</a>
+</dt>
+<dt>C.1. <a href="svn.webdav.html#svn.webdav.clients.tbl-1">Common WebDAV clients</a>
+</dt>
+</dl>
+</div>
+<div class="list-of-examples">
+<p><b>Beispiele</b></p>
+<dl>
+<dt>5.1. <a href="svn.reposadmin.html#svn.reposadmin.maint.diskspace.deadtxns.ex-1">txn-info.sh (ausstehende Transaktionen anzeigen)</a>
+</dt>
+<dt>5.2. <a href="svn.reposadmin.html#svn.reposadmin.maint.replication.pre-revprop-change">Mirror repository's pre-revprop-change hook script</a>
+</dt>
+<dt>5.3. <a href="svn.reposadmin.html#svn.reposadmin.maint.replication.start-commit">Mirror repository's start-commit hook script</a>
+</dt>
+<dt>6.1. <a href="svn.serverconfig.html#svn.serverconfig.httpd.authz.perdir.ex-1">A sample configuration for anonymous access</a>
+</dt>
+<dt>6.2. <a href="svn.serverconfig.html#svn.serverconfig.httpd.authz.perdir.ex-2">A sample configuration for authenticated access</a>
+</dt>
+<dt>6.3. <a href="svn.serverconfig.html#svn.serverconfig.httpd.authz.perdir.ex-3">A sample configuration for mixed
+            authenticated/anonymous access</a>
+</dt>
+<dt>6.4. <a href="svn.serverconfig.html#svn.serverconfig.httpd.authz.pathauthzoff.ex-1">Disabling path checks altogether</a>
+</dt>
+<dt>7.1. <a href="svn.customization.html#svn.advanced.confarea.windows-registry.ex-1">Sample registration entries (.reg) file</a>
+</dt>
+<dt>7.2. <a href="svn.customization.html#svn.advanced.externaldifftools.diff.ex-1">diffwrap.py</a>
+</dt>
+<dt>7.3. <a href="svn.customization.html#svn.advanced.externaldifftools.diff.ex-2">diffwrap.bat</a>
+</dt>
+<dt>7.4. <a href="svn.customization.html#svn.advanced.externaldifftools.diff3.ex-1">diff3wrap.py</a>
+</dt>
+<dt>7.5. <a href="svn.customization.html#svn.advanced.externaldifftools.diff3.ex-2">diff3wrap.bat</a>
+</dt>
+<dt>8.1. <a href="svn.developer.html#svn.developer.layerlib.repos.ex-1">Using the Repository Layer</a>
+</dt>
+<dt>8.2. <a href="svn.developer.html#svn.developer.usingapi.otherlangs.ex-1">Using the Repository layer with Python</a>
+</dt>
+<dt>8.3. <a href="svn.developer.html#svn.developer.usingapi.otherlangs.ex-2">A Python status crawler</a>
+</dt>
+</dl>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.foreword.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top"> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right" valign="top"> Geleitwort</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

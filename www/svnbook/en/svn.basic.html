@@ -1,0 +1,856 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Chapter 1. Fundamental Concepts</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Version Control with Subversion">
+<link rel="up" href="index.html" title="Version Control with Subversion">
+<link rel="prev" href="svn.preface.html" title="Preface">
+<link rel="next" href="svn.tour.html" title="Chapter 2. Basic Usage">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 1. Fundamental Concepts</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.preface.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.tour.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="svn.basic"></a>Chapter 1. Fundamental Concepts</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.repository">1.1. The Repository</a></span></dt>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.vsn-models">1.2. Versioning Models</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.problem-sharing">1.2.1. The Problem of File Sharing</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.lock-unlock">1.2.2. The Lock-Modify-Unlock Solution</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.vsn-models.copy-merge">1.2.3. The Copy-Modify-Merge Solution</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.in-action">1.3. Subversion in Action</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.basic.html#svn.advanced.reposurls">1.3.1. Subversion Repository URLs</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.wc">1.3.2. Working Copies</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.revs">1.3.3. Revisions</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.track-repos">1.3.4. How Working Copies Track the Repository</a></span></dt>
+<dt><span class="sect2"><a href="svn.basic.html#svn.basic.in-action.mixedrevs">1.3.5. Mixed Revision Working Copies</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.basic.html#svn.basic.summary">1.4. Summary</a></span></dt>
+</dl>
+</div>
+<p>This chapter is a short, casual introduction to Subversion.
+    If you're new to version control, this chapter is definitely for
+    you.  We begin with a discussion of general version control
+    concepts, work our way into the specific ideas behind
+    Subversion, and show some simple examples of Subversion in
+    use.</p>
+<p>Even though the examples in this chapter show people sharing
+    collections of program source code, keep in mind that Subversion
+    can manage any sort of file collection&#8212;it's not limited to
+    helping computer programmers.</p>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.repository"></a>1.1. The Repository</h2></div></div></div>
+<p>Subversion is a centralized system for sharing information.
+      At its core is a repository, which is a central store of data.
+      The repository stores information in the form of a
+      <em class="firstterm">filesystem tree</em>&#8212;a typical hierarchy
+      of files and directories.  Any number of
+      <em class="firstterm">clients</em> connect to the repository, and
+      then read or write to these files.  By writing data, a client
+      makes the information available to others; by reading data, the
+      client receives information from others.  <a class="xref" href="svn.basic.html#svn.basic.repository.dia-1" title="Figure 1.1. A typical client/server system">Figure 1.1, &#8220;A typical client/server system&#8221;</a> illustrates this.</p>
+<div class="figure">
+<a name="svn.basic.repository.dia-1"></a><p class="title"><b>Figure 1.1. A typical client/server system</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia1.png" alt="A typical client/server system"></div></div>
+</div>
+<br class="figure-break"><p>So why is this interesting?  So far, this sounds like the
+      definition of a typical file server.  And indeed, the repository
+      <span class="emphasis"><em>is</em></span> a kind of file server, but it's not your
+      usual breed.  What makes the Subversion repository special is
+      that <span class="emphasis"><em>it remembers every change</em></span> ever written
+      to it&#8212;every change to every file, and even changes to the
+      directory tree itself, such as the addition, deletion, and
+      rearrangement of files and directories.</p>
+<p>When a client reads data from the repository, it normally
+      sees only the latest version of the filesystem tree.  But the
+      client also has the ability to view
+      <span class="emphasis"><em>previous</em></span> states of the filesystem.  For
+      example, a client can ask historical questions such
+      as &#8220;<span class="quote">What did this directory contain last
+      Wednesday?</span>&#8221; and &#8220;<span class="quote">Who was the last person to change
+      this file, and what changes did he make?</span>&#8221; These are the
+      sorts of questions that are at the heart of
+      any <em class="firstterm">version control system</em>: systems that
+      are designed to track changes to data over time.
+    </p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.vsn-models"></a>1.2. Versioning Models</h2></div></div></div>
+<p>The core mission of a version control system is to enable
+      collaborative editing and sharing of data.  But different
+      systems use different strategies to achieve this.  It's
+      important to understand these different strategies, for a couple
+      of reasons.  First, it will help you compare and contrast
+      existing version control systems, in case you encounter other
+      systems similar to Subversion.  Beyond that, it will also help
+      you make more effective use of Subversion, since Subversion
+      itself supports a couple of different ways of working.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.problem-sharing"></a>1.2.1. The Problem of File Sharing</h3></div></div></div>
+<p>All version control systems have to solve the same
+        fundamental problem: how will the system allow users to share
+        information, but prevent them from accidentally stepping on
+        each other's feet?  It's all too easy for users to
+        accidentally overwrite each other's changes in the
+        repository.</p>
+<p>Consider the scenario shown in <a class="xref" href="svn.basic.html#svn.basic.vsn-models.problem-sharing.dia-1" title="Figure 1.2. The problem to avoid">Figure 1.2, &#8220;The problem to avoid&#8221;</a>.
+        Suppose we have two coworkers, Harry and Sally.  They each
+        decide to edit the same repository file at the same time.  If
+        Harry saves his changes to the repository first, it's
+        possible that (a few moments later) Sally could accidentally
+        overwrite them with her own new version of the file.  While
+        Harry's version of the file won't be lost forever (because the
+        system remembers every change), any changes Harry made
+        <span class="emphasis"><em>won't</em></span> be present in Sally's newer version
+        of the file, because she never saw Harry's changes to begin
+        with.  Harry's work is still effectively lost&#8212;or at
+        least missing from the latest version of the file&#8212;and
+        probably by accident.  This is definitely a situation we want
+        to avoid!</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.problem-sharing.dia-1"></a><p class="title"><b>Figure 1.2. The problem to avoid</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia2.png" alt="The problem to avoid"></div></div>
+</div>
+<br class="figure-break">
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.lock-unlock"></a>1.2.2. The Lock-Modify-Unlock Solution</h3></div></div></div>
+<p>Many version control systems use a
+        <em class="firstterm">lock-modify-unlock</em> model to address the
+        problem of many authors clobbering each other's work.  In this
+        model, the repository allows only one person to change a file
+        at a time.  This exclusivity policy is managed using locks.
+        Harry must &#8220;<span class="quote">lock</span>&#8221; a file before he can begin
+        making changes to it.  If Harry has locked a file, Sally
+        cannot also lock it, and therefore cannot make any changes to
+        that file.  All she can do is read the file and wait for
+        Harry to finish his changes and release his lock.  After Harry
+        unlocks the file, Sally can take her turn by locking and
+        editing the file.  <a class="xref" href="svn.basic.html#svn.basic.vsn-models.lock-unlock.dia-1" title="Figure 1.3. The lock-modify-unlock solution">Figure 1.3, &#8220;The lock-modify-unlock solution&#8221;</a>
+        demonstrates this simple solution.</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.lock-unlock.dia-1"></a><p class="title"><b>Figure 1.3. The lock-modify-unlock solution</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia3.png" alt="The lock-modify-unlock solution"></div></div>
+</div>
+<br class="figure-break"><p>The problem with the lock-modify-unlock model is that it's
+        a bit restrictive and often becomes a roadblock for
+        users:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><span class="emphasis"><em>Locking may cause administrative
+            problems.</em></span>
+
+            Sometimes Harry will lock a file and then forget about it.
+            Meanwhile, because Sally is still waiting to edit the file,
+            her hands are tied.  And then Harry goes on vacation.  Now
+            Sally has to get an administrator to release Harry's lock.
+            The situation ends up causing a lot of unnecessary delay
+            and wasted time.</p></li>
+<li><p><span class="emphasis"><em>Locking may cause unnecessary
+            serialization.</em></span>
+
+            What if Harry is editing the beginning of a text file,
+            and Sally simply wants to edit the end of the same file?
+            These changes don't overlap at all.  They could easily
+            edit the file simultaneously, and no great harm would
+            come, assuming the changes were properly merged together.
+            There's no need for them to take turns in this
+            situation.</p></li>
+<li><p><span class="emphasis"><em>Locking may create a false sense of
+            security.</em></span>
+
+            Suppose Harry locks and edits file A, while Sally
+            simultaneously locks and edits file B.  But what if A and
+            B depend on one another, and the changes made to each are
+            semantically incompatible?  Suddenly A and B don't work
+            together anymore.  The locking system was powerless to
+            prevent the problem&#8212;yet it somehow provided a false
+            sense of security.  It's easy for Harry and Sally to
+            imagine that by locking files, each is beginning a safe,
+            insulated task, and thus they need not bother discussing
+            their incompatible changes early on.  Locking often
+            becomes a substitute for real communication.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.copy-merge"></a>1.2.3. The Copy-Modify-Merge Solution</h3></div></div></div>
+<p>Subversion, CVS, and many other version control systems
+        use a <em class="firstterm">copy-modify-merge</em> model as an
+        alternative to locking.  In this model, each user's client
+        contacts the project repository and creates a personal
+        <em class="firstterm">working copy</em>&#8212;a local reflection
+        of the repository's files and directories.  Users then work
+        simultaneously and independently, modifying their private
+        copies.  Finally, the private copies are merged together into
+        a new, final version.  The version control system often
+        assists with the merging, but ultimately, a human being is
+        responsible for making it happen correctly.</p>
+<p>Here's an example.  Say that Harry and Sally each create
+        working copies of the same project, copied from the
+        repository.  They work concurrently and make changes to the
+        same file A within their copies.  Sally saves her changes to
+        the repository first.  When Harry attempts to save his changes
+        later, the repository informs him that his file A is
+        <em class="firstterm">out of date</em>.  In other words, file
+        A in the repository has somehow changed since he last copied
+        it.  So Harry asks his client to <em class="firstterm">merge</em>
+        any new changes from the repository into his working copy of
+        file A.  Chances are that Sally's changes don't overlap with
+        his own; once he has both sets of changes integrated, he
+        saves his working copy back to the repository.  <a class="xref" href="svn.basic.html#svn.basic.vsn-models.copy-merge.dia-1" title="Figure 1.4. The copy-modify-merge solution">Figure 1.4, &#8220;The copy-modify-merge solution&#8221;</a> and <a class="xref" href="svn.basic.html#svn.basic.vsn-models.copy-merge.dia-2" title="Figure 1.5. The copy-modify-merge solution (continued)">Figure 1.5, &#8220;The copy-modify-merge solution (continued)&#8221;</a> show this
+        process.</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-1"></a><p class="title"><b>Figure 1.4. The copy-modify-merge solution</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia4.png" alt="The copy-modify-merge solution"></div></div>
+</div>
+<br class="figure-break"><div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-2"></a><p class="title"><b>Figure 1.5. The copy-modify-merge solution (continued)</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia5.png" alt="The copy-modify-merge solution (continued)"></div></div>
+</div>
+<br class="figure-break"><p>But what if Sally's changes <span class="emphasis"><em>do</em></span> overlap
+        with Harry's changes?  What then?  This situation is called a
+        <em class="firstterm">conflict</em>, and it's usually not much of
+        a problem.  When Harry asks his client to merge the latest
+        repository changes into his working copy, his copy of file A
+        is somehow flagged as being in a state of conflict: he'll be
+        able to see both sets of conflicting changes and manually
+        choose between them.  Note that software can't automatically
+        resolve conflicts; only humans are capable of understanding
+        and making the necessary intelligent choices.  Once Harry has
+        manually resolved the overlapping changes&#8212;perhaps after
+        a discussion with Sally&#8212;he can safely save the
+        merged file back to the repository.</p>
+<p>The copy-modify-merge model may sound a bit chaotic, but
+        in practice, it runs extremely smoothly.  Users can work in
+        parallel, never waiting for one another.  When they work on
+        the same files, it turns out that most of their concurrent
+        changes don't overlap at all; conflicts are infrequent.  And
+        the amount of time it takes to resolve conflicts is usually
+        far less than the time lost by a locking system.</p>
+<p>In the end, it all comes down to one critical factor: user
+        communication.  When users communicate poorly, both syntactic
+        and semantic conflicts increase.  No system can force users to
+        communicate perfectly, and no system can detect semantic
+        conflicts.  So there's no point in being lulled into a false
+        sense of security that a locking system will somehow prevent
+        conflicts; in practice, locking seems to inhibit productivity
+        more than anything else.</p>
+<div class="sidebar">
+<a name="svn.basic.vsn-models.copy-merge.sb-1"></a><p class="title"><b>When Locking Is Necessary</b></p>
+<p>While the lock-modify-unlock model is considered
+          generally harmful to collaboration, sometimes
+          locking is appropriate.</p>
+<p>The copy-modify-merge model is based on the assumption
+          that files are contextually mergeable&#8212;that is, that the
+          majority of the files in the repository are line-based text
+          files (such as program source code).  But for files with
+          binary formats, such as artwork or sound, it's often
+          impossible to merge conflicting changes.  In these
+          situations, it really is necessary for users to take strict
+          turns when changing the file.  Without serialized access,
+          somebody ends up wasting time on changes that are ultimately
+          discarded.</p>
+<p>While Subversion is primarily a copy-modify-merge
+          system, it still recognizes the need to lock an occasional
+          file, and thus provides mechanisms for this.  We discuss
+          this feature in <a class="xref" href="svn.advanced.html#svn.advanced.locking" title="3.7. Locking">Section 3.7, &#8220;Locking&#8221;</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.in-action"></a>1.3. Subversion in Action</h2></div></div></div>
+<p>It's time to move from the abstract to the concrete.  In
+      this section, we'll show real examples of Subversion being
+      used.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.advanced.reposurls"></a>1.3.1. Subversion Repository URLs</h3></div></div></div>
+<p>Throughout this book, Subversion uses URLs to identify
+        versioned files and directories in Subversion repositories.
+        For the most part, these URLs use the standard syntax,
+        allowing for server names and port numbers to be specified as
+        part of the URL:</p>
+<pre class="screen">
+$ svn checkout http://svn.example.com:9834/repos
+&#8230;
+</pre>
+<p>But there are some nuances in Subversion's handling of URLs
+        that are notable.  For example, URLs containing the
+        <code class="literal">file://</code> access method (used for local
+        repositories) must, in accordance with convention, have either a
+        server name of <code class="literal">localhost</code> or no server name at
+        all:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos
+&#8230;
+$ svn checkout file://localhost/var/svn/repos
+&#8230;
+</pre>
+<p>Also, users of the <code class="literal">file://</code> scheme on
+        Windows platforms will need to use an unofficially
+        &#8220;<span class="quote">standard</span>&#8221; syntax for accessing repositories
+        that are on the same machine, but on a different drive than
+        the client's current working drive.  Either of the two
+        following URL path syntaxes will work, where
+        <code class="literal">X</code> is the drive on which the repository
+        resides:</p>
+<pre class="screen">
+C:\&gt; svn checkout file:///X:/var/svn/repos
+&#8230;
+C:\&gt; svn checkout "file:///X|/var/svn/repos"
+&#8230;
+</pre>
+<p>In the second syntax, you need to quote the URL so that the
+        vertical bar character is not interpreted as a pipe.  Also, note
+        that a URL uses forward slashes even though the native
+        (non-URL) form of a path on Windows uses backslashes.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>You cannot use Subversion's <code class="literal">file://</code> URLs
+          in a regular web browser the way typical
+          <code class="literal">file://</code> URLs can.  When you attempt to view
+          a <code class="literal">file://</code> URL in a regular web browser, it
+          reads and displays the contents of the file at that location
+          by examining the filesystem directly.  However, Subversion's
+          resources exist in a virtual filesystem (see <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos" title="8.1.1. Repository Layer">Section 8.1.1, &#8220;Repository Layer&#8221;</a>), and your browser
+          will not understand how to interact with that
+          filesystem.</p></td></tr>
+</table></div>
+<p>The Subversion client will automatically encode URLs as
+        necessary, just like a web browser does.  For example, if a
+        URL contains a space or upper-ASCII character as in the
+        following:</p>
+<pre class="screen">
+$ svn checkout "http://host/path with space/project/españa"
+</pre>
+<p>then Subversion will escape the unsafe characters
+        and behave as though you had typed:</p>
+<pre class="screen">
+$ svn checkout http://host/path%20with%20space/project/espa%C3%B1a
+</pre>
+<p>If the URL contains spaces, be sure to place it within quotation
+        marks so that your shell treats the whole thing as a single
+        argument to the <span class="command"><strong>svn</strong></span> program.</p>
+<p>In Subversion 1.6, a new caret (<code class="literal">^</code>)
+        notation was introduced as a shorthand for &#8220;<span class="quote">the URL of
+        the repository's root directory</span>&#8221;.  For example:</p>
+<pre class="screen">
+$ svn list ^/tags/bigsandwich/
+</pre>
+<p>In this example, we're specifying a URL for
+        the <code class="filename">/tags/bigsandwich</code> directory in the
+        root of the repository.  Note that this URL
+        syntax <span class="emphasis"><em>only</em></span> works when your current
+        working directory is a working copy&#8212;the commandline
+        client knows the repository's root URL by looking at the
+        working copy's metadata.</p>
+<div class="sidebar">
+<a name="svn.basic.in-action.wc.sb-1"></a><p class="title"><b>Repository URLs</b></p>
+<p>You can access Subversion repositories through many
+          different methods&#8212;on local disk or through various
+          network protocols, depending on how your administrator has
+          set things up for you.  A repository location, however, is
+          always a URL.
+          <a class="xref" href="svn.basic.html#svn.basic.in-action.wc.tbl-1" title="Table 1.1. Repository access URLs">Table 1.1, &#8220;Repository access URLs&#8221;</a> describes how
+          different URL schemes map to the available access
+          methods.</p>
+<div class="table">
+<a name="svn.basic.in-action.wc.tbl-1"></a><p class="title"><b>Table 1.1. Repository access URLs</b></p>
+<div class="table-contents"><table summary="Repository access URLs" border="1">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Schema</th>
+<th>Access method</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code class="literal">file:///</code></td>
+<td>Direct repository access (on local disk)</td>
+</tr>
+<tr>
+<td><code class="literal">http://</code></td>
+<td>Access via WebDAV protocol to Subversion-aware
+                  Apache server</td>
+</tr>
+<tr>
+<td><code class="literal">https://</code></td>
+<td>Same as <code class="literal">http://</code>, but with
+                  SSL encryption.</td>
+</tr>
+<tr>
+<td><code class="literal">svn://</code></td>
+<td>Access via custom protocol to an
+                  <code class="literal">svnserve</code> server</td>
+</tr>
+<tr>
+<td><code class="literal">svn+ssh://</code></td>
+<td>Same as <code class="literal">svn://</code>, but through
+                  an SSH tunnel.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>For more information on how Subversion parses URLs, see
+        <a class="xref" href="svn.basic.html#svn.advanced.reposurls" title="1.3.1. Subversion Repository URLs">Section 1.3.1, &#8220;Subversion Repository URLs&#8221;</a>.  For more
+        information on the different types of network servers
+        available for Subversion, see
+        <a class="xref" href="svn.serverconfig.html" title="Chapter 6. Server Configuration">Chapter 6, <i>Server Configuration</i></a>.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.wc"></a>1.3.2. Working Copies</h3></div></div></div>
+<p>You've already read about working copies; now we'll
+        demonstrate how the Subversion client creates and uses
+        them.</p>
+<p>A Subversion working copy is an ordinary directory tree on
+        your local system, containing a collection of files.  You can
+        edit these files however you wish, and if they're source code
+        files, you can compile your program from them in the usual
+        way.  Your working copy is your own private work area:
+        Subversion will never incorporate other people's changes, nor
+        make your own changes available to others, until you
+        explicitly tell it to do so.  You can even have multiple
+        working copies of the same project.</p>
+<p>After you've made some changes to the files in your
+        working copy and verified that they work properly, Subversion
+        provides you with commands to &#8220;<span class="quote">publish</span>&#8221; your
+        changes to the other people working with you on your project
+        (by writing to the repository).  If other people publish their
+        own changes, Subversion provides you with commands to merge
+        those changes into your working copy (by reading from the
+        repository).</p>
+<p>A working copy also contains some extra files, created and
+        maintained by Subversion, to help it carry out these commands.
+        In particular, each directory in your working copy contains a
+        subdirectory named <code class="filename">.svn</code>, also known as
+        the working copy's <em class="firstterm">administrative
+        directory</em>.  The files in each administrative
+        directory help Subversion recognize which files contain
+        unpublished changes, and which files are out of date with
+        respect to others' work.</p>
+<p>A typical Subversion repository often holds the files (or
+        source code) for several projects; usually, each project is a
+        subdirectory in the repository's filesystem tree.  In this
+        arrangement, a user's working copy will usually correspond to
+        a particular subtree of the repository.</p>
+<p>For example, suppose you have a repository that contains
+        two software projects, <code class="literal">paint</code> and
+        <code class="literal">calc</code>.  Each project lives in its own
+        top-level subdirectory, as shown in <a class="xref" href="svn.basic.html#svn.basic.in-action.wc.dia-1" title="Figure 1.6. The repository's filesystem">Figure 1.6, &#8220;The repository's filesystem&#8221;</a>.</p>
+<div class="figure">
+<a name="svn.basic.in-action.wc.dia-1"></a><p class="title"><b>Figure 1.6. The repository's filesystem</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia6.png" alt="The repository's filesystem"></div></div>
+</div>
+<br class="figure-break"><p>To get a working copy, you must <em class="firstterm">check
+        out</em> some subtree of the repository.  (The term
+        <span class="emphasis"><em>check out</em></span> may sound like it has something to do
+        with locking or reserving resources, but it doesn't; it simply
+        creates a private copy of the project for you.) For example,
+        if you check out <code class="filename">/calc</code>, you will get a
+        working copy like this:</p>
+<pre class="screen">
+$ svn checkout http://svn.example.com/repos/calc
+A    calc/Makefile
+A    calc/integer.c
+A    calc/button.c
+Checked out revision 56.
+
+$ ls -A calc
+Makefile  button.c integer.c .svn/
+</pre>
+<p>The list of letter <code class="literal">A</code>s in the left
+        margin indicates that Subversion is adding a number of items
+        to your working copy.  You now have a personal copy of the
+        repository's <code class="filename">/calc</code> directory, with one
+        additional entry&#8212;<code class="filename">.svn</code>&#8212;which
+        holds the extra information needed by Subversion, as mentioned
+        earlier.</p>
+<p>Suppose you make changes to <code class="filename">button.c</code>.
+        Since the <code class="filename">.svn</code> directory remembers the
+        file's original modification date and contents, Subversion can
+        tell that you've changed the file.  However, Subversion does
+        not make your changes public until you explicitly tell it to.
+        The act of publishing your changes is more commonly known as
+        <em class="firstterm">committing</em> (or <em class="firstterm">checking
+        in</em>) changes to the repository.</p>
+<p>To publish your changes to others, you can use
+        Subversion's <span class="command"><strong>svn commit</strong></span> command:</p>
+<pre class="screen">
+$ svn commit button.c -m "Fixed a typo in button.c."
+Sending        button.c
+Transmitting file data .
+Committed revision 57.
+</pre>
+<p>Now your changes to <code class="filename">button.c</code> have
+        been committed to the repository, with a note describing your
+        change (namely, that you fixed a typo).  If another user
+        checks out a working copy of <code class="filename">/calc</code>, she
+        will see your changes in the latest version of the
+        file.</p>
+<p>Suppose you have a collaborator, Sally, who checked out a
+        working copy of <code class="filename">/calc</code> at the same time
+        you did.  When you commit your change to
+        <code class="filename">button.c</code>, Sally's working copy is left
+        unchanged; Subversion modifies working copies only at the
+        user's request.</p>
+<p>To bring her project up to date, Sally can ask Subversion
+        to <em class="firstterm">update</em> her working copy, by using
+        the <span class="command"><strong>svn update</strong></span> command.  This will incorporate
+        your changes into her working copy, as well as any others that
+        have been committed since she checked it out.</p>
+<pre class="screen">
+$ pwd
+/home/sally/calc
+
+$ ls -A
+Makefile button.c integer.c .svn/
+
+$ svn update
+U    button.c
+Updated to revision 57.
+</pre>
+<p>The output from the <span class="command"><strong>svn update</strong></span> command
+        indicates that Subversion updated the contents of
+        <code class="filename">button.c</code>.  Note that Sally didn't need to
+        specify which files to update; Subversion uses the information
+        in the <code class="filename">.svn</code> directory as well as further
+        information in the repository, to decide which files need to
+        be brought up to date.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.revs"></a>1.3.3. Revisions</h3></div></div></div>
+<p>An <span class="command"><strong>svn commit</strong></span> operation publishes
+        changes to any number of files and directories as a single
+        atomic transaction.  In your working copy, you can change
+        files' contents; create, delete, rename, and copy files and
+        directories; and then commit a complete set of changes as an
+        atomic transaction.</p>
+<p>By atomic transaction, we mean simply this: either all of
+        the changes happen in the repository, or none of them happens.
+        Subversion tries to retain this atomicity in the face of
+        program crashes, system crashes, network problems, and other
+        users' actions.</p>
+<p>Each time the repository accepts a commit, this creates a
+        new state of the filesystem tree, called a
+        <em class="firstterm">revision</em>.  Each revision is assigned a
+        unique natural number, one greater than the number of the
+        previous revision.  The initial revision of a freshly created
+        repository is numbered 0 and consists of nothing but an
+        empty root directory.</p>
+<p><a class="xref" href="svn.basic.html#svn.basic.in-action.revs.dia-1" title="Figure 1.7. The repository">Figure 1.7, &#8220;The repository&#8221;</a> illustrates a nice way to
+        visualize the repository.  Imagine an array of revision
+        numbers, starting at 0, stretching from left to right.  Each
+        revision number has a filesystem tree hanging below it, and
+        each tree is a &#8220;<span class="quote">snapshot</span>&#8221; of the way the
+        repository looked after a commit.</p>
+<div class="figure">
+<a name="svn.basic.in-action.revs.dia-1"></a><p class="title"><b>Figure 1.7. The repository</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia7.png" alt="The repository"></div></div>
+</div>
+<br class="figure-break"><div class="sidebar">
+<p class="title"><b>Global Revision Numbers</b></p>
+<p>Unlike most version control systems, Subversion's
+          revision numbers apply to <span class="emphasis"><em>entire trees</em></span>,
+          not individual files.  Each revision number selects an
+          entire tree, a particular state of the repository after some
+          committed change.  Another way to think about it is that
+          revision N represents the state of the repository filesystem
+          after the Nth commit.  When Subversion users talk
+          about &#8220;<span class="quote">revision 5 of
+          <code class="filename">foo.c</code>,</span>&#8221; they really mean
+          &#8220;<span class="quote"><code class="filename">foo.c</code> as it appears in revision
+          5.</span>&#8221; Notice that in general, revisions N and M of a
+          file do <span class="emphasis"><em>not</em></span> necessarily differ!  Many
+          other version control systems use per-file revision numbers,
+          so this concept may seem unusual at first. (Former CVS users
+          might want to see <a class="xref" href="svn.forcvs.html" title="Appendix B. Subversion for CVS Users">Appendix B, <i>Subversion for CVS Users</i></a> for more
+          details.)</p>
+</div>
+<p>It's important to note that working copies do not always
+        correspond to any single revision in the repository; they may
+        contain files from several different revisions.  For example,
+        suppose you check out a working copy from a repository whose
+        most recent revision is 4:</p>
+<pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:4
+</pre>
+<p>At the moment, this working directory corresponds exactly
+        to revision 4 in the repository.  However, suppose you make a
+        change to <code class="filename">button.c</code>, and commit that
+        change.  Assuming no other commits have taken place, your
+        commit will create revision 5 of the repository, and your
+        working copy will now look like this:</p>
+<pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:5
+</pre>
+<p>Suppose that, at this point, Sally commits a change to
+        <code class="filename">integer.c</code>, creating revision 6.  If you
+        use <span class="command"><strong>svn update</strong></span> to bring your working copy
+        up to date, it will look like this:</p>
+<pre class="screen">
+calc/Makefile:6
+     integer.c:6
+     button.c:6
+</pre>
+<p>Sally's change to <code class="filename">integer.c</code> will
+        appear in your working copy, and your change will still be
+        present in <code class="filename">button.c</code>.  In this example,
+        the text of <code class="filename">Makefile</code> is identical in
+        revisions 4, 5, and 6, but Subversion will mark your working
+        copy of <code class="filename">Makefile</code> with revision 6 to
+        indicate that it is still current.  So, after you do a clean
+        update at the top of your working copy, it will generally
+        correspond to exactly one revision in the repository.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.track-repos"></a>1.3.4. How Working Copies Track the Repository</h3></div></div></div>
+<p>For each file in a working directory, Subversion records
+        two essential pieces of information in the
+        <code class="filename">.svn/</code> administrative area:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>What revision your working file is based on (this is
+            called the file's <em class="firstterm">working
+            revision</em>)</p></li>
+<li><p>A timestamp recording when the local copy was last
+            updated by the repository</p></li>
+</ul></div>
+<p>Given this information, by talking to the repository,
+        Subversion can tell which of the following four states a
+        working file is in:</p>
+<div class="variablelist"><dl>
+<dt><span class="term">Unchanged, and current</span></dt>
+<dd><p>The file is unchanged in the working directory, and
+              no changes to that file have been committed to the
+              repository since its working revision.  An <span class="command"><strong>svn
+              commit</strong></span> of the file will do nothing, and an
+              <span class="command"><strong>svn update</strong></span> of the file will do
+              nothing.</p></dd>
+<dt><span class="term">Locally changed, and current</span></dt>
+<dd><p>The file has been changed in the working directory,
+              and no changes to that file have been committed to the
+              repository since you last updated.  There are local
+              changes that have not been committed to the repository;
+              thus an <span class="command"><strong>svn commit</strong></span> of the file will
+              succeed in publishing your changes, and an <span class="command"><strong>svn
+              update</strong></span> of the file will do nothing.</p></dd>
+<dt><span class="term">Unchanged, and out of date</span></dt>
+<dd><p>The file has not been changed in the working
+              directory, but it has been changed in the repository.
+              The file should eventually be updated in order to make
+              it current with the latest public revision.
+              An <span class="command"><strong>svn commit</strong></span> of the file will do
+              nothing, and an
+              <span class="command"><strong>svn update</strong></span> of the file will fold the
+              latest changes into your working copy.</p></dd>
+<dt><span class="term">Locally changed, and out of date</span></dt>
+<dd><p>The file has been changed both in the working
+              directory and in the repository.  An <span class="command"><strong>svn
+              commit</strong></span> of the file will fail with an
+              &#8220;<span class="quote">out-of-date</span>&#8221; error.  The file should be
+              updated first; an <span class="command"><strong>svn update</strong></span> command
+              will attempt to merge the public changes with the local
+              changes.  If Subversion can't complete the merge in a
+              plausible way automatically, it leaves it to the user to
+              resolve the conflict.</p></dd>
+</dl></div>
+<p>This may sound like a lot to keep track of, but the
+        <span class="command"><strong>svn status</strong></span> command will show you the state
+        of any item in your working copy.  For more information on
+        that command, see
+        <a class="xref" href="svn.tour.html#svn.tour.cycle.examine.status" title="2.4.3.1. See an overview of your changes">Section 2.4.3.1, &#8220;See an overview of your changes&#8221;</a>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.mixedrevs"></a>1.3.5. Mixed Revision Working Copies</h3></div></div></div>
+<p>As a general principle, Subversion tries to be as flexible
+        as possible.  One special kind of flexibility is the ability
+        to have a working copy containing files and directories with a
+        mix of different working revision numbers.  Unfortunately,
+        this flexibility tends to confuse a number of new users.  If
+        the earlier example showing mixed revisions perplexed you,
+        here's a primer on why the feature exists and how to make
+        use of it.</p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.update-commit"></a>1.3.5.1. Updates and commits are separate</h4></div></div></div>
+<p>One of the fundamental rules of Subversion is that
+          a &#8220;<span class="quote">push</span>&#8221; action does not cause
+          a &#8220;<span class="quote">pull,</span>&#8221; nor vice versa.  Just
+          because you're ready to submit new changes to the repository
+          doesn't mean you're ready to receive changes from other
+          people.  And if you have new changes still in progress,
+          <span class="command"><strong>svn update</strong></span> should gracefully merge
+          repository changes into your own, rather than forcing you to
+          publish them.</p>
+<p>The main side effect of this rule is that it means a
+          working copy has to do extra bookkeeping to track mixed
+          revisions as well as be tolerant of the mixture.  It's made
+          more complicated by the fact that directories themselves are
+          versioned.</p>
+<p>For example, suppose you have a working copy entirely at
+          revision 10.  You edit the
+          file <code class="filename">foo.html</code> and then perform
+          an <span class="command"><strong>svn commit</strong></span>, which creates revision 15
+          in the repository.  After the commit succeeds, many new
+          users would expect the working copy to be entirely at
+          revision 15, but that's not the case!  Any number of changes
+          might have happened in the repository between revisions 10
+          and 15.  The client knows nothing of those changes in the
+          repository, since you haven't yet run <span class="command"><strong>svn
+          update</strong></span>, and <span class="command"><strong>svn commit</strong></span> doesn't
+          pull down new changes.  If, on the other hand,
+          <span class="command"><strong>svn commit</strong></span> were to automatically download
+          the newest changes, it would be possible to set the
+          entire working copy to revision 15&#8212;but then we'd be
+          breaking the fundamental rule of &#8220;<span class="quote">push</span>&#8221;
+          and &#8220;<span class="quote">pull</span>&#8221; remaining separate actions.
+          Therefore, the only safe thing the Subversion client can do
+          is mark the one
+          file&#8212;<code class="filename">foo.html</code>&#8212;as being at
+          revision 15.  The rest of the working copy remains at
+          revision 10.  Only by running <span class="command"><strong>svn update</strong></span>
+          can the latest changes be downloaded and the whole working
+          copy be marked as revision 15.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.normal"></a>1.3.5.2. Mixed revisions are normal</h4></div></div></div>
+<p>The fact is, <span class="emphasis"><em>every time</em></span> you run
+          <span class="command"><strong>svn commit</strong></span> your working copy ends up
+          with some mixture of revisions.  The things you just
+          committed are marked as having larger working revisions than
+          everything else.  After several commits (with no updates
+          in between), your working copy will contain a whole mixture
+          of revisions.  Even if you're the only person using the
+          repository, you will still see this phenomenon.  To examine
+          your mixture of working revisions, use the <span class="command"><strong>svn
+          status</strong></span> command with the <code class="option">--verbose</code> option (see <a class="xref" href="svn.tour.html#svn.tour.cycle.examine.status" title="2.4.3.1. See an overview of your changes">Section 2.4.3.1, &#8220;See an overview of your changes&#8221;</a> for more
+          information).</p>
+<p>Often, new users are completely unaware that their
+          working copy contains mixed revisions.  This can be
+          confusing, because many client commands are sensitive to the
+          working revision of the item they're examining.  For
+          example, the <span class="command"><strong>svn log</strong></span> command is used to
+          display the history of changes to a file or directory (see
+          <a class="xref" href="svn.tour.html#svn.tour.history.log" title="2.5.1. Generating a List of Historical Changes">Section 2.5.1, &#8220;Generating a List of Historical Changes&#8221;</a>).  When the user
+          invokes this command on a working copy object, he expects
+          to see the entire history of the object.  But if the
+          object's working revision is quite old (often because
+          <span class="command"><strong>svn update</strong></span> hasn't been run in a long
+          time), the history of the <span class="emphasis"><em>older</em></span>
+          version of the object is shown.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.useful"></a>1.3.5.3. Mixed revisions are useful</h4></div></div></div>
+<p>If your project is sufficiently complex, you'll discover
+          that it's sometimes nice to
+          forcibly <em class="firstterm">backdate</em> (or update to a
+          revision older than the one you already have) portions of
+          your working copy to an earlier revision; you'll learn how
+          to do that in <a class="xref" href="svn.tour.html" title="Chapter 2. Basic Usage">Chapter 2, <i>Basic Usage</i></a>.  Perhaps you'd
+          like to test an earlier version of a submodule contained in
+          a subdirectory, or perhaps you'd like to figure out when a
+          bug first came into existence in a specific file.  This is
+          the &#8220;<span class="quote">time machine</span>&#8221; aspect of a version control
+          system&#8212;the feature that allows you to move any
+          portion of your working copy forward and backward in
+          history.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.limits"></a>1.3.5.4. Mixed revisions have limitations</h4></div></div></div>
+<p>However you make use of mixed revisions in your working
+          copy, there are limitations to this flexibility.</p>
+<p>First, you cannot commit the deletion of a file or
+          directory that isn't fully up to date.  If a newer version
+          of the item exists in the repository, your attempt to delete
+          will be rejected to prevent you from accidentally
+          destroying changes you've not yet seen.</p>
+<p>Second, you cannot commit a metadata change to a
+          directory unless it's fully up to date.  You'll learn about
+          attaching &#8220;<span class="quote">properties</span>&#8221; to items in <a class="xref" href="svn.advanced.html" title="Chapter 3. Advanced Topics">Chapter 3, <i>Advanced Topics</i></a>.  A directory's working revision
+          defines a specific set of entries and properties, and thus
+          committing a property change to an out-of-date directory may
+          destroy properties you've not yet seen.</p>
+</div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.summary"></a>1.4. Summary</h2></div></div></div>
+<p>We covered a number of fundamental Subversion concepts in
+      this chapter:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>We introduced the notions of the central repository,
+          the client working copy, and the array of repository
+          revision trees.</p></li>
+<li><p>We saw some simple examples of how two collaborators
+          can use Subversion to publish and receive changes from one
+          another, using the &#8220;<span class="quote">copy-modify-merge</span>&#8221;
+          model.</p></li>
+<li><p>We talked a bit about the way Subversion tracks and
+          manages information in a working copy.</p></li>
+</ul></div>
+<p>At this point, you should have a good idea of how Subversion
+      works in the most general sense.  Armed with this knowledge, you
+      should now be ready to move into the next chapter, which is a
+      detailed tour of Subversion's commands and features.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.preface.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.tour.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Preface </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 2. Basic Usage</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,1253 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Chapter 8. Embedding Subversion</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="Version Control with Subversion">
+<link rel="up" href="index.html" title="Version Control with Subversion">
+<link rel="prev" href="svn.customization.html" title="Chapter 7. Customizing Your Subversion Experience">
+<link rel="next" href="svn.ref.html" title="Chapter 9. Subversion Complete Reference">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 8. Embedding Subversion</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.customization.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="svn.developer"></a>Chapter 8. Embedding Subversion</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.layerlib">8.1. Layered Library Design</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.repos">8.1.1. Repository Layer</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.ra">8.1.2. Repository Access Layer</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.layerlib.client">8.1.3. Client Layer</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.insidewc">8.2. Inside the Working Copy Administration Area</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.insidewc.entries">8.2.1. The Entries File</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.insidewc.base-and-props">8.2.2. Pristine Copies and Property Files</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.usingapi">8.3. Using the APIs</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.apr">8.3.1. The Apache Portable Runtime Library</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.urlpath">8.3.2. URL and Path Requirements</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.otherlangs">8.3.3. Using Languages Other Than C and C++</a></span></dt>
+<dt><span class="sect2"><a href="svn.developer.html#svn.developer.usingapi.codesamples">8.3.4. Code Samples</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="svn.developer.html#svn.developer.summary">8.4. Summary</a></span></dt>
+</dl>
+</div>
+<p>Subversion has a modular design: it's implemented as a
+    collection of libraries written in C.  Each library has a
+    well-defined purpose and application programming interface (API),
+    and that interface is available not only for Subversion itself to
+    use, but for any software that wishes to embed or otherwise
+    programmatically control Subversion.  Additionally, Subversion's
+    API is available not only to other C programs, but also to
+    programs written in higher-level languages such as Python, Perl,
+    Java, and Ruby.</p>
+<p>This chapter is for those who wish to interact with Subversion
+    through its public API or its various language bindings.  If you
+    wish to write robust wrapper scripts around Subversion
+    functionality to simplify your own life, are trying to develop
+    more complex integrations between Subversion and other pieces of
+    software, or just have an interest in Subversion's various library
+    modules and what they offer, this chapter is for you.  If,
+    however, you don't foresee yourself participating with Subversion
+    at such a level, feel free to skip this chapter with the
+    confidence that your experience as a Subversion user will not be
+    affected.</p>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.developer.layerlib"></a>8.1. Layered Library Design</h2></div></div></div>
+<p>Each of Subversion's core libraries can be said to exist in
+      one of three main layers&#8212;the Repository layer, the
+      Repository Access (RA) layer, or the Client layer (see <a class="xref" href="svn.preface.html#svn.intro.architecture.dia-1" title="Figure 1. Subversion's architecture">Figure 1, &#8220;Subversion's architecture&#8221;</a> in the Preface).  We will examine
+      these layers shortly, but first, let's briefly summarize
+      Subversion's various libraries.  For the sake of consistency, we
+      will refer to the libraries by their extensionless Unix library
+      names (<code class="filename">libsvn_fs</code>, <code class="filename">libsvn_wc</code>,
+      <code class="filename">mod_dav_svn</code>, etc.).</p>
+<div class="variablelist"><dl>
+<dt><span class="term">libsvn_client</span></dt>
+<dd><p>Primary interface for client
+          programs</p></dd>
+<dt><span class="term">libsvn_delta</span></dt>
+<dd><p>Tree and byte-stream differencing
+          routines</p></dd>
+<dt><span class="term">libsvn_diff</span></dt>
+<dd><p>Contextual differencing and merging
+          routines</p></dd>
+<dt><span class="term">libsvn_fs</span></dt>
+<dd><p>Filesystem commons and module
+          loader</p></dd>
+<dt><span class="term">libsvn_fs_base</span></dt>
+<dd><p>The Berkeley DB filesystem
+          backend</p></dd>
+<dt><span class="term">libsvn_fs_fs</span></dt>
+<dd><p>The native filesystem (FSFS)
+          backend</p></dd>
+<dt><span class="term">libsvn_ra</span></dt>
+<dd><p>Repository Access commons and module
+          loader</p></dd>
+<dt><span class="term">libsvn_ra_local</span></dt>
+<dd><p>The local Repository Access
+          module</p></dd>
+<dt><span class="term">libsvn_ra_neon</span></dt>
+<dd><p>The WebDAV Repository Access
+          module</p></dd>
+<dt><span class="term">libsvn_ra_serf</span></dt>
+<dd><p>Another (experimental) WebDAV Repository
+          Access module</p></dd>
+<dt><span class="term">libsvn_ra_svn</span></dt>
+<dd><p>The custom protocol Repository Access
+          module</p></dd>
+<dt><span class="term">libsvn_repos</span></dt>
+<dd><p>Repository interface</p></dd>
+<dt><span class="term">libsvn_subr</span></dt>
+<dd><p>Miscellaneous helpful
+          subroutines</p></dd>
+<dt><span class="term">libsvn_wc</span></dt>
+<dd><p>The working copy management
+          library</p></dd>
+<dt><span class="term">mod_authz_svn</span></dt>
+<dd><p>Apache authorization module for Subversion
+          repositories access via WebDAV</p></dd>
+<dt><span class="term">mod_dav_svn</span></dt>
+<dd><p>Apache module for mapping WebDAV operations to
+          Subversion ones</p></dd>
+</dl></div>
+<p>The fact that the word &#8220;<span class="quote">miscellaneous</span>&#8221;
+      appears only once in the previous list is a good sign.  The
+      Subversion development team is serious about making sure that
+      functionality lives in the right layer and libraries.  Perhaps
+      the greatest advantage of the modular design is its lack of
+      complexity from a developer's point of view.  As a developer,
+      you can quickly formulate that kind of &#8220;<span class="quote">big
+      picture</span>&#8221; that allows you to pinpoint the location of
+      certain pieces of functionality with relative ease.</p>
+<p>Another benefit of modularity is the ability to replace a
+      given module with a whole new library that implements the same
+      API without affecting the rest of the code base.  In some sense,
+      this happens within Subversion already.  The
+      <code class="filename">libsvn_ra_local</code>,
+      <code class="filename">libsvn_ra_neon</code>,
+      <code class="filename">libsvn_ra_serf</code>, and
+      <code class="filename">libsvn_ra_svn</code> libraries each implement the
+      same interface, all working as plug-ins to
+      <code class="filename">libsvn_ra</code>.  And all four communicate with
+      the Repository layer&#8212;<code class="filename">libsvn_ra_local</code> connects to the
+      repository directly; the other three do so over a network.  The
+      <code class="filename">libsvn_fs_base</code> and
+      <code class="filename">libsvn_fs_fs</code> libraries are another pair of
+      libraries that implement the same functionality in different
+      ways&#8212;both are plug-ins to the common
+      <code class="filename">libsvn_fs</code> library.</p>
+<p>The client itself also highlights the benefits of modularity
+      in the Subversion design.  Subversion's
+      <code class="filename">libsvn_client</code> library is a one-stop shop
+      for most of the functionality necessary for designing a working
+      Subversion client (see <a class="xref" href="svn.developer.html#svn.developer.layerlib.client" title="8.1.3. Client Layer">Section 8.1.3, &#8220;Client Layer&#8221;</a>).  So while the
+      Subversion distribution provides only the <span class="command"><strong>svn</strong></span>
+      command-line client program, several third-party
+      programs provide various forms of graphical client UIs.
+      These GUIs use the same APIs that the stock command-line client
+      does.  This type of modularity has played a large role in the
+      proliferation of available Subversion clients and IDE
+      integrations and, by extension, to the tremendous adoption rate
+      of Subversion itself.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.layerlib.repos"></a>8.1.1. Repository Layer</h3></div></div></div>
+<p>When referring to Subversion's Repository layer, we're
+        generally talking about two basic concepts&#8212;the versioned
+        filesystem implementation (accessed via
+        <code class="filename">libsvn_fs</code>, and supported by its
+        <code class="filename">libsvn_fs_base</code> and
+        <code class="filename">libsvn_fs_fs</code> plug-ins), and the repository
+        logic that wraps it (as implemented in
+        <code class="filename">libsvn_repos</code>).  These libraries provide
+        the storage and reporting mechanisms for the various revisions
+        of your version-controlled data.  This layer is connected to
+        the Client layer via the Repository Access layer, and is, from
+        the perspective of the Subversion user, the stuff at the
+        &#8220;<span class="quote">other end of the line.</span>&#8221;</p>
+<p>The Subversion filesystem is not a kernel-level filesystem
+        that one would install in an operating system (such as the
+        Linux ext2 or NTFS), but instead is a virtual filesystem.
+        Rather than storing &#8220;<span class="quote">files</span>&#8221; and
+        &#8220;<span class="quote">directories</span>&#8221; as real files and directories (the
+        kind you can navigate through using your favorite shell
+        program), it uses one of two available abstract storage
+        backends&#8212;either a Berkeley DB database environment or a
+        flat-file representation.  (To learn more about the two
+        repository backends, see <a class="xref" href="svn.reposadmin.html#svn.reposadmin.basics.backends" title="5.2.3. Choosing a Data Store">Section 5.2.3, &#8220;Choosing a Data Store&#8221;</a>.)  There has even
+        been considerable interest by the development community in
+        giving future releases of Subversion the ability to use other
+        backend database systems, perhaps through a mechanism such as
+        Open Database Connectivity (ODBC).  In fact, Google did
+        something similar to this before launching the Google Code
+        Project Hosting service:  they announced in mid-2006 that
+        members of its open source team had written a new proprietary
+        Subversion filesystem plug-in that used Google's ultra-scalable
+        Bigtable database for its storage.</p>
+<p>The filesystem API exported by
+        <code class="filename">libsvn_fs</code> contains the kinds of
+        functionality you would expect from any other filesystem
+        API&#8212;you can create and remove files and directories,
+        copy and move them around, modify file contents, and so on.
+        It also has features that are not quite as common, such as the
+        ability to add, modify, and remove metadata
+        (&#8220;<span class="quote">properties</span>&#8221;) on each file or directory.
+        Furthermore, the Subversion filesystem is a versioning
+        filesystem, which means that as you make changes to your
+        directory tree, Subversion remembers what your tree looked
+        like before those changes.  And before the previous changes.
+        And the previous ones.  And so on, all the way back through
+        versioning time to (and just beyond) the moment you first
+        started adding things to the filesystem.</p>
+<p>All the modifications you make to your tree are done
+        within the context of a Subversion commit transaction.  The
+        following is a simplified general routine for modifying your
+        filesystem:</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Begin a Subversion commit transaction.</p></li>
+<li><p>Make your changes (adds, deletes, property
+            modifications, etc.).</p></li>
+<li><p>Commit your transaction.</p></li>
+</ol></div>
+<p>Once you have committed your transaction, your filesystem
+        modifications are permanently stored as historical artifacts.
+        Each of these cycles generates a single new revision of your
+        tree, and each revision is forever accessible as an immutable
+        snapshot of &#8220;<span class="quote">the way things were.</span>&#8221;</p>
+<div class="sidebar">
+<p class="title"><b>The Transaction Distraction</b></p>
+<p>The notion of a Subversion transaction can become easily
+          confused with the transaction support provided by the
+          underlying database itself, especially given the former's
+          close proximity to the Berkeley DB database code in
+          <code class="filename">libsvn_fs_base</code>.  Both types of
+          transaction exist to provide atomicity and isolation.  In
+          other words, transactions give you the ability to perform a
+          set of actions in an all-or-nothing fashion&#8212;either all
+          the actions in the set complete with success, or they all
+          get treated as though <span class="emphasis"><em>none</em></span> of them ever
+          happened&#8212;and in a way that does not interfere with
+          other processes acting on the data.</p>
+<p>Database transactions generally encompass small
+          operations related specifically to the modification of data
+          in the database itself (such as changing the contents of a
+          table row).  Subversion transactions are larger in scope,
+          encompassing higher-level operations such as making
+          modifications to a set of files and directories that are
+          intended to be stored as the next revision of the filesystem
+          tree.  If that isn't confusing enough, consider the fact
+          that Subversion uses a database transaction during the
+          creation of a Subversion transaction (so that if the
+          creation of a Subversion transaction fails, the database will
+          look as though we had never attempted that creation in the first
+          place)!</p>
+<p>Fortunately for users of the filesystem API, the
+          transaction support provided by the database system itself
+          is hidden almost entirely from view (as should be expected
+          from a properly modularized library scheme).  It is only
+          when you start digging into the implementation of the
+          filesystem itself that such things become visible (or
+          interesting).</p>
+</div>
+<p>Most of the functionality the filesystem
+        interface provides deals with actions that occur on individual
+        filesystem paths.  That is, from outside the filesystem, the
+        primary mechanism for describing and accessing the individual
+        revisions of files and directories comes through the use of
+        path strings such as <code class="filename">/foo/bar</code>, just as though
+        you were addressing files and directories through your
+        favorite shell program.  You add new files and directories by
+        passing their paths-to-be to the right API functions.  You
+        query for information about them by the same mechanism.</p>
+<p>Unlike most filesystems, though, a path alone is not
+        enough information to identify a file or directory in
+        Subversion.  Think of a directory tree as a two-dimensional
+        system, where a node's siblings represent a sort of
+        left-and-right motion, and navigating into the node's
+        subdirectories represents a downward motion.  <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.dia-1" title="Figure 8.1. Files and directories in two dimensions">Figure 8.1, &#8220;Files and directories in two dimensions&#8221;</a> shows a typical
+        representation of a tree as exactly that.</p>
+<div class="figure">
+<a name="svn.developer.layerlib.repos.dia-1"></a><p class="title"><b>Figure 8.1. Files and directories in two dimensions</b></p>
+<div class="figure-contents"><div><img src="images/ch08dia1.png" alt="Files and directories in two dimensions"></div></div>
+</div>
+<br class="figure-break"><p>The difference here is that the Subversion filesystem has a
+        nifty third dimension that most filesystems do not
+        have&#8212;Time!
+        <sup>[<a name="id515222" href="#ftn.id515222" class="footnote">53</a>]</sup>
+        In the filesystem interface, nearly every function that has a
+        <em class="parameter"><code>path</code></em> argument also expects a
+        <em class="parameter"><code>root</code></em> argument.  This
+        <code class="literal">svn_fs_root_t</code> argument describes
+        either a revision or a Subversion transaction (which is simply
+        a revision in the making) and provides that third dimension
+        of context needed to understand the difference between
+        <code class="filename">/foo/bar</code> in revision 32, and the same
+        path as it exists in revision 98.  <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.dia-2" title="Figure 8.2. Versioning time&#8212;the third dimension!">Figure 8.2, &#8220;Versioning time&#8212;the third dimension!&#8221;</a> shows revision
+        history as an added dimension to the Subversion filesystem
+        universe.</p>
+<div class="figure">
+<a name="svn.developer.layerlib.repos.dia-2"></a><p class="title"><b>Figure 8.2. Versioning time&#8212;the third dimension!</b></p>
+<div class="figure-contents"><div><img src="images/ch08dia2.png" alt="Versioning time&#8212;the third dimension!"></div></div>
+</div>
+<br class="figure-break"><p>As we mentioned earlier, the
+        <code class="filename">libsvn_fs</code> API looks and feels like any
+        other filesystem, except that it has this wonderful versioning
+        capability.  It was designed to be usable by any program
+        interested in a versioning filesystem.  Not coincidentally,
+        Subversion itself is interested in that functionality.  But
+        while the filesystem API should be sufficient for basic file
+        and directory versioning support, Subversion wants
+        more&#8212;and that is where <code class="filename">libsvn_repos</code>
+        comes in.</p>
+<p>The Subversion repository library
+        (<code class="filename">libsvn_repos</code>) sits (logically speaking)
+        atop the <code class="filename">libsvn_fs</code> API, providing
+        additional functionality beyond that of the underlying
+        versioned filesystem logic.  It does not completely wrap each
+        and every filesystem function&#8212;only certain major steps
+        in the general cycle of filesystem activity are wrapped by the
+        repository interface.  Some of these include the creation and
+        commit of Subversion transactions and the modification of
+        revision properties.  These particular events are wrapped by
+        the repository layer because they have hooks associated with
+        them.  A repository hook system is not strictly related to
+        implementing a versioning filesystem, so it lives in the
+        repository wrapper library.</p>
+<p>The hooks mechanism is but one of the reasons for the
+        abstraction of a separate repository library from the rest of
+        the filesystem code.  The <code class="filename">libsvn_repos</code>
+        API provides several other important utilities to Subversion.
+        These include the abilities to:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Create, open, destroy, and perform recovery steps on a
+            Subversion repository and the filesystem included in that
+            repository.</p></li>
+<li><p>Describe the differences between two filesystem
+            trees.</p></li>
+<li><p>Query for the commit log messages associated with all
+            (or some) of the revisions in which a set of files was
+            modified in the filesystem.</p></li>
+<li><p>Generate a human-readable &#8220;<span class="quote">dump</span>&#8221; of the
+            filesystem&#8212;a complete representation of the revisions in
+            the filesystem.</p></li>
+<li><p>Parse that dump format, loading the dumped revisions
+            into a different Subversion repository.</p></li>
+</ul></div>
+<p>As Subversion continues to evolve, the repository library
+        will grow with the filesystem library to offer increased
+        functionality and configurable option support.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.layerlib.ra"></a>8.1.2. Repository Access Layer</h3></div></div></div>
+<p>If the Subversion Repository layer is at &#8220;<span class="quote">the other
+        end of the line,</span>&#8221; the Repository Access (RA) layer is
+        the line itself.  Charged with marshaling data between the
+        client libraries and the repository, this layer includes the
+        <code class="filename">libsvn_ra</code> module loader library, the RA
+        modules themselves (which currently includes
+        <code class="filename">libsvn_ra_neon</code>,
+        <code class="filename">libsvn_ra_local</code>,
+        <code class="filename">libsvn_ra_serf</code>, and
+        <code class="filename">libsvn_ra_svn</code>), and any additional
+        libraries needed by one or more of those RA modules (such as
+        the <code class="filename">mod_dav_svn</code> Apache module or
+        <code class="filename">libsvn_ra_svn</code>'s server,
+        <span class="command"><strong>svnserve</strong></span>).</p>
+<p>Since Subversion uses URLs to identify its repository
+        resources, the protocol portion of the URL scheme (usually
+        <code class="literal">file://</code>, <code class="literal">http://</code>,
+        <code class="literal">https://</code>, <code class="literal">svn://</code>, or
+        <code class="literal">svn+ssh://</code>) is used to determine which RA
+        module will handle the communications.  Each module registers
+        a list of the protocols it knows how to &#8220;<span class="quote">speak</span>&#8221;
+        so that the RA loader can, at runtime, determine which module
+        to use for the task at hand.  You can determine which RA
+        modules are available to the Subversion command-line client,
+        and what protocols they claim to support, by running
+        <strong class="userinput"><code>svn --version</code></strong>:</p>
+<pre class="screen">
+$ svn --version
+svn, version 1.5.0 (r31699)
+   compiled Jun 18 2008, 09:57:36
+
+Copyright (C) 2000-2008 CollabNet.
+Subversion is open source software, see http://subversion.tigris.org/
+This product includes software developed by CollabNet (http://www.Collab.Net/).
+
+The following repository access (RA) modules are available:
+
+* ra_neon : Module for accessing a repository via WebDAV protocol using Neon.
+  - handles 'http' scheme
+  - handles 'https' scheme
+* ra_svn : Module for accessing a repository using the svn network protocol.
+  - handles 'svn' scheme
+* ra_local : Module for accessing a repository on local disk.
+  - handles 'file' scheme
+* ra_serf : Module for accessing a repository via WebDAV protocol using serf.
+  - handles 'http' scheme
+  - handles 'https' scheme
+
+$
+</pre>
+<p>The public API exported by the RA layer contains
+        functionality necessary for sending and receiving versioned
+        data to and from the repository.  And each of the available RA
+        plug-ins is able to perform that task using a specific
+        protocol&#8212;<code class="filename">libsvn_ra_dav</code> speaks
+        HTTP/WebDAV (optionally using SSL encryption) with an Apache
+        HTTP Server that is running the
+        <code class="filename">mod_dav_svn</code> Subversion server module;
+        <code class="filename">libsvn_ra_svn</code> speaks a custom network
+        protocol with the <span class="command"><strong>svnserve</strong></span> program; and so
+        on.</p>
+<p>For those who wish to access a Subversion repository
+        using still another protocol, that is precisely why the
+        Repository Access layer is modularized!  Developers can simply
+        write a new library that implements the RA interface on one
+        side and communicates with the repository on the other.  Your
+        new library can use existing network protocols or you can
+        invent your own.  You could use interprocess communication
+        (IPC) calls, or&#8212;let's get crazy, shall we?&#8212;you
+        could even implement an email-based protocol.  Subversion
+        supplies the APIs; you supply the creativity.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.layerlib.client"></a>8.1.3. Client Layer</h3></div></div></div>
+<p>On the client side, the Subversion working copy is where
+        all the action takes place.  The bulk of functionality
+        implemented by the client-side libraries exists for the sole
+        purpose of managing working copies&#8212;directories full of
+        files and other subdirectories that serve as a sort of local,
+        editable &#8220;<span class="quote">reflection</span>&#8221; of one or more repository
+        locations&#8212;and propagating changes to and from the
+        Repository Access layer.</p>
+<p>Subversion's working copy library,
+        <code class="filename">libsvn_wc</code>, is directly responsible for
+        managing the data in the working copies.  To accomplish this,
+        the library stores administrative information about each
+        working copy directory within a special subdirectory.  This
+        subdirectory, named <code class="filename">.svn</code>, is present in
+        each working copy directory and contains various other files
+        and directories that record state and provide a private
+        workspace for administrative action.  For those familiar with
+        CVS, this <code class="filename">.svn</code> subdirectory is similar in
+        purpose to the <code class="filename">CVS</code> administrative
+        directories found in CVS working copies.  For more information
+        about the <code class="filename">.svn</code> administrative area, see
+        <a class="xref" href="svn.developer.html#svn.developer.insidewc" title="8.2. Inside the Working Copy Administration Area">Section 8.2, &#8220;Inside the Working Copy Administration Area&#8221;</a> later in this
+        chapter.</p>
+<p>The Subversion client library,
+        <code class="filename">libsvn_client</code>, has the broadest
+        responsibility; its job is to mingle the functionality of the
+        working copy library with that of the Repository Access layer,
+        and then to provide the highest-level API to any application
+        that wishes to perform general revision control actions.  For
+        example, the function
+        <code class="function">svn_client_checkout()</code> takes a URL as an
+        argument.  It passes this URL to the RA layer and opens an
+        authenticated session with a particular repository.  It then
+        asks the repository for a certain tree, and sends this tree
+        into the working copy library, which then writes a full
+        working copy to disk (<code class="filename">.svn</code> directories
+        and all).</p>
+<p>The client library is designed to be used by any
+        application.  While the Subversion source code includes a
+        standard command-line client, it should be very easy to write
+        any number of GUI clients on top of the client library.  New
+        GUIs (or any new client, really) for Subversion need not be
+        clunky wrappers around the included command-line
+        client&#8212;they have full access via the
+        <code class="filename">libsvn_client</code> API to the same functionality,
+        data, and callback mechanisms that the command-line client
+        uses.  In fact, the Subversion source code tree contains a
+        small C program (which you can find at
+        <code class="filename">tools/examples/minimal_client.c</code>) that
+        exemplifies how to wield the Subversion API to create a simple
+        client program.</p>
+<div class="sidebar">
+<p class="title"><b>Binding Directly&#8212;A Word About Correctness</b></p>
+<p>Why should your GUI program bind directly with a
+          <code class="filename">libsvn_client</code> instead of acting as a
+          wrapper around a command-line program?  Besides simply being
+          more efficient, it can be more correct as well.  A
+          command-line program (such as the one supplied with
+          Subversion) that binds to the client library needs to
+          effectively translate feedback and requested data bits from
+          C types to some form of human-readable output.  This type of
+          translation can be lossy.  That is, the program may not
+          display all of the information harvested from the API or may
+          combine bits of information for compact
+          representation.</p>
+<p>If you wrap such a command-line program with yet another
+          program, the second program has access only to
+          already interpreted (and as we mentioned, likely incomplete)
+          information, which it must <span class="emphasis"><em>again</em></span>
+          translate into <span class="emphasis"><em>its</em></span> representation
+          format.  With each layer of wrapping, the integrity of the
+          original data is potentially tainted more and more, much
+          like the result of making a copy of a copy (of a copy&#8230;)
+          of a favorite audio or video cassette.</p>
+<p>But the most compelling argument for binding directly to
+          the APIs instead of wrapping other programs is that the
+          Subversion project makes compatibility promises regarding
+          its APIs.  Across minor versions of those APIs (such as
+          between 1.3 and 1.4), no function's prototype will change.
+          In other words, you aren't forced to update your program's
+          source code simply because you've upgraded to a new version
+          of Subversion.  Certain functions might be deprecated, but
+          they still work, and this gives you a buffer of time to
+          eventually embrace the newer APIs.  These kinds of
+          compatibility promises do not exist for Subversion
+          command-line program output, which is subject to change from
+          release to release.</p>
+</div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.developer.insidewc"></a>8.2. Inside the Working Copy Administration Area</h2></div></div></div>
+<p>As we mentioned earlier, each directory of a Subversion
+      working copy contains a special subdirectory called
+      <code class="filename">.svn</code> that houses administrative data about
+      that working copy directory.  Subversion uses the information in
+      <code class="filename">.svn</code> to keep track of things such as:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Which repository location(s) are represented by the
+          files and subdirectories in the working copy
+          directory</p></li>
+<li><p>What revision of each of those files and directories is
+          currently present in the working copy</p></li>
+<li><p>Any user-defined properties that might be attached
+          to those files and directories</p></li>
+<li><p>Pristine (unedited) copies of the working copy
+          files</p></li>
+</ul></div>
+<p>The Subversion working copy administration area's layout and
+      contents are considered implementation details not really
+      intended for human consumption.  Developers are encouraged to
+      use Subversion's public APIs, or the tools that Subversion
+      provides, to access and manipulate the working copy data,
+      instead of directly reading or modifying those files.  The file
+      formats employed by the working copy library for its
+      administrative data do change from time to time&#8212;a fact
+      that the public APIs do a great job of hiding from the average
+      user.  In this section, we expose some of these implementation
+      details sheerly to appease your overwhelming curiosity.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.insidewc.entries"></a>8.2.1. The Entries File</h3></div></div></div>
+<p>Perhaps the single most important file in the
+        <code class="filename">.svn</code> directory is the
+        <code class="filename">entries</code> file.  It
+        contains the bulk of the administrative
+        information about the versioned items in a working copy
+        directory.  This one file tracks the repository
+        URLs, pristine revision, file checksums, pristine text and
+        property timestamps, scheduling and conflict state
+        information, last-known commit information (author, revision,
+        timestamp), local copy history&#8212;practically everything
+        that a Subversion client is interested in knowing about a
+        versioned (or to-be-versioned) resource!</p>
+<p>Folks familiar with CVS's administrative directories will
+        have recognized at this point that Subversion's
+        <code class="filename">.svn/entries</code> file serves the purposes of,
+        among other things, CVS's <code class="filename">CVS/Entries</code>,
+        <code class="filename">CVS/Root</code>, and
+        <code class="filename">CVS/Repository</code> files combined.</p>
+<p>The format of the <code class="filename">.svn/entries</code> file
+        has changed over time.  Originally an XML file, it now uses a
+        custom&#8212;though still human-readable&#8212;file format.
+        While XML was a great choice for early developers of
+        Subversion who were frequently debugging the file's contents
+        (and Subversion's behavior in light of them), the need for
+        easy developer debugging has diminished as Subversion has
+        matured and has been replaced by the user's need for snappier
+        performance.  Be aware that Subversion's working copy library
+        automatically upgrades working copies from one format to
+        another&#8212;it reads the old formats and writes the
+        new&#8212;which saves you the hassle of checking out a new
+        working copy, but can also complicate situations where
+        different versions of Subversion might be trying to use the
+        same working copy.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.insidewc.base-and-props"></a>8.2.2. Pristine Copies and Property Files</h3></div></div></div>
+<p>As mentioned before, the <code class="filename">.svn</code>
+        directory also holds the pristine &#8220;<span class="quote">text-base</span>&#8221;
+        versions of files.  You can find those in
+        <code class="filename">.svn/text-base</code>.  The benefits of these
+        pristine copies are multiple&#8212;network-free checks for
+        local modifications and difference reporting, network-free
+        reversion of modified or missing files, more efficient
+        transmission of changes to the server&#8212;but they come at the
+        cost of having each versioned file stored at least twice on
+        disk.  These days, this seems to be a negligible penalty for
+        most files.  However, the situation gets uglier as the size of
+        your versioned files grows.  Some attention is being given to
+        making the presence of the &#8220;<span class="quote">text-base</span>&#8221; an option.
+        Ironically, though, it is as your versioned files' sizes get
+        larger that the existence of the &#8220;<span class="quote">text-base</span>&#8221;
+        becomes more crucial&#8212;who wants to transmit a huge file
+        across a network just because she wants to commit a tiny
+        change to it?</p>
+<p>Similar in purpose to the &#8220;<span class="quote">text-base</span>&#8221; files
+        are the property files and their pristine
+        &#8220;<span class="quote">prop-base</span>&#8221; copies, located in
+        <code class="filename">.svn/props</code> and
+        <code class="filename">.svn/prop-base</code>, respectively.  Since
+        directories can have properties too, there are also
+        <code class="filename">.svn/dir-props</code> and
+        <code class="filename">.svn/dir-prop-base</code> files.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.developer.usingapi"></a>8.3. Using the APIs</h2></div></div></div>
+<p>Developing applications against the Subversion library APIs
+      is fairly straightforward.  Subversion is primarily a set of C
+      libraries, with header (<code class="filename">.h</code>) files that live
+      in the <code class="filename">subversion/include</code> directory of the
+      source tree.  These headers are copied into your system
+      locations (e.g., <code class="filename">/usr/local/include</code>)
+      when you build and install Subversion itself from source.  These
+      headers represent the entirety of the functions and types meant
+      to be accessible by users of the Subversion libraries.  The
+      Subversion developer community is meticulous about ensuring that
+      the public API is well documented&#8212;refer directly to the
+      header files for that documentation.</p>
+<p>When examining the public header files, the first thing you
+      might notice is that Subversion's datatypes and functions are
+      namespace-protected.  That is, every public Subversion symbol
+      name begins with <code class="literal">svn_</code>, followed by a short
+      code for the library in which the symbol is defined (such as
+      <code class="literal">wc</code>, <code class="literal">client</code>,
+      <code class="literal">fs</code>, etc.), followed by a single underscore
+      (<code class="literal">_</code>), and then the rest of the symbol name.
+      Semipublic functions (used among source files of a given
+      library but not by code outside that library, and found inside
+      the library directories themselves) differ from this naming
+      scheme in that instead of a single underscore after the library
+      code, they use a double underscore
+      (<code class="literal">_&#8201;_</code>).  Functions that are private to
+      a given source file have no special prefixing and are declared
+      <code class="literal">static</code>.  Of course, a compiler isn't
+      interested in these naming conventions, but they help to clarify
+      the scope of a given function or datatype.</p>
+<p>Another good source of information about programming against
+      the Subversion APIs is the project's own hacking guidelines,
+      which you can find at <a class="ulink" href="http://subversion.tigris.org/hacking.html" target="_top">http://subversion.tigris.org/hacking.html</a>.  This
+      document contains useful information, which, while aimed at
+      developers and would-be developers of Subversion itself, is
+      equally applicable to folks developing against Subversion as a
+      set of third-party libraries.
+      <sup>[<a name="id516118" href="#ftn.id516118" class="footnote">54</a>]</sup>
+    </p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.usingapi.apr"></a>8.3.1. The Apache Portable Runtime Library</h3></div></div></div>
+<p>Along with Subversion's own datatypes, you will see many
+        references to datatypes that begin with
+        <code class="literal">apr_</code>&#8212;symbols from the Apache Portable
+        Runtime (APR) library.  APR is Apache's portability library,
+        originally carved out of its server code as an attempt to
+        separate the OS-specific bits from the OS-independent portions
+        of the code.  The result was a library that provides a generic
+        API for performing operations that differ mildly&#8212;or
+        wildly&#8212;from OS to OS.  While the Apache HTTP Server was
+        obviously the first user of the APR library, the Subversion
+        developers immediately recognized the value of using APR as
+        well.  This means that there is practically no OS-specific
+        code in Subversion itself.  Also, it means that the Subversion
+        client compiles and runs anywhere that the Apache HTTP Server
+        does.  Currently, this list includes all flavors of Unix,
+        Win32, BeOS, OS/2, and Mac OS X.</p>
+<p>In addition to providing consistent implementations of
+        system calls that differ across operating systems,
+        <sup>[<a name="id516172" href="#ftn.id516172" class="footnote">55</a>]</sup>
+        APR gives Subversion immediate access to many custom
+        datatypes, such as dynamic arrays and hash tables.  Subversion
+        uses these types extensively.  But
+        perhaps the most pervasive APR datatype, found in nearly every
+        Subversion API prototype, is the
+        <code class="literal">apr_pool_t</code>&#8212;the APR memory pool.
+        Subversion uses pools internally for all its memory allocation
+        needs (unless an external library requires a different memory
+        management mechanism for data passed through its API),
+        <sup>[<a name="id516192" href="#ftn.id516192" class="footnote">56</a>]</sup>
+        and while a person coding against the Subversion APIs is not
+        required to do the same, she <span class="emphasis"><em>is</em></span>
+        required to provide pools to the API functions that need them.
+        This means that users of the Subversion API must also link
+        against APR, must call <code class="function">apr_initialize()</code>
+        to initialize the APR subsystem, and then must create and
+        manage pools for use with Subversion API calls, typically by
+        using <code class="function">svn_pool_create()</code>,
+        <code class="function">svn_pool_clear()</code>, and
+        <code class="function">svn_pool_destroy()</code>.</p>
+<div class="sidebar">
+<p class="title"><b>Programming with Memory Pools</b></p>
+<p>Almost every developer who has used the C programming
+          language has at some point sighed at the daunting task of
+          managing memory usage.  Allocating enough memory to use,
+          keeping track of those allocations, freeing the memory when
+          you no longer need it&#8212;these tasks can be quite
+          complex.  And of course, failure to do those things properly
+          can result in a program that crashes itself, or worse,
+          crashes the computer.</p>
+<p>Higher-level languages, on the other hand, either take
+          the job of memory management away from you completely or
+          make it something you toy with only when doing extremely
+          tight program optimization.  Languages such as Java and
+          Python use <em class="firstterm">garbage collection</em>,
+          allocating memory for objects when needed, and automatically
+          freeing that memory when the object is no longer in
+          use.</p>
+<p>APR provides a middle-ground approach called
+          <em class="firstterm">pool-based memory management</em>.  It
+          allows the developer to control memory usage at a lower
+          resolution&#8212;per chunk (or &#8220;<span class="quote">pool</span>&#8221;) of
+          memory, instead of per allocated object.  Rather than using
+          <code class="function">malloc()</code> and friends to allocate enough
+          memory for a given object, you ask APR to allocate the
+          memory from a memory pool.  When you're finished using the
+          objects you've created in the pool, you destroy the entire
+          pool, effectively de-allocating the memory consumed by
+          <span class="emphasis"><em>all</em></span> the objects you allocated from it.
+          Thus, rather than keeping track of individual objects that
+          need to be de-allocated, your program simply considers the
+          general lifetimes of those objects and allocates the objects
+          in a pool whose lifetime (the time between the pool's
+          creation and its deletion) matches the object's
+          needs.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.usingapi.urlpath"></a>8.3.2. URL and Path Requirements</h3></div></div></div>
+<p>With remote version control operation as the whole point
+        of Subversion's existence, it makes sense that some attention
+        has been paid to internationalization (i18n) support.  After
+        all, while &#8220;<span class="quote">remote</span>&#8221; might mean &#8220;<span class="quote">across the
+        office,</span>&#8221; it could just as well mean &#8220;<span class="quote">across the
+        globe.</span>&#8221; To facilitate this, all of Subversion's public
+        interfaces that accept path arguments expect those paths to be
+        canonicalized&#8212;which is most easily accomplished by passing
+        them through the <code class="function">svn_path_canonicalize()</code>
+        function&#8212;and encoded in UTF-8.  This means, for example, that
+        any new client binary that drives the
+        <code class="filename">libsvn_client</code> interface needs to first
+        convert paths from the locale-specific encoding to UTF-8
+        before passing those paths to the Subversion libraries, and
+        then reconvert any resultant output paths from Subversion
+        back into the locale's encoding before using those paths for
+        non-Subversion purposes.  Fortunately, Subversion provides a
+        suite of functions (see
+        <code class="filename">subversion/include/svn_utf.h</code>) that 
+        any program can use to do these conversions.</p>
+<p>Also, Subversion APIs require all URL parameters to be
+        properly URI-encoded.  So, instead of passing
+        <code class="uri">file:///home/username/My File.txt</code> as the URL of a
+        file named <code class="filename">My File.txt</code>, you need to pass
+        <code class="uri">file:///home/username/My%20File.txt</code>.  Again,
+        Subversion supplies helper functions that your application can
+        use&#8212;<code class="function">svn_path_uri_encode()</code> and
+        <code class="function">svn_path_uri_decode()</code>, for URI encoding
+        and decoding, respectively.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.usingapi.otherlangs"></a>8.3.3. Using Languages Other Than C and C++</h3></div></div></div>
+<p>If you are interested in using the Subversion libraries in
+        conjunction with something other than a C program&#8212;say, a
+        Python or Perl script&#8212;Subversion has some support for this
+        via the Simplified Wrapper and Interface Generator (SWIG).  The
+        SWIG bindings for Subversion are located in
+        <code class="filename">subversion/bindings/swig</code>.  They are still
+        maturing, but they are usable.  These bindings allow you
+        to call Subversion API functions indirectly, using wrappers that
+        translate the datatypes native to your scripting language into
+        the datatypes needed by Subversion's C libraries.</p>
+<p>Significant efforts have been made toward creating
+        functional SWIG-generated bindings for Python, Perl, and Ruby.
+        To some extent, the work done preparing the SWIG interface
+        files for these languages is reusable in efforts to generate
+        bindings for other languages supported by SWIG (which include
+        versions of C#, Guile, Java, MzScheme, OCaml, PHP, and Tcl,
+        among others).  However, some extra programming is required to
+        compensate for complex APIs that SWIG needs some help
+        translating between languages.  For more information on SWIG
+        itself, see the project's web site at <a class="ulink" href="http://www.swig.org/" target="_top">http://www.swig.org/</a>.</p>
+<p>Subversion also has language bindings for Java.  The
+        javahl bindings (located in
+        <code class="filename">subversion/bindings/java</code> in the
+        Subversion source tree) aren't SWIG-based, but are instead a
+        mixture of Java and hand-coded JNI.  Javahl covers most
+        Subversion client-side APIs and is specifically targeted at
+        implementors of Java-based Subversion clients and IDE
+        integrations.</p>
+<p>Subversion's language bindings tend to lack the level of
+        developer attention given to the core Subversion modules, but
+        can generally be trusted as production-ready.  A number of
+        scripts and applications, alternative Subversion GUI clients,
+        and other third-party tools are successfully using
+        Subversion's language bindings today to accomplish their
+        Subversion integrations.</p>
+<p>It's worth noting here that there are other options for
+        interfacing with Subversion using other languages:  alternative
+        bindings for Subversion that aren't provided by the
+        Subversion development community at all.  You can find links
+        to these alternative bindings on the Subversion project's
+        links page (at <a class="ulink" href="http://subversion.tigris.org/links.html" target="_top">http://subversion.tigris.org/links.html</a>), but there
+        are a couple of popular ones we feel are especially
+        noteworthy.  First, Barry Scott's PySVN bindings (<a class="ulink" href="http://pysvn.tigris.org/" target="_top">http://pysvn.tigris.org/</a>) are a popular option for
+        binding with Python.  PySVN boasts of a more Pythonic
+        interface than the more C-like APIs provided by Subversion's
+        own Python bindings.  And if you're looking for a pure Java
+        implementation of Subversion, check out SVNKit (<a class="ulink" href="http://svnkit.com/" target="_top">http://svnkit.com/</a>), which is Subversion rewritten
+        from the ground up in Java.</p>
+<div class="sidebar">
+<p class="title"><b>SVNKit Versus javahl</b></p>
+<p>In 2005, a small company called TMate announced the
+          1.0.0 release of JavaSVN&#8212;a pure Java implementation of
+          Subversion.  Since then, the project has been renamed to
+          SVNKit (available at <a class="ulink" href="http://svnkit.com/" target="_top">http://svnkit.com/</a>)
+          and has seen great success as a provider of Subversion
+          functionality to various Subversion clients, IDE
+          integrations, and other third-party tools.</p>
+<p>The SVNKit library is interesting in that, unlike the
+          javahl library, it is not merely a wrapper around the
+          official Subversion core libraries.  In fact, it shares no
+          code with Subversion at all.  But while it is easy to
+          confuse SVNKit with javahl, and easier still to not even
+          realize which of these libraries you are using, folks should
+          be aware that SVNKit differs from javahl in some significant
+          ways.  First, SVNKit is not developed as open source
+          software and seems to have at any given time only a few
+          developers working on it.  Also, SVNKit's license is more
+          restrictive than that of Subversion.  Finally, by aiming to
+          be a pure Java Subversion library, SVNKit is limited in
+          which portions of Subversion can be reasonably cloned while
+          still keeping up with Subversion's releases.  This has
+          already happened once&#8212;SVNKit cannot access BDB-backed
+          Subversion repositories via the <code class="literal">file://</code>
+          protocol because there's no pure Java implementation of
+          Berkeley DB that is file-format-compatible with the native
+          implementation of that library.</p>
+<p>That said, SVNKit has a well-established track record of
+          reliability.  And a pure Java solution is much more robust
+          in the face of programming errors&#8212;a bug in SVNKit
+          might raise a catchable Java Exception, but a bug in the Subversion core
+          libraries as accessed via javahl can bring down your entire
+          Java Runtime Environment.  So, weigh the costs when choosing
+          a Java-based Subversion implementation.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.usingapi.codesamples"></a>8.3.4. Code Samples</h3></div></div></div>
+<p><a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.ex-1" title="Example 8.1. Using the Repository Layer">Example 8.1, &#8220;Using the Repository Layer&#8221;</a>
+        contains a code segment (written in C) that illustrates some
+        of the concepts we've been discussing.  It uses both the
+        repository and filesystem interfaces (as can be determined by
+        the prefixes <code class="literal">svn_repos_</code> and
+        <code class="literal">svn_fs_</code> of the function names,
+        respectively) to create a new revision in which a directory is
+        added.  You can see the use of an APR pool, which is passed
+        around for memory allocation purposes.  Also, the code reveals
+        a somewhat obscure fact about Subversion error
+        handling&#8212;all Subversion errors must be explicitly
+        handled to avoid memory leakage (and in some cases,
+        application failure).</p>
+<div class="example">
+<a name="svn.developer.layerlib.repos.ex-1"></a><p class="title"><b>Example 8.1. Using the Repository Layer</b></p>
+<div class="example-contents"><pre class="programlisting">
+/* Convert a Subversion error into a simple boolean error code.
+ *
+ * NOTE:  Subversion errors must be cleared (using svn_error_clear())
+ *        because they are allocated from the global pool, else memory
+ *        leaking occurs.
+ */
+#define INT_ERR(expr)                           \
+  do {                                          \
+    svn_error_t *__temperr = (expr);            \
+    if (__temperr)                              \
+      {                                         \
+        svn_error_clear(__temperr);             \
+        return 1;                               \
+      }                                         \
+    return 0;                                   \
+  } while (0)
+
+/* Create a new directory at the path NEW_DIRECTORY in the Subversion
+ * repository located at REPOS_PATH.  Perform all memory allocation in
+ * POOL.  This function will create a new revision for the addition of
+ * NEW_DIRECTORY.  Return zero if the operation completes
+ * successfully, nonzero otherwise.
+ */
+static int
+make_new_directory(const char *repos_path,
+                   const char *new_directory,
+                   apr_pool_t *pool)
+{
+  svn_error_t *err;
+  svn_repos_t *repos;
+  svn_fs_t *fs;
+  svn_revnum_t youngest_rev;
+  svn_fs_txn_t *txn;
+  svn_fs_root_t *txn_root;
+  const char *conflict_str;
+
+  /* Open the repository located at REPOS_PATH. 
+   */
+  INT_ERR(svn_repos_open(&amp;repos, repos_path, pool));
+
+  /* Get a pointer to the filesystem object that is stored in REPOS. 
+   */
+  fs = svn_repos_fs(repos);
+
+  /* Ask the filesystem to tell us the youngest revision that
+   * currently exists. 
+   */
+  INT_ERR(svn_fs_youngest_rev(&amp;youngest_rev, fs, pool));
+
+  /* Begin a new transaction that is based on YOUNGEST_REV.  We are
+   * less likely to have our later commit rejected as conflicting if we
+   * always try to make our changes against a copy of the latest snapshot
+   * of the filesystem tree. 
+   */
+  INT_ERR(svn_repos_fs_begin_txn_for_commit2(&amp;txn, repos, youngest_rev,
+                                             apr_hash_make(pool), pool));
+
+  /* Now that we have started a new Subversion transaction, get a root
+   * object that represents that transaction. 
+   */
+  INT_ERR(svn_fs_txn_root(&amp;txn_root, txn, pool));
+  
+  /* Create our new directory under the transaction root, at the path
+   * NEW_DIRECTORY. 
+   */
+  INT_ERR(svn_fs_make_dir(txn_root, new_directory, pool));
+
+  /* Commit the transaction, creating a new revision of the filesystem
+   * which includes our added directory path.
+   */
+  err = svn_repos_fs_commit_txn(&amp;conflict_str, repos, 
+                                &amp;youngest_rev, txn, pool);
+  if (! err)
+    {
+      /* No error?  Excellent!  Print a brief report of our success.
+       */
+      printf("Directory '%s' was successfully added as new revision "
+             "'%ld'.\n", new_directory, youngest_rev);
+    }
+  else if (err-&gt;apr_err == SVN_ERR_FS_CONFLICT)
+    {
+      /* Uh-oh.  Our commit failed as the result of a conflict
+       * (someone else seems to have made changes to the same area 
+       * of the filesystem that we tried to modify).  Print an error
+       * message.
+       */
+      printf("A conflict occurred at path '%s' while attempting "
+             "to add directory '%s' to the repository at '%s'.\n", 
+             conflict_str, new_directory, repos_path);
+    }
+  else
+    {
+      /* Some other error has occurred.  Print an error message.
+       */
+      printf("An error occurred while attempting to add directory '%s' "
+             "to the repository at '%s'.\n", 
+             new_directory, repos_path);
+    }
+
+  INT_ERR(err);
+} 
+</pre></div>
+</div>
+<br class="example-break"><p>Note that in <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.ex-1" title="Example 8.1. Using the Repository Layer">Example 8.1, &#8220;Using the Repository Layer&#8221;</a>, the code could
+        just as easily have committed the transaction using
+        <code class="function">svn_fs_commit_txn()</code>.  But the filesystem
+        API knows nothing about the repository library's hook
+        mechanism.  If you want your Subversion repository to
+        automatically perform some set of non-Subversion tasks every
+        time you commit a transaction (e.g., sending an
+        email that describes all the changes made in that transaction
+        to your developer mailing list), you need to use the
+        <code class="filename">libsvn_repos</code>-wrapped version of that
+        function, which adds the hook triggering
+        functionality&#8212;in this case,
+        <code class="function">svn_repos_fs_commit_txn()</code>.  (For more
+        information regarding Subversion's repository hooks, see <a class="xref" href="svn.reposadmin.html#svn.reposadmin.create.hooks" title="5.3.2. Implementing Repository Hooks">Section 5.3.2, &#8220;Implementing Repository Hooks&#8221;</a>.)</p>
+<p>Now let's switch languages.  <a class="xref" href="svn.developer.html#svn.developer.usingapi.otherlangs.ex-1" title="Example 8.2. Using the Repository layer with Python">Example 8.2, &#8220;Using the Repository layer with Python&#8221;</a> is a
+        sample program that uses Subversion's SWIG Python bindings to
+        recursively crawl the youngest repository revision, and to
+        print the various paths reached during the crawl.</p>
+<div class="example">
+<a name="svn.developer.usingapi.otherlangs.ex-1"></a><p class="title"><b>Example 8.2. Using the Repository layer with Python</b></p>
+<div class="example-contents"><pre class="programlisting">
+#!/usr/bin/python
+
+"""Crawl a repository, printing versioned object path names."""
+
+import sys
+import os.path
+import svn.fs, svn.core, svn.repos
+
+def crawl_filesystem_dir(root, directory):
+    """Recursively crawl DIRECTORY under ROOT in the filesystem, and return
+    a list of all the paths at or below DIRECTORY."""
+
+    # Print the name of this path.
+    print directory + "/"
+    
+    # Get the directory entries for DIRECTORY.
+    entries = svn.fs.svn_fs_dir_entries(root, directory)
+
+    # Loop over the entries.
+    names = entries.keys()
+    for name in names:
+        # Calculate the entry's full path.
+        full_path = directory + '/' + name
+
+        # If the entry is a directory, recurse.  The recursion will return
+        # a list with the entry and all its children, which we will add to
+        # our running list of paths.
+        if svn.fs.svn_fs_is_dir(root, full_path):
+            crawl_filesystem_dir(root, full_path)
+        else:
+            # Else it's a file, so print its path here.
+            print full_path
+
+def crawl_youngest(repos_path):
+    """Open the repository at REPOS_PATH, and recursively crawl its
+    youngest revision."""
+    
+    # Open the repository at REPOS_PATH, and get a reference to its
+    # versioning filesystem.
+    repos_obj = svn.repos.svn_repos_open(repos_path)
+    fs_obj = svn.repos.svn_repos_fs(repos_obj)
+
+    # Query the current youngest revision.
+    youngest_rev = svn.fs.svn_fs_youngest_rev(fs_obj)
+    
+    # Open a root object representing the youngest (HEAD) revision.
+    root_obj = svn.fs.svn_fs_revision_root(fs_obj, youngest_rev)
+
+    # Do the recursive crawl.
+    crawl_filesystem_dir(root_obj, "")
+    
+if __name__ == "__main__":
+    # Check for sane usage.
+    if len(sys.argv) != 2:
+        sys.stderr.write("Usage: %s REPOS_PATH\n"
+                         % (os.path.basename(sys.argv[0])))
+        sys.exit(1)
+
+    # Canonicalize the repository path.
+    repos_path = svn.core.svn_path_canonicalize(sys.argv[1])
+
+    # Do the real work.
+    crawl_youngest(repos_path)
+</pre></div>
+</div>
+<br class="example-break"><p>This same program in C would need to deal with APR's
+        memory pool system.  But Python handles memory usage
+        automatically, and Subversion's Python bindings adhere to that
+        convention.  In C, you'd be working with custom datatypes
+        (such as those provided by the APR library) for representing
+        the hash of entries and the list of paths, but Python has
+        hashes (called &#8220;<span class="quote">dictionaries</span>&#8221;) and lists as
+        built-in datatypes, and it provides a rich collection of
+        functions for operating on those types.  So SWIG (with the
+        help of some customizations in Subversion's language bindings
+        layer) takes care of mapping those custom datatypes into the
+        native datatypes of the target language.  This provides a more
+        intuitive interface for users of that language.</p>
+<p>The Subversion Python bindings can be used for working
+        copy operations, too.  In the previous section of this
+        chapter, we mentioned the <code class="filename">libsvn_client</code>
+        interface and how it exists for the sole purpose of
+        simplifying the process of writing a Subversion client.  <a class="xref" href="svn.developer.html#svn.developer.usingapi.otherlangs.ex-2" title="Example 8.3. A Python status crawler">Example 8.3, &#8220;A Python status crawler&#8221;</a> is a brief
+        example of how that library can be accessed via the SWIG
+        Python bindings to re-create a scaled-down version of the
+        <span class="command"><strong>svn status</strong></span> command.</p>
+<div class="example">
+<a name="svn.developer.usingapi.otherlangs.ex-2"></a><p class="title"><b>Example 8.3. A Python status crawler</b></p>
+<div class="example-contents"><pre class="programlisting">
+#!/usr/bin/env python
+
+"""Crawl a working copy directory, printing status information."""
+
+import sys
+import os.path
+import getopt
+import svn.core, svn.client, svn.wc
+
+def generate_status_code(status):
+    """Translate a status value into a single-character status code,
+    using the same logic as the Subversion command-line client."""
+    code_map = { svn.wc.svn_wc_status_none        : ' ',
+                 svn.wc.svn_wc_status_normal      : ' ',
+                 svn.wc.svn_wc_status_added       : 'A',
+                 svn.wc.svn_wc_status_missing     : '!',
+                 svn.wc.svn_wc_status_incomplete  : '!',
+                 svn.wc.svn_wc_status_deleted     : 'D',
+                 svn.wc.svn_wc_status_replaced    : 'R',
+                 svn.wc.svn_wc_status_modified    : 'M',
+                 svn.wc.svn_wc_status_merged      : 'G',
+                 svn.wc.svn_wc_status_conflicted  : 'C',
+                 svn.wc.svn_wc_status_obstructed  : '~',
+                 svn.wc.svn_wc_status_ignored     : 'I',
+                 svn.wc.svn_wc_status_external    : 'X',
+                 svn.wc.svn_wc_status_unversioned : '?',
+               }
+    return code_map.get(status, '?')
+
+def do_status(wc_path, verbose):
+    # Build a client context baton.
+    ctx = svn.client.svn_client_ctx_t()
+
+    def _status_callback(path, status):
+        """A callback function for svn_client_status."""
+
+        # Print the path, minus the bit that overlaps with the root of
+        # the status crawl
+        text_status = generate_status_code(status.text_status)
+        prop_status = generate_status_code(status.prop_status)
+        print '%s%s  %s' % (text_status, prop_status, path)
+        
+    # Do the status crawl, using _status_callback() as our callback function.
+    revision = svn.core.svn_opt_revision_t()
+    revision.type = svn.core.svn_opt_revision_head
+    svn.client.svn_client_status2(wc_path, revision, _status_callback,
+                                  svn.core.svn_depth_infinity, verbose,
+                                  0, 0, 1, ctx)
+
+def usage_and_exit(errorcode):
+    """Print usage message, and exit with ERRORCODE."""
+    stream = errorcode and sys.stderr or sys.stdout
+    stream.write("""Usage: %s OPTIONS WC-PATH
+Options:
+  --help, -h    : Show this usage message
+  --verbose, -v : Show all statuses, even uninteresting ones
+""" % (os.path.basename(sys.argv[0])))
+    sys.exit(errorcode)
+    
+if __name__ == '__main__':
+    # Parse command-line options.
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "verbose"])
+    except getopt.GetoptError:
+        usage_and_exit(1)
+    verbose = 0
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            usage_and_exit(0)
+        if opt in ("-v", "--verbose"):
+            verbose = 1
+    if len(args) != 1:
+        usage_and_exit(2)
+            
+    # Canonicalize the repository path.
+    wc_path = svn.core.svn_path_canonicalize(args[0])
+
+    # Do the real work.
+    try:
+        do_status(wc_path, verbose)
+    except svn.core.SubversionException, e:
+        sys.stderr.write("Error (%d): %s\n" % (e.apr_err, e.message))
+        sys.exit(1)
+</pre></div>
+</div>
+<br class="example-break"><p>As was the case in <a class="xref" href="svn.developer.html#svn.developer.usingapi.otherlangs.ex-1" title="Example 8.2. Using the Repository layer with Python">Example 8.2, &#8220;Using the Repository layer with Python&#8221;</a>, this
+        program is pool-free and uses, for the most part, normal
+        Python datatypes.  The call to
+        <code class="function">svn_client_ctx_t()</code> is deceiving because
+        the public Subversion API has no such function&#8212;this just
+        happens to be a case where SWIG's automatic language
+        generation bleeds through a little bit (the function is a sort
+        of factory function for Python's version of the corresponding
+        complex C structure).  Also note that the path passed to this
+        program (like the last one) gets run through
+        <code class="function">svn_path_canonicalize()</code>, because to
+        <span class="emphasis"><em>not</em></span> do so runs the risk of triggering the
+        underlying Subversion C library's assertions about such
+        things, which translates into rather immediate and
+        unceremonious program abortion.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.developer.summary"></a>8.4. Summary</h2></div></div></div>
+<p>One of Subversion's greatest features isn't something you
+      get from running its command-line client or other tools.  It's
+      the fact that Subversion was designed modularly and provides a
+      stable, public API so that others&#8212;like yourself,
+      perhaps&#8212;can write custom software that drives Subversion's
+      core logic.</p>
+<p>In this chapter, we took a closer look at Subversion's
+      architecture, examining its logical layers and describing that
+      public API, the very same API that Subversion's own layers use
+      to communicate with each other.  Many developers have found
+      interesting uses for the Subversion API, from simple repository
+      hook scripts, to integrations between Subversion and some other
+      application, to completely different version control systems.
+      What unique itch will <span class="emphasis"><em>you</em></span> scratch with
+      it?</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id515222" href="#id515222" class="para">53</a>] </sup>We understand that this may come as a shock to sci-fi
+            fans who have long been under the impression that Time was
+            actually the <span class="emphasis"><em>fourth</em></span> dimension, and we
+            apologize for any emotional trauma induced by our
+            assertion of a different theory.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id516118" href="#id516118" class="para">54</a>] </sup>After all, Subversion uses Subversion's APIs,
+          too.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id516172" href="#id516172" class="para">55</a>] </sup>Subversion uses ANSI system calls and datatypes as much
+            as possible.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id516192" href="#id516192" class="para">56</a>] </sup>Neon and Berkeley DB are examples of such libraries.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.customization.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 7. Customizing Your Subversion Experience </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 9. Subversion Complete Reference</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
