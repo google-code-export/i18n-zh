@@ -2022,8 +2022,12 @@ $
   <!-- ================================================================= -->
   <!-- ================================================================= -->
   <sect1 id="svn.reposadmin.maint">
+<!--
     <title>Repository Maintenance</title>
+-->
+    <title>Repository-Wartung</title>
 
+<!--
     <para>Maintaining a Subversion repository can be daunting, mostly
       due to the complexities inherent in systems that have a database
       backend.  Doing the task well is all about knowing the
@@ -2032,11 +2036,25 @@ $
       tools provided by Subversion and discuss how to wield them to
       accomplish tasks such as repository data migration, upgrades,
       backups, and cleanups.</para>
+-->
+    <para>Die Wartung eines Subversion-Repositorys kann abschreckend
+      sein, was an der Komplexität liegt, die Systemen innewohnt, die
+      auf Datenbanken aufbauen. Die Arbeit gut zu machen, bedeutet,
+      die Werkzeuge zu kennen &ndash; was sie sind, wann sie zu
+      verwenden sind und wie. Dieser Abschnitt stellt Ihnen die
+      Repository-Verwaltungswerkzeuge vor, die Subversion mitbringt
+      und erörtert, wie sie gehandhabt werden, um Aufgaben zu
+      erledigen, wie etwa Repository-Datenmigration, Aktualisierungen,
+      Sicherungen und Aufräumarbeiten.</para>
 
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.tk">
+<!--
       <title>An Administrator's Toolkit</title>
+-->
+      <title>Der Werkzeugkasten eines Administrators</title>
 
+<!--
       <para>Subversion provides a handful of utilities useful for
         creating, inspecting, modifying, and repairing your repository.
         Let's look more closely at each of those tools.  Afterward,
@@ -2044,11 +2062,22 @@ $
         Berkeley DB distribution that provide functionality specific
         to your repository's database backend not otherwise provided
         by Subversion's own tools.</para>
+-->
+      <para>Subversion stellt eine Handvoll Dienstprogramme zur
+        Verfügung, die nützlich zum Erstellen, Untersuchen, Verändern
+        und Reparieren Ihres Repositorys sind. Wir wollen uns diese
+        Werkzeuge einmal genauer ansehen. Anschließend werden wir kurz
+        einige der zum Berkeley-DB-Paket gehörenden Dienstprogramme
+        untersuchen, die auf die Besonderheiten der von Subversion
+        verwendeten Datenbank zugeschnittene Funktionen anbieten, die
+        mit Subversions eigenen Werkzeugen nicht verfügbar
+        sind.</para>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.tk.svnadmin">
         <title>svnadmin</title>
 
+<!--
         <para>The <command>svnadmin</command> program is the
           repository administrator's best friend.  Besides providing
           the ability to create Subversion repositories, this program
@@ -2056,12 +2085,21 @@ $
           those repositories.  The syntax of
           <command>svnadmin</command> is similar to that of other
           Subversion command-line programs:</para>
+-->
+        <para>Das Programm <command>svnadmin</command> ist der beste
+          Freund des Repository-Administrators. Neben der Fähigkeit,
+          Subversion-Repositorys zu erzeugen, erlaubt Ihnen dieses
+          Programm verschiedene Wartungsarbeiten auf diesen
+          Repositorys auszuführen. Die Syntax von
+          <command>svnadmin</command> ist ähnlich wie bei anderen
+          Kommandozeilenprogrammen von Subversion:</para>
 
+<!--
         <screen>
 $ svnadmin help
 general usage: svnadmin SUBCOMMAND REPOS_PATH  [ARGS &amp; OPTIONS ...]
 Type 'svnadmin help &lt;subcommand&gt;' for help on a specific subcommand.
-Type 'svnadmin --version' to see the program version and FS modules.
+Type 'svnadmin - -version' to see the program version and FS modules.
 
 Available subcommands:
    crashtest
@@ -2069,7 +2107,23 @@ Available subcommands:
    deltify
 &hellip;
 </screen>
+-->
+        <screen>
+$ svnadmin help
+Aufruf: svnadmin UNTERBEFEHL ARCHIV_PFAD [Optionen &amp; Parameter ...]
+Geben Sie »svnadmin help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem Unterbefehl
+          zu erhalten.
+Geben Sie »svnadmin --version« ein, um die Programmversion und die Datei-
+          systemmodule zu sehen.
 
+Verfügbare Unterbefehle:
+   crashtest
+   create
+   deltify
+&hellip;
+</screen>
+
+<!--
         <para>Previously in this chapter (in <xref
           linkend="svn.reposadmin.basics.creating"/>), we were
           introduced to the <command>svnadmin create</command>
@@ -2077,13 +2131,23 @@ Available subcommands:
           subcommands we will cover later in this chapter.  And you
           can consult <xref linkend="svn.ref.svnadmin" /> for a full
           rundown of subcommands and what each of them offers.</para>
+-->
+        <para>Früher in diesem Kapitel (in <xref
+          linkend="svn.reposadmin.basics.creating"/>), wurde uns der
+          Unterbefehl <command>svnadmin create</command> vorgestellt.
+          Die meisten anderen Unterbefehle von
+          <command>svnadmin</command> werden wir später in diesem
+          Kapitel behandeln. Und in <xref linkend="svn.ref.svnadmin"
+          /> können Sie in einer vollständigen Aufstellung der
+          Unterbefehle nachlesen, was jeder zu bieten hat.</para>
 
       </sect3>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.tk.svnlook">
         <title>svnlook</title>
-            
+
+<!--
         <para><command>svnlook</command> is a tool provided by
           Subversion for examining the various revisions and
           <firstterm>transactions</firstterm> (which are revisions
@@ -2095,47 +2159,103 @@ Available subcommands:
           committed (in the case of the <command>post-commit</command>
           hook) to the repository.  A repository administrator may use
           this tool for diagnostic purposes.</para>
-            
+-->
+        <para><command>svnlook</command> ist ein von Subversion
+          mitgeliefertes Dienstprogramm zum Untersuchen der
+          mannigfaltigen Revisionen und
+          <firstterm>Transaktionen</firstterm> (bei denen es sich um
+          Revisionen in Entstehung handelt) in einem Repository. Kein
+          Teil dieses Programms versucht, das Repository zu verändern.
+          <command>svnlook</command> wird üblicherweise von
+          Repository-Hooks verwendet, um die abzuliefernden Änderungen
+          zu melden (im Fall des <command>pre-commit</command>-Hooks)
+          oder die gerade an das Repository übergeben wurden (im Fall
+          des <command>post-commit</command>-hooks). Ein
+          Repository-Administrator kann dieses Programm zur Diagnose
+          benutzen.</para>
+
+<!--
         <para><command>svnlook</command> has a straightforward
           syntax:</para>
-            
+-->
+        <para><command>svnlook</command> besitzt eine überschaubare
+          Syntax:</para>
+
+<!--
         <screen>
 $ svnlook help
 general usage: svnlook SUBCOMMAND REPOS_PATH [ARGS &amp; OPTIONS ...]
-Note: any subcommand which takes the '--revision' and '--transaction'
+Note: any subcommand which takes the '- -revision' and '- -transaction'
       options will, if invoked without one of those options, act on
       the repository's youngest revision.
 Type 'svnlook help &lt;subcommand&gt;' for help on a specific subcommand.
-Type 'svnlook --version' to see the program version and FS modules.
+Type 'svnlook - -version' to see the program version and FS modules.
+&hellip;
+</screen>
+-->
+        <screen>
+$ svnlook help
+Aufruf: svnlook UNTERBEFEHL ARCHIV_PFAD [Optionen &amp; Parameter ...]
+Hinweis: Alle Unterbefehle, die die Parameter »--revision« und »--transaction«
+         akzeptieren, werden ohne diese Parameter die neueste
+         Revision des Projektarchivs verwenden.
+Geben Sie »svnlook help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem Unterbefehl
+         zu erhalten.
+Geben Sie »svnlook --version« ein, um die Programmversion und die Datei-
+         systemmodule zu sehen.
 &hellip;
 </screen>
 
+<!--
         <para>Most of <command>svnlook</command>'s
           subcommands can operate on either a revision or a
           transaction tree, printing information about the tree
           itself, or how it differs from the previous revision of the
-          repository.  You use the <option>--revision</option>
-          (<option>-r</option>) and <option>--transaction</option>
+          repository.  You use the <option>- -revision</option>
+          (<option>-r</option>) and <option>- -transaction</option>
           (<option>-t</option>) options to specify which revision or
           transaction, respectively, to examine.  In the absence of
-          both the <option>--revision</option> (<option>-r</option>)
-          and <option>--transaction</option> (<option>-t</option>)
+          both the <option>- -revision</option> (<option>-r</option>)
+          and <option>- -transaction</option> (<option>-t</option>)
           options, <command>svnlook</command> will examine the
           youngest (or <literal>HEAD</literal>) revision in the
           repository.  So the following two commands do exactly the
           same thing when 19 is the youngest revision in the
           repository located at
           <filename>/var/svn/repos</filename>:</para>
+-->
+        <para>Die meisten Unterbefehle von <command>svnlook</command>
+          können entweder auf einem Revisions- oder auf einem
+          Transaktionsbaum arbeiten, indem sie Informationen über den
+          Baum an sich ausgeben oder darüber, inwiefern er sich von
+          einer früheren Revision des Repositorys unterscheidet. Sie
+          verwenden die Optionen <option>--revision</option>
+          (<option>-r</option>) und <option>--transaction</option>
+          (<option>-t</option>), um die zu untersuchende Revision bzw.
+          Transaktion anzugeben. Ohne eine der Optionen
+          <option>--revision</option> (<option>-r</option>) und
+          <option>--transaction</option> (<option>-t</option>)
+          untersucht Subversion die jüngste (oder
+          <literal>HEAD</literal>) Revision des Repositorys. Das
+          heißt, die beiden folgenden Befehle machen genau dasselbe,
+          wenn 19 die jüngste Revision im Repository unter
+          <filename>/var/svn/repos</filename> ist:</para>
 
         <screen>
 $ svnlook info /var/svn/repos
 $ svnlook info /var/svn/repos -r 19
 </screen>
 
+<!--
         <para>One exception to these rules about subcommands is
           the <command>svnlook youngest</command> subcommand, which
           takes no options and simply prints out the repository's
           youngest revision number:</para>
+-->
+        <para>Eine Ausnahme von diesen Regeln zu Unterbefehlen ist der
+          Unterbefehl <command>svnlook youngest</command>, der keine
+          Optionen entgegennimmt und einfach die jüngste
+          Revisionsnummer des Repositorys ausgibt:</para>
 
         <screen>
 $ svnlook youngest /var/svn/repos
@@ -2144,48 +2264,82 @@ $
 </screen>
 
         <note>
+<!--
           <para>Keep in mind that the only transactions you can browse
             are uncommitted ones.  Most repositories will have no such
             transactions because transactions are usually either
             committed (in which case, you should access them as
-            revision with the <option>--revision</option>
+            revision with the <option>- -revision</option>
             (<option>-r</option>) option) or aborted and
             removed.</para>
+-->
+          <para>Beachten Sie, dass Sie nur Transaktionen untersuchen
+            können, die noch nicht übergeben sind. Die meisten
+            Repositorys haben keine derartigen Transaktionen, da
+            Transaktionen entweder übergeben (in diesem Fall sollten
+            Sie darauf mit der Option <option>--revision</option>
+            (<option>-r</option>) zugreifen) oder abgebrochen und
+            entfernt sind.</para>
         </note>
             
+<!--
         <para>Output from <command>svnlook</command> is designed to be
           both human- and machine-parsable.  Take, as an example, the
           output of the <command>svnlook info</command> subcommand:</para>
+-->
+        <para>Die Ausgabe <command>svnlook</command> ist so gestaltet,
+          dass sie sowohl für Menschen als auch für Maschinen lesbar
+          ist. Nehmen wir zum Beispiel die Ausgabe des Unterbefehls
+          <command>svnlook info</command>:</para>
 
         <screen>
 $ svnlook info /var/svn/repos
 sally
 2002-11-04 09:29:13 -0600 (Mon, 04 Nov 2002)
-27
-Added the usual
-Greek tree.
+43
+Den üblichen griechischen
+Baum hinzugefügt.
 $
 </screen>
 
+<!--
         <para>The output of <command>svnlook info</command> consists
           of the following, in the order given:</para>
+-->
+        <para>Die Ausgabe von <command>svnlook info</command> besteht
+          aus dem Folgenden in entsprechender Reihenfolge:</para>
 
         <orderedlist>
           <listitem>
+<!--
             <para>The author, followed by a newline</para>
+-->
+            <para>Der Autor gefolgt von einem Zeilenvorschub</para>
           </listitem>
           <listitem>
+<!--
             <para>The date, followed by a newline</para>
+-->
+            <para>Das Datum gefolgt von einem Zeilenvorschub</para>
           </listitem>
           <listitem>
+<!--
             <para>The number of characters in the log message,
               followed by a newline</para>
+-->
+            <para>Die Anzahl der Zeichen der Protokollnachricht
+              gefolgt von einem Zeilenvorschub.</para>
           </listitem>
           <listitem>
+<!--
             <para>The log message itself, followed by a newline</para>
+-->
+            <para>Die eigentliche Protokollnachricht gefolgt von einem
+              Zeilenvorschub</para>
           </listitem>
         </orderedlist>
 
+<!--
         <para>This output is human-readable, meaning items such as the
           datestamp are displayed using a textual representation
           instead of something more obscure (such as the number of
@@ -2199,7 +2353,23 @@ $
           allocate for the message, or at least how many bytes to skip
           in the event that this output is not the last bit of data in
           the stream.</para>
+-->
+        <para>Diese Ausgabe ist für Menschen lesbar, d.h., Dinge wie
+          der Zeitstempel werden als Text dargestellt statt als
+          irgendetwas Obskures (wie die Anzahl der Nanosekunden seit
+          der Mann von Bofrost das letzte Mal da war). Jedoch ist die
+          Ausgabe auch maschinenlesbar &ndash; weil die
+          Protokollnachricht mehrere Zeilen umfassen und von der Länge
+          her unbegrenzt sein kann, liefert <command>svnlook</command>
+          die Länge der Nachricht vor der eigentlichen Nachricht. Das
+          erlaubt Scripten und anderen Programmen, die um diesen
+          Befehl herumgeschrieben wurden, intelligente Entscheidungen
+          in Bezug auf die Protokollnachricht zu treffen, etwa wieviel
+          Speicher für die Nachricht anzufordern ist oder zumindest
+          wieviele Bytes zu überspringen sind, falls diese Ausgabe
+          nicht das letzte Stück im Datenstrom sein sollte.</para>
 
+<!--
         <para><command>svnlook</command> can perform a variety of
           other queries:  displaying subsets of bits of information
           we've mentioned previously, recursively listing versioned
@@ -2208,6 +2378,16 @@ $
           differences made to files and directories, and so on.  See
           <xref linkend="svn.ref.svnlook" /> for a full reference of
           <command>svnlook</command>'s features.</para>
+-->
+        <para><command>svnlook</command> kann eine Auswahl anderer
+          Abfragen ausführen: Teilmengen der bereits erwähnten
+          Informationen ausgeben, versionierte Verzeichnisbäume
+          rekursiv auflisten, berichten, welche Pfade in einer
+          bestimmten Revision oder Transaktion verändert wurden,
+          textuelle und property-basierte Unterschiede an Dateien und
+          Verzeichnissen aufzeigen, usw. Siehe <xref
+          linkend="svn.ref.svnlook" /> für eine vollständige Referenz
+          der Funktionen von <command>svnlook</command>.</para>
 
       </sect3>
 
@@ -2215,28 +2395,56 @@ $
       <sect3 id="svn.reposadmin.maint.tk.svndumpfilter">
         <title>svndumpfilter</title>
 
+<!--
         <para>While it won't be the most commonly used tool at the
           administrator's disposal, <command>svndumpfilter</command>
           provides a very particular brand of useful
           functionality&mdash;the ability to quickly and easily modify
           streams of Subversion repository history data by acting as a
           path-based filter.</para>
+-->
+        <para>Obwohl es nicht das am meisten verwendete Werkzeug im
+          Sortiment des Administrators sein wird, bietet
+          <command>svndumpfilter</command> eine ganz besondere Art von
+          nützlichen Funktionen &ndash; die Fähigkeit, schnell und
+          einfach Datenströme aus der Repository-Historie zu
+          verändern, indem es als ein pfadbasierter Filter
+          arbeitet.</para>
 
+<!--
         <para>The syntax of <command>svndumpfilter</command> is as
           follows:</para>
+-->
+        <para>Die Syntax von <command>svndumpfilter</command> lautet
+          wie folgt:</para>
 
+<!--
         <screen>
 $ svndumpfilter help
 general usage: svndumpfilter SUBCOMMAND [ARGS &amp; OPTIONS ...]
 Type "svndumpfilter help &lt;subcommand&gt;" for help on a specific subcommand.
-Type 'svndumpfilter --version' to see the program version.
+Type 'svndumpfilter - -version' to see the program version.
   
 Available subcommands:
    exclude
    include
    help (?, h)
 </screen>
+-->
+        <screen>
+$ svndumpfilter help
+Aufruf: svndumpfilter UNTERBEFEHL [Optionen &amp; Parameter ...]
+Geben Sie »svndumpfilter help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem
+          Unterbefehl zu erhalten.
+Geben Sie »svndumpfilter --version« ein, um die Programmversion zu sehen.
 
+Verfügbare Unterbefehle:
+   exclude
+   include
+   help (?, h)
+</screen>
+
+<!--
         <para>There are only two interesting subcommands:
           <command>svndumpfilter exclude</command> and
           <command>svndumpfilter include</command>.  They allow you to
@@ -2245,6 +2453,16 @@ Available subcommands:
           subcommands and <command>svndumpfilter</command>'s unique
           purpose later in this chapter, in <xref
           linkend="svn.reposadmin.maint.filtering" />.</para>
+-->
+        <para>Es gibt nur zwei interessante Unterbefehle:
+          <command>svndumpfilter exclude</command> und
+          <command>svndumpfilter include</command>. Sie erlauben
+          Ihnen, zwischen einer impliziten oder expliziten
+          Einbeziehung von Pfaden im Datenstrom zu wählen. Sie können
+          mehr über diese Unterbefehle und den einzigartigen Zweck von
+          <command>svndumpfilter</command> später in diesem Kapitel
+          unter <xref linkend="svn.reposadmin.maint.filtering" />
+          erfahren.</para>
 
       </sect3>
 
@@ -2252,6 +2470,7 @@ Available subcommands:
       <sect3 id="svn.reposadmin.maint.tk.svnsync">
         <title>svnsync</title>
 
+<!--
         <para>The <command>svnsync</command> program, which is new to
           the 1.4 release of Subversion, provides all the
           functionality required for maintaining a read-only mirror of
@@ -2266,16 +2485,34 @@ Available subcommands:
           </footnote>
           repositories may be on different computers from each other
           and from <command>svnsync</command> itself.</para>
+-->
+        <para>Der Befehl <command>svnsync</command>, der in Subversion
+          1.4 neu hinzugekommen ist, bietet Funktionen zum Verwalten
+          eines Nur-Lese-Spiegels des Subversion-Repositorys. Das
+          Programm hat eine Aufgabe &ndash; die versionierte Historie
+          eines Repositorys in ein anderes zu übertragen. Und während
+          es nicht viele Möglichkeiten gibt, dies zu tun, liegt seine
+          hauptsächliche Stärke darin, das es aus der Ferne eingesetzt
+          werden kann &ndash; das <quote>Quell</quote>- und
+          <quote>Ziel</quote>-Repository können auf verschiedenen
+          Rechnern liegen und auf einem anderen Rechner als
+          <command>svnsync</command> selbst.</para>
 
+<!--
         <para>As you might expect, <command>svnsync</command> has a
           syntax that looks very much like every other program we've
           mentioned in this chapter:</para>
+-->
+        <para>Wie Sie vielleicht erwarten, hat
+          <command>svnsync</command> eine Syntax, die allen anderen
+          Programmen aus diesem Kapitel gleicht:</para>
 
+<!--
         <screen>
 $ svnsync help
 general usage: svnsync SUBCOMMAND DEST_URL  [ARGS &amp; OPTIONS ...]
 Type 'svnsync help &lt;subcommand&gt;' for help on a specific subcommand.
-Type 'svnsync --version' to see the program version and RA modules.
+Type 'svnsync - -version' to see the program version and RA modules.
 
 Available subcommands:
    initialize (init)
@@ -2284,9 +2521,32 @@ Available subcommands:
    help (?, h)
 $
 </screen>
+-->
+        <screen>
+$ svnsync help
+Aufruf: svnsync UNTERBEFEHL ZIEL_URL [Optionen &amp; Parameter ...]
+Geben Sie »svnsync help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem
+          Unterbefehl zu erhalten.
+Geben Sie »svnsync --version« ein, um die Programmversion und die Zugriffs-
+          module zu sehen.
 
+Verfügbare Unterbefehle:
+   initialize (init)
+   synchronize (sync)
+   copy-revprops
+   help (?, h)
+
+$
+</screen>
+
+<!--
         <para>We talk more about replicating repositories with
           <command>svnsync</command> later in this chapter (see <xref
+          linkend="svn.reposadmin.maint.replication" />).</para>
+-->
+        <para>Später in diesem Kapitel werden wir mehr über das
+          Replizieren von Repositorys mit  <command>svnsync</command>
+          reden (siehe <xref
           linkend="svn.reposadmin.maint.replication" />).</para>
 
       </sect3>
@@ -2295,6 +2555,7 @@ $
       <sect3 id="svn.reposadmin.maint.tk.fsfsreshard">
         <title>fsfs-reshard.py</title>
 
+<!--
         <para>While not an official member of the Subversion
           toolchain, the <command>fsfs-reshard.py</command> script
           (found in the <filename>tools/server-side</filename>
@@ -2311,7 +2572,26 @@ $
           number of these files in each directory can grow to be quite
           large.  This has been observed to cause performance problems
           on certain network-based filesystems.</para>
+-->
+        <para>Obwohl es kein offizielles Glied in der Werkzeugkette
+          von Subversion ist, handelt es sich bei dem Script
+          <command>fsfs-reshard.py</command> (zu finden im Verzeichnis
+          <filename>tools/server-side</filename> des
+          Subversion-Quelltext-Paketes) um ein nützliches Werkzeug zur
+          Leistungssteigerung für Administratoren von FSFS-basierten
+          Subversion-Repositorys. FSFS-Repositorys enthalten Dateien,
+          die die Änderungen in einer einzelnen Revision beschreiben
+          sowie Dateien, die die zu einer Revision gehörenden Eigenschaften
+          beinhalten. Repositorys, die in einer früheren Version als
+          Subversion 1.5 erzeugt wurden, legen diese Dateien in zwei
+          Verzeichnissen ab &ndash; eins pro Dateityp. Während neue
+          Revisionen an das Repository übergeben werden, legt
+          Subversion dort immer mehr Dateien ab &ndash; im Lauf der
+          Zeit kann die Anzahl der Dateien recht groß werden. Es wurde
+          festgestellt, dass dies bei bestimmten netzbasierten
+          Dateisystemen zu Leistungseinbußen kommen kann.</para>
 
+<!--
         <para>Subversion 1.5 creates FSFS-backed repositories using a
           slightly modified layout in which the contents of these two
           directories are <firstterm>sharded</firstterm>, or scattered
@@ -2329,13 +2609,36 @@ $
           sharded layout (which Subversion will not automatically do
           for you) or for fine-tuning an already sharded
           repository.</para>
+-->
+        <para>Subversion 1.5 legt FSFS-basierte Repositorys mit einer
+          geringfügig veränderten Struktur an, in der der Inhalt
+          dieser beiden Verzeichnisse
+          <firstterm>aufgebrochen</firstterm> ist, d.h. über mehrere
+          Unterverzeichnisse aufgeteilt ist.  Das kann die Zeit
+          erheblich beschleunigen, die benötigt wird, um eine dieser
+          Dateien zu finden und führt somit zu einer allgemeinen
+          Leistungssteigerung beim Lesen aus dem Repository. Die
+          Anzahl der Unterverzeichnisse für diese Dateien ist jedoch
+          konfigurierbar, und hier setzt
+          <command>fsfs-reshard.py</command> an. Dieses Script mischt
+          die Dateistruktur des Repositorys und ordnet sie gemäß der
+          Anzahl der gewünschten Unterverzeichnisse neu an. Das ist
+          inbesonders dann nützlich, wenn ein älteres Repository in
+          die neue Struktur von Subversion 1.5 überführt werden soll
+          (was Subversion nicht automatisch für Sie macht) oder falls
+          ein bereits aufgeteiltes Repository noch feiner eingestellt
+          werden soll.</para>
 
       </sect3>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.tk.bdbutil">
+<!--
         <title>Berkeley DB utilities</title>
+-->
+        <title>Dienstprogramme von Berkeley DB</title>
 
+<!--
         <para>If you're using a Berkeley DB repository, all of
           your versioned filesystem's structure and data live in a set
           of database tables within the <filename>db/</filename>
@@ -2344,7 +2647,18 @@ $
           be used in conjunction with any of the Berkeley database
           tools, typically provided as part of the Berkeley DB
           distribution.</para>
+-->
+        <para>Falls Sie ein Repository verwenden, das auf Berkeley DB
+          basiert, befindet sich die gesamte Struktur und die Daten
+          Ihres versionierten Dateisystems in einer Menge von
+          Datenbanktabellen innerhalb des Unterverzeichnisses
+          <filename>db/</filename> Ihres Repositorys. Dieses
+          Unterverzeichnis ist ein gewöhnliches Verzeichnis einer
+          Berkeley-DB-Umgebung und kann deshalb mit irgendeinem der
+          Berkeley Datenbankwerkzeuge verwendet werden, die
+          normalerweise mit Berkeley DB ausgeliefert werden.</para>
 
+<!--
         <para>For day-to-day Subversion use, these tools are
           unnecessary.  Most of the functionality typically needed for
           Subversion repositories has been duplicated in the
@@ -2355,7 +2669,20 @@ $
           <command>db_archive</command> utility, and <command>svnadmin
           recover</command> reflects the common use cases of the
           <command>db_recover</command> utility.</para>
-            
+-->
+        <para>Für die tägliche Arbeit mit Subversion werden diese
+          Werkzeuge nicht benötigt. Die meisten Funktionen, die
+          üblicherweise für Subversion-Repositorys gebraucht werden,
+          sind in <command>svnadmin</command> integriert worden.
+          Beispielsweise liefern <command>svnadmin
+          list-unused-dblogs</command> und <command>svnadmin
+          list-dblogs</command> eine Teilmenge dessen, was vom
+          Berkeley-Dienstprogramm <command>db_archive</command>
+          angeboten wird, und <command>svnadmin recover</command>
+          spiegelt die verbreiteten Anwendungsfälle von
+          <command>db_recover</command> wieder.</para>
+
+<!--
         <para>However, there are still a few Berkeley DB utilities
           that you might find useful.  The <command>db_dump</command>
           and <command>db_load</command> programs write and read,
@@ -2376,10 +2703,42 @@ $
           utility can provide useful information about the status of
           your Berkeley DB environment, including detailed statistics
           about the locking and storage subsystems.</para>
+-->
+        <para>Trotzdem gibt es noch ein paar Berkeley-DB-Werkzeuge,
+          die Ihnen nützlich sein könnten. Die Programme
+          <command>db_dump</command> und <command>db_load</command>
+          schreiben bzw. lesen ein spezielles Dateiformat, das die
+          Schlüssel und Werte in einer Berkeley-DB-Datenbank
+          beschreibt. Da Berkeley-Datenbanken nicht zwischen
+          Rechnerarchitekturen portierbar sind, stellt dieses Format
+          ein nützliches Verfahren zur Übertragung der Datenbanken
+          zwischen Maschinen zur Verfügung, wobei die Architektur oder
+          das Betriebssystem keine Rolle spielen. Später in diesem
+          Kapitel werden wir noch beschreiben, wie Sie auch
+          <command>svnadmin dump</command> und <command>svnadmin
+          load</command> für ähnliche Zwecke verwenden können, doch
+          <command>db_dump</command> und <command>db_load</command>
+          können bestimmte Aufgaben genausogut und viel schneller
+          erledigen. Sie können auch dabei dienlich sein, wenn der
+          erfahrene Berkeley-DB-Hacker aus irgendwelchen Gründen die
+          Daten in einem BDB-basierten Repository direkt vor Ort
+          anpassen muss, was die Dienstprogramme von Subversion
+          nicht erlauben. Ferner liefert das Dienstprogramm
+          <command>db_stat</command> nützliche Informationen über den
+          Zustand Ihrer Berkeley-DB-Umgebung, wozu ausführliche
+          Statistiken über das Sperr- und Speicher-Teilsystem
+          gehören.</para>
 
+<!--
         <para>For more information on the Berkeley DB tool chain,
           visit the documentation section of the Berkeley DB section
           of Oracle's web site, located at <ulink
+          url="http://www.oracle.com/technology/documentation/berkeley-db/db/"
+          />.</para>
+-->
+        <para>Besuchen Sie für weitergehende Informationen zur
+          Berkeley-Werkzeugsammlung den Dokumentationsabschnitt der
+          Berkeley-DB-Abteilung auf der Seite von Oracle bei <ulink
           url="http://www.oracle.com/technology/documentation/berkeley-db/db/"
           />.</para>
 
@@ -2388,8 +2747,12 @@ $
 
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.setlog">
+<!--
       <title>Commit Log Message Correction</title>
-            
+-->
+      <title>Berichtigung des Protokolleintrags</title>
+
+<!--
       <para>Sometimes a user will have an error in her log message (a
         misspelling or some misinformation, perhaps).  If the
         repository is configured (using the
@@ -2403,18 +2766,49 @@ $
         are not, by default, configured to allow changes to
         unversioned properties&mdash;except by an
         administrator.</para>
+-->
+      <para>Manchmal kommt es vor, dass ein Benutzer einen Fehler im
+        Protokolleintrag gemacht hat (einen Tippfehler oder vielleicht
+        eine Fehlinformation). Falls das Repository entsprechend
+        eingestellt ist (indem der Hook
+        <literal>pre-revprop-change</literal> verwendet wird; siehe
+        <xref linkend="svn.reposadmin.create.hooks"/>), um Änderungen
+        am Protokolleintrag vorzunehmen nachdem die Übergabe
+        abgeschlossen ist, kann der Benutzer den Protokolleintrag aus
+        der Ferne mit dem Befehl <command>svn propset</command> (siehe
+        <xref linkend="svn.ref.svn.c.propset"/>)
+        <quote>berichtigen</quote>.  Wegen der Möglichkeit, dadurch
+        für immer Informationen zu verlieren, sind
+        Subversion-Repositorys allerdings standardmäßig nicht so
+        eingestellt, dass Änderungen an unversionierten Propertys
+        erlaubt sind &ndash; außer für einen Administrator.</para>
 
+<!--
       <para>If a log message needs to be changed by an administrator,
         this can be done using <command>svnadmin setlog</command>.
         This command changes the log message (the
         <literal>svn:log</literal> property) on a given revision of a
         repository, reading the new value from a provided file.</para>
-          
+-->
+      <para>Falls ein Protokolleintrag durch einen Administrator
+        geändert werden muss, kann das mit <command>svnadmin
+        setlog</command> geschehen. Dieser Befehl ändert den
+        Protokolleintrag (das Property <literal>svn:log</literal>)
+        einer gegebenen Revision eines Repositorys, indem der neue
+        Inhalt aus einer angegebenen Datei gelesen wird.</para>
+
+<!--
       <screen>
 $ echo "Here is the new, correct log message" &gt; newlog.txt
 $ svnadmin setlog myrepos newlog.txt -r 388
 </screen>
-      
+-->
+      <screen>
+$ echo "Hier ist der neue, korrekte Protokolleintrag" &gt; newlog.txt
+$ svnadmin setlog myrepos newlog.txt -r 388
+</screen>
+
+<!--
       <para>The <command>svnadmin setlog</command> command, by
         default, is
         still bound by the same protections against modifying
@@ -2423,16 +2817,35 @@ $ svnadmin setlog myrepos newlog.txt -r 388
         <literal>post-revprop-change</literal> hooks are still
         triggered, and therefore must be set up to accept changes of
         this nature.  But an administrator can get around these
-        protections by passing the <option>--bypass-hooks</option>
+        protections by passing the <option>- -bypass-hooks</option>
         option to the <command>svnadmin setlog</command> command.</para>
- 
+-->
+      <para>Auch der Befehl <command>svnadmin setlog</command> ist
+        standardmäßig durch dieselben Schutzmechanismen gegen die
+        Veränderung unversionierter Propertys eingeschränkt wie ein
+        Client aus der Ferne &ndash; die Hooks <literal>pre-</literal>
+        und <literal>post-revprop-change</literal> werden immer noch
+        ausgelöst und müssen entsprechend eingestellt werden, um
+        solche Änderungen zuzulassen. Allerdings kann ein
+        Administrator diese Schutzmechanismen umgehen, indem er die
+        Option <option>--bypass-hooks</option> an den Befehl
+        <command>svnadmin setlog</command> übergibt.</para>
+
       <warning>
+<!--
         <para>Remember, though, that by bypassing the hooks, you are
           likely avoiding such things as email notifications of
           property changes, backup systems that track unversioned
           property changes, and so on.  In other words, be very
           careful about what you are changing, and how you change
           it.</para>
+-->
+        <para>Denken Sie trotzdem daran, dass beim Umgehen der Hooks
+          auch Dinge umgangen werden wie E-Mail-Benachrichtigungen bei
+          Property-Änderungen, Sicherungssysteme, die Änderungen an
+          unversionierten Propertys verfolgen, usw. Mit anderen
+          Worten: Seien Sie sehr vorsichtig bei der Auswahl dessen,
+          was Sie ändern und wie Sie es ändern.</para>
       </warning>
 
 
@@ -2440,8 +2853,12 @@ $ svnadmin setlog myrepos newlog.txt -r 388
 
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.diskspace">
+<!--
       <title>Managing Disk Space</title>
+-->
+      <title>Plattenplatzverwaltung</title>
 
+<!--
       <para>While the cost of storage has dropped incredibly in the
         past few years, disk usage is still a valid concern for
         administrators seeking to version large amounts of data.
@@ -2451,11 +2868,27 @@ $ svnadmin setlog myrepos newlog.txt -r 388
         schedules.  It is useful to know what pieces of Subversion's
         repository data need to remain on the live site, which need to
         be backed up, and which can be safely removed.</para>
+-->
+      <para>Obwohl die Kosten für Speicherplatz in den letzten Jahren
+        unglaublich gefallen sind, ist Plattenplatz immer noch ein
+        berechtigtes Anliegen für Administratoren, die große Mengen
+        von Daten zu versionieren haben. Jedes im aktiven Repository
+        gespeicherte Bisschen Information über die Versionshistorie
+        muss zu einem anderen Ort gesichert werden; vielleicht sogar
+        öfter, falls eine zyklische Sicherungsstrategie angewendet
+        wird. Es ist zweckdienlich zu wissen, welche Teile von
+        Subversions Repository am Ort verbleiben müssen, welche
+        gesichert werden müssen und welche ruhig entfernt werden
+        können.</para>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.diskspace.deltas">
+<!--
         <title>How Subversion saves disk space</title>
+-->
+        <title>Wie Subversion Plattenplatz spart</title>
 
+<!--
         <para>To keep the repository small,
           Subversion uses <firstterm>deltification</firstterm> (or
           deltified storage) within the repository
@@ -2475,8 +2908,31 @@ $ svnadmin setlog myrepos newlog.txt -r 388
           later, the space savings are even better&mdash;now those
           full-text representations of file contents are themselves
           compressed.</para>
+-->
+        <para>Um das Repository klein zu halten, verwendet Subversion
+          innerhalb des Repositorys
+          <firstterm>Delta-Kodierung</firstterm> (oder
+          Deltaspeicherung). Unter Delta-Kodierung wird die Kodierung
+          eines Datensatzes als eine Sammlung von Unterschieden
+          gegenüber einem anderen Datensatz verstanden. Falls die
+          beiden Datensätze sehr ähnlich sind, bewirkt diese
+          Delta-Kodierung eine Einsparung an Speicherplatz für den als
+          Delta gespeicherten Datensatz &ndash; anstatt den
+          Platz der Originaldaten zu belegen, wird hierbei nur soviel
+          Platz benötigt, um zu sagen: <quote>Schau mal, ich sehe
+          genau so aus, wie der andere Datensatz da drüben, bis auf
+          die folgenden paar Änderungen.</quote> Das Ergebnis ist,
+          dass die meisten der Daten im Repository, die normalerweise
+          recht voluminös sind &ndash; nämlich der Inhalt
+          versionierter Dateien &ndash; in einer viel geringeren Größe
+          gespeichert werden als der ursprüngliche Volltext dieser
+          Daten. Und für Repositorys, die mit Subversion 1.4 oder
+          später angelegt wurden, ist die Platzersparnis sogar noch
+          besser &ndash; jetzt sind die Volltexte der Dateiinhalte
+          selbst komprimiert.</para>
 
         <note>
+<!--
           <para>Because all of the data that is subject to
             deltification in a BDB-backed repository is stored in a
             single Berkeley DB database file, reducing the size of the
@@ -2487,14 +2943,30 @@ $ svnadmin setlog myrepos newlog.txt -r 388
             database file.  So while deltification doesn't produce
             immediate space savings, it can drastically slow future
             growth of the database.</para>
+-->
+          <para>Da alle delta-kodierten Daten in einem BDB-basierten
+            Repository in einer einzigen Berkeley-DB-Datenbankdatei
+            gespeichert werden, wird die verringerte Größe der
+            gespeicherten Werte nicht unmittelbar die Größe der
+            Datenbankdatei verringern. Berkeley DB führt jedoch intern
+            Buch über unbenutzte Bereiche der Datenbankdatei und wird
+            zunächst jene aufbrauchen, bevor die Datenbankdatei selbst
+            vergrößert wird. Während Delta-Kodierung also nicht
+            unmittelbare Platzersparnis bringt, kann sie jedoch das
+            künftige Wachstum der Datenbank drastisch
+            verlangsamen.</para>
         </note>
 
       </sect3>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.diskspace.deadtxns">
+<!--
         <title>Removing dead transactions</title>
+-->
+        <title>Entfernen unvollendeter Transaktionen</title>
 
+<!--
         <para>Though they are uncommon, there are circumstances in
           which a Subversion commit process might fail, leaving behind
           in the repository the remnants of the revision-to-be that
@@ -2507,10 +2979,28 @@ $ svnadmin setlog myrepos newlog.txt -r 388
           They don't do any real harm, other than consuming disk
           space.  A fastidious administrator may nonetheless wish to
           remove them.</para>
+-->
+        <para>Obwohl es selten vorkommt, gibt es Umstände, unter denen
+          der Übergabeprozess mit einem Fehler abbricht und die Reste
+          einer Revision in Spe  hinterlässt &ndash; eine unvollendete
+          Transaktion samt aller Datei- und Verzeichnisänderungen, die
+          dazugehören. Dies kann aus verschiedenen Gründen passieren:
+          Vielleicht wurde die Operation des Clients vom Benutzer
+          unsauber beendet oder es trat mittendrin ein Netzfehler auf.
+          Aus welchem Grund auch immer, es können unvollendete
+          Transaktionen auftreten. Sie verursachen keine tatsächlichen
+          Schäden, außer Plattenplatz zu verschwenden. Ein penibler
+          Administrator möchte sie vielleicht dennoch
+          entfernen.</para>
 
+<!--
         <para>You can use the <command>svnadmin lstxns</command>
           command to list the names of the currently outstanding
           transactions:</para>
+-->
+        <para>Sie können den Befehl <command>svnadmin lstxns</command>
+          verwenden, um die Namen der aktuell ausstehenden
+          Transaktionen anzuzeigen:</para>
 
         <screen>
 $ svnadmin lstxns myrepos
@@ -2520,9 +3010,10 @@ a45
 $
 </screen>
 
+<!--
         <para>Each item in the resultant output can then be used with
           <command>svnlook</command> (and its
-          <option>--transaction</option> (<option>-t</option>) option)
+          <option>- -transaction</option> (<option>-t</option>) option)
           to determine who created the transaction, when it was
           created, what types of changes were made in the
           transaction&mdash;information that is helpful in determining
@@ -2533,12 +3024,28 @@ $
           <command>svnadmin rmtxns</command> can take its input
           directly from the output of
           <command>svnadmin lstxns</command>!</para>
+-->
+        <para>Jeder Eintrag der Ausgabe kann dann mit dem Befehl
+          <command>svnlook</command> (und seiner Option
+          <option>--transaction</option> (<option>-t</option>))
+          aufgerufen werden, um festzustellen, wer die Transaktion
+          erzeugt hat, wann sie erzeugt wurde und welche Änderungen
+          sie beinhaltet &ndash; Informationen, die bei der
+          Entscheidung helfen können, ob eine Transaktion ein sicherer
+          Kandidat zum Löschen ist! Wenn Sie tatsächlich eine
+          Transaktion löschen wollen, kann deren Name an den Befehl
+          <command>svnadmin rmtxns</command> übergeben werden, der
+          dann die Transaktion aufräumt. <command>svnadmin
+          rmtxns</command> kann seine Eingabe auch direkt aus der
+          Ausgabe von <command>svnadmin lstxns</command>
+          beziehen!</para>
 
         <screen>
 $ svnadmin rmtxns myrepos `svnadmin lstxns myrepos`
 $
 </screen>
 
+<!--
         <para>If you use these two subcommands like this, you should
           consider making your repository temporarily inaccessible to
           clients.  That way, no one can begin a legitimate
@@ -2547,10 +3054,25 @@ $
           contains a bit of shell-scripting that can quickly generate
           information about each outstanding transaction in your
           repository.</para>
+-->
+        <para>Falls Sie auf diese Weise diese beiden Unterbefehle
+          verwenden, sollten Sie vorübergehend das Repository für
+          Clients unzugänglich machen. So kann niemand eine
+          berechtigte Transaktion beginnen, bevor Sie aufgeräumt
+          haben.  <xref
+          linkend="svn.reposadmin.maint.diskspace.deadtxns.ex-1" />
+          enthält ein kleines Shell-Script, das schnell eine Übersicht
+          über jede ausstehende Transaktion in Ihrem Repository
+          erzeugen kann.</para>
 
+<!--
         <example id="svn.reposadmin.maint.diskspace.deadtxns.ex-1">
           <title>txn-info.sh (reporting outstanding transactions)</title>
+-->
+        <example id="svn.reposadmin.maint.diskspace.deadtxns.ex-1">
+          <title>txn-info.sh (ausstehende Transaktionen anzeigen)</title>
 
+<!--
           <programlisting>
 #!/bin/sh
 
@@ -2564,41 +3086,94 @@ if [ "x$REPOS" = x ] ; then
 fi
 
 for TXN in `svnadmin lstxns ${REPOS}`; do 
-  echo "---[ Transaction ${TXN} ]-------------------------------------------"
+  echo "- -[ Transaction ${TXN} ]- - - - - - - - - - - - - - - - - - - - - -"
+  svnlook info "${REPOS}" -t "${TXN}"
+done
+</programlisting>
+-->
+          <programlisting>
+#!/bin/sh
+
+### Erzeuge Informationen über alle ausstehenden Transaktionen eines
+### Subversion Repositorys.
+
+REPOS="${1}"
+if [ "x$REPOS" = x ] ; then
+  echo "Aufruf: $0 REPOS_PATH"
+  exit
+fi
+
+for TXN in `svnadmin lstxns ${REPOS}`; do 
+  echo "---[ Transaktion ${TXN} ]-------------------------------------------"
   svnlook info "${REPOS}" -t "${TXN}"
 done
 </programlisting>
         </example>
 
+<!--
         <para>The output of the script is basically a concatenation of
           several chunks of <command>svnlook info</command> output
           (see <xref linkend="svn.reposadmin.maint.tk.svnlook"/>) and
           will look something like this:</para>
+-->
+        <para>Die Ausgabe des Scriptes ist im Grunde genommen eine
+          Aneinanderreihung mehrerer Teile von <command>svnlook
+          info</command>-Ausgaben (siehe <xref
+          linkend="svn.reposadmin.maint.tk.svnlook"/>) und sieht etwa
+          so aus:</para>
 
+<!--
         <screen>
 $ txn-info.sh myrepos
----[ Transaction 19 ]-------------------------------------------
+- -[ Transaction 19 ]- - - - - - - - - - - - - - - - - - - - - -
 sally
 2001-09-04 11:57:19 -0500 (Tue, 04 Sep 2001)
 0
----[ Transaction 3a1 ]-------------------------------------------
+- -[ Transaction 3a1 ]- - - - - - - - - - - - - - - - - - - - - -
 harry
 2001-09-10 16:50:30 -0500 (Mon, 10 Sep 2001)
 39
 Trying to commit over a faulty network.
----[ Transaction a45 ]-------------------------------------------
+- -[ Transaction a45 ]- - - - - - - - - - - - - - - - - - - - - -
+sally
+2001-09-12 11:09:28 -0500 (Wed, 12 Sep 2001)
+0
+$
+</screen>
+-->
+        <screen>
+$ txn-info.sh myrepos
+---[ Transaktion 19 ]-------------------------------------------
+sally
+2001-09-04 11:57:19 -0500 (Tue, 04 Sep 2001)
+0
+---[ Transaktion 3a1 ]-------------------------------------------
+harry
+2001-09-10 16:50:30 -0500 (Mon, 10 Sep 2001)
+39
+Versuch, über eine schlechte Netzverbindung abzuliefern.
+---[ Transaktion a45 ]-------------------------------------------
 sally
 2001-09-12 11:09:28 -0500 (Wed, 12 Sep 2001)
 0
 $
 </screen>
 
+<!--
         <para>A long-abandoned transaction usually represents some
           sort of failed or interrupted commit.  A transaction's
           datestamp can provide interesting information&mdash;for
           example, how likely is it that an operation begun nine
           months ago is still active?</para>
+-->
+        <para>Eine vor langer Zeit aufgegebene Transaktion bedeutet
+          normalerweise eine Art fehlgeschlagenen oder unterbrochenen
+          Übergabeversuch. Der Zeitstempel einer Transaktion kann eine
+          interessante Information sein &ndash; ist es beispielsweise
+          wahrscheinlich, dass eine vor neun Monaten begonnene
+          Operation immer noch aktiv ist?</para>
 
+<!--
         <para>In short, transaction cleanup decisions need not be made
           unwisely.  Various sources of information&mdash;including
           Apache's error and access logs, Subversion's operational
@@ -2607,13 +3182,30 @@ $
           administrator can often simply communicate with a seemingly
           dead transaction's owner (via email, e.g.) to verify
           that the transaction is, in fact, in a zombie state.</para>
+-->
+        <para>Kurz gesagt, Entscheidungen zur Bereinigung von
+          Transaktionen sollten klug getroffen werden. Verschiedene
+          Informationsquellen &ndash; hierzu gehören die Fehler- und
+          Zugriffsprotokolldateien von Apache, die operativen
+          Protokolldateien von Subversion, die Revisions-Historie von
+          Subversion usw. &ndash; können während des
+          Entscheidungsprozesses hinzugezogen werden. Natürlich kann
+          sich ein Administrator auch einfach  mit dem Eigentümer
+          einer anscheinend abgebrochenen Transaktion in Verbindung
+          setzen (z.B. per E-Mail), um sicherzustellen, dass die
+          Transaktion sich tatsächlich in einem Zombiezustand
+          befindet.</para>
 
       </sect3>
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <sect3 id="svn.reposadmin.maint.diskspace.bdblogs">
+<!--
         <title>Purging unused Berkeley DB logfiles</title>
+-->
+        <title>Entfernen unbenutzter Protokolldateien von Berkeley DB</title>
 
+<!--
         <para>Until recently, the largest offender of disk space usage
           with respect to BDB-backed Subversion repositories were the
           logfiles in which Berkeley DB performs its prewrites before
@@ -2624,7 +3216,20 @@ $
           logfiles contain all of the many changes along the way
           <emphasis>between</emphasis> states.  Thus, they can grow
           and accumulate quite rapidly.</para>
+-->
+        <para>Bis vor kurzer Zeit waren die größten
+          Plattenplatzfresser bei BDB-basierten Subversion-Repositorys
+          die Protokolldateien, in die Berkeley DB zunächst alle
+          Schritte hineinschreibt, bevor es die eigentlichen
+          Datenbankdateien verändert. Diese Dateien halten alle
+          Aktionen der Datenbank auf dem Weg von einem Zustand zum
+          nächsten fest &ndash; während die Datenbankdateien zu jeder
+          Zeit einen bestimmten Zustand widerspiegeln, beinhalten die
+          Protokolldateien all die vielen Änderungen auf dem Weg
+          <emphasis>zwischen</emphasis> den Zuständen. Somit können
+          sie sehr schnell wachsen und sich anhäufen.</para>
 
+<!--
         <para>Fortunately, beginning with the 4.2 release of Berkeley
           DB, the database environment has the ability to remove its
           own unused logfiles automatically.  Any
@@ -2632,7 +3237,7 @@ $
           when compiled against Berkeley DB version 4.2 or later
           will be configured for this automatic logfile removal.  If
           you don't want this feature enabled, simply pass the
-          <option>--bdb-log-keep</option> option to the
+          <option>- -bdb-log-keep</option> option to the
           <command>svnadmin create</command> command.  If you forget
           to do this or change your mind at a later time, simply edit
           the <filename>DB_CONFIG</filename> file found in your
@@ -2643,7 +3248,28 @@ $
           force the configuration changes to take effect.  See <xref
           linkend="svn.reposadmin.create.bdb"/> for more information about
           database configuration.</para>
+-->
+        <para>Glücklicherweise hat die Datenbankumgebung beginnend mit
+          der Version 4.2 der Berkeley DB die Fähigkeit, ihre eigenen
+          unbenutzten Protokolldateien automatisch zu entfernen. Alle
+          Repositorys, die mit einem <command>svnadmin</command>
+          angelegt wurden, das mit Berkeley DB Version 4.2 oder später
+          übersetzt wurde, werden mit automatischer
+          Protokolldateientfernung konfiguriert. Wenn Sie diese
+          Funktion nicht möchten, geben Sie dem Befehl
+          <command>svnadmin create</command> einfach die Option
+          <option>--bdb-log-keep</option> mit. Sollten Sie das
+          vergessen oder es sich später anders überlegen, editieren
+          Sie einfach die Datei <filename>DB_CONFIG</filename> im
+          Verzeichnis <filename>db</filename> Ihres Repositorys indem
+          Sie die Zeile mit der Direktive <literal>set_flags
+          DB_LOG_AUTOREMOVE</literal> auskommentieren und starten dann
+          <command>svnadmin recover</command> auf Ihrem Repository, um
+          die Konfigurationsänderung zu aktivieren.  Siehe <xref
+          linkend="svn.reposadmin.create.bdb"/> für weitere
+          Informationen zur Datenbankkonfiguration.</para>
 
+<!--
         <para>Without some sort of automatic logfile removal in
           place, logfiles will accumulate as you use your repository.
           This is actually somewhat of a feature of the database
@@ -2655,7 +3281,22 @@ $
           to conserve space.  Use the <command>svnadmin
           list-unused-dblogs</command> command to list the unused
           logfiles:</para>
+-->
+        <para>Ohne eine Art automatische Protokolldateientfernung
+          aktiviert zu haben, häufen sich die Protokolldateien während
+          der Nutzung des Repositorys an. Es ist eigentlich ein
+          Merkmal des Datenbanksystems &ndash; Sie sollten
+          ausschließlich  mit Hilfe der Protokolldateien in der Lage
+          sein, Ihre gesamte Datenbank zu rekonstruieren, so dass
+          diese Protokolldateien sehr nützlich für eine
+          Wiederherstellung im Katastrophenfall sein können. Jedoch
+          möchten Sie normalerweise die nicht mehr von Berkeley DB
+          verwendeten Protokolldateien archivieren und sie zur
+          Platzersparnis von der Platte entfernen. Verwenden Sie den
+          Befehl <command>svnadmin list-unused-dblogs</command>, um
+          die unbenutzten Protokolldateien anzuzeigen:</para>
 
+<!--
         <screen>
 $ svnadmin list-unused-dblogs /var/svn/repos
 /var/svn/repos/log.0000000031
@@ -2665,8 +3306,19 @@ $ svnadmin list-unused-dblogs /var/svn/repos
 $ rm `svnadmin list-unused-dblogs /var/svn/repos`
 ## disk space reclaimed!
 </screen>
+-->
+        <screen>
+$ svnadmin list-unused-dblogs /var/svn/repos
+/var/svn/repos/log.0000000031
+/var/svn/repos/log.0000000032
+/var/svn/repos/log.0000000033
+&hellip;
+$ rm `svnadmin list-unused-dblogs /var/svn/repos`
+## Pattenplatz zurückgewonnen!
+</screen>
 
         <warning>
+<!--
           <para>BDB-backed repositories whose logfiles are used as
             part of a backup or disaster recovery plan should
             <emphasis>not</emphasis> make use of the logfile
@@ -2677,11 +3329,23 @@ $ rm `svnadmin list-unused-dblogs /var/svn/repos`
             backup system has a chance to copy them elsewhere, the
             incomplete set of backed-up logfiles is essentially
             useless.</para> </warning>
+-->
+          <para>BDB-basierte Repositorys, deren Protokolldateien ein
+            Bestandteil eines Sicherungs- oder Notfallplans sind,
+            sollten <emphasis>nicht</emphasis> die automatische
+            Entfernung verwenden. Die Wiederherstellung der Daten
+            eines Repositorys kann nur gewährleistet werden, wenn
+            <emphasis>alle</emphasis> Protokolldateien verfügbar sind.
+            Falls einige der Protokolldateien von der Platte entfernt
+            werden, bevor das Sicherungssystem die Gelegenheit
+            bekommt, sie woandershin zu kopieren, ist die
+            unvollständige Menge gesicherter Protokolldateien
+            tatsächlich nutzlos.</para> </warning>
 
       </sect3>
 
     </sect2>
-        
+
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.recovery">
       <title>Berkeley DB Recovery</title>
