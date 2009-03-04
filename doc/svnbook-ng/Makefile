@@ -10,6 +10,7 @@ LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
 UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 \
 	   -f docbook -o doctype='docbook' \
+	   -o nodefault='<programlisting> <screen>' \
 	   -o untranslated='<programlisting> <screen>'
 TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 \
 	   -f docbook -o doctype='docbook' \
