@@ -122,7 +122,6 @@
         description="Generate document - html">
     <copy todir="build/zh/svnbook/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making html ..."/>
@@ -168,7 +167,6 @@
 
     <copy todir="build/zh/htmlhelp/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making chm ..."/>
@@ -208,7 +206,6 @@
         description="Generate document - pdf">
     <copy todir="build/zh/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making fo ..."/>
@@ -226,15 +223,10 @@
       <arg value="build/zh/book.xml"/>
       <arg value="stylesheets/zh/fo.xsl"/>
       <arg value="fop1.extensions=1"/>
-      <arg value="title.font.family=${fop.title.font.family}"/>
-      <arg value="body.font.family=${fop.body.font.family}"/>
-      <arg value="sans.font.family=${fop.sans.font.family}"/>
-      <arg value="ingbat.font.family=${fop.ingbat.font.family}"/>
-      <arg value="monospace.font.family=${fop.monospace.font.family}"/>
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="${fop.class}" fork="true" maxmemory="512m"
+    <java classname="org.apache.fop.cli.Main" fork="true" maxmemory="512m"
           failonerror="true" dir="${basedir}/build/zh">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
@@ -248,7 +240,6 @@
         description="Generate document - pdf - xep">
     <copy todir="build/zh/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making fo ..."/>
@@ -291,7 +282,6 @@
         description="Generate document - english(pdf)">
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
     <copy file='source/book.xml' todir="build/en"/>
 
@@ -310,15 +300,10 @@
       <arg value="book.xml"/>
       <arg value="../../stylesheets/fo.xsl"/>
       <arg value="fop1.extensions=1"/>
-      <arg value="title.font.family=${fop.title.font.family}"/>
-      <arg value="body.font.family=${fop.body.font.family}"/>
-      <arg value="sans.font.family=${fop.sans.font.family}"/>
-      <arg value="ingbat.font.family=${fop.ingbat.font.family}"/>
-      <arg value="monospace.font.family=${fop.monospace.font.family}"/>
     </java>
 
     <echo message="Making pdf ..."/>
-    <java classname="${fop.class}" fork="true" maxmemory="512m"
+    <java classname="org.apache.fop.cli.Main" fork="true" maxmemory="512m"
           failonerror="true" dir="${basedir}/build/en">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
@@ -332,7 +317,6 @@
         description="Generate document - english(pdf) - xep">
     <copy todir="build/en/images">
       <fileset dir="source/images" includes="*.png"/>
-      <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
     <copy file='source/book.xml' todir="build/en"/>
 
