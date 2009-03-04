@@ -72,67 +72,67 @@
       <arg value="../source/book.xml"/>
     </exec>
 
-    <echo message="Merging zh_CN.po ..."/>
+    <echo message="Merging zh.po ..."/>
     <exec dir="${basedir}/po" executable="msgmerge">
       <arg value="--sort-by-file"/>
       <arg value="--width=80"/>
       <arg value="-o"/>
-      <arg value="zh_CN-tmp.po"/>
-      <arg value="zh_CN.po"/>
+      <arg value="zh-tmp.po"/>
+      <arg value="zh.po"/>
       <arg value="book.pot"/>
     </exec>
-    <move file="po/zh_CN-tmp.po" tofile="po/zh_CN.po"/>
-    <fixcrlf srcdir="${basedir}" encoding="UTF-8" includes="source/book.xml,po/book.pot,po/zh_CN.po" eol="lf"/>
+    <move file="po/zh-tmp.po" tofile="po/zh.po"/>
+    <fixcrlf srcdir="${basedir}" encoding="UTF-8" includes="source/book.xml,po/book.pot,po/zh.po" eol="lf"/>
   </target>
 
   <target name="translate.init">
-    <uptodate property="translate.isUpToDate" targetfile="build/zh_CN/book.xml">
+    <uptodate property="translate.isUpToDate" targetfile="build/zh/book.xml">
       <srcfiles dir="source" includes="book.xml"/>
-      <srcfiles dir="po" includes="zh_CN.po"/>
+      <srcfiles dir="po" includes="zh.po"/>
     </uptodate>
   </target>
 
   <target name="translate" depends="translate.init" unless="translate.isUpToDate"
         description="Translate document">
-    <mkdir dir="build/zh_CN"/>
-    <echo message="Translating to zh_CN ..."/>
+    <mkdir dir="build/zh"/>
+    <echo message="Translating to zh ..."/>
     <exec dir="${basedir}/xml2po" executable="python" failonerror="true">
       <arg value="xml2po.py"/>
       <arg value="-l"/>
       <arg value="zh-cn"/>
       <arg value="-p"/>
-      <arg value="../po/zh_CN.po"/>
+      <arg value="../po/zh.po"/>
       <arg value="-o"/>
-      <arg value="../build/zh_CN/book.xml"/>
+      <arg value="../build/zh/book.xml"/>
       <arg value="../source/book.xml"/>
     </exec>
     <delete file="xml2po/.xml2po.mo"/>
   </target>
 
   <target name="html.init">
-    <uptodate property="html.isUpToDate" targetfile="build/zh_CN/svnbook/.done">
+    <uptodate property="html.isUpToDate" targetfile="build/zh/svnbook/.done">
       <srcfiles dir="source" includes="book.xml"/>
-      <srcfiles dir="po" includes="zh_CN.po"/>
+      <srcfiles dir="po" includes="zh.po"/>
       <srcfiles dir="stylesheets" includes="html.xsl"/>
-      <srcfiles dir="stylesheets/zh_CN" includes="html.xsl"/>
+      <srcfiles dir="stylesheets/zh" includes="html.xsl"/>
     </uptodate>
   </target>
 
   <target name="html" depends="translate,html.init" unless="html.isUpToDate"
         description="Generate document - html">
-    <copy todir="build/zh_CN/svnbook/images">
+    <copy todir="build/zh/svnbook/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making html ..."/>
-    <!-- exec dir="${basedir}/build/zh_CN/svnbook" executable="xsltproc" failonerror="true">
+    <!-- exec dir="${basedir}/build/zh/svnbook" executable="xsltproc" failonerror="true">
       <arg value="- -nonet"/>
-      <arg value="../../../stylesheets/zh_CN/html.xsl"/>
+      <arg value="../../../stylesheets/zh/html.xsl"/>
       <arg value="../book.xml"/>
     </exec -->
     <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
-          failonerror="true" dir="${basedir}/build/zh_CN/svnbook">
+          failonerror="true" dir="${basedir}/build/zh/svnbook">
       <classpath refid="lib.classpath"/>
       <arg value="-x"/>
       <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
@@ -141,17 +141,17 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="../book.xml"/>
-      <arg value="../../../stylesheets/zh_CN/html.xsl"/>
+      <arg value="../../../stylesheets/zh/html.xsl"/>
     </java>
-    <touch file="build/zh_CN/svnbook/.done"/>
+    <touch file="build/zh/svnbook/.done"/>
   </target>
 
   <target name="chm.init">
-    <uptodate property="chm.isUpToDate" targetfile="build/zh_CN/svnbook-zh_CN.chm">
+    <uptodate property="chm.isUpToDate" targetfile="build/zh/svnbook-zh.chm">
       <srcfiles dir="source" includes="book.xml"/>
-      <srcfiles dir="po" includes="zh_CN.po"/>
+      <srcfiles dir="po" includes="zh.po"/>
       <srcfiles dir="stylesheets" includes="chm.xsl"/>
-      <srcfiles dir="stylesheets/zh_CN" includes="chm.xsl"/>
+      <srcfiles dir="stylesheets/zh" includes="chm.xsl"/>
     </uptodate>
   </target>
 
@@ -166,13 +166,13 @@
       This target only work on windows !
     </fail>
 
-    <copy todir="build/zh_CN/htmlhelp/images">
+    <copy todir="build/zh/htmlhelp/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
 
     <echo message="Making chm ..."/>
-    <exec dir="${basedir}/build/zh_CN" executable="xmllint">
+    <exec dir="${basedir}/build/zh" executable="xmllint">
       <arg value="--encode"/>
       <arg value="GB18030"/>
       <arg value="--output"/>
@@ -180,33 +180,33 @@
       <arg value="book.xml"/>
     </exec>
     <!--Must use GB18030 encoding and xsltproc for chm format !-->
-    <exec dir="${basedir}/build/zh_CN" executable="xsltproc" failonerror="true">
+    <exec dir="${basedir}/build/zh" executable="xsltproc" failonerror="true">
       <arg value="--nonet"/>
       <arg value="--catalogs"/>
-      <arg value="../../stylesheets/zh_CN/chm.xsl"/>
+      <arg value="../../stylesheets/zh/chm.xsl"/>
       <arg value="book-GB18030.xml"/>
     </exec>
 
-    <exec dir="${basedir}/build/zh_CN" executable="hhc" failonerror="false">
+    <exec dir="${basedir}/build/zh" executable="hhc" failonerror="false">
       <arg value="htmlhelp.hhp"/>
     </exec>
-    <delete dir="build/zh_CN/htmlhelp"/>
-    <delete file="build/zh_CN/toc.hhc"/>
-    <delete file="build/zh_CN/index.hhk"/>
-    <delete file="build/zh_CN/htmlhelp.hhp"/>
+    <delete dir="build/zh/htmlhelp"/>
+    <delete file="build/zh/toc.hhc"/>
+    <delete file="build/zh/index.hhk"/>
+    <delete file="build/zh/htmlhelp.hhp"/>
   </target>
 
 
   <target name="pdf.init">
-    <uptodate property="pdf.isUpToDate" targetfile="build/zh_CN/svnbook-zh.pdf">
+    <uptodate property="pdf.isUpToDate" targetfile="build/zh/svnbook-zh.pdf">
       <srcfiles dir="source" includes="book.xml"/>
-      <srcfiles dir="po" includes="zh_CN.po"/>
+      <srcfiles dir="po" includes="zh.po"/>
     </uptodate>
   </target>
 
   <target name="pdf"  depends="translate,pdf.init" unless="pdf.isUpToDate"
         description="Generate document - pdf">
-    <copy todir="build/zh_CN/images">
+    <copy todir="build/zh/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
@@ -222,9 +222,9 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="build/zh_CN/svnbook.fo"/>
-      <arg value="build/zh_CN/book.xml"/>
-      <arg value="stylesheets/zh_CN/fo.xsl"/>
+      <arg value="build/zh/svnbook.fo"/>
+      <arg value="build/zh/book.xml"/>
+      <arg value="stylesheets/zh/fo.xsl"/>
       <arg value="fop1.extensions=1"/>
       <arg value="title.font.family=${fop.title.font.family}"/>
       <arg value="body.font.family=${fop.body.font.family}"/>
@@ -235,7 +235,7 @@
 
     <echo message="Making pdf ..."/>
     <java classname="${fop.class}" fork="true" maxmemory="512m"
-          failonerror="true" dir="${basedir}/build/zh_CN">
+          failonerror="true" dir="${basedir}/build/zh">
       <classpath refid="lib.classpath"/>
       <arg value="-c"/>
       <arg value="${fop.home}/conf/userconfig.xml"/>
@@ -246,7 +246,7 @@
 
   <target name="pdf-xep" depends="translate,pdf.init" unless="pdf.isUpToDate"
         description="Generate document - pdf - xep">
-    <copy todir="build/zh_CN/images">
+    <copy todir="build/zh/images">
       <fileset dir="source/images" includes="*.png"/>
       <fileset dir="${docbook.xsl}/images" includes="**/*.png"/>
     </copy>
@@ -262,15 +262,15 @@
       <arg value="-r"/>
       <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
       <arg value="-o"/>
-      <arg value="build/zh_CN/svnbook.fo"/>
-      <arg value="build/zh_CN/book.xml"/>
-      <arg value="stylesheets/zh_CN/fo.xsl"/>
+      <arg value="build/zh/svnbook.fo"/>
+      <arg value="build/zh/book.xml"/>
+      <arg value="stylesheets/zh/fo.xsl"/>
       <arg value="xep.extensions=1"/>
     </java>
 
     <echo message="Making pdf ..."/>
     <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
-          failonerror="true" dir="${basedir}/build/zh_CN">
+          failonerror="true" dir="${basedir}/build/zh">
       <jvmarg value="-Xss512k"/>
       <classpath refid="xep.classpath"/>
       <arg value="-DCONFIG=${xep.home}/xep.xml"/>
