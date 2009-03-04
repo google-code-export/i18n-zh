@@ -3,7 +3,7 @@
 
   <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/htmlhelp/htmlhelp.xsl"/>
 
-  <xsl:param name="l10n.gentext.language" select="'en'"/>
+  <xsl:param name="l10n.gentext.language" select="en"/>
 
   <xsl:param name="htmlhelp.encoding" select="'UTF-8'"/>
   <xsl:param name="chunker.output.encoding" select="'UTF-8'"/>
