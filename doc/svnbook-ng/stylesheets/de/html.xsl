@@ -3,6 +3,6 @@
 
   <xsl:import href="../html.xsl"/>
 
-  <xsl:param name="l10n.gentext.language" select="de"/>
+  <xsl:param name="l10n.gentext.language" select="'de'"/>
 
 </xsl:stylesheet>

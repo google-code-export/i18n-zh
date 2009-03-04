@@ -5,6 +5,6 @@
 
   <xsl:import href="../fo.xsl"/>
 
-  <xsl:param name="l10n.gentext.language" select="de"/>
+  <xsl:param name="l10n.gentext.language" select="'de'"/>
 
 </xsl:stylesheet>

@@ -3,7 +3,7 @@
 
   <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl"/>
 
-  <xsl:param name="l10n.gentext.language" select="en"/>
+  <xsl:param name="l10n.gentext.language" select="'en'"/>
   <xsl:param name="draft.mode" select="no"/>
 
   <!-- xsltproc can't support these extensions
