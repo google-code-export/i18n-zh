@@ -1686,7 +1686,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{break}->{$2} = $1 || ""
-			unless    $list_nodefault{$tag}
+			unless    $list_nodefault{$2}
 			       or defined $self->{break}->{$2};
 	}
 
@@ -1699,7 +1699,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{translated}->{$2} = $1 || ""
-			unless    $list_nodefault{$tag}
+			unless    $list_nodefault{$2}
 			       or defined $self->{translated}->{$2};
 	}
 
@@ -1712,7 +1712,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{untranslated}->{$2} = $1 || ""
-			unless    $list_nodefault{$tag}
+			unless    $list_nodefault{$2}
 			       or defined $self->{untranslated}->{$2};
 	}
 
@@ -1747,7 +1747,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{inline}->{$2} = $1 || ""
-			unless    $list_nodefault{$tag}
+			unless    $list_nodefault{$2}
 			       or defined $self->{inline}->{$2};
 	}
 
@@ -1760,7 +1760,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{placeholder}->{$2} = $1 || ""
-			unless    $list_nodefault{$tag}
+			unless    $list_nodefault{$2}
 			       or defined $self->{placeholder}->{$2};
 	}
 
@@ -1769,24 +1769,24 @@ sub treat_options {
 		die wrap_mod("po4a::xml",
 		             dgettext("po4a",
 		                      "Tag '%s' both in the %s and %s categories."), $tag, "translated", "untranslated")
-			if $self->{untranslated}->{$tag};
+			if defined $self->{untranslated}->{$tag};
 	}
 	# There should be no inline, break, and placeholder tags
 	foreach my $tag (keys %{$self->{inline}}) {
 		die wrap_mod("po4a::xml",
 		             dgettext("po4a",
 		                      "Tag '%s' both in the %s and %s categories."), $tag, "inline", "break")
-			if $self->{break}->{$tag};
+			if defined $self->{break}->{$tag};
 		die wrap_mod("po4a::xml",
 		             dgettext("po4a",
 		                      "Tag '%s' both in the %s and %s categories."), $tag, "inline", "placeholder")
-			if $self->{placeholder}->{$tag};
+			if defined $self->{placeholder}->{$tag};
 	}
 	foreach my $tag (keys %{$self->{break}}) {
 		die wrap_mod("po4a::xml",
 		             dgettext("po4a",
 		                      "Tag '%s' both in the %s and %s categories."), $tag, "break", "placeholder")
-			if $self->{placeholder}->{$tag};
+			if defined $self->{placeholder}->{$tag};
 	}
 }
 
