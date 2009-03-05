@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-17 21:43+0800\n"
+"POT-Creation-Date: 2009-03-05 12:54+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -148,8 +148,7 @@ msgstr ""
 msgid ""
 "Parse .hg/bookmarks file and return a dictionary\n"
 "\n"
-"    Bookmarks are stored as {HASH}\\s{NAME}\n"
-" (localtags format) values\n"
+"    Bookmarks are stored as {HASH}\\s{NAME}\\n (localtags format) values\n"
 "    in the .hg/bookmarks file. They are read by the parse() method and\n"
 "    returned as a dictionary with name => hash values.\n"
 "\n"
@@ -208,7 +207,7 @@ msgstr ""
 msgid "a bookmark of this name does not exist"
 msgstr ""
 
-#: hgext/bookmarks.py:134 hgext/bookmarks.py:158
+#: hgext/bookmarks.py:134 hgext/bookmarks.py:160
 msgid "a bookmark of the same name already exists"
 msgstr ""
 
@@ -216,36 +215,36 @@ msgstr ""
 msgid "new bookmark name required"
 msgstr ""
 
-#: hgext/bookmarks.py:146 hgext/bookmarks.py:172
+#: hgext/bookmarks.py:146 hgext/bookmarks.py:175
 msgid "bookmark name required"
 msgstr ""
 
-#: hgext/bookmarks.py:155
+#: hgext/bookmarks.py:157
 msgid "bookmark name cannot contain newlines"
 msgstr ""
 
-#: hgext/bookmarks.py:162
+#: hgext/bookmarks.py:164
 msgid "a bookmark cannot have the name of an existing branch"
 msgstr ""
 
-#: hgext/bookmarks.py:201
+#: hgext/bookmarks.py:204
 msgid ""
 "Strip bookmarks if revisions are stripped using\n"
 "    the mercurial.strip method. This usually happens during\n"
 "    qpush and qpop"
 msgstr ""
 
-#: hgext/bookmarks.py:239
+#: hgext/bookmarks.py:242
 msgid ""
 "Add a revision to the repository and\n"
 "            move the bookmark"
 msgstr ""
 
-#: hgext/bookmarks.py:282
+#: hgext/bookmarks.py:285
 msgid "Merge bookmarks with normal tags"
 msgstr ""
 
-#: hgext/bookmarks.py:298
+#: hgext/bookmarks.py:301
 msgid ""
 "Set the current bookmark\n"
 "\n"
@@ -254,25 +253,25 @@ msgid ""
 "    "
 msgstr ""
 
-#: hgext/bookmarks.py:313
+#: hgext/bookmarks.py:316
 msgid "force"
 msgstr ""
 
-#: hgext/bookmarks.py:314 hgext/extdiff.py:219 mercurial/commands.py:3168
+#: hgext/bookmarks.py:317 hgext/extdiff.py:219 mercurial/commands.py:3168
 #: mercurial/commands.py:3408
 msgid "revision"
 msgstr ""
 
-#: hgext/bookmarks.py:315
+#: hgext/bookmarks.py:318
 msgid "delete a given bookmark"
 msgstr ""
 
-#: hgext/bookmarks.py:316
+#: hgext/bookmarks.py:319
 msgid "rename a given bookmark"
 msgstr ""
 
-#: hgext/bookmarks.py:317
-msgid "hg bookmarks [-d] [-m NAME] [-r NAME] [NAME]"
+#: hgext/bookmarks.py:320
+msgid "hg bookmarks [-f] [-d] [-m NAME] [-r REV] [NAME]"
 msgstr ""
 
 #: hgext/bugzilla.py:8
@@ -784,6 +783,7 @@ msgid ""
 "    - Monotone [mtn]\n"
 "    - GNU Arch [gnuarch]\n"
 "    - Bazaar [bzr]\n"
+"    - Perforce [p4]\n"
 "\n"
 "    Accepted destination formats [identifiers]:\n"
 "    - Mercurial [hg]\n"
@@ -850,8 +850,9 @@ msgid ""
 "        ignore integrity errors when reading. Use it to fix Mercurial\n"
 "        repositories with missing revlogs, by converting from and to\n"
 "        Mercurial.\n"
-"    --config convert.hg.saverev=True          (boolean)\n"
-"        allow target to preserve source revision ID\n"
+"    --config convert.hg.saverev=False          (boolean)\n"
+"        store original revision ID in changeset (forces target IDs to "
+"change)\n"
 "    --config convert.hg.startrev=0            (hg revision identifier)\n"
 "        convert start revision and its descendants\n"
 "\n"
@@ -928,6 +929,23 @@ msgid ""
 "    --config convert.svn.startrev=0           (svn revision number)\n"
 "        specify start Subversion revision.\n"
 "\n"
+"    Perforce Source\n"
+"    ---------------\n"
+"\n"
+"    The Perforce (P4) importer can be given a p4 depot path or a client\n"
+"    specification as source. It will convert all files in the source to\n"
+"    a flat Mercurial repository, ignoring labels, branches and "
+"integrations.\n"
+"    Note that when a depot path is given you then usually should specify a\n"
+"    target directory, because otherwise the target may be named ...-hg.\n"
+"\n"
+"    It is possible to limit the amount of source history to be converted\n"
+"    by specifying an initial Perforce revision.\n"
+"\n"
+"    --config convert.p4.startrev=0           (perforce changelist number)\n"
+"        specify initial Perforce revision.\n"
+"\n"
+"\n"
 "    Mercurial Destination\n"
 "    ---------------------\n"
 "\n"
@@ -941,7 +959,7 @@ msgid ""
 "    "
 msgstr ""
 
-#: hgext/convert/__init__.py:188
+#: hgext/convert/__init__.py:205
 msgid ""
 "create changeset information from CVS\n"
 "\n"
@@ -953,79 +971,79 @@ msgid ""
 "    changesets based on matching commit log entries and dates."
 msgstr ""
 
-#: hgext/convert/__init__.py:203
+#: hgext/convert/__init__.py:220
 msgid "username mapping filename"
 msgstr ""
 
-#: hgext/convert/__init__.py:204
+#: hgext/convert/__init__.py:221
 msgid "destination repository type"
 msgstr ""
 
-#: hgext/convert/__init__.py:205
+#: hgext/convert/__init__.py:222
 msgid "remap file names using contents of file"
 msgstr ""
 
-#: hgext/convert/__init__.py:206
+#: hgext/convert/__init__.py:223
 msgid "import up to target revision REV"
 msgstr ""
 
-#: hgext/convert/__init__.py:207
+#: hgext/convert/__init__.py:224
 msgid "source repository type"
 msgstr ""
 
-#: hgext/convert/__init__.py:208
+#: hgext/convert/__init__.py:225
 msgid "splice synthesized history into place"
 msgstr ""
 
-#: hgext/convert/__init__.py:209
+#: hgext/convert/__init__.py:226
 msgid "try to sort changesets by date"
 msgstr ""
 
-#: hgext/convert/__init__.py:210
+#: hgext/convert/__init__.py:227
 msgid "hg convert [OPTION]... SOURCE [DEST [REVMAP]]"
 msgstr ""
 
-#: hgext/convert/__init__.py:219
+#: hgext/convert/__init__.py:236
 msgid "only return changes on specified branches"
 msgstr ""
 
-#: hgext/convert/__init__.py:220
+#: hgext/convert/__init__.py:237
 msgid "prefix to remove from file names"
 msgstr ""
 
-#: hgext/convert/__init__.py:221
+#: hgext/convert/__init__.py:238
 msgid "only return changes after or between specified tags"
 msgstr ""
 
-#: hgext/convert/__init__.py:222
+#: hgext/convert/__init__.py:239
 msgid "update cvs log cache"
 msgstr ""
 
-#: hgext/convert/__init__.py:223
+#: hgext/convert/__init__.py:240
 msgid "create new cvs log cache"
 msgstr ""
 
-#: hgext/convert/__init__.py:224
+#: hgext/convert/__init__.py:241
 msgid "set commit time fuzz in seconds"
 msgstr ""
 
-#: hgext/convert/__init__.py:225
+#: hgext/convert/__init__.py:242
 msgid "specify cvsroot"
 msgstr ""
 
-#: hgext/convert/__init__.py:227
+#: hgext/convert/__init__.py:244
 msgid "show parent changesets"
 msgstr ""
 
-#: hgext/convert/__init__.py:228
+#: hgext/convert/__init__.py:245
 msgid "show current changeset in ancestor branches"
 msgstr ""
 
-#: hgext/convert/__init__.py:230
+#: hgext/convert/__init__.py:247
 msgid "ignored for compatibility"
 msgstr ""
 
-#: hgext/convert/__init__.py:232
+#: hgext/convert/__init__.py:249
 msgid "hg debugcvsps [OPTION]... [PATH]..."
 msgstr ""
 
@@ -1064,73 +1082,73 @@ msgstr ""
 msgid "could not open map file %r: %s"
 msgstr ""
 
-#: hgext/convert/convcmd.py:58
+#: hgext/convert/convcmd.py:60
 #, python-format
 msgid "%s: missing or unsupported repository"
 msgstr ""
 
-#: hgext/convert/convcmd.py:66
+#: hgext/convert/convcmd.py:68
 #, python-format
 msgid "convert: %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:67
+#: hgext/convert/convcmd.py:69
 #, python-format
 msgid "%s: unknown repository type"
 msgstr ""
 
-#: hgext/convert/convcmd.py:174
+#: hgext/convert/convcmd.py:176
 #, python-format
 msgid "cycle detected between %s and %s"
 msgstr ""
 
-#: hgext/convert/convcmd.py:182
+#: hgext/convert/convcmd.py:184
 msgid "not all revisions were sorted"
 msgstr ""
 
-#: hgext/convert/convcmd.py:189
+#: hgext/convert/convcmd.py:191
 #, python-format
 msgid "Writing author map file %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:206
+#: hgext/convert/convcmd.py:208
 #, python-format
 msgid "Overriding mapping for author %s, was %s, will be %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:209
+#: hgext/convert/convcmd.py:211
 #, python-format
 msgid "mapping author %s to %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:214
+#: hgext/convert/convcmd.py:216
 #, python-format
 msgid "Ignoring bad line in author map file %s: %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:246
+#: hgext/convert/convcmd.py:248
 #, python-format
 msgid "spliced in %s as parents of %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:261
+#: hgext/convert/convcmd.py:263
 msgid "scanning source...\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:264
+#: hgext/convert/convcmd.py:266
 msgid "sorting...\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:269
+#: hgext/convert/convcmd.py:271
 msgid "converting...\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:279
+#: hgext/convert/convcmd.py:281
 #, python-format
 msgid "source: %s\n"
 msgstr ""
 
-#: hgext/convert/convcmd.py:314
+#: hgext/convert/convcmd.py:316
 #, python-format
 msgid "assuming destination %s\n"
 msgstr ""
@@ -1366,6 +1384,14 @@ msgstr ""
 #: hgext/convert/monotone.py:158
 #, python-format
 msgid "copying file in renamed dir from '%s' to '%s'"
+msgstr ""
+
+#: hgext/convert/p4.py:57
+msgid "reading p4 views\n"
+msgstr ""
+
+#: hgext/convert/p4.py:97
+msgid "collecting p4 changelists\n"
 msgstr ""
 
 #: hgext/convert/subversion.py:158
@@ -2019,7 +2045,7 @@ msgstr ""
 
 #: hgext/graphlog.py:332 hgext/graphlog.py:364 hgext/patchbomb.py:225
 #: mercurial/commands.py:1743 mercurial/commands.py:2061
-#: mercurial/localrepo.py:1479 mercurial/localrepo.py:1520
+#: mercurial/localrepo.py:1480 mercurial/localrepo.py:1521
 msgid "no changes found\n"
 msgstr ""
 
@@ -4317,7 +4343,7 @@ msgid ""
 "each patchbomb message in a pager or sending the messages directly,\n"
 "it will create a UNIX mailbox file with the patch emails.  This\n"
 "mailbox file can be previewed with any mail user agent which supports\n"
-"UNIX mbox files, i.e. with mutt:\n"
+"UNIX mbox files, e.g. with mutt:\n"
 "\n"
 "  % mutt -R -f mbox\n"
 "\n"
@@ -4453,7 +4479,7 @@ msgid "send patches as inline attachments"
 msgstr ""
 
 #: hgext/patchbomb.py:447
-msgid "email addresses of blind copy recipients"
+msgid "email addresses of blind carbon copy recipients"
 msgstr ""
 
 #: hgext/patchbomb.py:448
@@ -5722,7 +5748,7 @@ msgid ""
 "    The files will be added to the repository at the next commit. To\n"
 "    undo an add before that, see hg revert.\n"
 "\n"
-"    If no names are given, add all files in the repository.\n"
+"    If no names are given, add all files to the repository.\n"
 "    "
 msgstr ""
 
@@ -5834,7 +5860,7 @@ msgid ""
 "    The --merge option remembers the parent of the working directory\n"
 "    before starting the backout, then merges the new head with that\n"
 "    changeset afterwards. This saves you from doing the merge by\n"
-"    hand. The result of this merge is not committed, as for a normal\n"
+"    hand. The result of this merge is not committed, as with a normal\n"
 "    merge.\n"
 "\n"
 "    See 'hg help dates' for a list of formats valid for -d/--date.\n"
@@ -5916,8 +5942,7 @@ msgid ""
 "exit\n"
 "    status is 0 the revision is marked as good, 125 - skipped, 127 (command "
 "not\n"
-"    found) - bisection will be aborted and any other status bigger than 0 "
-"will\n"
+"    found) - bisection will be aborted; any other status bigger than 0 will\n"
 "    mark revision as bad.\n"
 "    "
 msgstr ""
@@ -6018,7 +6043,7 @@ msgid ""
 "create a changegroup file\n"
 "\n"
 "    Generate a compressed changegroup file collecting changesets not\n"
-"    found in the other repository.\n"
+"    known to be in another repository.\n"
 "\n"
 "    If no destination repository is specified the destination is\n"
 "    assumed to have all the nodes specified by one or more --base\n"
@@ -6122,7 +6147,7 @@ msgid ""
 "    file names or -I/-X filters.\n"
 "\n"
 "    If no commit message is specified, the configured editor is started to\n"
-"    enter a message.\n"
+"    prompt you for a message.\n"
 "\n"
 "    See 'hg help dates' for a list of formats valid for -d/--date.\n"
 "    "
@@ -6143,13 +6168,13 @@ msgid ""
 "\n"
 "    Mark dest as having copies of source files. If dest is a\n"
 "    directory, copies are put in that directory. If dest is a file,\n"
-"    there can only be one source.\n"
+"    the source must be a single file.\n"
 "\n"
 "    By default, this command copies the contents of files as they\n"
 "    stand in the working directory. If invoked with --after, the\n"
 "    operation is recorded, but no copying is performed.\n"
 "\n"
-"    This command takes effect in the next commit. To undo a copy\n"
+"    This command takes effect with the next commit. To undo a copy\n"
 "    before that, see hg revert.\n"
 "    "
 msgstr ""
@@ -6160,7 +6185,7 @@ msgstr ""
 
 #: mercurial/commands.py:679 mercurial/commands.py:1534
 #: mercurial/commands.py:2632 mercurial/commands.py:2647
-#: mercurial/dispatch.py:353 mercurial/hgweb/server.py:251
+#: mercurial/dispatch.py:364 mercurial/hgweb/server.py:251
 msgid "There is no Mercurial repository here (.hg not found)"
 msgstr ""
 
@@ -6396,7 +6421,7 @@ msgid ""
 "    probably with undesirable results.\n"
 "\n"
 "    Use the --git option to generate diffs in the git extended diff\n"
-"    format. Read the diffs help topic for more information.\n"
+"    format. For more information, read hg help diffs.\n"
 "    "
 msgstr ""
 
@@ -6745,8 +6770,8 @@ msgid ""
 "    files and full commit message is shown.\n"
 "\n"
 "    NOTE: log -p may generate unexpected diff output for merge\n"
-"    changesets, as it will compare the merge changeset against its\n"
-"    first parent only. Also, the files: list will only reflect files\n"
+"    changesets, as it will only compare the merge changeset against\n"
+"    its first parent. Also, the files: list will only reflect files\n"
 "    that are different from BOTH parents.\n"
 "\n"
 "    "
@@ -7019,10 +7044,10 @@ msgid ""
 "    a file, there can only be one source.\n"
 "\n"
 "    By default, this command copies the contents of files as they\n"
-"    stand in the working directory. If invoked with --after, the\n"
+"    exist in the working directory. If invoked with --after, the\n"
 "    operation is recorded, but no copying is performed.\n"
 "\n"
-"    This command takes effect in the next commit. To undo a rename\n"
+"    This command takes effect at the next commit. To undo a rename\n"
 "    before that, see hg revert.\n"
 "    "
 msgstr ""
@@ -8442,44 +8467,44 @@ msgstr ""
 msgid "malformed --config option: %s"
 msgstr ""
 
-#: mercurial/dispatch.py:289
+#: mercurial/dispatch.py:300
 #, python-format
 msgid "extension '%s' overrides commands: %s\n"
 msgstr ""
 
-#: mercurial/dispatch.py:302
+#: mercurial/dispatch.py:313
 msgid "Option --config may not be abbreviated!"
 msgstr ""
 
-#: mercurial/dispatch.py:304
+#: mercurial/dispatch.py:315
 msgid "Option --cwd may not be abbreviated!"
 msgstr ""
 
-#: mercurial/dispatch.py:307
+#: mercurial/dispatch.py:318
 msgid ""
 "Option -R has to be separated from other options (i.e. not -qR) and --"
 "repository may only be abbreviated as --repo!"
 msgstr ""
 
-#: mercurial/dispatch.py:323
+#: mercurial/dispatch.py:334
 #, python-format
 msgid "Time: real %.3f secs (user %.3f+%.3f sys %.3f+%.3f)\n"
 msgstr ""
 
-#: mercurial/dispatch.py:343
+#: mercurial/dispatch.py:354
 #, python-format
 msgid "repository '%s' is not local"
 msgstr ""
 
-#: mercurial/dispatch.py:377
+#: mercurial/dispatch.py:379
 msgid "invalid arguments"
 msgstr ""
 
-#: mercurial/dispatch.py:387
+#: mercurial/dispatch.py:389
 msgid "exception raised - generating profile anyway\n"
 msgstr ""
 
-#: mercurial/dispatch.py:403
+#: mercurial/dispatch.py:405
 msgid ""
 "lsprof not available - install from http://codespeak.net/svn/user/arigo/hack/"
 "misc/lsprof/"
@@ -8622,9 +8647,9 @@ msgid ""
 "\n"
 "    The log command also accepts date ranges:\n"
 "\n"
-"    \"<{date}\" - on or before a given date\n"
-"    \">{date}\" - on or after a given date\n"
-"    \"{date} to {date}\" - a date range, inclusive\n"
+"    \"<{datetime}\" - at or before a given date/time\n"
+"    \">{datetime}\" - on or after a given date/time\n"
+"    \"{datetime} to {datetime}\" - a date range, inclusive\n"
 "    \"-{days}\" - within a given number of days of today\n"
 "    "
 msgstr ""
@@ -8644,16 +8669,16 @@ msgid ""
 "\n"
 "    Alternate pattern notations must be specified explicitly.\n"
 "\n"
-"    To use a plain path name without any pattern matching, start a\n"
-"    name with \"path:\".  These path names must match completely, from\n"
-"    the root of the current repository.\n"
+"    To use a plain path name without any pattern matching, start it\n"
+"    with \"path:\". These path names must completely match starting at\n"
+"    the current repository root.\n"
 "\n"
-"    To use an extended glob, start a name with \"glob:\".  Globs are\n"
-"    rooted at the current directory; a glob such as \"*.c\" will match\n"
-"    files ending in \".c\" in the current directory only.\n"
+"    To use an extended glob, start a name with \"glob:\". Globs are\n"
+"    rooted at the current directory; a glob such as \"*.c\" will only\n"
+"    match files in the current directory ending with \".c\".\n"
 "\n"
 "    The supported glob syntax extensions are \"**\" to match any string\n"
-"    across path separators, and \"{a,b}\" to mean \"a or b\".\n"
+"    across path separators and \"{a,b}\" to mean \"a or b\".\n"
 "\n"
 "    To use a Perl/Python regular expression, start a name with \"re:\".\n"
 "    Regexp pattern matching is anchored at the root of the repository.\n"
@@ -8668,11 +8693,11 @@ msgid ""
 "\n"
 "    glob:*.c       any name ending in \".c\" in the current directory\n"
 "    *.c            any name ending in \".c\" in the current directory\n"
-"    **.c           any name ending in \".c\" in the current directory, or\n"
-"                   any subdirectory\n"
+"    **.c           any name ending in \".c\" in any subdirectory of the\n"
+"                   current directory including itself.\n"
 "    foo/*.c        any name ending in \".c\" in the directory foo\n"
-"    foo/**.c       any name ending in \".c\" in the directory foo, or any\n"
-"                   subdirectory\n"
+"    foo/**.c       any name ending in \".c\" in any subdirectory of foo\n"
+"                   including itself.\n"
 "\n"
 "    Regexp examples:\n"
 "\n"
@@ -8690,11 +8715,13 @@ msgid ""
 "\n"
 "HG::\n"
 "    Path to the 'hg' executable, automatically passed when running hooks,\n"
-"    extensions or external tools. If unset or empty, an executable named\n"
-"    'hg' (with com/exe/bat/cmd extension on Windows) is searched.\n"
+"    extensions or external tools. If unset or empty, this is the hg\n"
+"    exutable's name if it's frozen, or an executable named 'hg'\n"
+"    (with %PATHEXT% [defaulting to COM/EXE/BAT/CMD] extensions on\n"
+"    Windows) is searched.\n"
 "\n"
 "HGEDITOR::\n"
-"    This is the name of the editor to use when committing. See EDITOR.\n"
+"    This is the name of the editor to run when committing. See EDITOR.\n"
 "\n"
 "    (deprecated, use .hgrc)\n"
 "\n"
@@ -8706,8 +8733,8 @@ msgid ""
 "\n"
 "HGENCODINGMODE::\n"
 "    This sets Mercurial's behavior for handling unknown characters\n"
-"    while transcoding user inputs. The default is \"strict\", which\n"
-"    causes Mercurial to abort if it can't translate a character. Other\n"
+"    while transcoding user input. The default is \"strict\", which\n"
+"    causes Mercurial to abort if it can't map a character. Other\n"
 "    settings include \"replace\", which replaces unknown characters, and\n"
 "    \"ignore\", which drops them. This setting can be overridden with\n"
 "    the --encodingmode command-line option.\n"
@@ -8720,26 +8747,32 @@ msgid ""
 "    (deprecated, use .hgrc)\n"
 "\n"
 "HGRCPATH::\n"
-"    A list of files or directories to search for hgrc files.  Item\n"
-"    separator is \":\" on Unix, \";\" on Windows.  If HGRCPATH is not set,\n"
-"    platform default search path is used.  If empty, only .hg/hgrc of\n"
-"    current repository is read.\n"
+"    A list of files or directories to search for hgrc files. Item\n"
+"    separator is \":\" on Unix, \";\" on Windows. If HGRCPATH is not set,\n"
+"    platform default search path is used. If empty, only the .hg/hgrc\n"
+"    from the current repository is read.\n"
 "\n"
-"    For each element in path, if a directory, all entries in directory\n"
-"    ending with \".rc\" are added to path.  Else, element itself is\n"
-"    added to path.\n"
+"    For each element in HGRCPATH:\n"
+"    * if it's a directory, all directories ending with .rc are added\n"
+"    * otherwise, the directory itself will be added\n"
 "\n"
 "HGUSER::\n"
-"    This is the string used for the author of a commit.\n"
+"    This is the string used as the author of a commit. If not set,\n"
+"    available values will be considered in this order:\n"
+"\n"
+"    * HGUSER (deprecated)\n"
+"    * hgrc files from the HGRCPATH\n"
+"    * EMAIL\n"
+"    * interactive prompt\n"
+"    * LOGNAME (with '@hostname' appended)\n"
 "\n"
 "    (deprecated, use .hgrc)\n"
 "\n"
 "EMAIL::\n"
-"    If HGUSER is not set, this will be used as the author for a commit.\n"
+"    May be used as the author of a commit; see HGUSER.\n"
 "\n"
 "LOGNAME::\n"
-"    If neither HGUSER nor EMAIL is set, LOGNAME will be used (with\n"
-"    '@hostname' appended) as the author value for a commit.\n"
+"    May be used as the author of a commit; see HGUSER.\n"
 "\n"
 "VISUAL::\n"
 "    This is the name of the editor to use when committing. See EDITOR.\n"
@@ -8754,23 +8787,25 @@ msgid ""
 "\n"
 "PYTHONPATH::\n"
 "    This is used by Python to find imported modules and may need to be set\n"
-"    appropriately if Mercurial is not installed system-wide.\n"
+"    appropriately if this Mercurial is not installed system-wide.\n"
 "    "
 msgstr ""
 
-#: mercurial/help.py:167
+#: mercurial/help.py:175
 msgid "Specifying Single Revisions"
 msgstr ""
 
-#: mercurial/help.py:168
+#: mercurial/help.py:176
 msgid ""
 "\n"
-"    Mercurial accepts several notations for identifying individual\n"
+"    Mercurial supports several ways to specify individual\n"
 "    revisions.\n"
 "\n"
 "    A plain integer is treated as a revision number. Negative\n"
-"    integers are treated as offsets from the tip, with -1 denoting the\n"
-"    tip.\n"
+"    integers are treated as toplogical offsets from the tip, with\n"
+"    -1 denoting the tip. As such, negative numbers are only useful\n"
+"    if you've memorized your local tree numbers and want to save\n"
+"    typing a single digit. This editor suggests copy and paste.\n"
 "\n"
 "    A 40-digit hexadecimal string is treated as a unique revision\n"
 "    identifier.\n"
@@ -8778,7 +8813,7 @@ msgid ""
 "    A hexadecimal string less than 40 characters long is treated as a\n"
 "    unique revision identifier, and referred to as a short-form\n"
 "    identifier. A short-form identifier is only valid if it is the\n"
-"    prefix of one full-length identifier.\n"
+"    prefix of exactly one full-length identifier.\n"
 "\n"
 "    Any other string is treated as a tag name, which is a symbolic\n"
 "    name associated with a revision identifier. Tag names may not\n"
@@ -8797,16 +8832,16 @@ msgid ""
 "    "
 msgstr ""
 
-#: mercurial/help.py:200
+#: mercurial/help.py:210
 msgid "Specifying Multiple Revisions"
 msgstr ""
 
-#: mercurial/help.py:201
+#: mercurial/help.py:211
 msgid ""
 "\n"
 "    When Mercurial accepts more than one revision, they may be\n"
-"    specified individually, or provided as a continuous range,\n"
-"    separated by the \":\" character.\n"
+"    specified individually, or provided as a topologically continuous\n"
+"    range, separated by the \":\" character.\n"
 "\n"
 "    The syntax of range notation is [BEGIN]:[END], where BEGIN and END\n"
 "    are revision identifiers. Both BEGIN and END are optional. If\n"
@@ -8818,15 +8853,15 @@ msgid ""
 "    order.\n"
 "\n"
 "    A range acts as a closed interval. This means that a range of 3:5\n"
-"    gives 3, 4 and 5. Similarly, a range of 4:2 gives 4, 3, and 2.\n"
+"    gives 3, 4 and 5. Similarly, a range of 9:6 gives 9, 8, 7, and 6.\n"
 "    "
 msgstr ""
 
-#: mercurial/help.py:219
+#: mercurial/help.py:229
 msgid "Diff Formats"
 msgstr ""
 
-#: mercurial/help.py:220
+#: mercurial/help.py:230
 msgid ""
 "\n"
 "    Mercurial's default format for showing changes between two versions\n"
@@ -8836,14 +8871,14 @@ msgid ""
 "    While this standard format is often enough, it does not encode the\n"
 "    following information:\n"
 "\n"
-"     - executable status\n"
+"     - executable status and other permission bits\n"
 "     - copy or rename information\n"
 "     - changes in binary files\n"
 "     - creation or deletion of empty files\n"
 "\n"
 "    Mercurial also supports the extended diff format from the git VCS\n"
 "    which addresses these limitations. The git diff format is not\n"
-"    produced by default because there are very few tools which\n"
+"    produced by default because a few widespread tools still do not\n"
 "    understand this format.\n"
 "\n"
 "    This means that when generating diffs from a Mercurial repository\n"
@@ -8861,11 +8896,11 @@ msgid ""
 "    "
 msgstr ""
 
-#: mercurial/help.py:251
+#: mercurial/help.py:261
 msgid "Template Usage"
 msgstr ""
 
-#: mercurial/help.py:252
+#: mercurial/help.py:262
 msgid ""
 "\n"
 "    Mercurial allows you to customize output of commands through\n"
@@ -8874,7 +8909,7 @@ msgid ""
 "style).\n"
 "\n"
 "    You can customize output for any \"log-like\" command: log, outgoing,\n"
-"    incoming, tip, parents, heads and glog are all template-enabled.\n"
+"    incoming, tip, parents, heads and glog.\n"
 "\n"
 "    Three styles are packaged with Mercurial: default (the style used\n"
 "    when no explicit preference is passed), compact and changelog. Usage:\n"
@@ -8911,7 +8946,7 @@ msgid ""
 "    want to use a date in your output, you can use a filter to process it.\n"
 "    Filters are functions which return a string based on the input "
 "variable.\n"
-"    You can also use a chain of filters to get the wanted output:\n"
+"    You can also use a chain of filters to get the desired output:\n"
 "\n"
 "       $ hg tip --template \"{date|isodate}\\n\"\n"
 "       2008-08-21 18:22 +0000\n"
@@ -8920,15 +8955,21 @@ msgid ""
 "\n"
 "    - addbreaks: Any text. Add an XHTML \"<br />\" tag before the end of\n"
 "          every line except the last.\n"
-"    - age: Date. Returns a human-readable age for the given date.\n"
+"    - age: Date. Returns a human-readable date/time difference between\n"
+"          the given date/time and the current date/time.\n"
 "    - basename: Any text. Treats the text as a path, and returns the\n"
-"          basename. For example, \"foo/bar/baz\" becomes \"baz\".\n"
-"    - date: Date. Returns a date in a Unix date command format, including\n"
+"          last component of the path after splitting by the path\n"
+"          separator (ignoring trailing seprators). For example,\n"
+"          \"foo/bar/baz\" becomes \"baz\" and \"foo/bar//\" becomes \"bar"
+"\".\n"
+"    - date: Date. Returns a date in a Unix date format, including\n"
 "          the timezone: \"Mon Sep 04 15:13:13 2006 0700\".\n"
 "    - domain: Any text. Finds the first string that looks like an email\n"
 "          address, and extracts just the domain component.\n"
+"          Example: 'User <user@example.com>' becomes 'example.com'.\n"
 "    - email: Any text. Extracts the first string that looks like an email\n"
-"          address.\n"
+"          address. Example: 'User <user@example.com>' becomes\n"
+"          'user@example.com'.\n"
 "    - escape: Any text. Replaces the special XML/XHTML characters \"&\",\n"
 "          \"<\" and \">\" with XML entities.\n"
 "    - fill68: Any text. Wraps the text to fit in 68 columns.\n"
@@ -8944,7 +8985,7 @@ msgid ""
 "          in email headers.\n"
 "    - short: Changeset hash. Returns the short form of a changeset hash,\n"
 "          i.e. a 12-byte hexadecimal string.\n"
-"    - shortdate: Date. Returns a date like \"2006-09-04\".\n"
+"    - shortdate: Date. Returns a date like \"2006-09-18\".\n"
 "    - strip: Any text. Strips all leading and trailing whitespace.\n"
 "    - tabindent: Any text. Returns the text, with every line except the\n"
 "          first starting with a tab character.\n"
@@ -8954,11 +8995,11 @@ msgid ""
 "    "
 msgstr ""
 
-#: mercurial/help.py:335
+#: mercurial/help.py:350
 msgid "Url Paths"
 msgstr ""
 
-#: mercurial/help.py:336
+#: mercurial/help.py:351
 msgid ""
 "\n"
 "    Valid URLs are of the form:\n"
@@ -8973,7 +9014,7 @@ msgid ""
 "    'hg incoming --bundle').\n"
 "\n"
 "    An optional identifier after # indicates a particular branch, tag,\n"
-"    or changeset to deal with in the remote repository.\n"
+"    or changeset to use from the remote repository.\n"
 "\n"
 "    Some features, such as pushing to http:// and https:// URLs are\n"
 "    only possible if the feature is explicitly enabled on the\n"
@@ -9005,13 +9046,14 @@ msgid ""
 "    You can then use the alias for any command that uses a url (for example\n"
 "    'hg pull alias1' would pull from the 'alias1' path).\n"
 "\n"
-"    Two path aliases are more important because they are used as defaults\n"
+"    Two path aliases are special because they are used as defaults\n"
 "    when you do not provide the url to a command:\n"
 "\n"
 "    default:\n"
 "      When you create a repository with hg clone, the clone command saves\n"
-"      the location of the source repository as the 'default' path. This is\n"
-"      then used when you omit a path from the push and pull commands.\n"
+"      the location of the source repository as the new repository's\n"
+"      'default' path. This is then used when you omit path from push-\n"
+"      and pull-like commands (including in and out).\n"
 "\n"
 "    default-push:\n"
 "      The push command will look for a path named 'default-push', and\n"
@@ -9064,11 +9106,17 @@ msgstr ""
 msgid "%d files %s"
 msgstr ""
 
-#: mercurial/hg.py:260 mercurial/hg.py:277
+#: mercurial/hg.py:260
 msgid "use 'hg resolve' to retry unresolved file merges\n"
 msgstr ""
 
-#: mercurial/hg.py:279
+#: mercurial/hg.py:277
+msgid ""
+"use 'hg resolve' to retry unresolved file merges or 'hg up --clean' to "
+"abandon\n"
+msgstr ""
+
+#: mercurial/hg.py:280
 msgid "(branch merge, don't forget to commit)\n"
 msgstr ""
 
@@ -9287,342 +9335,342 @@ msgstr ""
 msgid "working copy of .hgtags is changed (please commit .hgtags manually)"
 msgstr ""
 
-#: mercurial/localrepo.py:245
+#: mercurial/localrepo.py:246
 #, python-format
 msgid "%s, line %s: %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:253
+#: mercurial/localrepo.py:254
 msgid "cannot parse entry"
 msgstr ""
 
-#: mercurial/localrepo.py:260
+#: mercurial/localrepo.py:261
 #, python-format
 msgid "node '%s' is not well formed"
 msgstr ""
 
-#: mercurial/localrepo.py:263
+#: mercurial/localrepo.py:264
 #, python-format
 msgid "tag '%s' refers to unknown node"
 msgstr ""
 
-#: mercurial/localrepo.py:494
+#: mercurial/localrepo.py:495
 #, python-format
 msgid "unknown revision '%s'"
 msgstr ""
 
-#: mercurial/localrepo.py:562
+#: mercurial/localrepo.py:563
 #, python-format
 msgid "filtering %s through %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:600
+#: mercurial/localrepo.py:601
 msgid "journal already exists - run hg recover"
 msgstr ""
 
-#: mercurial/localrepo.py:624
+#: mercurial/localrepo.py:625
 msgid "rolling back interrupted transaction\n"
 msgstr ""
 
-#: mercurial/localrepo.py:629
+#: mercurial/localrepo.py:630
 msgid "no interrupted transaction available\n"
 msgstr ""
 
-#: mercurial/localrepo.py:640
+#: mercurial/localrepo.py:641
 msgid "rolling back last transaction\n"
 msgstr ""
 
-#: mercurial/localrepo.py:647
+#: mercurial/localrepo.py:648
 #, python-format
 msgid "Named branch could not be reset, current branch still is: %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:653
+#: mercurial/localrepo.py:654
 msgid "no rollback information available\n"
 msgstr ""
 
-#: mercurial/localrepo.py:674
+#: mercurial/localrepo.py:675
 #, python-format
 msgid "waiting for lock on %s held by %r\n"
 msgstr ""
 
-#: mercurial/localrepo.py:688
+#: mercurial/localrepo.py:689
 #, python-format
 msgid "repository %s"
 msgstr ""
 
-#: mercurial/localrepo.py:697
+#: mercurial/localrepo.py:698
 #, python-format
 msgid "working directory of %s"
 msgstr ""
 
-#: mercurial/localrepo.py:747
+#: mercurial/localrepo.py:748
 #, python-format
 msgid " %s: searching for copy revision for %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:754
+#: mercurial/localrepo.py:755
 #, python-format
 msgid " %s: copy %s:%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:798
+#: mercurial/localrepo.py:799
 msgid "cannot partially commit a merge (do not specify files or patterns)"
 msgstr ""
 
-#: mercurial/localrepo.py:810 mercurial/localrepo.py:1161
+#: mercurial/localrepo.py:811 mercurial/localrepo.py:1162
 #, python-format
 msgid "%s not tracked!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:822
+#: mercurial/localrepo.py:823
 msgid "unresolved merge conflicts (see hg resolve)"
 msgstr ""
 
-#: mercurial/localrepo.py:869
+#: mercurial/localrepo.py:870
 msgid "nothing changed\n"
 msgstr ""
 
-#: mercurial/localrepo.py:904
+#: mercurial/localrepo.py:905
 #, python-format
 msgid "trouble committing %s!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:935
+#: mercurial/localrepo.py:936
 msgid "HG: Enter commit message.  Lines beginning with 'HG:' are removed."
 msgstr ""
 
-#: mercurial/localrepo.py:959
+#: mercurial/localrepo.py:960
 msgid "empty commit message"
 msgstr ""
 
-#: mercurial/localrepo.py:1111 mercurial/localrepo.py:1189
+#: mercurial/localrepo.py:1112 mercurial/localrepo.py:1190
 #, python-format
 msgid "%s does not exist!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1115
+#: mercurial/localrepo.py:1116
 #, python-format
 msgid ""
 "%s: files over 10MB may cause memory and performance problems\n"
 "(use 'hg revert %s' to unadd the file)\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1120
+#: mercurial/localrepo.py:1121
 #, python-format
 msgid "%s not added: only files and symlinks supported currently\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1124
+#: mercurial/localrepo.py:1125
 #, python-format
 msgid "%s already tracked!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1138
+#: mercurial/localrepo.py:1139
 #, python-format
 msgid "%s not added!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1157
+#: mercurial/localrepo.py:1158
 #, python-format
 msgid "%s still exists!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1175
+#: mercurial/localrepo.py:1176
 #, python-format
 msgid "%s not removed!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1191
+#: mercurial/localrepo.py:1192
 #, python-format
 msgid "copy failed: %s is not a file or a symbolic link\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1313
+#: mercurial/localrepo.py:1314
 msgid "searching for changes\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1341
+#: mercurial/localrepo.py:1342
 #, python-format
 msgid "examining %s:%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1346
+#: mercurial/localrepo.py:1347
 msgid "branch already found\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1349
+#: mercurial/localrepo.py:1350
 #, python-format
 msgid "found incomplete branch %s:%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1356
+#: mercurial/localrepo.py:1357
 #, python-format
 msgid "found new changeset %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1371
+#: mercurial/localrepo.py:1372
 #, python-format
 msgid "request %d: %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1375
+#: mercurial/localrepo.py:1376
 #, python-format
 msgid "received %s:%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1388
+#: mercurial/localrepo.py:1389
 #, python-format
 msgid "narrowing %d:%d %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1391
+#: mercurial/localrepo.py:1392
 #, python-format
 msgid "found new branch changeset %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1396
+#: mercurial/localrepo.py:1397
 #, python-format
 msgid "narrowed branch search to %s:%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1406
+#: mercurial/localrepo.py:1407
 msgid "already have changeset "
 msgstr ""
 
-#: mercurial/localrepo.py:1411
+#: mercurial/localrepo.py:1412
 msgid "warning: repository is unrelated\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1413
+#: mercurial/localrepo.py:1414
 msgid "repository is unrelated"
 msgstr ""
 
-#: mercurial/localrepo.py:1415
+#: mercurial/localrepo.py:1416
 msgid "found new changesets starting at "
 msgstr ""
 
-#: mercurial/localrepo.py:1418
+#: mercurial/localrepo.py:1419
 #, python-format
 msgid "%d total queries\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1435
+#: mercurial/localrepo.py:1436
 msgid "common changesets up to "
 msgstr ""
 
-#: mercurial/localrepo.py:1476
+#: mercurial/localrepo.py:1477
 msgid "requesting all changes\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1489
+#: mercurial/localrepo.py:1490
 msgid ""
 "Partial pull cannot be done because other repository doesn't support "
 "changegroupsubset."
 msgstr ""
 
-#: mercurial/localrepo.py:1550
+#: mercurial/localrepo.py:1551
 msgid "abort: push creates new remote heads!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1551
+#: mercurial/localrepo.py:1552
 msgid "(did you forget to merge? use push -f to force)\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1555
+#: mercurial/localrepo.py:1556
 msgid "note: unsynced remote changes!\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1591
+#: mercurial/localrepo.py:1592
 #, python-format
 msgid "%d changesets found\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1593
+#: mercurial/localrepo.py:1594
 msgid "list of changesets:\n"
 msgstr ""
 
-#: mercurial/localrepo.py:1872 mercurial/localrepo.py:1962
+#: mercurial/localrepo.py:1873 mercurial/localrepo.py:1963
 #, python-format
 msgid "empty or missing revlog for %s"
 msgstr ""
 
-#: mercurial/localrepo.py:1989
+#: mercurial/localrepo.py:1990
 #, python-format
 msgid "add changeset %s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2012
+#: mercurial/localrepo.py:2013
 msgid "adding changesets\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2016
+#: mercurial/localrepo.py:2017
 msgid "received changelog group is empty"
 msgstr ""
 
-#: mercurial/localrepo.py:2021
+#: mercurial/localrepo.py:2022
 msgid "adding manifests\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2030
+#: mercurial/localrepo.py:2031
 msgid "adding file changes\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2035
+#: mercurial/localrepo.py:2036
 #, python-format
 msgid "adding %s revisions\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2040
+#: mercurial/localrepo.py:2041
 msgid "received file revlog group is empty"
 msgstr ""
 
-#: mercurial/localrepo.py:2047
+#: mercurial/localrepo.py:2048
 #, python-format
 msgid " (%+d heads)"
 msgstr ""
 
-#: mercurial/localrepo.py:2049
+#: mercurial/localrepo.py:2050
 #, python-format
 msgid "added %d changesets with %d changes to %d files%s\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2068
+#: mercurial/localrepo.py:2069
 msgid "updating the branch cache\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2091 mercurial/localrepo.py:2104
-#: mercurial/localrepo.py:2116
+#: mercurial/localrepo.py:2092 mercurial/localrepo.py:2105
+#: mercurial/localrepo.py:2117
 msgid "Unexpected response from remote server:"
 msgstr ""
 
-#: mercurial/localrepo.py:2093
+#: mercurial/localrepo.py:2094
 msgid "operation forbidden by server"
 msgstr ""
 
-#: mercurial/localrepo.py:2095
+#: mercurial/localrepo.py:2096
 msgid "locking the remote repository failed"
 msgstr ""
 
-#: mercurial/localrepo.py:2097
+#: mercurial/localrepo.py:2098
 msgid "the server sent an unknown error code"
 msgstr ""
 
-#: mercurial/localrepo.py:2098
+#: mercurial/localrepo.py:2099
 msgid "streaming all changes\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2105
+#: mercurial/localrepo.py:2106
 #, python-format
 msgid "%d files to transfer, %s of data\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2117
+#: mercurial/localrepo.py:2118
 #, python-format
 msgid "adding %s (%s)\n"
 msgstr ""
 
-#: mercurial/localrepo.py:2125
+#: mercurial/localrepo.py:2126
 #, python-format
 msgid "transferred %s in %.1f seconds (%s/sec)\n"
 msgstr ""
@@ -10141,15 +10189,15 @@ msgstr ""
 msgid "unrecognized response\n"
 msgstr ""
 
-#: mercurial/ui.py:438
+#: mercurial/ui.py:438 mercurial/ui.py:445
 msgid "response expected"
 msgstr ""
 
-#: mercurial/ui.py:442
+#: mercurial/ui.py:443
 msgid "password: "
 msgstr ""
 
-#: mercurial/ui.py:463
+#: mercurial/ui.py:466
 msgid "edit failed"
 msgstr ""
 
