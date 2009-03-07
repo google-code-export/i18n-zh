@@ -8,8 +8,8 @@ PO_LANGUAGES := zh
 DBK_LANGUAGES := en de
 LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
-UPDATEPO = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-updatepo -M UTF-8 \
-	   -f docbook -o doctype='docbook' \
+UPDATEPO = PERLLIB=../tools/po4a/lib/ ../tools/po4a/po4a-updatepo -M UTF-8 \
+	   -f docbook -o doctype='docbook' -o includeexternal \
 	   -o nodefault='<programlisting> <screen>' \
 	   -o untranslated='<programlisting> <screen>'
 TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 \
@@ -64,24 +64,7 @@ updatepo:
 else
 updatepo:
 ifneq "$(findstring $(LINGUA),$(PO_LANGUAGES))" ""
-	$(UPDATEPO) \
-		-m en/appa-quickstart.xml \
-		-m en/appb-svn-for-cvs-users.xml \
-		-m en/appc-webdav.xml \
-		-m en/book.xml \
-		-m en/ch00-preface.xml \
-		-m en/ch01-fundamental-concepts.xml \
-		-m en/ch02-basic-usage.xml \
-		-m en/ch03-advanced-topics.xml \
-		-m en/ch04-branching-and-merging.xml \
-		-m en/ch05-repository-admin.xml \
-		-m en/ch06-server-configuration.xml \
-		-m en/ch07-customizing-svn.xml \
-		-m en/ch08-embedding-svn.xml \
-		-m en/ch09-reference.xml \
-		-m en/copyright.xml \
-		-m en/foreword.xml \
-		-p po/$(LINGUA).po
+	(cd en && $(UPDATEPO) -m book.xml -p ../po/$(LINGUA).po)
 	$(MAKE) tidypo LINGUA=$$l
 endif
 endif
