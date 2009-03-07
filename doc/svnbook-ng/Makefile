@@ -64,7 +64,7 @@ updatepo:
 else
 updatepo:
 ifneq "$(findstring $(LINGUA),$(PO_LANGUAGES))" ""
-	(cd en && $(UPDATEPO) -m book.xml -p ../po/$(LINGUA).po)
+	(cd po && $(UPDATEPO) -m ../en/book.xml -p $(LINGUA).po)
 	$(MAKE) tidypo LINGUA=$$l
 endif
 endif
