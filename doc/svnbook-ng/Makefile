@@ -23,19 +23,25 @@ help:
 	@echo "  make validate     [LINGUA=en|de|zh|...] # always before commit!"
 	@echo "  make tidypo       [LINGUA=zh|...]       # always before commit!"
 	@echo "  make updatepo     [LINGUA=zh|...]       # update po files."
+	@echo "  make all          [LINGUA=en|zh|...]"
 	@echo "  make stat         # print statistics about po files."
-	@echo "  make all          # make html & pdf output of all languages."
 	@echo "  make clean        # Remove the build files."
 
 clean:
 	@rm -fr build en/version.xml po/*.mo
 
 all:
+ifdef LINGUA
+	for f in $(FORMATS); do \
+	  $(MAKE) LINGUA=$(LINGUA) $$f; \
+	done
+else
 	for l in $(LANGUAGES); do \
 	    for f in $(FORMATS); do \
-		$(MAKE) LANG=$$l $$f; \
+		$(MAKE) LINGUA=$$l $$f; \
 	    done; \
 	done
+endif
 
 stat:
 	@( \
