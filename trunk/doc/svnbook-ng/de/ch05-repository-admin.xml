@@ -3314,7 +3314,7 @@ $ svnadmin list-unused-dblogs /var/svn/repos
 /var/svn/repos/log.0000000033
 &hellip;
 $ rm `svnadmin list-unused-dblogs /var/svn/repos`
-## Pattenplatz zurückgewonnen!
+## Plattenplatz zurückgewonnen!
 </screen>
 
         <warning>
@@ -3595,15 +3595,28 @@ Die neueste Revision des Projektarchivs ist 19.
 
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.migrate">
+<!--
       <title>Migrating Repository Data Elsewhere</title>
-    
+-->
+      <title>Repository-Daten woandershin verschieben</title>
+
+<!--
       <para>A Subversion filesystem has its data spread throughout
         files in the repository, in a fashion generally
         understood by (and of interest to) only the Subversion
         developers themselves.  However, circumstances may arise that
         call for all, or some subset, of that data to be copied or
         moved into another repository.</para>
+-->
+      <para>Ein Subversion-Dateisystem hält seine Daten in Dateien,
+        die auf eine Art und Weise über das Repository verstreut sind,
+        die im Allgemeinen nur die Subversion-Entwickler selbst
+        verstehen (und auch nur sie interessieren).  Allerdings können
+        es bestimmte Umstände erforderlich machen, alle Daten oder nur
+        Teile davon in ein anderes Repository zu kopieren oder zu
+        verschieben.</para>
 
+<!--
       <para>Subversion provides such functionality by way of
         <firstterm>repository dump streams</firstterm>.  A repository
         dump stream (often referred to as a <quote>dump file</quote>
@@ -3617,8 +3630,25 @@ Die neueste Revision des Projektarchivs ist 19.
         dump streams: the <command>svnadmin dump</command> and
         <command>svnadmin load</command> subcommands,
         respectively.</para>
+-->
+      <para>Subversion stellt solche Funktionen durch
+        <firstterm>Repository-Auszugs-Datenströme</firstterm>
+        (repository dump streams) bereit.  Ein
+        Repository-Auszugs-Datenstrom (oft als
+        <quote>Auszugsdatei</quote> bezeichnet, wenn er als Datei auf
+        Platte gespeichert wird) ist ein portables, flaches
+        Dateiformat, das die zahlreichen Revisionen in Ihrem
+        Repository beschreibt &ndash; was geändert wurde, von wem usw.
+        Dieser Datenstrom ist der primäre Mechanismus zum
+        Herumschieben der versionierten Historie &ndash; als Ganzes
+        oder in Teilen, mit oder ohne Änderung &ndash; zwischen
+        Repositorys. Und Subversion stellt die Werkzeuge zum Erzeugen
+        und Laden dieser Datenströme zur Verfügung: die Unterbefehle
+        <command>svnadmin dump</command> bzw.  <command>svnadmin
+        load</command>.</para>
 
       <warning>
+<!--
         <para>While the Subversion repository dump format contains
           human-readable portions and a familiar structure (it
           resembles an RFC 822 format, the same type of format used
@@ -3626,8 +3656,18 @@ Die neueste Revision des Projektarchivs ist 19.
           file format.  It is a binary file format, highly sensitive
           to meddling.  For example, many text editors will corrupt
           the file by automatically converting line endings.</para>
-      </warning>
+-->
+        <para>Obwohl das Format der Subversion Auszugsströme
+          menschenlesbare Teile enthält und das Format eine gewohnte
+          Struktur besitzt (es gleicht einem RFC 822 Format, das
+          meistens für E-Mail verwendet wird), ist es
+          <emphasis>kein</emphasis> reines Textformat. Es ist ein
+          Binärformat, das sehr empfindlich gegenüber Herumgepfusche
+          ist. Beispielsweise würden viele Texteditoren die Datei
+          beschädigen, indem sie automatisch die Zeilenenden
+          umformen.</para> </warning>
 
+<!--
       <para>There are many reasons for dumping and loading Subversion
         repository data.  Early in Subversion's life, the most common
         reason was due to the evolution of Subversion itself.  As
@@ -3647,15 +3687,47 @@ Die neueste Revision des Projektarchivs ist 19.
         backends, or (as we'll cover later in this chapter in <xref
         linkend="svn.reposadmin.maint.filtering" />) purging versioned
         data from repository history.</para>
+-->
+      <para>Es gibt viele Gründe, Auszüge von
+        Subversion-Repository-Daten zu machen und zu laden. In der
+        Anfangsphase von Subversion war der häufigste Grund die
+        Weiterentwicklung von Subversion an sich. Während Subversion
+        reifte, gab es Zeiten, als Änderungen an der Datenbankbasis zu
+        Kompatibilitätsproblemen mit früheren Repository-Versionen
+        führten, so dass Benutzer mit der vorherigen Version von
+        Subversion Auszüge von ihren Repository-Daten machen und sie
+        mit der neueren Version von Subversion in ein frisch erzeugtes
+        Repository laden mussten. Diese Schemaänderungen haben seit
+        Subversion 1.0 nicht mehr stattgefunden, und die
+        Subversion-Entwickler versprechen, dass die Benutzer zwischen
+        Unterversionen von Subversion (wie etwa von 1.3 nach 1.4)
+        keine Abzüge ihrer Repositorys machen und neu laden müssen.
+        Jedoch gibt es noch andere Gründe, die es erforderlich machen,
+        zu denen Dinge gehören wie das erneute Aufsetzen eines
+        Berkeley-DB-Repositorys auf einem neuen Betriebssystem oder
+        einer CPU-Architektur, der Wechsel von einem
+        Berkeley-DB-basierten auf ein FSFS-basiertes Repository oder
+        (was wir später in diesem Kapitel in <xref
+        linkend="svn.reposadmin.maint.filtering" /> behandeln werden)
+        das Entfernen versionierter Daten aus der
+        Repository-Historie.</para>
 
       <note>
+<!--
         <para>The Subversion repository dump format describes
           versioned repository changes only.  It will not carry any
           information about uncommitted transactions, user locks on
           filesystem paths, repository or server configuration
           customizations (including hook scripts), and so on.</para>
-      </note>
+-->
+        <para>Das Auszugsformat eines Subversion Repositorys
+          beschreibt nur versionierte Änderungen. Es beinhaltet keine
+          Informationen über unvollendete Transaktionen, von Benutzern
+          gesetzte Sperren auf Pfade im Repository, Anpassungen an
+          Repository- oder Server-Konfigurationen (inklusive
+          Hook-Scripten) usw.</para> </note>
 
+<!--
       <para>Whatever your reason for migrating repository history,
         using the <command>svnadmin dump</command> and
         <command>svnadmin load</command> subcommands is
@@ -3667,7 +3739,20 @@ Die neueste Revision des Projektarchivs ist 19.
         allows you to redirect the output stream to a file while
         watching the status output in your terminal window.  For
         example:</para>
+-->
+      <para>Welche Gründe für den Umzug der Repository-Historie für
+        Sie auch immer eine Rolle spielen, die Verwendung der
+        Unterbefehle <command>svnadmin dump</command> und
+        <command>svnadmin load</command> sind der direkte Weg.
+        <command>svnadmin dump</command> gibt ein Intervall von
+        Repository-Revisionen im speziellen Subversion-Auszugsformat
+        aus. Der Auszug wird zur Standardausgabe geschrieben, während
+        Mitteilungen an die Standardfehlerausgabe gehen. Das erlaubt
+        Ihnen, den Ausgabestrom in eine Datei umzuleiten, während Sie
+        Statusausgaben im Terminalfenster verfolgen können. Zum
+        Beispiel:</para>
 
+<!--
       <screen>
 $ svnlook youngest myrepos
 26
@@ -3679,7 +3764,20 @@ $ svnadmin dump myrepos &gt; dumpfile
 * Dumped revision 25.
 * Dumped revision 26.
 </screen>
+-->
+      <screen>
+$ svnlook youngest myrepos
+26
+$ svnadmin dump myrepos &gt; dumpfile
+* Revision 0 ausgegeben.
+* Revision 1 ausgegeben.
+* Revision 2 ausgegeben.
+&hellip;
+* Revision 25 ausgegeben.
+* Revision 26 ausgegeben.
+</screen>
 
+<!--
       <para>At the end of the process, you will have a single file
         (<filename>dumpfile</filename> in the previous example) that
         contains all the data stored in your repository in the
@@ -3688,51 +3786,99 @@ $ svnadmin dump myrepos &gt; dumpfile
         just like any other <quote>reader</quote> process would
         (e.g., <command>svn checkout</command>), so it's safe
         to run this command at any time.</para>
+-->
+      <para>Am Ende haben Sie eine einzelne Datei (im vorangegangenen
+        Beispiel <filename>dumpfile</filename>), die alle im
+        Repository gespeicherten Daten aus dem gewählten Intervall von
+        Revisionen beinhaltet. Beachten Sie, dass <command>svnadmin
+        dump</command> wie jeder andere <quote>lesende</quote> Prozess
+        (z.B. <command>svn checkout</command>) Revisionsbäume aus dem
+        Repository liest, so dass Sie diesen Befehl jederzeit aufrufen
+        können.</para>
 
+<!--
       <para>The other subcommand in the pair, <command>svnadmin
         load</command>, parses the standard input stream as a
         Subversion repository dump file and effectively replays those
         dumped revisions into the target repository for that
         operation.  It also gives informative feedback, this time
         using the standard output stream:</para>
+-->
+      <para>Der andere Unterbefehl dieses Paars, <command>svnadmin
+        load</command>, liest den Standardeingabestrom als eine
+        Subversion-Repository-Auszugsdatei und spielt diese Revisionen
+        aus dem Auszug gewissermaßen neu in das Ziel-Repository. Auch
+        dieser Befehl erzeugt Meldungen, dieses Mal aber über die
+        Standardausgabe:</para>
 
+<!--
       <screen>
 $ svnadmin load newrepos &lt; dumpfile
 &lt;&lt;&lt; Started new txn, based on original revision 1
      * adding path : A ... done.
      * adding path : A/B ... done.
      &hellip;
-------- Committed new rev 1 (loaded from original rev 1) &gt;&gt;&gt;
+- - - - Committed new rev 1 (loaded from original rev 1) &gt;&gt;&gt;
 
 &lt;&lt;&lt; Started new txn, based on original revision 2
      * editing path : A/mu ... done.
      * editing path : A/D/G/rho ... done.
 
-------- Committed new rev 2 (loaded from original rev 2) &gt;&gt;&gt;
+- - - - Committed new rev 2 (loaded from original rev 2) &gt;&gt;&gt;
 
 &hellip;
 
 &lt;&lt;&lt; Started new txn, based on original revision 25
      * editing path : A/D/gamma ... done.
 
-------- Committed new rev 25 (loaded from original rev 25) &gt;&gt;&gt;
+- - - - Committed new rev 25 (loaded from original rev 25) &gt;&gt;&gt;
 
 &lt;&lt;&lt; Started new txn, based on original revision 26
      * adding path : A/Z/zeta ... done.
      * editing path : A/mu ... done.
 
-------- Committed new rev 26 (loaded from original rev 26) &gt;&gt;&gt;
+- - - - Committed new rev 26 (loaded from original rev 26) &gt;&gt;&gt;
+
+</screen>
+-->
+      <screen>
+$ svnadmin load newrepos &lt; dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: A ... erledigt.
+     * Füge Pfad hinzu: A/B ... erledigt.
+     &hellip;
+------- Neue Revision 1 übertragen (geladen aus Original 1) &gt;&gt;&gt;
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 2 gestartet
+     * Bearbeite Pfad: A/mu ... erledigt.
+     * Bearbeite Pfad: A/D/G/rho ... erledigt.
+
+------- Neue Revision 2 übertragen (geladen aus Original 2) &gt;&gt;&gt;
+
+&hellip;
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 25 gestartet
+     * Bearbeite Pfad: A/D/gamma ... erledigt.
+
+------- Neue Revision 25 übertragen (geladen aus Original 25) &gt;&gt;&gt;
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 26 gestartet
+     * Füge Pfad hinzu: A/Z/zeta ... erledigt.
+     * Bearbeite Pfad: A/mu ... erledigt.
+
+------- Neue Revision 26 übertragen (geladen aus Original 26) &gt;&gt;&gt;
 
 </screen>
 
+<!--
       <para>The result of a load is new revisions added to a
         repository&mdash;the same thing you get by making commits
         against that repository from a regular Subversion client.
         Just as in a commit, you can use hook programs to perform
         actions before and after each of the commits made during a
         load process.  By passing the
-        <option>--use-pre-commit-hook</option> and
-        <option>--use-post-commit-hook</option> options to
+        <option>- -use-pre-commit-hook</option> and
+        <option>- -use-post-commit-hook</option> options to
         <command>svnadmin load</command>, you can instruct Subversion
         to execute the pre-commit and post-commit hook programs,
         respectively, for each loaded revision.  You might use these,
@@ -3744,18 +3890,49 @@ $ svnadmin load newrepos &lt; dumpfile
         commit emails in rapid succession at that list!  You can read more about the use of hook
         scripts in <xref
         linkend="svn.reposadmin.create.hooks"/>.</para>
+-->
+      <para>Das Ergebnis eines Ladevorgangs sind neue Revisionen, die
+        dem Repository hinzugefügt wurden &ndash; dasselbe, was Sie
+        erhalten, wenn Sie mit einem normalen Subversion-Client
+        Übergaben an das Repository machen. Ebenso wie bei einer
+        Übergabe können können Sie Hook-Programme verwenden, um
+        Aktionen vor und nach jeder Übergabe während des Ladevorgangs
+        auszuführen. Indem Sie die Optionen
+        <option>--use-pre-commit-hook</option> und
+        <option>--use-post-commit-hook</option> an <command>svnadmin
+        load</command> übergeben, können Sie Subversion befehlen, für
+        jede zu ladende Revision die Hook-Programme pre-commit bzw.
+        post-commit auszuführen. Sie könnten diese beispielsweise
+        verwenden, um sicherzustellen, dass die geladenen Revisionen
+        dieselben Validierungsschritte durchlaufen müssen wie reguläre
+        Übergaben. Natürlich sollten Sie diese Optionen mit Sorgfalt
+        verwenden &ndash; wenn Ihr post-commit-Hook für jede neue
+        Übergabe E-Mails an eine Mailing-Liste verschickt, wollen Sie
+        bestimmt nicht, das innerhalb kürzester Zeit hunderte oder
+        tausende Übergabe-E-Mails in diese Liste hineinhageln! Sie
+        können mehr über Hook-Scripte in <xref
+        linkend="svn.reposadmin.create.hooks"/> lesen.</para>
 
+<!--
       <para>Note that because <command>svnadmin</command> uses
         standard input and output streams for the repository dump and
         load processes, people who are feeling especially saucy can try
         things such as this (perhaps even using different versions of
         <command>svnadmin</command> on each side of the pipe):</para>
-  
+-->
+      <para>Beachten Sie, dass Menschen, die sich besonders gewitzt
+        fühlen, weil <command>svnadmin</command> für den Auszug und
+        den Ladevorgang den Standardeingabe- und den
+        Standardausgabestrom benutzt, Dinge wie dieses ausprobieren
+        können (vielleicht sogar unterschiedliche Versionen von
+        <command>svnadmin</command> auf jeder Seite der Pipe):</para>
+
       <screen>
 $ svnadmin create newrepos
 $ svnadmin dump oldrepos | svnadmin load newrepos
 </screen>
 
+<!--
       <para>By default, the dump file will be quite large&mdash;much
         larger than the repository itself.  That's because by default
         every version of every file is expressed as a full text in the
@@ -3764,25 +3941,52 @@ $ svnadmin dump oldrepos | svnadmin load newrepos
         process (such as a compression program, filtering program, or
         loading process).  But if you're creating a dump file
         for longer-term storage, you'll likely want to save disk space
-        by using the <option>--deltas</option> option.  With this
+        by using the <option>- -deltas</option> option.  With this
         option, successive revisions of files will be output as
         compressed, binary differences&mdash;just as file revisions
         are stored in a repository.  This option is slower, but it
         results in a dump file much closer in size to the original
         repository.</para>
+-->
+      <para>Im Normalfall wird die Auszugsdatei ziemlich groß &ndash;
+        viel größer als das Repository selbst. Das liegt daran, dass
+        standardmäßig jede Version jeder Datei als vollständiger Text
+        in der Auszugsdatei dargestellt wird. Dies ist das schnellste
+        und einfachste Verhalten, und es ist nett, wenn Sie die
+        Auszugsdaten über eine Pipe direkt an einen weiteren Prozess
+        weiterleiten (etwa ein Komprimierprogramm, ein Filterprogramm
+        oder einen Prozess zum Laden). Wenn Sie jedoch eine
+        Auszugsdatei für die Langzeitspeicherung erzeugen, möchten Sie
+        wahrscheinlich Plattenplatz sparen, indem Sie die Option
+        <option>--deltas</option> verwenden. Mit dieser Option werden
+        aufeinanderfolgende Revisionen von Dateien als komprimierte
+        binäre Unterschiede ausgegeben &ndash; so wie Dateirevisionen
+        im Repository gespeichert werden. Diese Option ist langsamer,
+        führt jedoch zu einer Größe der Auszugsdatei, die der Größe
+        des Original-Repositorys näher kommt.</para>
 
+<!--
       <para>We mentioned previously that <command>svnadmin
         dump</command> outputs a range of revisions.  Use the
-        <option>--revision</option> (<option>-r</option>) option to
+        <option>- -revision</option> (<option>-r</option>) option to
         specify a single revision, or a range of revisions, to dump.
         If you omit this option, all the existing repository revisions
         will be dumped.</para>
+-->
+      <para>Wir haben eben erwähnt, dass <command>svnadmin
+        dump</command> einen Bereich von Revisionen ausgibt. Verwenden
+        Sie die Option <option>--revision</option>
+        (<option>-r</option>), um eine einzelne Revision oder einen
+        Bereich von Revisionen für den Auszug anzugeben. Wenn Sie
+        diese Option weglassen, wird ein Auszug aller
+        Repository-Revisionen erstellt.</para>
 
       <screen>
 $ svnadmin dump myrepos -r 23 &gt; rev-23.dumpfile
 $ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile
 </screen>
 
+<!--
       <para>As Subversion dumps each new revision, it outputs only
         enough information to allow a future loader to re-create that
         revision based on the previous one.  In other words, for any
@@ -3791,7 +3995,18 @@ $ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile
         exception to this rule is the first revision that is dumped
         with the current <command>svnadmin dump</command>
         command.</para>
+-->
+      <para>Beim Erstellen eines Auszugs jeder Revision gibt
+        Subversion gerade soviel Information aus, dass später ein
+        Ladeprozess in der Lage ist, diese Revision auf der Basis der
+        Vorgängerrevision wiederherzustellen. Mit anderen Worten: Für
+        jede Revision befinden sich nur die Dinge in der Auszugsdatei,
+        die sich in dieser Revision geändert haben. Die einzige
+        Ausnahme von dieser Regel ist die erste Revision, die mit dem
+        aktuellen <command>svnadmin dump</command> erstellt
+        wird.</para>
 
+<!--
       <para>By default, Subversion will not express the first dumped
         revision as merely differences to be applied to the previous
         revision.  For one thing, there is no previous revision in the
@@ -3802,9 +4017,22 @@ $ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile
         self-sufficient, the first dumped revision is, by default, a
         full representation of every directory, file, and property in
         that revision of the repository.</para>
+-->
+      <para>Standardmäßig wird Subversion den Auszug der ersten
+        Revision nicht bloß als Unterschied ausdrücken, der auf die
+        Vorgängerrevision anzuwenden ist. Zum Ersten gibt es keine
+        Vorgängerrevision in der Auszugsdatei. Und zum Zweiten kann
+        Subversion den Zustand des Repositorys, in das der Auszug
+        (falls überhaupt) geladen werden soll, nicht kennen. Um
+        sicherzustellen, dass die Ausgabe jedes Aufrufs von
+        <command>svnadmin dump</command> unabhängig ist, ist der
+        Auszug der ersten Revision standardmäßig eine vollständige
+        Darstellung jedes Verzeichnisses, jeder Datei und jedes
+        Propertys aus dieser Revision im Repository.</para>
 
+<!--
       <para>However, you can change this default behavior.  If you add
-        the <option>--incremental</option> option when you dump your
+        the <option>- -incremental</option> option when you dump your
         repository, <command>svnadmin</command> will compare the first
         dumped revision against the previous revision in the
         repository&mdash;the same way it treats every other revision that
@@ -3814,6 +4042,18 @@ $ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile
         revision.  The benefit of this is that you can create several
         small dump files that can be loaded in succession, instead of
         one large one, like so:</para>
+-->
+      <para>Sie können dieses Standardverhalten jedoch ändern. Falls
+        Sie die Option <option>--incremental</option> angeben,
+        vergleicht <command>svnadmin</command> die erste Revision für
+        die ein Auszug erstellt werden soll mit der vorhergehenden
+        Revision im Repository &ndash; auf dieselbe Art und Weise, wie
+        jede andere Revision behandelt wird, für die ein Auszug
+        erstellt werden soll &ndash; indem lediglich die Änderungen
+        aus dieser Revision erwähnt werden. Der Vorteil dabei ist,
+        dass Sie mehrere kleinere Auszugsdateien erstellen können, die
+        hintereinander geladen werden können, anstatt eine
+        große:</para>
 
       <screen>
 $ svnadmin dump myrepos -r 0:1000 &gt; dumpfile1
@@ -3821,8 +4061,12 @@ $ svnadmin dump myrepos -r 1001:2000 --incremental &gt; dumpfile2
 $ svnadmin dump myrepos -r 2001:3000 --incremental &gt; dumpfile3
 </screen>
 
+<!--
       <para>These dump files could be loaded into a new repository
         with the following command sequence:</para>
+-->
+      <para>Diese Auszugsdateien können mit der folgenden Befehlsfolge
+        in ein neues Repository geladen werden:</para>
 
       <screen>
 $ svnadmin load newrepos &lt; dumpfile1
@@ -3830,8 +4074,9 @@ $ svnadmin load newrepos &lt; dumpfile2
 $ svnadmin load newrepos &lt; dumpfile3
 </screen>
 
+<!--
       <para>Another neat trick you can perform with this
-        <option>--incremental</option> option involves appending to an
+        <option>- -incremental</option> option involves appending to an
         existing dump file a new range of dumped revisions.  For
         example, you might have a <literal>post-commit</literal> hook
         that simply appends the repository dump of the single revision
@@ -3841,10 +4086,23 @@ $ svnadmin load newrepos &lt; dumpfile3
         ran.  Used like this, <command>svnadmin dump</command> can be
         one way to back up changes to your repository over time in case
         of a system crash or some other catastrophic event.</para>
-
+-->
+      <para>Ein weiterer toller Trick, den Sie mit der Option
+        <option>--incremental</option> anwenden können besteht darin,
+        einen neuen Bereich von Revisionsauszügen an eine existierende
+        Revisionsdatei anzuhängen. Beispielsweise könnten Sie einen
+        <literal>post-commit</literal>-Hook haben, der der Datei einen
+        Auszug derjenigen Revision anfügt, die den Hook ausgelöst hat.
+        Oder Sie haben ein Script, das jede Nacht läuft, um Auszüge
+        sämtlicher Revisionen seit dem letzten Lauf anzufügen. Wenn es
+        auf diese Weise verwendet wird, stellt <command>svnadmin
+        dump</command> eine Möglichkeit dar, laufend die Änderungen an
+        Ihrem Repository für den Fall eines Systemabsturzes oder eines
+        anderen katastrophalen Ereignisses zu sichern.</para>
+<!--
       <para>The dump format can also be used to merge the contents of
         several different repositories into a single repository.  By
-        using the <option>--parent-dir</option> option of
+        using the <option>- -parent-dir</option> option of
         <command>svnadmin load</command>, you can specify a new
         virtual root directory for the load process.  That means if
         you have dump files for three repositories&mdash;say
@@ -3853,15 +4111,35 @@ $ svnadmin load newrepos &lt; dumpfile3
         <filename>ss-dumpfile</filename>&mdash;you can first create a new
         repository to hold them all:</para>
 
+-->
+      <para>Das Auszugsformat kann auch dazu verwendet werden, um die
+        Inhalte mehrerer verschiedener Repositorys in ein Repository
+        zusammenzuführen. Indem Sie die Option
+        <option>--parent-dir</option> von <command>svnadmin
+        load</command> benutzen, können Sie ein neues virtuelles
+        Wurzelverzeichnis für den Ladevorgang angeben. Das heißt,
+        falls Sie beispielsweise die Auszugsdateien von drei
+        Repositorys haben &ndash; etwa
+        <filename>calc-dumpfile</filename>,
+        <filename>cal-dumpfile</filename> und
+        <filename>ss-dumpfile</filename> &ndash; können Sie zunächst
+        ein Repository anlegen, das alle beherbergt:</para>
+
       <screen>
 $ svnadmin create /var/svn/projects
 $
 </screen>
 
+<!--
       <para>Then, make new directories in the repository that will
         encapsulate the contents of each of the three previous
         repositories:</para>
+-->
+      <para>Erstellen Sie dann neue Verzeichnisse im Repository, die
+        den Inhalt der vorherigen drei Repositorys aufnehmen
+        werden:</para>
 
+<!--
       <screen>
 $ svn mkdir -m "Initial project roots" \
       file:///var/svn/projects/calc \
@@ -3870,9 +4148,22 @@ $ svn mkdir -m "Initial project roots" \
 Committed revision 1.
 $ 
 </screen>
+-->
+      <screen>
+$ svn mkdir -m "Initial project roots" \
+      file:///var/svn/projects/calc \
+      file:///var/svn/projects/calendar \
+      file:///var/svn/projects/spreadsheet
+Revision 1 übertragen.
+$ 
+</screen>
 
+<!--
       <para>Lastly, load the individual dump files into their
         respective locations in the new repository:</para>
+-->
+      <para>Laden Sie schließlich die Auszugsdateien an ihren
+        jeweiligen Ort im neuen Repository:</para>
 
       <screen>
 $ svnadmin load /var/svn/projects --parent-dir calc &lt; calc-dumpfile
@@ -3884,6 +4175,7 @@ $ svnadmin load /var/svn/projects --parent-dir spreadsheet &lt; ss-dumpfile
 $
 </screen>
 
+<!--
       <para>We'll mention one final way to use the Subversion
         repository dump format&mdash;conversion from a different
         storage mechanism or version control system altogether.
@@ -3895,13 +4187,30 @@ $
         linkend="svn.forcvs.convert"/>) uses the dump format to
         represent the contents of a CVS repository so that those
         contents can be copied into a Subversion repository.</para>
+-->
+      <para>Zum Schluss erwähnen wir noch einen Anwendungsfall für
+        das Auszugsformat &ndash; die Umwandlung aus einem
+        unterschiedlichen Speicherverfahren oder gar aus einem
+        unterschiedlichen Versionskontrollsystem. Da das Format der
+        Auszugsdatei größtenteils menschenlesbar ist, sollte es
+        einfach sein, gewöhnliche Änderungsmengen &ndash; von denen
+        jede als Revision behandelt werden sollte &ndash; mit diesem
+        Format zu beschreiben. Tatsächlich verwendet das
+        Dienstprogramm <command>cvs2svn</command> (siehe <xref
+        linkend="svn.forcvs.convert"/>) dieses Auszugsformat, um den
+        Inhalt eines CVS-Repositorys darzustellen, so dass er in ein
+        Subversion-Repository kopiert werden kann.</para>
 
     </sect2>
 
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.filtering">
+<!--
       <title>Filtering Repository History</title>
+-->
+      <title>Filtern der Repository-Historie</title>
 
+<!--
       <para>Since Subversion stores your versioned history using, at
         the very least, binary differencing algorithms and data
         compression (optionally in a completely opaque database
@@ -3932,7 +4241,42 @@ $
         administrators need a more manageable and malleable
         representation of the data in their repositories&mdash;the
         Subversion repository dump format.</para>
+-->
+      <para>Da Subversion Ihre versionierte Historie mindestens mit
+        binären Differenzalgorithmen und Datenkompression abspeichert
+        (optional in einem völlig undurchsichtigen Datenbanksystem),
+        ist der Versuch manueller Eingiffe unklug, zumindest
+        schwierig und unter allen Umständen nicht angeraten. Sobald
+        Daten im Repository gespeichert sind, bietet Subversion im
+        Allgemeinen keine einfache Möglichkeit, diese Daten zu
+        entfernen.
+        <footnote>
+          <para>Das ist doch überhaupt der Grund dafür,
+            Versionskontrolle einzusetzen, oder?</para>
+        </footnote>
+        Doch zwangsläufig werden sich Gelegenheiten ergeben, bei denen
+        Sie die Historie Ihres Repositorys manipulieren müssen. Es
+        könnte sein, dass Sie alle Instanzen einer Datei entfernen
+        müssen, die versehentlich dem Repository hinzugefügt worden
+        ist, aber aus welchen Gründen auch immer nicht hineingehört).
+        <footnote>
+          <para>Das bewusste, vorsichtige Entfernen bestimmter Teile
+            versionierter Daten wird tatsächlich von wirklichen
+            Anwendungsfällen verlangt. Das ist der Grund, warum eine
+            <quote>Auslösch</quote>-Funktion eine der am häufigsten
+            gewünschten Funktionen von Subversion ist, von der die
+            Subversion-Entwickler hoffen, sie bald zur Verfügung
+            stellen zu können.</para>
+        </footnote>
+        Oder Sie haben vielleicht mehrere Projekte, die sich ein
+        Repository teilen und entscheiden sich nun, jedem Projekt sein
+        eigenes Repository zu geben. Um Aufgaben wie diese
+        bewerkstelligen zu können, benötigen Administratoren eine
+        besser handhabbare und bearbeitbare Repräsentation der Daten
+        in den Repositorys &ndash; das
+        Subversion-Repository-Auszugsformat.</para>
 
+<!--
       <para>As we described earlier in <xref
         linkend="svn.reposadmin.maint.migrate" />, the Subversion
         repository dump format is a human-readable representation of
@@ -3946,7 +4290,24 @@ $
         worth of repository activity encapsulated in what is likely to
         be a very large dump file, it could take you a long, long time
         to manually inspect and modify it.</para>
+-->
+      <para>Wie bereits in <xref
+        linkend="svn.reposadmin.maint.migrate" /> beschrieben, ist das
+        Subversion-Repository-Auszugsformat eine menschenlesbare
+        Wiedergabe der Änderungen, die Sie an Ihren versionierten
+        Daten im Laufe der Zeit vorgenommen haben. Verwenden Sie den
+        Befehl <command>svnadmin dump</command>, um den Auszug
+        anzulegen und <command>svnadmin load</command>, um ein neues
+        Repository damit zu füllen. Das Tolle an der
+        Menschenlesbarkeit des Auszugsformates ist, dass Sie, sofern
+        es Ihnen nicht egal ist, die Daten manuell untersuchen und
+        verändern können. Natürlich besteht ein Nachteil darin, dass
+        eine Auszugsdatei eines Repositorys, in das über drei Jahre
+        Änderungen eingeflossen sind, riesig groß sein wird, und es
+        Sie eine lange, lange Zeit kosten wird, die Daten manuell zu
+        untersuchen und zu verändern.</para>
 
+<!--
       <para>That's where <command>svndumpfilter</command> becomes
         useful.  This program acts as a path-based filter for
         repository dump streams.  Simply give it either a list of
@@ -3955,7 +4316,17 @@ $
         filter.  The result will be a modified stream of dump data
         that contains only the versioned paths you (explicitly or
         implicitly) requested.</para>
+-->
+      <para>Hierbei hilft <command>svndumpfilter</command>.  Dieses
+        Programm verhält sich wie ein pfadbasierter Filter für
+        Auszugsströme. Geben Sie ihm einfach eine Liste von Pfaden
+        mit, die Sie behalten möchten oder eine Liste von Pfaden, die
+        Sie nicht behalten möchten, und leiten Sie Ihre Auszugsdaten
+        durch diesen Filter. Das Ergebnis ist ein modifizierter Strom
+        der Auszugsdaten, der nur die versionierten Pfade beinhaltet,
+        die Sie (explizit oder implizit) verlangt haben.</para>
 
+<!--
       <para>Let's look at a realistic example of how you might use this
         program.  Earlier in this chapter (see <xref
         linkend="svn.reposadmin.projects.chooselayout"/>), we discussed the
@@ -3967,11 +4338,30 @@ $
         A common change is the decision to move multiple projects
         that are sharing a single repository into separate
         repositories for each project.</para>
+-->
+      <para>Lassen Sie uns an einem realistischen Beispiel betrachten,
+      wie Sie diesen Programm verwenden könnten. Früher in diesem
+      Kapitel (siehe <xref
+      linkend="svn.reposadmin.projects.chooselayout"/>) erörterten wir
+      das Entscheidungsfindungsverfahren, wie Sie Ihre Daten im
+      Repository anordnen sollen &ndash; ein Repository pro Projekt
+      oder kombiniert, wie Sie die Daten im Repository verteilen usw.
+      Doch manchmal, nachdem bereits einige Revisionen hinzugekommen
+      sind, überdenken Sie die Anordnung und würden gerne einige
+      Änderungen vornehmen. Eine verbreitete Änderung ist die
+      Entscheidung, mehrere Projekte, die sich ein Repository teilen,
+      auf getrennte Repositorys pro Projekt aufzuteilen.</para>
 
+<!--
       <para>Our imaginary repository contains three projects:
         <literal>calc</literal>, <literal>calendar</literal>, and
         <literal>spreadsheet</literal>.  They have been living
         side-by-side in a layout like this:</para>
+-->
+      <para>Unser imaginäres Repository beinhaltet drei Projekte:
+        <literal>calc</literal>, <literal>calendar</literal> und
+        <literal>spreadsheet</literal>. Sie waren miteinander in der
+        folgenden Anordnung abgelegt:</para>
 
       <screen>
 /
@@ -3989,9 +4379,15 @@ $
       tags/
 </screen>
 
+<!--
       <para>To get these three projects into their own repositories,
         we first dump the whole repository:</para>
+-->
+      <para>Um diese drei Projekte in ihre eigenen Repositorys zu
+        bekommen, erstellen wir zunächst einen Auszug des gesamten
+        Repositorys:</para>
 
+<!--
       <screen>
 $ svnadmin dump /var/svn/repos &gt; repos-dumpfile
 * Dumped revision 0.
@@ -4001,10 +4397,26 @@ $ svnadmin dump /var/svn/repos &gt; repos-dumpfile
 &hellip;
 $
 </screen>
+-->
+      <screen>
+$ svnadmin dump /var/svn/repos &gt; repos-dumpfile
+* Revision 0 ausgegeben.
+* Revision 1 ausgegeben.
+* Revision 2 ausgegeben.
+* Revision 3 ausgegeben.
+&hellip;
+$
+</screen>
 
+<!--
       <para>Next, run that dump file through the filter, each time
         including only one of our top-level directories.  This results
         in three new dump files:</para>
+-->
+      <para>Dann leiten wir die Auszugsdatei durch die Filter, wobei
+        jedesmal nur jeweils eins der obersten Verzeichnisse
+        ausgewählt wird.  Als Ergebnis erhalten wir drei
+        Auszugsdateien:</para>
 
       <screen>
 $ svndumpfilter include calc &lt; repos-dumpfile &gt; calc-dumpfile
@@ -4016,6 +4428,7 @@ $ svndumpfilter include spreadsheet &lt; repos-dumpfile &gt; ss-dumpfile
 $
 </screen>
 
+<!--
       <para>At this point, you have to make a decision.  Each of your
         dump files will create a valid repository, but will preserve
         the paths exactly as they were in the original repository.
@@ -4032,6 +4445,24 @@ $
         component.  Also, you'll want to remove the section of dump
         data that creates the <filename>calc</filename> directory.  It
         will look something like the following:</para>
+-->
+      <para>An dieser Stelle müssen sie eine Entscheidung treffen.
+        Jede Ihrer Auszugsdateien wird ein gültiges Repository
+        erzeugen, allerdings unter Beibehaltung der Pfade wie sie im
+        ursprünglichen Repository waren. Das bedeutet, dass, obwohl
+        Sie ein Repository ausschließlich für Ihr
+        <literal>calc</literal> Projekt haben, wird es immer noch ein
+        Wurzelverzeichnis namens <filename>calc</filename> besitzen.
+        Falls Sie möchten, dass die Verzeichnisse
+        <filename>trunk</filename>, <filename>tags</filename> und
+        <filename>branches</filename> direkt im Wurzelverzeichnis
+        Ihres Repositorys liegen, sollten Sie Ihre Auszugsdateien
+        editieren, indem Sie die Einträge <literal>Node-path</literal>
+        und <literal>Node-copyfrom-path</literal> verändern, so dass
+        sie nicht mehr die erste Komponente <filename>calc/</filename>
+        im Pfad haben. Sie sollten auch den Abschnitt entfernen, der
+        das Verzeichnis <filename>calc</filename> anlegt. Es sollte
+        etwa wie folgt aussehen:</para>
 
       <screen>
 Node-path: calc
@@ -4041,6 +4472,7 @@ Content-length: 0
   
 </screen>
 
+<!--
       <warning>
         <para>If you do plan on manually editing the dump file to
           remove a top-level directory, make sure your editor is
@@ -4050,33 +4482,73 @@ Content-length: 0
           with the metadata.  This will render the dump file
           useless.</para>
       </warning>
+-->
+      <warning>
+        <para>Falls Sie sich entscheiden sollten, die Auszugsdatei
+          manuell zu editieren, um eins der obersten Verzeichnisse zu
+          entfernen, sollten Sie sicherstellen, dass Ihr Editor nicht
+          automatisch Zeilenenden in das native Format umwandelt (z.B.
+          <literal>\r\n</literal> in <literal>\n</literal>), da sonst
+          der Inhalt nicht zu den Metadaten passt. Das würde Ihre
+          Auszugsdatei nutzlos machen.</para>
+      </warning>
 
+<!--
       <para>All that remains now is to create your three new
         repositories, and load each dump file into the right
         repository, ignoring the UUID found in the dump stream:</para>
+-->
+      <para>Alles, was jetzt noch übrig bleibt, ist, Ihre drei neuen
+        Repositorys zu erstellen und jede Auszugsdatei in das richtige
+        Repository zu laden, wobei die UUID aus dem Auszugsstrom
+        ignoriert wird:</para>
 
+<!--
       <screen>
 $ svnadmin create calc
-$ svnadmin load --ignore-uuid calc &lt; calc-dumpfile
+$ svnadmin load - -ignore-uuid calc &lt; calc-dumpfile
 &lt;&lt;&lt; Started new transaction, based on original revision 1
      * adding path : Makefile ... done.
      * adding path : button.c ... done.
 &hellip;
 $ svnadmin create calendar
-$ svnadmin load --ignore-uuid calendar &lt; cal-dumpfile
+$ svnadmin load - -ignore-uuid calendar &lt; cal-dumpfile
 &lt;&lt;&lt; Started new transaction, based on original revision 1
      * adding path : Makefile ... done.
      * adding path : cal.c ... done.
 &hellip;
 $ svnadmin create spreadsheet
-$ svnadmin load --ignore-uuid spreadsheet &lt; ss-dumpfile
+$ svnadmin load - -ignore-uuid spreadsheet &lt; ss-dumpfile
 &lt;&lt;&lt; Started new transaction, based on original revision 1
      * adding path : Makefile ... done.
      * adding path : ss.c ... done.
 &hellip;
 $
 </screen>
+-->
+      <screen>
+$ svnadmin create calc
+$ svnadmin load --ignore-uuid calc &lt; calc-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: button.c ... erledigt.
+&hellip;
+$ svnadmin create calendar
+$ svnadmin load --ignore-uuid calendar &lt; cal-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: cal.c ... erledigt.
+&hellip;
+$ svnadmin create spreadsheet
+$ svnadmin load --ignore-uuid spreadsheet &lt; ss-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: ss.c ... erledigt.
+&hellip;
+$
+</screen>
 
+<!--
       <para>Both of <command>svndumpfilter</command>'s subcommands
         accept options for deciding how to deal with
         <quote>empty</quote> revisions.  If a given revision
@@ -4085,27 +4557,47 @@ $
         unwanted.  So to give the user control over what to do with
         those revisions, <command>svndumpfilter</command> provides
         the following command-line options:</para>
+-->
+      <para>Beide Unterbefehle von <command>svndumpfilter</command>
+        akzeptieren Optionen, die angeben, wie <quote>leere</quote>
+        Revisionen behandelt werden sollen. Falls eine Revision nur
+        Änderungen an herausgefilterten Pfaden beinhaltet, könnte die
+        neue Revision als uninteressant oder gar unerwünscht gelten.
+        Um dem Benutzer die Kontrolle darüber zu geben, wie hiermit
+        verfahren werden soll, bietet <command>svndumpfilter</command>
+        die folgenden Kommandozeilenoptionen:</para>
 
       <variablelist>
         <varlistentry>
           <term><option>--drop-empty-revs</option></term>
           <listitem>
+<!--
             <para>Do not generate empty revisions at all&mdash;just
               omit them.</para>
+-->
+            <para>Überhaupt keine leeren Revisionen erzeugen &ndash;
+              einfach auslassen.</para>
           </listitem>
         </varlistentry>
         <varlistentry>
           <term><option>--renumber-revs</option></term>
           <listitem>
+<!--
             <para>If empty revisions are dropped (using the
-              <option>--drop-empty-revs</option> option), change the
+              <option>- -drop-empty-revs</option> option), change the
               revision numbers of the remaining revisions so that
               there are no gaps in the numeric sequence.</para>
+-->
+            <para>Falls leere Revisionen ausgelassen werden (mit der
+              Option <option>--drop-empty-revs</option>), die
+              Nummern der übrig gebliebenen Revisionen ändern, so dass
+              keine Lücken in der Nummernfolge auftreten.</para>
           </listitem>
         </varlistentry>
         <varlistentry>
           <term><option>--preserve-revprops</option></term>
           <listitem>
+<!--
             <para>If empty revisions are not dropped, preserve the
               revision properties (log message, author, date, custom
               properties, etc.) for those empty revisions.
@@ -4113,10 +4605,19 @@ $
               original datestamp, and a generated log message that
               indicates that this revision was emptied by
               <command>svndumpfilter</command>.</para>
+-->
+            <para>Falls leere Revisionen nicht ausgelassen werden, die
+              Eigenschaften der leeren Revisionen bewahren
+              (Protokolleintrag, Autor, Datum, Propertys usw.). Sonst
+              beinhalten leere Revisionen lediglich den Zeitstempel
+              und einen erzeugten Protokolleintrag, der darauf
+              hinweist, dass diese Revision von
+              <command>svndumpfilter</command> geleert wurde.</para>
           </listitem>
         </varlistentry>
       </variablelist>
-      
+
+<!--
       <para>While <command>svndumpfilter</command> can be very
         useful and a huge timesaver, there are unfortunately a
         couple of gotchas.  First, this utility is overly sensitive
@@ -4124,6 +4625,15 @@ $
         dump file are specified with or without leading slashes.
         You'll want to look at the <literal>Node-path</literal> and
         <literal>Node-copyfrom-path</literal> headers.</para>
+-->
+      <para>Obwohl <command>svndumpfilter</command> sehr nützlich und
+        eine Zeitersparnis sein kann, gibt es unglücklicherweise ein
+        paar Fallstricke. Erstens ist das Dienstprogramm
+        überempfindlich gegenüber der Pfadsemantik. Achten Sie darauf,
+        ob die Pfade in Ihrer Auszugsdatei mit oder ohne führende
+        Schrägstriche angegeben werden. Sie sollten sich die Einträge
+        <literal>Node-path</literal> und
+        <literal>Node-copyfrom-path</literal> ansehen.</para>
 
       <screen>
 &hellip;
@@ -4131,6 +4641,7 @@ Node-path: spreadsheet/Makefile
 &hellip;
 </screen>
 
+<!--
       <para>If the paths have leading slashes, you should
         include leading slashes in the paths you pass to
         <command>svndumpfilter include</command> and
@@ -4145,7 +4656,25 @@ Node-path: spreadsheet/Makefile
         </footnote>
         you should probably normalize those paths so that they all
         have, or all lack, leading slashes.</para>
+-->
+      <para>Falls die Pfade führende Schrägstriche haben, sollten auch
+        Sie Schrägstriche in den Pfaden angeben, die Sie an
+        <command>svndumpfilter include</command> und
+        <command>svndumpfilter exclude</command> übergeben (und wenn
+        sie keine haben, sollten Sie auch keine angeben). Falls Ihre
+        Auszugsdatei aus irgendwelchen Gründen einen nicht
+        konsistenten Gebrauch von führenden Schrägstrichen macht,
+        <footnote>
+          <para>Obwohl <command>svnadmin dump</command> ein
+            konsistentes Vorgehen bezüglich führender Schrägstriche
+            vorweisen kann (indem es sie nicht einfügt), sind andere
+            Programme, die Auszugsdateien erzeugen eventuell nicht so
+            konsistent.</para>
+        </footnote>
+        sollten Sie diese Pfade normalisieren, so dass sie alle
+        entweder Schrägstriche haben oder nicht.</para>
 
+<!--
       <para>Also, copied paths can give you some trouble.
         Subversion supports copy operations in the repository, where
         a new path is created by copying some already existing path.
@@ -4166,7 +4695,29 @@ Node-path: spreadsheet/Makefile
         your set of included/excluded paths, perhaps including the
         paths that served as sources of your troublesome copy
         operations, too.</para>
+-->
+      <para>Ebenso können kopierte Pfade Probleme bereiten. Subversion
+        unterstützt Kopieroperationen im Repository, bei denen ein
+        neuer Pfad erzeugt wird, indem ein bereits bestehender kopiert
+        wird. Es kann vorkommen, dass Sie zu irgendeinem Zeitpunkt der
+        Lebenszeit Ihres Repositorys eine Datei oder ein Verzeichnis
+        von einer durch <command>svndumpfilter</command> ausgelassenen
+        Stelle an eine durch <command>svndumpfilter</command>
+        berücksichtigte Stelle kopiert haben. Um die Auszugsdateien
+        unabhängig zu machen, muss <command>svndumpfilter</command>
+        trotzdem das Hinzufügen des neuen Pfades anzeigen &ndash; mit
+        dem Inhalt aller durch die Kopie erzeugten Dateien &ndash;
+        allerdings nicht als eine Kopie aus einer Quelle, die es gar
+        nicht im gefilterten Auszugsstrom gibt. Da allerdings das
+        Subversion Auszugsdateiformat nur Änderungen von Revisionen
+        beinhaltet, kann es sein, dass der Inhalt der Quelle der Kopie
+        nicht verfügbar ist. Wenn Sie mutmaßen, dass Sie solche Kopien
+        in Ihrem Repository haben, sollten Sie die Auswahl der
+        ausgelassenen/berücksichtigten Pfade überdenken, indem Sie
+        vielleicht die Pfade, die als Quellen für die problematischen
+        Kopien dienten, hinzunehmen.</para>
 
+<!--
       <para>Finally, <command>svndumpfilter</command> takes path
         filtering quite literally.  If you are trying to copy the
         history of a project rooted at
@@ -4186,13 +4737,38 @@ Node-path: spreadsheet/Makefile
         directories that the new dump stream expects to exist
         actually do exist in the target repository before trying to
         load the stream into that repository.</para>
+-->
+      <para>Schließlich behandelt <command>svndumpfilter</command>
+        Pfadfilterung ziemlich wörtlich. Wenn Sie die Historie eines
+        Projektes mit dem Wurzelverzeichnis
+        <filename>trunk/my-project</filename> kopieren und sie in ein
+        eigenes Repository verschieben möchten, werden Sie
+        selbstverständlich den Befehl <command>svndumpfilter
+        include</command> verwenden, um alle Änderungen in und
+        unterhalb von <filename>trunk/my-project</filename> zu
+        bewahren. Doch macht die entstehende Auszugsdatei keinerlei
+        Annahmen bezüglich des Repositorys, in das Sie die Daten zu
+        laden beabsichtigen. In diesem besonderen Fall könnten die
+        Auszugsdaten mit der Revision beginnen, die das Verzeichnis
+        <filename>trunk/my-project</filename> hinzugefügt hat, doch
+        sie werden <emphasis>keine</emphasis> Direktiven enthalten,
+        dir das Verzeichnis <filename>trunk</filename> selbst anlegen
+        (weil <filename>trunk</filename> nicht zum Filter der zu
+        berücksichtigenden Pfade passt). Sie müssen sicherstellen,
+        dass alle Verzeichnisse, die der Auszugsstrom erwartet,
+        tatsächlich im Ziel-Repository vorhanden sind, bevor Sie
+        versuchen, den Strom in dieses Repository zu laden.</para>
 
     </sect2>
   
     <!-- =============================================================== -->
     <sect2 id="svn.reposadmin.maint.replication">
+<!--
       <title>Repository Replication</title>
+-->
+      <title>Repository Replikation</title>
 
+<!--
       <para>There are several scenarios in which it is quite handy to
         have a Subversion repository whose version history is exactly
         the same as some other repository's.  Perhaps the most obvious
@@ -4202,7 +4778,19 @@ Node-path: spreadsheet/Makefile
         Other scenarios include deploying mirror repositories to
         distribute heavy Subversion load across multiple servers, use
         as a soft-upgrade mechanism, and so on.</para>
+-->
+      <para>Es gibt mehrere Szenarien, in denen es sehr passend ist,
+        ein Subversion-Repository zu haben, dessen Versionshistorie
+        genau dieselbe wie die eines anderen Repositorys ist.
+        Vielleicht das offensichtlichste ist die Aufrechterhaltung
+        eines Repositorys als einfache Sicherheitskopie, das verwendet
+        wird, wenn das primäre Repository wegen Materialdefekt,
+        Netzausfall oder ähnlichen Ärgernissen unzugänglich geworden
+        ist. Andere Szenarien umfassen den Einsatz von
+        Spiegel-Repositorys, um heftige Subversion-Last über mehrere
+        Server zu verteilen, zum sanften Aufrüsten usw.</para>
 
+<!--
       <para>As of version 1.4, Subversion provides a program for
         managing scenarios such as
         these&mdash;<command>svnsync</command>.  This works by
@@ -4216,13 +4804,35 @@ Node-path: spreadsheet/Makefile
         interfaces.  All it requires is read access to the source
         repository and read/write access to the destination
         repository.</para>
+-->
+      <para>Seit Version 1.4 stellt Subversion ein Programm zur
+        Handhabung solcher Szenarien zur Verfügung &ndash;
+        <command>svnsync</command>. Im Wesentlichen funktioniert das,
+        indem der Subversion-Server aufgefordert wird, Revisionen zu
+        <quote>wiederholen</quote>, eine nach der anderen. Dann wird
+        die Information dieser Revision benutzt, um eine Übergabe
+        derselben an ein anderes Repository zu imitieren. Keins der
+        Repositorys muss lokal auf der Maschine liegen, auf der
+        <command>svnsync</command> läuft &ndash; seine Parameter sind
+        Repository-URLs, und es verrichtet seine gesamte Arbeit über
+        die Repository-Access-Schnittstellen (RA) von Subversion. Das
+        Einzige, was benötigt wird, ist Lesezugriff auf das
+        Quell-Repository und Lese-/Schreibzugriff auf das
+        Ziel-Repository.</para>
 
       <note>
+<!--
         <para>When using <command>svnsync</command> against a remote
           source repository, the Subversion server for that repository
           must be running Subversion version 1.4 or later.</para>
+-->
+        <para>Wenn Sie <command>svnsync</command> mit einem entfernt
+          liegenden Quell-Repository verwenden, muss auf dem
+          Subversion-Server für dieses Repository Subversion 1.4 oder
+          neuer laufen.</para>
       </note>
 
+<!--
       <para>Assuming you already have a source repository that you'd
         like to mirror, the next thing you need is an empty target
         repository that will actually serve as that mirror.  This
@@ -4244,16 +4854,50 @@ Node-path: spreadsheet/Makefile
         allowing the revision history in the target repository to
         change by any mechanism other than the mirroring process is a
         recipe for disaster.</para>
+-->
+      <para>Angenommen, Sie haben bereits ein Repository, das Sie
+        gerne spiegeln möchten. Als nächstes brauchen Sie ein leeres
+        Ziel-Repository, das als Spiegel dienen soll. Dieses
+        Repository kann eins der verfügbaren Speicherverfahren
+        benutzen (siehe <xref
+        linkend="svn.reposadmin.basics.backends" />), doch es darf
+        noch keine Versionshistorie enthalten. Das von
+        <command>svnsync</command> verwendete Protokoll zur
+        Übermittlung der Revisionsinformation ist sehr empfindlich
+        gegenüber nicht übereinstimmenden Versionshistorien im
+        Quell- und Ziel-Repository. Aus dem Grund, dass
+        <command>svnsync</command> nicht
+        <emphasis>verlangen</emphasis> kann, dass das Ziel-Repository
+        nur lesbar ist,
+        <footnote>
+          <para>Tatsächlich kann es gar nicht nur lesbar sein, denn
+            sonst hätte <command>svnsync</command> ein echtes Problem,
+            die Versionshistorie hineinzukopieren.</para>
+        </footnote>
+        ist die Katastrophe programmiert, wenn erlaubt wird, die
+        Revisions-Historie im Ziel-Repository mit anderen Mitteln als
+        durch das Spiegeln zu verändern.</para>
 
       <warning>
+<!--
         <para>Do <emphasis>not</emphasis> modify a mirror repository
           in such a way as to cause its version history to deviate
           from that of the repository it mirrors.  The only commits
           and revision property modifications that ever occur on that
           mirror repository should be those performed by the
           <command>svnsync</command> tool.</para>
+-->
+        <para>Verändern Sie ein Spiegel-Repository
+          <emphasis>nicht</emphasis> auf eine Art und Weise, die dazu
+          führt, dass die Versionshistorie von der des
+          Original-Repositorys abweicht. Die einzigen Übergaben und
+          Änderungen an Revisions-Propertys die in diesem
+          Spiegel-Repository stattfinden, sollten ausschließlich durch
+          den Befehl <command>svnsync</command> vorgenommen
+          werden.</para>
       </warning>
 
+<!--
       <para>Another requirement of the target repository is that the
         <command>svnsync</command> process be allowed to modify
         revision properties.  Because <command>svnsync</command> works
@@ -4266,20 +4910,50 @@ Node-path: spreadsheet/Makefile
         <command>svnsync</command> to set and change revision
         properties.  With those provisions in place, you are ready to
         start mirroring repository revisions.</para>
+-->
+      <para>Eine weitere Anforderung an das Ziel-Repository ist, dass
+        dem <command>svnsync</command>-Prozess erlaubt wird,
+        Revisions-Propertys zu verändern. Da
+        <command>svnsync</command> im Rahmen des Hook-Systems
+        ausgeführt wird, ist der standardmäßige Zustand des
+        Repositorys (welcher keine Änderungen an Revisions-Propertys
+        zulässt; siehe <xref
+        linkend="svn.ref.reposhooks.pre-revprop-change" />) nicht
+        ausreichend. Sie müssen ausdrücklich den
+        pre-revprop-change-Hook bereitstellen, der
+        <command>svnsync</command> erlaubt, Revisions-Propertys zu
+        definieren und zu ändern. Mit diesen Vorkehrungen sind Sie
+        gerüstet, um Repository-Revisionen zu spiegeln.</para>
 
       <tip>
+<!--
         <para>It's a good idea to implement authorization measures
           that allow your repository replication process to perform
           its tasks while preventing other users from modifying the
           contents of your mirror repository at all.</para>
+-->
+        <para>Es ist eine gute Idee, Autorisierungsmaßnahmen zu
+          ergreifen, um Ihrem Repository-Replikations-Prozess die
+          Arbeit zu ermöglichen, wohingegen anderen Benutzern die
+          Veränderung der Inhalte des Spiegel-Repositorys verwehrt
+          wird.</para>
       </tip>
 
+<!--
       <para>Let's walk through the use of <command>svnsync</command>
         in a somewhat typical mirroring scenario.  We'll pepper this
         discourse with practical recommendations, which you are free to
         disregard if they aren't required by or suitable for your
         environment.</para>
+-->
+      <para>Lassen Sie uns nun die Benutzung von
+        <command>svnsync</command> bei einem Rundgang in einem
+        typischen Spiegel-Szenario erklären. Wir werden diesen Diskurs
+        mit Empfehlungen würzen, die Sie jedoch getrost missachten
+        können, falls sie für Ihre Umgebung nicht benötigt werden oder
+        nicht passend sind.</para>
 
+<!--
       <para>As a service to the fine developers of our favorite
         version control system, we will be mirroring the public
         Subversion source code repository and exposing that mirror
@@ -4295,12 +4969,38 @@ Node-path: spreadsheet/Makefile
         that it makes for a more interesting example, we'll be driving
         the replication process from a third machine&mdash;the one that
         we currently find ourselves using.</para>
+-->
+      <para>Als Dienst an den ausgezeichneten Entwicklern unseres
+        Lieblings-Versionskontrollsystems wollen wir das öffentliche
+        Subversion-Quelltext-Repository spiegeln und diesen Spiegel
+        von einer anderen Maschine als der, auf der das ursprüngliche
+        Subversion-Quelltext-Repository untergebracht ist, im Internet
+        veröffentlichen. Dieser entfernt liegende Rechner besitzt eine
+        globale Konfiguration, die es anonymen Benutzern erlaubt, den
+        Inhalt von Repositorys auf diesem Rechner zu lesen, aber zum
+        Ändern dieser Repositorys eine Authentifizierung der Benutzer
+        erforderlich macht. (Vergeben Sie uns bitte, dass wir für den
+        Augenblick über die Details der
+        Subversion-Server-Konfiguration hinwegsehen &ndash; sie werden
+        in <xref linkend="svn.serverconfig" /> behandelt.) Und aus dem
+        alleinigen Grund, es noch interessanter machen zu wollen,
+        werden wir den Replikationsprozess von einer dritten Maschine
+        aus steuern &ndash; diejenige, die wir aktuell
+        benutzen.</para>
 
+<!--
       <para>First, we'll create the repository which will be our
         mirror.  This and the next couple of steps do require shell
         access to the machine on which the mirror repository will
         live.  Once the repository is all configured, though, we
         shouldn't need to touch it directly again.</para>
+-->
+      <para>Zunächst erstellen wir das Repository, das unser Spiegel
+        sein soll. Dieser und die folgenden paar Schritte erfordern
+        einen Shell-Zugang auf die Maschine, die das
+        Spiegel-Repository beherbergen soll. Sobald das Repository
+        jedoch konfiguriert ist, sollten wir nicht mehr direkt darauf
+        zugreifen müssen.</para>
 
       <screen>
 $ ssh admin@svn.example.com \
@@ -4309,6 +5009,7 @@ admin@svn.example.com's password: ********
 $
 </screen>
 
+<!--
       <para>At this point, we have our repository, and due to our
         server's configuration, that repository is now
         <quote>live</quote> on the Internet.  Now, because we don't
@@ -4318,7 +5019,19 @@ $
         for our process.  Only commits and revision property
         modifications performed by the special username
         <literal>syncuser</literal> will be allowed.</para>
+-->
+      <para>Zu diesem Zeitpunkt haben wir unser Repository, und wegen
+        unserer Server-Konfiguration ist das Repository nun
+        <quote>live</quote> im Internet. Da wir aber außer unserem
+        Replikationsprozess niemanden erlauben wollen, das Repository
+        zu ändern, benötigen wir eine Möglichkeit, diesen Prozess von
+        anderen potentiellen Zugriffen zu unterscheiden. Um dies zu
+        machen, verwenden wir einen ausgezeichneten Benutzernamen für
+        unseren Prozess. Nur Übergaben und Änderungen an
+        Revisions-Propertys unter dem Benutzerkonto
+        <literal>syncuser</literal> werden erlaubt.</para>
 
+<!--
       <para>We'll use the repository's hook system both to allow the
         replication process to do what it needs to do and to enforce
         that only it is doing those things.  We accomplish this by
@@ -4330,10 +5043,28 @@ $
         />, and basically verifies that the user attempting the
         property changes is our <literal>syncuser</literal> user.  If
         so, the change is allowed; otherwise, it is denied.</para>
+-->
+      <para>Wir verwenden das Hook-System des Repositorys sowohl, um
+        dem Replikationsprozess seine Arbeit zu ermöglichen, als auch,
+        um sicherzustellen, dass nur er diese Dinge tut. Wir
+        bewerkstelligen dies, indem wir zwei der
+        Repository-Ereignis-Hooks implementieren &ndash;
+        pre-revprop-change und start-commit. Unser
+        <filename>pre-revprop-change</filename>-Hook-Script finden Sie
+        in <xref
+        linkend="svn.reposadmin.maint.replication.pre-revprop-change"
+        />; grundsätzlich stellt es sicher, dass der Benutzer, der die
+        Propertys ändern möchte, unser <literal>syncuser</literal>
+        ist. Falls dies zutrifft, ist die Änderung erlaubt,
+        anderenfalls wird die Änderung abgelehnt.</para>
 
       <example id="svn.reposadmin.maint.replication.pre-revprop-change">
+<!--
         <title>Mirror repository's pre-revprop-change hook script</title>
+-->
+        <title>pre-revprop-change-Hook-Script des Spiegel-Repositorys</title>
 
+<!--
         <programlisting>
 #!/bin/sh 
 
@@ -4344,8 +5075,20 @@ if [ "$USER" = "syncuser" ]; then exit 0; fi
 echo "Only the syncuser user may change revision properties" &gt;&amp;2
 exit 1
 </programlisting>
+-->
+        <programlisting>
+#!/bin/sh 
+
+USER="$3"
+
+if [ "$USER" = "syncuser" ]; then exit 0; fi
+
+echo "Ausschließlich der Benutzer syncuser darf Revisions-Propertys ändern" &gt;&amp;2
+exit 1
+</programlisting>
       </example>
 
+<!--
       <para>That covers revision property changes.  Now we need to
         ensure that only the <literal>syncuser</literal> user is
         permitted to commit new revisions to the repository.  We do
@@ -4353,10 +5096,22 @@ exit 1
         such as the one in <xref
         linkend="svn.reposadmin.maint.replication.start-commit"
         />.</para>
+-->
+      <para>Das deckt Änderungen an Revisions-Propertys ab. Nun müssen
+        wir sicherstellen, dass nur der Benutzer
+        <literal>syncuser</literal> neue Revisionen an das Repository
+        übergeben darf. Wir machen das, indem wir ein
+        <filename>start-commit</filename>-Hook-Script wie das in <xref
+        linkend="svn.reposadmin.maint.replication.start-commit" />
+        benutzen.</para>
 
       <example id="svn.reposadmin.maint.replication.start-commit">
+<!--
         <title>Mirror repository's start-commit hook script</title>
+-->
+        <title>start-commit-Hook-Script des Spiegel-Repositorys</title>
 
+<!--
         <programlisting>
 #!/bin/sh 
 
@@ -4367,13 +5122,32 @@ if [ "$USER" = "syncuser" ]; then exit 0; fi
 echo "Only the syncuser user may commit new revisions" &gt;&amp;2
 exit 1
 </programlisting>
+-->
+        <programlisting>
+#!/bin/sh 
+
+USER="$2"
+
+if [ "$USER" = "syncuser" ]; then exit 0; fi
+
+echo "Ausschließlich der Benutzer syncuser darf neue Revisionen übergeben" &gt;&amp;2
+exit 1
+</programlisting>
       </example>
 
+<!--
       <para>After installing our hook scripts and ensuring that they
         are executable by the Subversion server, we're finished with
         the setup of the mirror repository.  Now, we get to actually
         do the mirroring.</para>
+-->
+      <para>Nachdem wir unsere Hook-Scripte installiert und uns
+        vergewissert haben, dass sie auf dem Subversion-Server
+        ausführbar sind, sind wir mit dem Aufsetzen des
+        Spiegel-Repositorys fertig. Nun kommen wir zum eigentlichen
+        Spiegeln.</para>
 
+<!--
       <para>The first thing we need to do with
         <command>svnsync</command> is to register in our target
         repository the fact that it will be a mirror of the source
@@ -4384,7 +5158,19 @@ exit 1
         full mirroring of repositories is permitted.  In Subversion
         1.5, though, you can use <command>svnsync</command> to mirror
         only some subtree of the repository, too.</para>
+-->
+      <para>Das Erste, was wir machen müssen ist, unserem
+        Ziel-Repository mit <command>svnsync</command> zu sagen, dass
+        es ein Spiegel des Quell-Repositorys sein wird. Wir machen das
+        mit dem Unterbefehl <command>svnsync initialize</command>. Die
+        URLs, die wir mitgeben, zeigen auf die Wurzelverzeichnisse des
+        Ziel- bzw. Quell-Repositorys. In Subversion 1.4 ist das
+        erforderlich &ndash; nur die vollständige Spiegelung von
+        Repositorys ist erlaubt. In Subversion 1.5 jedoch können Sie
+        <command>svnsync</command> auch zum Spiegeln von Teilbäumen
+        des Repositorys verwenden.</para>
 
+<!--
       <screen>
 $ svnsync help init
 initialize (init): usage: svnsync initialize DEST_URL SOURCE_URL
@@ -4394,41 +5180,87 @@ another repository.
 &hellip;
 $ svnsync initialize http://svn.example.com/svn-mirror \
                      http://svn.collab.net/repos/svn \
-                     --sync-username syncuser --sync-password syncpass
+                     - -sync-username syncuser - -sync-password syncpass
 Copied properties for revision 0.
 $
 </screen>
+-->
+      <screen>
+$ svnsync help init
+initialize (init): Aufruf: svnsync initialize ZIEL_URL QUELL_URL
 
+Bereitet ein Zielprojektarchiv auf die Synchronisation mit einem
+anderen Projektarchiv vor.
+&hellip;
+$ svnsync initialize http://svn.example.com/svn-mirror \
+                     http://svn.collab.net/repos/svn \
+                     --sync-username syncuser --sync-password syncpass
+Eigenschaften für Revision 0 kopiert.
+$
+</screen>
+
+<!--
       <para>Our target repository will now remember that it is a
         mirror of the public Subversion source code repository.
         Notice that we provided a username and password as arguments
         to <command>svnsync</command>&mdash;that was required by the
         pre-revprop-change hook on our mirror repository.</para>
+-->
+      <para>Unser Ziel-Repository wird sich nun erinnern, dass es ein
+        Spiegel des öffentlichen Subversion-Quelltext-Repositorys ist.
+        Beachten Sie, dass wir einen Benutzernamen und ein Passwort an
+        <command>svnsync</command> übergeben haben &ndash; das war für
+        den pre-revprop-change-Hook in unserem Spiegel-Repository
+        erforderlich.</para>
 
       <note>
+<!--
         <para>In Subversion 1.4, the values given to
-          <command>svnsync</command>'s <option>--username</option> and
-          <option>--password</option> command-line options were used
+          <command>svnsync</command>'s <option>- -username</option> and
+          <option>- -password</option> command-line options were used
           for authentication against both the source and destination
           repositories.  This caused problems when a user's
           credentials weren't exactly the same for both repositories,
           especially when running in noninteractive mode (with the
-          <option>--non-interactive</option> option).</para>
+          <option>- -non-interactive</option> option).</para>
+-->
+        <para>In Subversion 1.4 wurden die an die
+          Kommandozeilenoptionen <option>--username</option> und
+          <option>--password</option> von <command>svnsync</command>
+          übergebenen Werte sowohl für die Authentifizierung gegenüber
+          dem Quell-Repository als auch gegenüber dem Ziel-Repository
+          verwendet. Das führte zu Problemen, falls die Zugangsdaten
+          eines Benutzers nicht für beide Repositorys identisch waren,
+          insbesonders im nicht-interaktiven Modus (mit der Option
+          <option>--non-interactive</option>).</para>
 
+<!--
         <para>This has been fixed in Subversion 1.5 with the
           introduction of two new pairs of options.  Use
-          <option>--source-username</option> and
-          <option>--source-password</option> to provide authentication
+          <option>- -source-username</option> and
+          <option>- -source-password</option> to provide authentication
           credentials for the source repository; use
-          <option>--sync-username</option> and
-          <option>--sync-password</option> to provide credentials for
+          <option>- -sync-username</option> and
+          <option>- -sync-password</option> to provide credentials for
           the destination repository.  (The old
-          <option>--username</option> and <option>--password</option>
+          <option>- -username</option> and <option>- -password</option>
           options still exist for compatibility, but we advise against
           using them.)</para>
+-->
+        <para>Dies ist in Subversion 1.5 mit der Einführung von zwei
+          neuen Optionspaaren behoben worden. Benutzen Sie
+          <option>--source-username</option> und
+          <option>--source-password</option> für die Zugangsdaten des
+          Quell-Repositorys sowie <option>--sync-username</option> und
+          <option>--sync-password</option> für das Ziel-Repository.
+          (Die alten Optionen <option>--username</option> und
+          <option>--password</option> bleiben aus
+          Kompatibilitätsgründen bestehen, doch raten wir von deren
+          Verwendung ab.)</para>
 
       </note>
 
+<!--
       <para>And now comes the fun part.  With a single subcommand, we
         can tell <command>svnsync</command> to copy all the
         as-yet-unmirrored revisions from the source repository to the
@@ -4452,7 +5284,32 @@ $
         resultant response from the source repository's server, it
         begins forwarding those revisions to the target repository's
         server as new commits.</para>
+-->
+      <para>Und nun kommt der lustige Teil. Mit einem einfachen
+        Unterbefehl können wir <command>svnsync</command> auffordern,
+        alle bislang ungespiegelten Revisionen aus dem
+        Quell-Repository zum Ziel zu kopieren.
+        <footnote>
+          <para>Seien Sie jedoch vorgewarnt, dass, obwohl der
+            durchschnittliche Leser nur ein paar Sekunden benötigt, um
+            diesen Absatz und die ihm folgende Beispielausgabe zu
+            erfassen, die tatsächlich für eine vollständige Spiegelung
+            erforderliche Zeit um Einiges länger ist.</para>
+        </footnote>
+        Der Unterbefehl <command>svnsync synchronize</command> wird
+        die bereits vorher im Ziel-Repository gespeicherten besonderen
+        Revisions-Propertys untersuchen und sowohl ermitteln, welches
+        Repository es spiegelt und dass die zuletzt gespiegelte
+        Revision die Revision 0 war. Dann fragt es das Quell-Repository
+        ab, welches die jüngste Revision in diesem Repository ist.
+        Schließlich fordert es den Server des Quell-Repositorys auf,
+        alle Revisionen zwischen 0 und dieser letzten Revision
+        zu wiederholen. Sobald <command>svnsync</command> die
+        entsprechende Antwort vom Quell-Repository-Server erhält,
+        leitet es diese Revisionen als neue Übergaben an den Server
+        des Ziel-Repositorys weiter.</para>
 
+<!--
       <screen>
 $ svnsync help synchronize
 synchronize (sync): usage: svnsync synchronize DEST_URL
@@ -4482,7 +5339,38 @@ Committed revision 23408.
 Copied properties for revision 23408.
 $
 </screen>
+-->
+      <screen>
+$ svnsync help synchronize
+synchronize (sync): Aufruf: svnsync synchronize ZIEL_URL
 
+Überträgt alle laufenden Revisionen von der Quelle, mit der es
+initialisiert wurde, zum Ziel.
+&hellip;
+$ svnsync synchronize http://svn.example.com/svn-mirror
+Übertrage Daten ........................................
+Revision 1 übertragen.
+Eigenschaften für Revision 1 kopiert.
+Übertrage Daten ..
+Revision 2 übertragen.
+Eigenschaften für Revision 2 kopiert.
+Übertrage Daten .....
+Revision 3 übertragen.
+Eigenschaften für Revision 3 kopiert.
+&hellip;
+Übertrage Daten ..
+Revision 23406 übertragen.
+Eigenschaften für Revision 23406 kopiert.
+Übertrage Daten .
+Revision 23407 übertragen.
+Eigenschaften für Revision 23407 kopiert.
+Übertrage Daten ....
+Revision 23408 übertragen.
+Eigenschaften für Revision 23408 kopiert.
+$
+</screen>
+
+<!--
       <para>Of particular interest here is that for each mirrored
         revision, there is first a commit of that revision to the
         target repository, and then property changes follow.  This is
@@ -4497,7 +5385,25 @@ $
         for that revision in the source repository.  This also has the
         effect of fixing the author and datestamp of the revision to
         match that of the source repository.</para>
+-->
+      <para>Von besonderem Interesse ist hier, dass für jede
+        gespiegelte Revision zunächst eine Übergabe der Revision an
+        das Ziel-Repository erfolgt und dann die Änderungen der
+        Propertys folgen. Das kommt daher, dass die anfängliche
+        Übergabe durch den Benutzer <literal>syncuser</literal>
+        durchgeführt (und ihm auch zugeschrieben) wird und mit dem
+        Zeitstempel der Erzeugung dieser Revision versehen wird.
+        Darüberhinaus erlauben die Subversion zugrundeliegenden
+        Repository-Zugriffs-Schnittstellen nicht das beliebige Setzen
+        von Revisions-Propertys als Teil einer Übergabe. Deshalb folgt
+        <command>svnsync</command> mit einer unmittelbaren Serie von
+        Änderungen an den Propertys, die all die Propertys dieser
+        Revision vom Quell-Repository ins Ziel-Repository kopieren.
+        Das hat auch den Effekt, dass der Autor und der Zeitstempel so
+        korrigiert werden, dass diese den entsprechenden Werten im
+        Quell-Repository entsprechen.</para>
 
+<!--
       <para>Also noteworthy is that <command>svnsync</command>
         performs careful bookkeeping that allows it to be safely
         interrupted and restarted without ruining the integrity of the
@@ -4507,10 +5413,26 @@ $
         right where it left off.  In fact, as new revisions appear in
         the source repository, this is exactly what you to do
         to keep your mirror up to date.</para>
+-->
+      <para>Bemerkenswert ist ebenfalls, dass
+        <command>svnsync</command> eine sorgfältige Buchführung
+        vornimmt, die es ihm erlaubt, sicher unterbrochen und erneut
+        gestartet zu werden, ohne die Integrität der gespiegelten
+        Daten zu gefährden. Falls während des Spiegelns ein
+        Netzproblem entsteht, wiederholen Sie einfach den Befehl
+        <command>svnsync synchronize</command>, und er wird einfach
+        damit weitermachen, womit er aufgehört hat. Das ist
+        tatsächlich genau das, was Sie machen, um Ihren Spiegel
+        aktuell zu halten, wenn neue Revisionen im Quell-Repository
+        auftauchen.</para>
 
       <sidebar>
+<!--
         <title>svnsync Bookkeeping</title>
+-->
+        <title>svnsync-Buchhaltung</title>
 
+<!--
         <para><command>svnsync</command> needs to be able to set and
           modify revision properties on the mirror repository because
           those properties are part of the data it is tasked with
@@ -4522,7 +5444,21 @@ $
           bookkeeping.  These properties contain information such as
           the URL and UUID of the source repository, plus some
           additional state-tracking information.</para>
+-->
+        <para><command>svnsync</command> muss in der Lage sein,
+          Revisions-Propertys im Ziel-Repository zu setzen und zu
+          verändern, da diese Propertys Teil der Daten sind, die es
+          spiegeln soll. Wenn sich diese Propertys im Quell-Repository
+          ändern, müssen sie im Ziel-Repository nachgezogen werden.
+          Allerdings verwendet <command>svnsync</command> auch eine
+          Menge von speziellen Revisions-Propertys &ndash;
+          gespeichert in Revision 0 des Spiegel-Repositorys &ndash;
+          für seine eigene interne Buchhaltung. Diese Propertys
+          beinhalten Informationen wie etwa der URL oder die UUID des
+          Quell-Repositorys plus einige Informationen zur
+          Zustandsverfolgung.</para>
 
+<!--
         <para>One of those pieces of state-tracking information is a
           flag that essentially just means <quote>there's a
           synchronization in progress right now.</quote>  This is used
@@ -4541,13 +5477,41 @@ $
           removing the <literal>svn:sync-lock</literal> property which
           serves as this flag from revision 0 of the mirror
           repository:</para>
+-->
+        <para>Ein Teil dieser Zustandsverfolgungsinformation ist ein
+          Flag, das bedeutet: <quote>momentan findet eine
+          Synchronisierung statt</quote>. Dies wird verwendet, um zu
+          verhindern, dass mehrere <command>svnsync</command>-Prozesse
+          miteinander kollidieren, während sie versuchen, Daten in
+          dasselbe Ziel-Repository zu spiegeln. Im Allgemeinen
+          brauchen Sie auf <emphasis>keins</emphasis> dieser
+          besonderen Propertys zu achten (sie beginnen alle mit dem
+          Präfix <literal>svn:sync-</literal>). Gelegentlich jedoch,
+          falls eine Synchronisierung unerwartet fehlschlägt, bekommt
+          Subversion keine Chance, dieses besondere Zustands-Flag zu
+          entfernen. Das führt dazu, dass alle weiteren
+          Synchronisierungsversuche fehlschlagen, da es scheint, dass
+          eine Synchronisierung gerade durchgeführt wird, obwohl
+          tatsächlich keine stattfindet. Glücklicherweise kann dies
+          behoben werden, indem einfach das Property
+          <literal>svn:sync-lock</literal> von Revision 0 des
+          Spiegel-Repositorys entfernt wird, das als dieses Flag
+          dient.</para>
 
+<!--
         <screen>
-$ svn propdel --revprop -r0 svn:sync-lock http://svn.example.com/svn-mirror
+$ svn propdel - -revprop -r0 svn:sync-lock http://svn.example.com/svn-mirror
 property 'svn:sync-lock' deleted from repository revision 0
 $
 </screen>
+-->
+        <screen>
+$ svn propdel --revprop -r0 svn:sync-lock http://svn.example.com/svn-mirror
+Eigenschaft »svn:sync-lock« wurde von Revision 0 im Projektarchiv gelöscht
+$
+</screen>
 
+<!--
         <para>That <command>svnsync</command> stores the source
           repository URL in a bookkeeping property on the mirror
           repository is the reason why you have to specify that
@@ -4572,14 +5536,49 @@ $
           to start referring to a different URL for the same source
           repository, you can change the bookkeeping property which
           houses that information:</para>
+-->
+        <para>Dass <command>svnsync</command> den URL des
+          Quell-Repositorys zur Buchhaltung in einem Property des
+          Spiegel-Repositorys speichert, ist der Grund dafür, dass Sie
+          diesen URL nur einmal angeben müssen: bei <command>svnsync
+          init</command>. Künftige Synchronisierungs-Operationen mit
+          diesem Spiegel lesen einfach das besondere Property
+          <literal>svn:sync-from-url</literal>, das auf dem Spiegel
+          gespeichert ist, um zu wissen, woher synchronisiert werden
+          soll. Dieser Wert wird vom Synchronisierungsprozess jedoch
+          wortwörtlich benutzt. Während Sie vielleicht innerhalb des
+          Netzes von CollabNet auf unseren Beispiel-URL
+          <literal>http://svn/repos/svn</literal> zugreifen können
+          (weil das erste <literal>svn</literal> durch
+          DNS-Voodoo-Zauber ein <literal>.collab.net</literal>
+          angehängt bekommt), kann der Zugriff fehlschlagen, falls Sie
+          später einmal den Spiegel von außerhalb des CollabNet-Netzes
+          aktualisieren müssen (da der Rechnername
+          <literal>svn</literal> mehrdeutig ist). Aus diesem Grund ist
+          es am besten, beim Initialisieren von Spiegel-Repositorys
+          vollqualifizierte Quell-Repository-URLs zu verwenden,
+          anstatt solche, die nur auf Rechnernamen oder IP-Adressen
+          verweisen (die sich im Lauf der Zeit ändern können). Aber
+          auch hier können Sie das Property zur Buchhaltung ändern,
+          falls ein bestehender Spiegel einen unterschiedlichen URL
+          für dasselbe Quell-Repository benötigt:</para>
 
+<!--
         <screen>
-$ svn propset --revprop -r0 svn:sync-from-url <replaceable>NEW-SOURCE-URL</replaceable> \
+$ svn propset - -revprop -r0 svn:sync-from-url <replaceable>NEW-SOURCE-URL</replaceable> \
       http://svn.example.com/svn-mirror
 property 'svn:sync-from-url' set on repository revision 0
 $
 </screen>
+-->
+        <screen>
+$ svn propset --revprop -r0 svn:sync-from-url <replaceable>NEUER-QUELL-URL</replaceable> \
+      http://svn.example.com/svn-mirror
+Eigenschaft »svn:sync-from-url« wurde für Revision 0 im Projektarchiv gesetzt
+$
+</screen>
 
+<!--
         <para>Another interesting thing about these special
           bookkeeping properties is that <command>svnsync</command>
           will not attempt to mirror any of those properties when they
@@ -4593,9 +5592,25 @@ $
           third repository.  When <command>svnsync</command> sees its
           own special properties in revision 0 of the source
           repository, it simply ignores them.</para>
+-->
+        <para>Eine weitere interessante Angelegenheit an diesen
+          speziellen Propertys zur Buchhaltung ist, dass
+          <command>svnsync</command> nicht versucht, diese Propertys
+          zu spiegeln, wenn sie im Quell-Repository gefunden werden.
+          Der Grund ist wahrscheinlich offensichtlich, aber im Grunde
+          läuft es darauf hinaus, dass <command>svnsync</command>
+          nicht zu unterscheiden vermag, welche der speziellen
+          Propertys es bloß aus dem Quell-Repository kopiert hat und
+          welche es für seine Buchhaltung benötigt und verwaltet.
+          Diese Situation kann auftreten, falls Sie beispielsweise
+          einen Spiegel eines Spiegels eines dritten Repositorys
+          vorhalten. Wenn <command>svnsync</command> seine eigenen
+          speziellen Propertys in Revision 0 des Quell-Repositorys
+          entdeckt, ignoriert es sie einfach.</para>
 
       </sidebar>
 
+<!--
       <para>There is, however, one bit of inelegance in the process.
         Because Subversion revision properties can be changed at any
         time throughout the lifetime of the repository, and because
@@ -4609,7 +5624,22 @@ $
         around) the <command>svnsync copy-revprops</command>
         subcommand, which simply rereplicates all the revision
         properties for a particular revision or range thereof.</para>
+-->
+      <para>In diesem Prozess ist jedoch eine kleine Unfeinheit. Da
+        die Revisions-Propertys von Subversion jederzeit während der
+        Lebenszeit eines Repository geändert werden können, ohne zu
+        protokollieren, wann sie geändert wurden, müssen replizierende
+        Prozesse ein besonderes Augenmerk auf sie richten. Wenn Sie
+        bereits die ersten 15 Revisionen eines Repositorys gespiegelt
+        haben, und dann jemand ein Revisions-Property von Revision 12
+        ändert, weiß <command>svnsync</command> nicht, dass es
+        zurückgehen und die Kopie der Revision 12 korrigieren muss.
+        Sie müssen es ihm manuell mitteilen, indem Sie den Unterbefehl
+        <command>svnsync copy-revprops</command> verwenden, der
+        einfach alle Propertys einer bestimmten Revision oder eines
+        Revisionsintervalls erneut repliziert.</para>
 
+<!--
       <screen>
 $ svnsync help copy-revprops
 copy-revprops: usage: svnsync copy-revprops DEST_URL [REV[:REV2]]
@@ -4621,7 +5651,20 @@ $ svnsync copy-revprops http://svn.example.com/svn-mirror 12
 Copied properties for revision 12.
 $
 </screen>
+-->
+      <screen>
+$ svnsync help copy-revprops
+copy-revprops: Aufruf: svnsync copy-revprops ZIEL_URL [REV[:REV2]]
 
+Kopiert die Revisionseigenschaften in einem gegebenen Revisionsbereich
+von der Quelle, mit der es initialisiert wurde, auf das Ziel.
+&hellip;
+$ svnsync copy-revprops http://svn.example.com/svn-mirror 12
+Eigenschaften für Revision 12 kopiert.
+$
+</screen>
+
+<!--
       <para>That's repository replication in a nutshell.  You'll
         likely want some automation around such a process.  For
         example, while our example was a pull-and-push setup, you
@@ -4630,14 +5673,34 @@ $
         post-revprop-change hook implementations.  This would enable
         the mirror to be up to date in as near to real time as is
         likely possible.</para>
+-->
+      <para>Das ist Repository-Replikation in aller Kürze.
+        Sehrwahrscheinlich möchten Sie einen solchen Prozess etwas
+        automatisieren. Während unser Beispiel ein
+        Ziehen-und-Schieben-Szenario beschrieb, möchten Sie
+        vielleicht, dass Ihr primäres Repository als Teil der
+        post-commit- und post-revprop-change-Hooks Änderungen an einen
+        oder mehrere ausgesuchte Spiegel weiterschiebt. Das würde es
+        ermöglichen, dass der Spiegel beinahe in Echtzeit aktuell
+        gehalten werden kann.</para>
 
+<!--
       <para>Also, while it isn't very commonplace to do so,
         <command>svnsync</command> does gracefully mirror repositories
         in which the user as whom it authenticates has only partial
         read access.  It simply copies only the bits of the repository
         that it is permitted to see.  Obviously, such a mirror is not
         useful as a backup solution.</para>
+-->
+      <para>Es ist auch möglich, wenn auch nicht sehr verbreitet, dass
+        <command>svnsync</command> Repositorys spiegelt, in denen der
+        Benutzer unter dessen Kennung es läuft, nur eingeschränkte
+        Rechte besitzt. Es werden dann einfach nur die Teile des
+        Repositorys kopiert, die der Benutzer sehen darf.
+        Offensichtlich taugt so ein Spiegel nicht als
+        Sicherheitskopie.</para>
 
+<!--
       <para>In Subversion 1.5, <command>svnsync</command> grew the
         ability to also mirror a subset of a repository rather than
         the whole thing.  The process of setting up and maintaining
@@ -4659,7 +5722,28 @@ $
         subdirectory is renamed in the future, your synchronization
         processes will stop mirroring data at the point that the
         source URL you specified is no longer valid.</para>
+-->
+      <para>In Subversion 1.5 entwickelte <command>svnsync</command>
+        auch die Fähigkeit, eine Teilmenge eines Repositorys statt des
+        Ganzen zu spiegeln. Das Anlegen und Pflegen eines solchen
+        Spiegels unterscheidet sich nicht vom Spiegeln eines
+        kompletten Repositorys; anstatt den Wurzel-URL des
+        Quell-Repositorys bei <command>svnsync init</command>
+        anzugeben, nennen Sie einfach den URL eines
+        Unterverzeichnisses dieses Repositorys. Hierbei gibt es
+        allerdings einige Einschränkungen. Als Erstes können Sie nicht
+        mehrere disjunkte Unterverzeichnisse des Quell-Repositorys in
+        ein einzelnes Ziel-Repository spiegeln &ndash; stattdessen
+        müssen Sie ein Eltern-Verzeichnis spiegeln, das allen
+        gemeinsam ist. Zum Zweiten ist die Filterlogik vollständig
+        pfadbasiert, so dass bei Verzeichnissen, die in der
+        Vergangenheit einmal umbenannt wurden, Ihr Spiegel nur die
+        Revisionen seit dem Zeitpunkt enthält an dem das Verzeichnis
+        unter diesem URL zu finden war. Auch wenn das Unterverzeichnis
+        künftig umbenannt wird, werden Revisionen nur bis zu dem
+        Zeitpunkt gespiegelt, an dem der URL ungültig wird.</para>
 
+<!--
       <para>As far as user interaction with repositories and mirrors
         goes, it <emphasis>is</emphasis> possible to have a single
         working copy that interacts with both, but you'll have to jump
@@ -4668,9 +5752,20 @@ $
         same repository UUID (which is not the case by default).  See
         <xref linkend="svn.reposadmin.maint.uuids" /> later in this
         chapter for more about this.</para>
-        
+-->
+      <para>Was das Zusammenspiel von Benutzern mit Repositorys und
+        Spiegeln betrifft, <emphasis>ist</emphasis> es möglich eine
+        einzelne Arbeitskopie zu haben, die mit beiden kommuniziert,
+        doch müssen Sie hierfür einige Verrenkungen machen. Zunächst
+        müssen Sie sicherstellen, dass sowohl das primäre Repository
+        als auch das Spiegel-Repository dieselbe Repository-UUID haben
+        (was standardmäßig nicht der Fall ist). Mehr darüber unter
+        <xref linkend="svn.reposadmin.maint.uuids" /> später in diesem
+        Kapitel.</para>
+
+<!--
       <para>Once the two repositories have the same UUID, you can use
-        <command>svn switch</command> with the <option>--relocate</option> option to point your working
+        <command>svn switch</command> with the <option>- -relocate</option> option to point your working
         copy to whichever of the repositories you wish to operate
         against, a process that is described in <xref
         linkend="svn.ref.svn.c.switch" />.  There is a possible danger
@@ -4685,7 +5780,26 @@ $
         repository is up to date, or backdate your working copy to a
         revision you know is present in the sync repository, and then
         retry the relocation.</para>
+-->
+      <para>Sobald beide Repositorys dieselbe UUID haben, können Sie
+        <command>svn switch</command> mit der Option
+        <option>--relocate</option> benutzen, um das Repository
+        auszuwählen, mit dem Sie arbeiten wollen; dieser Prozess ist
+        in <xref linkend="svn.ref.svn.c.switch" /> beschrieben. Eine
+        mögliche Gefahr besteht allerdings, wenn das Haupt- und das
+        Spiegel-Repository nicht zeitnah synchronisiert sind. Eine
+        Arbeitskopie, die auf das Haupt-Repository zeigt und gegenüber
+        diesem aktuell ist, wird nach dem Umschalten auf den nicht
+        aktuellen Spiegel durch den plötzlichen Verlust von
+        Revisionen, die sie dort erwartet, verwirrt werden und deshalb
+        Fehler ausgeben. Falls dies auftritt, können Sie entweder Ihre
+        Arbeitskopie wieder zurück auf das Haupt-Repository schalten
+        und warten bis das Spiegel-Repository aktuell ist oder Ihre
+        Arbeitskopie auf eine Revision zurücksetzen, von der Sie
+        wissen, dass sie im synchronisierten Repository vorhanden ist,
+        und dann noch einmal das Umschalten versuchen. </para>
 
+<!--
       <para>Finally, be aware that the revision-based replication
         provided by <command>svnsync</command> is only
         that&mdash;replication of revisions.  Only information carried
@@ -4696,6 +5810,17 @@ $
         repository or server configuration data, uncommitted
         transactions, or information about user locks on repository
         paths.</para>
+-->
+      <para>Zum Schluss sollte Ihnen bewusst sein, dass die von
+        <command>svnsync</command> angebotene revisionsbasierte
+        Replikation genau das ist &ndash; die Replikation von
+        Revisionen. Nur die durch das Format der
+        Subversion-Auszugsdateien übertragene Information ist
+        replizierbar. Somit hat <command>svnsync</command> dieselben
+        Einschränkungen wie der Auszugsstrom und beinhaltet nicht
+        Dinge wie Hook-Implementierungen, Repository- oder
+        Server-Konfigurationen, unvollständige Transaktionen oder
+        Benutzersperren auf Repository-Pfaden.</para>
 
     </sect2>
 
