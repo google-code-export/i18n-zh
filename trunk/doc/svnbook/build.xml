@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="svnbook" default="pdf">
+<project name="svnbook" default="usage">
 
   <property file="build.properties"/>
 
@@ -22,8 +22,12 @@
     </fileset>
   </path>
 
-  <target name="usage">
-    <echo message="Use the -projecthelp option instead"/>
+  <target name="usage" depends="init" description="Describe targets usage">
+    <java classname="org.apache.tools.ant.Main">
+      <arg value="-projecthelp" />
+      <arg value="-buildfile" />
+      <arg value="${ant.file}" />
+    </java>
   </target>
 
   <target name="clean" description="Clean the build directory">
@@ -48,6 +52,8 @@
     <fail message="Saxon 6.5 Support NOT Present !" unless="saxon.present"/>
 
     <echo message="java.version: ${java.version}"/>
+    <echo message="ant.version: ${ant.version}"/>
+    <echo message="os.version: ${os.name} ${os.version}"/>
   </target>
 
   <target name="all" description="Generate document - pdf,html,chm">
