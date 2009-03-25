@@ -45,6 +45,7 @@
       BeanShell Support NOT Present !
     </fail>
 
+    <echo message="java.version: ${basedir}"/>
     <echo message="java.version: ${java.version}"/>
     <echo message="ant.version: ${ant.version}"/>
     <echo message="os.version: ${os.name} ${os.version}"/>
@@ -88,12 +89,12 @@
       <arg value="-p"/>
       <arg value="po/zh.po"/>
       <arg value="-m"/>
-      <arg value="../en/build/source/svnbook.xml"/>
+      <arg value="../en/build/source/svnbook-tmp.xml"/>
       <arg value="-l"/>
       <arg value="build/source/svnbook-tmp.xml"/>
     </exec>
 
-    <!-- version.xml is too bothersome-->
+    <!-- version id is too bothersome -->
     <script language="beanshell" manager="bsf">
     <![CDATA[
       import java.text.*;
@@ -102,7 +103,7 @@
 
       String getId(String path) {
         Process p = Runtime.getRuntime().exec(
-            new String[] { "svn", "info", basedir + File.pathSeparator + path },
+            new String[] { "svn", "info", basedir + File.separator + path },
             new  String[] {"LC_ALL=C" });
         if (p.waitFor() != 0) return "";
 
@@ -142,7 +143,7 @@
       if (id_l10n.length() < 2) {
         id = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
       } else {
-        id = id_l10n + "/" + id_svn;
+        id = "r" + id_l10n + "/r" + id_svn;
       }
 
       replace("build/source/svnbook.xml", "build/source/svnbook-tmp.xml", "$svn.rev.id$", id);
@@ -161,6 +162,12 @@
     </exec>
   </target>
 
+  <target name="stat" description="Print statistics about po file">
+    <exec dir="po" executable="msgfmt" failonerror="true">
+      <arg line="--statistics -c zh.po"/>
+    </exec>
+  </target>
+
   <target name="tidypo" description="Format po file - always before commit!">
     <exec dir="po" executable="msgcat" failonerror="true">
       <arg line="--sort-by-file --width=80 -o zh-tmp.po zh.po"/>
@@ -169,7 +176,7 @@
   </target>
 
   <target name="updatepo" description="Update po file">
-    <exec dir="${basedir}" executable="perl" failonerror="true">
+    <exec dir="${basedir}/po" executable="perl" failonerror="true">
       <env key="PERLLIB" value="${po4a.lib}"/>
       <env key="PERL5LIB" value="${po4a.lib}"/>
       <arg value="${po4a.home}/po4a-updatepo"/>
@@ -186,10 +193,11 @@
       <arg value="-o"/>
       <arg value="untranslated=&lt;programlisting&gt; &lt;screen&gt;"/>
       <arg value="-p"/>
-      <arg value="po/zh.po"/>
+      <arg value="zh.po"/>
       <arg value="-m"/>
-      <arg value="../en/book/book.xml"/>
+      <arg value="../../en/book/book.xml"/>
     </exec>
+
     <antcall target="tidypo"/>
   </target>
 
