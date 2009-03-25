@@ -47,24 +47,24 @@ tidypo:
 	done
 
 updatepo:
-	(cd po && $(UPDATEPO) -m ../../en/book/book.xml -p $(LINGUA).po)
+	(cd po && $(UPDATEPO) -m ../../en/book/book.xml -p svnbook.po)
 	$(MAKE) tidypo
 
 validate: build/source/svnbook.xml
 	xmllint --nonet --noout --postvalid --xinclude $<
 
-build/source/version.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/$(LINGUA).po
+build/source/version.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po
 	mkdir -p build/source
 	cp ../en/book/*.xml build/source
 	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
-	@echo '<!ENTITY svn.l10n_revision "r'`LC_ALL=C svn info po/$(LINGUA).po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
+	@echo '<!ENTITY svn.l10n_revision "r'`LC_ALL=C svn info po/svnbook.po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
 
-build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/$(LINGUA).po build/source/version.xml
+build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po build/source/version.xml
 	mkdir -p build/source/images
 	cp ../en/book/images/*.png build/source/images
 	for f in ../en/book/*.xml; do \
 	  if [ $$f != "../en/book/version.xml" ]; then \
-	    $(TRANSLATE) -m $$f -p po/$(LINGUA).po -l build/source/`basename $$f`; \
+	    $(TRANSLATE) -m $$f -p po/svnbook.po -l build/source/`basename $$f`; \
 	  fi \
 	done
 	xmllint --nonet --noent --xinclude --postvalid --output $@ build/source/book.xml
