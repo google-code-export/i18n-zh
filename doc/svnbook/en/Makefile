@@ -1,6 +1,7 @@
 #
-# Makefile for the svnbook, LINGUA=zh
+# Makefile for the svnbook, xml based
 #
+include Makefile.vars
 
 LINGUA=en
 FORMATS=html html-single pdf
@@ -14,53 +15,51 @@ help:
 	@echo "  make clean"
 
 clean:
-	@rm -fr build book/version.xml book/svnbook.xml book/svnbook.fo
+	@rm -fr build
 
 all:
 	for f in $(FORMATS); do \
 	  $(MAKE) $$f; \
 	done
 
-validate: book/svnbook.xml
+validate: build/source/svnbook.xml
 	xmllint --nonet --noout --postvalid --xinclude $<
 
-book/version.xml: $(filter-out book/version.xml book/svnbook.xml, $(wildcard book/*.xml))
-	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info $(LINGUA) | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
-	@echo '<!ENTITY svn.l10n_revision "">' >> $@
-
-book/svnbook.xml: $(filter-out book/svnbook.xml, $(wildcard book/*.xml)) book/version.xml
-	xmllint --nonet --noent --xinclude --postvalid --output $@ book/book.xml
+build/source/svnbook.xml: $(filter-out book/version.xml, $(wildcard book/*.xml))
+	mkdir -p build/source
+	cp -fr book/images build/source
+	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook.xml book/book.xml
 
 html: build/html/index.html
 
-build/html/index.html: book/svnbook.xml ../stylesheets/html.xsl ../stylesheets/$(LINGUA)/html.xsl
+build/html/index.html: build/source/svnbook.xml ../stylesheets/html.xsl ../stylesheets/$(LINGUA)/html.xsl
 	mkdir -p build/html/images
 	cp book/styles.css build/html
 	cp book/images/*.png build/html/images
 	xsltproc --output build/html/ \
-	    ../stylesheets/$(LINGUA)/html.xsl book/svnbook.xml
+	    ../stylesheets/$(LINGUA)/html.xsl build/source/svnbook.xml
 
 html-single: build/html-single/svnbook.html
 
-build/html-single/svnbook.html: book/svnbook.xml ../stylesheets/html-single.xsl ../stylesheets/$(LINGUA)/html-single.xsl
+build/html-single/svnbook.html: build/source/svnbook.xml ../stylesheets/html-single.xsl ../stylesheets/$(LINGUA)/html-single.xsl
 	mkdir -p build/html-single/images
 	cp book/styles.css build/html-single
 	cp book/images/*.png build/html-single/images
 	xsltproc --output build/html-single/svnbook.html \
-	    ../stylesheets/$(LINGUA)/html-single.xsl book/svnbook.xml
+	    ../stylesheets/$(LINGUA)/html-single.xsl build/source/svnbook.xml
 
 pdf: build/pdf/svnbook.pdf
 
-build/pdf/svnbook.pdf: book/svnbook.xml ../stylesheets/fo.xsl ../stylesheets/$(LINGUA)/fo.xsl
+build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesheets/$(LINGUA)/fo.xsl
 	mkdir -p build/pdf
-	java -classpath ../tools/fop/lib/saxon65.jar:../tools/fop/lib/saxon65-dbxsl.jar:../tools/fop/lib/xml-commons-resolver-1.2.jar:../tools/fop/conf \
+	java -classpath $(JAVA_SHARE)/saxon65.jar:$(JAVA_SHARE)/saxon65-dbxsl.jar:$(JAVA_SHARE)/xml-commons-resolver-1.2.jar:$(JAVA_SHARE) \
 	    com.icl.saxon.StyleSheet \
 	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -r org.apache.xml.resolver.tools.CatalogResolver \
 	    -o book/svnbook.fo \
-	    book/svnbook.xml \
+	    build/source/svnbook.xml \
 	    ../stylesheets/$(LINGUA)/fo.xsl \
 	    fop1.extensions=1
 
-	(cd book && ../../tools/fop/fop.sh svnbook.fo ../build/pdf/svnbook.pdf)
+	(cd book && $(FOP_HOME)/fop.sh -c $(FOP_HOME)/conf/userconfig.xml svnbook.fo ../build/pdf/svnbook.pdf)
