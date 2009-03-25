@@ -5,7 +5,7 @@
 
   <xsl:import href="../fo.xsl"/>
 
-  <xsl:param name="l10n.gentext.language" select="'zh'"/>
+  <xsl:param name="l10n.gentext.language" select="'zh-cn'"/>
 
   <!-- Chinese font related settings -->
   <xsl:param name="body.font.master">12</xsl:param>
