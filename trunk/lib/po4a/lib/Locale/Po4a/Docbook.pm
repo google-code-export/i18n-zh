@@ -89,6 +89,7 @@ sub initialize {
 	my %options = @_;
 
 	$self->SUPER::initialize(%options);
+	$self->{options}{'tagsonly'}=1;
 	$self->{options}{'wrap'}=1;
 	$self->{options}{'doctype'}=$self->{options}{'doctype'} || 'docbook xml';
 
@@ -212,7 +213,7 @@ sub initialize {
 	# NOTE: the attributes might be translated
 	$self->{options}{'_default_translated'} .= " <audiodata>";
 	$self->{options}{'_default_placeholder'} .= " <audiodata>";
-	$self->{options}{'_default_attributes'}.=' <audiodata>fileref';
+	$self->{options}{'attributes'}.=' <audiodata>fileref';
 
 	# audioobject; does not contain text;
 	# NOTE: might be contaioned in a inlinemediaobject
@@ -765,7 +766,7 @@ sub initialize {
 	# v4, not in v5
 	$self->{options}{'_default_untranslated'} .= " <graphic>";
 	$self->{options}{'_default_inline'} .= " <graphic>";
-	$self->{options}{'_default_attributes'}.=' <graphic>fileref';
+	$self->{options}{'attributes'}.=' <graphic>fileref';
 
 	# graphicco; does not contain text; Formatted as a displayed block.
 	# v4, not in v5
@@ -861,7 +862,7 @@ sub initialize {
 	# as a displayed block, depending on context
 	$self->{options}{'_default_translated'} .= " <imagedata>";
 	$self->{options}{'_default_inline'} .= " <imagedata>";
-	$self->{options}{'_default_attributes'}.=' <imagedata>fileref';
+	$self->{options}{'attributes'}.=' <imagedata>fileref';
 
 	# imageobject; does not contain text; May be formatted inline or
 	# as a displayed block, depending on context
@@ -1859,7 +1860,7 @@ sub initialize {
 	# NOTE: could be in the inline class
 	$self->{options}{'_default_untranslated'} .= " <textdata>";
 	$self->{options}{'_default_break'} .= " <textdata>";
-	$self->{options}{'_default_attributes'}.=' <textdata>fileref';
+	$self->{options}{'attributes'}.=' <textdata>fileref';
 
 	# textobject; does not contain text; Formatted inline or as a displayed block
 	# NOTE: could be in the inline class
@@ -1994,7 +1995,7 @@ sub initialize {
 	# videodata; contains text; Formatted inline or as a displayed block
 	$self->{options}{'_default_untranslated'} .= " <videodata>";
 	$self->{options}{'_default_break'} .= " <videodata>";
-	$self->{options}{'_default_attributes'}.=' <videodata>fileref';
+	$self->{options}{'attributes'}.=' <videodata>fileref';
 
 	# videoobject; contains text; Formatted inline or as a displayed block
 	$self->{options}{'_default_untranslated'} .= " <videoobject>";
@@ -2032,7 +2033,7 @@ sub initialize {
 
 # ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
-	$self->{options}{'_default_attributes'}.='
+	$self->{options}{'attributes'}.='
 		lang
 		xml:lang';
 
