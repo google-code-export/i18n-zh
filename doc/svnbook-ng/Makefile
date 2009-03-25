@@ -1,6 +1,7 @@
 #
 # Makefile for the svnbook, top-level
 #
+include Makefile.vars
 
 FORMATS=html pdf
 
@@ -8,13 +9,8 @@ PO_LANGUAGES := zh
 DBK_LANGUAGES := en de
 LANGUAGES := $(DBK_LANGUAGES) $(PO_LANGUAGES)
 
-UPDATEPO = PERLLIB=../tools/po4a/lib/ ../tools/po4a/po4a-updatepo -M UTF-8 \
-	   -f docbook -o doctype='docbook' -o includeexternal \
-	   -o nodefault='<programlisting> <screen>' \
-	   -o untranslated='<programlisting> <screen>'
-TRANSLATE = PERLLIB=tools/po4a/lib/ tools/po4a/po4a-translate -M UTF-8 \
-	   -f docbook -o doctype='docbook' \
-	   -k 0
+UPDATEPO = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-updatepo -M UTF-8 -f docbook
+TRANSLATE = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-translate -M UTF-8 -f docbook -k 0
 
 help:
 	@echo "  make html         [LINGUA=en|de|zh|...]"
@@ -23,25 +19,19 @@ help:
 	@echo "  make validate     [LINGUA=en|de|zh|...] # always before commit!"
 	@echo "  make tidypo       [LINGUA=zh|...]       # always before commit!"
 	@echo "  make updatepo     [LINGUA=zh|...]       # update po files."
-	@echo "  make all          [LINGUA=en|zh|...]"
 	@echo "  make stat         # print statistics about po files."
+	@echo "  make all          # make html & pdf output of all languages."
 	@echo "  make clean        # Remove the build files."
 
 clean:
 	@rm -fr build en/version.xml po/*.mo
 
 all:
-ifdef LINGUA
-	for f in $(FORMATS); do \
-	  $(MAKE) LINGUA=$(LINGUA) $$f; \
-	done
-else
 	for l in $(LANGUAGES); do \
 	    for f in $(FORMATS); do \
-		$(MAKE) LINGUA=$$l $$f; \
+		$(MAKE) LANG=$$l $$f; \
 	    done; \
 	done
-endif
 
 stat:
 	@( \
@@ -70,7 +60,24 @@ updatepo:
 else
 updatepo:
 ifneq "$(findstring $(LINGUA),$(PO_LANGUAGES))" ""
-	(cd po && $(UPDATEPO) -m ../en/book.xml -p $(LINGUA).po)
+	$(UPDATEPO) \
+		-m en/appa-quickstart.xml \
+		-m en/appb-svn-for-cvs-users.xml \
+		-m en/appc-webdav.xml \
+		-m en/book.xml \
+		-m en/ch00-preface.xml \
+		-m en/ch01-fundamental-concepts.xml \
+		-m en/ch02-basic-usage.xml \
+		-m en/ch03-advanced-topics.xml \
+		-m en/ch04-branching-and-merging.xml \
+		-m en/ch05-repository-admin.xml \
+		-m en/ch06-server-configuration.xml \
+		-m en/ch07-customizing-svn.xml \
+		-m en/ch08-embedding-svn.xml \
+		-m en/ch09-reference.xml \
+		-m en/copyright.xml \
+		-m en/foreword.xml \
+		-p po/$(LINGUA).po
 	$(MAKE) tidypo LINGUA=$$l
 endif
 endif
@@ -156,7 +163,7 @@ pdf: build/$(LINGUA)/pdf/svnbook.pdf
 
 build/$(LINGUA)/pdf/svnbook.pdf: build/$(LINGUA)/source/svnbook.xml stylesheets/fo.xsl stylesheets/$(LINGUA)/fo.xsl
 	mkdir -p build/$(LINGUA)/pdf
-	java -classpath tools/fop/lib/saxon65.jar:tools/fop/lib/saxon65-dbxsl.jar:tools/fop/lib/xml-commons-resolver-1.2.jar:tools/fop/conf \
+	java -classpath $(JAVA_SHARE)/saxon65.jar:$(JAVA_SHARE)/saxon65-dbxsl.jar:$(JAVA_SHARE)/xml-commons-resolver-1.2.jar:$(JAVA_SHARE) \
 	    com.icl.saxon.StyleSheet \
 	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
@@ -166,5 +173,5 @@ build/$(LINGUA)/pdf/svnbook.pdf: build/$(LINGUA)/source/svnbook.xml stylesheets/
 	    stylesheets/$(LINGUA)/fo.xsl \
 	    fop1.extensions=1
 
-	(cd build/$(LINGUA)/source && ../../../tools/fop/fop.sh svnbook.fo ../pdf/svnbook.pdf)
+	(cd build/$(LINGUA)/source && $(FOP_HOME)/fop.sh svnbook.fo ../pdf/svnbook.pdf)
 endif

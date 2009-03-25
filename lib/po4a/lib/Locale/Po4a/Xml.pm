@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+#TODO:
+#Warn if tags / tagsonly / inline is used
 
 # Po4a::Xml.pm 
 # 
@@ -9,7 +11,7 @@
 # XML-based documents.
 #
 # Copyright (c) 2004 by Jordi Vilalta  <jvprat@gmail.com>
-# Copyright (c) 2008-2009 by Nicolas François  <nicolas.francois@centraliens.net>
+# Copyright (c) 2008 by Nicolas François  <nicolas.francois@centraliens.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,8 +60,6 @@ use vars qw(@ISA @EXPORT);
 use Locale::Po4a::TransTractor;
 use Locale::Po4a::Common;
 use Carp qw(croak);
-use File::Basename;
-use File::Spec;
 
 #It will mantain the path from the root tag to the current one
 my @path;
@@ -117,64 +117,40 @@ sub parse {
 }
 
 # @save_holders is a stack of references to ('paragraph', 'translation',
-# 'sub_translations', 'open', 'close', 'folded_attributes') hashes, where:
-# paragraph         is a reference to an array (see paragraph in the
-#                   treat_content() subroutine) of strings followed by
-#                   references.  It contains the @paragraph array as it was
-#                   before the processing was interrupted by a tag instroducing
-#                   a placeholder.
-# translation       is the translation of this level up to now
-# sub_translations  is a reference to an array of strings containing the
-#                   translations which must replace the placeholders.
-# open              is the tag which opened the placeholder.
-# close             is the tag which closed the placeholder.
-# folded_attributes is an hash of tags with their attributes (<tag attrs=...>
-#                   strings), referenced by the folded tag id, which should
-#                   replace the <tag po4a-id=id> strings in the current
-#                   translation.
+# 'sub_translations') hashes, where:
+# paragraph is a reference to an array (see paragraph in the
+#           treat_content() subroutine) of strings followed by references.
+#           It contains the @paragraph array as it was before the
+#           processing was interrupted by a tag instroducing a
+#           placeholder.
+# translation is the translation of this level up to now
+# sub_translations is a reference to an array of strings containing the
+#                  translations which must replace the placeholders.
 #
 # If @save_holders only has 1 holder, then we are not processing the
 # content of an holder, we are translating the document.
 my @save_holders;
 
 
-# If we are at the bottom of the stack and there is no <placeholder ...> in
+# If we are at the bottom of the stack and there is no <placeholder\d+> in
 # the current translation, we can push the translation in the translated
 # document.
 # Otherwise, we keep the translation in the current holder.
 sub pushline {
 	my ($self, $line) = (shift, shift);
 
-	my $holder = $save_holders[$#save_holders];
-	my $translation = $holder->{'translation'};
+	my $holder_ref = pop @save_holders;
+	my %holder = %$holder_ref;
+	my $translation = $holder{'translation'};
 	$translation .= $line;
-
-	while (    %{$holder->{folded_attributes}}
-	       and $translation =~ m/^(.*)<([^>]+?)\s+po4a-id=([0-9]+)>(.*)$/s) {
-		my $begin = $1;
-		my $tag = $2;
-		my $id = $3;
-		my $end = $4;
-		if (defined $holder->{folded_attributes}->{$id}) {
-			# TODO: check if the tag is the same
-			$translation = $begin.$holder->{folded_attributes}->{$id}.$end;
-			delete $holder->{folded_attributes}->{$id};
-		} else {
-			# TODO: It will be hard to identify the location.
-			#       => find a way to retrieve the reference.
-			die wrap_mod("po4a::xml", dgettext("po4a", "'po4a-id=%d' in the translation does not exist in the original string (or 'po4a-id=%d' used twice in the translation)."), $id, $id);
-		}
-	}
-# TODO: check that %folded_attributes is empty at some time
-# => in translate_paragraph?
-
-	if (   ($#save_holders > 0)
-	    or ($translation =~ m/<placeholder\s+type="[^"]+"\s+id="(\d+)"\s*\/>/s)) {
-		$holder->{'translation'} = $translation;
+	if (   (scalar @save_holders)
+	    or ($translation =~ m/<placeholder\d+>/s)) {
+		$holder{'translation'} = $translation;
 	} else {
 		$self->SUPER::pushline($translation);
-		$holder->{'translation'} = '';
+		$holder{'translation'} = '';
 	}
+	push @save_holders, \%holder;
 }
 
 =head1 TRANSLATING WITH PO4A::XML
@@ -217,29 +193,29 @@ These are this module's particular options:
 
 =over 4
 
-=item B<nostrip>
+=item nostrip
 
 Prevents it to strip the spaces around the extracted strings.
 
-=item B<wrap>
+=item wrap
 
 Canonizes the string to translate, considering that whitespaces are not
 important, and wraps the translated document. This option can be overridden
 by custom tag options. See the "tags" option below.
 
-=item B<caseinsensitive>
+=item caseinsensitive
 
 It makes the tags and attributes searching to work in a case insensitive
 way.  If it's defined, it will treat E<lt>BooKE<gt>laNG and E<lt>BOOKE<gt>Lang as E<lt>bookE<gt>lang.
 
-=item B<includeexternal>
+=item includeexternal
 
 When defined, external entities are included in the generated (translated)
 document, and for the extraction of strings.  If it's not defined, you
 will have to translate external entities separately as independent
 documents.
 
-=item B<ontagerror>
+=item ontagerror
 
 This option defines the behavior of the module when it encounter a invalid
 Xml syntax (a closing tag which does not match the last opening tag, or a
@@ -266,22 +242,21 @@ The module will continue without any warnings.
 Be careful when using this option.
 It is generally recommended to fix the input file.
 
-=item B<tagsonly>
+=item tagsonly
 
 Extracts only the specified tags in the "tags" option.  Otherwise, it
 will extract all the tags except the ones specified.
 
 Note: This option is deprecated.
 
-=item B<doctype>
+=item doctype
 
 String that will try to match with the first line of the document's doctype
-(if defined). If it doesn't, a warning will indicate that the document
-might be of a bad type.
+(if defined). If it doesn't, the document will be considered of a bad type.
 
-=item B<tags>
+=item tags
 
-Space-separated list of tags you want to translate or skip.  By default,
+Space-separated list of the tags you want to translate or skip.  By default,
 the specified tags will be excluded, but if you use the "tagsonly" option,
 the specified tags will be the only ones included.  The tags must be in the
 form E<lt>aaaE<gt>, but you can join some (E<lt>bbbE<gt>E<lt>aaaE<gt>) to say that the content of
@@ -296,62 +271,26 @@ Example: WE<lt>chapterE<gt>E<lt>titleE<gt>
 Note: This option is deprecated.
 You should use the B<translated> and B<untranslated> options instead.
 
-=item B<attributes>
+=item attributes
 
-Space-separated list of tag's attributes you want to translate.  You can
+Space-separated list of the tag's attributes you want to translate.  You can
 specify the attributes by their name (for example, "lang"), but you can
 prefix it with a tag hierarchy, to specify that this attribute will only be
 translated when it's into the specified tag. For example: E<lt>bbbE<gt>E<lt>aaaE<gt>lang
 specifies that the lang attribute will only be translated if it's into an
 E<lt>aaaE<gt> tag, and it's into a E<lt>bbbE<gt> tag.
 
-=item B<foldattributes>
+=item inline
 
-Do not translate attributes in inline tags.
-Instead, replace all attributes of a tag by po4a-id=<id>.
+Space-separated list of the tags you want to treat as inline.  By default,
+all tags break the sequence.  This follows the same syntax as the tags option.
 
-This is useful when attributes shall not be translated, as this simplifies the
-strings for translators, and avoids typos.
-
-=item B<break>
-
-Space-separated list of tags which should break the sequence.
-By default, all tags break the sequence.
-
-The tags must be in the form <aaa>, but you can join some
-(<bbb><aaa>), if a tag (<aaa>) should only be considered 
-when it's into another tag (<bbb>).
-
-=item B<inline>
-
-Space-separated list of tags which should be treated as inline.
-By default, all tags break the sequence.
-
-The tags must be in the form <aaa>, but you can join some
-(<bbb><aaa>), if a tag (<aaa>) should only be considered 
-when it's into another tag (<bbb>).
-
-=item B<placeholder>
-
-Space-separated list of tags which should be treated as placeholders.
-Placeholders do not break the sequence, but the content of placeholders is
-translated separately.
-
-The location of the placeholder in its block will be marked with a string
-similar to:
-
-  <placeholder type=\"footnote\" id=\"0\"/>
-
-The tags must be in the form <aaa>, but you can join some
-(<bbb><aaa>), if a tag (<aaa>) should only be considered 
-when it's into another tag (<bbb>).
-
-=item B<nodefault>
+=item nodefault
 
 Space separated list of tags that the module should not try to set by
-default in any category.
+default in the "tags" or "inline" category.
 
-=item B<cpp>
+=item cpp
 
 Support C preprocessor directives.
 When this option is set, po4a will consider preprocessor directives as
@@ -363,13 +302,12 @@ preprocessor.
 Note: the preprocessor directives must only appear between tags
 (they must not break a tag).
 
-=item B<translated>
+=item translated
 
-Space-separated list of tags you want to translate.
-
-The tags must be in the form <aaa>, but you can join some
-(<bbb><aaa>), if a tag (<aaa>) should only be considered 
-when it's into another tag (<bbb>).
+Space-separated list of the tags you want to translate.
+The tags must be in the form <aaa>, but you can join some (<bbb><aaa>) to
+indicate that the content of the tag <aaa> will only be translated when
+it's into a <bbb> tag.
 
 You can also specify some tag options putting some characters in front of
 the tag hierarchy. For example, you can put 'w' (wrap) or 'W' (don't wrap)
@@ -377,48 +315,14 @@ to overide the default behavior specified by the global "wrap" option.
 
 Example: WE<lt>chapterE<gt>E<lt>titleE<gt>
 
-=item B<untranslated>
+=item untranslated
 
-Space-separated list of tags you do not want to translate.
-
-The tags must be in the form <aaa>, but you can join some
-(<bbb><aaa>), if a tag (<aaa>) should only be considered 
-when it's into another tag (<bbb>).
-
-=item B<defaulttranslateoption>
-
-The default categories for tags that are not in any of the translated,
-untranslated, break, inline, or placeholder.
-
-This is a set of letters:
-
-=over
-
-=item I<w>
-
-Tags should be translated and content can be re-wrapped.
-
-=item I<W>
-
-Tags should be translated and content should not be re-wrapped.
-
-=item I<i>
-
-Tags should be translated inline.
-
-=item I<p>
-
-Tags should be translated as placeholders.
-
-=back
+Space-separated list of the tags you do not want to translate or not. It
+uses the same format as the B<translated> option.
 
 =back
 
 =cut
-# TODO: defaulttranslateoption
-# w => indicate that it is only valid for translatable tags and do not
-#      care about inline/break/placeholder?
-# ...
 
 sub initialize {
 	my $self = shift;
@@ -430,11 +334,9 @@ sub initialize {
 	# Initialize the stack of holders
 	my @paragraph = ();
 	my @sub_translations = ();
-	my %folded_attributes;
 	my %holder = ('paragraph' => \@paragraph,
 	              'translation' => "",
-	              'sub_translations' => \@sub_translations,
-	              'folded_attributes' => \%folded_attributes);
+	              'sub_translations' => \@sub_translations);
 	@save_holders = (\%holder);
 
 	$self->{options}{'nostrip'}=0;
@@ -447,7 +349,6 @@ sub initialize {
 	$self->{options}{'untranslated'}='';
 	$self->{options}{'defaulttranslateoption'}='';
 	$self->{options}{'attributes'}='';
-	$self->{options}{'foldattributes'}=0;
 	$self->{options}{'inline'}='';
 	$self->{options}{'placeholder'}='';
 	$self->{options}{'doctype'}='';
@@ -473,7 +374,6 @@ sub initialize {
 	$self->{options}{'_default_break'}='';
 	$self->{options}{'_default_inline'}='';
 	$self->{options}{'_default_placeholder'}='';
-	$self->{options}{'_default_attributes'}='';
 
 	#It will maintain the list of the translatable tags
 	$self->{tags}=();
@@ -507,16 +407,10 @@ calling the main initialize:
 
   $self->{options}{'new_option'}='';
   $self->SUPER::initialize(%options);
-  $self->{options}{'_default_translated'}.=' <p> <head><title>';
+  $self->{options}{'tags'}.=' <p> <head><title>';
   $self->{options}{'attributes'}.=' <p>lang id';
-  $self->{options}{'_default_inline'}.=' <br>';
+  $self->{options}{'inline'}.=' <br>';
   $self->treat_options;
-
-You should use the B<_default_inline>, B<_default_break>,
-B<_default_placeholder>, B<_default_translated>, B<_default_untranslated>,
-and B<_default_attributes> options in derivated modules. This allow users
-to override the default behavior defined in your module with command line
-options.
 
 =head2 OVERRIDING THE found_string FUNCTION
 
@@ -727,6 +621,7 @@ sub tag_trans_procins {
 }
 
 sub tag_extract_doctype {
+#TODO
 	my ($self,$remove)=(shift,shift);
 
 	# Check if there is an internal subset (between []).
@@ -748,20 +643,15 @@ sub tag_extract_doctype {
 }
 
 sub tag_trans_doctype {
-# This check is not really reliable.  There are system and public
-# identifiers.  Only the public one could be checked reliably.
+#TODO
 	my ($self,@tag)=@_;
 	if (defined $self->{options}{'doctype'} ) {
 		my $doctype = $self->{options}{'doctype'};
 		if ( $tag[0] !~ /\Q$doctype\E/i ) {
-			warn wrap_ref_mod($tag[1], "po4a::xml", dgettext("po4a", "Bad document type. '%s' expected. You can fix this warning with a -o doctype option, or ignore this check with -o doctype=\"\"."), $doctype);
+			#die wrap_ref_mod($tag[1], "po4a::xml", dgettext("po4a", "Bad document type. '%s' expected."), $doctype);
 		}
 	}
 	my $i = 0;
-	my $basedir = $tag[1];
-	$basedir =~ s/:[0-9]+$//;
-	$basedir = dirname($basedir);
-
 	while ( $i < $#tag ) {
 		my $t = $tag[$i];
 		my $ref = $tag[$i+1];
@@ -787,7 +677,6 @@ sub tag_trans_doctype {
 				if ($self->{options}{'includeexternal'}) {
 					$entities{$name} = $part2;
 					$entities{$name} =~ s/^"?(.*?)".*$/$1/s;
-					$entities{$name} = File::Spec->catfile($basedir, $entities{$name});
 				}
 			}
 			if ((not $file) and (not $includenow)) {
@@ -908,9 +797,6 @@ sub tag_trans_open {
 
 This function returns the path to the current tag from the document's root,
 in the form E<lt>htmlE<gt>E<lt>bodyE<gt>E<lt>pE<gt>.
-
-An additional array of tags (without brackets) can be passed in argument.
-These path elements are added to the end of the current path.
 
 =cut
 
@@ -1281,10 +1167,6 @@ sub get_translate_options {
 		}
 	}
 
-	if ($options =~ m/i/ and $self->{options}{'foldattributes'}) {
-		$options .= "f";
-	}
-
 	$translate_options_cache{$path} = $options;
 	return $options;
 }
@@ -1349,30 +1231,31 @@ sub treat_content {
 			if ($tag_types[$type]->{'end'} eq "") {
 				if ($tag_types[$type]->{'beginning'} eq "") {
 					# Opening inline tag
-					my $cur_tag_name = $self->get_tag_name(@tag);
-					my $t_opts = $self->get_translate_options($self->get_path($cur_tag_name));
-					if ($t_opts =~ m/p/) {
+					if ($self->get_translate_options($self->get_path($self->get_tag_name(@tag))) =~ m/p/) {
 						# We enter a new holder.
-						# Append a <placeholder ...> tag to the current
+						# Append a <placeholder#> tag to the current
 						# paragraph, and save the @paragraph in the
 						# current holder.
-						my $last_holder = $save_holders[$#save_holders];
-						my $placeholder_str = "<placeholder type=\"".$cur_tag_name."\" id=\"".($#{$last_holder->{'sub_translations'}}+1)."\"/>";
+						my $holder_ref = pop @save_holders;
+						my %old_holder = %$holder_ref;
+						my $sub_translations_ref = $old_holder{'sub_translations'};
+						my @sub_translations = @$sub_translations_ref;
+
+						my $placeholder_str = "<placeholder".($#sub_translations+1).">";
 						push @paragraph, ($placeholder_str, $text[1]);
 						my @saved_paragraph = @paragraph;
 
-						$last_holder->{'paragraph'} = \@saved_paragraph;
+						$old_holder{'paragraph'} = \@saved_paragraph;
+						push @save_holders, \%old_holder;
 
 						# Then we must push a new holder
 						my @new_paragraph = ();
-						my @sub_translations = ();
-						my %folded_attributes;
+						@sub_translations = ();
 						my %new_holder = ('paragraph' => \@new_paragraph,
 						                  'open' => $text[0],
 						                  'translation' => "",
 						                  'close' => undef,
-						                  'sub_translations' => \@sub_translations,
-						                  'folded_attributes' => \%folded_attributes);
+						                  'sub_translations' => \@sub_translations);
 						push @save_holders, \%new_holder;
 						@text = ();
 
@@ -1380,21 +1263,8 @@ sub treat_content {
 						# (for the current holder)
 						# is empty.
 						@paragraph = ();
-					} elsif ($t_opts =~ m/f/) {
-						my $tag_full = $self->join_lines(@text);
-						my $tag_ref = $text[1];
-						if ($tag_full =~ m/^<\s*\S+\s+\S.*>$/s) {
-							my $holder = $save_holders[$#save_holders];
-							my $id = 0;
-							foreach (keys %{$holder->{folded_attributes}}) {
-								$id = $_ + 1 if ($_ >= $id);
-							}
-							$holder->{folded_attributes}->{$id} = $tag_full;
-
-							@text = ("<$cur_tag_name po4a-id=$id>", $tag_ref);
-						}
 					}
-					push @path, $cur_tag_name;
+					push @path, $self->get_tag_name(@tag);
 				} elsif ($tag_types[$type]->{'beginning'} eq "/") {
 					# Closing inline tag
 
@@ -1419,25 +1289,31 @@ sub treat_content {
 						# Now translate this paragraph if needed.
 						# This will call pushline and append the
 						# translation to the current holder's translation.
-						$self->translate_paragraph(@paragraph);
+						$self->translate_paragraph($translate, @paragraph);
 						pop @path;
 
 						# Now that this holder is closed, we can remove
 						# the holder from the stack.
-						my $holder = pop @save_holders;
+						my $holder_ref = pop @save_holders;
 						# We need to keep the translation of this holder
-						my $translation = $holder->{'open'}.$holder->{'translation'}.$text[0];
-						# FIXME: @text could be multilines.
-
+						my %holder = %$holder_ref;
+						$holder{'close'} = $text[0];
 						@text = ();
-
+						my $translation = $holder{'open'}.$holder{'translation'}.$holder{'close'};
 						# Then we store the translation in the previous
 						# holder's sub_translations array
-						my $previous_holder = $save_holders[$#save_holders];
-						push @{$previous_holder->{'sub_translations'}}, $translation;
+						my $old_holder_ref = pop @save_holders;
+						my %old_holder = %$old_holder_ref;
+						my $sub_translations_ref = $old_holder{'sub_translations'};
+						my @sub_translations = @$sub_translations_ref;
+						push @sub_translations, $translation;
 						# We also need to restore the @paragraph array, as
 						# it was before we encountered the holder.
-						@paragraph = @{$previous_holder->{'paragraph'}};
+						my $paragraph_ref = $old_holder{'paragraph'};
+						@paragraph = @$paragraph_ref;
+						# restore the holder in the stack
+						$old_holder{'sub_translations'} = \@sub_translations;
+						push @save_holders, \%old_holder;
 					}
 				}
 			}
@@ -1501,7 +1377,7 @@ sub treat_content {
 	# Translate the string when needed
 	# This will either push the translation in the translated document or
 	# in the current holder translation.
-	$self->translate_paragraph(@paragraph);
+	$self->translate_paragraph($translate, @paragraph);
 
 	# Push the trailing blanks
 	if ($blank ne "") {
@@ -1514,9 +1390,10 @@ sub treat_content {
 # The $translate argument indicates if the strings must be translated or
 # just pushed
 sub translate_paragraph {
-	my $self = shift;
+# TODO: remove the translate parameter
+	my ($self, $translate) = (shift, shift);
 	my @paragraph = @_;
-	my $translate = $self->get_translate_options($self->get_path);
+	$translate = $self->get_translate_options($self->get_path);
 
 	while (    (scalar @paragraph)
 	       and ($paragraph[0] =~ m/^\s*\n/s)) {
@@ -1552,7 +1429,8 @@ sub translate_paragraph {
 			# Thus do not try to match "include ".
 			if ($t =~ m/^#[ \t]*(if |endif|undef |include|else|ifdef |ifndef |define )/si) {
 				if (@paragraph) {
-					$self->translate_paragraph(@paragraph);
+					$self->translate_paragraph($translate,
+					                           @paragraph);
 					@paragraph = ();
 					$self->pushline("\n");
 				}
@@ -1586,40 +1464,47 @@ sub translate_paragraph {
 	# placeholders by their translations.
 	# We must wait to have all the translations because the holders are
 	# numbered.
-	{
-		my $holder = $save_holders[$#save_holders];
-		my $translation = $holder->{'translation'};
+	if (scalar @save_holders) {
+		my $holder_ref = pop @save_holders;
+		my %holder = %$holder_ref;
+		my $sub_translations_ref = $holder{'sub_translations'};
+		my $translation = $holder{'translation'};
+		my @sub_translations = @$sub_translations_ref;
 
-		# Count the number of <placeholder ...> in $translation
+		# Count the number of <placeholder\d+> in $translation
 		my $count = 0;
 		my $str = $translation;
 		while (    (defined $str)
-		       and ($str =~ m/^.*?<placeholder\s+type="[^"]+"\s+id="(\d+)"\s*\/>(.*)$/s)) {
+		       and ($str =~ m/^.*?<placeholder(\d+)>(.*)$/s)) {
 			$count += 1;
 			$str = $2;
-			if ($holder->{'sub_translations'}->[$1] =~ m/<placeholder\s+type="[^"]+"\s+id="(\d+)"\s*\/>/s) {
+			if ($sub_translations[$1] =~ m/<placeholder\d+>/s) {
 				$count = -1;
 				last;
 			}
 		}
 
 		if (    (defined $translation)
-		    and (scalar(@{$holder->{'sub_translations'}}) == $count)) {
+		    and (scalar(@sub_translations) == $count)) {
 			# OK, all the holders of the current paragraph are
 			# closed (and translated).
 			# Replace them by their translation.
-			while ($translation =~ m/^(.*?)<placeholder\s+type="[^"]+"\s+id="(\d+)"\s*\/>(.*)$/s) {
+			while ($translation =~ m/^(.*?)<placeholder(\d+)>(.*)$/s) {
 				# FIXME: we could also check that
 				#          * the holder exists
 				#          * all the holders are used
-				$translation = $1.$holder->{'sub_translations'}->[$2].$3;
+				$translation = $1.$sub_translations[$2].$3;
 			}
 			# We have our translation
-			$holder->{'translation'} = $translation;
+			$holder{'translation'} = $translation;
 			# And there is no need for any holder in it.
-			my @sub_translations = ();
-			$holder->{'sub_translations'} = \@sub_translations;
+			@sub_translations = ();
+			$holder{'sub_translations'} = \@sub_translations;
 		}
+		# Either we don't have all the holders, either we have the
+		# final translation.
+		# We must keep the current holder at the top of the stack.
+		push @save_holders, \%holder;
 	}
 
 }
@@ -1653,7 +1538,6 @@ sub treat_options {
 		$self->{options}{'untranslated'}          = lc $self->{options}{'untranslated'};
 		$self->{options}{'_default_untranslated'} = lc $self->{options}{'_default_untranslated'};
 		$self->{options}{'attributes'}            = lc $self->{options}{'attributes'};
-		$self->{options}{'_default_attributes'}   = lc $self->{options}{'_default_attributes'};
 		$self->{options}{'inline'}                = lc $self->{options}{'inline'};
 		$self->{options}{'_default_inline'}       = lc $self->{options}{'_default_inline'};
 		$self->{options}{'placeholder'}           = lc $self->{options}{'placeholder'};
@@ -1668,20 +1552,9 @@ sub treat_options {
 	$self->{nodefault} = \%list_nodefault;
 
 	$self->{options}{'tags'} =~ /^\s*(.*)\s*$/s;
-	if (length $self->{options}{'tags'}) {
-		warn wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "The '%s' option is deprecated. Please use the translated/untranslated and/or break/inline/placeholder categories."), "tags");
-	}
 	foreach (split(/\s+/s,$1)) {
 		$_ =~ m/^(.*?)(<.*)$/;
 		$self->{tags}->{$2} = $1 || "";
-	}
-
-	if ($self->{options}{'tagsonly'}) {
-		warn wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "The '%s' option is deprecated. Please use the translated/untranslated and/or break/inline/placeholder categories."), "tagsonly");
 	}
 
 	$self->{options}{'break'} =~ /^\s*(.*)\s*$/s;
@@ -1693,8 +1566,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{break}->{$2} = $1 || ""
-			unless    $list_nodefault{$2}
-			       or defined $self->{break}->{$2};
+			unless $list_nodefault{$tag};
 	}
 
 	$self->{options}{'translated'} =~ /^\s*(.*)\s*$/s;
@@ -1706,8 +1578,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{translated}->{$2} = $1 || ""
-			unless    $list_nodefault{$2}
-			       or defined $self->{translated}->{$2};
+			unless $list_nodefault{$tag};
 	}
 
 	$self->{options}{'untranslated'} =~ /^\s*(.*)\s*$/s;
@@ -1719,8 +1590,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{untranslated}->{$2} = $1 || ""
-			unless    $list_nodefault{$2}
-			       or defined $self->{untranslated}->{$2};
+			unless $list_nodefault{$tag};
 	}
 
 	$self->{options}{'attributes'} =~ /^\s*(.*)\s*$/s;
@@ -1729,18 +1599,6 @@ sub treat_options {
 			$self->{attributes}->{$2} = $1 || "";
 		} else {
 			$self->{attributes}->{$tag} = "";
-		}
-	}
-	$self->{options}{'_default_attributes'} =~ /^\s*(.*)\s*$/s;
-	foreach my $tag (split(/\s+/s,$1)) {
-		if ($tag =~ m/^(.*?)(<.*)$/) {
-			$self->{attributes}->{$2} = $1 || ""
-				unless    $list_nodefault{$2}
-				       or defined $self->{attributes}->{$2};
-		} else {
-			$self->{attributes}->{$tag} = ""
-				unless    $list_nodefault{$tag}
-				       or defined $self->{attributes}->{$tag};
 		}
 	}
 
@@ -1754,8 +1612,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{inline}->{$2} = $1 || ""
-			unless    $list_nodefault{$2}
-			       or defined $self->{inline}->{$2};
+			unless $list_nodefault{$tag};
 	}
 
 	$self->{options}{'placeholder'} =~ /^\s*(.*)\s*$/s;
@@ -1767,33 +1624,7 @@ sub treat_options {
 	foreach my $tag (split(/\s+/s,$1)) {
 		$tag =~ m/^(.*?)(<.*)$/;
 		$self->{placeholder}->{$2} = $1 || ""
-			unless    $list_nodefault{$2}
-			       or defined $self->{placeholder}->{$2};
-	}
-
-	# There should be no translated and untranslated tags
-	foreach my $tag (keys %{$self->{translated}}) {
-		die wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "Tag '%s' both in the %s and %s categories."), $tag, "translated", "untranslated")
-			if defined $self->{untranslated}->{$tag};
-	}
-	# There should be no inline, break, and placeholder tags
-	foreach my $tag (keys %{$self->{inline}}) {
-		die wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "Tag '%s' both in the %s and %s categories."), $tag, "inline", "break")
-			if defined $self->{break}->{$tag};
-		die wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "Tag '%s' both in the %s and %s categories."), $tag, "inline", "placeholder")
-			if defined $self->{placeholder}->{$tag};
-	}
-	foreach my $tag (keys %{$self->{break}}) {
-		die wrap_mod("po4a::xml",
-		             dgettext("po4a",
-		                      "Tag '%s' both in the %s and %s categories."), $tag, "break", "placeholder")
-			if defined $self->{placeholder}->{$tag};
+			unless $list_nodefault{$tag};
 	}
 }
 
@@ -1939,6 +1770,10 @@ sub join_lines {
 
 This module can translate tags and attributes.
 
+Support for entities and included files is in the TODO list.
+
+The writing of derivate modules is rather limited.
+
 =head1 TODO LIST
 
 DOCTYPE (ENTITIES)
@@ -1948,8 +1783,12 @@ translated as a whole, and tags are not taken into account. Multilines
 entities are not supported and entities are always rewrapped during the
 translation.
 
+INCLUDED FILES
+
 MODIFY TAG TYPES FROM INHERITED MODULES
 (move the tag_types structure inside the $self hash?)
+
+breaking tag inside non-breaking tag (possible?) causes ugly comments
 
 =head1 SEE ALSO
 
@@ -1963,7 +1802,7 @@ L<po4a(7)|po4a.7>, L<Locale::Po4a::TransTractor(3pm)|Locale::Po4a::TransTractor>
 =head1 COPYRIGHT AND LICENSE
 
  Copyright (c) 2004 by Jordi Vilalta  <jvprat@gmail.com>
- Copyright (c) 2008-2009 by Nicolas François <nicolas.francois@centraliens.net>
+ Copyright (c) 2008 by Nicolas François <nicolas.francois@centraliens.net>
 
 This program is free software; you may redistribute it and/or modify it
 under the terms of GPL (see the COPYING file).
