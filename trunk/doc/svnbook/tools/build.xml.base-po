@@ -66,12 +66,18 @@
   </target>
 
   <target name="translate" depends="translate.init" description="Translate document" unless="translate.isUpToDate" >
-
-    <ant antfile="../en/build.xml" target="profile" inheritAll="false"/>
-
     <copy todir="build/source/images" overwrite="true">
       <fileset dir="../en/book/images"/>
     </copy>
+
+    <exec dir="${basedir}" osfamily="windows" executable="xmllint" failonerror="true">
+      <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
+      <arg line="--catalogs --nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml"/>
+    </exec>
+
+    <exec dir="${basedir}" osfamily="unix" executable="xmllint" failonerror="true">
+      <arg line="--nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml"/>
+    </exec>
 
     <exec dir="${basedir}" executable="perl" failonerror="true">
       <env key="PERLLIB" value="${po4a.lib}"/>
@@ -88,7 +94,7 @@
       <arg value="-p"/>
       <arg value="po/svnbook.po"/>
       <arg value="-m"/>
-      <arg value="../en/build/source/svnbook-tmp.xml"/>
+      <arg value="build/source/svnbook-en.xml"/>
       <arg value="-l"/>
       <arg value="build/source/svnbook-tmp.xml"/>
     </exec>
