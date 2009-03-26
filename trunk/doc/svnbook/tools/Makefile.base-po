@@ -14,6 +14,7 @@ TRANSLATE = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-translate -M UTF-8 \
        -k 0
 
 help:
+	@echo "  make epub"
 	@echo "  make html"
 	@echo "  make html-single"
 	@echo "  make pdf"
@@ -55,10 +56,17 @@ validate: build/source/svnbook.xml
 
 build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po
 	mkdir -p build/source/images
+	cp ../en/book/styles.css build/source
 	cp ../en/book/images/*.png build/source/images
 	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml
 	$(TRANSLATE) -m build/source/svnbook-en.xml -p po/svnbook.po -l build/source/svnbook.xml
-	xmllint --nonet --noout --postvalid --xinclude $@
+	$(MAKE) validate
+
+epub: build/epub/svnbook.epub
+
+build/epub/svnbook.epub: build/source/svnbook.xml
+	mkdir -p build/epub
+	(cd build/source; $(DB2EPUB) -c styles.css -v svnbook.xml; mv svnbook.epub ../epub)
 
 html: build/html/index.html
 

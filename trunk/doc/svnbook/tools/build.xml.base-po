@@ -69,6 +69,7 @@
     <copy todir="build/source/images" overwrite="true">
       <fileset dir="../en/book/images"/>
     </copy>
+    <copy file="../en/book/styles.css" todir="build/source" overwrite="true"/>
 
     <exec dir="${basedir}" osfamily="windows" executable="xmllint" failonerror="true">
       <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
@@ -207,6 +208,23 @@
   </target>
 
   <target name="all" depends="html,html-single,pdf" description="Generate document - all format"/>
+
+  <target name="epub.init">
+    <uptodate property="epub.isUpToDate" targetfile="build/epub/svnbook.epub">
+      <srcfiles dir="build/source" includes="svnbook.xml"/>
+    </uptodate>
+  </target>
+
+  <target name="epub" depends="translate,epub.init" unless="epub.isUpToDate"
+        description="Generate document - epub">
+
+    <echo message="Making epub ..."/>
+    <mkdir dir="build/epub"/>
+    <exec dir="build/source" executable="ruby" failonerror="true">
+      <arg line="${db2epub} -c styles.css -v svnbook.xml"/>
+    </exec>
+    <move file="build/source/svnbook.epub" todir="build/epub"/>
+  </target>
 
   <target name="html.init">
     <uptodate property="html.isUpToDate" targetfile="build/html/index.html">
