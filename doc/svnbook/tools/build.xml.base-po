@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="svnbook-po" default="usage">
+
+  <property file="../tools/build.properties"/>
+
+  <path id="lib.classpath">
+    <fileset dir="${usr.share.java}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${usr.share.java}"/>
+    <fileset dir="${fop.home}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="xep.classpath">
+    <fileset dir="${xep.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="clean" description="Clean the build directory">
+    <delete dir="build"/>
+  </target>
+
+  <target name="init" description="Check runtime environment">
+    <available file="../tools/build.properties" property="properties.present"/>
+    <fail message="Please create your ../tools/build.properties from ../tools/build.properties.tmpl !"
+        unless="properties.present"/>
+
+    <fail>
+      <condition><not>
+        <available classname="com.icl.saxon.StyleSheet" classpathref="lib.classpath"/>
+      </not></condition>
+      Saxon 6.5 Support NOT Present !
+    </fail>
+
+    <fail>
+      <condition>
+        <not><and>
+          <available classname="org.apache.bsf.BSFManager"/>
+          <available classname="bsh.util.BeanShellBSFEngine"/>
+        </and></not>
+      </condition>
+      BeanShell Support NOT Present !
+    </fail>
+
+    <echo message="java.version: ${java.version}"/>
+    <echo message="ant.version: ${ant.version}"/>
+    <echo message="os.version: ${os.name} ${os.version}"/>
+  </target>
+
+  <target name="usage" depends="init" description="Describe targets usage">
+    <java classname="org.apache.tools.ant.Main">
+      <arg value="-projecthelp" />
+      <arg value="-buildfile" />
+      <arg value="${ant.file}" />
+    </java>
+  </target>
+
+  <target name="translate.init" depends="init">
+    <uptodate property="translate.isUpToDate" targetfile="build/source/svnbook.xml">
+      <srcfiles dir="../en/book" excludes="version.xml"/>
+      <srcfiles dir="po" excludes="zh.po"/>
+    </uptodate>
+  </target>
+
+  <target name="translate" depends="translate.init" description="Translate document" unless="translate.isUpToDate" >
+
+    <ant antfile="../en/build.xml" target="profile" inheritAll="false"/>
+
+    <copy todir="build/source/images" overwrite="true">
+      <fileset dir="../en/book/images"/>
+    </copy>
+
+    <exec dir="${basedir}" executable="perl" failonerror="true">
+      <env key="PERLLIB" value="${po4a.lib}"/>
+      <env key="PERL5LIB" value="${po4a.lib}"/>
+      <arg value="${po4a.home}/po4a-translate"/>
+      <arg value="-M"/>
+      <arg value="UTF-8"/>
+      <arg value="-f"/>
+      <arg value="docbook"/>
+      <arg value="-o"/>
+      <arg value="doctype=docbook"/>
+      <arg value="-k"/>
+      <arg value="0"/>
+      <arg value="-p"/>
+      <arg value="po/svnbook.po"/>
+      <arg value="-m"/>
+      <arg value="../en/build/source/svnbook-tmp.xml"/>
+      <arg value="-l"/>
+      <arg value="build/source/svnbook-tmp.xml"/>
+    </exec>
+
+    <!-- version id is too bothersome -->
+    <script language="beanshell" manager="bsf">
+    <![CDATA[
+      import java.text.*;
+      import java.io.*;
+      basedir = project.getProperty("basedir");
+
+      String getId(String path) {
+        Process p = Runtime.getRuntime().exec(
+            new String[] { "svn", "info", basedir + File.separator + path },
+            new  String[] {"LC_ALL=C" });
+        if (p.waitFor() != 0) return "";
+
+        in = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"), 512);
+        prefix = "Last Changed Rev: ";
+        while((line = in.readLine()) != null) {
+          if (line.startsWith(prefix)) {
+            return line.substring(prefix.length());
+            break;
+          }
+        }
+      }
+
+      void replace(String dst, String src, String token, String id) {
+        Reader in = new BufferedReader(new InputStreamReader(
+            new FileInputStream(new File(basedir, "build/source/svnbook-tmp.xml")), "UTF-8"), 8192);
+        Writer out = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream(new File(basedir, "build/source/svnbook.xml")), "UTF-8"), 8192);
+
+        token_found = false;
+        while((line = in.readLine()) != null) {
+          if(!token_found && line.indexOf(token) > 0) {
+            out.write(line.replace(token, id));
+            token_found = true;
+          } else {
+            out.write(line);
+          }
+          out.newLine();
+        }
+        in.close();
+        out.close();
+      }
+
+      id_svn = getId("../en/book");
+      id_l10n = getId("po");
+
+      if (id_l10n.length() < 2) {
+        id = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+      } else {
+        id = "r" + id_l10n + "/r" + id_svn;
+      }
+
+      replace("build/source/svnbook.xml", "build/source/svnbook-tmp.xml", "$svn.rev.id$", id);
+    ]]>
+    </script>
+  </target>
+
+  <target name="validate" depends="translate" description="Validate translated xml file - always before commit!">
+    <exec dir="build/source" executable="xmllint" osfamily="windows" failonerror="true">
+      <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
+      <arg line="--catalogs --nonet --noout --postvalid --xinclude svnbook.xml"/>
+    </exec>
+
+    <exec dir="build/source" executable="xmllint" osfamily="unix" failonerror="true">
+      <arg line="--nonet --noout --postvalid --xinclude svnbook.xml"/>
+    </exec>
+  </target>
+
+  <target name="stat" description="Print statistics about po file">
+    <exec dir="po" executable="msgfmt" failonerror="true">
+      <arg line="--statistics -c svnbook.po"/>
+    </exec>
+  </target>
+
+  <target name="tidypo" description="Format po file - always before commit!">
+    <exec dir="po" executable="msgcat" failonerror="true">
+      <arg line="--sort-by-file --width=80 -o svnbook-tmp.po svnbook.po"/>
+    </exec>
+    <move file="po/zh-tmp.po" tofile="po/svnbook.po"/>
+  </target>
+
+  <target name="updatepo" description="Update po file">
+    <exec dir="${basedir}/po" executable="perl" failonerror="true">
+      <env key="PERLLIB" value="${po4a.lib}"/>
+      <env key="PERL5LIB" value="${po4a.lib}"/>
+      <arg value="${po4a.home}/po4a-updatepo"/>
+      <arg value="-M"/>
+      <arg value="UTF-8"/>
+      <arg value="-f"/>
+      <arg value="docbook"/>
+      <arg value="-o"/>
+      <arg value="doctype=docbook"/>
+      <arg value="-o"/>
+      <arg value="includeexternal"/>
+      <arg value="-o"/>
+      <arg value="nodefault=&lt;programlisting&gt; &lt;screen&gt;"/>
+      <arg value="-o"/>
+      <arg value="untranslated=&lt;programlisting&gt; &lt;screen&gt;"/>
+      <arg value="-p"/>
+      <arg value="svnbook.po"/>
+      <arg value="-m"/>
+      <arg value="../../en/book/book.xml"/>
+    </exec>
+
+    <antcall target="tidypo"/>
+  </target>
+
+  <target name="all" depends="html,html-single,pdf" description="Generate document - all format"/>
+
+  <target name="html.init">
+    <uptodate property="html.isUpToDate" targetfile="build/html/index.html">
+      <srcfiles dir="build/source" includes="svnbook.xml"/>
+      <srcfiles dir="../stylesheets/zh" includes="html.xsl"/>
+    </uptodate>
+  </target>
+
+  <target name="html" depends="translate,html.init" unless="html.isUpToDate"
+        description="Generate document - html">
+    <copy todir="build/html/images">
+      <fileset dir="build/source/images"/>
+    </copy>
+
+    <echo message="Making html ..."/>
+    <exec dir="build/html" executable="xsltproc" osfamily="windows" failonerror="true">
+      <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
+      <arg line="--catalogs --nonet ../../../stylesheets/zh/html.xsl ../source/svnbook.xml"/>
+    </exec>
+    <exec dir="build/html" executable="xsltproc" osfamily="unix" failonerror="true">
+      <arg line="--nonet ../../../stylesheets/zh/html.xsl ../source/svnbook.xml"/>
+    </exec>
+  </target>
+
+  <target name="html-single.init">
+    <uptodate property="html-single.isUpToDate" targetfile="build/html-single/svnbook.html">
+      <srcfiles dir="build/source" includes="svnbook.xml"/>
+      <srcfiles dir="../stylesheets/zh" includes="html-single.xsl"/>
+    </uptodate>
+  </target>
+
+  <target name="html-single" depends="translate,html-single.init" unless="html-single.isUpToDate"
+        description="Generate document - html-single">
+    <copy todir="build/html-single/images">
+      <fileset dir="build/source/images"/>
+    </copy>
+
+    <echo message="Making html-single ..."/>
+    <exec dir="build/html-single" executable="xsltproc" osfamily="windows" failonerror="true">
+      <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
+      <arg line="--catalogs --nonet --output svnbook.html ../../../stylesheets/zh/html-single.xsl ../source/svnbook.xml"/>
+    </exec>
+    <exec dir="build/html-single" executable="xsltproc" osfamily="unix" failonerror="true">
+      <arg line="--nonet --output svnbook.html ../../../stylesheets/zh/html-single.xsl ../source/svnbook.xml"/>
+    </exec>
+  </target>
+
+  <target name="pdf.init">
+    <uptodate property="pdf.isUpToDate" targetfile="build/pdf/svnbook.pdf">
+      <srcfiles dir="build/source" includes="svnbook.xml"/>
+      <srcfiles dir="../stylesheets/zh" includes="fo.xsl"/>
+    </uptodate>
+  </target>
+
+  <target name="pdf" depends="translate,pdf.init" unless="pdf.isUpToDate"
+        description="Generate document - pdf">
+
+    <echo message="Making fo ..."/>
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="build/source">
+      <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
+      <arg value="-o"/>
+      <arg value="svnbook.fo"/>
+      <arg value="svnbook.xml"/>
+      <arg value="../../../stylesheets/zh/fo.xsl"/>
+      <arg value="fop1.extensions=1"/>
+    </java>
+
+    <echo message="Making pdf ..."/>
+    <mkdir dir="build/pdf"/>
+    <java classname="org.apache.fop.cli.Main" fork="true" maxmemory="512m"
+          failonerror="true" dir="build/source">
+      <classpath refid="lib.classpath"/>
+      <arg value="-c"/>
+      <arg value="${fop.home}/conf/userconfig.xml"/>
+      <arg value="svnbook.fo"/>
+      <arg value="../pdf/svnbook.pdf"/>
+    </java>
+  </target>
+
+  <target name="xep.init">
+    <uptodate property="xep.isUpToDate" targetfile="build/xep/svnbook.pdf">
+      <srcfiles dir="build/source" includes="svnbook.xml"/>
+      <srcfiles dir="../stylesheets/zh" includes="fo.xsl"/>
+    </uptodate>
+  </target>
+
+  <target name="xep" depends="translate,xep.init" unless="xep.isUpToDate"
+        description="Generate document - pdf (xep)">
+
+    <echo message="Making fo (xep) ..."/>
+    <java classname="com.icl.saxon.StyleSheet" fork="true" maxmemory="512m"
+          failonerror="true" dir="build/source">
+      <classpath refid="lib.classpath"/>
+      <arg value="-x"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-y"/>
+      <arg value="org.apache.xml.resolver.tools.ResolvingXMLReader"/>
+      <arg value="-r"/>
+      <arg value="org.apache.xml.resolver.tools.CatalogResolver"/>
+      <arg value="-o"/>
+      <arg value="svnbook.fo"/>
+      <arg value="svnbook.xml"/>
+      <arg value="../../../stylesheets/zh/fo.xsl"/>
+      <arg value="xep.extensions=1"/>
+    </java>
+
+    <echo message="Making pdf (xep) ..."/>
+    <mkdir dir="build/xep"/>
+    <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+          failonerror="true" dir="build/source">
+      <jvmarg value="-Xss512k"/>
+      <classpath refid="xep.classpath"/>
+      <arg value="-DCONFIG=${xep.home}/xep.xml"/>
+      <arg value="-quiet"/>
+      <arg value="svnbook.fo"/>
+      <arg value="../xep/svnbook.pdf"/>
+    </java>
+  </target>
+</project>
