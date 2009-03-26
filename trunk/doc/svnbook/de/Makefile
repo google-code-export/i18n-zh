@@ -1,0 +1,65 @@
+#
+# XML based Makefile for the svnbook
+#
+include Makefile.vars
+
+LINGUA=de
+FORMATS=html html-single pdf
+
+help:
+	@echo "  make html"
+	@echo "  make html-single"
+	@echo "  make pdf"
+	@echo "  make validate      # always before commit!"
+	@echo "  make all"
+	@echo "  make clean"
+
+clean:
+	@rm -fr build
+
+all:
+	for f in $(FORMATS); do \
+	  $(MAKE) $$f; \
+	done
+
+validate: build/source/svnbook.xml
+	xmllint --nonet --noout --postvalid --xinclude $<
+
+build/source/svnbook.xml: $(filter-out book/version.xml, $(wildcard book/*.xml))
+	mkdir -p build/source
+	cp -fr book/images build/source
+	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook.xml book/book.xml
+
+html: build/html/index.html
+
+build/html/index.html: build/source/svnbook.xml ../stylesheets/html.xsl ../stylesheets/$(LINGUA)/html.xsl
+	mkdir -p build/html/images
+	cp book/styles.css build/html
+	cp book/images/*.png build/html/images
+	xsltproc --output build/html/ \
+	    ../stylesheets/$(LINGUA)/html.xsl build/source/svnbook.xml
+
+html-single: build/html-single/svnbook.html
+
+build/html-single/svnbook.html: build/source/svnbook.xml ../stylesheets/html-single.xsl ../stylesheets/$(LINGUA)/html-single.xsl
+	mkdir -p build/html-single/images
+	cp book/styles.css build/html-single
+	cp book/images/*.png build/html-single/images
+	xsltproc --output build/html-single/svnbook.html \
+	    ../stylesheets/$(LINGUA)/html-single.xsl build/source/svnbook.xml
+
+pdf: build/pdf/svnbook.pdf
+
+build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesheets/$(LINGUA)/fo.xsl
+	mkdir -p build/pdf
+	java -classpath $(JAVA_SHARE)/saxon65.jar:$(JAVA_SHARE)/saxon65-dbxsl.jar:$(JAVA_SHARE)/xml-commons-resolver-1.2.jar:$(JAVA_SHARE) \
+	    com.icl.saxon.StyleSheet \
+	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
+	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
+	    -r org.apache.xml.resolver.tools.CatalogResolver \
+	    -o build/source/svnbook.fo \
+	    build/source/svnbook.xml \
+	    ../stylesheets/$(LINGUA)/fo.xsl \
+	    fop1.extensions=1
+
+	(cd build/source && $(FOP_HOME)/fop.sh -c $(FOP_HOME)/conf/userconfig.xml svnbook.fo ../pdf/svnbook.pdf)
