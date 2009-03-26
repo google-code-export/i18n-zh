@@ -6,6 +6,7 @@ include ../tools/Makefile.vars
 FORMATS=html html-single pdf
 
 help:
+	@echo "  make epub"
 	@echo "  make html"
 	@echo "  make html-single"
 	@echo "  make pdf"
@@ -25,9 +26,16 @@ validate: build/source/svnbook.xml
 	xmllint --nonet --noout --postvalid --xinclude $<
 
 build/source/svnbook.xml: $(filter-out book/version.xml, $(wildcard book/*.xml))
-	mkdir -p build/source
-	cp -fr book/images build/source
+	mkdir -p build/source/images
+	cp book/styles.css build/source
+	cp -fr book/images/*.png build/source/images
 	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook.xml book/book.xml
+
+epub: build/epub/svnbook.epub
+
+build/epub/svnbook.epub: build/source/svnbook.xml
+	mkdir -p build/epub
+	(cd build/source; $(DB2EPUB) -c styles.css -v svnbook.xml; mv svnbook.epub ../epub)
 
 html: build/html/index.html
 
