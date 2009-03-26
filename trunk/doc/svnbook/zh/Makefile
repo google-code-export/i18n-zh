@@ -2,5 +2,5 @@
 # XML based Makefile for the svnbook
 #
 
-LINGUA=de
+LINGUA=zh
 include ../tools/Makefile.base-po
