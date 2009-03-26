@@ -1,15 +1,16 @@
 #
-# Makefile for the svnbook, LINGUA=zh
+# PO based Makefile for the svnbook
 #
+include Makefile.vars
 
 LINGUA=zh
 FORMATS=html html-single pdf
 
-UPDATEPO = PERLLIB=../../tools/po4a/lib/ ../../tools/po4a/po4a-updatepo -M UTF-8 \
+UPDATEPO = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-updatepo -M UTF-8 \
        -f docbook -o doctype='docbook' -o includeexternal \
        -o nodefault='<programlisting> <screen>' \
        -o untranslated='<programlisting> <screen>'
-TRANSLATE = PERLLIB=../tools/po4a/lib/ ../tools/po4a/po4a-translate -M UTF-8 \
+TRANSLATE = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-translate -M UTF-8 \
        -f docbook -o doctype='docbook' \
        -k 0
 
@@ -25,7 +26,7 @@ help:
 	@echo "  make clean"
 
 clean:
-	@rm -fr build ../en/book/version.xml po/*.mo
+	@rm -fr build po/*.mo
 
 all:
 	for f in $(FORMATS); do \
@@ -53,21 +54,12 @@ updatepo:
 validate: build/source/svnbook.xml
 	xmllint --nonet --noout --postvalid --xinclude $<
 
-build/source/version.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po
-	mkdir -p build/source
-	cp ../en/book/*.xml build/source
-	@echo '<!ENTITY svn.version "r'`LC_ALL=C svn info en | grep 'Last Changed Rev: ' | awk '{print $$4}'`'">' > $@
-	@echo '<!ENTITY svn.l10n_revision "r'`LC_ALL=C svn info po/svnbook.po | grep 'Last Changed Rev: ' | awk '{print $$4}'`'/">' >> $@
-
-build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po build/source/version.xml
+build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/book/*.xml)) po/svnbook.po
 	mkdir -p build/source/images
 	cp ../en/book/images/*.png build/source/images
-	for f in ../en/book/*.xml; do \
-	  if [ $$f != "../en/book/version.xml" ]; then \
-	    $(TRANSLATE) -m $$f -p po/svnbook.po -l build/source/`basename $$f`; \
-	  fi \
-	done
-	xmllint --nonet --noent --xinclude --postvalid --output $@ build/source/book.xml
+	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml
+	$(TRANSLATE) -m build/source/svnbook-en.xml -p po/svnbook.po -l build/source/svnbook.xml
+	xmllint --nonet --noout --postvalid --xinclude $@
 
 html: build/html/index.html
 
@@ -91,7 +83,7 @@ pdf: build/pdf/svnbook.pdf
 
 build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesheets/$(LINGUA)/fo.xsl
 	mkdir -p build/pdf
-	java -classpath ../tools/fop/lib/saxon65.jar:../tools/fop/lib/saxon65-dbxsl.jar:../tools/fop/lib/xml-commons-resolver-1.2.jar:../tools/fop/conf \
+	java -classpath $(JAVA_SHARE)/saxon65.jar:$(JAVA_SHARE)/saxon65-dbxsl.jar:$(JAVA_SHARE)/xml-commons-resolver-1.2.jar:$(JAVA_SHARE) \
 	    com.icl.saxon.StyleSheet \
 	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
@@ -101,4 +93,4 @@ build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesh
 	    ../stylesheets/$(LINGUA)/fo.xsl \
 	    fop1.extensions=1
 
-	(cd build/source && ../../../tools/fop/fop.sh svnbook.fo ../pdf/svnbook.pdf)
+	(cd build/source && $(FOP_HOME)/fop.sh -c $(FOP_HOME)/conf/userconfig.xml svnbook.fo ../pdf/svnbook.pdf)

@@ -1,5 +1,5 @@
 #
-# Makefile for the svnbook, xml based
+# XML based Makefile for the svnbook
 #
 include Makefile.vars
 
@@ -57,9 +57,9 @@ build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesh
 	    -x org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -y org.apache.xml.resolver.tools.ResolvingXMLReader \
 	    -r org.apache.xml.resolver.tools.CatalogResolver \
-	    -o book/svnbook.fo \
+	    -o build/source/svnbook.fo \
 	    build/source/svnbook.xml \
 	    ../stylesheets/$(LINGUA)/fo.xsl \
 	    fop1.extensions=1
 
-	(cd book && $(FOP_HOME)/fop.sh -c $(FOP_HOME)/conf/userconfig.xml svnbook.fo ../build/pdf/svnbook.pdf)
+	(cd build/source && $(FOP_HOME)/fop.sh -c $(FOP_HOME)/conf/userconfig.xml svnbook.fo ../pdf/svnbook.pdf)
