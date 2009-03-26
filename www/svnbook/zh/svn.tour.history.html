@@ -1,0 +1,375 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>2.5. 检验历史</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.tour.html" title="第 2 章 基本使用">
+<link rel="prev" href="svn.tour.cycle.html" title="2.4. 基本的工作循环">
+<link rel="next" href="svn.tour.cleanup.html" title="2.6. 有时你只需要清理">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">2.5. 检验历史</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.tour.cycle.html">上一页</a> </td>
+<th width="60%" align="center">第 2 章 基本使用</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.tour.cleanup.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.tour.history"></a>2.5. 检验历史</h2></div></div></div>
+<p>Your Subversion repository is like a time machine.  It keeps a record of
+every change ever committed and allows you to explore this history by
+examining previous versions of files and directories as well as the metadata
+that accompanies them.  With a single Subversion command, you can check out
+the repository (or restore an existing working copy) exactly as it was at
+any date or revision number in the past.  However, sometimes you just want
+to <span class="emphasis"><em>peer into</em></span> the past instead of <span class="emphasis"><em>going
+into</em></span> it.</p>
+<p>Several commands can provide you with historical data from the repository:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><span class="command"><strong>svn log</strong></span></span></dt>
+<dd><p>Shows you broad information: log messages with date and author information
+attached to revisions and which paths changed in each revision</p></dd>
+<dt><span class="term"><span class="command"><strong>svn diff</strong></span></span></dt>
+<dd><p>Shows line-level details of a particular change</p></dd>
+<dt><span class="term"><span class="command"><strong>svn cat</strong></span></span></dt>
+<dd><p>Retrieves a file as it existed in a particular revision number and displays
+it on your screen</p></dd>
+<dt><span class="term"><span class="command"><strong>svn list</strong></span></span></dt>
+<dd><p>Displays the files in a directory for any given revision</p></dd>
+</dl></div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.history.log"></a>2.5.1. 产生历史修改列表</h3></div></div></div>
+<p>To find information about the history of a file or directory, use the
+<span class="command"><strong>svn log</strong></span> command. <span class="command"><strong>svn log</strong></span> will provide
+you with a record of who made changes to a file or directory, at what
+revision it changed, the time and date of that revision, and—if it
+was provided—the log message that accompanied the commit:</p>
+<pre class="screen">
+$ svn log
+------------------------------------------------------------------------
+r3 | sally | 2008-05-15 23:09:28 -0500 (Thu, 15 May 2008) | 1 line
+
+Added include lines and corrected # of cheese slices.
+------------------------------------------------------------------------
+r2 | harry | 2008-05-14 18:43:15 -0500 (Wed, 14 May 2008) | 1 line
+
+Added main() methods.
+------------------------------------------------------------------------
+r1 | sally | 2008-05-10 19:50:31 -0500 (Sat, 10 May 2008) | 1 line
+
+Initial import
+------------------------------------------------------------------------
+</pre>
+<p>Note that the log messages are printed in <span class="emphasis"><em>reverse chronological
+order</em></span> by default.  If you wish to see a different range of
+revisions in a particular order or just a single revision, pass the
+<code class="option">--revision</code> (<code class="option">-r</code>)  option:</p>
+<pre class="screen">
+$ svn log -r 5:19    # shows logs 5 through 19 in chronological order
+
+$ svn log -r 19:5    # shows logs 5 through 19 in reverse order
+
+$ svn log -r 8       # shows log for revision 8
+</pre>
+<p>You can also examine the log history of a single file or directory.  For
+example:</p>
+<pre class="screen">
+$ svn log foo.c
+…
+$ svn log http://foo.com/svn/trunk/code/foo.c
+…
+</pre>
+<p>These will display log messages <span class="emphasis"><em>only</em></span> for those
+revisions in which the working file (or URL)  changed.</p>
+<div class="sidebar">
+<p class="title"><b>为什么 <span class="command"><strong>svn log</strong></span> 不会显示我刚刚提交的内容？</b></p>
+<p>If you make a commit and immediately type <strong class="userinput"><code>svn log</code></strong>
+with no arguments, you may notice that your most recent commit doesn't show
+up in the list of log messages.  This is due to a combination of the
+behavior of <span class="command"><strong>svn commit</strong></span> and the default behavior of
+<span class="command"><strong>svn log</strong></span>.  First, when you commit changes to the
+repository, <span class="command"><strong>svn</strong></span> bumps only the revision of files (and
+directories) that it commits, so usually the parent directory remains at the
+older revision (See <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.mixedrevs.update-commit" title="1.3.5.1. 更新和提交是分开的">第 1.3.5.1 节 “更新和提交是分开的”</a> for an explanation
+of why).  <span class="command"><strong>svn log</strong></span> then defaults to fetching the history
+of the directory at its current revision, and thus you don't see the newly
+committed changes.  The solution here is to either update your working copy
+or explicitly provide a revision number to <span class="command"><strong>svn log</strong></span> by
+using the <code class="option">--revision</code> (<code class="option">-r</code>) option.</p>
+</div>
+<p>If you want even more information about a file or directory, <span class="command"><strong>svn
+log</strong></span> also takes a <code class="option">--verbose</code> (<code class="option">-v</code>)
+option.  Because Subversion allows you to move and copy files and
+directories, it is important to be able to track path changes in the
+filesystem. So, in verbose mode, <span class="command"><strong>svn log</strong></span> will include a
+list of changed paths in a revision in its output:</p>
+<pre class="screen">
+$ svn log -r 8 -v
+------------------------------------------------------------------------
+r8 | sally | 2008-05-21 13:19:25 -0500 (Wed, 21 May 2008) | 1 line
+Changed paths:
+   M /trunk/code/foo.c
+   M /trunk/code/bar.h
+   A /trunk/code/doc/README
+
+Frozzled the sub-space winch.
+
+------------------------------------------------------------------------
+</pre>
+<p>
+        <span class="command"><strong>svn log</strong></span> also takes a <code class="option">--quiet</code>
+(<code class="option">-q</code>) option, which suppresses the body of the log message.
+When combined with <code class="option">--verbose</code>, it gives just the names of
+the changed files.</p>
+<div class="sidebar">
+<p class="title"><b>为什么 <span class="command"><strong>svn log</strong></span> 给我一个空的回应？</b></p>
+<p>当使用Subversion一些时间后，许多用户会遇到这种情况：</p>
+<pre class="screen">
+$ svn log -r 2
+------------------------------------------------------------------------
+$
+</pre>
+<p>At first glance, this seems like an error.  But recall that while revisions
+are repository-wide, <span class="command"><strong>svn log</strong></span> operates on a path in the
+repository.  If you supply no path, Subversion uses the current working
+directory as the default target.  As a result, if you're operating in a
+subdirectory of your working copy and attempt to see the log of a revision
+in which neither that directory nor any of its children was changed,
+Subversion will show you an empty log.  If you want to see what changed in
+that revision, try pointing <span class="command"><strong>svn log</strong></span> directly at the
+topmost URL of your repository, as in <strong class="userinput"><code>svn log -r 2
+http://svn.collab.net/repos/svn</code></strong>.</p>
+</div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.history.diff"></a>2.5.2. 检查历史修改详情</h3></div></div></div>
+<p>We've already seen <span class="command"><strong>svn diff</strong></span> before—it displays
+file differences in unified diff format; we used it to show the local
+modifications made to our working copy before committing to the repository.</p>
+<p>事实上，<span class="command"><strong>svn diff</strong></span>有<span class="emphasis"><em>三</em></span>种不同的用法：</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>检查本地修改</p></li>
+<li><p>比较工作副本与版本库</p></li>
+<li><p>比较版本库中的版本</p></li>
+</ul></div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.tour.history.diff.local"></a>2.5.2.1. 检查本地修改</h4></div></div></div>
+<p>像我们看到的，不使用任何参数调用时，<strong class="userinput"><code>svn diff</code></strong> 将会比较你的工作文件与缓存在
+<code class="filename">.svn</code> 的“<span class="quote">原始</span>”副本：</p>
+<pre class="screen">
+$ svn diff
+Index: rules.txt
+===================================================================
+--- rules.txt	(revision 3)
++++ rules.txt	(working copy)
+@@ -1,4 +1,5 @@
+ Be kind to others
+ Freedom = Responsibility
+ Everything in moderation
+-Chew with your mouth open
++Chew with your mouth closed
++Listen when others are speaking
+$
+</pre>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.tour.history.diff.wcrepos"></a>2.5.2.2. 比较工作副本和版本库</h4></div></div></div>
+<p>如果传递一个 <code class="option">--revision</code> (<code class="option">-r</code>)
+参数，你的工作副本会与版本库中的指定版本比较：</p>
+<pre class="screen">
+$ svn diff -r 3 rules.txt
+Index: rules.txt
+===================================================================
+--- rules.txt	(revision 3)
++++ rules.txt	(working copy)
+@@ -1,4 +1,5 @@
+ Be kind to others
+ Freedom = Responsibility
+ Everything in moderation
+-Chew with your mouth open
++Chew with your mouth closed
++Listen when others are speaking
+$
+</pre>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.tour.history.diff.reposrepos"></a>2.5.2.3. 比较版本库中的版本</h4></div></div></div>
+<p>如果通过 <code class="option">--revision</code> (<code class="option">-r</code>)
+传递两个通过冒号分开的版本号，这两个版本会直接比较：</p>
+<pre class="screen">
+$ svn diff -r 2:3 rules.txt
+Index: rules.txt
+===================================================================
+--- rules.txt	(revision 2)
++++ rules.txt	(revision 3)
+@@ -1,4 +1,4 @@
+ Be kind to others
+-Freedom = Chocolate Ice Cream
++Freedom = Responsibility
+ Everything in moderation
+ Chew with your mouth open
+$
+</pre>
+<p>A more convenient way of comparing one revision to the previous revision is
+to use the <code class="option">--change</code> (<code class="option">-c</code>) option:</p>
+<pre class="screen">
+$ svn diff -c 3 rules.txt
+Index: rules.txt
+===================================================================
+--- rules.txt	(revision 2)
++++ rules.txt	(revision 3)
+@@ -1,4 +1,4 @@
+ Be kind to others
+-Freedom = Chocolate Ice Cream
++Freedom = Responsibility
+ Everything in moderation
+ Chew with your mouth open
+$
+</pre>
+<p>最后，即使你在本机没有工作副本，还是可以比较版本库的修订版本，只需要在命令行中输入合适的URL：</p>
+<pre class="screen">
+$ svn diff -c 5 http://svn.example.com/repos/example/trunk/text/rules.txt
+…
+$
+</pre>
+</div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.history.browsing"></a>2.5.3. 浏览版本库</h3></div></div></div>
+<p>Using <span class="command"><strong>svn cat</strong></span> and <span class="command"><strong>svn list</strong></span>, you can
+view various revisions of files and directories without changing the working
+revision of your working copy.  In fact, you don't even need a working copy
+to use either one.</p>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.tour.history.browsing.cat"></a>2.5.3.1. svn cat</h4></div></div></div>
+<p>如果你只是希望检查一个过去的版本而不希望察看它们的区别，使用<span class="command"><strong>svn cat</strong></span>：</p>
+<pre class="screen">
+$ svn cat -r 2 rules.txt
+Be kind to others
+Freedom = Chocolate Ice Cream
+Everything in moderation
+Chew with your mouth open
+$
+</pre>
+<p>你可以重定向输出到一个文件：</p>
+<pre class="screen">
+$ svn cat -r 2 rules.txt &gt; rules.txt.v2
+$
+</pre>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.tour.history.browsing.list"></a>2.5.3.2. svn list</h4></div></div></div>
+<p><span class="command"><strong>svn list</strong></span>可以在不下载文件到本地目录的情况下来察看目录中的文件：</p>
+<pre class="screen">
+$ svn list http://svn.collab.net/repos/svn
+README
+branches/
+clients/
+tags/
+trunk/
+</pre>
+<p>如果你希望察看详细信息，你可以使用<code class="option">--verbose</code>(<code class="option">-v</code>) 参数：</p>
+<pre class="screen">
+$ svn list -v http://svn.collab.net/repos/svn
+  20620 harry            1084 Jul 13  2006 README
+  23339 harry                 Feb 04 01:40 branches/
+  21282 sally                 Aug 27 09:41 developer-resources/
+  23198 harry                 Jan 23 17:17 tags/
+  23351 sally                 Feb 05 13:26 trunk/
+</pre>
+<p>这些列告诉你文件和目录最后修改的修订版本, 做出修改的用户, 如果是文件还会有文件的大小，最后是修改日期和项目的名字。</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[警告]" src="images/warning.png"></td>
+<th align="left">警告</th>
+</tr>
+<tr><td align="left" valign="top"><p>The <strong class="userinput"><code>svn list</code></strong> command with no arguments defaults to
+the <span class="emphasis"><em>repository URL</em></span> of the current working directory,
+<span class="emphasis"><em>not</em></span> the local working copy directory.  After all, if
+you want a listing of your local directory, you could use just plain
+<span class="command"><strong>ls</strong></span> (or any reasonable non-Unixy equivalent).</p></td></tr>
+</table></div>
+</div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.history.snapshots"></a>2.5.4. 获得旧的版本库快照</h3></div></div></div>
+<p>In addition to all of the previous commands, you can use <span class="command"><strong>svn
+update</strong></span> and <span class="command"><strong>svn checkout</strong></span> with the
+<code class="option">--revision</code> option to take an entire working copy
+“<span class="quote">back in time</span>”: <sup>[<a name="id364052" href="#ftn.id364052" class="footnote">6</a>]</sup>
+        </p>
+<pre class="screen">
+$ svn checkout -r 1729 # Checks out a new working copy at r1729
+…
+$ svn update -r 1729 # Updates an existing working copy to r1729
+…
+</pre>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[提示]" src="images/tip.png"></td>
+<th align="left">提示</th>
+</tr>
+<tr><td align="left" valign="top"><p>Many Subversion newcomers attempt to use the preceding <span class="command"><strong>svn
+update</strong></span> example to “<span class="quote">undo</span>” committed changes, but this
+won't work as you can't commit changes that you obtain from backdating a
+working copy if the changed files have newer revisions.  See <a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.resurrect" title="4.3.5. 找回删除的项目">第 4.3.5 节 “找回删除的项目”</a> for a description of how
+to “<span class="quote">undo</span>” a commit.</p></td></tr>
+</table></div>
+<p>Lastly, if you're building a release and wish to bundle up your files from
+Subversion but don't want those pesky <code class="filename">.svn</code> directories
+in the way, you can use <span class="command"><strong>svn export</strong></span> to create a local copy
+of all or part of your repository sans <code class="filename">.svn</code>
+directories.  As with <span class="command"><strong>svn update</strong></span> and <span class="command"><strong>svn
+checkout</strong></span>, you can also pass the <code class="option">--revision</code> option
+to <span class="command"><strong>svn export</strong></span>:</p>
+<pre class="screen">
+$ svn export http://svn.example.com/svn/repos1 # Exports latest revision
+…
+$ svn export http://svn.example.com/svn/repos1 -r 1729
+# Exports revision r1729
+…
+</pre>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id364052" href="#id364052" class="para">6</a>] </sup>看到了吧？我们说过Subversion是一个时间机器。</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.tour.cycle.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.tour.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.tour.cleanup.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">2.4. 基本的工作循环 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 2.6. 有时你只需要清理</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

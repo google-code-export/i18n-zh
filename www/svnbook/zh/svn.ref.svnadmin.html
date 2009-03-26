@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>9.2. svnadmin</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.ref.html" title="第 9 章 Subversion 完全参考">
+<link rel="prev" href="svn.ref.svn.c.update.html" title="svn update">
+<link rel="next" href="svn.ref.svnadmin.c.crashtest.html" title="svnadmin crashtest">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">9.2. svnadmin</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.update.html">上一页</a> </td>
+<th width="60%" align="center">第 9 章 Subversion 完全参考</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svnadmin.c.crashtest.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.ref.svnadmin"></a>9.2. svnadmin</h2></div></div></div>
+<p><span class="command"><strong>svnadmin</strong></span> is the administrative tool for monitoring and
+repairing your Subversion repository.  For detailed information on
+repository administration, see the maintenance section for <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.tk.svnadmin" title="5.4.1.1. svnadmin">第 5.4.1.1 节 “svnadmin”</a>.</p>
+<p>因为<span class="command"><strong>svnadmin</strong></span>直接访问版本库(因此只可以在存放版本库的机器上使用)，它通过路径访问版本库，而不是URL。</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.svnadmin.sw"></a>9.2.1. <span class="command"><strong>svnadmin</strong></span> 选项</h3></div></div></div>
+<p>Options in <span class="command"><strong>svmadin</strong></span> are global, just as they are in
+<span class="command"><strong>svn</strong></span>:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><code class="option">--bdb-log-keep</code></span></dt>
+<dd><p>(Berkeley DB-specific.) Disable automatic log removal of database logfiles.
+Having these logfiles around can be convenient if you need to restore from a
+catastrophic repository failure.</p></dd>
+<dt><span class="term"><code class="option">--bdb-txn-nosync</code></span></dt>
+<dd><p>(Berkeley DB-specific.) Disables fsync when committing database
+transactions.  Used with the <span class="command"><strong>svnadmin create</strong></span> command to
+create a Berkeley DB-backed repository with <code class="literal">DB_TXN_NOSYNC</code>
+enabled (which improves speed but has some risks associated with it).</p></dd>
+<dt><span class="term"><code class="option">--bypass-hooks</code></span></dt>
+<dd><p>绕过版本库钩子系统。</p></dd>
+<dt><span class="term"><code class="option">--clean-logs</code></span></dt>
+<dd><p>删除不使用的Berkeley DB日志。</p></dd>
+<dt><span class="term"><code class="option">--force-uuid</code></span></dt>
+<dd><p>By default, when loading data into repository that already contains
+revisions, <span class="command"><strong>svnadmin</strong></span> will ignore the
+<code class="literal">UUID</code> from the dump stream.  This option will cause the
+repository's <code class="literal">UUID</code> to be set to the
+<code class="literal">UUID</code> from the stream.</p></dd>
+<dt><span class="term"><code class="option">--ignore-uuid</code></span></dt>
+<dd><p>By default, when loading an empty repository, <span class="command"><strong>svnadmin</strong></span>
+will ignore the <code class="literal">UUID</code> from the dump stream.  This option
+will force that UUID to be ignored (useful for overriding your configuration
+file if it has <code class="option">--force-uuid</code> set).</p></dd>
+<dt><span class="term"><code class="option">--incremental</code></span></dt>
+<dd><p>导出一个修订版本针对前一个修订版本的区别，而不是通常的完全结果。</p></dd>
+<dt><span class="term"><code class="option">--parent-dir <em class="replaceable"><code>DIR</code></em></code></span></dt>
+<dd><p>当加载一个转储文件时，根路径为<em class="replaceable"><code>DIR</code></em>而不是<code class="filename">/</code>。</p></dd>
+<dt><span class="term"><code class="option">--pre-1.4-compatible</code></span></dt>
+<dd><p>When creating a new repository, use a format that is compatible with
+versions of Subversion earlier than Subversion 1.4.</p></dd>
+<dt><span class="term"><code class="option">--pre-1.5-compatible</code></span></dt>
+<dd><p>When creating a new repository, use a format that is compatible with
+versions of Subversion earlier than Subversion 1.5.</p></dd>
+<dt><span class="term"><code class="option">--revision</code> (<code class="option">-r</code>)
+<em class="replaceable"><code>ARG</code></em></span></dt>
+<dd><p>指定一个操作的修订版本。</p></dd>
+<dt><span class="term"><code class="option">--quiet</code></span></dt>
+<dd><p>Do not show normal progress—show only errors.</p></dd>
+<dt><span class="term"><code class="option">--use-post-commit-hook</code></span></dt>
+<dd><p>When loading a dump file, runs the repository's
+<code class="literal">post-commit</code> hook after finalizing each newly loaded
+revision.</p></dd>
+<dt><span class="term"><code class="option">--use-post-revprop-change-hook</code></span></dt>
+<dd><p>When changing a revision property, runs the repository's
+<code class="literal">post-revprop-change</code> hook after changing the revision
+property.</p></dd>
+<dt><span class="term"><code class="option">--use-pre-commit-hook</code></span></dt>
+<dd><p>When loading a dump file, runs the repository's
+<code class="literal">pre-commit</code> hook before finalizing each newly loaded
+revision.  If the hook fails, aborts the commit and terminates the load
+process.</p></dd>
+<dt><span class="term"><code class="option">--use-pre-revprop-change-hook</code></span></dt>
+<dd><p>When changing a revision property, runs the repository's
+<code class="literal">pre-revprop-change</code> hook before changing the revision
+property.  If the hook fails, aborts the modification and terminates.</p></dd>
+</dl></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.svnadmin.c"></a>9.2.2. svnadmin 子命令</h3></div></div></div>
+<p>Here are the various subcommands for the <span class="command"><strong>svnadmin</strong></span>
+program.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svn.c.update.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svnadmin.c.crashtest.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svn update </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> svnadmin crashtest</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

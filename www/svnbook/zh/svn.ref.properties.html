@@ -1,0 +1,120 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>9.10. Subversion 属性</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.ref.html" title="第 9 章 Subversion 完全参考">
+<link rel="prev" href="svn.ref.mod_authz_svn.conf.html" title="mod_authz_svn 配置指令">
+<link rel="next" href="svn.ref.reposhooks.html" title="9.11. 版本库钩子">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">9.10. Subversion 属性</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.mod_authz_svn.conf.html">上一页</a> </td>
+<th width="60%" align="center">第 9 章 Subversion 完全参考</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.reposhooks.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.ref.properties"></a>9.10. Subversion 属性</h2></div></div></div>
+<p>Subversion allows users to invent arbitrarily named versioned properties on
+files and directories, as well as unversioned properties on revisions.  The
+only restriction is on properties whose names begin with
+<code class="literal">svn:</code> (those are reserved for Subversion's own use).
+While these properties may be set by users to control Subversion's behavior,
+users may not invent new <code class="literal">svn:</code> properties.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.properties.versioned-props"></a>9.10.1. 版本控制的属性</h3></div></div></div>
+<p>These are the versioned properties that Subversion reserves for its own use:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><code class="literal">svn:executable</code></span></dt>
+<dd><p>If present on a file, the client will make the file executable in
+Unix-hosted working copies.  See <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.executable" title="3.3.2. 文件的可执行性">第 3.3.2 节 “文件的可执行性”</a>.</p></dd>
+<dt><span class="term"><code class="literal">svn:mime-type</code></span></dt>
+<dd><p>If present on a file, the value indicates the file's MIME type.  This allows
+the client to decide whether line-based contextual merging is safe to
+perform during updates, and can also affect how the file behaves when
+fetched via a web browser.  See <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.mime-type" title="3.3.1. 文件内容类型">第 3.3.1 节 “文件内容类型”</a>. </p></dd>
+<dt><span class="term"><code class="literal">svn:ignore</code></span></dt>
+<dd><p>If present on a directory, the value is a list of
+<span class="emphasis"><em>unversioned</em></span> file patterns to be ignored by <span class="command"><strong>svn
+status</strong></span> and other subcommands.  See <a class="xref" href="svn.advanced.props.special.ignore.html" title="3.4. 忽略未版本控制的条目">第 3.4 节 “忽略未版本控制的条目”</a>.</p></dd>
+<dt><span class="term"><code class="literal">svn:keywords</code></span></dt>
+<dd><p>If present on a file, the value tells the client how to expand particular
+keywords within the file.  See <a class="xref" href="svn.advanced.props.special.keywords.html" title="3.5. 关键字替换">第 3.5 节 “关键字替换”</a>.</p></dd>
+<dt><span class="term"><code class="literal">svn:eol-style</code></span></dt>
+<dd><p>If present on a file, the value tells the client how to manipulate the
+file's line-endings in the working copy and in exported trees.  See <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.eol-style" title="3.3.3. 行结束字符序列">第 3.3.3 节 “行结束字符序列”</a> and <a class="xref" href="svn.ref.svn.c.export.html" title="svn export">svn export</a> earlier in this chapter.</p></dd>
+<dt><span class="term"><code class="literal">svn:externals</code></span></dt>
+<dd><p>If present on a directory, the value is a multiline list of other paths and
+URLs the client should check out.  See <a class="xref" href="svn.advanced.externals.html" title="3.8. 外部定义">第 3.8 节 “外部定义”</a>.</p></dd>
+<dt><span class="term"><code class="literal">svn:special</code></span></dt>
+<dd><p>If present on a file, indicates that the file is not an ordinary file, but a
+symbolic link or other special object.  <sup>[<a name="id411900" href="#ftn.id411900" class="footnote">59</a>]</sup>
+            </p></dd>
+<dt><span class="term"><code class="literal">svn:needs-lock</code></span></dt>
+<dd><p>If present on a file, tells the client to make the file read-only in the
+working copy, as a reminder that the file should be locked before editing
+begins.  See <a class="xref" href="svn.advanced.locking.html#svn.advanced.locking.lock-communication" title="3.7.4. 锁定交流">第 3.7.4 节 “锁定交流”</a>.</p></dd>
+<dt><span class="term"><code class="literal">svn:mergeinfo</code></span></dt>
+<dd><p>Used by Subversion to track merge data.  See <a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.mergeinfo" title="4.3.3. 合并信息和预览">第 4.3.3 节 “合并信息和预览”</a> for details, but you
+should never edit this property unless you <span class="emphasis"><em>really</em></span> know
+what you're doing.</p></dd>
+</dl></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.properties.unversioned-props"></a>9.10.2. 未版本控制的属性</h3></div></div></div>
+<p>These are the unversioned properties that Subversion reserves for its own
+use:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><code class="literal">svn:author</code></span></dt>
+<dd><p>If present, contains the authenticated username of the person who created
+the revision.  (If not present, the revision was committed anonymously.)</p></dd>
+<dt><span class="term"><code class="literal">svn:date</code></span></dt>
+<dd><p>Contains the UTC time the revision was created, in ISO 8601 format.  The
+value comes from the <span class="emphasis"><em>server</em></span> machine's clock, not the
+client's.</p></dd>
+<dt><span class="term"><code class="literal">svn:log</code></span></dt>
+<dd><p>保存了描述修订版本的日志信息。</p></dd>
+<dt><span class="term"><code class="literal">svn:autoversioned</code></span></dt>
+<dd><p>If present, the revision was created via the autoversioning feature.  See
+<a class="xref" href="svn.webdav.autoversioning.html" title="C.2. 自动版本化">第 C.2 节 “自动版本化”</a>.</p></dd>
+</dl></div>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id411900" href="#id411900" class="para">59</a>] </sup>As of this writing, symbolic links are indeed the only
+“<span class="quote">special</span>” objects.  But there might be more in future releases
+of Subversion.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.mod_authz_svn.conf.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.reposhooks.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">mod_authz_svn 配置指令 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 9.11. 版本库钩子</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

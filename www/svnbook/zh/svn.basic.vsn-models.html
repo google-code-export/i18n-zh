@@ -1,0 +1,190 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>1.2. 版本模型</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.basic.html" title="第 1 章 基本概念">
+<link rel="prev" href="svn.basic.html" title="第 1 章 基本概念">
+<link rel="next" href="svn.basic.in-action.html" title="1.3. Subversion 实践">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">1.2. 版本模型</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.basic.html">上一页</a> </td>
+<th width="60%" align="center">第 1 章 基本概念</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.basic.in-action.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.vsn-models"></a>1.2. 版本模型</h2></div></div></div>
+<p>The core mission of a version control system is to enable collaborative
+editing and sharing of data.  But different systems use different strategies
+to achieve this.  It's important to understand these different strategies,
+for a couple of reasons.  First, it will help you compare and contrast
+existing version control systems, in case you encounter other systems
+similar to Subversion.  Beyond that, it will also help you make more
+effective use of Subversion, since Subversion itself supports a couple of
+different ways of working.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.problem-sharing"></a>1.2.1. 文件共享的问题</h3></div></div></div>
+<p>所有的版本控制系统都需要解决这样一个基础问题：怎样让系统允许用户共享信息，而不会让他们因意外而互相干扰？版本库里意外覆盖别人的更改非常的容易。</p>
+<p>Consider the scenario shown in <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.problem-sharing.dia-1" title="图 1.2. 需要避免的问题">图 1.2 “需要避免的问题”</a>.  Suppose we have two
+coworkers, Harry and Sally.  They each decide to edit the same repository
+file at the same time.  If Harry saves his changes to the repository first,
+it's possible that (a few moments later) Sally could accidentally overwrite
+them with her own new version of the file.  While Harry's version of the
+file won't be lost forever (because the system remembers every change), any
+changes Harry made <span class="emphasis"><em>won't</em></span> be present in Sally's newer
+version of the file, because she never saw Harry's changes to begin with.
+Harry's work is still effectively lost—or at least missing from the
+latest version of the file—and probably by accident.  This is
+definitely a situation we want to avoid!</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.problem-sharing.dia-1"></a><p class="title"><b>图 1.2. 需要避免的问题</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia2.png" alt="需要避免的问题"></div></div>
+</div>
+<br class="figure-break">
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.lock-unlock"></a>1.2.2. “锁定-修改-解锁”方案</h3></div></div></div>
+<p>Many version control systems use a <em class="firstterm">lock-modify-unlock</em>
+model to address the problem of many authors clobbering each other's work.
+In this model, the repository allows only one person to change a file at a
+time.  This exclusivity policy is managed using locks.  Harry must
+“<span class="quote">lock</span>” a file before he can begin making changes to it.  If
+Harry has locked a file, Sally cannot also lock it, and therefore cannot
+make any changes to that file.  All she can do is read the file and wait for
+Harry to finish his changes and release his lock.  After Harry unlocks the
+file, Sally can take her turn by locking and editing the file.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.lock-unlock.dia-1" title="图 1.3. “锁定-修改-解锁”方案">图 1.3 ““锁定-修改-解锁”方案”</a> demonstrates this simple
+solution.</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.lock-unlock.dia-1"></a><p class="title"><b>图 1.3. “锁定-修改-解锁”方案</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia3.png" alt="“锁定-修改-解锁”方案"></div></div>
+</div>
+<br class="figure-break"><p>锁定-修改-解锁模型有一点问题就是限制太多，经常会成为用户的障碍：</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><span class="emphasis"><em>Locking may cause administrative problems.</em></span> Sometimes
+Harry will lock a file and then forget about it.  Meanwhile, because Sally
+is still waiting to edit the file, her hands are tied.  And then Harry goes
+on vacation.  Now Sally has to get an administrator to release Harry's
+lock.  The situation ends up causing a lot of unnecessary delay and wasted
+time.</p></li>
+<li><p><span class="emphasis"><em>Locking may cause unnecessary serialization.</em></span> What if
+Harry is editing the beginning of a text file, and Sally simply wants to
+edit the end of the same file? These changes don't overlap at all.  They
+could easily edit the file simultaneously, and no great harm would come,
+assuming the changes were properly merged together.  There's no need for
+them to take turns in this situation.</p></li>
+<li><p><span class="emphasis"><em>Locking may create a false sense of security.</em></span> Suppose
+Harry locks and edits file A, while Sally simultaneously locks and edits
+file B.  But what if A and B depend on one another, and the changes made to
+each are semantically incompatible? Suddenly A and B don't work together
+anymore.  The locking system was powerless to prevent the problem—yet
+it somehow provided a false sense of security.  It's easy for Harry and
+Sally to imagine that by locking files, each is beginning a safe, insulated
+task, and thus they need not bother discussing their incompatible changes
+early on.  Locking often becomes a substitute for real communication.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.copy-merge"></a>1.2.3. “拷贝-修改-合并”方案</h3></div></div></div>
+<p>Subversion, CVS, and many other version control systems use a
+<em class="firstterm">copy-modify-merge</em> model as an alternative to
+locking.  In this model, each user's client contacts the project repository
+and creates a personal <em class="firstterm">working copy</em>—a local
+reflection of the repository's files and directories.  Users then work
+simultaneously and independently, modifying their private copies.  Finally,
+the private copies are merged together into a new, final version.  The
+version control system often assists with the merging, but ultimately, a
+human being is responsible for making it happen correctly.</p>
+<p>Here's an example.  Say that Harry and Sally each create working copies of
+the same project, copied from the repository.  They work concurrently and
+make changes to the same file A within their copies.  Sally saves her
+changes to the repository first.  When Harry attempts to save his changes
+later, the repository informs him that his file A is <em class="firstterm">out of
+date</em>.  In other words, file A in the repository has somehow
+changed since he last copied it.  So Harry asks his client to
+<em class="firstterm">merge</em> any new changes from the repository into his
+working copy of file A.  Chances are that Sally's changes don't overlap with
+his own; once he has both sets of changes integrated, he saves his working
+copy back to the repository.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-1" title="图 1.4. “拷贝-修改-合并”方案">图 1.4 ““拷贝-修改-合并”方案”</a> and <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-2" title="图 1.5. “拷贝-修改-合并”方案(续)">图 1.5 ““拷贝-修改-合并”方案(续)”</a> show this process.</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-1"></a><p class="title"><b>图 1.4. “拷贝-修改-合并”方案</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia4.png" alt="“拷贝-修改-合并”方案"></div></div>
+</div>
+<br class="figure-break"><div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-2"></a><p class="title"><b>图 1.5. “拷贝-修改-合并”方案(续)</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia5.png" alt="“拷贝-修改-合并”方案(续)"></div></div>
+</div>
+<br class="figure-break"><p>But what if Sally's changes <span class="emphasis"><em>do</em></span> overlap with Harry's
+changes? What then? This situation is called a
+<em class="firstterm">conflict</em>, and it's usually not much of a problem.
+When Harry asks his client to merge the latest repository changes into his
+working copy, his copy of file A is somehow flagged as being in a state of
+conflict: he'll be able to see both sets of conflicting changes and manually
+choose between them.  Note that software can't automatically resolve
+conflicts; only humans are capable of understanding and making the necessary
+intelligent choices.  Once Harry has manually resolved the overlapping
+changes—perhaps after a discussion with Sally—he can safely
+save the merged file back to the repository.</p>
+<p>The copy-modify-merge model may sound a bit chaotic, but in practice, it
+runs extremely smoothly.  Users can work in parallel, never waiting for one
+another.  When they work on the same files, it turns out that most of their
+concurrent changes don't overlap at all; conflicts are infrequent.  And the
+amount of time it takes to resolve conflicts is usually far less than the
+time lost by a locking system.</p>
+<p>In the end, it all comes down to one critical factor: user communication.
+When users communicate poorly, both syntactic and semantic conflicts
+increase.  No system can force users to communicate perfectly, and no system
+can detect semantic conflicts.  So there's no point in being lulled into a
+false sense of security that a locking system will somehow prevent
+conflicts; in practice, locking seems to inhibit productivity more than
+anything else.</p>
+<div class="sidebar">
+<a name="svn.basic.vsn-models.copy-merge.sb-1"></a><p class="title"><b>什么时候锁定是必需的</b></p>
+<p>锁定-修改-解锁模型被认为不利于协作，但有时候锁定会更好。</p>
+<p>The copy-modify-merge model is based on the assumption that files are
+contextually mergeable—that is, that the majority of the files in the
+repository are line-based text files (such as program source code).  But for
+files with binary formats, such as artwork or sound, it's often impossible
+to merge conflicting changes.  In these situations, it really is necessary
+for users to take strict turns when changing the file.  Without serialized
+access, somebody ends up wasting time on changes that are ultimately
+discarded.</p>
+<p>While Subversion is primarily a copy-modify-merge system, it still
+recognizes the need to lock an occasional file, and thus provides mechanisms
+for this.  We discuss this feature in <a class="xref" href="svn.advanced.locking.html" title="3.7. 锁定">第 3.7 节 “锁定”</a>.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.basic.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.basic.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.basic.in-action.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 1 章 基本概念 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 1.3. Subversion 实践</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

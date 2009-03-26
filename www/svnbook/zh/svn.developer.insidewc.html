@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>8.2. 进入工作副本的管理区</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.developer.html" title="第 8 章 嵌入 Subversion">
+<link rel="prev" href="svn.developer.html" title="第 8 章 嵌入 Subversion">
+<link rel="next" href="svn.developer.usingapi.html" title="8.3. 使用 API">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">8.2. 进入工作副本的管理区</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.developer.html">上一页</a> </td>
+<th width="60%" align="center">第 8 章 嵌入 Subversion</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.developer.usingapi.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.developer.insidewc"></a>8.2. 进入工作副本的管理区</h2></div></div></div>
+<p>像我们前面提到的，每个 Subversion 工作副本包含了一个特别的子目录叫做
+<code class="filename">.svn</code>，这个目录包含了关于工作副本目录的管理数据。Subversion 使用
+<code class="filename">.svn</code> 中的信息来追踪如下的数据：</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>工作副本中展示的目录和文件在版本库中的位置</p></li>
+<li><p>工作副本中当前展示的文件和目录的版本、</p></li>
+<li><p>所有可能附加在文件和目录上的用户定义的属性。</p></li>
+<li><p>工作副本文件的原始(未编辑)的版本。</p></li>
+</ul></div>
+<p>The Subversion working copy administration area's layout and contents are
+considered implementation details not really intended for human
+consumption.  Developers are encouraged to use Subversion's public APIs, or
+the tools that Subversion provides, to access and manipulate the working
+copy data, instead of directly reading or modifying those files.  The file
+formats employed by the working copy library for its administrative data do
+change from time to time—a fact that the public APIs do a great job
+of hiding from the average user.  In this section, we expose some of these
+implementation details sheerly to appease your overwhelming curiosity.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.insidewc.entries"></a>8.2.1. 条目文件</h3></div></div></div>
+<p>Perhaps the single most important file in the <code class="filename">.svn</code>
+directory is the <code class="filename">entries</code> file.  It contains the bulk of
+the administrative information about the versioned items in a working copy
+directory.  This one file tracks the repository URLs, pristine revision,
+file checksums, pristine text and property timestamps, scheduling and
+conflict state information, last-known commit information (author, revision,
+timestamp), local copy history—practically everything that a
+Subversion client is interested in knowing about a versioned (or
+to-be-versioned) resource!</p>
+<p>熟悉CVS管理目录的人可能会发现，Subversion的<code class="filename">.svn/entries</code>实现了CVS的<code class="filename">CVS/Entries</code>,
+<code class="filename">CVS/Root</code>和<code class="filename">CVS/Repository</code>的功能。</p>
+<p>The format of the <code class="filename">.svn/entries</code> file has changed over
+time.  Originally an XML file, it now uses a custom—though still
+human-readable—file format.  While XML was a great choice for early
+developers of Subversion who were frequently debugging the file's contents
+(and Subversion's behavior in light of them), the need for easy developer
+debugging has diminished as Subversion has matured and has been replaced by
+the user's need for snappier performance.  Be aware that Subversion's
+working copy library automatically upgrades working copies from one format
+to another—it reads the old formats and writes the new—which
+saves you the hassle of checking out a new working copy, but can also
+complicate situations where different versions of Subversion might be trying
+to use the same working copy.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.developer.insidewc.base-and-props"></a>8.2.2. 原始副本和属性文件</h3></div></div></div>
+<p>As mentioned before, the <code class="filename">.svn</code> directory also holds the
+pristine “<span class="quote">text-base</span>” versions of files.  You can find those in
+<code class="filename">.svn/text-base</code>.  The benefits of these pristine copies
+are multiple—network-free checks for local modifications and
+difference reporting, network-free reversion of modified or missing files,
+more efficient transmission of changes to the server—but they come at
+the cost of having each versioned file stored at least twice on disk.  These
+days, this seems to be a negligible penalty for most files.  However, the
+situation gets uglier as the size of your versioned files grows.  Some
+attention is being given to making the presence of the
+“<span class="quote">text-base</span>” an option.  Ironically, though, it is as your
+versioned files' sizes get larger that the existence of the
+“<span class="quote">text-base</span>” becomes more crucial—who wants to transmit a
+huge file across a network just because she wants to commit a tiny change to
+it?</p>
+<p>Similar in purpose to the “<span class="quote">text-base</span>” files are the property
+files and their pristine “<span class="quote">prop-base</span>” copies, located in
+<code class="filename">.svn/props</code> and <code class="filename">.svn/prop-base</code>,
+respectively.  Since directories can have properties too, there are also
+<code class="filename">.svn/dir-props</code> and
+<code class="filename">.svn/dir-prop-base</code> files.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.developer.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.developer.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.developer.usingapi.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 8 章 嵌入 Subversion </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 8.3. 使用 API</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

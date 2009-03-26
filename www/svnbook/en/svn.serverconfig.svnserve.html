@@ -1,0 +1,850 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>6.3. svnserve, a Custom Server</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Version Control with Subversion">
+<link rel="up" href="svn.serverconfig.html" title="Chapter 6. Server Configuration">
+<link rel="prev" href="svn.serverconfig.choosing.html" title="6.2. Choosing a Server Configuration">
+<link rel="next" href="svn.serverconfig.httpd.html" title="6.4. httpd, the Apache HTTP Server">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">6.3. svnserve, a Custom Server</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.serverconfig.choosing.html">Prev</a> </td>
+<th width="60%" align="center">Chapter 6. Server Configuration</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.serverconfig.httpd.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.serverconfig.svnserve"></a>6.3. svnserve, a Custom Server</h2></div></div></div>
+<p>The <span class="command"><strong>svnserve</strong></span> program is a lightweight
+      server, capable of speaking to clients over TCP/IP using a
+      custom, stateful protocol.  Clients contact an
+      <span class="command"><strong>svnserve</strong></span> server by using URLs that begin with
+      the <code class="literal">svn://</code> or <code class="literal">svn+ssh://</code>
+      scheme.  This section will explain the different ways of running
+      <span class="command"><strong>svnserve</strong></span>, how clients authenticate themselves
+      to the server, and how to configure appropriate access control
+      to your repositories.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.serverconfig.svnserve.invoking"></a>6.3.1. Invoking the Server</h3></div></div></div>
+<p>There are a few different ways to run the
+        <span class="command"><strong>svnserve</strong></span> program:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Run <span class="command"><strong>svnserve</strong></span> as a
+            standalone daemon, listening for
+            requests.</p></li>
+<li><p>Have the Unix <span class="command"><strong>inetd</strong></span> daemon
+            temporarily spawn <span class="command"><strong>svnserve</strong></span> whenever a
+            request comes in on a certain port.</p></li>
+<li><p>Have SSH invoke a
+            temporary <span class="command"><strong>svnserve</strong></span> over an encrypted
+            tunnel.</p></li>
+<li><p>Run <span class="command"><strong>svnserve</strong></span> as a Microsoft
+            Windows service.</p></li>
+</ul></div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.invoking.daemon"></a>6.3.1.1. svnserve as daemon</h4></div></div></div>
+<p>The easiest option is to run <span class="command"><strong>svnserve</strong></span>
+          as a standalone “<span class="quote">daemon</span>” process.  Use the
+          <code class="option">-d</code> option for this:</p>
+<pre class="screen">
+$ svnserve -d
+$               # svnserve is now running, listening on port 3690
+</pre>
+<p>When running <span class="command"><strong>svnserve</strong></span> in daemon mode,
+          you can use the <code class="option">--listen-port</code> and
+          <code class="option">--listen-host</code> options to customize the
+          exact port and hostname to “<span class="quote">bind</span>” to.</p>
+<p>Once we successfully start <span class="command"><strong>svnserve</strong></span> as
+        explained previously, it makes every repository on your system
+        available to the network.  A client needs to specify an
+        <span class="emphasis"><em>absolute</em></span> path in the repository URL.  For
+        example, if a repository is located at
+        <code class="filename">/var/svn/project1</code>, a client would
+        reach it via
+        <code class="uri">svn://host.example.com/var/svn/project1</code>.  To
+        increase security, you can pass the <code class="option">-r</code> option
+        to <span class="command"><strong>svnserve</strong></span>, which restricts it to
+        exporting only repositories below that path.  For
+        example:</p>
+<pre class="screen">
+$ svnserve -d -r /var/svn
+…
+</pre>
+<p>Using the <code class="option">-r</code> option effectively
+        modifies the location that the program treats as the root of
+        the remote filesystem space.  Clients then use URLs that
+        have that path portion removed from them, leaving much
+        shorter (and much less revealing) URLs:</p>
+<pre class="screen">
+$ svn checkout svn://host.example.com/project1
+…
+</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.invoking.inetd"></a>6.3.1.2. svnserve via inetd</h4></div></div></div>
+<p>If you want <span class="command"><strong>inetd</strong></span> to launch the
+          process, you need to pass the <code class="option">-i</code>
+          (<code class="option">--inetd</code>) option.  In the following
+          example, we've shown the output from running
+          <code class="literal">svnserve -i</code> at the command line, but note
+          that this isn't how you actually start the daemon; see the
+          paragraphs following the example for how to configure
+          <span class="command"><strong>inetd</strong></span> to start
+          <span class="command"><strong>svnserve</strong></span>.</p>
+<pre class="screen">
+$ svnserve -i
+( success ( 1 2 ( ANONYMOUS ) ( edit-pipeline ) ) )
+</pre>
+<p>When invoked with the <code class="option">--inetd</code> option,
+        <span class="command"><strong>svnserve</strong></span> attempts to speak with a
+        Subversion client via <code class="filename">stdin</code> and
+        <code class="filename">stdout</code> using a custom protocol.  This is
+        the standard behavior for a program being run via
+        <span class="command"><strong>inetd</strong></span>.  The IANA has reserved port 3690 for
+        the Subversion protocol, so on a Unix-like system you can add
+        lines to <code class="filename">/etc/services</code> such as these (if
+        they don't already exist):</p>
+<pre class="screen">
+svn           3690/tcp   # Subversion
+svn           3690/udp   # Subversion
+</pre>
+<p>If your system is using a classic Unix-like
+        <span class="command"><strong>inetd</strong></span> daemon, you can add this line to
+        <code class="filename">/etc/inetd.conf</code>:</p>
+<pre class="screen">
+svn stream tcp nowait svnowner /usr/bin/svnserve svnserve -i
+</pre>
+<p>Make sure “<span class="quote">svnowner</span>” is a user that has
+        appropriate permissions to access your repositories.  Now,
+        when a client connection comes into your server on port 3690,
+        <span class="command"><strong>inetd</strong></span> will spawn an
+        <span class="command"><strong>svnserve</strong></span> process to service it.  Of course,
+        you may also want to add <code class="option">-r</code> to the
+        configuration line as well, to restrict which repositories are
+        exported.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.invoking.tunnel"></a>6.3.1.3. svnserve over a tunnel</h4></div></div></div>
+<p>A third way to invoke <span class="command"><strong>svnserve</strong></span> is in
+          tunnel mode, using the <code class="option">-t</code> option.  This
+          mode assumes that a remote-service program such as
+          <span class="command"><strong>rsh</strong></span> or <span class="command"><strong>ssh</strong></span> has
+          successfully authenticated a user and is now invoking a
+          private <span class="command"><strong>svnserve</strong></span> process <span class="emphasis"><em>as
+          that user</em></span>.  (Note that you, the user, will
+          rarely, if ever, have reason to invoke
+          <span class="command"><strong>svnserve</strong></span> with the <code class="option">-t</code> at
+          the command line; instead, the SSH daemon
+          does so for you.)  The <span class="command"><strong>svnserve</strong></span> program
+          behaves normally (communicating via
+          <code class="filename">stdin</code> and <code class="filename">stdout</code>)
+          and assumes that the traffic is being automatically
+          redirected over some sort of tunnel back to the client.
+          When <span class="command"><strong>svnserve</strong></span> is invoked by a tunnel
+          agent like this, be sure that the authenticated user has
+          full read and write access to the repository database files.
+          It's essentially the same as a local user accessing the
+          repository via <code class="literal">file://</code> URLs.</p>
+<p>This option is described in much more detail later in
+          this chapter in <a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.sshauth" title="6.3.4. Tunneling over SSH">Section 6.3.4, “Tunneling over SSH”</a>.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.invoking.winservice"></a>6.3.1.4. svnserve as Windows service</h4></div></div></div>
+<p>If your Windows system is a descendant of Windows NT
+          (2000, 2003, XP, or Vista), you can
+          run <span class="command"><strong>svnserve</strong></span> as a standard Windows
+          service.  This is typically a much nicer experience than
+          running it as a standalone daemon with the <code class="option">--daemon
+          (-d)</code> option.  Using daemon mode requires launching
+          a console, typing a command, and then leaving the console
+          window running indefinitely.  A Windows service, however,
+          runs in the background, can start at boot time
+          automatically, and can be started and stopped using the same
+          consistent administration interface as other
+          Windows services. </p>
+<p>You'll need to define the new service using the
+          command-line tool <span class="command"><strong>SC.EXE</strong></span>.  Much like
+          the <span class="command"><strong>inetd</strong></span> configuration line, you must
+          specify an exact invocation of <span class="command"><strong>svnserve</strong></span>
+          for Windows to run at startup time:</p>
+<pre class="screen">
+C:\&gt; sc create svn
+        binpath= "C:\svn\bin\svnserve.exe --service -r C:\repos"
+        displayname= "Subversion Server"
+        depend= Tcpip
+        start= auto
+</pre>
+<p>This defines a new Windows service named
+          “<span class="quote">svn,</span>” which executes a particular
+          <span class="command"><strong>svnserve.exe</strong></span> command when started (in
+          this case, rooted at <code class="filename">C:\repos</code>).  There
+          are a number of caveats in the prior example,
+          however.</p>
+<p>First, notice that the <span class="command"><strong>svnserve.exe</strong></span>
+          program must always be invoked with the
+          <code class="option">--service</code> option.  Any other options to
+          <span class="command"><strong>svnserve</strong></span> must then be specified on the
+          same line, but you cannot add conflicting options such as
+          <code class="option">--daemon (-d)</code>, <code class="option">--tunnel</code>,
+          or <code class="option">--inetd (-i)</code>.  Options such as
+          <code class="option">-r</code> or <code class="option">--listen-port</code> are
+          fine, though.  Second, be careful about spaces when invoking
+          the <span class="command"><strong>SC.EXE</strong></span> command: the <code class="literal">key=
+          value</code> patterns must have no spaces between
+          <code class="literal">key=</code> and must have exactly one space
+          before the <code class="literal">value</code>.  Lastly, be careful
+          about spaces in your command line to be invoked.  If a
+          directory name contains spaces (or other characters that
+          need escaping), place the entire inner value of
+          <code class="literal">binpath</code> in double quotes, by escaping
+          them:</p>
+<pre class="screen">
+C:\&gt; sc create svn
+        binpath= "\"C:\program files\svn\bin\svnserve.exe\" --service -r C:\repos"
+        displayname= "Subversion Server"
+        depend= Tcpip
+        start= auto
+</pre>
+<p>Also note that the word <code class="literal">binpath</code> is
+          misleading—its value is a <span class="emphasis"><em>command
+          line</em></span>, not the path to an executable.  That's why
+          you need to surround it with quotes if it contains
+          embedded spaces.</p>
+<p>Once the service is defined, it can be stopped, started,
+          or queried using standard GUI tools (the Services
+          administrative control panel), or at the command
+          line:</p>
+<pre class="screen">
+C:\&gt; net stop svn
+C:\&gt; net start svn
+</pre>
+<p>The service can also be uninstalled (i.e., undefined) by
+          deleting its definition:  <strong class="userinput"><code>sc delete svn</code></strong>.
+          Just be sure to stop the service first!
+          The <span class="command"><strong>SC.EXE</strong></span> program has many other
+          subcommands and options; run <strong class="userinput"><code>sc /?</code></strong> to
+          learn more about it.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.serverconfig.svnserve.auth"></a>6.3.2. Built-in Authentication and Authorization</h3></div></div></div>
+<p>When a client connects to an <span class="command"><strong>svnserve</strong></span>
+        process, the following things happen:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>The client selects a specific
+        repository.</p></li>
+<li><p>The server processes the repository's
+        <code class="filename">conf/svnserve.conf</code> file and begins to
+        enforce any authentication and authorization policies it
+        describes.</p></li>
+<li>
+<p>Depending on the defined policies, one of the
+        following may occur:</p>
+<div class="itemizedlist"><ul type="circle">
+<li><p>The client may be allowed to make requests
+              anonymously, without ever receiving an authentication
+              challenge.</p></li>
+<li><p>The client may be challenged for
+              authentication at any time.</p></li>
+<li><p>If operating in tunnel mode, the client
+              will declare itself to be already externally
+              authenticated (typically by SSH).</p></li>
+</ul></div>
+</li>
+</ul></div>
+<p>The <span class="command"><strong>svnserve</strong></span> server, by default, knows
+        only how to send a CRAM-MD5
+        <sup>[<a name="id434646" href="#ftn.id434646" class="footnote">42</a>]</sup>
+        authentication challenge.  In essence,
+        the server sends a small amount of data to the client.  The
+        client uses the MD5 hash algorithm to create a fingerprint of
+        the data and password combined, and then sends the fingerprint
+        as a response.  The server performs the same computation with
+        the stored password to verify that the result is identical.
+        <span class="emphasis"><em>At no point does the actual password travel over the
+        network.</em></span></p>
+<p>If your <span class="command"><strong>svnserve</strong></span> server was built with
+        SASL support, it not only knows how to send CRAM-MD5 challenges,
+        but also likely knows a whole host of other authentication
+        mechanisms.  See <a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.sasl" title="6.3.3. Using svnserve with SASL">Section 6.3.3, “Using svnserve with SASL”</a> later in this
+        chapter to learn how to configure SASL authentication and
+        encryption.</p>
+<p>It's also possible, of course, for the client to be
+        externally authenticated via a tunnel agent, such as
+        <span class="command"><strong>ssh</strong></span>.  In that case, the server simply
+        examines the user it's running as, and uses this name as the
+        authenticated username.  For more on this, see the later
+        section, <a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.sshauth" title="6.3.4. Tunneling over SSH">Section 6.3.4, “Tunneling over SSH”</a>.</p>
+<p>As you've already guessed, a repository's
+        <code class="filename">svnserve.conf</code> file is the central
+        mechanism for controlling authentication and authorization
+        policies.  The file has the same format as other configuration
+        files (see <a class="xref" href="svn.customization.html#svn.advanced.confarea" title="7.1. Runtime Configuration Area">Section 7.1, “Runtime Configuration Area”</a>):
+        section names are marked by square brackets
+        (<code class="literal">[</code> and <code class="literal">]</code>), comments
+        begin with hashes (<code class="literal">#</code>), and each section
+        contains specific variables that can be set (<code class="literal">variable
+        = value</code>).  Let's walk through these files and learn
+        how to use them.</p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.auth.users"></a>6.3.2.1. Create a users file and realm</h4></div></div></div>
+<p>For now, the <code class="literal">[general]</code> section of
+          <code class="filename">svnserve.conf</code> has all the variables you
+          need.  Begin by changing the values of those variables:
+          choose a name for a file that will contain your usernames
+          and passwords and choose an authentication realm:</p>
+<pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+</pre>
+<p>The <code class="literal">realm</code> is a name that you define.
+          It tells clients which sort of “<span class="quote">authentication
+          namespace</span>” they're connecting to; the Subversion
+          client displays it in the authentication prompt and uses it
+          as a key (along with the server's hostname and port) for
+          caching credentials on disk (see <a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="3.11.2. Client Credentials Caching">Section 3.11.2, “Client Credentials Caching”</a>).  The
+          <code class="literal">password-db</code> variable points to a separate
+          file that contains a list of usernames and passwords, using
+          the same familiar format.  For example:</p>
+<pre class="screen">
+[users]
+harry = foopassword
+sally = barpassword
+</pre>
+<p>The value of <code class="literal">password-db</code> can be an
+          absolute or relative path to the users file.  For many
+          admins, it's easy to keep the file right in the
+          <code class="filename">conf/</code> area of the repository, alongside
+          <code class="filename">svnserve.conf</code>.  On the other hand, it's
+          possible you may want to have two or more repositories share
+          the same users file; in that case, the file should probably
+          live in a more public place.  The repositories sharing the
+          users file should also be configured to have the same realm,
+          since the list of users essentially defines an
+          authentication realm.  Wherever the file lives, be sure to
+          set the file's read and write permissions appropriately.  If
+          you know which user(s) <span class="command"><strong>svnserve</strong></span> will run
+          as, restrict read access to the users file as necessary.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.auth.general"></a>6.3.2.2. Set access controls</h4></div></div></div>
+<p>There are two more variables to set in the
+          <code class="filename">svnserve.conf</code> file: they determine what
+          unauthenticated (anonymous) and authenticated users are
+          allowed to do.  The variables <code class="literal">anon-access</code>
+          and <code class="literal">auth-access</code> can be set to the value
+          <code class="literal">none</code>, <code class="literal">read</code>, or
+          <code class="literal">write</code>.  Setting the value to
+          <code class="literal">none</code> prohibits both reading and writing;
+          <code class="literal">read</code> allows read-only access to the
+          repository, and <code class="literal">write</code> allows complete
+          read/write access to the repository.  For example:</p>
+<pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# anonymous users can only read the repository
+anon-access = read
+
+# authenticated users can both read and write
+auth-access = write
+</pre>
+<p>The example settings are, in fact, the default values of
+          the variables, should you forget to define them.  If you
+          want to be even more conservative, you can block anonymous
+          access completely:</p>
+<pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# anonymous users aren't allowed
+anon-access = none
+
+# authenticated users can both read and write
+auth-access = write
+</pre>
+<p>The server process understands not only
+        these “<span class="quote">blanket</span>” access controls to the
+        repository, but also finer-grained access restrictions placed
+        on specific files and directories within the repository.  To
+        make use of this feature, you need to define a file containing
+        more detailed rules, and then set
+        the <code class="literal">authz-db</code> variable to point to it:</p>
+<pre class="screen">
+[general]
+password-db = userfile
+realm = example realm
+
+# Specific access rules for specific locations
+authz-db = authzfile
+</pre>
+<p>We discuss the syntax of the <code class="filename">authzfile</code> file
+          in detail later in this chapter, in
+          <a class="xref" href="svn.serverconfig.pathbasedauthz.html" title="6.5. Path-Based Authorization">Section 6.5, “Path-Based Authorization”</a>.  Note
+          that the <code class="literal">authz-db</code> variable isn't mutually
+          exclusive with the <code class="literal">anon-access</code>
+          and <code class="literal">auth-access</code> variables;  if all the
+          variables are defined at once, <span class="emphasis"><em>all</em></span>
+          of the rules must be satisfied before access is allowed.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.serverconfig.svnserve.sasl"></a>6.3.3. Using <span class="command"><strong>svnserve</strong></span> with SASL</h3></div></div></div>
+<p>For many teams, the built-in CRAM-MD5 authentication is
+        all they need from <span class="command"><strong>svnserve</strong></span>.  However, if
+        your server (and your Subversion clients) were built with the
+        Cyrus Simple Authentication and Security Layer (SASL) library,
+        you have a number of authentication and encryption
+        options available to you.</p>
+<div class="sidebar">
+<p class="title"><b>What Is SASL?</b></p>
+<p>The Cyrus Simple Authentication and Security Layer is
+          open source software written by Carnegie Mellon University.
+          It adds generic authentication and encryption capabilities
+          to any network protocol, and as of Subversion 1.5 and later,
+          both the <span class="command"><strong>svnserve</strong></span> server
+          and <span class="command"><strong>svn</strong></span> client know how to make use of
+          this library.  It may or may not be available to you: if
+          you're building Subversion yourself, you'll need to have at
+          least version 2.1 of SASL installed on your system, and
+          you'll need to make sure that it's detected during
+          Subversion's build process.  If you're using a prebuilt
+          Subversion binary package, you'll have to check with the
+          package maintainer as to whether SASL support was compiled
+          in.  SASL comes with a number of pluggable modules that
+          represent different authentication systems: Kerberos
+          (GSSAPI), NTLM, One-Time-Passwords (OTP), DIGEST-MD5, LDAP,
+          Secure-Remote-Password (SRP), and others.  Certain
+          mechanisms may or may not be available to you; be sure to
+          check which modules are provided.</p>
+<p>You can download Cyrus SASL (both code and
+          documentation) from
+          <a class="ulink" href="http://asg.web.cmu.edu/sasl/sasl-library.html" target="_top">http://asg.web.cmu.edu/sasl/sasl-library.html</a>.</p>
+</div>
+<p>Normally, when a subversion client connects to
+        <span class="command"><strong>svnserve</strong></span>, the server sends a greeting that
+        advertises a list of the capabilities it supports, and the
+        client responds with a similar list of capabilities.  If the
+        server is configured to require authentication, it then sends
+        a challenge that lists the authentication mechanisms
+        available; the client responds by choosing one of the
+        mechanisms, and then authentication is carried out in some
+        number of round-trip messages.  Even when SASL capabilities
+        aren't present, the client and server inherently know how to
+        use the CRAM-MD5 and ANONYMOUS mechanisms (see
+        <a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.auth" title="6.3.2. Built-in Authentication and Authorization">Section 6.3.2, “Built-in Authentication and Authorization”</a>).  If server
+        and client were linked against SASL, a number of other
+        authentication mechanisms may also be available.  However,
+        you'll need to explicitly configure SASL on the server side to
+        advertise them.</p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.sasl.authn"></a>6.3.3.1. Authenticating with SASL</h4></div></div></div>
+<p>To activate specific SASL mechanisms on the server,
+          you'll need to do two things.  First, create
+          a <code class="literal">[sasl]</code> section in your
+          repository's <code class="filename">svnserve.conf</code> file with an
+          initial key-value pair:</p>
+<pre class="programlisting">
+          [sasl]
+          use-sasl = true
+</pre>
+<p>Second, create a main SASL configuration file
+          called <code class="filename">svn.conf</code> in a place where the
+          SASL library can find it—typically in the directory
+          where SASL plug-ins are located.  You'll have to locate the
+          plug-in directory on your particular system, such
+          as <code class="filename">/usr/lib/sasl2/</code>
+          or <code class="filename">/etc/sasl2/</code>.  (Note that this
+          is <span class="emphasis"><em>not</em></span>
+          the <code class="filename">svnserve.conf</code> file that lives
+          within a repository!)</p>
+<p>On a Windows server, you'll also have to edit the system
+          registry (using a tool such as <span class="command"><strong>regedit</strong></span>)
+          to tell SASL where to find things.  Create a registry key
+          named <code class="literal">[HKEY_LOCAL_MACHINE\SOFTWARE\Carnegie
+          Mellon\Project Cyrus\SASL Library]</code>, and place two
+          keys inside it: a key called <code class="literal">SearchPath</code>
+          (whose value is a path to the directory containing the SASL
+          <code class="filename">sasl*.dll</code> plug-in libraries), and a key
+          called
+          <code class="literal">ConfFile</code> (whose value is a path to the
+          parent directory containing
+          the <code class="filename">svn.conf</code> file you created).</p>
+<p>Because SASL provides so many different kinds of
+          authentication mechanisms, it would be foolish (and far
+          beyond the scope of this book) to try to describe every
+          possible server-side configuration.  Instead, we recommend
+          that you read the documentation supplied in the
+          <code class="filename">doc/</code> subdirectory of the SASL source
+          code.  It goes into great detail about every mechanism and
+          how to configure the server appropriately for each.  For the
+          purposes of this discussion, we'll just demonstrate a simple
+          example of configuring the DIGEST-MD5 mechanism.  For
+          example, if your <code class="filename">subversion.conf</code>
+          (or <code class="filename">svn.conf</code>) file contains the
+          following:</p>
+<pre class="screen">
+pwcheck_method: auxprop
+auxprop_plugin: sasldb
+sasldb_path: /etc/my_sasldb
+mech_list: DIGEST-MD5
+</pre>
+<p>you've told SASL to advertise the DIGEST-MD5
+          mechanism to clients and to check user passwords against a
+          private password database located
+          at <code class="filename">/etc/my_sasldb</code>.  A system
+          administrator can then use
+          the <span class="command"><strong>saslpasswd2</strong></span> program to add or modify
+          usernames and passwords in the database:</p>
+<pre class="screen">
+$ saslpasswd2 -c -f /etc/my_sasldb -u realm username
+</pre>
+<p>A few words of warning: first, make sure the
+          “<span class="quote">realm</span>” argument
+          to <span class="command"><strong>saslpasswd2</strong></span> matches the same realm
+          you've defined in your
+          repository's <code class="filename">svnserve.conf</code> file; if
+          they don't match, authentication will fail.  Also, due to a
+          shortcoming in SASL, the common realm must be a string with
+          no space characters.  Finally, if you decide to go with the
+          standard SASL password database, make sure
+          the <span class="command"><strong>svnserve</strong></span> program has read access to
+          the file (and possibly write access as well, if you're using
+          a mechanism such as OTP).</p>
+<p>This is just one simple way of configuring SASL.  Many
+          other authentication mechanisms are available, and passwords
+          can be stored in other places such as in LDAP or a SQL
+          database.  Consult the full SASL documentation for
+          details.</p>
+<p>Remember that if you configure your server to only allow
+          certain SASL authentication mechanisms, this forces all
+          connecting clients to have SASL support as well.  Any
+          Subversion client built without SASL support (which includes
+          all pre-1.5 clients) will be unable to authenticate.  On the
+          one hand, this sort of restriction may be exactly what you
+          want (“<span class="quote">My clients must all use Kerberos!</span>”).
+          However, if you still want non-SASL clients to be able to
+          authenticate, be sure to advertise the CRAM-MD5 mechanism as
+          an option.  All clients are able to use CRAM-MD5, whether
+          they have SASL capabilities or not.</p>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.sasl.encryption"></a>6.3.3.2. SASL encryption</h4></div></div></div>
+<p>SASL is also able to perform data encryption if a
+          particular mechanism supports it.  The built-in CRAM-MD5
+          mechanism doesn't support encryption, but DIGEST-MD5 does,
+          and mechanisms such as SRP actually require use of the
+          OpenSSL library.  To enable or disable different levels of
+          encryption, you can set two values in your repository's
+          <code class="filename">svnserve.conf</code> file:</p>
+<pre class="screen">
+[sasl]
+use-sasl = true
+min-encryption = 128
+max-encryption = 256
+</pre>
+<p>The <code class="literal">min-encryption</code> and
+          <code class="literal">max-encryption</code> variables control the
+          level of encryption demanded by the server.  To disable
+          encryption completely, set both values to 0.  To enable
+          simple checksumming of data (i.e., prevent tampering and
+          guarantee data integrity without encryption), set both
+          values to 1.  If you wish to allow—but not
+          require—encryption, set the minimum value to 0, and
+          the maximum value to some bit length.  To require encryption
+          unconditionally, set both values to numbers greater than 1.
+          In our previous example, we require clients to do at least
+          128-bit encryption, but no more than 256-bit
+          encryption.</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.serverconfig.svnserve.sshauth"></a>6.3.4. Tunneling over SSH</h3></div></div></div>
+<p><span class="command"><strong>svnserve</strong></span>'s built-in authentication (and
+        SASL support) can be very handy, because it avoids the need to
+        create real system accounts.  On the other hand, some
+        administrators already have well-established SSH
+        authentication frameworks in place.  In these situations, all
+        of the project's users already have system accounts and the
+        ability to “<span class="quote">SSH into</span>” the server machine.</p>
+<p>It's easy to use SSH in conjunction with
+        <span class="command"><strong>svnserve</strong></span>.  The client simply uses the
+        <code class="literal">svn+ssh://</code> URL scheme to connect:</p>
+<pre class="screen">
+$ whoami
+harry
+
+$ svn list svn+ssh://host.example.com/repos/project
+harryssh@host.example.com's password:  *****
+
+foo
+bar
+baz
+…
+</pre>
+<p>In this example, the Subversion client is invoking a local
+        <span class="command"><strong>ssh</strong></span> process, connecting to
+        <code class="literal">host.example.com</code>, authenticating as the
+        user <code class="literal">harryssh</code> (according to SSH user
+        configuration), then spawning a private
+        <span class="command"><strong>svnserve</strong></span> process on the remote machine
+        running as the user <code class="literal">harryssh</code>.  The
+        <span class="command"><strong>svnserve</strong></span> command is being invoked in tunnel
+        mode (<code class="option">-t</code>), and its network protocol is being
+        “<span class="quote">tunneled</span>” over the encrypted connection by
+        <span class="command"><strong>ssh</strong></span>, the tunnel agent.
+        If the client performs a commit, the authenticated username
+        <code class="literal">harryssh</code> will be used as the author
+        of the new revision.</p>
+<p>The important thing to understand here is that the
+        Subversion client is <span class="emphasis"><em>not</em></span> connecting to a
+        running <span class="command"><strong>svnserve</strong></span> daemon.  This method of
+        access doesn't require a daemon, nor does it notice one if
+        present.  It relies wholly on the ability of
+        <span class="command"><strong>ssh</strong></span> to spawn a temporary
+        <span class="command"><strong>svnserve</strong></span> process, which then terminates
+        when the network connection is closed.</p>
+<p>When using <code class="literal">svn+ssh://</code> URLs to access a
+        repository, remember that it's the <span class="command"><strong>ssh</strong></span>
+        program prompting for authentication, and
+        <span class="emphasis"><em>not</em></span> the <span class="command"><strong>svn</strong></span> client
+        program.  That means there's no automatic password-caching
+        going on (see <a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="3.11.2. Client Credentials Caching">Section 3.11.2, “Client Credentials Caching”</a>).  The
+        Subversion client often makes multiple connections to the
+        repository, though users don't normally notice this due to the
+        password caching feature.  When using
+        <code class="literal">svn+ssh://</code> URLs, however, users may be
+        annoyed by <span class="command"><strong>ssh</strong></span> repeatedly asking for a
+        password for every outbound connection.  The solution is to
+        use a separate SSH password-caching tool such as
+        <span class="command"><strong>ssh-agent</strong></span> on a Unix-like system, or
+        <span class="command"><strong>pageant</strong></span> on Windows.</p>
+<p>When running over a tunnel, authorization is primarily
+        controlled by operating system permissions to the repository's
+        database files; it's very much the same as if Harry were
+        accessing the repository directly via a
+        <code class="literal">file://</code> URL.  If multiple system users are
+        going to be accessing the repository directly, you may want to
+        place them into a common group, and you'll need to be careful
+        about umasks (be sure to read <a class="xref" href="svn.serverconfig.multimethod.html" title="6.6. Supporting Multiple Repository Access Methods">Section 6.6, “Supporting Multiple Repository Access Methods”</a> later in this
+        chapter).  But even in the case of tunneling, you can still use the
+        <code class="filename">svnserve.conf</code> file to block access, by
+        simply setting <code class="literal">auth-access = read</code>
+        or <code class="literal">auth-access = none</code>.
+        <sup>[<a name="id435608" href="#ftn.id435608" class="footnote">43</a>]</sup>
+      </p>
+<p>You'd think that the story of SSH tunneling would end
+        here, but it doesn't.  Subversion allows you to create custom
+        tunnel behaviors in your runtime <code class="filename">config</code>
+        file (see <a class="xref" href="svn.customization.html#svn.advanced.confarea" title="7.1. Runtime Configuration Area">Section 7.1, “Runtime Configuration Area”</a>.)  For
+        example, suppose you want to use RSH instead of SSH.
+        <sup>[<a name="id435639" href="#ftn.id435639" class="footnote">44</a>]</sup>
+        In the <code class="literal">[tunnels]</code> section of your
+        <code class="filename">config</code> file, simply define it like
+        this:</p>
+<pre class="screen">
+[tunnels]
+rsh = rsh
+</pre>
+<p>And now, you can use this new tunnel definition by using a
+        URL scheme that matches the name of your new variable:
+        <code class="literal">svn+rsh://host/path</code>.  When using the new
+        URL scheme, the Subversion client will actually be running the
+        command <strong class="userinput"><code>rsh host svnserve -t</code></strong> behind the
+        scenes.  If you include a username in the URL (e.g.,
+        <code class="literal">svn+rsh://username@host/path</code>), the client
+        will also include that in its command (<strong class="userinput"><code>rsh
+        username@host svnserve -t</code></strong>).  But you can define new
+        tunneling schemes to be much more clever than that:</p>
+<pre class="screen">
+[tunnels]
+joessh = $JOESSH /opt/alternate/ssh -p 29934
+</pre>
+<p>This example demonstrates a couple of things.  First, it
+        shows how to make the Subversion client launch a very specific
+        tunneling binary (the one located at
+        <code class="filename">/opt/alternate/ssh</code>) with specific
+        options.  In this case, accessing an
+        <code class="literal">svn+joessh://</code> URL would invoke the
+        particular SSH binary with <code class="option">-p 29934</code> as
+        arguments—useful if you want the tunnel program to
+        connect to a nonstandard port.</p>
+<p>Second, it shows how to define a custom environment
+        variable that can override the name of the tunneling program.
+        Setting the <code class="literal">SVN_SSH</code> environment variable is
+        a convenient way to override the default SSH tunnel agent.
+        But if you need to have several different overrides for
+        different servers, each perhaps contacting a different port or
+        passing a different set of options to SSH, you can use the
+        mechanism demonstrated in this example.  Now if we were to set
+        the <code class="literal">JOESSH</code> environment variable, its value
+        would override the entire value of the tunnel
+        variable—<span class="command"><strong>$JOESSH</strong></span> would be executed
+        instead of <strong class="userinput"><code>/opt/alternate/ssh -p
+        29934</code></strong>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.serverconfig.svnserve.sshtricks"></a>6.3.5. SSH configuration tricks</h3></div></div></div>
+<p>It's possible to control not only the way in which the
+        client invokes <span class="command"><strong>ssh</strong></span>, but also to control
+        the behavior of <span class="command"><strong>sshd</strong></span> on your server
+        machine.  In this section, we'll show how to control the
+        exact <span class="command"><strong>svnserve</strong></span> command executed
+        by <span class="command"><strong>sshd</strong></span>, as well as how to have multiple
+        users share a single system account.</p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.sshtricks.setup"></a>6.3.5.1. Initial setup</h4></div></div></div>
+<p>To begin, locate the home directory of the account
+          you'll be using to launch <span class="command"><strong>svnserve</strong></span>.  Make
+          sure the account has an SSH public/private keypair
+          installed, and that the user can log in via public-key
+          authentication.  Password authentication will not work,
+          since all of the following SSH tricks revolve around using
+          the SSH <code class="filename">authorized_keys</code> file.</p>
+<p>If it doesn't already exist, create the
+          <code class="filename">authorized_keys</code> file (on Unix,
+          typically <code class="filename">~/.ssh/authorized_keys</code>).
+          Each line in this file describes a public key that is
+          allowed to connect.  The lines are typically of the
+          form:</p>
+<pre class="screen">
+  ssh-dsa AAAABtce9euch… user@example.com
+</pre>
+<p>The first field describes the type of key, the second
+          field is the base64-encoded key itself, and the third field
+          is a comment.  However, it's a lesser known fact that the
+          entire line can be preceded by a <code class="literal">command</code>
+          field:</p>
+<pre class="screen">
+  command="program" ssh-dsa AAAABtce9euch… user@example.com
+</pre>
+<p>When the <code class="literal">command</code> field is set, the
+          SSH daemon will run the named program instead of the
+          typical tunnel-mode <span class="command"><strong>svnserve</strong></span> invocation that the
+          Subversion client asks for.  This opens the door to a number
+          of server-side tricks.  In the following examples, we
+          abbreviate the lines of the file as:</p>
+<pre class="screen">
+  command="program" TYPE KEY COMMENT
+</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.serverconfig.svnserve.sshtricks.fixedcmd"></a>6.3.5.2. Controlling the invoked command</h4></div></div></div>
+<p>Because we can specify the executed server-side command,
+          it's easy to name a specific <span class="command"><strong>svnserve</strong></span>
+          binary to run and to pass it extra arguments:</p>
+<pre class="screen">
+  command="/path/to/svnserve -t -r /virtual/root" TYPE KEY COMMENT
+</pre>
+<p>In this example, <code class="filename">/path/to/svnserve</code>
+          might be a custom wrapper script
+          around <span class="command"><strong>svnserve</strong></span> which sets the umask (see
+          <a class="xref" href="svn.serverconfig.multimethod.html" title="6.6. Supporting Multiple Repository Access Methods">Section 6.6, “Supporting Multiple Repository Access Methods”</a>.)  It also
+          shows how to anchor <span class="command"><strong>svnserve</strong></span> in a virtual
+          root directory, just as one often does when
+          running <span class="command"><strong>svnserve</strong></span> as a daemon process.
+          This might be done either to restrict access to parts of the
+          system, or simply to relieve the user of having to type an
+          absolute path in the <code class="literal">svn+ssh://</code>
+          URL.</p>
+<p>It's also possible to have multiple users share a single
+          account.  Instead of creating a separate system account for
+          each user, generate a public/private key pair for each
+          person.  Then place each public key into
+          the <code class="filename">authorized_users</code> file, one per
+          line, and use the <code class="option">--tunnel-user</code>
+          option:</p>
+<pre class="screen">
+  command="svnserve -t --tunnel-user=harry" TYPE1 KEY1 harry@example.com
+  command="svnserve -t --tunnel-user=sally" TYPE2 KEY2 sally@example.com
+</pre>
+<p>This example allows both Harry and Sally to connect to
+          the same account via public key authentication.  Each of
+          them has a custom command that will be executed;
+          the <code class="option">--tunnel-user</code> option 
+          tells <span class="command"><strong>svnserve</strong></span> to assume that the named
+          argument is the authenticated user.  Without
+          <code class="option">--tunnel-user</code>, it would appear as though
+          all commits were coming from the one shared system
+          account.</p>
+<p>A final word of caution: giving a user access to the
+          server via public-key in a shared account might still allow
+          other forms of SSH access, even if you've set
+          the <code class="literal">command</code> value
+          in <code class="filename">authorized_keys</code>.  For example, the
+          user may still get shell access through SSH or be able to
+          perform X11 or general port forwarding through your server.
+          To give the user as little permission as possible, you may
+          want to specify a number of restrictive options immediately
+          after the <code class="literal">command</code>:</p>
+<pre class="screen">
+  command="svnserve -t --tunnel-user=harry",no-port-forwarding,no-agent-forw
+arding,no-X11-forwarding,no-pty TYPE1 KEY1 harry@example.com
+</pre>
+<p>Note that this all must be on one line—truly on
+          one line—since SSH <code class="filename">authorized_keys</code> 
+          files do not even allow the conventional backslash character
+          (<code class="literal">\</code>) for line continuation.  The only
+          reason we've shown it with a line break is to fit it on
+          the physical page of a book.</p>
+</div>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id434646" href="#id434646" class="para">42</a>] </sup>See RFC 2195.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id435608" href="#id435608" class="para">43</a>] </sup>Note that using any sort of
+            <span class="command"><strong>svnserve</strong></span>-enforced access control at all
+            is a bit pointless; the user already has direct access to
+            the repository database.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id435639" href="#id435639" class="para">44</a>] </sup>We don't actually recommend this, since RSH
+            is notably less secure than SSH.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.serverconfig.choosing.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.serverconfig.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.serverconfig.httpd.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">6.2. Choosing a Server Configuration </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 6.4. httpd, the Apache HTTP Server</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.6. Tags</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.switchwc.html" title="4.5. Zweige durchlaufen">
+<link rel="next" href="svn.branchmerge.maint.html" title="4.7. Verwaltung von Zweigen">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.6. Tags</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.switchwc.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.maint.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.tags"></a>4.6. Tags</h2></div></div></div>
+<p>Ein weiterer verbreiteter Begriff in der Versionskontrolle
+      ist ein <em class="firstterm">Tag</em>. Ein Tag ist lediglich eine
+      „<span class="quote">Momentaufnahme</span>“ eines Projekts. In Subversion
+      scheint dieses Konzept bereits überall vorhanden zu sein. Jede
+      Revision im Repository ist genau das – eine Momentaufnahme
+      des Dateisystems nach einer Übergabe.</p>
+<p>Allerdings möchten Menschen häufig sprechendere Namen für
+      Tags vergeben, wie etwa <code class="literal">release-1.0</code>. Und sie
+      möchten Momentaufnahmen kleinerer Unterverzeichnisse des
+      Dateisystems erstellen. Schließlich ist es nicht gerade einfach,
+      sich daran zu erinnern, dass Release 1.0 einer Software ein
+      bestimmtes Unterverzeichnis der Revision 4822 ist.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.tags.mksimple"></a>4.6.1. Erzeugen eines einfachen Tags</h3></div></div></div>
+<p>Wieder einmal hilft Ihnen <span class="command"><strong>svn copy</strong></span> bei
+        der Arbeit. Wenn Sie eine Momentaufnahme von
+        <code class="filename">/calc/trunk</code> machen wollen, genau so, wie
+        es in der Revision <code class="literal">HEAD</code> aussieht, machen
+        Sie davon eine Kopie:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/tags/release-1.0 \
+      -m "Ein Tag für die Ausgabe 1.0 des 'calc' Projektes anlegen."
+
+Revision 902 übertragen.
+</pre>
+<p>Dieses Beispiel geht davon aus, dass ein Verzeichnis
+        <code class="filename">/calc/tags</code> bereits besteht. (Falls nicht,
+        können Sie es mit <span class="command"><strong>svn mkdir</strong></span> erstellen.)
+        Nach Abschluss der Kopie ist das neue Verzeichnis
+        <code class="filename">release-1.0</code> für immer eine Momentaufnahme
+        des Verzeichnisses <code class="filename">/trunk</code> in der Revision
+        <code class="literal">HEAD</code> zum Zeitpunkt, an dem Sie die Kopie
+        erstellt haben. Natürlich können Sie auch angeben, welche
+        Revision Sie genau kopieren möchten, für den Fall, dass jemand
+        anderes Änderungen an das Projekt übergeben haben könnte,
+        während Sie nicht hingeschaut haben. Wenn Sie also wissen,
+        dass Revision 901 von <code class="filename">/calc/trunk</code> genau
+        die Momentaufnahme ist, die Sie möchten, können Sie sie mit
+        der Option <code class="option">-r 901</code> an den Befehl <span class="command"><strong>svn
+        copy</strong></span> übergeben.</p>
+<p>Moment mal: ist die Erstellung eines Tags nicht dasselbe
+        Vorgehen wie bei der Erstellung eines Zweigs? Ja, es ist es
+        tatsächlich. In Subversion gibt es keinen Unterschied zwischen
+        einem Tag und einem Zweig. Beides sind gewöhnliche
+        Verzeichnisse, die durch Kopieren erzeugt werden. Genauso wie
+        bei Zweigen, ist der einzige Grund warum ein kopiertes
+        Verzeichnis ein „<span class="quote">Tag</span>“ ist, weil
+        <span class="emphasis"><em>Menschen</em></span> sich entschieden haben, es so zu
+        betrachten: Solange niemand etwas an das Verzeichnis übergibt,
+        bleibt es für immer eine Momentaufnahme. Wenn jemand damit
+        beginnt, etwas dorthin zu übergeben, wird es ein Zweig.</p>
+<p>Wenn Sie ein Repository verwalten, gibt es zwei Ansätze
+        für den Umgang mit Tags. Der erste Ansatz ist „<span class="quote">Hände
+        weg</span>“: Als Vereinbarung im Projekt entscheiden Sie, wohin
+        Sie Ihre Tags kopieren möchten; stellen Sie sicher, dass alle
+        Benutzer wissen, wie sie ihre zu kopierenden Verzeichnisse
+        behandeln sollen, d.h., stellen Sie sicher, dass sie nichts
+        dorthin übergeben. Der zweite Ansatz ist etwas paranoider: Sie
+        können eins der Zugriffskontrollskripte verwenden, die mit
+        Subversion ausgeliefert werden, um zu verhindern, dass
+        irgendjemand etwas anderes im Tag-Bereich macht, als dort neue
+        Kopien zu erzeugen (siehe <a class="xref" href="svn.serverconfig.html" title="Kapitel 6. Die Administration eines Subversion-Servers">Kapitel 6, <i>Die Administration eines Subversion-Servers</i></a>).
+        Der paranoide Ansatz ist normalerweise nicht notwendig. Falls
+        ein Benutzer versehentlich eine Änderung an ein
+        Tag-Verzeichnis übergeben hat, können Sie die Änderung einfach
+        rückgängig machen, wie im vorhergehenden Abschnitt
+        beschrieben. Schließlich handelt es sich um
+        Versionskontrolle!</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.tags.mkcomplex"></a>4.6.2. Erzeugen eines komplexen Tags</h3></div></div></div>
+<p>Manchmal möchten Sie vielleicht eine
+        „<span class="quote">Momentaufnahme</span>“ machen, die komplizierter ist
+        als ein einzelnes Verzeichnis mit einer einzigen
+        Revision.</p>
+<p>Stellen Sie sich beispielsweise vor, Ihr Projekt sei viel
+        größer als unser <code class="filename">calc</code> Beispiel: Nehmen
+        wir an, es enthalte eine große Zahl von Unterverzeichnissen
+        und viel mehr Dateien. Während Ihrer Arbeit könnte es sein,
+        dass Sie sich entscheiden, eine Arbeitskopie anzulegen, die
+        bestimmte Merkmale und Fehlerbehebungen beinhaltet. Sie können
+        dies hinbekommen, indem Sie selektiv Dateien oder
+        Verzeichnisse auf bestimmte Revisionen zurückdatieren (unter
+        Verwendung von <span class="command"><strong>svn update</strong></span> mit der Option
+        <code class="option">-r</code>), indem Sie Dateien und Verzeichnisse auf
+        bestimmte Zweige umschalten (mit <span class="command"><strong>svn
+        switch</strong></span>) oder sogar, indem Sie ein paar lokale
+        Änderungen vornehmen. Wenn Sie fertig sind, ist Ihre
+        Arbeitskopie ein Mischmasch aus Repository-Quellen
+        verschiedener Revisionen. Nach dem Testen wissen Sie jedoch,
+        dass das genau die Kombination ist, die Sie mit einem Tag
+        versehen möchten.</p>
+<p>Nun ist es an der Zeit, eine Momentaufnahme zu machen.
+        Einen URL auf einen anderen zu kopieren hilft hier nicht
+        weiter. In diesem Fall möchten Sie eine Momentaufnahme der
+        exakten Anordnung Ihrer Arbeitskopie machen und sie im
+        Repository speichern. Glücklicherweise besitzt <span class="command"><strong>svn
+        copy</strong></span> vier verschiedene Anwendungsfälle (über die Sie
+        in <a class="xref" href="svn.ref.html" title="Kapitel 9. Subversion Complete Reference">Kapitel 9, <i>Subversion Complete Reference</i></a> nachlesen können), zu denen auch
+        die Fähigkeit gehört, einen Arbeitskopie-Baum ins Repository
+        zu kopieren:</p>
+<pre class="screen">
+$ ls
+my-working-copy/
+
+$ svn copy my-working-copy \
+           http://svn.example.com/repos/calc/tags/mytag \
+           -m "Ein Tag für den Zustand meines Arbeitsverzeichnisses anlegen."
+
+Revision 940 übertragen.
+</pre>
+<p>Nun gibt es ein neues Verzeichnis im Repository,
+        <code class="filename">/calc/tags/mytag</code>, das eine exakte
+        Momentaufnahme Ihrer Arbeitskopie ist – gemischte
+        Revisionen, URLs, lokale Änderungen, usw.</p>
+<p>Andere Benutzer haben interessante Anwendungsfälle für
+        diese Fähigkeit von Subversion gefunden. Manchmal gibt es
+        Situationen, in denen Sie ein paar lokale Änderungen in Ihrer
+        Arbeitskopie gemacht haben, die ein Mitarbeiter sehen soll.
+        Statt <span class="command"><strong>svn diff</strong></span> aufzurufen und eine
+        Patch-Datei zu versenden (die allerdings weder Änderungen an
+        Verzeichnissen, symbolischen Links oder Propertys beinhaltet),
+        können Sie <span class="command"><strong>svn copy</strong></span> verwenden, um Ihre
+        Arbeitskopie in einen privaten Bereich des Repositorys
+        „<span class="quote">abzulegen</span>“. Ihr Mitarbeiter kann dann entweder
+        eine exakte Kopie Ihrer Arbeitskopie auschecken oder
+        <span class="command"><strong>svn merge</strong></span> verwenden, um genau Ihre
+        Änderungen zu empfangen.</p>
+<p>Obwohl dies eine nette Methode ist, schnell eine
+        Momentaufnahme Ihrer Arbeitskopie anzulegen, sollten Sie
+        beachten, dass es <span class="emphasis"><em>keine</em></span> gute
+        Vorgehensweise ist, einen Zweig zu erstellen. Die Erzeugung
+        eines Zweigs sollte ein Ereignis für sich sein, wohingegen
+        diese Methode die Erzeugung eines Zweigs mit zusätzlichen
+        Änderungen an Dateien innerhalb einer einzelnen Revision
+        verbindet. Das macht es später sehr schwer, eine einzelne
+        Revisionsnummer als Verzweigungspunkt zu
+        identifizieren.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.switchwc.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.maint.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.5. Zweige durchlaufen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.7. Verwaltung von Zweigen</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

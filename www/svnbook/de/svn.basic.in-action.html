@@ -1,0 +1,612 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>1.3. Subversion in Action</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.basic.html" title="Kapitel 1. Grundlegende Konzepte">
+<link rel="prev" href="svn.basic.vsn-models.html" title="1.2. Versionierungsmodelle">
+<link rel="next" href="svn.basic.summary.html" title="1.4. Zusammenfassung">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">1.3. Subversion in Action</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.basic.vsn-models.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 1. Grundlegende Konzepte</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.basic.summary.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.in-action"></a>1.3. Subversion in Action</h2></div></div></div>
+<p>Es ist an der Zeit, sich vom Abstrakten zum Konkreten zu
+      bewegen. In diesem Abschnitt werden wir echte Beispiele zur
+      Benutzung von Subversion zeigen.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.advanced.reposurls"></a>1.3.1. Subversion-Repository-URLs</h3></div></div></div>
+<p>Das ganze Buch hindurch verwendet Subversion URLs, um
+        Dateien und Verzeichnisse in Subversion-Repositorys zu
+        identifizieren. Meistens benutzen diese URLs die
+        Standardsyntax, die es erlaubt, Servernamen und Portnummern
+        als Teil des URL zu spezifizieren:</p>
+<pre class="screen">
+$ svn checkout http://svn.example.com:9834/repos
+…
+</pre>
+<p>Allerdings gibt es einige bemerkenswerte Feinheiten, wie
+        Subversion mit URLs umgeht. Beispielsweise dürfen URLs, die
+        die <code class="literal">file://</code>-Zugriffsmethode enthalten (für
+        lokale Repositorys verwendet), gemäß Konvention entweder
+        den Servernamen <code class="literal">localhost</code> oder gar keinen
+        Servernamen enthalten:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos
+…
+$ svn checkout file://localhost/var/svn/repos
+…
+</pre>
+<p>Darüber hinaus müssen Benutzer des
+        <code class="literal">file://</code> Schemas auf Windows-Plattformen
+        eine inoffizielle „<span class="quote">Standard</span>“-Syntax verwenden
+        falls auf Repositorys auf derselben Maschine aber auf einem
+        anderen Laufwerk zugegriffen werden soll.  Beide  der
+        folgenden URL-Pfad-Syntaxen funktionieren, wobei
+        <code class="literal">X</code> das Laufwerk ist, wo das Repository
+        liegt:</p>
+<pre class="screen">
+C:\&gt; svn checkout file:///X:/var/svn/repos
+…
+C:\&gt; svn checkout "file:///X|/var/svn/repos"
+…
+</pre>
+<p>Bei der zweiten Syntax muss der URL in Anführungsstriche
+        eingeschlossen werden, damit der senkrechte Strich nicht als
+        Pipe-Symbol interpretiert wird. Beachten Sie auch, dass in
+        einem URL Schrägstriche verwendet werden, obwohl es unter
+        Windows üblich ist, für Pfade umgekehrte Schrägstriche zu
+        verwenden.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Sie können die <code class="literal">file://</code> URLs von Subversion
+          nicht in einem normalen Web-Browser auf die Art und
+          Weise verwenden wie andere <code class="literal">file://</code>
+          URLs. Falls Sie versuchen, einen <code class="literal">file://</code>
+          URL in einem gewöhnlichen Web-Browser anzusehen, wird der
+          Inhalt der Datei von der angegebenen Stelle direkt aus dem
+          Dateisystem gelesen und angezeigt. Allerdings befinden sich
+          die Daten von Subversion in einem virtuellen Dateisystem
+          (siehe <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos" title="8.1.1. Repository Layer">Abschnitt 8.1.1, „Repository Layer“</a>), und
+          der Browser wird nicht mit diesem Dateisystem umzugehen
+          wissen.</p></td></tr>
+</table></div>
+<p>Zuletzt sei noch angemerkt, dass der Subversion-Client,
+        wie ein Web-Browser, nötigenfalls automatisch URLs umwandelt.
+        Falls zum Beispiel in einem URL Leerzeichen oder
+        Großbuchstaben vorkommen wie hier:</p>
+<pre class="screen">
+$ svn checkout "http://host/path with space/project/españa"
+</pre>
+<p>wird Subversion die unsicheren Zeichen umwandeln, als ob
+        Sie</p>
+<pre class="screen">
+$ svn checkout http://host/path%20with%20space/project/espa%C3%B1a
+</pre>
+<p>geschrieben hätten.</p>
+<p>Falls ein URL Leerzeichen beinhalten sollte, stellen Sie
+        sicher, das der URL in Anführungszeichen gesetzt wird, damit
+        die Shell alles als ein Argument für das
+        <span class="command"><strong>svn</strong></span> Programm behandelt.</p>
+<div class="sidebar">
+<a name="svn.basic.in-action.wc.sb-1"></a><p class="title"><b>Repository URLs</b></p>
+<p>Sie können auf Subversion-Repositorys über viele
+          unterschiedliche Methoden zugreifen – auf der
+          lokalen Festplatte oder über verschiedene Protokolle, je
+          nachdem, wie Ihr Administrator es eingerichtet hat. Ein Ort
+          im Repository ist jedenfalls immer ein URL.
+          <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.tbl-1" title="Tabelle 1.1. Repository-Zugriffs-URLs">Tabelle 1.1, „Repository-Zugriffs-URLs“</a> beschreibt,
+          wie unterschiedliche URL Schemata auf die verfügbaren
+          Zugriffsmethoden abgebildet werden.</p>
+<div class="table">
+<a name="svn.basic.in-action.wc.tbl-1"></a><p class="title"><b>Tabelle 1.1. Repository-Zugriffs-URLs</b></p>
+<div class="table-contents"><table summary="Repository-Zugriffs-URLs" border="1">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Schema</th>
+<th>Zugriffsmethode</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code class="literal">file:///</code></td>
+<td>Direkter Repository-Zugriff (auf lokaler
+                  Festplatte)</td>
+</tr>
+<tr>
+<td><code class="literal">http://</code></td>
+<td>Zugriff über das WebDAV-Protokoll auf
+                  Apache-Server, die Subversion unterstützen</td>
+</tr>
+<tr>
+<td><code class="literal">https://</code></td>
+<td>Wie <code class="literal">http://</code>, jedoch mit
+                  SSL-Verschlüsselung.</td>
+</tr>
+<tr>
+<td><code class="literal">svn://</code></td>
+<td>Zugriff über eigenes Protokoll auf einen
+                  <code class="literal">svnserve</code>-Server</td>
+</tr>
+<tr>
+<td><code class="literal">svn+ssh://</code></td>
+<td>Wie <code class="literal">svn://</code>, jedoch über
+                  SSH getunnelt.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>Für mehr Informationen darüber, wie Subversion URLs
+          parst, siehe <a class="xref" href="svn.basic.in-action.html#svn.advanced.reposurls" title="1.3.1. Subversion-Repository-URLs">Abschnitt 1.3.1, „Subversion-Repository-URLs“</a>.  Für
+          weitergehende Informationen zu den unterschiedlichen Typen
+          verfügbarer Netzwerk-Servern für Subversion, siehe <a class="xref" href="svn.serverconfig.html" title="Kapitel 6. Die Administration eines Subversion-Servers">Kapitel 6, <i>Die Administration eines Subversion-Servers</i></a>.</p>
+</div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.wc"></a>1.3.2. Arbeitskopien</h3></div></div></div>
+<p>Sie haben schon über Arbeitskopien gelesen; nun werden wir
+        zeigen, wie der Subversion-Client sie erzeugt und
+        benutzt.</p>
+<p>Eine Subversion-Arbeitskopie ist ein gewöhnlicher
+        Verzeichnisbaum auf Ihrem lokalen System, der eine Ansammlung
+        von Dateien enthält. Sie können diese Dateien nach belieben
+        bearbeiten, und wenn es sich um Quelltexte handelt, können Sie
+        hieraus Ihr Programm auf die übliche Weise compilieren. Ihre
+        Arbeitskopie ist Ihr privater Arbeitsbereich: nie wird
+        Subversion weder die Änderungen von anderen einpflegen, noch
+        Ihre eigenen Änderungen anderen zur Verfügung stellen, bis Sie
+        es ausdrücklich dazu auffordern. Sie können sogar mehrere
+        Arbeitskopien desselben Projektes haben.</p>
+<p>Nachdem Sie einige Änderungen an den Dateien Ihrer
+        Arbeitskopie gemacht und sichergestellt haben, dass sie
+        funktionieren, stellt Ihnen Subversion Befehle zur Verfügung,
+        um Ihre Änderungen den anderen, die an Ihrem Projekt
+        mitarbeiten, „<span class="quote">publik</span>“ zu machen (indem es ins
+        Repository schreibt). Wenn die anderen ihre Änderungen
+        veröffentlichen, stellt Ihnen Subversion Befehle zur
+        Verfügung, um diese Änderungen in Ihr Arbeitsverzeichnis
+        einzupflegen (indem es aus dem Repository liest).</p>
+<p>Eine Arbeitskopie verfügt darüber hinaus über einige
+        zusätzliche Dateien, die von Subversion erzeugt und gepflegt
+        werden, um es bei diesen Befehlen zu unterstützen.
+        Insbesondere enthält jedes Verzeichnis Ihrer Arbeitskopie ein
+        Unterverzeichnis namens <code class="filename">.svn</code>, auch
+        bekannt als das <em class="firstterm">Verwaltungsverzeichnis</em>
+        der Arbeitskopie. Die Dateien in jedem Verwaltungsverzeichnis
+        helfen Subversion dabei, zu erkennen, welche Dateien
+        unveröffentlichte Änderungen enthalten und welche Dateien
+        hinsichtlich der Arbeit anderer veraltet sind.</p>
+<p>Oft enthält ein typisches Subversion-Repository die
+        Dateien (oder den Quelltext) für verschiedene Projekte; für
+        gewöhnlich ist jedes Projekt ein Unterverzeichnis im
+        Dateisystembaum des Repositorys.  Bei dieser Anordnung
+        entspricht die Arbeitskopie eines Benutzers gewöhnlich einem
+        bestimmten Unterverzeichnis des Repositorys.</p>
+<p>Nehmen wir zum Beispiel an, Sie haben ein Repository, das
+        zwei Software-Projekte beinhaltet, <code class="literal">paint</code> und
+        <code class="literal">calc</code>.  Jedes Projekt ist in einem eigenen
+        Hauptverzeichnis abgelegt, wie in <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.dia-1" title="Abbildung 1.6. Das Dateisystem des Repositorys">Abbildung 1.6, „Das Dateisystem des Repositorys“</a> dargestellt.</p>
+<div class="figure">
+<a name="svn.basic.in-action.wc.dia-1"></a><p class="title"><b>Abbildung 1.6. Das Dateisystem des Repositorys</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia6.png" alt="Das Dateisystem des Repositorys"></div></div>
+</div>
+<br class="figure-break"><p>Um eine Arbeitskopie zu erhalten, muss zunächst irgendein
+        Teilbaum des Repositorys <em class="firstterm">ausgecheckt</em>
+        werden(check out).  (Der Begriff <span class="emphasis"><em>check
+          out</em></span> hört sich an, als habe es etwas mit dem
+        Sperren oder Reservieren von Ressourcen zu tun, hat es aber
+        nicht; es erzeugt lediglich eine private Kopie des Projektes
+        für Sie.) Wenn Sie zum Beispiel <code class="filename">/calc</code>
+        auschecken, bekommen Sie eine Arbeitskopie wie diese:</p>
+<pre class="screen">
+$ svn checkout http://svn.example.com/repos/calc
+A    calc/Makefile
+A    calc/integer.c
+A    calc/button.c
+Ausgecheckt, Revision 56.
+
+$ ls -A calc
+Makefile  button.c integer.c .svn/
+</pre>
+<p>Die Liste der <code class="literal">A</code>s am linken Rand zeigt
+        an, dass Subversion Ihrer Arbeitskopie eine Anzahl von
+        Objekten hinzufügt (Add).  Sie haben nun eine persönliche
+        Kopie des Verzeichnisses <code class="filename">/calc</code> im
+        Repository, mit einem zusätzlichen
+        Eintrag – <code class="filename">.svn</code> – das, wie bereits
+        erwähnt, die besonderen Informationen enthält, die Subversion
+        benötigt.</p>
+<p>Angenommen, Sie nehmen Änderungen an
+        <code class="filename">button.c</code> vor. Da sich das Verzeichnis
+        <code class="filename">.svn</code> den ursprünglichen
+        Änderungszeitpunkt und den Inhalt der Datei merkt, kann
+        Subversion erkennen, dass Sie die Datei verändert haben.
+        Trotzdem veröffentlicht Subversion Ihre Änderungen solange
+        nicht, bis Sie es ausdrücklich hierzu auffordern. Der Vorgang
+        des Veröffentlichens von Änderungen über das Repository ist
+        gemeinhin bekannter als <em class="firstterm">commit</em> (oder
+        <em class="firstterm">check in</em>).</p>
+<p>Um Ihre Änderungen anderen gegenüber zu veröffentlichen,
+        können Sie den Subversion-Befehl <span class="command"><strong>svn commit</strong></span>
+        verwenden:</p>
+<pre class="screen">
+$ svn commit button.c -m "Tippfehler in button.c korrigiert"
+Sende          button.c
+Übertrage Daten .
+Revision 6 übertragen.
+</pre>
+<p>Nun sind Ihre Änderungen an <code class="filename">button.c</code> dem
+        Repository überstellt, mitsamt einer Notiz, die Ihre Änderung
+        beschreibt (nämlich, dass Sie einen Tippfehler beseitigt
+        haben). Wenn eine andere Benutzerin eine Arbeitskopie von
+        <code class="filename">/calc</code> auscheckt, wird sie Ihre
+        Änderungen in der letzten Version der Datei sehen
+        können.</p>
+<p>angenommen, Sie haben eine Mitarbeiterin, Sally, die eine
+        Arbeitskopie von <code class="filename">/calc</code> gleichzeitig mit
+        Ihnen ausgecheckt hat. Wenn Sie Ihre Änderung an
+        <code class="filename">button.c</code> committen, bleibt Sallys
+        Arbeitskopie unverändert; Subversion ändert Arbeitskopien nur
+        auf Wunsch des Benutzers.</p>
+<p>Um ihr Projekt auf den neuesten Stand zu bringen, kann
+        Sally Subversion dazu auffordern, ihre Arbeitskopie zu
+        aktualisieren, indem sie den Befehl <span class="command"><strong>svn update</strong></span>
+        verwendet. Das bringt sowohl Ihre als auch alle anderen
+        Änderungen die committet wurden seit sie ausgecheckt hatte in
+        ihre Arbeitskopie.</p>
+<pre class="screen">
+$ pwd
+/home/sally/calc
+
+$ ls -A
+Makefile button.c integer.c .svn/
+
+$ svn update
+U    button.c
+Aktualisiert zu Revision 57.
+</pre>
+<p>Die Ausgabe des <span class="command"><strong>svn update</strong></span> Befehls
+        zeigt, dass Subversion den Inhalt von
+        <code class="filename">button.c</code> aktualisiert hat (Update).
+        Beachten Sie, dass Sally nicht angeben musste, welche Dateien
+        zu aktualisieren sind; Subversion benutzt die Informationen
+        aus dem <code class="filename">.svn</code> Verzeichnis und
+        darüber hinaus weitere Informationen im Repository, um zu
+        entscheiden, welche Dateien auf den neuesten Stand gebracht
+        werden müssen.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.revs"></a>1.3.3. Revisionen</h3></div></div></div>
+<p>Ein <span class="command"><strong>svn commit</strong></span> veröffentlicht
+        Änderungen an einer beliebigen Anzahl von Dateien und
+        Verzeichnissen als eine einzige atomare Transaktion. In Ihrer
+        Arbeitskopie können Sie Dateiinhalte ändern, Dateien und
+        Verzeichnisse erzeugen, löschen, umbenennen und kopieren und
+        dann den gesamten Umfang der Änderungen als atomare
+        Transaktion durch ein <span class="command"><strong>svn commit</strong></span> in das
+        Repository einbringen.</p>
+<p>Eine atomare Transaktion bedeutet: entweder es gehen alle
+        Änderungen in das Repository oder keine. Angesichts von
+        Programmabstürzen, Systemabstürzen, Netzproblemen oder anderer
+        Benutzeraktionen hält Subversion an dieser Atomizität
+        fest.</p>
+<p>Jedes Mal wenn das Repository ein Commit annimmt, wird ein
+        neuer Zustand des Dateisystem-Baums erzeugt, der
+        <em class="firstterm">Revision</em> genannt wird. Jeder Revision
+        wird eine einmalige natürliche Zahl zugewiesen, die um eins
+        größer ist als die Vorgänger-Revision. Die anfängliche
+        Revision eines frisch erzeugten Repositorys bekommt die Nummer
+        0 und besteht lediglich aus einem leeren
+        Wurzelverzeichnis.</p>
+<p><a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.revs.dia-1" title="Abbildung 1.7. Das Repository">Abbildung 1.7, „Das Repository“</a> zeigt,
+        wie man sich das Repository vorstellen kann. Stellen Sie sich
+        eine Reihe von Revisionsnummern vor, die bei 0 startet und von
+        links nach rechts wächst. Jede Revisionsnummer hat einen
+        Dateisystem-Baum unter sich hängen, der ein
+        „<span class="quote">Schnappschuss</span>“ des Repositorys nach einem Commit
+        ist.</p>
+<div class="figure">
+<a name="svn.basic.in-action.revs.dia-1"></a><p class="title"><b>Abbildung 1.7. Das Repository</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia7.png" alt="Das Repository"></div></div>
+</div>
+<br class="figure-break"><div class="sidebar">
+<p class="title"><b>Globale Revisionsnummern</b></p>
+<p>Anders als die meisten Versionskontrollsysteme werden
+          die Revisionsnummern von Subversion auf
+          <span class="emphasis"><em>komplette Bäume</em></span> anstatt auf einzelne
+          Dateien angewendet. Jede Revisionsnummer wählt einen
+          kompletten Baum aus; ein besonderer Zustand nach dem Commit
+          einer Änderung. Man kann sich auch vorstellen, dass Revision
+          N den Zustand des Repository-Dateisystems nach dem N-ten
+          Commit repräsentiert. Wenn Subversion-Benutzer von
+          „<span class="quote">Revision 5 von <code class="filename">foo.c</code></span>“
+          sprechen, meinen sie tatsächlich
+          „<span class="quote"><code class="filename">foo.c</code> so wie es in Revision 5
+            aussieht</span>“. Beachten Sie, dass sich im Allgemeinen die
+          Revisionen N und M einer Datei <span class="emphasis"><em>nicht</em></span>
+          notwendigerweise unterscheiden! Viele andere
+          Versionskontrollsysteme verwenden dateibezogene
+          Revisionsnummern, so dass dieses Konzept zunächst
+          ungewöhnlich aussieht. (Ehemalige CVS-Benutzer sollten sich
+          für weitergehende Informationen <a class="xref" href="svn.forcvs.html" title="Anhang B. Subversion for CVS Users">Anhang B, <i>Subversion for CVS Users</i></a>
+          ansehen.)</p>
+</div>
+<p>Es ist wichtig zu beachten, dass eine Arbeitskopie nicht
+        immer genau einer Revision im Repository zugeordnet werden
+        kann; sie kann Dateien aus verschiedenen Revisionen
+        beinhalten. Nehmen wir z.B. an, Sie checken sich eine
+        Arbeitskopie einer Datei aus einem Repository aus, deren
+        neueste Revision 4 ist:</p>
+<pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:4
+</pre>
+<p>In diesem Augenblick entspricht Ihre Arbeitskopie exakt
+        der Revision im Repository. Sie machen jetzt allerdings eine
+        Änderung an <code class="filename">button.c</code> und bringen diese
+        Änderung mit einem Commit ins Repository. Angenommen, dass
+        keine weiteren Commits vorgenommen wurden, wird Ihr Commit die
+        Revision 5 im Repository erzeugen, und Ihre Arbeitskopie sieht
+        so aus:</p>
+<pre class="screen">
+calc/Makefile:4
+     integer.c:4
+     button.c:5
+</pre>
+<p>Angenommen, zu diesem Zeitpunkt macht Sally einen Commit
+        für eine Änderung an <code class="filename">integer.c</code> und
+        erzeugt Revision 6. Wenn Sie <span class="command"><strong>svn update</strong></span>
+        verwenden, um Ihre Arbeitskopie zu aktualisieren, sieht sie so
+        aus:</p>
+<pre class="screen">
+calc/Makefile:6
+     integer.c:6
+     button.c:6
+</pre>
+<p>Sallys Änderung an <code class="filename">integer.c</code>
+        erscheint in Ihrer Arbeitskopie, und Ihre Änderung ist immer
+        noch in <code class="filename">button.c</code>.  In diesem Beispiel ist
+        der Text von <code class="filename">Makefile</code> in den Revisionen
+        4, 5 und 6 identisch, jedoch markiert Subversion die
+        Arbeitskopie von <code class="filename">Makefile</code> mit Revision 6,
+        um zu zeigen, dass es noch aktuell ist. Wenn Sie also ein
+        sauberes Update von der Wurzel Ihrer Arbeitskopie her machen,
+        sollte sie im Allgemeinen genau einer Revision im Repository
+        entsprechen.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.track-repos"></a>1.3.4. Wie Arbeitskopien das Repository verfolgen</h3></div></div></div>
+<p>Für jede Datei eines Arbeitsverzeichnis merkt sich
+        Subversion zwei essentielle Informationen im
+        <code class="filename">.svn/</code>-Verwaltungsbereich:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Auf welcher Revision Ihre Arbeitsdatei aufbaut (das
+            wird die <em class="firstterm">Arbeitsrevision</em> der Datei
+            genannt)</p></li>
+<li><p>Ein Zeitstempel, der festhält, wann die lokale Kopie
+            das letzte Mal vom Repository aktualisiert wurde.</p></li>
+</ul></div>
+<p>Mit diesen Informationen kann Subversion durch
+        Kommunikation mit dem Repository feststellen, in
+        welchem der folgenden Zustände sich eine Arbeitsdatei
+        befindet:</p>
+<div class="variablelist"><dl>
+<dt><span class="term">Unverändert und aktuell</span></dt>
+<dd><p>Die Datei im Arbeitsverzeichnis ist unverändert, und
+              keinerlei Änderungen an der Datei sind seit der
+              Arbeitsrevision an das Repository übergeben worden. Ein
+              <span class="command"><strong>svn commit</strong></span> der Datei würde nichts
+              machen, und ein <span class="command"><strong>svn update</strong></span> der Datei
+              auch nicht.</p></dd>
+<dt><span class="term">Lokal geändert und aktuell</span></dt>
+<dd><p>Die Datei wurde im Arbeitsverzeichnis geändert, und
+              keinerlei Änderungen an der Datei sind seit der letzten
+              Aktualisierung an das Repository übergeben worden. Es
+              gibt lokale Änderungen, die noch nicht an das Repository
+              übergeben worden sind, so dass ein <span class="command"><strong>svn
+                commit</strong></span> der Datei Ihre Änderungen erfolgreich
+              veröffentlichen würde, und ein <span class="command"><strong>svn
+                update</strong></span> der Datei nichts tun würde.</p></dd>
+<dt><span class="term">Unverändert und veraltet</span></dt>
+<dd><p>Die Datei wurde im Arbeitsverzeichnis nicht
+              geändert, jedoch im Repository. Die Datei sollte
+              aktualisiert werden, damit sie bezüglich der letzten
+              öffentlichen Revision aktuell ist. Ein <span class="command"><strong>svn
+                commit</strong></span> der Datei würde nichts machen, und
+              ein <span class="command"><strong>svn update</strong></span> der Datei würde die
+              letzten Änderungen in Ihre Arbeitskopie
+              einbringen.</p></dd>
+<dt><span class="term">Lokal geändert und veraltet</span></dt>
+<dd><p>Die Datei wurde sowohl im Arbeitsverzeichnis als
+              auch im Repository geändert. Ein <span class="command"><strong>svn
+              commit</strong></span> der Datei würde mit einem
+            „<span class="quote">out-of-date</span>“ Fehler abbrechen. Die Datei
+            sollte erst aktualisiert werden; ein <span class="command"><strong>svn
+              update</strong></span> Befehl würde versuchen, die
+            öffentlichen mit den lokalen Änderungen zusammenzuführen.
+            Wenn Subversion diese Zusammenführung nicht plausibel
+            automatisch durchführen kann, wird die Auflösung des
+            Konflikts dem Benutzer überlassen.</p></dd>
+</dl></div>
+<p>Das hört sich an, als müsse man jede Menge mitverfolgen,
+        aber der <span class="command"><strong>svn status</strong></span> Befehl zeigt Ihnen den
+        Zustand jedes Objektes in Ihrer Arbeitskopie. Weitergehende
+        Informationen zu diesem Befehl finden Sie unter
+        <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. Verschaffen Sie sich einen Überblick über Ihre Änderungen">Abschnitt 2.4.3.1, „Verschaffen Sie sich einen Überblick über Ihre
+          Änderungen“</a>.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.in-action.mixedrevs"></a>1.3.5. Arbeitskopien mit gemischten Revisionen</h3></div></div></div>
+<p>Als allgemeingültiges Prinzip versucht Subversion, so
+        flexibel wie möglich zu sein. Eine besondere Ausprägung der
+        Flexibilität ist die Fähigkeit, eine Arbeitskopie bestehend
+        aus Dateien und Verzeichnissen mit einer Mischung
+        unterschiedlicher Revisionsnummern zu haben.
+        Unglücklicherweise neigt diese Flexibilität dazu, eine Anzahl
+        neuer Benutzer zu verwirren. Wenn Sie das vorangegangene Beispiel,
+        das gemischte Revisionen vorgestellt hat, verwirrte, zeigen
+        wir hier eine Einführung warum es diese Möglichkeit gibt und
+        wie sie verwendet wird.</p>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.update-commit"></a>1.3.5.1. Updates und Commits sind getrennt</h4></div></div></div>
+<p>Eine der grundlegenden Regeln von Subversion ist, dass
+          eine Aktion, die in das Repository schreibt keine Aktion zur
+          Folge hat, die aus dem Repository liest und umgekehrt. Wenn
+          Sie bereit sind, neue Änderungen an das Repository zu
+          übergeben, heißt das noch lange nicht, dass Sie auch die
+          Änderungen anderer haben möchten. Und wenn Sie noch an
+          Änderungen arbeiten, sollte <span class="command"><strong>svn update</strong></span>
+          elegant die Änderungen aus dem Repository mit Ihren
+          Änderungen zusammenführen anstatt Sie dazu zu zwingen, Ihre
+          Änderungen zu veröffentlichen.</p>
+<p>Der hauptsächliche Nebeneffekt dieser Regel ist, dass
+          eine Arbeitskopie zusätzlich buchhalten muss, um sowohl
+          gemischte Revisionen zu verfolgen als auch diese Mischung
+          vertragen zu können. Die Tatsache, dass auch Verzeichnisse
+          selbst versioniert sind, verkompliziert die Sache
+          nur.</p>
+<p>Nehmen wir zum Beispiel an, Ihre Arbeitskopie besteht
+          komplett aus Revision 10. Sie bearbeiten die Datei
+          <code class="filename">foo.html</code> und führen ein <span class="command"><strong>svn
+            commit</strong></span> aus, das die Revision 15 im Repository
+          erzeugt. Nach dem erfolgreichen Commit würden viele neue
+          Benutzer erwarten, dass die gesamte Arbeitskopie auf
+          Revision 15 stehe, was aber nicht der Fall ist! Alle
+          möglichen Änderungen können sich zwischen Revision 10 und 15
+          im Repository zugetragen haben. Der Client weiß nichts über
+          diese Änderungen im Repository, da Sie noch nicht
+          <span class="command"><strong>svn update</strong></span> aufgerufen haben, und
+          <span class="command"><strong>svn commit</strong></span> zieht keine Änderungen herein.
+          Wenn andererseits <span class="command"><strong>svn commit</strong></span> automatisch
+          Änderungen hereinziehen würde, könnte die gesamte
+          Arbeitskopie auf Revision 15 gebracht werden – doch dann
+          wäre die grundlegende Regel verletzt, dass Lesen und
+          Schreiben getrennte Aktionen sind. Deshalb ist das einzig
+          Sichere, das der Subversion-Client tun kann, die eine
+          Datei – <code class="filename">foo.html</code> – als zur
+          Revision 15 gehörig zu kennzeichnen. Der Rest der
+          Arbeitskopie verbleibt bei Revision 10. Nur durch
+          <span class="command"><strong>svn update</strong></span> können die neuesten Änderungen
+          hereingezogen und die gesamte Arbeitskopie als
+          Revision 15 gekennzeichnet werden.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.normal"></a>1.3.5.2. Gemischte Revisionen sind normal</h4></div></div></div>
+<p>Tatsache ist, dass <span class="emphasis"><em>jedes Mal</em></span> wenn
+          Sie <span class="command"><strong>svn commit</strong></span> aufgerufen haben, die
+          Arbeitskopie aus irgendeiner Mischung von Revisionen
+          besteht. Die Sachen, die Sie eben ins Repository gebracht
+          haben, werden mit höheren Revisionsnummern gekennzeichnet
+          als alles andere. Nach einigen Commits (ohne
+          zwischenzeitliche Updates) ist Ihre Arbeitskopie eine
+          Riesenmischung von Revisionen. Selbst wenn Sie die einzige
+          Person sind, die das Repository benutzt, werden sie dieses
+          Phänomen bemerken. Um Ihre Mischung aus Arbeitsrevisionen
+          untersuchen zu können, verwenden Sie den Befehl <span class="command"><strong>svn
+            status</strong></span> mit der <code class="option">--verbose</code>-Option
+          (siehe <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. Verschaffen Sie sich einen Überblick über Ihre Änderungen">Abschnitt 2.4.3.1, „Verschaffen Sie sich einen Überblick über Ihre
+          Änderungen“</a> für
+          weitergehende Informationen).</p>
+<p>Oft ist neuen Benutzern überhaupt nicht bewusst, das
+          ihre Arbeitskopie gemischte Revisionen beinhaltet. Das kann
+          zur Verwirrung führen, weil viele Client-Programme
+          empfindlich auf die Revision des Objektes reagieren, das sie
+          untersuchen. Beispielsweise wird der <span class="command"><strong>svn
+            log</strong></span>-Befehl verwendet, um die Historie der
+          Änderungen einer Datei oder eines Verzeichnisses
+          darzustellen (siehe <a class="xref" href="svn.tour.history.html#svn.tour.history.log" title="2.5.1. Erzeugung einer Liste der Änderungsgeschichte">Abschnitt 2.5.1, „Erzeugung einer Liste der Änderungsgeschichte“</a>).
+          Wenn der Benutzer diesen Befehl auf ein Objekt in der
+          Arbeitskopie anwendet, erwartet er, die gesamte Historie des
+          Objektes zu sehen. Wenn jedoch die Arbeitsrevision des
+          Objektes ziemlich alt ist (oftmals weil lange Zeit kein
+          <span class="command"><strong>svn update</strong></span> aufgerufen wurde), wird die
+          Historie der <span class="emphasis"><em>älteren</em></span> Version des
+          Objekts angezeigt.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.useful"></a>1.3.5.3. Gemischte Revisionen sind nützlich</h4></div></div></div>
+<p>Wenn Ihr Projekt hinreichend komplex ist, werden Sie
+          entdecken, dass es manchmal ganz nett sein kann, Teile Ihrer
+          Arbeitskopie <em class="firstterm">zurückzudatieren</em> (oder
+          auf eine ältere Version als die vorliegende zu
+          aktualisieren); wie das gemacht wird, wird in <a class="xref" href="svn.tour.html" title="Kapitel 2. Grundlegende Benutzung">Kapitel 2, <i>Grundlegende Benutzung</i></a> gezeigt.  Vielleicht möchten Sie eine
+          ältere Version eines Teilmoduls in einem Unterverzeichnis
+          testen, oder Sie möchten herausbekommen, wann ein Fehler das
+          erste Mal in einer Datei auftauchte. Dies ist der
+          „<span class="quote">Zeitmaschinen</span>“-Aspekt eines
+          Versionskontrollsystems – die Eigenschaft, die es
+          ermöglicht, irgendeinen Teil Ihrer Arbeitskopie zeitlich nach
+          vorne oder nach hinten zu verschieben.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.basic.in-action.mixedrevs.limits"></a>1.3.5.4. Gemischte Revisionen haben ihre Grenzen</h4></div></div></div>
+<p>Wie auch immer Sie gemischte Revisionen in Ihrer
+          Arbeitskopie verwenden, diese Flexibilität hat ihre
+          Grenzen.</p>
+<p>Erstens kann die Löschung einer Datei oder eines
+          Verzeichnisses nicht an das Repository übergeben werden,
+          wenn die Datei oder das Verzeichnis nicht ganz aktuell ist.
+          Falls eine neuere Version im Repository existiert, wird Ihr
+          Löschversuch abgelehnt, um zu vermeiden, dass Sie
+          versehentlich Änderungen löschen, die Sie noch nicht gesehen
+          haben.</p>
+<p>Zweitens können Sie keine Änderungen an Metadaten eines
+          Verzeichnisses an das Repository übergeben, wenn das
+          Verzeichnis nicht ganz aktuell ist. In <a class="xref" href="svn.advanced.html" title="Kapitel 3. Advanced Topics">Kapitel 3, <i>Advanced Topics</i></a> werden Sie lernen, wie man
+          „<span class="quote">Propertys</span>“ an Objekte hängt. Die Arbeitskopie
+          eines Verzeichnisses definiert eine bestimmte Menge von
+          Einträgen und Propertys, so dass eine Property-Änderung an
+          einem veralteten Verzeichnis Propertys zerstören kann, die
+          Sie noch nicht gesehen haben.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.basic.vsn-models.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.basic.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.basic.summary.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">1.2. Versionierungsmodelle </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 1.4. Zusammenfassung</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

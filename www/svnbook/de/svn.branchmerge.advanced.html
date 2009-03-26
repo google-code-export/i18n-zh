@@ -1,0 +1,880 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.4. Fortgeschrittenes Zusammenführen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.basicmerging.html" title="4.3. Grundlegendes Zusammenführen">
+<link rel="next" href="svn.branchmerge.switchwc.html" title="4.5. Zweige durchlaufen">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.4. Fortgeschrittenes Zusammenführen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.basicmerging.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.switchwc.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.advanced"></a>4.4. Fortgeschrittenes Zusammenführen</h2></div></div></div>
+<p>Hier endet die automatische Magie. Früher oder später,
+      sobald Sie den Dreh beim Verzweigen und Zusammenführen heraus
+      haben, werden Sie Subversion fragen müssen,
+      <span class="emphasis"><em>bestimmte</em></span> Änderungen von einem Ort zum
+      anderen zusammenzuführen. Um dies tun zu können, werden Sie
+      damit beginnen müssen, kompliziertere Argumente an <span class="command"><strong>svn
+      merge</strong></span> zu übergeben. Der nächste Abschnitt beschreibt
+      die vollständig erweiterte Syntax des Befehls und behandelt eine
+      Anzahl verbreiteter Szenarien, die diese benötigen.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.cherrypicking"></a>4.4.1. Die Rosinen herauspicken</h3></div></div></div>
+<p>Genauso oft wie der Begriff „<span class="quote">Änderungsmenge</span>“
+        wird die Wendung <em class="firstterm">die Rosinen
+        herauspicken</em> in Versionskontrollsystemen
+        verwendet. Das bezieht sich darauf, <span class="emphasis"><em>eine</em></span>
+        bestimmte Änderungsmenge von einem Zweig auszuwählen und sie
+        auf einen anderen anzuwenden. Die Rosinen herauszupicken kann
+        sich auch darauf beziehen, eine bestimmte Menge von (nicht
+        notwendigerweise angrenzenden) Änderungsmengen von einem auf
+        einen anderen Zweig zu duplizieren. Dies steht im Gegensatz zu
+        den üblicheren Zusammenführungs-Szenarien, bei denen der
+        „<span class="quote">nächste</span>“ zusammenhängende Bereich von Revisionen
+        automatisch dupliziert wird.</p>
+<p>Warum sollte jemand nur eine einzelne Änderung wollen? Das
+        kommt häufiger vor, als Sie denken. Gehen wir beispielsweise
+        einmal zurück in die Vergangenheit und stellen uns vor, dass
+        Sie Ihren Zweig noch nicht wieder mit dem Stamm
+        zusammengeführt hätten. In der Kaffeeküche bekommen Sie mit,
+        dass Sally eine interessante Änderung an
+        <code class="filename">integer.c</code> auf dem Stamm gemacht hat. Als
+        Sie sich die Geschichte der Übergaben auf dem Stamm ansehen,
+        entdecken Sie, dass sie in Revision 355 einen kritischen
+        Fehler beseitigt hat, der direkte Auswirkungen auf die
+        Funktion hat, an der Sie gerade arbeiten. Es kann sein, dass
+        Sie noch nicht bereit sind, alle Änderungen vom Stamm zu
+        übernehmen, jedoch benötigen Sie diese bestimmte
+        Fehlerbehebung, um mit Ihrer Arbeit weitermachen zu
+        können.</p>
+<pre class="screen">
+$ svn diff -c 355 http://svn.example.com/repos/calc/trunk
+
+Index: integer.c
+===================================================================
+--- integer.c   (revision 354)
++++ integer.c   (revision 355)
+@@ -147,7 +147,7 @@
+     case 6:  sprintf(info-&gt;operating_system, "HPFS (OS/2 or NT)"); break;
+     case 7:  sprintf(info-&gt;operating_system, "Macintosh"); break;
+     case 8:  sprintf(info-&gt;operating_system, "Z-System"); break;
+-    case 9:  sprintf(info-&gt;operating_system, "CP/MM");
++    case 9:  sprintf(info-&gt;operating_system, "CP/M"); break;
+     case 10:  sprintf(info-&gt;operating_system, "TOPS-20"); break;
+     case 11:  sprintf(info-&gt;operating_system, "NTFS (Windows NT)"); break;
+     case 12:  sprintf(info-&gt;operating_system, "QDOS"); break;
+</pre>
+<p>Ebenso wie Sie <span class="command"><strong>svn diff</strong></span> im vorigen
+        Beispiel benutzt haben, um sich Revision 355 anzusehen, können
+        Sie die gleiche Option an <span class="command"><strong>svn merge</strong></span>
+        übergeben:</p>
+<pre class="screen">
+$ svn merge -c 355 http://svn.example.com/repos/calc/trunk
+U    integer.c
+
+$ svn status
+M      integer.c
+</pre>
+<p>Sie können nun Ihre üblichen Tests durchführen, bevor Sie
+        diese Änderung an den Zweig übergeben. Nach der Übergabe merkt
+        sich Subversion, dass r355 mit dem Zweig zusammengeführt
+        wurde, so dass künftige „<span class="quote">magische</span>“
+        Zusammenführungen, die Ihren Zweig mit dem Stamm
+        synchronisieren, r355 überspringen. (Das Zusammenführen
+        derselben Änderung auf denselben Zweig führt fast immer zu
+        einem Konflikt!)</p>
+<pre class="screen">
+$ cd my-calc-branch
+
+$ svn propget svn:mergeinfo .
+/trunk:341-349,355
+
+# Beachten Sie, dass r355 nicht als Zusammenführungs-Kandidat aufgeführt wird
+# da es bereits zusammengeführt wurde.
+$ svn mergeinfo http://svn.example.com/repos/calc/trunk --show-revs eligible
+r350
+r351
+r352
+r353
+r354
+r356
+r357
+r358
+r359
+r360
+
+$ svn merge http://svn.example.com/repos/calc/trunk
+--- Zusammenführen von r350 bis r354 in ».«:
+ U   .
+U    integer.c
+U    Makefile
+--- Zusammenführen von r356 bis r360 in ».«:
+ U   .
+U    integer.c
+U    button.c
+</pre>
+<p>Dieser Anwendungsfall des Abgleichens (oder
+        <em class="firstterm">Nachziehens</em>) von Fehlerbehebungen von
+        einem Zweig zu einem anderen ist vielleicht der gängigste Grund
+        für Änderungen, die Rosinen herauszupicken; es kommt ständig
+        vor, beispielsweise, wenn ein Team einen
+        „<span class="quote">Software-Release-Zweig</span>“ verwendet.  (Wir
+        erörtern dieses Muster in <a class="xref" href="svn.branchmerge.commonpatterns.html#svn.branchmerge.commonpatterns.release" title="4.8.1. Release-Zweige">Abschnitt 4.8.1, „Release-Zweige“</a>.)</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Haben Sie bemerkt, wie im letzten Beispiel der Aufruf
+          von <span class="command"><strong>svn merge</strong></span> dazu geführt hat, zwei
+          unterschiedliche Abgleichsintervalle anzuwenden? Der Befehl
+          führte zwei unabhängige Patches auf Ihrer Arbeitskopie aus,
+          um die Änderungsmenge 355 zu überspringen, die Ihr Zweig
+          bereits beinhaltete. An und für sich ist daran nichts
+          falsch, bis auf die Tatsache, dass die Möglichkeit besteht,
+          eine Konfliktauflösung komplizierter zu machen. Falls das
+          erste Änderungsintervall Konflikte erzeugt,
+          <span class="emphasis"><em>müssen</em></span> Sie diese interaktiv auflösen,
+          um die Zusammenführung fortzusetzen und das zweite
+          Änderungsintervall anzuwenden. Wenn Sie die
+          Konfliktauflösung der ersten Phase aufschieben, wird der
+          komplette Zusammenführungsbefehl mit einer Fehlermeldung
+          abbrechen.
+          <sup>[<a name="id617195" href="#ftn.id617195" class="footnote">22</a>]</sup> 
+        </p></td></tr>
+</table></div>
+<p>Ein Wort zur Warnung: Während <span class="command"><strong>svn diff</strong></span>
+        und <span class="command"><strong>svn merge</strong></span> vom Konzept her sehr ähnlich
+        sind, haben sie in vielen Fällen eine unterschiedliche Syntax.
+        Gehen Sie sicher, dass Sie Details hierzu in <a class="xref" href="svn.ref.html" title="Kapitel 9. Subversion Complete Reference">Kapitel 9, <i>Subversion Complete Reference</i></a> nachlesen oder <span class="command"><strong>svn help</strong></span>
+        fragen.  Zum Beispiel benötigt <span class="command"><strong>svn merge</strong></span>
+        einen Pfad in der Arbeitskopie als Ziel, d.h., einen Ort, an
+        dem es den erzeugten Patch anwenden kann.  Falls das Ziel
+        nicht angegeben wird, nimmt es an, dass Sie eine der folgenden
+        häufigen Operationen durchführen möchten:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Sie möchten Verzeichnisänderungen auf Ihr aktuelles
+            Arbeitsverzeichnis abgleichen.</p></li>
+<li><p>Sie möchten die Änderungen in einer bestimmten Datei
+            mit einer Datei gleichen Namens in Ihrem aktuellen
+            Arbeitsverzeichnis zusammenführen.</p></li>
+</ul></div>
+<p>Falls Sie ein Verzeichnis zusammenführen und keinen
+        Zielpfad angegeben haben, nimmt <span class="command"><strong>svn merge</strong></span>
+        den ersten Fall an und versucht, die Änderungen auf Ihr
+        aktuelles Arbeitsverzeichnis anzuwenden. Falls Sie eine Datei
+        zusammenführen und diese Datei (oder eine gleichnamige Datei)
+        in Ihrem aktuellen Arbeitsverzeichnis existiert, nimmt
+        <span class="command"><strong>svn merge</strong></span> den zweiten Fall an und wendet
+        die Änderungen auf eine lokale Datei gleichen Namens
+        an.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.advancedsyntax"></a>4.4.2. Merge-Syntax: Die vollständige Enthüllung</h3></div></div></div>
+<p>Sie haben nun einige Beispiele zum Befehl <span class="command"><strong>svn
+        merge</strong></span> gesehen und werden bald einige mehr sehen.
+        Falls Sie verwirrt darüber sind, wie das Zusammenführen genau
+        funktioniert, sind Sie nicht alleine. Viele Anwender
+        (besonders diejenigen, für die Versionskontrolle etwas Neues
+        ist) sind anfangs verwirrt darüber, wie die korrekte Syntax
+        des Befehls lautet und wann das Feature verwendet werden soll.
+        Aber, keine Angst, dieser Befehl ist tatsächlich viel
+        einfacher als Sie denken! Es gibt eine einfache Technik, die
+        verstehen hilft, wie sich <span class="command"><strong>svn merge</strong></span> genau
+        verhält.</p>
+<p>Die Hauptquelle der Verwirrung ist der
+        <span class="emphasis"><em>Name</em></span> des Befehls.  Der Begriff
+        „<span class="quote">merge</span>“ (Zusammenführung, Mischung) deutet
+        irgendwie an, dass Zweige miteinander verschmolzen werden,
+        oder dass irgendeine geheimnisvolle Mischung der Daten
+        erfolgt. Das ist nicht der Fall. Ein besserer Name für den
+        Befehl wäre vielleicht <span class="command"><strong>svn
+          ermittele-die-Unterschiede-und-wende-sie-an</strong></span>
+        gewesen, da das alles ist, was passiert: Die Bäume im
+        Repository werden verglichen und die Unterschiede in eine
+        Arbeitskopie eingearbeitet.</p>
+<p>Falls Sie <span class="command"><strong>svn merge</strong></span> benutzen, um
+        einfache Kopien von Änderungen zwischen Zweigen vorzunehmen,
+        wird es üblicherweise automatisch das Richtige machen.
+        Beispielsweise wird ein Befehl wie der folgende:</p>
+<pre class="screen">
+$ svn merge http://svn.example.com/repos/calc/some-branch
+</pre>
+<p>versuchen, alle Änderungen, die auf
+        <code class="filename">some-branch</code> gemacht worden sind, in Ihr
+        aktuelles Arbeitsverzeichnis zu kopieren, welches vermutlich
+        eine Arbeitskopie ist, die mit dem Zweig irgendeine
+        historische Verbindung teilt. Der Befehl ist klug genug, nur
+        die Änderungen zu kopieren, die Ihre Arbeitskopie noch nicht
+        hat. Wenn Sie diesen Befehl einmal die Woche wiederholen, wird
+        er nur die „<span class="quote">neuesten</span>“ Änderungen vom Zweig
+        kopieren, die seit Ihrem letzten Zusammenführen
+        stattfanden.</p>
+<p>Wenn Sie den Befehl <span class="command"><strong>svn merge</strong></span> in seiner
+        ganzen Pracht wählen, indem Sie ihm bestimmte
+        Revisionsintervalle zum kopieren übergeben, benötigt der
+        Befehl drei Hauptargumente:</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Einen Anfangsbaum im Repository (häufig
+        <em class="firstterm">linke Seite</em> des Vergleichs
+        genannt)</p></li>
+<li><p>Einen Endbaum im Repository (häufig
+        <em class="firstterm">rechte Seite</em> des Vergleichs
+        genannt)</p></li>
+<li><p>Eine Arbeitskopie, die die Unterschiede als
+        lokale Änderungen aufnimmt (häufig <em class="firstterm">Ziel</em>
+        der Zusammenführung genannt)</p></li>
+</ol></div>
+<p>Sobald diese drei Argumente angegeben sind, werden die
+        zwei Bäume miteinander verglichen und die Unterschiede als
+        lokale Änderungen auf die Ziel-Arbeitskopie angewendet. Wenn
+        der Befehl fertig ist, sieht das Ergebnis so aus, als hätten
+        Sie die Dateien manuell editiert oder verschiedene
+        <span class="command"><strong>svn add</strong></span>- oder <span class="command"><strong>svn
+          delete</strong></span>-Befehle ausgeführt. Wenn Ihnen das Ergebnis
+        gefällt, können Sie es übergeben. Falls nicht, können Sie
+        einfach mit <span class="command"><strong>svn revert</strong></span> alle Änderungen
+        rückgängig machen.</p>
+<p>Die Syntax von <span class="command"><strong>svn merge</strong></span> erlaubt Ihnen,
+        die drei notwendigen Argumente auf eine recht flexible Weise
+        anzugeben. Hier sind einige Beispiele:</p>
+<pre class="screen">
+$ svn merge http://svn.example.com/repos/branch1@150 \
+            http://svn.example.com/repos/branch2@212 \
+            my-working-copy
+
+$ svn merge -r 100:200 http://svn.example.com/repos/trunk my-working-copy
+
+$ svn merge -r 100:200 http://svn.example.com/repos/trunk
+</pre>
+<p>Die erste Syntax führt alle drei Argumente explizit auf,
+        indem jeder Baum mit dem Format <span class="emphasis"><em>URL@REV</em></span>
+        bezeichnet und die Ziel-Arbeitskopie angegeben wird. Die
+        zweite Syntax kann als Kurzform verwendet werden, wenn Sie
+        zwei unterschiedliche Revisionen desselben URL vergleichen.
+        Die letzte Syntax zeigt, dass das Arbeitskopie-Argument
+        optional ist; entfällt es, wird das aktuelle Verzeichnis
+        genommen.</p>
+<p>Obwohl das erste Beispiel die „<span class="quote">vollständige</span>“
+        Syntax von <span class="command"><strong>svn merge</strong></span> zeigt, muss sie sehr
+        sorgfältig verwendet werden; es können hierbei
+        Zusammenführungen entstehen, bei denen keinerlei
+        <code class="literal">svn:mergeinfo</code> Metadaten aufgezeichnet
+        werden. Der nächste Abschnitt geht näher darauf ein.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.nomergedata"></a>4.4.3. Zusammenführen ohne Mergeinfo</h3></div></div></div>
+<p>Subversion versucht immer wenn es kann, Metadaten über das
+        Zusammenführen zu erzeugen, um spätere Aufrufe von
+        <span class="command"><strong>svn merge</strong></span> schlauer zu machen. Trotzdem
+        gibt es Situationen, in denen
+        <code class="literal">svn:mergeinfo</code>-Daten nicht erzeugt oder
+        geändert werden.  Denken Sie daran, vor diesen Szenarien auf
+        der Hut zu sein:</p>
+<div class="variablelist"><dl>
+<dt><span class="term">Zusammenführen von Quellen ohne Beziehung</span></dt>
+<dd><p>Falls Sie <span class="command"><strong>svn merge</strong></span> dazu
+            auffordern, zwei URLs zu vergleichen, die nicht
+            miteinander in Beziehung stehen, wird trotzdem ein Patch
+            erzeugt und auf die Arbeitskopie angewendet, allerdings
+            werden keine Metadaten erzeugt. Es gibt keine gemeinsame
+            Geschichte der zwei Quellen, und spätere
+            „<span class="quote">schlaue</span>“ Zusammenführungen hängen von dieser
+            gemeinsamen Geschichte ab.</p></dd>
+<dt><span class="term">Zusammenführen aus fremden Repositorys</span></dt>
+<dd><p>Obwohl es möglich ist, einen Befehl wie <strong class="userinput"><code>svn
+              merge -r 100:200
+              <em class="replaceable"><code>http://svn.foreignproject.com/repos/trunk</code></em></code></strong>
+            auszuführen, wird auch dieser resultierende Patch keine
+            historischen Metadaten über die Zusammenführung haben.
+            Zum gegenwärtigen Zeitpunkt hat Subversion keine
+            Möglichkeit, unterschiedliche Repository-URLs innerhalb
+            des <code class="literal">svn:mergeinfo</code>-Propertys zu
+            repräsentieren.</p></dd>
+<dt><span class="term">Verwendung von <code class="option">--ignore-ancestry</code></span></dt>
+<dd><p>Wenn diese Option an <span class="command"><strong>svn merge</strong></span>
+            übergeben wird, veranlasst das die Zusammenführungs-Logik,
+            ohne nachzudenken Unterschiede auf dieselbe Art zu
+            erzeugen, wie es <span class="command"><strong>svn diff</strong></span> macht, und
+            ignoriert dabei irgendwelche historischen Verbindungen.
+            Wir werden das später in diesem Kapitel in <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.ancestry" title="4.4.7. Die Abstammung berücksichtigen oder ignorieren">Abschnitt 4.4.7, „Die Abstammung berücksichtigen oder ignorieren“</a>
+            erörtern.</p></dd>
+<dt><span class="term">Zusammenführen rückgängig machen</span></dt>
+<dd><p>Weiter oben in diesem Kapitel 
+              (<a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.undo" title="4.3.4. Änderungen rückgängig machen">Abschnitt 4.3.4, „Änderungen rückgängig machen“</a>)
+              haben wir darüber gesprochen, wie man mit <span class="command"><strong>svn
+                merge</strong></span> einen „<span class="quote">Rückwärts-Patch</span>“
+              verwendet, um Änderungen rückgängig zu machen. Wenn
+              diese Technik dazu verwendet wird, um eine Änderung in
+              der Geschichte eines Objektes zurückzunehmen (z.B. r5
+              an den Stamm übergeben, und dann sofort r5 mit
+              <strong class="userinput"><code>svn merge . -c -5</code></strong> rückgängig
+              machen), hat dies keine Auswirkungen auf die
+              aufgezeichneten Metadaten.
+            <sup>[<a name="id617804" href="#ftn.id617804" class="footnote">23</a>]</sup>
+            </p></dd>
+</dl></div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.mergeconflicts"></a>4.4.4. Mehr über Konflikte beim Zusammenführen</h3></div></div></div>
+<p>Wie der Befehl <span class="command"><strong>svn update</strong></span> wendet auch 
+        <span class="command"><strong>svn merge</strong></span> Änderungen auf Ihre Arbeitskopie
+        an.  Und deshalb kann er auch Konflikte erzeugen. Die von
+        <span class="command"><strong>svn merge</strong></span> hervorgerufenen Konflikte sind
+        jedoch manchmal anders geartet, und dieser Abschnitt erklärt
+        diese Unterschiede.</p>
+<p>Zunächst gehen wir davon aus, dass Ihre Arbeitskopie keine
+        lokalen Änderungen enthält. Wenn Sie mit <span class="command"><strong>svn
+          update</strong></span> auf eine bestimmte Revision aktualisieren,
+        werden die vom Server gesendeten Änderungen immer
+        „<span class="quote">sauber</span>“ auf Ihre Arbeitskopie angewendet. Der
+        Server erzeugt das Delta, indem er zwei Bäume vergleicht: eine
+        virtuelle Momentaufnahme Ihrer Arbeitskopie und der
+        Revisionsbaum, an dem Sie interessiert sind. Da die linke
+        Seite des Vergleichs völlig gleich zu dem ist, was Sie bereits
+        haben, wird das Delta garantiert Ihre Arbeitskopie korrekt in
+        den rechten Baum überführen.</p>
+<p><span class="command"><strong>svn merge</strong></span> jedoch kann das nicht
+        gewährleisten und kann viel chaotischer sein: Der
+        fortgeschrittene Benutzer kann den Server auffordern,
+        <span class="emphasis"><em>irgendwelche</em></span> zwei Bäume miteinander zu
+        vergleichen, sogar solche, die nicht mit der Arbeitskopie in
+        Beziehung stehen! Das bedeutet, dass ein hohes Potenzial für
+        menschliche Fehler besteht. Benutzer werden manchmal die
+        falschen zwei Bäume miteinander vergleichen, so dass ein Delta
+        erzeugt wird, das sich nicht sauber anwenden lässt.
+        <span class="command"><strong>svn merge</strong></span> wird sein Bestes geben, um soviel
+        wie möglich vom Delta anzuwenden, doch bei einigen Teilen kann
+        das unmöglich sein. So wie der Unix-Befehl
+        <span class="command"><strong>patch</strong></span> sich manchmal über „<span class="quote">failed
+          hunks</span>“ beschwert, wird sich <span class="command"><strong>svn
+          merge</strong></span> ähnlich über „<span class="quote">skipped
+        targets</span>“ beschweren:</p>
+<pre class="screen">
+$ svn merge -r 1288:1351 http://svn.example.com/repos/branch
+U    foo.c
+U    bar.c
+Fehlendes Ziel: »baz.c« übersprungen.
+U    glub.c
+U    sputter.h
+
+Konflikt in »glorb.h« entdeckt.
+Auswahl: (p) zurückstellen, (df) voller Diff, (e) editieren,
+        (h) Hilfe für weitere Optionen:
+</pre>
+<p>Im vorangegangenen Beispiel kann es der Fall gewesen sein,
+        dass <code class="filename">baz.c</code> in beiden Momentaufnahmen des
+        Zweiges vorkommt, die verglichen werden, und das resultierende
+        Delta den Inhalt der Datei verändern will, die in der
+        Arbeitskopie aber nicht vorhanden ist. Wie auch immer, die
+        „<span class="quote">skipped</span>“-Nachricht bedeutet, dass der Benutzer
+        höchstwahrscheinlich die falschen Bäume miteinander
+        vergleicht; es ist das klassische Zeichen für einen
+        Anwenderfehler. Falls dies passiert, ist es einfach, alle
+        durch das Zusammenführen hervorgerufenen Änderungen rekursiv
+        rückgängig zu machen (<strong class="userinput"><code>svn revert .
+          --recursive</code></strong>), alle unversionierten Dateien oder
+        Verzeichnisse zu löschen, die nach dem Rückgängigmachen
+        zurückgeblieben sind, und <span class="command"><strong>svn merge</strong></span> noch
+        einmal mit unterschiedlichen Argumenten aufzurufen.</p>
+<p>Beachten Sie auch, dass das vorangegangene Beispiel einen
+        Konflikt in <code class="filename">glorb.h</code> anzeigt. Wir
+        bemerkten bereits, dass die Arbeitskopie keine lokalen
+        Änderungen besitzt: Wie kann da ein Konflikt entstehen? Noch
+        einmal: Weil der Benutzer <span class="command"><strong>svn merge</strong></span> dazu
+        verwenden kann, ein altes Delta zu definieren und auf die
+        Arbeitskopie anzuwenden, kann es sein, dass dieses alte Delta
+        textuelle Änderungen enthält, die nicht sauber in eine
+        Arbeitsdatei eingearbeitet werden können, selbst dann nicht,
+        wenn die Datei keine lokalen Änderungen vorzuweisen
+        hat.</p>
+<p>Ein weiterer kleiner Unterschied zwischen <span class="command"><strong>svn
+          update</strong></span> und <span class="command"><strong>svn merge</strong></span> sind die
+        Namen der erzeugten Textdateien, falls ein Konflikt entsteht.
+        In <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.resolve" title="2.4.5. Konflikte auflösen (Änderungen anderer einarbeiten)">Abschnitt 2.4.5, „Konflikte auflösen (Änderungen anderer einarbeiten)“</a> sahen wir, dass
+        bei einer Aktualisierung die Dateien namens
+        <code class="filename">filename.mine</code>,
+        <code class="filename">filename.rOLDREV</code> und
+        <code class="filename">filename.rNEWREV</code> erzeugt werden. Falls
+        <span class="command"><strong>svn merge</strong></span> einen Konflikt hervorruft,
+        erstellt es jedoch drei Dateien namens
+        <code class="filename">filename.working</code>,
+        <code class="filename">filename.left</code> und
+        <code class="filename">filename.right</code>.  In diesem Fall
+        beschreiben die Begriffe  „<span class="quote">left</span>“ (links) und
+        „<span class="quote">right</span>“ (rechts) von welcher Seite des Vergleichs
+        zwischen den beiden Bäumen die Datei hergeleitet wurde. Auf
+        alle Fälle werden Ihnen diese unterschiedlichen Namen dabei
+        helfen, zwischen Konflikten zu unterscheiden, die durch eine
+        Aktualisierung entstanden, und solchen die durch eine
+        Zusammenführung hervorgerufen wurden .</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.blockchanges"></a>4.4.5. Änderungen blockieren</h3></div></div></div>
+<p>Manchmal gibt es eine bestimmte Änderungsmenge, die Sie
+        nicht automatisch zusammengeführt haben wollen. Beispielsweise
+        ist vielleicht die Vorgehensweise Ihres Teams dergestalt, dass
+        Neuentwicklungen auf <code class="filename">/trunk</code> gemacht
+        werden, aber konservativer, wenn es darum geht, Änderungen auf
+        einen stabilen Zweig zurückzuportieren, den sie zur
+        Veröffentlichung benutzen. Auf der einen Seite können Sie
+        die Rosinen in Form von einzelnen Änderungsmengen manuell aus
+        dem Stamm herauspicken und in den Zweig einpflegen – nur
+        die Änderungen, die stabil genug sind, um die Qualitätsprüfung
+        zu bestehen. Vielleicht ist es ja auch nicht ganz so streng,
+        und Sie möchten normalerweise, dass <span class="command"><strong>svn
+          merge</strong></span> die meisten Änderungen vom Stamm automatisch
+        mit dem Zweig zusammenführt. In diesem Fall könnten Sie ein
+        Verfahren gebrauchen, dass es Ihnen erlaubt, einige bestimmte
+        Änderungen auszulassen, d.h. zu vermeiden, dass sie
+        automatisch in den Zweig eingebracht werden.</p>
+<p>Die einzige Möglichkeit, mit Subversion 1.5 eine
+        Änderungsmenge zu blockieren, besteht darin, dem System
+        vorzugaukeln, dass die Änderung <span class="emphasis"><em>bereits</em></span>
+        eingearbeitet wurde. Dazu können Sie den Befehl mit der Option
+        <code class="option">--record-only</code> aufrufen:</p>
+<pre class="screen">
+$ cd my-calc-branch
+
+$ svn propget svn:mergeinfo .
+/trunk:1680-3305
+
+# In den Metadaten r3328 als bereits zusammengeführt vermerken.
+$ svn merge -c 3328 --record-only http://svn.example.com/repos/calc/trunk
+
+$ svn status
+M     .
+
+$ svn propget svn:mergeinfo .
+/trunk:1680-3305,3328
+
+$ svn commit -m "Das Zusammenführen von r3328 mit dem Zweig verhindern."
+…
+</pre>
+<p>Diese Technik funktioniert zwar, sie ist allerdings auch
+        ein wenig gefährlich. Das Hauptproblem ist, dass wir nicht
+        klar unterscheiden zwischen „<span class="quote">ich habe diese Änderung
+          bereits</span>“ und „<span class="quote">ich habe diese Änderung
+          nicht</span>“. Wir belügen das System gewissermaßen, indem
+        wir es glauben lassen, dass die Änderung schon eingearbeitet
+        sei. Das schiebt die Verantwortung, sich daran zu erinnern,
+        dass die Änderung tatsächlich gar nicht übernommen wurde
+        sondern nicht gewünscht war, auf Sie – den Benutzer. Es
+        gibt keine Möglichkeit, Subversion nach einer Liste
+        „<span class="quote">blockierter Änderungen</span>“ zu fragen. Wenn Sie sie
+        verfolgen möchten (so dass Sie eines Tages die Blockierung
+        aufheben können) müssen Sie sie irgendwo in eine Textdatei
+        schreiben oder in einem erfundenen Property festhalten. Leider
+        ist das in Subversion 1.5 die einzige Möglichkeit mit
+        blockierten Revisionen umzugehen; ein besseres Interface dafür
+        ist für künftige Versionen geplant.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.logblame"></a>4.4.6. Protokolle und Anmerkungen, die Zusammenführungen anzeigen</h3></div></div></div>
+<p>Ein Hauptmerkmal jedes Versionskontrollsystems ist es,
+        darüber Buch zu führen, wer was wann geändert hat. Die Befehle
+        <span class="command"><strong>svn log</strong></span> und <span class="command"><strong>svn blame</strong></span>
+        sind die geeigneten Werkzeuge hierfür: Wenn sie auf
+        individuelle Dateien angewendet werden, zeigen sie nicht nur
+        die Geschichte der Änderungsmengen, die in diese Datei
+        hineinflossen, sondern auch, welcher Benutzer wann welche
+        Zeile im Quelltext geschrieben hat.</p>
+<p>Wenn jedoch Änderungen über Zweige hinweg dupliziert
+        werden, wird es schnell kompliziert. Wenn Sie z.B.
+        <span class="command"><strong>svn log</strong></span> nach der Geschichte Ihres Zweigs
+        fragen, wird es Ihnen exakt jede Revision anzeigen, die je in
+        den Zweig hineingeflossen ist:</p>
+<pre class="screen">
+$ cd my-calc-branch
+$ svn log -q
+------------------------------------------------------------------------
+r390 | user | 2002-11-22 11:01:57 -0600 (Fr, 22. Nov 2002) | 1 line
+------------------------------------------------------------------------
+r388 | user | 2002-11-21 05:20:00 -0600 (Do, 21. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r381 | user | 2002-11-20 15:07:06 -0600 (Mi, 20. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r359 | user | 2002-11-19 19:19:20 -0600 (Di, 19. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r357 | user | 2002-11-15 14:29:52 -0600 (Fr, 15. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r343 | user | 2002-11-07 13:50:10 -0600 (Do, 07. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r341 | user | 2002-11-03 07:17:16 -0600 (So, 03. Nov 2002) | 2 lines
+------------------------------------------------------------------------
+r303 | sally | 2002-10-29 21:14:35 -0600 (Di, 29. Oct 2002) | 2 lines
+------------------------------------------------------------------------
+r98 | sally | 2002-02-22 15:35:29 -0600 (Fr, 22. Feb 2002) | 2 lines
+------------------------------------------------------------------------
+</pre>
+<p>Aber ist das wirklich eine genaue Wiedergabe aller
+        Änderungen, die auf dem Zweig stattgefunden haben? Was hier
+        ausgelassen wird, ist, dass die Revisionen 390, 381 und 357
+        tatsächlich Ergebnisse des Zusammenführens von Änderungen aus
+        dem Stamm waren. Wenn Sie sich eins dieser Protokolle im
+        Detail anschauen, können Sie die verschiedenen
+        Änderungsmengen vom Stamm, die die Änderungen auf dem Zweig
+        ausmachen, nirgendwo sehen:</p>
+<pre class="screen">
+$ svn log -v -r 390
+------------------------------------------------------------------------
+r390 | user | 2002-11-22 11:01:57 -0600 (Fri, 22 Nov 2002) | 1 line
+Geänderte Pfade:
+   M /branches/my-calc-branch/button.c
+   M /branches/my-calc-branch/README
+
+Letzte Zusammenführung der Änderungen von trunk changes in my-calc-branch.
+</pre>
+<p>Wir wissen, dass diese Zusammenführung in den Zweig nichts
+        anderes war als eine Zusammenführung von Änderungen vom Stamm.
+        Wie können wir zusätzlich diese Änderungen sehen? Die Antwort
+        lautet, die Option <code class="option">--use-merge-history</code>
+        (<code class="option">-g</code>) zu verwenden. Diese Option expandiert
+        diejenigen „<span class="quote">Teil</span>“-Änderungen, aus denen die
+        Zusammenführung bestand.</p>
+<pre class="screen">
+$ svn log -v -r 390 -g
+------------------------------------------------------------------------
+r390 | user | 2002-11-22 11:01:57 -0600 (Fri, 22 Nov 2002) | 1 line
+Geänderte Pfade:
+   M /branches/my-calc-branch/button.c
+   M /branches/my-calc-branch/README
+
+Letzte Zusammenführung der Änderungen von trunk changes in my-calc-branch.
+------------------------------------------------------------------------
+r383 | sally | 2002-11-21 03:19:00 -0600 (Thu, 21 Nov 2002) | 2 lines
+Geänderte Pfade:
+   M /branches/my-calc-branch/button.c
+Zusammengeführt mittels: r390
+
+Inverse Grafik auf Knopf behoben.
+------------------------------------------------------------------------
+r382 | sally | 2002-11-20 16:57:06 -0600 (Wed, 20 Nov 2002) | 2 lines
+Geänderte Pfade:
+   M /branches/my-calc-branch/README
+Zusammengeführt mittels: r390
+
+Meine letzte Änderung in README dokumentiert.
+</pre>
+<p>Dadurch, dass wir die Protokoll-Operation aufgefordert
+        haben, die Geschichte der Zusammenführungen zu verwenden,
+        sehen wir nicht nur die Revision, die wir abgefragt haben
+        (r390), sondern auch die zwei Revisionen, die hier mitkamen
+        – ein paar Änderungen, die Sally auf dem Stamm gemacht
+        hat. Das ist ein wesentlich vollständigeres Bild der
+        Geschichte!</p>
+<p>Auch der <span class="command"><strong>svn blame</strong></span>-Befehl versteht die
+        Option <code class="option">--use-merge-history</code>
+        (<code class="option">-g</code>).  Falls diese Option vergessen wird,
+        könnte jemand, der sich die zeilenweisen Anmerkungen von
+        <code class="filename">button.c</code> ansieht, fälschlicherweise davon
+        ausgehen, dass Sie für die Zeilen verantwortlich sind, die
+        einen bestimmten Fehler beseitigt haben:</p>
+<pre class="screen">
+$ svn blame button.c
+…
+   390    user    retval = inverse_func(button, path);
+   390    user    return retval;
+   390    user    }
+…
+</pre>
+<p>Obwohl es zutrifft, dass Sie diese drei Zeilen in Revision
+        390 übergeben haben, sind zwei davon tatsächlich von Sally in
+        Revision 383 geschrieben worden:</p>
+<pre class="screen">
+$ svn blame button.c -g
+…
+G    383    sally   retval = inverse_func(button, path);
+G    383    sally   return retval;
+     390    user    }
+…
+</pre>
+<p>Nun wissen wir, wer <span class="emphasis"><em>wirklich</em></span> für die
+        zwei Zeilen Quelltext verantwortlich ist!</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.ancestry"></a>4.4.7. Die Abstammung berücksichtigen oder ignorieren</h3></div></div></div>
+<p>Wenn Sie sich mit einem Subversion-Entwickler unterhalten,
+        wird wahrscheinlich auch der Begriff
+        <em class="firstterm">Abstammung</em> erwähnt. Dieses Wort wird
+        verwendet, um die Beziehung zwischen zwei Objekten im
+        Repository zu beschreiben: Wenn sie in Beziehung zueinander
+        stehen, heißt es, dass ein Objekt vom anderen abstammt.</p>
+<p>Nehmen wir an, Sie übergeben Revision 100, die eine
+        Änderung an der Datei <code class="filename">foo.c</code> beinhaltet.
+        Dann ist  <code class="filename">foo.c@99</code> ein
+        „<span class="quote">Vorfahre</span>“ von <code class="filename">foo.c@100</code>.
+        Wenn Sie dagegen in Revision 101 die Löschung von
+        <code class="filename">foo.c</code> übergeben und in Revision 102 eine
+        neue Datei mit demselben Namen hinzufügen, hat es zwar den
+        Anschein, dass <code class="filename">foo.c@99</code> und
+        <code class="filename">foo.c@102</code> in Beziehung zueinander stehen
+        (sie haben denselben Pfad), es handelt sich allerdings um
+        völlig unterschiedliche Objekte im Repository. Sie haben weder
+        eine gemeinsame Geschichte noch
+        „<span class="quote">Abstammung</span>“.</p>
+<p>Wir erwähnen das, um auf einen wichtigen Unterschied
+        zwischen den Befehlen <span class="command"><strong>svn diff</strong></span> und
+        <span class="command"><strong>svn merge</strong></span> hinzuweisen. Der erstere Befehl
+        ignoriert die Abstammung, wohingegen letzterer diese beachtet.
+        Wenn Sie beispielsweise mit <span class="command"><strong>svn diff</strong></span> die
+        Revisionen 99 und 102 von <code class="filename">foo.c</code>
+        vergleichen, werden Sie zeilenbasierte Unterschiede sehen; der
+        Befehl <span class="command"><strong>diff</strong></span> vergleicht blind zwei Pfade.
+        Wenn Sie aber dieselben Objekte mit <span class="command"><strong>svn
+        merge</strong></span> vergleichen, wird es feststellen, dass sie
+        nicht in Beziehung stehen und versuchen, die alte Datei zu
+        löschen und dann die neue hinzuzufügen; die Ausgabe wird eine
+        Löschung gefolgt von einer Hinzufügung anzeigen:</p>
+<pre class="screen">
+D    foo.c
+A    foo.c
+      </pre>
+<p>Die meisten Zusammenführungen vergleichen Bäume, die von
+        der Abstammung  her miteinander in Beziehung stehen, deshalb
+        verhält sich <span class="command"><strong>svn merge</strong></span> auf diese Weise.
+        Gelegentlich möchten Sie jedoch mit dem
+        <span class="command"><strong>merge</strong></span>-Befehl zwei Bäume vergleichen, die
+        nicht miteinander in Beziehung stehen. Es kann z.B. sein, dass
+        Sie zwei Quelltext-Bäume importiert haben, die unterschiedliche
+        Lieferantenstände eines Software-Projektes repräsentieren
+        (siehe <a class="xref" href="svn.advanced.vendorbr.html" title="4.9. Lieferanten-Zweige">Abschnitt 4.9, „Lieferanten-Zweige“</a>).  Falls Sie 
+        <span class="command"><strong>svn merge</strong></span> dazu aufforderten, die beiden Bäume
+        miteinander zu vergleichen, würden Sie sehen, dass der
+        vollständige erste Baum gelöscht und anschließend der
+        vollständige zweite Baum hinzugefügt würde! In diesen
+        Situationen möchten Sie, dass <span class="command"><strong>svn merge</strong></span>
+        lediglich einen pfadbasierten Vergleich vornimmt und
+        Beziehungen zwischen Dateien und Verzeichnissen außer Acht
+        lässt. Fügen Sie die Option <code class="option">--ignore-ancestry</code>
+        dem <span class="command"><strong>merge</strong></span>-Befehl hinzu, und er wird sich
+        verhalten wie <span class="command"><strong>svn diff</strong></span>.  (Auf der anderen
+        Seite wird die Option <code class="option">--notice-ancestry</code> den
+        Befehl <span class="command"><strong>svn diff</strong></span> dazu veranlassen, sich wie
+        <span class="command"><strong>svn merge</strong></span> zu verhalten.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.moves"></a>4.4.8. Zusammenführen und Verschieben</h3></div></div></div>
+<p>Es ist ein verbreiteter Wunsch, Software zu refaktorieren,
+        besonders in Java-basierten Software-Projekten. Dateien und
+        Verzeichnisse werden hin und her geschoben und umbenannt, was
+        häufig zu erheblichen Beeinträchtigungen für alle
+        Projektmitarbeiter führt. Das hört sich an, als sei das der
+        klassische Fall, um nach einem Zweig zu greifen, nicht wahr?
+        Sie erzeugen einfach einen Zweig, schieben das Zeug herum und
+        führen anschließend den Zweig mit dem Stamm zusammen.</p>
+<p>Leider funktioniert dieses Szenario im Augenblick noch
+        nicht so richtig und gilt als einer der Schwachpunkte von
+        Subversion. Das Problem ist, das der Subversion-Befehl
+        <span class="command"><strong>svn update</strong></span> nicht so stabil ist, wie er sein
+        sollte, besonders wenn es um Kopier- und Verschiebeoperationen
+        geht.</p>
+<p>Wenn Sie <span class="command"><strong>svn copy</strong></span> zum Duplizieren einer
+        Datei verwenden, merkt sich das Repository, woher die neue
+        Datei kam, versäumt aber, diese Information an den Client zu
+        senden, der <span class="command"><strong>svn update</strong></span> oder <span class="command"><strong>svn
+        merge</strong></span> ausführt. Statt dem Client mitzuteilen:
+        „<span class="quote">Kopiere die Datei, die du bereits hast an diesen neuen
+        Ort</span>“, sendet es eine völlig neue Datei. Das kann zu
+        Problemen führen, besonders, weil dasselbe mit umbenannten
+        Dateien passiert. Eine weniger bekannte Tatsache über
+        Subversion ist, dass es keine „<span class="quote">echten
+        Umbenennungen</span>“ hat – der Befehl <span class="command"><strong>svn
+        move</strong></span> ist weiter nichts als eine Verbindung von
+        <span class="command"><strong>svn copy</strong></span> und <span class="command"><strong>svn
+        delete</strong></span>.</p>
+<p>Nehmen wir beispielsweise an, dass Sie während Ihrer
+        Arbeit auf Ihrem privaten Zweig <code class="filename">integer.c</code>
+        in <code class="filename">whole.c</code> umbenennen. Tatsächlich haben
+        Sie eine neue Datei auf Ihrem Zweig erzeugt, die eine Kopie
+        der ursprünglichen Datei ist, und letztere gelöscht.
+        Zwischenzeitlich hat Sally einige Verbesserungen an
+        <code class="filename">integer.c</code> in <code class="filename">trunk</code>
+        übergeben. Nun entscheiden Sie sich, Ihren Zweig mit dem Stamm
+        zusammenzuführen:</p>
+<pre class="screen">
+$ cd calc/trunk
+
+$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/my-calc-branch
+-- Zusammenführen der Unterschiede zwischen Projektarchiv-URLs in ».«:
+D   integer.c
+A   whole.c
+U   .
+      </pre>
+<p>Auf den ersten Blick sieht es gar nicht schlecht aus,
+        jedoch ist es nicht das, was Sie und Sally erwartet hätten.
+        Die Zusammenführung hat die letzte Version der Datei
+        <code class="filename">integer.c</code> gelöscht (diejenige, die Sallys
+        Änderungen beinhaltet) und blindlings Ihre neue Datei
+        <code class="filename">whole.c</code> hinzugefügt – die ein
+        Duplikat der <span class="emphasis"><em>älteren</em></span> Version von
+        <code class="filename">integer.c</code> ist. Das Endergebnis ist, dass
+        durch die Zusammenführung Ihrer „<span class="quote">Umbenennung</span>“ auf
+        dem Zweig mit dem Stamm Sallys jüngste Änderungen aus der
+        letzten Revision entfernt wurden.</p>
+<p>Es ist kein echter Datenverlust. Sallys Änderungen
+        befinden sich noch immer in der Geschichte des Repositorys,
+        allerdings mag es nicht sofort ersichtlich sein, dass es
+        passiert ist. Die Lehre, die es aus dieser Geschichte zu
+        ziehen gilt, lautet, dass Sie sehr vorsichtig mit dem
+        Zusammenführen von Kopien und Umbenennungen zwischen Zweigen
+        sein sollten, solange sich Subversion an dieser Stelle nicht
+        verbessert hat.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.pre1.5clients"></a>4.4.9. Abblocken von Clients, die Zusammenführungen nicht
+        ausreichend unterstützen</h3></div></div></div>
+<p>Wenn Sie gerade Ihren Server auf Subversion 1.5 oder
+        größer umgestellt haben, besteht ein signifikantes Risiko,
+        dass Subversion-Clients einer kleineren Version als 1.5 Ihre
+        automatische Zusammenführungs-Verfolgung durcheinander bringen
+        können. Warum? Wenn ein älterer Subversion-Client <span class="command"><strong>svn
+        merge</strong></span> ausführt, modifiziert er nicht den Wert des
+        Propertys <code class="literal">svn:mergeinfo</code>.  Obwohl die
+        anschließende Übergabe das Ergebnis einer Zusammenführung ist,
+        wird dem Repository nichts über die duplizierten Änderungen
+        mitgeteilt – diese Information ist verloren. Wenn später
+        Clients, die Zusammenführungsinformationen auswerten,
+        automatische Zusammenführungen versuchen, werden Sie
+        wahrscheinlich in alle möglichen Konflikte laufen, die durch
+        wiederholte Zusammenführungen hervorgerufen wurden.</p>
+<p>Wenn Sie und Ihr Team auf die Zusammenführungs-Verfolgung
+        von Subversion angewiesen sind, sollten Sie Ihr Repository
+        dergestalt konfigurieren, dass ältere Clients daran gehindert
+        werden, Änderungen zu übergeben. Die einfache Methode hierfür
+        ist es, den „<span class="quote">Fähigkeiten</span>“-Parameter im
+        <code class="literal">start-commit</code> Hook-Skript zu untersuchen.
+        Wenn der Client meldet, dass er mit
+        <code class="literal">mergeinfo</code> umgehen kann, kann das Skript den
+        Beginn der Übergabe erlauben.  Wenn der Client diese Fähigkeit
+        nicht meldet, wird die Übergabe abgelehnt. Wir werden mehr
+        über Hook-Skripte im nächsten Kapitel erfahren; siehe <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="5.3.2. Erstellen von Repository-Hooks">Abschnitt 5.3.2, „Erstellen von Repository-Hooks“</a> und <a class="xref" href="svn.ref.reposhooks.start-commit.html" title="start-commit">start-commit</a> für
+        Details.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.advanced.finalword"></a>4.4.10. Das abschließende Wort zur Zusammenführungs-Verfolgung</h3></div></div></div>
+<p>Unter dem Strich bedeutet das, dass die Fähigkeit von
+        Subversion zur Zusammenführungs-Verfolgung eine höchst
+        komplexe interne Implementierung besitzt und das Property
+        <code class="literal">svn:mergeinfo</code> das einzige Fenster zu diesem
+        Räderwerk ist. Da diese Fähigkeit relativ neu ist, kann eine
+        Anzahl von Randfällen und mögliche unerwartete
+        Verhaltensweisen auftauchen.</p>
+<p>So kann zum Beispiel Mergeinfo manchmal durch einen
+        einfachen <span class="command"><strong>svn copy</strong></span>- oder <span class="command"><strong>svn
+        move</strong></span>-Befehl erzeugt werden. Manchmal wird Mergeinfo
+        an Dateien auftauchen, von denen Sie nicht erwartet hätten,
+        dass sie durch die Operation berührt worden wären. Manchmal
+        wird Mergeinfo überhaupt nicht erzeugt, obwohl Sie es erwartet
+        hätten. Darüberhinaus umgibt die Verwaltung der
+        Mergeinfo-Metadaten eine ganze Menge von Systematiken und
+        Verhalten, wie „<span class="quote">explizite</span>“ gegenüber
+        „<span class="quote">implizite</span>“ Mergeinfo, „<span class="quote">operative</span>“
+        gegenüber „<span class="quote">inoperativen</span>“ Revisionen, besondere
+        Mechanismen von  Mergeinfo-„<span class="quote">Auslassung</span>“ und sogar
+        „<span class="quote">Vererbung</span>“ von Eltern- zu
+        Kindverzeichnissen.</p>
+<p>Wir haben uns entschieden, diese detaillierten Themen aus
+        einer Reihe von Gründen nicht in diesem Buch zu behandeln.
+        Erstens ist der Detaillierungsgrad für einen normalen
+        Benutzer absolut erdrückend. Zweitens glauben wir, dass das
+        Verständnis diese Konzepte für einen typischen Benutzer nicht
+        unbedingt erforderlich sein <span class="emphasis"><em>sollte</em></span> während
+        Subversion sich verbessert; letztendlich werden sie als
+        nervige Implementierugsdetails in den Hintergrund treten. Wenn
+        Sie, nachdem dies gesagt ist, diese Dinge mögen, können Sie
+        einen fantastischen Überblick in einer Arbeit nachlesen, die
+        auf der Webseite von CollabNet veröffentlicht ist:<a class="ulink" href="http://www.collab.net/community/subversion/articles/merge-info.html" target="_top">http://www.collab.net/community/subversion/articles/merge-info.html</a>.</p>
+<p>Fürs Erste empfiehlt CollabNet, sich an die folgenden
+        bewährten Praktiken zu halten, wenn Sie Fehler und
+        merkwürdiges Verhalten bei automatischen Zusammenführungen
+        vermeiden wollen:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Wenden Sie für kurzlebige Arbeitszweige das Verfahren
+            an, das in <a class="xref" href="svn.branchmerge.basicmerging.html" title="4.3. Grundlegendes Zusammenführen">Abschnitt 4.3, „Grundlegendes Zusammenführen“</a>
+            beschrieben wird.</p></li>
+<li><p>Machen Sie Zusammenführungen langlebiger
+            Release-Zweige (wie in  <a class="xref" href="svn.branchmerge.commonpatterns.html" title="4.8. Verbreitete Verzweigungsmuster">Abschnitt 4.8, „Verbreitete Verzweigungsmuster“</a> beschrieben)
+            nur im Wurzelverzeichnis des Zweigs und nicht in
+            Unterverzeichnissen.</p></li>
+<li><p>Machen Sie Zusammenführungen in Arbeitsverzeichnisse
+            niemals mit einer Mischung aus Arbeitsrevisionsnummern oder
+            „<span class="quote">umgeschalteten</span>“ Unterverzeichnissen (wie als
+            Nächstes in <a class="xref" href="svn.branchmerge.switchwc.html" title="4.5. Zweige durchlaufen">Abschnitt 4.5, „Zweige durchlaufen“</a>
+            beschrieben). Das Ziel einer Zusammenführung sollte eine
+            Arbeitskopie sein, die einen <span class="emphasis"><em>einzigen</em></span>
+            Ort zu einem einzelnen Zeitpunkt im Repository
+            repräsentiert.</p></li>
+<li><p>Editieren Sie niemals direkt das Property
+            <code class="literal">svn:mergeinfo</code>; verwenden Sie
+            <span class="command"><strong>svn merge</strong></span> mit der Option
+            <code class="option">--record-only</code>, um eine gewünschte
+            Änderung an den Metadaten zu bewirken (wie in <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.blockchanges" title="4.4.5. Änderungen blockieren">Abschnitt 4.4.5, „Änderungen blockieren“</a>
+            gezeigt).</p></li>
+<li><p>Stellen Sie jederzeit sicher, dass Sie vollständigen
+            Lesezugriff auf die Quellen für die Zusammenführung haben
+            und dass Ihre Ziel-Arbeitskopie keine dünn besetzten
+            Verzeichnisse besitzt.</p></li>
+</ul></div>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id617195" href="#id617195" class="para">22</a>] </sup>Zumindest trifft das zur Zeit für Subversion 1.5 zu.
+              Dieses Verhalten könnte sich in künftigen Versionen von
+              Subversion verbessern.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id617804" href="#id617804" class="para">23</a>] </sup>Interessanterweise werden wir nach dem
+                Zurücknehmen einer Revision auf diese Art nicht in der
+                Lage sein, diese Revision erneut mit <strong class="userinput"><code>svn
+                  merge . -c 5</code></strong> anzuwenden, da aus den
+                Metadaten hervorgeht, dass r5 bereits angewendet
+                wurde. Wir müssten die Option
+                <code class="option">--ignore-ancestry</code> verwenden, damit
+                der Befehl die bestehenden Metadaten ignoriert.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.basicmerging.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.switchwc.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.3. Grundlegendes Zusammenführen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.5. Zweige durchlaufen</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

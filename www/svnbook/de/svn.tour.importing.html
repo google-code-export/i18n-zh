@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>2.2. Wie Sie Daten in Ihr Repository bekommen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.tour.html" title="Kapitel 2. Grundlegende Benutzung">
+<link rel="prev" href="svn.tour.html" title="Kapitel 2. Grundlegende Benutzung">
+<link rel="next" href="svn.tour.initial.html" title="2.3. Anfänglicher Checkout">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">2.2. Wie Sie Daten in Ihr Repository bekommen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.tour.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 2. Grundlegende Benutzung</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.tour.initial.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.tour.importing"></a>2.2. Wie Sie Daten in Ihr Repository bekommen</h2></div></div></div>
+<p>Sie können neue Dateien auf zweierlei Weisen in das
+      Subversion-Repository bekommen: <span class="command"><strong>svn import</strong></span> und
+      <span class="command"><strong>svn add</strong></span>.  Wir werden <span class="command"><strong>svn
+        import</strong></span> jetzt und <span class="command"><strong>svn add</strong></span> später
+      in diesem Kapitel besprechen, wenn wir einen typischen Tag mit
+      Subversion durchnehmen.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.importing.import"></a>2.2.1. svn import</h3></div></div></div>
+<p>Mit dem <span class="command"><strong>svn import</strong></span>-Befehl kann ein
+        unversionierter Verzeichnisbaum schnell in ein Repository
+        kopiert werden, wobei benötigte Zwischenverzeichnisse nach
+        Bedarf angelegt werden. <span class="command"><strong>svn import</strong></span>
+        erfordert keine Arbeitskopie und pflegt Ihre Dateien sofort in
+        das Repository ein. Typischerweise verwenden Sie diesen Befehl,
+        wenn bereits ein Verzeichnisbaum besteht, den Sie
+        aber in einem Subversion-Repository pflegen möchten. Zum
+        Beispiel:</p>
+<pre class="screen">
+$ svnadmin create /var/svn/newrepos
+$ svn import mytree file:///var/svn/newrepos/some/project \
+             -m "Erstimport"
+Hinzufügen     mytree/foo.c
+Hinzufügen     mytree/bar.c
+Hinzufügen     mytree/subdir
+Hinzufügen     mytree/subdir/quux.h
+
+Revision 1 übertragen.
+</pre>
+<p>Im vorstehenden Beispiel wurde der Inhalt des
+        Verzeichnisses <code class="filename">mytree</code> unter dem
+        Verzeichnis <code class="filename">some/project</code> im Repository
+        abgelegt:</p>
+<pre class="screen">
+$ svn list file:///var/svn/newrepos/some/project
+bar.c
+foo.c
+subdir/
+</pre>
+<p>Beachten Sie, dass nach dem Import der Originalbaum
+        <span class="emphasis"><em>nicht</em></span> in eine Arbeitskopie umgewandelt
+        wird. Vor Beginn der Arbeit müssen Sie noch <span class="command"><strong>svn
+          checkout</strong></span> ausführen, um eine frische Arbeitskopie
+        des Baums zu erhalten.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.importing.layout"></a>2.2.2. Empfohlene Repository Aufteilung</h3></div></div></div>
+<p>Obwohl die Flexibilität von Subversion es Ihnen erlaubt,
+        Ihr Repository nach Belieben aufzuteilen, empfehlen wir, ein
+        Verzeichnis <code class="filename">trunk</code> für die
+        „<span class="quote">Hauptlinie</span>“ der Entwicklung, ein
+        Verzeichnis <code class="filename">branches</code> für Branch-Kopien und
+        ein Verzeichnis <code class="filename">tags</code> für
+        Tag-Kopien. Zum Beispiel:</p>
+<pre class="screen">
+$ svn list file:///var/svn/repos
+/trunk
+/branches
+/tags
+</pre>
+<p>In <a class="xref" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">Kapitel 4, <i>Verzweigen und Zusammenführen</i></a> werden Sie mehr über
+        Branches und Tags erfahren. Details über das Aufsetzen
+        mehrerer Projekte finden Sie in <a class="xref" href="svn.branchmerge.maint.html#svn.branchmerge.maint.layout" title="4.7.1. Aufbau des Repositorys">Abschnitt 4.7.1, „Aufbau des Repositorys“</a>, und in <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. Planung der Organisation Ihres Repositorys">Abschnitt 5.2.1, „Planung der Organisation Ihres Repositorys“</a>  lesen
+        Sie mehr über Wurzelverzeichnisse von Projekten.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.tour.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.tour.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.tour.initial.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Kapitel 2. Grundlegende Benutzung </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 2.3. Anfänglicher Checkout</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.7. Verwaltung von Zweigen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.tags.html" title="4.6. Tags">
+<link rel="next" href="svn.branchmerge.commonpatterns.html" title="4.8. Verbreitete Verzweigungsmuster">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.7. Verwaltung von Zweigen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.tags.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.commonpatterns.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.maint"></a>4.7. Verwaltung von Zweigen</h2></div></div></div>
+<p>Sie haben mittlerweile vielleicht festgestellt, dass
+      Subversion äußerst flexibel ist. Da Zweigen und Tags derselbe
+      Mechanismus zugrundeliegt (Verzeichniskopien) und weil Zweige
+      und Tags im normalen Dateisystem auftauchen, finden viele Leute
+      Subversion einschüchternd. Es ist beinahe
+      <span class="emphasis"><em>zu</em></span> flexibel. In diesem Abschnitt machen wir
+      einige Vorschläge, wie Sie Ihre Daten im Laufe der Zeit
+      organisieren und verwalten können.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.maint.layout"></a>4.7.1. Aufbau des Repositorys</h3></div></div></div>
+<p>Es gibt einige empfohlene Standards, ein Repository zu
+        organisieren. Die meisten Leute erzeugen ein
+        <code class="filename">trunk</code>-Verzeichnis, um die Hauptlinie der
+        Entwicklung aufzunehmen, ein
+        <code class="filename">branches</code>-Verzeichnis für Zweig-Kopien und
+        ein <code class="filename">tags</code>-Verzeichnis für Tag-Kopien.
+        Falls ein Repository nur ein Projekt beinhaltet, werden oft
+        diese Verzeichnisse auf der obersten Ebene angelegt:</p>
+<pre class="screen">
+/trunk
+/branches
+/tags
+</pre>
+<p>Falls ein Repository mehrere Projekte enthält, teilen
+        Administratoren das Repository üblicherweise nach den
+        Projekten ein (lesen Sie in <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. Planung der Organisation Ihres Repositorys">Abschnitt 5.2.1, „Planung der Organisation Ihres Repositorys“</a> mehr über
+        „<span class="quote">Projekt-Wurzelverzeichnisse</span>“):</p>
+<pre class="screen">
+/paint/trunk
+/paint/branches
+/paint/tags
+/calc/trunk
+/calc/branches
+/calc/tags
+</pre>
+<p>Natürlich ist es Ihnen freigestellt, diese verbreiteten
+        Strukturen zu ignorieren. Sie können alle möglichen
+        Variationen erzeugen, die am besten für Sie oder Ihr Team
+        funktionieren. Denken Sie daran, dass es, wie auch immer Sie
+        sich entscheiden, nicht für die Ewigkeit sein muss. Sie können
+        jederzeit Ihr Repository umorganisieren. Da Zweige und Tags
+        gewöhnliche Verzeichnisse sind, kann der Befehl <span class="command"><strong>svn
+        move</strong></span> sie nach Belieben verschieben oder umbenennen.
+        Die Umstrukturierung ist einfach eine Sache von serverseitigen
+        Verschiebebefehlen. Wenn Ihnen der Aufbau des Repositorys
+        nicht zusagt, jonglieren Sie einfach mit den Verzeichnissen
+        herum.</p>
+<p>Obwohl es einfach ist, Verzeichnisse zu verschieben,
+        sollten Sie Rücksicht auf Ihre Benutzer nehmen. Ihr Jonglieren
+        kann verwirrend für Benutzer mit bestehenden Arbeitskopien
+        sein. Falls ein Benutzer eine Arbeitskopie eines bestimmten
+        Repository-Verzeichnisses hat, könnte Ihre <span class="command"><strong>svn
+        move</strong></span>-Operation den Pfad von der letzten Revision
+        entfernen. Wenn der Benutzer beim nächsten Mal <span class="command"><strong>svn
+        update</strong></span> aufruft, wird ihm mitgeteilt, dass die
+        Arbeitskopie einen Pfad repräsentiere, der nicht mehr bestehe,
+        so dass er gezwungen ist, mit <span class="command"><strong>svn switch</strong></span>
+        auf den neuen Ort umzuschalten.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.maint.lifetime"></a>4.7.2. Lebensdauer von Daten</h3></div></div></div>
+<p>Eine weitere nette Eigenschaft des Subversion-Modells ist
+        die Möglichkeit, Zweigen und Tags eine begrenzte Lebensdauer
+        zu geben, so wie jedem anderen versionierten Objekt. Nehmen
+        wir beispielsweise an, dass Sie letztendlich Ihre Arbeit auf
+        dem persönlichen Zweig des <code class="filename">calc</code>-Projektes
+        abschließen. Nachdem Sie all Ihre Änderungen zurück nach
+        <code class="filename">/calc/trunk</code> gebracht haben, braucht Ihr
+        privater Zweig nicht mehr herumzuliegen:</p>
+<pre class="screen">
+$ svn delete http://svn.example.com/repos/calc/branches/my-calc-branch \
+             -m "Veralteten Zweig des Projekts calc gelöscht."
+
+Revision 375 übertragen.
+</pre>
+<p>Nun ist Ihr Zweig verschwunden. Selbstverständlich ist er
+        nicht wirklich verschwunden: das Verzeichnis fehlt einfach in
+        der <code class="literal">HEAD</code>-Revision, so dass es niemanden
+        mehr ablenken kann. Wenn Sie <span class="command"><strong>svn checkout</strong></span>,
+        <span class="command"><strong>svn switch</strong></span> oder <span class="command"><strong>svn list</strong></span>
+        verwenden, um sich eine frühere Revision anzusehen, werden Sie
+        immer noch Ihren alten Zweig sehen.</p>
+<p>Falls es nicht ausreichen sollte, im gelöschten
+        Verzeichnis zu stöbern, können Sie es jederzeit wieder
+        zurückholen. Das Wiederbeleben von Daten in Subversion ist
+        sehr einfach. Falls ein gelöschtes Verzeichnis (oder eine
+        gelöschte Datei) wieder nach <code class="literal">HEAD</code> gebracht
+        werden soll, verwenden Sie einfach <span class="command"><strong>svn copy</strong></span>
+        zum Kopieren aus der alten Revision:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/branches/my-calc-branch@374 \
+           http://svn.example.com/repos/calc/branches/my-calc-branch \
+           -m "my-calc-branch wiederhergestellt."
+
+Revision 376 übertragen.
+</pre>
+<p>In unserem Beispiel hatte Ihr persönlicher Zweig eine
+        relativ kurze Lebensdauer: Sie haben ihn vielleicht angelegt,
+        um einen Fehler zu beseitigen oder eine neue Funktion
+        einzubauen. Wenn Ihr Arbeitspaket abgeschlossen ist, kann auch
+        der Zweig geschlossen werden. In der Softwareentwicklung ist
+        es allerdings auch üblich, zwei „<span class="quote">Haupt</span>“-Zweige zu
+        haben, die für lange Zeit nebeneinander bestehen. Es ist zum
+        Beispiel an der Zeit, eine stabile Version des
+        <code class="filename">calc</code>-Projektes zu veröffentlichen, und
+        Sie wissen, dass es wohl noch ein paar Monate dauern wird, um
+        Fehler aus der Software zu entfernen. Sie wollen weder, dass
+        dem Projekt neue Funktionen hinzugefügt werden, noch möchten
+        Sie alle Entwicklern auffordern, das Programmieren
+        einzustellen. Stattdessen erstellen Sie einen
+        „<span class="quote">stabilen</span>“ Zweig der Software, auf dem sich nicht
+        viel verändern wird:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/branches/stable-1.0 \
+           -m "Stabilen Zweig für Projekt calc angelegt."
+
+Revision 377 übertragen.
+</pre>
+<p>Nun können Entwickler die neuesten (oder experimentellen)
+        Funktionen <code class="filename">/calc/trunk</code> hinzufügen,
+        während Sie zum Grundsatz erklären, dass ausschließlich
+        Fehlerbehebungen an
+        <code class="filename">/calc/branches/stable-1.0</code> übergeben
+        werden. Das heißt, während auf dem Stamm weitergearbeitet
+        wird, überträgt jemand selektiv Fehlerbehebungen auf den
+        stabilen Zweig. Selbst wenn die Software von hier bereits
+        ausgeliefert worden ist, werden Sie diesen Zweig
+        wahrscheinlich noch für eine lange Zeit pflegen – das
+        heißt, so lange, wie Sie diese Auslieferung beim Kunden
+        unterstützen werden. Wir werden das im nächsten Abschnitt
+        näher erörtern.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.tags.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.commonpatterns.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.6. Tags </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.8. Verbreitete Verzweigungsmuster</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

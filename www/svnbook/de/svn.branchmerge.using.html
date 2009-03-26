@@ -1,0 +1,379 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.2. Verwenden von Zweigen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="next" href="svn.branchmerge.basicmerging.html" title="4.3. Grundlegendes Zusammenführen">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.2. Verwenden von Zweigen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.basicmerging.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.using"></a>4.2. Verwenden von Zweigen</h2></div></div></div>
+<p>An dieser Stelle sollten Sie verstehen, wie jede Übergabe an
+      das Repository dort einen völlig neuen Dateibaum
+      („<span class="quote">Revision</span>“ genannt) erzeugt. Wenn nicht, blättern
+      Sie zurück und lesen Sie in <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.revs" title="1.3.3. Revisionen">Abschnitt 1.3.3, „Revisionen“</a> über Revisionen
+      nach.</p>
+<p>Für dieses Kapitel verwenden wir das Beispiel aus <a class="xref" href="svn.basic.html" title="Kapitel 1. Grundlegende Konzepte">Kapitel 1, <i>Grundlegende Konzepte</i></a>. Erinnern Sie sich, dass Sie und Ihre
+      Mitarbeiterin Sally sich ein Repository teilen, das zwei
+      Projekte beinhaltet: <code class="filename">paint</code> und
+      <code class="filename">calc</code>. Beachten Sie, dass in <a class="xref" href="svn.branchmerge.using.html#svn.branchmerge.using.dia-1" title="Abbildung 4.2. Repository-Struktur zu Beginn">Abbildung 4.2, „Repository-Struktur zu Beginn“</a> dieses Mal jedoch jedes
+      Projektverzeichnis Unterverzeichnisse namens
+      <code class="filename">trunk</code> und <code class="filename">branches</code>
+      beinhaltet.  Der Grund hierfür wird bald klar sein.</p>
+<div class="figure">
+<a name="svn.branchmerge.using.dia-1"></a><p class="title"><b>Abbildung 4.2. Repository-Struktur zu Beginn</b></p>
+<div class="figure-contents"><div><img src="images/ch04dia2.png" alt="Repository-Struktur zu Beginn"></div></div>
+</div>
+<br class="figure-break"><p>Wie vorher sei hier angenommen, dass sowohl Sally als auch
+      Sie Arbeitskopien des „<span class="quote">calc</span>“ Projektes
+      besitzen. Ausdrücklich hat jeder von Ihnen eine Arbeitskopie von
+      <code class="filename">/calc/trunk</code>. Alle Dateien des Projektes
+      befinden sich in diesem Unterverzeichnis statt in
+      <code class="filename">/calc</code> selber, da Ihr Team entschieden hat,
+      dass in <code class="filename">/calc/trunk</code> die
+      „<span class="quote">Hauptlinie</span>“ der Entwicklung stattfindet.</p>
+<p>Sagen wir mal, dass Sie die Aufgabe bekommen haben, ein
+      großes Stück Software umzusetzen. Die Erstellung benötigt eine
+      lange Zeit und berührt alle Dateien im Projekt. Das Problem,
+      dass sofort auftaucht ist, dass Sie nicht Sally in die Quere
+      kommen möchten, die gerade hier und da kleinere Fehler
+      beseitigt. Sie ist abhängig von der Tatsache, dass die letzte
+      Version des Projektes (in <code class="filename">/calc/trunk</code>)
+      stets benutzbar ist. Wenn Sie nun damit beginnen, Stück für
+      Stück Ihre Änderungen zu übergeben, werden Sie gewiss die Dinge
+      für Sally (und auch für andere Teammitglieder) in Unordnung
+      bringen.</p>
+<p>Eine Strategie ist, sich in ein Loch zu verkriechen: Sie und
+      Sally können für eine Woche oder zwei den Informationsaustausch
+      einstellen. Das heißt, Sie fangen damit an, die Dateien Ihrer
+      Arbeitskopie auszuräumen und umzuorganisieren, ohne Änderungen
+      zu übergeben oder die Arbeitskopie zu aktualisieren, bevor Sie
+      mit Ihrer Arbeit vollständig fertig sind. Das wirft allerdings
+      einige Probleme auf. Erstens ist das nicht sehr sicher. Viele
+      Leute möchten Ihre Arbeit regelmäßig ins Repository sichern, für
+      den Fall, dass etwas Schlimmes mit der Arbeitskopie passieren
+      könnte. Zweitens ist das nicht sehr flexibel. Falls Sie Ihre
+      Arbeit an mehreren Rechnern verrichten (vielleicht haben Sie
+      eine Arbeitskopie von <code class="filename">/calc/trunk</code> auf zwei
+      unterschiedlichen Maschinen), müssten Sie entweder alle
+      Änderungen manuell hin und her kopieren oder die gesamte Arbeit
+      an nur einem Rechner erledigen. Ebenso schwierig wäre es, Ihre
+      Änderungen mit anderen zu teilen. Eine weit verbreitete
+      „<span class="quote">beste Vorgehensweise</span>“ ist es, Ihren Mitarbeitern
+      zu erlauben, während Sie mit Ihrer Arbeit fortfahren, Ihre
+      bisherigen Ergebnisse zu überprüfen. Wenn niemand Ihre
+      unmittelbaren Änderungen sieht, haben Sie keine möglichen
+      Rückmeldungen und es könnte sein, dass Sie für Wochen einen
+      falschen Weg einschlagen, bevor es jemand aus Ihrem Team
+      bemerkt. Schließlich könnte es am Ende, wenn Sie mit Ihren
+      Änderungen fertig sind, sehr schwierig sein, Ihr Arbeitsergebnis
+      wieder mit dem Hauptteil der Quelltexte Ihrer Firma
+      zusammenzuführen. Sally (und andere) hätten viele andere
+      Änderungen ins Repository übergeben haben können, die sich
+      schwer in Ihre Arbeitskopie einarbeiten ließen –
+      besonders, falls Sie <span class="command"><strong>svn update</strong></span> nach Wochen
+      der Isolierung ausführen.</p>
+<p>Die bessere Lösung ist, Ihren eigenen Zweig oder Ihre eigene
+      Entwicklungslinie im Repository zu erzeugen. Dies erlaubt Ihnen,
+      Ihre halbfertigen Arbeitsergebnisse regelmäßig zu sichern, ohne
+      andere zu stören; dennoch können Sie selektiv Informationen mit
+      Ihren Kollegen teilen. Im Weiteren werden Sie sehen, wie das
+      funktioniert.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.using.create"></a>4.2.1. Erzeugen eines Zweiges</h3></div></div></div>
+<p>Es ist sehr einfach, einen Zweig zu erzeugen – Sie
+        erstellen mit dem Befehl <span class="command"><strong>svn copy</strong></span> eine
+        Kopie des Projektes im Repository. Subversion kann nicht nur
+        Dateien, sondern auch komplette Verzeichnisse kopieren.  In
+        diesem Fall möchten Sie eine Kopie des Verzeichnisses
+        <code class="filename">/calc/trunk</code> machen. Wo soll die neue
+        Kopie angelegt werden? Wo Sie wünschen – es ist eine
+        Frage der Projektkonventionen. Sagen wir mal, dass Ihr Team
+        die Konvention vereinbart hat, Zweige im Bereich
+        <code class="filename">/calc/branches</code> des Repositorys anzulegen,
+        und Sie Ihren Zweig <code class="literal">my-calc-branch</code> nennen
+        möchten. Sie werden ein neues Verzeichnis
+        <code class="filename">/calc/branches/my-calc-branch</code> anlegen,
+        das als Kopie von <code class="filename">/calc/trunk</code>
+        beginnt.</p>
+<p>Sie haben vielleicht schon gesehen, wie mit <span class="command"><strong>svn
+        copy</strong></span> in einer Arbeitskopie eine Datei auf eine
+        andere kopiert wird. Es kann allerdings auch verwendet werden,
+        um eine „<span class="quote">entfernte</span>“ Kopie innerhalb des
+        Repositorys durchzuführen. Kopieren Sie einfach einen URL auf
+        einen anderen:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/branches/my-calc-branch \
+      -m "Privaten Zweig von /calc/trunk angelegt."
+
+Revision 341 übertragen.
+</pre>
+<p>Dieser Befehl bewirkt eine fast sofortige Übergabe im
+        Repository, wobei in Revision 341 ein neues Verzeichnis
+        erzeugt wird. Das neue Verzeichnis ist eine Kopie von
+        <code class="filename">/calc/trunk</code>. Dies wird in <a class="xref" href="svn.branchmerge.using.html#svn.branchmerge.using.create.dia-1" title="Abbildung 4.3. Repository mit neuer Kopie">Abbildung 4.3, „Repository mit neuer Kopie“</a> gezeigt.
+        <sup>[<a name="id614539" href="#ftn.id614539" class="footnote">20</a>]</sup>
+
+        Obwohl es auch möglich ist, einen Zweig zu erzeugen, indem
+        <span class="command"><strong>svn copy</strong></span> verwendet wird, um ein Verzeichnis
+        innerhalb der Arbeitskopie zu duplizieren, wird dieses
+        Vorgehen nicht empfohlen. Es kann in der Tat sehr langsam
+        sein! Das client-seitige Kopieren eines Verzeichnisses besitzt
+        einen linearen Zeitaufwand, da wirklich jede Datei und jedes
+        Verzeichnis auf der lokalen Platte dupliziert werden muss. Das
+        Kopieren eines Verzeichnisses auf dem Server jedoch besitzt
+        einen konstanten Zeitaufwand und ist die Art und Weise, auf
+        die die meisten Leute Zweige erstellen.</p>
+<div class="figure">
+<a name="svn.branchmerge.using.create.dia-1"></a><p class="title"><b>Abbildung 4.3. Repository mit neuer Kopie</b></p>
+<div class="figure-contents"><div><img src="images/ch04dia3.png" alt="Repository mit neuer Kopie"></div></div>
+</div>
+<br class="figure-break"><div class="sidebar">
+<p class="title"><b>Billige Kopien</b></p>
+<p>Das Repository von Subversion ist auf eine besondere
+          Weise konstruiert. Wenn Sie ein Verzeichnis kopieren,
+          brauchen Sie sich keine Gedanken darüber zu machen, dass das
+          Repository riesengroß wird – Subversion dupliziert
+          tatsächlich überhaupt keine Daten. Stattdessen erzeugt es
+          einen neuen Verzeichniseintrag, der auf einen
+          <span class="emphasis"><em>bestehenden</em></span> Baum verweist. Falls Sie
+          ein erfahrener Unix-Benutzer sind, werden Sie erkennen, dass
+          es sich um dasselbe Konzept handelt wie bei einem
+          Hardlink. Während weitere Änderungen an den Dateien und
+          Verzeichnissen unterhalb des kopierten Verzeichnisses
+          gemacht werden, fährt Subversion fort, dieses Konzept
+          anzuwenden wo es geht. Es dupliziert Daten nur dann, wenn es
+          notwendig wird, verschiedene Versionen von Objekten
+          auseinanderzuhalten.</p>
+<p>Deshalb hören Sie Subversion-Benutzer oft von
+          „<span class="quote">billigen Kopien</span>“ sprechen. Es spielt keine
+          Rolle, wie umfangreich das Verzeichnis ist – es bedarf
+          lediglich eines kleinen, konstanten Zeitaufwands und
+          Speicherplatzes, um eine Kopie davon zu erstellen. Diese
+          Fähigkeit ist tatsächlich die Grundlage für die Umsetzung
+          von Übergaben in Subversion: Jede Revision ist eine
+          „<span class="quote">billige Kopie</span>“ der vorhergehenden Revision mit
+          ein paar Dingen, die sich im Innern geändert haben. (Um mehr
+          hierüber zu lesen, gehen Sie auf die Website von Subversion
+          und lesen Sie in den Subversion-Design-Dokumenten über die
+          „<span class="quote">bubble-up</span>“-Methode.)</p>
+<p>Natürlich sind diese internen Mechanismen des Kopierens
+          und Teilens vor dem Benutzer verborgen, der lediglich Kopien
+          von Bäumen sieht. Die Hauptsache hierbei ist, das Kopien
+          billig sind, sowohl was die Zeit als auch den Speicherplatz
+          angeht. Wenn Sie einen Zweig komplett im Repository anlegen
+          (durch den Aufruf von <strong class="userinput"><code>svn copy
+          <em class="replaceable"><code>URL1</code></em>
+          <em class="replaceable"><code>URL2</code></em></code></strong>), handelt es
+          sich um eine schnelle Operation mit konstanter
+          Zeitdauer. Erstellen Sie Zweige so oft Sie wollen.</p>
+</div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.using.work"></a>4.2.2. Arbeiten mit Ihrem Zweig</h3></div></div></div>
+<p>Da Sie nun einen Zweig des Projektes erzeugt haben, können
+        Sie eine neue Arbeitskopie auschecken, um ihn zu
+        benutzen:</p>
+<pre class="screen">
+$ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch
+A  my-calc-branch/Makefile
+A  my-calc-branch/integer.c
+A  my-calc-branch/button.c
+Ausgecheckt, Revision 341.
+</pre>
+<p>An dieser Arbeitskopie ist nichts besonders; sie spiegelt
+        bloß ein anderes Verzeichnis im Repository wieder. Wenn Sie
+        Änderungen übergeben, wird sie Sally jedoch nicht sehen, wenn
+        sie aktualisiert, da sie eine Arbeitskopie von
+        <code class="filename">/calc/trunk</code> hat. (Stellen Sie sicher,
+        dass Sie <a class="xref" href="svn.branchmerge.switchwc.html" title="4.5. Zweige durchlaufen">Abschnitt 4.5, „Zweige durchlaufen“</a> weiter
+        unten in diesem Kapitel lesen: Der Befehl <span class="command"><strong>svn
+        switch</strong></span> ist eine Alternative für die Bereitstellung
+        einer Arbeitskopie eines Zweiges.)</p>
+<p>Tun wir mal so, als ob eine Woche ins Land geht und die
+        folgenden Übergaben stattfinden:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+
+          Sie machen eine Änderung an
+          <code class="filename">/calc/branches/my-calc-branch/button.c</code>,
+          die die Revision 342 erzeugt.</p></li>
+<li><p>
+
+          Sie machen eine Änderung an
+          <code class="filename">/calc/branches/my-calc-branch/integer.c</code>,
+          die die Revision 343 erzeugt.</p></li>
+<li><p>
+
+          Sally macht eine Änderung an
+          <code class="filename">/calc/trunk/integer.c</code>, die die Revision
+          344 erzeugt.</p></li>
+</ul></div>
+<p>Nun finden zwei unabhängige Entwicklungslinien (siehe
+        <a class="xref" href="svn.branchmerge.using.html#svn.branchmerge.using.work.dia-1" title="Abbildung 4.4. Die Verzweigung der Geschichte einer Datei">Abbildung 4.4, „Die Verzweigung der Geschichte einer Datei“</a>) auf
+        <code class="filename">integer.c</code> statt.</p>
+<div class="figure">
+<a name="svn.branchmerge.using.work.dia-1"></a><p class="title"><b>Abbildung 4.4. Die Verzweigung der Geschichte einer Datei</b></p>
+<div class="figure-contents"><div><img src="images/ch04dia4.png" alt="Die Verzweigung der Geschichte einer Datei"></div></div>
+</div>
+<br class="figure-break"><p>Es wird interessant, wenn Sie die Geschichte der
+        Änderungen an Ihrer Kopie von <code class="filename">integer.c</code>
+        betrachten:</p>
+<pre class="screen">
+$ pwd
+/home/user/my-calc-branch
+
+$ svn log -v integer.c
+------------------------------------------------------------------------
+r343 | user | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Geänderte Pfade:
+   M /calc/branches/my-calc-branch/integer.c
+
+* integer.c:  Wazjub gefrozzelt.
+
+------------------------------------------------------------------------
+r341 | user | 2002-11-03 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Geänderte Pfade:
+   A /calc/branches/my-calc-branch (from /calc/trunk:340)
+
+Privaten Zweig von /calc/trunk angelegt.
+
+------------------------------------------------------------------------
+r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines
+Geänderte Pfade:
+   M /calc/trunk/integer.c
+
+* integer.c:  Einen Docstring geändert.
+
+------------------------------------------------------------------------
+r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines
+Geänderte Pfade:
+   A /calc/trunk/integer.c
+
+* integer.c:  Diese Datei dem Projekt hinzugefügt.
+
+------------------------------------------------------------------------
+</pre>
+<p>Beachten Sie, dass Subversion die Geschichte von
+        <code class="filename">integer.c</code> auf Ihrem Zweig über die
+        gesamte Zeit zurück verfolgt, und dabei sogar über den Punkt
+        hinweg geht, an dem es kopiert wurde. Es zeigt die Erzeugung
+        des Zweigs als ein Ereignis in der Geschichte, da
+        <code class="filename">integer.c</code> implizit kopiert wurde, als
+        alles andere in <code class="filename">/calc/trunk/</code> kopiert
+        wurde. Sehen Sie nun, was passiert, wenn Sally den gleichen
+        Befehl auf Ihre Arbeitskopie der Datei anwendet:</p>
+<pre class="screen">
+$ pwd
+/home/sally/calc
+
+$ svn log -v integer.c
+------------------------------------------------------------------------
+r344 | sally | 2002-11-07 15:27:56 -0600 (Thu, 07 Nov 2002) | 2 lines
+Changed paths:
+   M /calc/trunk/integer.c
+
+* integer.c:  fix a bunch of spelling errors.
+
+------------------------------------------------------------------------
+r303 | sally | 2002-10-29 21:14:35 -0600 (Tue, 29 Oct 2002) | 2 lines
+Changed paths:
+   M /calc/trunk/integer.c
+
+* integer.c:  changed a docstring.
+
+------------------------------------------------------------------------
+r98 | sally | 2002-02-22 15:35:29 -0600 (Fri, 22 Feb 2002) | 2 lines
+Changed paths:
+   A /calc/trunk/integer.c
+
+* integer.c:  adding this file to the project.
+
+------------------------------------------------------------------------
+</pre>
+<p>Sally sieht ihre eigene Änderung in Revision 344, aber
+        nicht die Änderung, die Sie in Revision 343 gemacht haben. Was
+        Subversion angeht, hatten diese beiden Übergaben Auswirkungen
+        auf unterschiedliche Dateien an unterschiedlichen
+        Repository-Orten. Dennoch zeigt Subversion
+        <span class="emphasis"><em>doch</em></span>, dass die beiden Dateien einen Teil
+        der Geschichte gemeinsam haben. Bevor die Kopie des Zweiges in
+        Revision 341 gemacht wurde, waren die Dateien dieselbe
+        Datei. Deshalb sehen sowohl Sie als auch Sally die Änderungen,
+        die in den Revisionen 303 und 98 gemacht wurden.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.using.concepts"></a>4.2.3. Die Schlüsselkonzepte des Verzweigens</h3></div></div></div>
+<p>Sie sollten sich zwei Lektionen aus diesem Abschnitt
+        merken. Erstens besitzt Subversion kein internes Konzept für
+        einen Zweig – es weiß lediglich, wie Kopien angelegt
+        werden. Wenn Sie ein Verzeichnis kopieren, ist das entstehende
+        Verzeichnis bloß ein „<span class="quote">Zweig</span>“, weil
+        <span class="emphasis"><em>Sie</em></span> ihm diese Bedeutung geben. Sie mögen
+        über das Verzeichnis anders denken oder es anders behandeln,
+        doch für Subversion ist es einfach ein gewöhnliches
+        Verzeichnis, das nebenbei mit einigen zusätzlichen
+        historischen Informationen ausgestattet ist.</p>
+<p>Zweitens bestehen die Zweige von Subversion, bedingt durch
+        den Kopiermechanismus, als <span class="emphasis"><em>normale
+        Dateisystemverzeichnisse</em></span> im Repository. Das ist ein
+        Unterschied zu anderen Versionskontrollsystemen, bei denen
+        Zweige typischerweise definiert werden, indem auf einer
+        eigenen Ebene den Dateisammlungen „<span class="quote">Etiketten</span>“ 
+        hinzugefügt werden. Der Ort Ihres Zweig-Verzeichnisses spielt
+        für Subversion keine Rolle. Die meisten Teams folgen der
+        Konvention, alle Zweige in einem Verzeichnis namens
+        <code class="filename">/branches</code> abzulegen, jedoch steht es
+        Ihnen frei, eine Vorgehensweise nach Ihren Wünschen zu
+        erfinden.</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id614539" href="#id614539" class="para">20</a>] </sup>Subversion unterstützt nicht das Kopieren zwischen
+        verschiedenen Repositorys. Wenn Sie mit <span class="command"><strong>svn
+        copy</strong></span> oder <span class="command"><strong>svn move</strong></span> URLs
+        verwenden, können Sie nur Objekte innerhalb desselben
+        Repositorys kopieren oder verschieben.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.basicmerging.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Kapitel 4. Verzweigen und Zusammenführen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.3. Grundlegendes Zusammenführen</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>2.3. Anfänglicher Checkout</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.tour.html" title="Kapitel 2. Grundlegende Benutzung">
+<link rel="prev" href="svn.tour.importing.html" title="2.2. Wie Sie Daten in Ihr Repository bekommen">
+<link rel="next" href="svn.tour.cycle.html" title="2.4. Der grundlegende Arbeitszyklus">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">2.3. Anfänglicher Checkout</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.tour.importing.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 2. Grundlegende Benutzung</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.tour.cycle.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.tour.initial"></a>2.3. Anfänglicher Checkout</h2></div></div></div>
+<p>In den meisten Fällen werden Sie ein Subversion-Repository
+      zu nutzen beginnen, indem Sie einen
+      <em class="firstterm">Checkout</em> Ihres Projektes vornehmen. Das
+      Auschecken eines Repositorys erzeugt eine
+      „<span class="quote">Arbeitskopie</span>“ desselben auf Ihrem lokalen Rechner.
+      Diese Arbeitskopie umfasst die Revision <code class="literal">HEAD</code>
+      (die letzte Revision) des auf der Kommandozeile angegebenen
+      Subversion-Repositorys:</p>
+<pre class="screen">
+$ svn checkout http://svn.collab.net/repos/svn/trunk
+A    trunk/Makefile.in
+A    trunk/ac-helpers
+A    trunk/ac-helpers/install.sh
+A    trunk/ac-helpers/install-sh
+A    trunk/build.conf
+…
+Ausgecheckt, Revision 8810.
+</pre>
+<div class="sidebar">
+<p class="title"><b>Was steckt in einem Namen?</b></p>
+<p>Subversion gibt sich alle Mühe, nicht die Art der Daten
+        einzuschränken, die Sie unter Versionskontrolle setzen können.
+        Der Inhalt von Dateien und Property-Werte werden als binäre
+        Daten gespeichert und übermittelt, und <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.mime-type" title="3.3.1. File Content Type">Abschnitt 3.3.1, „File Content Type“</a> sagt Ihnen,
+        wie Sie Subversion darauf hinweisen, dass
+        „<span class="quote">Text</span>“-Operationen für eine bestimmte Datei
+        keinen Sinn ergeben. Trotzdem gibt es einige wenige Stellen,
+        an denen Subversion Einschränkungen für gespeicherte
+        Informationen vorsieht.</p>
+<p>Subversion behandelt intern bestimmte
+        Dateneinheiten – z.B. Property-Namen, Pfadnamen und
+        Logmitteilungen – als UTF-8-kodiertes Unicode.  Das heißt
+        aber nicht, dass all Ihre Interaktionen mit Subversion in
+        UTF-8 erfolgen müssen. Im Allgemeinen werden Subversion-Clients
+        die Umwandlungen zwischen UTF-8 und dem auf Ihrem
+        Computer verwendeten Kodiersystem großzügig und transparent
+        vornehmen, sofern eine solche Umwandlung sinnvollerweise
+        durchgeführt werden kann (was bei den meisten gebräuchlichsten
+        Kodierungen heutzutage der Fall ist).</p>
+<p>Darüber hinaus werden Pfadnamen sowohl bei
+        WebDAV-Übertragungen als auch in einigen der Steuerdateien von
+        Subversion als XML-Attributwerte verwendet. Das bedeutet, dass
+        Pfadnamen nur aus zulässigen XML (1.0) Zeichen bestehen
+        dürfen. Subversion verbietet ebenfalls TAB, CR und LF Zeichen
+        in Pfadnamen, um zu verhindern, das Pfade in Vergleichen oder
+        bei Befehlsausgaben, wie <span class="command"><strong>svn log</strong></span> oder
+        <span class="command"><strong>svn status</strong></span> zerrissen werden.</p>
+<p>Obwohl es sich anhört, als müsse man sich eine Menge
+        merken, sind diese Einschränkungen selten ein Problem. Solange
+        Ihre Locale-Einstellungen kompatibel zu UTF-8 sind und Sie
+        keine Kontrollzeichen in den Pfadnamen verwenden, sollten Sie
+        keine Probleme habe, mit Subversion zu kommunizieren. Der
+        Kommandozeilen-Client bietet Ihnen noch ein wenig
+        Extrahilfe – um „<span class="quote">korrekte</span>“ Versionen für den
+        internen Gebrauch zu erzeugen, maskiert er bei Bedarf automatisch
+        illegale Zeichen in URL-Pfaden, die Sie eingeben.</p>
+</div>
+<p>Obwohl im vorangehenden Beispiel das Verzeichnis <code class="filename">trunk</code> ausgecheckt
+      wird, können Sie genauso leicht irgendein tiefliegendes
+      Unterverzeichnis aus einem Repository auschecken, indem Sie das
+      Unterverzeichnis im URL beim Checkout angeben:</p>
+<pre class="screen">
+$ svn checkout \
+      http://svn.collab.net/repos/svn/trunk/subversion/tests/cmdline/
+A    cmdline/revert_tests.py
+A    cmdline/diff_tests.py
+A    cmdline/autoprop_tests.py
+A    cmdline/xmltests
+A    cmdline/xmltests/svn-test.sh
+…
+Ausgecheckt, Revision 8810.
+</pre>
+<p>Da Subversion ein <span class="emphasis"><em>copy-modify-merge</em></span>-Modell
+      (kopieren-ändern-zusammenführen) statt eines
+      <span class="emphasis"><em>lock-modify-unlock</em></span>-Modells (sperren-ändern-freigeben)
+      verwendet (siehe <a class="xref" href="svn.basic.vsn-models.html" title="1.2. Versionierungsmodelle">Abschnitt 1.2, „Versionierungsmodelle“</a>), können Sie sofort damit
+      beginnen, Änderungen an den Dateien und Verzeichnissen Ihrer
+      Arbeitskopie vorzunehmen. Ihre Arbeitskopie ist wie jede
+      beliebige andere Ansammlung aus Dateien und Verzeichnissen auf
+      Ihrem System. Sie können sie bearbeiten, ändern, verschieben und
+      sie sogar löschen und vergessen.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Obwohl sich Ihre Arbeitskopie „<span class="quote">wie jede beliebige
+            andere Ansammlung aus Dateien und Verzeichnissen auf Ihrem
+            System</span>“ verhält, können Sie zwar beliebig Dateien
+          editieren, doch Sie müssen Subversion über <span class="emphasis"><em>alles
+            andere</em></span> was Sie tun in Kenntnis setzen. Wenn Sie
+          z.B.  ein Objekt in der Arbeitskopie kopieren oder
+          verschieben möchten, sollten Sie <span class="command"><strong>svn copy</strong></span>
+          oder <span class="command"><strong>svn move</strong></span> verwenden statt der Kopier-
+          oder Verschiebebefehle Ihres Betriebssystems. Wir werden
+          darauf später im Kapitel näher eingehen.</p></td></tr>
+</table></div>
+<p>Sofern Sie nicht bereit sind, das Hinzufügen einer neuen
+      Datei oder eines neuen Verzeichnisses oder Änderungen an
+      bestehenden Objekten an das Repository zu übergeben, besteht
+      keine Notwendigkeit, dem Subversion-Server mitzuteilen, dass Sie
+      irgendetwas gemacht haben.</p>
+<div class="sidebar">
+<p class="title"><b>Was hat es mit dem  Verzeichnis .svn
+        auf sich?</b></p>
+<p>Jedes Verzeichnis in einer Arbeitskopie beinhaltet einen
+        Verwaltungsbereich – ein Verzeichnis namens
+        <code class="filename">.svn</code>.  Normalerweise wird dieses
+        Unterverzeichnis nicht vom Befehl zum Auflisten des
+        Verzeichnisinhaltes angezeigt, trotzdem ist es ein wichtiges
+        Verzeichnis. Egal, was Sie machen, löschen oder ändern Sie
+        nichts im Verwaltungsbereich! Subversion ist darauf
+        angewiesen, um Ihre Arbeitskopie zu verwalten.</p>
+<p>Sollten Sie versehentlich das Verzeichnis <code class="filename">.svn</code>
+        löschen, besteht die einfachste Lösung des
+        Problems darin, das komplette darüberliegende Verzeichnis zu
+        löschen (mit dem Betriebssystem-Löschbefehl, nicht mit
+        <span class="command"><strong>svn delete</strong></span>) und dann wiederum
+        <strong class="userinput"><code>svn update</code></strong> von einem darüberliegenden
+        Verzeichnis aus aufzurufen. Der Subversion-Client wird das von
+        Ihnen gelöschte Verzeichnis herunterladen und dabei
+        auch einen neuen <code class="filename">.svn</code>-Bereich
+        anlegen.</p>
+</div>
+<p>Obwohl Sie sicherlich eine Arbeitskopie mit dem
+      Repository-URL als einziges Argument auschecken können, haben
+      sie auch die Möglichkeit, ein Verzeichnis hinter dem
+      Repository-URL anzugeben. Das erstellt Ihre Arbeitskopie in dem
+      angegebenen Verzeichnis. Zum Beispiel:</p>
+<pre class="screen">
+$  svn checkout http://svn.collab.net/repos/svn/trunk subv
+A    subv/Makefile.in
+A    subv/ac-helpers
+A    subv/ac-helpers/install.sh
+A    subv/ac-helpers/install-sh
+A    subv/build.conf
+…
+Ausgecheckt, Revision 8810.
+</pre>
+<p>Das legt Ihre Arbeitskopie in einem Verzeichnis namens 
+      <code class="literal">subv</code> ab anstatt in <code class="literal">trunk</code>
+      so wie wir es früher schon einmal gemacht haben. Das Verzeichnis
+      <code class="literal">subv</code> wird angelegt, sofern es nicht bereits
+      vorhanden ist.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.initial.disabling-password-caching"></a>2.3.1. Das Zwischenspeichern des Passwortes abstellen</h3></div></div></div>
+<p>Wenn Sie eine Subversion-Operation ausführen, für die Sie
+        sich authentifizieren müssen, speichert Subversion Ihre
+        Zugangsdaten standardmäßig auf der Platte. Das geschieht zu
+        Ihrer Annehmlichkeit, damit Sie bei künftigen Operationen
+        nicht ständig Ihr Passwort eingeben müssen. Falls Sie wegen
+        der Speicherung besorgt sein sollten,
+        <sup>[<a name="id602245" href="#ftn.id602245" class="footnote">3</a>]</sup>
+        können Sie das Zwischenspeichern entweder dauerhaft oder von Fall zu
+        Fall abstellen.</p>
+<p>Um das Passwort-Caching für einen bestimmten einmaligen
+        Befehl zu unterbinden, übergeben Sie die
+        <code class="option">--no-auth-cache</code>-Option auf der Kommandozeile.
+        Um das Caching dauerhaft abzustellen, können Sie der
+        Subversion-Konfigurationsdatei Ihres lokalen Rechners die Zeile
+        <code class="literal">store-passwords = no</code> hinzufügen. Für
+        Details siehe <a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="3.11.2. Client Credentials Caching">Abschnitt 3.11.2, „Client Credentials Caching“</a>.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.initial.different-user"></a>2.3.2. Authentifizierung als ein anderer Anwender</h3></div></div></div>
+<p>Da Subversion standardmäßig Zugangsdaten speichert
+        (sowohl den Benutzernamen als auch das Passwort), erinnert es
+        sich bequemerweise, wer Sie das letzte Mal waren, als Sie Ihre
+        Arbeitskopie modifizierten. Doch manchmal ist das nicht
+        hilfreich – besonders, wenn Sie in einer gemeinsam
+        benutzten Arbeitskopie arbeiten wie in einem
+        Konfigurationsverzeichnis oder im Dokumenten-Wurzelverzeichnis
+        eines Webservers. In diesem Fall brauchen Sie nur die
+        <code class="option">--username</code>-Option auf der Kommandozeile zu
+        übergeben und Subversion versucht, sich als dieser Benutzer zu
+        authentifizieren und wird Sie, wenn nötig, zur Eingabe eines
+        Passworts auffordern.</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id602245" href="#id602245" class="para">3</a>] </sup>Natürlich sind Sie nicht ernsthaft
+            besorgt – erstens, weil Sie wissen, dass Sie nichts
+            <span class="emphasis"><em>wirklich</em></span> aus Subversion löschen
+            können und zweitens, weil Ihr Subversion-Passwort nicht
+            das gleiche ist wie irgendein anderes Ihrer 3 Millionen
+            Passwörter, nicht wahr?</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.tour.importing.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.tour.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.tour.cycle.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">2.2. Wie Sie Daten in Ihr Repository bekommen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 2.4. Der grundlegende Arbeitszyklus</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

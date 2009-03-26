@@ -1,0 +1,222 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.8. Verbreitete Verzweigungsmuster</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.maint.html" title="4.7. Verwaltung von Zweigen">
+<link rel="next" href="svn.advanced.vendorbr.html" title="4.9. Lieferanten-Zweige">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.8. Verbreitete Verzweigungsmuster</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.maint.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.advanced.vendorbr.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.commonpatterns"></a>4.8. Verbreitete Verzweigungsmuster</h2></div></div></div>
+<p>Es gibt zahlreiche unterschiedliche Anwendungsfälle für  das
+      Verzweigen und <span class="command"><strong>svn merge</strong></span>; dieser Abschnitt
+      beschreibt die verbreitetesten.</p>
+<p>Am häufigsten wird Versionskontrolle in der
+      Softwareentwicklung verwendet, so dass wir an dieser Stelle
+      kurz zwei der gebräuchlichsten Verzweigungs-  und
+      Zusammenführungsmuster vorstellen, die von Entwicklerteams
+      benutzt werden. Falls Sie Subversion nicht in der
+      Softwareentwicklung verwenden, können Sie den Abschnitt getrost
+      überspringen. Falls Sie ein Softwareentwickler sind, der
+      Versionskontrolle das erste Mal verwendet, sollten Sie gut
+      aufpassen, da es sich bei diesen Mustern um bewährte
+      Vorgehensweisen handelt, die von erfahrenen Menschen empfohlen
+      werden. Diese Prozesse sind nicht spezifisch für Subversion; sie
+      sind anwendbar auf alle Versionskontrollsysteme. Trotzdem
+      mag es hilfreich sein, wenn sie anhand von Subversion erklärt
+      werden.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.commonpatterns.release"></a>4.8.1. Release-Zweige</h3></div></div></div>
+<p>Die meiste Software hat einen typischen Lebenszyklus:
+        Erstellung, Test, Freigabe und wieder von vorne. Bei diesem
+        Prozess gibt es zwei Probleme. Erstens müssen Entwickler neue
+        Funktionen schreiben, während das Qualitätssicherungsteam sich
+        Zeit zum Testen der vermeintlich stabilen Software nimmt.  Die
+        Arbeit kann allerdings nicht liegenbleiben während die
+        Software getestet wird. Zweitens muss das Team fast immer
+        ältere, bereits an den Kunden herausgegebene Software
+        unterstützen; falls im neuesten Quelltext ein Fehler entdeckt
+        wird, besteht der Fehler wahrscheinlich auch in der
+        herausgegebenen Version. Die Kunden möchten dann eine
+        Fehlerbehebung, ohne auf ein größeres, neues Release zu
+        warten.</p>
+<p>Hier kann Versionskontrolle helfen. Die typische
+        Vorgehensweise ist wie folgt:</p>
+<div class="orderedlist"><ol type="1">
+<li><p><span class="emphasis"><em>Entwickler übergeben alles Neue an den
+            Stamm.</em></span>
+
+            Tägliche Änderungen werden an <code class="filename">/trunk</code>
+            übergeben: neue Funktionen, Fehlerbehebungen usw.</p></li>
+<li><p><span class="emphasis"><em>Der Stamm wird in einen
+            „<span class="quote">Release</span>“-Zweig kopiert.</em></span>
+
+            Wenn das Team der Auffassung ist, dass die Software reif
+            für eine Freigabe ist (z.B. Release 1.0 ), kann
+            <code class="filename">/trunk</code> nach
+            <code class="filename">/branches/1.0</code> kopiert werden.</p></li>
+<li><p><span class="emphasis"><em>Die Teams arbeiten parallel.</em></span>
+
+            Ein Team beginnt, den Release-Zweig sorgfältig zu testen,
+            während ein anderes Team mit der Arbeit (z.B. für Release
+            2.0) in <code class="filename">/trunk</code> fortfährt. Falls hier
+            oder dort Fehler entdeckt werden sollten, werden die
+            Fehlerbehebungen nach Bedarf hin oder her kopiert. Zu
+            einem gegebenen Zeitpunkt hört jedoch sogar dieser Prozess
+            auf. Der Zweig wird für die Abschlusstests vor der
+            Freigabe „<span class="quote">eingefroren</span>“.</p></li>
+<li><p><span class="emphasis"><em>Der Zweig wird markiert und freigegeben.</em></span>
+
+            Nach dem Abschluss der Tests wird
+            <code class="filename">/branches/1.0</code> als Momentaufnahme nach
+            <code class="filename">/tags/1.0.0</code> kopiert. Das Tag wird
+            paketiert und an den Kunden ausgeliefert.</p></li>
+<li><p><span class="emphasis"><em>Der Zweig wird gepflegt.</em></span>
+
+            Während die Arbeit für Version 2.0 in
+            <code class="filename">/trunk</code> weitergeht, werden weiterhin
+            Fehlerbehebungen von <code class="filename">/trunk</code> nach
+            <code class="filename">/branches/1.0</code> portiert. Wenn sich
+            ausreichend Fehlerbehebungen angesammelt haben, könnte
+            sich das Management entschließen, ein Release 1.0.1
+            herauszugeben: <code class="filename">/branches/1.0</code> wird
+            nach <code class="filename">/tags/1.0.1</code> kopiert, und das Tag
+            wird paketiert und freigegeben.</p></li>
+</ol></div>
+<p>Der gesamte Prozess wiederholt sich während die Software
+        reift: Wenn die Arbeit an 2.0 fertig ist, wird ein neuer 2.0
+        Release-Zweig erstellt, getestet, markiert und schließlich
+        freigegeben. Nach einigen Jahren füllt sich das Repository mit
+        einer Anzahl von Release-Zweigen, die weiterhin
+        „<span class="quote">gepflegt</span>“ werden, und einer Zahl von Tags, die
+        den endgültigen, ausgelieferten Versionen entsprechen.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.branchmerge.commonpatterns.feature"></a>4.8.2. Funktions-Zweige</h3></div></div></div>
+<p>Ein <em class="firstterm">Funktions-Zweig</em> ist die Art von
+        Zweig, wie er im Hauptbeispiel dieses Kapitels vorkam (der
+        Zweig, auf dem Sie gearbeitet haben, während Sally auf
+        <code class="filename">/trunk</code> arbeitete). Es ist ein
+        vorübergehender Zweig, der angelegt wird, um an einer
+        komplexen Änderung zu arbeiten, ohne
+        <code class="filename">/trunk</code> zu stören. Anders als
+        Release-Zweige (die vielleicht ewig gepflegt werden müssen),
+        werden Funktions-Zweige erstellt, eine Zeit lang genutzt,
+        zurück in den Stamm integriert und schließlich gelöscht. Sie
+        haben einen zeitlich begrenzten Nutzen.</p>
+<p>In Projekten gehen die Meinungen oft auseinander, wann der
+        richtige Zeitpunkt zum Anlegen eines Funktions-Zweiges
+        gekommen ist. Manche Projekte benutzen nie Funktions-Zweige:
+        jeder darf Änderungen in <code class="filename">/trunk</code>
+        übergeben. Der Vorteil hier ist, dass es einfach ist –
+        niemand benötigt eine Schulung im Verzweigen und
+        Zusammenführen. Der Nachteil ist, dass der Code oft instabil
+        oder nicht nutzbar ist. Andere Projekte verwenden
+        ausschließlich Zweige: Eine Änderung darf
+        <span class="emphasis"><em>niemals</em></span> direkt in
+        <code class="filename">/trunk</code> übergeben werden. Selbst die
+        trivialsten Änderungen werden auf einem kurzlebigen Zweig
+        durchgeführt, sorgfältig geprüft und in den Stamm
+        zurückgeführt. Danach wird der Zweig gelöscht. Dieses Vorgehen
+        garantiert einen außerordentlich stabilen und nutzbaren Stamm,
+        jedoch zum Preis eines erheblichen Prozessaufwands.</p>
+<p>Die meisten Projekte bewegen sich irgendwo dazwischen.
+        Gewöhnlich bestehen sie darauf, dass
+        <code class="filename">/trunk</code> stets compilierfähig bleibt und
+        Regressionstests besteht. Ein Funktions-Zweig wird nur dann
+        benötigt, falls eine Änderung eine große Anzahl
+        destabilisierender Übergaben erfordert. Eine gute Faustregel
+        ist, diese Frage zu stellen: Wäre, falls ein Entwickler nach Tagen
+        isolierter Entwicklung die große Änderung auf einmal übergäbe
+        (so dass <code class="filename">/trunk</code> nie instabil würde), die
+        Änderung zu umfangreich zum Überprüfen? Falls die Antwort auf
+        diese Frage „<span class="quote">ja</span>“ lautet, sollte die Änderung auf
+        einem Funktions-Zweig durchgeführt werden. Während der
+        Entwickler schrittweise Änderungen in den Zweig übergibt,
+        können sie auf einfache Weise von den Kollegen geprüft
+        werden.</p>
+<p>Schließlich stellt sich die Frage, wie ein Funktions-Zweig
+        am besten mit dem Stamm „<span class="quote">synchron</span>“ gehalten
+        werden kann während die Arbeit weitergeht. Wie wir vorher
+        bereits bemerkten, besteht ein großes Risiko, wenn wochen-
+        oder monatelang auf dem Zweig gearbeitet wird; währenddessen
+        ändert sich auch der Stamm, so dass ein Punkt erreicht werden
+        kann, an dem sich die beiden Entwicklungslinien so sehr
+        unterscheiden, dass es zu einem Albtraum ausarten kann, den
+        Zweig zurück auf den Stamm zu führen.</p>
+<p>Diese Situation wird am besten vermieden, indem regelmäßig
+        Änderungen vom Stamm in den Zweig eingearbeitet werden. Machen
+        Sie es zur Gewohnheit: Arbeiten Sie wöchentlich die Änderungen
+        der vergangenen Woche vom Stamm in den Zweig ein.</p>
+<p>Irgendwann werden Sie dann bereit sein, den
+        „<span class="quote">synchronisierten</span>“ Funktions-Zweig zurück in den
+        Stamm zu führen. Hierzu arbeiten Sie ein letztes Mal die
+        jüngsten Änderungen vom Stamm in den Zweig ein. Danach werden
+        die letzten Versionen auf dem Stamm und dem Zweig, bis auf Ihre
+        Änderungen auf dem Zweig, absolut gleich sein. Dann werden Sie
+        den Zweig mit der Option <code class="option">--reintegrate</code> wieder
+        mit dem Stamm zusammenführen:</p>
+<pre class="screen">
+$ cd trunk-working-copy
+
+$ svn update
+Revision 1910.
+
+$ svn merge --reintegrate http://svn.example.com/repos/calc/branches/mybranch
+-- Zusammenführen der Unterschiede zwischen Projektarchiv-URLs in ».«:
+U    real.c
+U    integer.c
+A    newdirectory
+A    newdirectory/newfile
+ U   .
+…
+</pre>
+<p>Aus einem anderen Winkel betrachtet ist dieser
+        wöchentliche Abgleich vom Stamm auf den Zweig analog zum
+        Ausführen von <span class="command"><strong>svn update</strong></span> in einer
+        Arbeitskopie, wobei das finale Zusammenführen <span class="command"><strong>svn
+        commit</strong></span> in einer Arbeitskopie entspricht.
+        <span class="emphasis"><em>Ist</em></span> denn letztendlich eine Arbeitskopie
+        nicht ein sehr flacher privater Zweig? Es ist ein Zweig, der
+        nur eine Änderung gleichzeitig aufnehmen kann.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.maint.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.advanced.vendorbr.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.7. Verwaltung von Zweigen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.9. Lieferanten-Zweige</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

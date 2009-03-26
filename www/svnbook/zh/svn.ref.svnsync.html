@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>9.4. svnsync</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.ref.html" title="第 9 章 Subversion 完全参考">
+<link rel="prev" href="svn.ref.svnlook.c.youngest.html" title="svnlook youngest">
+<link rel="next" href="svn.ref.svnsync.c.copy-revprops.html" title="svnsync copy-revprops">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">9.4. svnsync</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.svnlook.c.youngest.html">上一页</a> </td>
+<th width="60%" align="center">第 9 章 Subversion 完全参考</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.ref.svnsync.c.copy-revprops.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.ref.svnsync"></a>9.4. svnsync</h2></div></div></div>
+<p><span class="command"><strong>svnsync</strong></span> is the Subversion remote repository mirroring
+tool.  Put simply, it allows you to replay the revisions of one repository
+into another one.</p>
+<p>In any mirroring scenario, there are two repositories: the source
+repository, and the mirror (or “<span class="quote">sink</span>”)  repository.  The source
+repository is the repository from which <span class="command"><strong>svnsync</strong></span> pulls
+revisions.  The mirror repository is the destination for the revisions
+pulled from the source repository.  Each of the repositories may be local or
+remote—they are only ever addressed by their URLs.</p>
+<p>The <span class="command"><strong>svnsync</strong></span> process requires only read access to the
+source repository; it never attempts to modify it.  But obviously,
+<span class="command"><strong>svnsync</strong></span> requires both read and write access to the mirror
+repository.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[警告]" src="images/warning.png"></td>
+<th align="left">警告</th>
+</tr>
+<tr><td align="left" valign="top"><p><span class="command"><strong>svnsync</strong></span> is very sensitive to changes made in the mirror
+repository that weren't made as part of a mirroring operation.  To prevent
+this from happening, it's best if the <span class="command"><strong>svnsync</strong></span> process is
+the only process permitted to modify the mirror repository.</p></td></tr>
+</table></div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.svnsync.sw"></a>9.4.1. svnsync 选项</h3></div></div></div>
+<p>Options in <span class="command"><strong>svnsync</strong></span> are global, just as they are in
+<span class="command"><strong>svn</strong></span> and <span class="command"><strong>svnadmin</strong></span>:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><code class="option">--config-dir</code> <em class="replaceable"><code>DIR</code></em></span></dt>
+<dd><p>指导Subversion从指定目录而不是默认位置(用户主目录的<code class="filename">.subversion</code>)读取配置信息。</p></dd>
+<dt><span class="term"><code class="option">--no-auth-cache</code></span></dt>
+<dd><p>Prevents caching of authentication information (e.g., username and password)
+in the Subversion runtime configuration directories.</p></dd>
+<dt><span class="term"><code class="option">--non-interactive</code></span></dt>
+<dd><p>In the case of an authentication failure or insufficient credentials,
+prevents prompting for credentials (e.g., username or password).  This is
+useful if you're running Subversion inside an automated script and it's more
+appropriate to have Subversion fail than to prompt for more information.</p></dd>
+<dt><span class="term"><code class="option">--quiet</code> (<code class="option">-q</code>)</span></dt>
+<dd><p>请求客户端在执行操作时只显示重要信息。</p></dd>
+<dt><span class="term"><code class="option">--source-password</code> <em class="replaceable"><code>PASSWD</code></em></span></dt>
+<dd><p>指定你要同步的源 Subversion 服务器的密码。如果没有提供，或者不正确，在需要时，Subversion 会提示你输入。</p></dd>
+<dt><span class="term"><code class="option">--source-username</code> <em class="replaceable"><code>NAME</code></em></span></dt>
+<dd><p>指定你要同步的源 Subversion 服务器的用户。如果没有提供，或者不正确，在需要时，Subversion 会提示你输入。</p></dd>
+<dt><span class="term"><code class="option">--sync-password</code> <em class="replaceable"><code>PASSWD</code></em></span></dt>
+<dd><p>指定你要同步的目标 Subversion 服务器的密码。如果没有提供，或者不正确，在需要时，Subversion 会提示你输入。</p></dd>
+<dt><span class="term"><code class="option">--sync-username</code> <em class="replaceable"><code>NAME</code></em></span></dt>
+<dd><p>指定你要同步的目标 Subversion 服务器的用户。如果没有提供，或者不正确，在需要时，Subversion 会提示你输入。</p></dd>
+</dl></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.ref.svnsync.c"></a>9.4.2. svnsync 子命令</h3></div></div></div>
+<p>Here are the various subcommands for the <span class="command"><strong>svnsync</strong></span> program.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.svnlook.c.youngest.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.ref.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.ref.svnsync.c.copy-revprops.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">svnlook youngest </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> svnsync copy-revprops</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

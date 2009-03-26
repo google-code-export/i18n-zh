@@ -1,289 +1,130 @@
 <html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   
-      <title>&#38468;&#24405;&nbsp;A.&nbsp;Subversion &#24555;&#36895;&#20837;&#38376;&#25351;&#21335;</title>
-      <meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
-      <link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;">
-      <link rel="up" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;">
-      <link rel="prev" href="svn.ref.reposhooks.post-unlock.html" title="post-unlock">
-      <link rel="next" href="svn.forcvs.html" title="&#38468;&#24405;&nbsp;B.&nbsp;CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;">
-   </head>
-   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-      <div class="navheader">
-         <table width="100%" summary="Navigation header">
-            <tr>
-               <th colspan="3" align="center">&#38468;&#24405;&nbsp;A.&nbsp;Subversion &#24555;&#36895;&#20837;&#38376;&#25351;&#21335;</th>
-            </tr>
-            <tr>
-               <td width="20%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-unlock.html">&#19978;&#19968;&#39029;</a>&nbsp;
-               </td>
-               <th width="60%" align="center">&nbsp;</th>
-               <td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.forcvs.html">&#19979;&#19968;&#39029;</a></td>
-            </tr>
-         </table>
-         <hr>
-      </div>
-      <div class="appendix" lang="zh-cn">
-         <div class="titlepage">
-            <div>
-               <div>
-                  <h2 class="title"><a name="svn.intro"></a>&#38468;&#24405;&nbsp;A.&nbsp;Subversion &#24555;&#36895;&#20837;&#38376;&#25351;&#21335;
-                  </h2>
-               </div>
-            </div>
-         </div>
-         <div class="toc">
-            <p><b>&#30446;&#24405;</b></p>
-            <dl>
-               <dt><span class="sect1"><a href="svn.intro.html#svn.intro.install">A.1. &#23433;&#35013; Subversion</a></span></dt>
-               <dt><span class="sect1"><a href="svn.intro.html#svn.intro.quickstart">A.2. &#24555;&#36895;&#25351;&#21335;</a></span></dt>
-            </dl>
-         </div>
-         <p>If you're eager to get Subversion up and running (and you
-            enjoy learning by experimentation), this appendix will show you how
-            to create a repository, import code, and then check it back out
-                again as a working copy.  Along the way, we give links to the
-                relevant chapters of this book.
-         </p>
-         <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
-            <table border="0" summary="Warning">
-               <tr>
-                  <td rowspan="2" align="center" valign="top" width="25"><img alt="[&#35686;&#21578;]" src="images/warning.png"></td>
-                  <th align="left">&#35686;&#21578;</th>
-               </tr>
-               <tr>
-                  <td align="left" valign="top">
-                     <p>If you're new to the entire concept of version control or to
-                            the &#8220;<span class="quote">copy-modify-merge</span>&#8221; model used by both CVS and
-                            Subversion, you should read <a class="xref" href="svn.basic.html" title="&#31532;&nbsp;1&nbsp;&#31456;&nbsp;&#22522;&#26412;&#27010;&#24565;">&#31532;&nbsp;1&nbsp;&#31456; <i>&#22522;&#26412;&#27010;&#24565;</i></a>
-                            before going any further.
-                     </p>
-                  </td>
-               </tr>
-            </table>
-         </div>
-         <div class="sect1" lang="zh-cn">
-            <div class="titlepage">
-               <div>
-                  <div>
-                     <h2 class="title" style="clear: both"><a name="svn.intro.install"></a>A.1.&nbsp;&#23433;&#35013; Subversion
-                     </h2>
-                  </div>
-               </div>
-            </div>
-            <p>Subversion is built on a portability layer called
-                     APR&#8212;the Apache Portable Runtime library.  The APR library
-                     provides all the interfaces that Subversion needs to function on
-                     different operating systems: disk access, network access, memory
-                     management, and so on.  While Subversion is able to use Apache
-                     as one of its network server programs, its dependence on APR
-                     <span class="emphasis"><em>does not</em></span> mean that Apache is a required
-                     component.  APR is a standalone library usable by any
-                     application.  It does mean, however, that like Apache,
-                     Subversion clients and servers run on any operating system that
-                     the Apache <span class="command"><strong>httpd</strong></span> server runs on: Windows,
-                     Linux, all flavors of BSD, Mac OS X, NetWare, and others.
-            </p>
-            <p>The easiest way to get Subversion is to download a binary
-                     package built for your operating system.  Subversion's web site
-                     (<a class="ulink" href="http://subversion.tigris.org" target="_top">http://subversion.tigris.org</a>) often has these
-                     packages available for download, posted by volunteers.  The site
-                     usually contains graphical installer packages for users of
-                     Microsoft operating systems.  If you run a Unix-like operating
-                     system, you can use your system's native package distribution
-                     system (RPMs, DEBs, the ports tree, etc.) to get
-                     Subversion.
-            </p>
-            <p>Alternatively, you can build Subversion directly from source
-                     code, though it's not always an easy task. (If you're not
-                     experienced at building open source software packages, you're
-                     probably better off downloading a binary distribution instead!)
-                     From the Subversion web site, download the latest source code
-                     release.  After unpacking it, follow the instructions in
-                     the <code class="filename">INSTALL</code> file to build it.  Note that a
-                     released source package may not contain everything you need to
-                     build a command-line client capable of talking to a remote
-                     repository.  Starting with Subversion 1.4 and later, the
-                     libraries Subversion depends on (apr, apr-util, and neon) are
-                     distributed in a separate source package suffixed
-                     with <code class="filename">-deps</code>.  These libraries are now common
-                     enough that they may already be installed on your system.  If
-                     not, you'll need to unpack the dependency package into the same
-                     directory where you unpacked the main Subversion source.
-                     Regardless, it's possible that you may want to fetch other
-                     optional dependencies such as Berkeley DB and possibly Apache
-                     <span class="command"><strong>httpd</strong></span>.  If you want to do a complete build,
-                     make sure you have all of the packages documented in
-                     the <code class="filename">INSTALL</code> file.
-            </p>
-            <p>If you're one of those folks that likes to use bleeding-edge
-                     software, you can also get the Subversion source code from the
-                     Subversion repository in which it lives.  Obviously, you'll need
-                     to already have a Subversion client on hand to do this.  But
-                     once you do, you can check out a working copy of the Subversion source
-                     repository from <a class="ulink" href="http://svn.collab.net/repos/svn/trunk/" target="_top">http://svn.collab.net/repos/svn/trunk/</a>:
-                     <sup>[<a name="d0e24770" href="#ftn.d0e24770" class="footnote">58</a>]</sup>
-                   
-            </p><pre class="screen">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>附录 A. Subversion 快速入门指南</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="index.html" title="Subversion 权威指南">
+<link rel="prev" href="svn.ref.reposhooks.html" title="9.11. 版本库钩子">
+<link rel="next" href="svn.intro.quickstart.html" title="A.2. 快速指南">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">附录 A. Subversion 快速入门指南</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.ref.reposhooks.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.intro.quickstart.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="appendix" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="svn.intro"></a>附录 A. Subversion 快速入门指南</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="svn.intro.html#svn.intro.install">A.1. 安装 Subversion</a></span></dt>
+<dt><span class="sect1"><a href="svn.intro.quickstart.html">A.2. 快速指南</a></span></dt>
+</dl>
+</div>
+<p>如果你渴望快速配置 Subversion
+并运行(而且你喜欢通过实验学习)，本章会展示如何创建版本库，导入代码，然后以工作副本检出，继续我们会给出本书的相关章节的链接。</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[警告]" src="images/warning.png"></td>
+<th align="left">警告</th>
+</tr>
+<tr><td align="left" valign="top"><p>如果读者还不熟悉版本控制，以及在 Subversion 和 CVS
+中使用的“<span class="quote">拷贝-修改-合并</span>”模型这些基础概念，那么建议在进一步学习之前，首先阅读<a class="xref" href="svn.basic.html" title="第 1 章 基本概念">第 1 章 <i>基本概念</i></a>。</p></td></tr>
+</table></div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.intro.install"></a>A.1. 安装 Subversion</h2></div></div></div>
+<p>Subversion is built on a portability layer called APR—the Apache
+Portable Runtime library.  The APR library provides all the interfaces that
+Subversion needs to function on different operating systems: disk access,
+network access, memory management, and so on.  While Subversion is able to
+use Apache as one of its network server programs, its dependence on APR
+<span class="emphasis"><em>does not</em></span> mean that Apache is a required component.  APR
+is a standalone library usable by any application.  It does mean, however,
+that like Apache, Subversion clients and servers run on any operating system
+that the Apache <span class="command"><strong>httpd</strong></span> server runs on: Windows, Linux, all
+flavors of BSD, Mac OS X, NetWare, and others.</p>
+<p>最简单的安装 Subversion 的方法就是下载与你的操作系统对应的二进制程序包。在 Subversion 的网站(<a class="ulink" href="http://subversion.tigris.org" target="_top">http://subversion.tigris.org</a>)上通常可以找到由志愿者提供下载的程序包。在这个网站上，会提供微软操作系统上的图形化应用程序安装包。而对于类
+Unix 系统，则可以使用其自身的程序包系统(RPM, DEB, ports 等)来获取 Subversion。</p>
+<p>Alternatively, you can build Subversion directly from source code, though
+it's not always an easy task. (If you're not experienced at building open
+source software packages, you're probably better off downloading a binary
+distribution instead!)  From the Subversion web site, download the latest
+source code release.  After unpacking it, follow the instructions in the
+<code class="filename">INSTALL</code> file to build it.  Note that a released source
+package may not contain everything you need to build a command-line client
+capable of talking to a remote repository.  Starting with Subversion 1.4 and
+later, the libraries Subversion depends on (apr, apr-util, and neon) are
+distributed in a separate source package suffixed with
+<code class="filename">-deps</code>.  These libraries are now common enough that they
+may already be installed on your system.  If not, you'll need to unpack the
+dependency package into the same directory where you unpacked the main
+Subversion source.  Regardless, it's possible that you may want to fetch
+other optional dependencies such as Berkeley DB and possibly Apache
+<span class="command"><strong>httpd</strong></span>.  If you want to do a complete build, make sure you
+have all of the packages documented in the <code class="filename">INSTALL</code>
+file.</p>
+<p>If you're one of those folks that likes to use bleeding-edge software, you
+can also get the Subversion source code from the Subversion repository in
+which it lives.  Obviously, you'll need to already have a Subversion client
+on hand to do this.  But once you do, you can check out a working copy of
+the Subversion source repository from <a class="ulink" href="http://svn.collab.net/repos/svn/trunk/" target="_top">http://svn.collab.net/repos/svn/trunk/</a>: <sup>[<a name="id413389" href="#ftn.id413389" class="footnote">60</a>]</sup>
+    </p>
+<pre class="screen">
 $ svn checkout http://svn.collab.net/repos/svn/trunk subversion
 A    subversion/HACKING
 A    subversion/INSTALL
 A    subversion/README
 A    subversion/autogen.sh
 A    subversion/build.conf
-&#8230;
-</pre><p>&#19978;&#38754;&#30340;&#21629;&#20196;&#20250;&#26816;&#20986;&#19968;&#20010;&#27969;&#34880;&#30340;&#65292;&#26368;&#26032;&#30340;Subversion&#28304;&#20195;&#30721;&#29256;&#26412;&#21040;&#20320;&#30340;&#21483;&#20570;<code class="filename">subversion</code>&#30340;&#24403;&#21069;&#24037;&#20316;&#30446;&#24405;&#12290;&#24456;&#26126;&#26174;&#65292;&#20320;&#21487;&#20197;&#35843;&#25972;&#26368;&#21518;&#30340;&#21442;&#25968;&#25913;&#20026;&#20320;&#38656;&#35201;&#30340;&#12290;&#19981;&#31649;&#20320;&#24590;&#20040;&#31216;&#21628;&#20320;&#30340;&#26032;&#30340;&#24037;&#20316;&#21103;&#26412;&#30446;&#24405;&#65292;&#22312;&#25805;&#20316;&#20043;&#21518;&#65292;&#20320;&#29616;&#22312;&#24050;&#32463;&#26377;&#20102;Subversion&#30340;&#28304;&#20195;&#30721;&#12290;&#24403;&#28982;&#65292;&#20320;&#36824;&#26159;&#38656;&#35201;&#24471;&#21040;&#19968;&#20123;&#24110;&#21161;&#24211;(apr&#65292;apr-util&#31561;&#31561;)&#8212;&#35265;&#24037;&#20316;&#25335;&#36125;&#26681;&#30446;&#24405;&#30340;<code class="filename">INSTALL</code>&#26469;&#24471;&#21040;&#26356;&#22810;&#32454;&#33410;&#12290;
-            </p>
-         </div>
-         <div class="sect1" lang="zh-cn">
-            <div class="titlepage">
-               <div>
-                  <div>
-                     <h2 class="title" style="clear: both"><a name="svn.intro.quickstart"></a>A.2.&nbsp;&#24555;&#36895;&#25351;&#21335;
-                     </h2>
-                  </div>
-               </div>
-            </div>
-            <div class="blockquote">
-               <blockquote class="blockquote">
-                  <p>&#8220;<span class="quote">&#35831;&#30830;&#23450;&#20320;&#22352;&#22312;&#20102;&#27491;&#30830;&#30340;&#20301;&#32622;&#65292;&#20320;&#30340;&#30424;&#26700;&#24050;&#32463;&#20851;&#38381;&#65292;&#20056;&#21153;&#21592;&#20204;&#65292;&#20934;&#22791;&#36215;&#39134; &#8230;&#12290;</span>&#8221;
-                  </p>
-               </blockquote>
-            </div>
-            <p>&#36825;&#26159;&#19968;&#20010;&#24555;&#36895;&#25945;&#31243;&#65292;&#33021;&#22815;&#24110;&#21161;&#20320;&#29087;&#24713; Subversion &#30340;&#22522;&#26412;&#37197;&#32622;&#21644;&#25805;&#20316;.&#22312;&#32467;&#26463;&#36825;&#20010;&#25945;&#31243;&#26102;&#65292;&#20320;&#24212;&#35813;&#23545; Subversion &#30340;&#20856;&#22411;&#20351;&#29992;&#26377;&#20102;&#19968;&#20010;&#22522;&#26412;&#35748;&#35782;&#12290;</p>
-            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
-               <table border="0" summary="Note">
-                  <tr>
-                     <td rowspan="2" align="center" valign="top" width="25"><img alt="[&#27880;&#24847;]" src="images/note.png"></td>
-                     <th align="left">&#27880;&#24847;</th>
-                  </tr>
-                  <tr>
-                     <td align="left" valign="top">
-                        <p>&#36816;&#34892;&#19979;&#38754;&#30340;&#20363;&#23376;&#38656;&#35201;&#39318;&#20808;&#27491;&#30830;&#23433;&#35013; Subversion &#23458;&#25143;&#31471;&#31243;&#24207; <span class="command"><strong>svn</strong></span>&#65292;&#20197;&#21450;&#31649;&#29702;&#24037;&#20855; <span class="command"><strong>svnadmin</strong></span>&#65292;&#22312;&#31867; Unix &#25805;&#20316;&#31995;&#32479;&#19978;&#36816;&#34892;(&#20551;&#23450;&#20320;&#20570;&#20102;&#26174;&#32780;&#26131;&#35265;&#30340;&#35843;&#25972;&#65292;&#26412;&#25945;&#31243;&#20063;&#33021;&#22312; Windows &#21629;&#20196;&#34892;&#25191;&#34892;)&#12290;&#25105;&#20204;&#36824;&#20551;&#23450;&#20320;&#20351;&#29992; Subversion 1.2 &#25110;&#26356;&#26032;&#29256;&#26412;(&#21487;&#20197;&#36816;&#34892; <strong class="userinput"><code>svn --version</code></strong> &#26469;&#26816;&#26597;)&#12290;
-                        </p>
-                     </td>
-                  </tr>
-               </table>
-            </div>
-            <p>Subversion&#30340;&#25152;&#26377;&#29256;&#26412;&#21270;&#25968;&#25454;&#37117;&#20648;&#23384;&#22312;&#20013;&#24515;&#29256;&#26412;&#24211;&#20013;&#12290;&#22240;&#27492;&#39318;&#20808;&#65292;&#25105;&#20204;&#38656;&#35201;&#21019;&#24314;&#19968;&#20010;&#29256;&#26412;&#24211;&#65306;</p><pre class="screen">
-$ svnadmin create /var/svn/repos
-$ ls /var/svn/repos
-conf/  dav/  db/  format  hooks/  locks/  README.txt
-</pre><p>&#36825;&#20010;&#21629;&#20196;&#21019;&#24314;&#20102;&#19968;&#20010;&#26032;&#30446;&#24405;<code class="filename">/var/svn/repos</code>&#65292;&#24182;&#22312;&#20854;&#20013;&#21019;&#24314;&#20102;&#19968;&#20010;Subversion&#29256;&#26412;&#24211;&#12290;&#36825;&#20010;&#30446;&#24405;&#37324;&#20027;&#35201;&#20445;&#23384;&#20102;&#19968;&#20123;&#25968;&#25454;&#24211;&#25991;&#20214;(&#36824;&#26377;&#20854;&#23427;&#19968;&#20123;&#25991;&#20214;)&#65292;&#32780;&#19981;&#20687;CVS&#37027;&#26679;&#20445;&#23384;&#30528;&#29256;&#26412;&#21270;&#30340;&#25991;&#20214;&#12290;&#38656;&#35201;&#26356;&#22810;&#29256;&#26412;&#24211;&#21019;&#24314;&#21644;&#32500;&#25252;&#26041;&#38754;&#30340;&#20869;&#23481;&#65292;&#21442;&#35265;<a class="xref" href="svn.reposadmin.html" title="&#31532;&nbsp;5&nbsp;&#31456;&nbsp;&#29256;&#26412;&#24211;&#31649;&#29702;">&#31532;&nbsp;5&nbsp;&#31456; <i>&#29256;&#26412;&#24211;&#31649;&#29702;</i></a>&#12290;
-            </p>
-            <p>Subversion has no concept of a &#8220;<span class="quote">project.</span>&#8221; The
-                     repository is just a virtual versioned filesystem, a large tree
-                     that can hold anything you wish.  Some administrators prefer to
-                     store only one project in a repository, and others prefer to
-                     store multiple projects in a repository by placing them into
-                     separate directories.  We discuss the merits of each approach
-                     in <a class="xref" href="svn.reposadmin.html#svn.reposadmin.projects.chooselayout" title="5.2.1.&nbsp;&#35268;&#21010;&#20320;&#30340;&#29256;&#26412;&#24211;&#32467;&#26500;">&#31532;&nbsp;5.2.1&nbsp;&#33410; &#8220;&#35268;&#21010;&#20320;&#30340;&#29256;&#26412;&#24211;&#32467;&#26500;&#8221;</a>.
-                     Either way, the repository manages only files and directories,
-                     so it's up to humans to interpret particular directories as
-                     &#8220;<span class="quote">projects.</span>&#8221;  So while you might see references to
-                     projects throughout this book, keep in mind that we're only ever
-                     talking about some directory (or collection of directories) in
-                     the repository.
-            </p>
-            <p>In this example, we assume you already have some sort
-                     of project (a collection of files and directories) that you wish
-                     to import into your newly created Subversion repository.  Begin
-                     by organizing your data into a single directory called
-                     <code class="filename">myproject</code> (or whatever you wish).  For
-                     reasons explained in <a class="xref" href="svn.branchmerge.html" title="&#31532;&nbsp;4&nbsp;&#31456;&nbsp;&#20998;&#25903;&#19982;&#21512;&#24182;">&#31532;&nbsp;4&nbsp;&#31456; <i>&#20998;&#25903;&#19982;&#21512;&#24182;</i></a>, your
-                     project's tree structure should contain three top-level
-                     directories named <code class="filename">branches</code>,
-                     <code class="filename">tags</code>, and <code class="filename">trunk</code>.  The
-                     <code class="filename">trunk</code> directory should contain all of your
-                     data, and the <code class="filename">branches</code> and
-                     <code class="filename">tags</code> directories should be empty:
-            </p><pre class="screen">
-/tmp/myproject/branches/
-/tmp/myproject/tags/
-/tmp/myproject/trunk/
-                     foo.c
-                     bar.c
-                     Makefile
-                     &#8230;
-</pre><p><code class="filename">branches</code>&#12289;<code class="filename">tags</code>&#21644;<code class="filename">trunk</code>&#36825;&#19977;&#20010;&#23376;&#30446;&#24405;&#19981;&#26159;Subversion&#24517;&#39035;&#30340;&#12290;&#20294;&#36825;&#26679;&#20570;&#26159;Subversion&#30340;&#20064;&#24815;&#29992;&#27861;&#65292;&#25105;&#20204;&#36824;&#26159;&#36981;&#23432;&#36825;&#20010;&#32422;&#23450;&#21543;&#12290;
-            </p>
-            <p>&#20934;&#22791;&#22909;&#20102;&#25968;&#25454;&#20043;&#21518;&#65292;&#23601;&#21487;&#20197;&#20351;&#29992;<span class="command"><strong>svn import</strong></span>&#21629;&#20196;(&#21442;&#35265;<a class="xref" href="svn.tour.html#svn.tour.importing" title="2.2.&nbsp;&#23548;&#20837;&#25968;&#25454;&#21040;&#20320;&#30340;&#29256;&#26412;&#24211;">&#31532;&nbsp;2.2&nbsp;&#33410; &#8220;&#23548;&#20837;&#25968;&#25454;&#21040;&#20320;&#30340;&#29256;&#26412;&#24211;&#8221;</a>)&#23558;&#20854;&#23548;&#20837;&#21040;&#29256;&#26412;&#24211;&#20013;&#65306;
-            </p><pre class="screen">
-$ svn import /tmp/myproject file:///var/svn/repos/myproject -m "initial import"
-Adding         /tmp/myproject/branches
-Adding         /tmp/myproject/tags
-Adding         /tmp/myproject/trunk
-Adding         /tmp/myproject/trunk/foo.c
-Adding         /tmp/myproject/trunk/bar.c
-Adding         /tmp/myproject/trunk/Makefile
-&#8230;
-Committed revision 1.
-$ 
-</pre><p>&#29616;&#22312;&#29256;&#26412;&#24211;&#20013;&#24050;&#32463;&#20445;&#23384;&#20102;&#30446;&#24405;&#20013;&#30340;&#25968;&#25454;&#12290;&#22914;&#21069;&#25152;&#36848;&#65292;&#30452;&#25509;&#26597;&#30475;&#29256;&#26412;&#24211;&#26159;&#30475;&#19981;&#21040;&#25991;&#20214;&#21644;&#30446;&#24405;&#30340;&#65307;&#23427;&#20204;&#23384;&#25918;&#22312;&#25968;&#25454;&#24211;&#20043;&#20013;&#12290;&#20294;&#26159;&#29256;&#26412;&#24211;&#30340;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;&#20013;&#21017;&#21253;&#21547;&#20102;&#19968;&#20010;&#21517;&#20026;<code class="filename">myproject</code>&#30340;&#39030;&#32423;&#30446;&#24405;&#65292;&#20854;&#20013;&#20381;&#27492;&#20445;&#23384;&#20102;&#25152;&#26377;&#30340;&#25968;&#25454;&#12290;
-            </p>
-            <p>Note that the original <code class="filename">/tmp/myproject</code>
-                     directory is unchanged; Subversion is unaware of it.  (In fact,
-                     you can even delete that directory if you wish.)  To
-                     start manipulating repository data, you need to create a new
-                     &#8220;<span class="quote">working copy</span>&#8221; of the data, a sort of private
-                     workspace.  Ask Subversion to &#8220;<span class="quote">check out</span>&#8221; a working
-                     copy of the <code class="filename">myproject/trunk</code> directory in
-                     the repository:
-            </p><pre class="screen">
-$ svn checkout file:///var/svn/repos/myproject/trunk myproject
-A  myproject/foo.c
-A  myproject/bar.c
-A  myproject/Makefile
-&#8230;
-Checked out revision 1.
-</pre><p>&#29616;&#22312;&#65292;&#22312;<code class="filename">myproject</code> &#30446;&#24405;&#19979;&#29983;&#25104;&#20102;&#19968;&#20010;&#29256;&#26412;&#24211;&#25968;&#25454;&#30340;&#29420;&#31435;&#21103;&#26412;&#12290;&#25105;&#20204;&#21487;&#20197;&#22312;&#36825;&#20010;&#24037;&#20316;&#21103;&#26412;&#20013;&#32534;&#36753;&#25991;&#20214;&#65292;&#24182;&#23558;&#20462;&#25913;&#25552;&#20132;&#21040;&#29256;&#26412;&#24211;&#20013;&#12290;
-            </p>
-            <div class="itemizedlist">
-               <ul type="disc">
-                  <li>
-                     <p>&#36827;&#20837;&#24037;&#20316;&#21103;&#26412;&#30446;&#24405;&#65292;&#32534;&#36753;&#26576;&#20010;&#25991;&#20214;&#30340;&#20869;&#23481;&#12290;</p>
-                  </li>
-                  <li>
-                     <p>&#36816;&#34892; <strong class="userinput"><code>svn diff</code></strong>&#65292;&#20197;&#26631;&#20934;&#24046;&#24322;&#26684;&#24335;&#26597;&#30475;&#20320;&#30340;&#20462;&#25913;&#12290;
-                     </p>
-                  </li>
-                  <li>
-                     <p>&#36816;&#34892; userinput&gt;svn commit</p>
-                  </li>
-                  <li>
-                     <p>&#36816;&#34892; <strong class="userinput"><code>svn update</code></strong>&#65292;&#35753;&#20320;&#30340;&#24037;&#20316;&#21103;&#26412;&#26356;&#26032;&#21040;&#29256;&#26412;&#24211;&#30340;&#8220;<span class="quote">&#26368;&#26032;</span>&#8221;&#29256;&#26412;&#12290;
-                     </p>
-                  </li>
-               </ul>
-            </div>
-            <p>&#23436;&#25972;&#30340;&#24037;&#20316;&#21103;&#26412;&#25805;&#20316;&#25351;&#21335;&#65292;&#35831;&#21442;&#35265;<a class="xref" href="svn.tour.html" title="&#31532;&nbsp;2&nbsp;&#31456;&nbsp;&#22522;&#26412;&#20351;&#29992;">&#31532;&nbsp;2&nbsp;&#31456; <i>&#22522;&#26412;&#20351;&#29992;</i></a>&#12290;
-            </p>
-            <p>&#29616;&#22312;&#65292;Subversion&#29256;&#26412;&#24211;&#21487;&#20197;&#36890;&#36807;&#32593;&#32476;&#26041;&#24335;&#35775;&#38382;&#12290;&#21442;&#32771;<a class="xref" href="svn.serverconfig.html" title="&#31532;&nbsp;6&nbsp;&#31456;&nbsp;&#26381;&#21153;&#37197;&#32622;">&#31532;&nbsp;6&nbsp;&#31456; <i>&#26381;&#21153;&#37197;&#32622;</i></a>&#65292;&#20102;&#35299;&#19981;&#21516;&#26381;&#21153;&#22120;&#36719;&#20214;&#30340;&#20351;&#29992;&#20197;&#21450;&#37197;&#32622;&#26041;&#27861;&#12290;
-            </p>
-         </div>
-         <div class="footnotes"><br><hr width="100" align="left">
-            <div class="footnote">
-               <p><sup>[<a name="ftn.d0e24770" href="#d0e24770" class="para">58</a>] </sup>&#27880;&#24847;&#19978;&#38754;&#20363;&#23376;&#20013;&#26816;&#20986;&#30340;URL&#24182;&#19981;&#26159;&#20197;<code class="literal">svn</code>&#32467;&#23614;&#65292;&#32780;&#26159;&#23427;&#30340;&#19968;&#20010;&#21483;&#20570;<code class="literal">trunk</code>&#30340;&#23376;&#30446;&#24405;&#65292;&#21487;&#20197;&#30475;&#25105;&#20204;&#23545;Subversion&#30340;&#20998;&#25903;&#21644;&#26631;&#31614;&#27169;&#22411;&#30340;&#35752;&#35770;&#26469;&#29702;&#35299;&#32972;&#21518;&#30340;&#21407;&#22240;&#12290;
-               </p>
-            </div>
-         </div>
-      </div>
-      <div class="navfooter">
-         <hr>
-         <table width="100%" summary="Navigation footer">
-            <tr>
-               <td width="40%" align="left"><a accesskey="p" href="svn.ref.reposhooks.post-unlock.html">&#19978;&#19968;&#39029;</a>&nbsp;
-               </td>
-               <td width="20%" align="center">&nbsp;</td>
-               <td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.forcvs.html">&#19979;&#19968;&#39029;</a></td>
-            </tr>
-            <tr>
-               <td width="40%" align="left" valign="top">post-unlock&nbsp;</td>
-               <td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td>
-               <td width="40%" align="right" valign="top">&nbsp;&#38468;&#24405;&nbsp;B.&nbsp;CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;</td>
-            </tr>
-         </table>
-      </div>
-   </body>
+…
+</pre>
+<p>The preceding command will create a working copy of the latest (unreleased)
+Subversion source code into a subdirectory named
+<code class="filename">subversion</code> in your current working directory.  You can
+adjust that last argument as you see fit.  Regardless of what you call the
+new working copy directory, though, after this operation completes, you will
+now have the Subversion source code.  Of course, you will still need to
+fetch a few helper libraries (apr, apr-util, etc.)—see the
+<code class="filename">INSTALL</code> file in the top level of the working copy for
+details.</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id413389" href="#id413389" class="para">60</a>] </sup>Note that the URL checked out in the example ends not with
+<code class="literal">svn</code>, but with a subdirectory thereof called
+<code class="literal">trunk</code>.  See our discussion of Subversion's branching and
+tagging model for the reasoning behind this.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.ref.reposhooks.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.intro.quickstart.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">9.11. 版本库钩子 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> A.2. 快速指南</td>
+</tr>
+</table>
+</div>
+</body>
 </html>

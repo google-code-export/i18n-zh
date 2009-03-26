@@ -1,0 +1,133 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>6.6. 支持多种版本库访问方法</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.serverconfig.html" title="第 6 章 服务配置">
+<link rel="prev" href="svn.serverconfig.pathbasedauthz.html" title="6.5. 基于路径的授权">
+<link rel="next" href="svn.customization.html" title="第 7 章 定制你的 Subversion 体验">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">6.6. 支持多种版本库访问方法</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.serverconfig.pathbasedauthz.html">上一页</a> </td>
+<th width="60%" align="center">第 6 章 服务配置</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.customization.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.serverconfig.multimethod"></a>6.6. 支持多种版本库访问方法</h2></div></div></div>
+<p>You've seen how a repository can be accessed in many different ways.  But is
+it possible—or safe—for your repository to be accessed by
+multiple methods simultaneously? The answer is yes, provided you use a bit
+of foresight.</p>
+<p>在任何给定的时间，这些进程会要求读或者写访问你的版本库：</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>常规的系统用户使用Subversion客户端(客户端程序本身)通过<code class="literal">file://</code>URL直接访问版本库</p></li>
+<li><p>常规的系统用户连接使用SSH调用的访问版本库的<span class="command"><strong>svnserve</strong></span>进程(就像它们自己运行一样)；</p></li>
+<li><p>An <span class="command"><strong>svnserve</strong></span> process—either a daemon or one
+launched by <span class="command"><strong>inetd</strong></span>—running as a particular fixed
+user</p></li>
+<li><p>一个Apache <span class="command"><strong>httpd</strong></span>进程，以一个固定用户运行</p></li>
+</ul></div>
+<p>The most common problem administrators run into is repository ownership and
+permissions.  Does every process (or user) in the preceding list have the
+rights to read and write the repository's underlying data files? Assuming
+you have a Unix-like operating system, a straightforward approach might be
+to place every potential repository user into a new <code class="literal">svn</code>
+group, and make the repository wholly owned by that group.  But even that's
+not enough, because a process may write to the database files using an
+unfriendly umask—one that prevents access by other users.</p>
+<p>So the next step beyond setting up a common group for repository users is to
+force every repository-accessing process to use a sane umask.  For users
+accessing the repository directly, you can make the <span class="command"><strong>svn</strong></span>
+program into a wrapper script that first runs <strong class="userinput"><code>umask
+002</code></strong> and then runs the real <span class="command"><strong>svn</strong></span> client
+program.  You can write a similar wrapper script for the
+<span class="command"><strong>svnserve</strong></span> program, and add a <strong class="userinput"><code>umask
+002</code></strong> command to Apache's own startup script,
+<code class="filename">apachectl</code>.  For example:</p>
+<pre class="screen">
+$ cat /usr/bin/svn
+
+#!/bin/sh
+
+umask 002
+/usr/bin/svn-real "$@"
+
+</pre>
+<p>Another common problem is often encountered on Unix-like systems.  If your
+repository is backed by Berkeley DB, for example, it occasionally creates
+new log files to journal its actions.  Even if the Berkeley DB repository is
+wholly owned by the <span class="command"><strong>svn</strong></span> group, these newly created log
+files won't necessarily be owned by that same group, which then creates more
+permissions problems for your users.  A good workaround is to set the group
+SUID bit on the repository's <code class="filename">db</code> directory. This causes
+all newly created log files to have the same group owner as the parent
+directory.</p>
+<p>Once you've jumped through these hoops, your repository should be accessible
+by all the necessary processes.  It may seem a bit messy and complicated,
+but the problems of having multiple users sharing write access to common
+files are classic ones that are not often elegantly solved.</p>
+<p>Fortunately, most repository administrators will never
+<span class="emphasis"><em>need</em></span> to have such a complex configuration.  Users who
+wish to access repositories that live on the same machine are not limited to
+using <code class="literal">file://</code> access URLs—they can typically
+contact the Apache HTTP server or <span class="command"><strong>svnserve</strong></span> using
+<code class="literal">localhost</code> for the server name in their
+<code class="literal">http://</code> or <code class="literal">svn://</code> URL.  And
+maintaining multiple server processes for your Subversion repositories is
+likely to be more of a headache than necessary.  We recommend that you
+choose a single server that best meets your needs and stick with it!</p>
+<div class="sidebar">
+<p class="title"><b>svn+ssh 服务器检查列表</b></p>
+<p>It can be quite tricky to get a bunch of users with existing SSH accounts to
+share a repository without permissions problems.  If you're confused about
+all the things that you (as an administrator) need to do on a Unix-like
+system, here's a quick checklist that resummarizes some of the topics
+discussed in this section:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>所有的SSH用户需要能够读写版本库，把所有的SSH用户放到同一个组里。</p></li>
+<li><p>
+            让那个组拥有整个版本库。
+            </p></li>
+<li><p>设置组的访问许可为读/写。</p></li>
+<li><p>Your users need to use a sane umask when accessing the repository, so make
+sure <span class="command"><strong>svnserve</strong></span> (<code class="filename">/usr/bin/svnserve</code>, or
+wherever it lives in <code class="literal">$PATH</code>) is actually a wrapper script
+that runs <strong class="userinput"><code>umask 002</code></strong> and executes the real
+<span class="command"><strong>svnserve</strong></span> binary.</p></li>
+<li><p>Take similar measures when using <span class="command"><strong>svnlook</strong></span> and
+<span class="command"><strong>svnadmin</strong></span>.  Either run them with a sane umask or wrap them
+as just described.</p></li>
+</ul></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.serverconfig.pathbasedauthz.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.serverconfig.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.customization.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">6.5. 基于路径的授权 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 7 章 定制你的 Subversion 体验</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

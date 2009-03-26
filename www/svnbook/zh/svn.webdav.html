@@ -1,643 +1,133 @@
 <html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   
-      <title>&#38468;&#24405;&nbsp;C.&nbsp;WebDAV &#21644;&#33258;&#21160;&#29256;&#26412;</title>
-      <meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
-      <link rel="start" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;">
-      <link rel="up" href="index.html" title="Subversion &#26435;&#23041;&#25351;&#21335;">
-      <link rel="prev" href="svn.forcvs.html" title="&#38468;&#24405;&nbsp;B.&nbsp;CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;">
-      <link rel="next" href="svn.copyright.html" title="&#38468;&#24405;&nbsp;D.&nbsp;&#29256;&#26435;">
-   </head>
-   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-      <div class="navheader">
-         <table width="100%" summary="Navigation header">
-            <tr>
-               <th colspan="3" align="center">&#38468;&#24405;&nbsp;C.&nbsp;WebDAV &#21644;&#33258;&#21160;&#29256;&#26412;</th>
-            </tr>
-            <tr>
-               <td width="20%" align="left"><a accesskey="p" href="svn.forcvs.html">&#19978;&#19968;&#39029;</a>&nbsp;
-               </td>
-               <th width="60%" align="center">&nbsp;</th>
-               <td width="20%" align="right">&nbsp;<a accesskey="n" href="svn.copyright.html">&#19979;&#19968;&#39029;</a></td>
-            </tr>
-         </table>
-         <hr>
-      </div>
-      <div class="appendix" lang="zh-cn">
-         <div class="titlepage">
-            <div>
-               <div>
-                  <h2 class="title"><a name="svn.webdav"></a>&#38468;&#24405;&nbsp;C.&nbsp;WebDAV &#21644;&#33258;&#21160;&#29256;&#26412;
-                  </h2>
-               </div>
-            </div>
-         </div>
-         <div class="toc">
-            <p><b>&#30446;&#24405;</b></p>
-            <dl>
-               <dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.basic">C.1. &#20160;&#20040;&#26159; WebDAV&#65311;</a></span></dt>
-               <dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.autoversioning">C.2. &#33258;&#21160;&#29256;&#26412;&#21270;</a></span></dt>
-               <dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.clients">C.3. &#23458;&#25143;&#31471;&#20132;&#20114;&#24615;</a></span></dt>
-               <dd>
-                  <dl>
-                     <dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.standalone">C.3.1. &#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</a></span></dt>
-                     <dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.file-explorer-extensions">C.3.2. &#25991;&#20214;&#27983;&#35272;&#22120;&#30340; WebDAV &#25193;&#23637;</a></span></dt>
-                     <dt><span class="sect2"><a href="svn.webdav.html#svn.webdav.clients.fs-impl">C.3.3. WebDAV &#30340;&#25991;&#20214;&#31995;&#32479;&#23454;&#29616;</a></span></dt>
-                  </dl>
-               </dd>
-            </dl>
-         </div>
-         <p>WebDAV is an extension to HTTP, and it is growing more and more
-                popular as a standard for file sharing.  Today's operating systems
-                are becoming extremely web-aware, and many now have built-in
-                support for mounting &#8220;<span class="quote">shares</span>&#8221; exported by WebDAV
-                servers.
-         </p>
-         <p>If you use Apache as your Subversion network server, to
-                some extent you are also running a WebDAV server.  This appendix
-                gives some background on the nature of this protocol, how
-                Subversion uses it, and how well Subversion interoperates with
-                other software that is WebDAV-aware.
-         </p>
-         <div class="sect1" lang="zh-cn">
-            <div class="titlepage">
-               <div>
-                  <div>
-                     <h2 class="title" style="clear: both"><a name="svn.webdav.basic"></a>C.1.&nbsp;&#20160;&#20040;&#26159; WebDAV&#65311;
-                     </h2>
-                  </div>
-               </div>
-            </div>
-            <p><em class="firstterm">DAV</em> stands for &#8220;<span class="quote">Distributed
-                        Authoring and Versioning.</span>&#8221;  RFC 2518 defines a set of
-                     concepts and accompanying extension methods to HTTP 1.1 that
-                     make the Web a more universal read/write medium.  The basic
-                     idea is that a WebDAV-compliant web server can act like a
-                     generic file server; clients can &#8220;<span class="quote">mount</span>&#8221; shared
-                     folders over HTTP that behave much like other network
-                     filesystems (such as NFS or SMB).
-            </p>
-            <p>&#24754;&#24808;&#30340;&#26159;&#65292;RFC&#35268;&#33539;&#24182;&#27809;&#26377;&#25552;&#20379;&#20219;&#20309;&#29256;&#26412;&#25511;&#21046;&#27169;&#22411;&#12290;&#22522;&#26412;&#30340;DAV&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#21482;&#26159;&#20551;&#23450;&#27599;&#20010;&#25991;&#20214;&#25110;&#30446;&#24405;&#21482;&#26377;&#19968;&#20010;&#29256;&#26412;&#23384;&#22312;&#65292;&#21487;&#20197;&#37325;&#22797;&#30340;&#35206;&#30422;&#12290;</p>
-            <p>&#22240;&#20026;RFC 2518&#28431;&#19979;&#20102;&#29256;&#26412;&#27010;&#24565;&#65292;&#20960;&#24180;&#20043;&#21518;&#65292;&#21478;&#19968;&#20010;&#22996;&#21592;&#20250;&#30041;&#19979;&#26469;&#36127;&#36131;&#25776;&#20889;RFC 3253&#26469;&#28155;&#21152;WebDAV&#30340;&#29256;&#26412;&#21270;&#65292;&#20063;&#23601;&#26159;&#8220;<span class="quote">DeltaV</span>&#8221;&#12290;WebDAV/DeltaV&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#32463;&#24120;&#21483;&#20570;&#8220;<span class="quote">DeltaV</span>&#8221;&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#65292;&#22240;&#20026;DeltaV&#26263;&#21547;&#20102;&#22522;&#26412;&#30340;WebDAV&#12290;
-            </p>
-            <p>The original WebDAV standard has been widely successful.
-                     Every modern computer operating system has a general WebDAV
-                     client built in (details to follow), and a number of popular
-                     standalone applications are also able to speak
-                     WebDAV&#8212;Microsoft Office, Dreamweaver, and Photoshop, to
-                     name a few.  On the server end, Apache HTTP Server has been
-                     able to provide WebDAV services since 1998 and is considered the
-                     de facto open source standard.  Several other
-                     commercial WebDAV servers are available, including Microsoft's own
-                     IIS.
-            </p>
-            <p>DeltaV, unfortunately, has not been so successful.  It's
-                     very difficult to find any DeltaV clients or servers.  The few
-                     that do exist are relatively unknown commercial products, and
-                     thus it's very difficult to test interoperability.  It's not
-                     entirely clear as to why DeltaV has remained stagnant.  Some
-                     opine that the specification is just too complex.  Others argue
-                     that while WebDAV's features have mass appeal (even the least
-                     technical users appreciate network file sharing), its version
-                     control features just aren't interesting or necessary for most
-                     users.  Finally, some believe that DeltaV remains unpopular
-                     because there's still no open source server product that
-                     implements it well.
-            </p>
-            <p>&#24403;Subversion&#36824;&#22312;&#35774;&#35745;&#38454;&#27573;&#26102;&#65292;&#20351;&#29992;Apache&#30340;httpd&#20316;&#20026;&#20027;&#35201;&#32593;&#32476;&#26381;&#21153;&#22120;&#23601;&#26159;&#19968;&#20010;&#24456;&#22909;&#30340;&#24819;&#27861;&#65292;&#24050;&#32463;&#26377;&#20102;&#25903;&#25345;WebDAV&#26381;&#21153;&#30340;&#27169;&#22359;(<span class="command"><strong>mod_dav_svn</strong></span>)&#12290;DeltaV&#26377;&#19968;&#20010;&#24456;&#26032;&#30340;&#35268;&#33539;&#65292;&#24076;&#26395;&#23601;&#26159;Subversion&#26381;&#21153;&#22120;&#27169;&#22359;&#26368;&#32456;&#33021;&#22815;&#25104;&#20026;&#19968;&#20010;&#24320;&#28304;&#30340;DeltaV&#21442;&#32771;&#23454;&#29616;&#65292;&#20294;&#38750;&#24120;&#19981;&#24184;&#65292;DeltaV&#24471;&#29256;&#26412;&#27169;&#22411;&#36807;&#20110;&#35814;&#32454;&#65292;&#19982;Subversion&#30340;&#27169;&#22411;&#24182;&#19981;&#21305;&#37197;&#65292;&#34429;&#28982;&#26377;&#20123;&#27010;&#24565;&#21487;&#20197;&#23545;&#24212;&#36215;&#26469;&#65292;&#20294;&#26377;&#20123;&#21017;&#19981;&#33021;&#12290;
-            </p>
-            <p>&#36825;&#26159;&#20160;&#20040;&#24847;&#24605;&#21602;&#65311;</p>
-            <p>&#39318;&#20808;&#65292;Subversion&#23458;&#25143;&#31471;&#19981;&#26159;&#19968;&#20010;&#23436;&#20840;&#23454;&#29616;&#30340;DeltaV&#23458;&#25143;&#31471;&#65292;&#23427;&#38656;&#35201;&#20174;&#26381;&#21153;&#22120;&#24471;&#21040;DeltaV&#19981;&#33021;&#25552;&#20379;&#30340;&#19996;&#35199;&#65292;&#22240;&#27492;&#38750;&#24120;&#20381;&#36182;&#20110;&#21482;&#26377;<span class="command"><strong>mod_dav_svn</strong></span>&#29702;&#35299;&#30340;Subversion&#29305;&#23450;&#30340;<code class="literal">REPORT</code>&#35831;&#27714;&#12290;
-            </p>
-            <p>Second, <span class="command"><strong>mod_dav_svn</strong></span> is not a
-                     fully realized DeltaV server.  Many portions of the DeltaV
-                     specification were irrelevant to Subversion, and thus were left
-                     unimplemented.
-            </p>
-            <p>&#22312;&#24320;&#21457;&#32773;&#31038;&#21306;&#19968;&#30452;&#26377;&#36825;&#26679;&#30340;&#35752;&#35770;&#65292;&#26159;&#21542;&#20540;&#24471;&#24357;&#34917;&#36825;&#31181;&#24418;&#21183;&#12290;&#25913;&#21464;Subversion&#30340;&#35774;&#35745;&#26469;&#21305;&#37197;DeltaV&#30475;&#36215;&#26469;&#24182;&#19981;&#29616;&#23454;&#65292;&#25152;&#20197;&#21487;&#33021;&#27809;&#26377;&#21150;&#27861;&#35753;&#23458;&#25143;&#31471;&#20174;&#26222;&#36890;&#30340;DeltaV&#26381;&#21153;&#22120;&#19978;&#24471;&#21040;&#25152;&#26377;&#30340;&#19996;&#35199;&#12290;&#21478;&#19968;&#26041;&#38754;&#65292;mod_dav_svn<span class="emphasis"><em>&#21487;&#20197;</em></span>&#32487;&#32493;&#24320;&#21457;&#26469;&#23454;&#29616;&#25152;&#26377;&#30340;DeltaV&#65292;&#20294;&#32570;&#20047;&#36825;&#26679;&#20570;&#30340;&#21160;&#21147;&#8212;&#20960;&#20046;&#27809;&#26377;&#33021;&#19982;&#20043;&#20132;&#25143;&#30340;DeltaV&#23458;&#25143;&#31471;&#12290;
-            </p>
-         </div>
-         <div class="sect1" lang="zh-cn">
-            <div class="titlepage">
-               <div>
-                  <div>
-                     <h2 class="title" style="clear: both"><a name="svn.webdav.autoversioning"></a>C.2.&nbsp;&#33258;&#21160;&#29256;&#26412;&#21270;
-                     </h2>
-                  </div>
-               </div>
-            </div>
-            <p>While the Subversion client is not a full DeltaV client, and
-                     the Subversion server is not a full DeltaV server, there's still a
-                     glimmer of WebDAV interoperability to be happy about:
-                     <em class="firstterm">autoversioning</em>.
-            </p>
-            <p>Autoversioning is an optional feature defined in the DeltaV
-                     standard.  A typical DeltaV server will reject an ignorant
-                     WebDAV client attempting to do a <code class="literal">PUT</code> to a
-                     file that's under version control.  To change a
-                     version-controlled file, the server expects a series of proper
-                     versioning requests: something like
-                     <code class="literal">MKACTIVITY</code>, <code class="literal">CHECKOUT</code>,
-                     <code class="literal">PUT</code>, <code class="literal">CHECKIN</code>.  But if the
-                     DeltaV server supports autoversioning, write requests from
-                     basic WebDAV clients are accepted.  The server behaves as though the
-                     client <span class="emphasis"><em>had</em></span> issued the proper series of
-                     versioning requests, performing a commit under the hood.  In
-                     other words, it allows a DeltaV server to interoperate with
-                     ordinary WebDAV clients that don't understand versioning.
-            </p>
-            <p>Because so many operating systems already have integrated
-                     WebDAV clients, the use case for this feature can be incredibly
-                     appealing to administrators working with non-technical users.
-                     Imagine an office of ordinary users running Microsoft Windows or
-                     Mac OS.  Each user &#8220;<span class="quote">mounts</span>&#8221; the Subversion
-                     repository, which appears to be an ordinary network folder.
-                     They use the shared folder as they always do:  open files, edit
-                     them, and save them.  Meanwhile, the server is automatically
-                     versioning everything.  Any administrator (or knowledgeable
-                     user) can still use a Subversion client to search history and
-                     retrieve older versions of data.
-            </p>
-            <p>&#36825;&#20010;&#22330;&#26223;&#19981;&#26159;&#23567;&#35828;&#65306;&#23545;&#20110;Subversion 1.2&#26469;&#35828;&#65292;&#26159;&#30495;&#23454;&#30340;&#21644;&#26377;&#25928;&#30340;&#12290;&#20026;&#20102;&#28608;&#27963;<span class="command"><strong>mod_dav_svn</strong></span>&#30340;&#33258;&#21160;&#29256;&#26412;&#21270;&#65292;&#38656;&#35201;&#20351;&#29992;<code class="filename">httpd.conf</code>&#20013;Location&#21306;&#22359;&#30340;<code class="literal">SVNAutoversioning</code>&#25351;&#31034;&#65292;&#20363;&#22914;&#65306;
-            </p><pre class="screen">
-&lt;Location /repos&gt;
-  DAV svn
-  SVNPath /var/svn/repository
-  SVNAutoversioning on
-&lt;/Location&gt;
-</pre><p>&#24403;&#28608;&#27963;&#20102;SVNAutoversioning&#65292;&#26469;&#33258;WebDAV&#30340;&#23458;&#25143;&#31471;&#35831;&#27714;&#20250;&#23548;&#33268;&#33258;&#21160;&#25552;&#20132;&#65292;&#27599;&#20010;&#20462;&#35746;&#29256;&#26412;&#20250;&#33258;&#21160;&#38468;&#21152;&#19968;&#20010;&#21407;&#22987;&#30340;&#26085;&#24535;&#20449;&#24687;&#12290;</p>
-            <p>Before activating this feature, however, understand what
-                     you're getting into.  WebDAV clients tend to do
-                     <span class="emphasis"><em>many</em></span> write requests, resulting in a huge
-                     number of automatically committed revisions.  For example, when
-                     saving data, many clients will do a <code class="literal">PUT</code> of a
-                     0-byte file (as a way of reserving a name) followed by another
-                     <code class="literal">PUT</code> with the real file data.  The single
-                     file-write results in two separate commits.  Also consider that
-                     many applications auto-save every few minutes, resulting in even
-                     more commits.
-            </p>
-            <p>If you have a post-commit hook program that sends email, you
-                     may want to disable email generation either altogether or on
-                     certain sections of the repository; it depends on whether you
-                     think the influx of emails will still prove to be valuable
-                     notifications or not.  Also, a smart post-commit hook program
-                     can distinguish between a transaction created via autoversioning
-                     and one created through a normal Subversion commit operation.
-                     The trick is to look for a revision property
-                     named <code class="literal">svn:autoversioned</code>.  If present, the
-                     commit was made by a generic WebDAV client.
-            </p>
-            <p>Another feature that may be a useful complement for
-                     Subversion's autoversioning comes from Apache's
-                     <code class="literal">mod_mime</code> module.  If a WebDAV client adds a
-                     new file to the repository, there's no opportunity for the user
-                     to set the the <code class="literal">svn:mime-type</code> property.  This
-                     might cause the file to appear as a generic icon when viewed
-                     within a WebDAV shared folder, not having an association with
-                     any application.  One remedy is to have a sysadmin (or other
-                     Subversion-knowledgeable person) check out a working copy and
-                     manually set the <code class="literal">svn:mime-type</code> property on
-                     necessary files. But there's potentially no end to such cleanup
-                     tasks.  Instead, you can use the
-                     <code class="literal">ModMimeUsePathInfo</code> directive in your
-                     Subversion <code class="literal">&lt;Location&gt;</code> block:
-            </p><pre class="screen">
-&lt;Location /repos&gt;
-  DAV svn
-  SVNPath /var/svn/repository
-  SVNAutoversioning on
-
-  ModMimeUsePathInfo on
-
-&lt;/Location&gt;
-</pre><p>&#36825;&#20010;&#25351;&#31034;&#20801;&#35768; <code class="literal">mod_mime</code> &#22312;&#20351;&#29992;&#33258;&#21160;&#29256;&#26412;&#21270;&#28155;&#21152;&#26032;&#25991;&#20214;&#26102;&#65292;&#23581;&#35797;&#33258;&#21160;&#26816;&#27979;&#26032;&#25991;&#20214;&#30340; mime-type&#65292;&#36825;&#20010;&#27169;&#22359;&#26597;&#30475;&#25991;&#20214;&#30340;&#25193;&#23637;&#21517;&#65292;&#26377;&#21487;&#33021;&#30340;&#35805;&#36824;&#21253;&#25324;&#26816;&#26597;&#20869;&#23481;&#65307;&#22914;&#26524;&#25991;&#20214;&#31526;&#21512;&#26576;&#20010;&#36890;&#29992;&#27169;&#24335;&#65292;&#23601;&#20250;&#33258;&#21160;&#35774;&#32622;&#25991;&#20214;&#30340;&#23646;&#24615; <code class="literal">svn:mime-type</code>&#12290;
-            </p>
-         </div>
-         <div class="sect1" lang="zh-cn">
-            <div class="titlepage">
-               <div>
-                  <div>
-                     <h2 class="title" style="clear: both"><a name="svn.webdav.clients"></a>C.3.&nbsp;&#23458;&#25143;&#31471;&#20132;&#20114;&#24615;
-                     </h2>
-                  </div>
-               </div>
-            </div>
-            <p>&#25152;&#26377;&#30340; WebDAV &#23458;&#25143;&#31471;&#20998;&#20026;&#19977;&#31867;&#8212;&#29420;&#31435;&#24212;&#29992;&#31243;&#24207;&#65292;&#25991;&#20214;&#27983;&#35272;&#22120;&#25193;&#23637;&#65292;&#25110;&#25991;&#20214;&#31995;&#32479;&#23454;&#29616;&#12290;&#36825;&#20123;&#20998;&#31867;&#23450;&#20041;&#20102; WebDAV &#29992;&#25143;&#21487;&#29992;&#30340;&#21151;&#33021;&#12290;<a class="xref" href="svn.webdav.html#svn.webdav.clients.tbl-1" title="&#34920;&nbsp;C.1.&nbsp;&#24120;&#29992;&#30340; WebDAV &#23458;&#25143;&#31471;">&#34920;&nbsp;C.1 &#8220;&#24120;&#29992;&#30340; WebDAV &#23458;&#25143;&#31471;&#8221;</a>&#32473; WebDAV &#24120;&#35265;&#36719;&#20214;&#36827;&#34892;&#20102;&#20998;&#31867;&#65292;&#24182;&#25552;&#20379;&#20102;&#30340;&#31616;&#30701;&#25551;&#36848;&#12290;&#36825;&#20123;&#36719;&#20214;&#25903;&#25345;&#30340;&#32454;&#33410;&#65292;&#20197;&#21450;&#24635;&#20307;&#30340;&#20998;&#31867;&#65292;&#21487;&#20197;&#22312;&#21518;&#38754;&#30340;&#31456;&#33410;&#25214;&#21040;&#12290;
-            </p>
-            <div class="table"><a name="svn.webdav.clients.tbl-1"></a><p class="title"><b>&#34920;&nbsp;C.1.&nbsp;&#24120;&#29992;&#30340; WebDAV &#23458;&#25143;&#31471;</b></p>
-               <div class="table-contents">
-                  <table summary="&#24120;&#29992;&#30340; WebDAV &#23458;&#25143;&#31471;" border="1">
-                     <colgroup>
-                        <col width="16%">
-                        <col width="17%">
-                        <col width="17%">
-                        <col width="16%">
-                        <col width="17%">
-                        <col width="17%">
-                     </colgroup>
-                     <thead>
-                        <tr>
-                           <th>&#36719;&#20214;</th>
-                           <th>&#31867;&#22411;</th>
-                           <th>Windows</th>
-                           <th>Mac</th>
-                           <th>Linux</th>
-                           <th>&#25551;&#36848;</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <td>Adobe Photoshop</td>
-                           <td>&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>&#22270;&#20687;&#32534;&#36753;&#36719;&#20214;&#65292;&#20801;&#35768;&#23545; WebDAV &#30340; URL &#30452;&#25509;&#35835;&#20889;</td>
-                        </tr>
-                        <tr>
-                           <td>cadaver</td>
-                           <td>&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</td>
-                           <td>&nbsp;</td>
-                           <td>X</td>
-                           <td>X</td>
-                           <td>&#21629;&#20196;&#34892; WebDAV &#23458;&#25143;&#31471;&#65292;&#25903;&#25345;&#25991;&#20214;&#20256;&#36755;&#65292;&#30446;&#24405;&#26641;&#26174;&#31034;&#21644;&#38145;&#23450;&#25805;&#20316;</td>
-                        </tr>
-                        <tr>
-                           <td>DAV Explorer</td>
-                           <td>&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</td>
-                           <td>X</td>
-                           <td>X</td>
-                           <td>X</td>
-                           <td>&#27983;&#35272; WebDAV &#20849;&#20139;&#30340; Java GUI &#24037;&#20855;</td>
-                        </tr>
-                        <tr>
-                           <td>Adobe Dreamweaver</td>
-                           <td>&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>Web &#21019;&#20316;&#36719;&#20214;&#65292;&#21487;&#20197;&#30452;&#25509;&#35835;&#20889; WebDAV &#30340; URL</td>
-                        </tr>
-                        <tr>
-                           <td>Microsoft Office</td>
-                           <td>&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>Office &#20135;&#21697;&#22871;&#20214;&#65292;&#26377;&#20960;&#20010;&#32452;&#20214;&#21487;&#20197;&#30452;&#25509;&#35835;&#20889; WebDAV &#30340; URL</td>
-                        </tr>
-                        <tr>
-                           <td>Microsoft Web &#25991;&#20214;&#22841;</td>
-                           <td>&#25991;&#20214;&#27983;&#35272;&#22120; WebDAV &#25193;&#23637;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>GUI &#25991;&#20214;&#27983;&#35272;&#22120;&#31243;&#24207;&#65292;&#21487;&#20197;&#23545; WebDAV &#20849;&#20139;&#25191;&#34892;&#30446;&#24405;&#26641;&#25805;&#20316;</td>
-                        </tr>
-                        <tr>
-                           <td>GNOME Nautilus</td>
-                           <td>&#25991;&#20214;&#27983;&#35272;&#22120; WebDAV &#25193;&#23637;</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>X</td>
-                           <td>GUI &#25991;&#20214;&#27983;&#35272;&#22120;&#65292;&#21487;&#20197;&#23545; WebDAV &#20849;&#20139;&#25191;&#34892;&#30446;&#24405;&#26641;&#25805;&#20316;</td>
-                        </tr>
-                        <tr>
-                           <td>KDE Konqueror</td>
-                           <td>&#25991;&#20214;&#27983;&#35272;&#22120; WebDAV &#25193;&#23637;</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>X</td>
-                           <td>GUI &#25991;&#20214;&#27983;&#35272;&#22120;&#65292;&#21487;&#20197;&#23545; WebDAV &#20849;&#20139;&#25191;&#34892;&#30446;&#24405;&#26641;&#25805;&#20316;</td>
-                        </tr>
-                        <tr>
-                           <td>Mac OS X</td>
-                           <td>WebDAV &#25991;&#20214;&#31995;&#32479;&#23454;&#29616;</td>
-                           <td>&nbsp;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&#20869;&#32622;&#25903;&#25345;&#21152;&#36733; WebDAV &#20849;&#20139;&#30340;&#25805;&#20316;&#31995;&#32479;&#12290;</td>
-                        </tr>
-                        <tr>
-                           <td>Novell NetDrive</td>
-                           <td>WebDAV &#25991;&#20214;&#31995;&#32479;&#23454;&#29616;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>&#20026;&#36828;&#31243; WebDAV &#20849;&#20139;&#20998;&#37197; Windows &#39537;&#21160;&#22120;&#30424;&#31526;&#30340;&#39537;&#21160;&#26144;&#23556;&#31243;&#24207;</td>
-                        </tr>
-                        <tr>
-                           <td>&#25991;&#20214;&#20256;&#36755;&#36719;&#20214;&#65292;&#21487;&#20197;&#23558; Windows &#39537;&#21160;&#22120;&#21152;&#36733;&#20026;&#36828;&#31243;&#30340; WebDAV &#20849;&#20139;</td>
-                           <td>WebDAV &#25991;&#20214;&#31995;&#32479;&#23454;&#29616;</td>
-                           <td>X</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>&#25991;&#20214;&#20256;&#36755;&#36719;&#20214;&#65292;&#20063;&#23601;&#26159;&#21487;&#20197;&#20026;&#21152;&#36733;&#30340;&#36828;&#31243; WebDAV &#20849;&#20139;&#36171;&#20104; Windows &#39537;&#21160;&#22120;&#30424;&#31526;&#12290;</td>
-                        </tr>
-                        <tr>
-                           <td>davfs2</td>
-                           <td>WebDAV &#25991;&#20214;&#31995;&#32479;&#23454;&#29616;</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                           <td>X</td>
-                           <td>&#20801;&#35768;&#21152;&#36733; WebDAV &#20849;&#20139;&#30340; Linux &#25991;&#20214;&#31995;&#32479;&#39537;&#21160;</td>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            </div><br class="table-break"><div class="sect2" lang="zh-cn">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="svn.webdav.clients.standalone"></a>C.3.1.&nbsp;&#29420;&#31435;&#30340; WebDAV &#24212;&#29992;&#31243;&#24207;
-                        </h3>
-                     </div>
-                  </div>
-               </div>
-               <p>WebDAV&#24212;&#29992;&#20351;&#29992;WebDAV&#21327;&#35758;&#19982;WebDAV&#26381;&#21153;&#22120;&#36890;&#35759;&#65292;&#25105;&#20204;&#23558;&#20250;&#20171;&#32461;&#19968;&#20123;&#25903;&#25345;WebDAV&#30340;&#27969;&#34892;&#31243;&#24207;&#12290;</p>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.standalone.windows"></a>C.3.1.1.&nbsp;Microsoft Office&#65292;Dreamweaver&#65292;Photoshop
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>On Windows, several well-known applications
-                               contain integrated WebDAV client functionality, such as
-                               Microsoft's Office,
-                               <sup>[<a name="d0e25825" href="#ftn.d0e25825" class="footnote">60</a>]</sup>
-                               Adobe's Photoshop and Dreamweaver programs.
-                               They're able to directly open and save to URLs, and tend to
-                               make heavy use of WebDAV locks when editing a file.
-                  </p>
-                  <p>Note that while many of these programs also exist for
-                               Mac OS X, they do not appear to support WebDAV directly
-                               on that platform.  In fact, on Mac OS X, the
-                               <span class="guimenu">File&#8594;Open</span> dialog box doesn't allow
-                               one to type a path or URL at all.  It's likely that the
-                               WebDAV features were deliberately left out of Macintosh
-                               versions of these programs, since OS X already provides such
-                               excellent low-level filesystem support for WebDAV.
-                  </p>
-               </div>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.standalone.free"></a>C.3.1.2.&nbsp;Cadaver&#65292;DAV &#27983;&#35272;&#22120;
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>cadaver is a bare-bones Unix command-line program for
-                               browsing and changing WebDAV shares.  Like the Subversion
-                               client, it uses the neon HTTP library&#8212;not
-                               surprisingly, since both neon and cadaver are written by the
-                               same author.  cadaver is free software (GPL license) and is
-                               available at
-                               <a class="ulink" href="http://www.webdav.org/cadaver/" target="_top">http://www.webdav.org/cadaver/</a>.
-                  </p>
-                  <p>Using cadaver is similar to using a command-line FTP
-                               program, and thus it's extremely useful for basic WebDAV
-                               debugging.  It can be used to upload or download files in a
-                               pinch, to examine properties, and to copy, move,
-                               lock, or unlock files:
-                  </p><pre class="screen">
-$ cadaver http://host/repos
-dav:/repos/&gt; ls
-Listing collection `/repos/': succeeded.
-Coll: &gt; foobar                                 0  May 10 16:19
-      &gt; playwright.el                       2864  May  4 16:18
-      &gt; proofbypoem.txt                     1461  May  5 15:09
-      &gt; westcoast.jpg                      66737  May  5 15:09
-
-dav:/repos/&gt; put README
-Uploading README to `/repos/README':
-Progress: [=============================&gt;] 100.0% of 357 bytes succeeded.
-
-dav:/repos/&gt; get proofbypoem.txt
-Downloading `/repos/proofbypoem.txt' to proofbypoem.txt:
-Progress: [=============================&gt;] 100.0% of 1461 bytes succeeded.
-</pre><p>DAV Explorer is another standalone WebDAV client, written
-                               in Java.  It's under a free Apache-like license and is
-                               available at <a class="ulink" href="http://www.ics.uci.edu/~webdav/" target="_top">http://www.ics.uci.edu/~webdav/</a>.
-                               It does everything cadaver does, but has the
-                               advantages of being portable and being a more user-friendly GUI
-                               application.  It's also one of the first clients to support
-                               the new WebDAV Access Control Protocol (RFC 3744).
-                  </p>
-                  <p>&#24403;&#28982;&#65292;&#22312;&#36825;&#20010;&#24773;&#20917;&#19979;DAV Explorer&#30340;ACL&#25903;&#25345;&#27809;&#26377;&#20219;&#20309;&#29992;&#22788;&#65292;&#22240;&#20026;<span class="command"><strong>mod_dav_svn</strong></span>&#19981;&#25903;&#25345;&#23427;&#65292;&#20107;&#23454;&#19978;&#65292;Cadaver&#21644;DAV Explorer&#25903;&#25345;&#30340;&#19968;&#20123;&#26377;&#38480;&#30340;DeltaV&#21629;&#20196;&#20063;&#24182;&#19981;&#26377;&#25928;&#65292;&#22240;&#20026;&#20182;&#20204;&#19981;&#20801;&#35768;<code class="literal">MKACTIVITY</code>&#35831;&#27714;&#65292;&#20294;&#26159;&#36825;&#37117;&#19981;&#30456;&#24178;&#65307;&#25105;&#20204;&#20551;&#23450;&#36825;&#20123;&#23458;&#25143;&#31471;&#37117;&#26159;&#38024;&#23545;&#33258;&#21160;&#29256;&#26412;&#21270;&#29256;&#26412;&#24211;&#24037;&#20316;&#12290;
-                  </p>
-               </div>
-            </div>
-            <div class="sect2" lang="zh-cn">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="svn.webdav.clients.file-explorer-extensions"></a>C.3.2.&nbsp;&#25991;&#20214;&#27983;&#35272;&#22120;&#30340; WebDAV &#25193;&#23637;
-                        </h3>
-                     </div>
-                  </div>
-               </div>
-               <p>Some popular file explorer GUI programs support WebDAV
-                          extensions that allow a user to browse a DAV share as though it
-                          was just another directory on the local computer, and to
-                          perform basic tree editing operations on the items in that
-                          share.  For example, Windows Explorer is able to browse a
-                          WebDAV server as a &#8220;<span class="quote">network place.</span>&#8221;  Users can
-                          drag files to and from the desktop, or can rename, copy, or
-                          delete files in the usual way.  But because it's only a
-                          feature of the file explorer, the DAV share isn't visible to
-                          ordinary applications.  All DAV interaction must happen
-                          through the explorer interface.
-               </p>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.file-explorer-extensions.windows"></a>C.3.2.1.&nbsp;Microsoft Web &#25991;&#20214;&#22841;
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>Microsoft was one of the original backers of the WebDAV
-                               specification, and first started shipping a client in
-                               Windows 98, which was known as Web Folders.  This client was
-                               also shipped in Windows NT 4.0 and Windows 2000.
-                  </p>
-                  <p>The original Web Folders client was an extension to
-                               Explorer, the main GUI program used to browse filesystems.  It
-                               works well enough.  In Windows 98, the feature might need to
-                               be explicitly installed if Web Folders aren't already visible
-                               inside My Computer.  In Windows 2000, simply
-                               add a new &#8220;<span class="quote">network place,</span>&#8221; enter the URL, and the
-                               WebDAV share will pop up for browsing.
-                  </p>
-                  <p>With the release of Windows XP, Microsoft started shipping
-                               a new implementation of Web Folders, known as the WebDAV
-                               Mini-Redirector.  The new implementation is a
-                               filesystem-level client, allowing WebDAV shares to be mounted
-                               as drive letters.  Unfortunately, this implementation is
-                               incredibly buggy.  The client usually tries to convert HTTP
-                               URLs (<code class="literal">http://host/repos</code>) into UNC share
-                               notation (<code class="literal">\\host\repos</code>); it also often
-                               tries to use Windows Domain authentication to respond to
-                               basic-auth HTTP challenges, sending usernames as
-                               <code class="literal">HOST\username</code>.  These interoperability
-                               problems are severe and are documented in numerous places around
-                               the Web, to the frustration of many users.  Even Greg Stein,
-                               the original author of Apache's WebDAV module, bluntly
-                               states that XP Web Folders simply can't operate against an Apache
-                               server.
-                  </p>
-                  <p>Windows Vista's initial implementation of Web Folders seems to
-                               be almost the same as XP's, so it has the same sort of
-                               problems.  With luck, Microsoft will remedy these issues in
-                               a Vista Service Pack.
-                  </p>
-                  <p>However, there seem to be workarounds for both XP and
-                               Vista that allow Web Folders to work against Apache.  Users
-                               have mostly reported success with these techniques, so we'll
-                               relay them here.
-                  </p>
-                  <p>On Windows XP, you have two options.  First, search
-                               Microsoft's web site for update KB90730, &#8220;<span class="quote">Software
-                                  Update for Web Folders.</span>&#8221;  This may fix all your
-                               problems.  If it doesn't, it seems that the original pre-XP
-                               Web Folders implementation is still buried within the
-                               system.  You can unearth it by going to Network
-                               Places and adding a new network place.  When prompted,
-                               enter the URL of the repository, but <span class="emphasis"><em>include a
-                                     port number</em></span> in the URL.  For
-                               example, you should enter <strong class="userinput"><code>http://host/repos</code></strong> 
-                               as <strong class="userinput"><code>http://host:80/repos</code></strong> instead.
-                               Respond to any authentication prompts with your Subversion
-                               credentials.
-                  </p>
-                  <p>On Windows Vista, the same KB90730 update may clear
-                               everything up.  But there may still be other issues.  Some
-                               users have reported that Vista considers
-                               all <code class="literal">http://</code> connections insecure, and thus
-                               will always fail any authentication challenges from Apache
-                               unless the connection happens
-                               over <code class="literal">https://</code>.  If you're unable to connect
-                               to the Subversion repository via SSL, you can tweak the
-                               system registry to turn off this behavior.  Just change the
-                               value of the <code class="literal">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters\BasicAuthLevel</code>
-                               key from <strong class="userinput"><code>1</code></strong> to <strong class="userinput"><code>2</code></strong>.  A final warning:  be sure to set up the Web
-                               Folder to point to the repository's root directory
-                               (<code class="filename">/</code>), rather than some subdirectory
-                               such as <code class="filename">/trunk</code>.  Vista Web Folders
-                               seems to work only against repository roots.
-                  </p>
-                  <p>In general, while these workarounds may function for
-                               you, you might get a better overall experience using a
-                               third-party WebDAV client such as WebDrive or NetDrive.
-                  </p>
-               </div>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.file-explorer-extensions.linux-de"></a>C.3.2.2.&nbsp;Nautilus&#65292;Konqueror
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>Nautilus &#26159; GNOME &#26700;&#38754;(<a class="ulink" href="http://www.gnome.org" target="_top">http://www.gnome.org</a>)&#30340;&#23448;&#26041;&#25991;&#20214;&#31649;&#29702;/&#27983;&#35272;&#22120;&#65292;KDE &#26700;&#38754;(<a class="ulink" href="http://www.kde.org" target="_top">http://www.kde.org</a>)&#30340;&#21017;&#26159; Konqueror&#12290;&#20004;&#20010;&#24212;&#29992;&#31243;&#24207;&#37117;&#26159;&#27983;&#35272;&#22120;&#32423;&#21035;&#30340; WebDAV &#23458;&#25143;&#31471;&#65292;&#23545;&#33258;&#21160;&#29256;&#26412;&#21270;&#30340;&#29256;&#26412;&#24211;&#24037;&#20316;&#33391;&#22909;&#12290;
-                  </p>
-                  <p>&#22312; GNOME &#30340; Nautilus &#20013;&#65292;&#36873;&#25321; <span class="guimenuitem">File&#8594;Open location</span>&#65292;&#22312;&#26174;&#31034;&#30340;&#23545;&#35805;&#26694;&#20013;&#36755;&#20837; URL&#12290;&#29256;&#26412;&#24211;&#23601;&#20250;&#35937;&#20854;&#23427;&#25991;&#20214;&#31995;&#32479;&#19968;&#26679;&#26174;&#31034;&#12290;
-                  </p>
-                  <p>&#22312; KDE &#30340; Konqueror &#20013;&#65292;&#20320;&#38656;&#35201;&#22312;&#22320;&#22336;&#26639;&#20351;&#29992; <code class="literal">webdav://</code> &#26041;&#26696;&#26469;&#36755;&#20837; URL&#65292;&#22914;&#26524;&#20320;&#36755;&#20837; <code class="literal">http://</code> URL&#65292;Konqueror &#20250;&#20687;&#26222;&#36890;&#30340; web &#27983;&#35272;&#22120;&#12290;&#20320;&#20250;&#30475;&#21040; <span class="command"><strong>mod_dav_svn</strong></span> &#36755;&#20986;&#30340;&#26222;&#36890; HTML &#30446;&#24405;&#21015;&#34920;&#12290;&#36890;&#36807;&#36755;&#20837; <strong class="userinput"><code>webdav://host/repos</code></strong> &#20195;&#26367; <strong class="userinput"><code>http://host/repos</code></strong>&#65292;Konqueror &#23601;&#25104;&#20026;&#20102;&#19968;&#20010; WebDAV &#23458;&#25143;&#31471;&#65292;&#24182;&#19988;&#25353;&#29031;&#25991;&#20214;&#31995;&#32479;&#30340;&#26041;&#24335;&#26174;&#31034;&#29256;&#26412;&#24211;&#12290;
-                  </p>
-               </div>
-            </div>
-            <div class="sect2" lang="zh-cn">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="svn.webdav.clients.fs-impl"></a>C.3.3.&nbsp;WebDAV &#30340;&#25991;&#20214;&#31995;&#32479;&#23454;&#29616;
-                        </h3>
-                     </div>
-                  </div>
-               </div>
-               <p>WebDAV &#25991;&#20214;&#31995;&#32479;&#23454;&#29616;&#34987;&#35748;&#20026;&#26159;&#26368;&#20339;&#30340; WebDAV &#23458;&#25143;&#31471;&#12290;&#23427;&#36890;&#36807;&#20302;&#32423;&#30340;&#25991;&#20214;&#31995;&#32479;&#27169;&#22359;&#23454;&#29616;&#65292;&#36890;&#24120;&#22312;&#25805;&#20316;&#31995;&#32479;&#30340;&#26680;&#24515;&#12290;&#36825;&#24847;&#21619;&#30528; DAV &#20849;&#20139;&#20687;&#32593;&#32476;&#30340;&#20854;&#20182;&#25991;&#20214;&#31995;&#32479;&#19968;&#26679;&#35013;&#36733;&#65292;&#23601;&#20687;&#22312; Unix &#19979;&#38754;&#35013;&#36733; NFS&#65292;&#25110;&#32773;&#22312; Windows &#19979;&#35013;&#36733;&#19968;&#20010; SMB
-                  &#20849;&#20139;&#12290;&#32467;&#26524;&#23601;&#26159;&#36825;&#31181;&#23458;&#25143;&#31471;&#20026;&#25152;&#26377;&#31243;&#24207;&#25552;&#20379;&#20102;&#23545; WebDAV &#30340;&#36879;&#26126;&#35775;&#38382;&#65292;&#24212;&#29992;&#31243;&#24207;&#29978;&#33267;&#24847;&#35782;&#19981;&#21040;&#21457;&#29983;&#20102; WebDAV &#35831;&#27714;&#12290;
-               </p>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.fs-impl.windows"></a>C.3.3.1.&nbsp;WebDrive&#65292;NetDrive
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>WebDrive &#21644; NetDrive &#37117;&#26159;&#20248;&#31168;&#30340;&#21830;&#19994;&#20135;&#21697;&#65292;&#20801;&#35768;&#23558; WebDAV &#32465;&#23450;&#21040; Windows &#30340;&#30424;&#31526;&#65292;&#32467;&#26524;&#26159;&#20320;&#21487;&#20197;&#21516;&#23545;&#30495;&#23454;&#30828;&#30424;&#19968;&#26679;&#25805;&#20316;&#36825;&#20123; WebDAV &#21518;&#31471;&#25903;&#25345;&#30340;&#20849;&#20139;&#12290;WebDrive &#21487;&#20197;&#20174; South River Technologies(<a class="ulink" href="http://www.southrivertech.com" target="_top">http://www.southrivertech.com</a>)&#36141;&#20080;&#12290;Novell &#30340; NetDrive &#21487;&#20197;&#22312;&#32593;&#32476;&#19978;&#20813;&#36153;&#19979;&#36733;&#65292;&#20294;&#29992;&#25143;&#36824;&#26159;&#38656;&#35201;&#26377;&#19968;&#20010; NetWare &#35768;&#21487;&#35777;&#12290;
-                  </p>
-               </div>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.fs-impl.macosx"></a>C.3.3.2.&nbsp;Mac OS X
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>Apple&#30340;OS X&#25805;&#20316;&#31995;&#32479;&#26159;&#38598;&#25104;&#30340;&#25991;&#20214;&#31995;&#32479;&#32423;&#30340;WebDAV&#23458;&#25143;&#31471;&#65292;&#36890;&#36807;Finder&#65292;&#36873;&#25321;<span class="guimenu">Go menu</span>&#30340;<span class="guimenuitem">Connect to Server</span>&#26465;&#30446;&#65292;&#36755;&#20837;WebDAV&#30340;URL&#65292;&#20250;&#22312;&#26700;&#38754;&#26174;&#31034;&#19968;&#20010;&#30913;&#30424;&#65292;&#23601;&#20687;&#20854;&#20182;&#35013;&#36733;&#30340;&#21367;&#12290;&#20320;&#20063;&#21487;&#20197;&#20174;Darwin&#32456;&#31471;&#36890;&#36807;<span class="command"><strong>mount</strong></span>&#31867;&#22411;&#20026;<code class="literal">webdav</code>&#30340;&#25991;&#20214;&#31995;&#32479;&#23454;&#29616;&#12290;
-                  </p><pre class="screen">
-$ mount -t webdav http://svn.example.com/repos/project /some/mountpoint
-$
-</pre><p>&#27880;&#24847;&#22914;&#26524; <span class="command"><strong>mod_dav_svn</strong></span> &#26159; 1.2 &#20043;&#21069;&#30340;&#29256;&#26412;&#65292;OS X &#19981;&#33021;&#35013;&#36733;&#20026;&#21487;&#35835;&#20889;&#65292;&#32780;&#26159;&#20250;&#25104;&#20026;&#21482;&#35835;&#12290;&#36825;&#26159;&#22240;&#20026;&#65292;OS X &#22362;&#25345;&#35201;&#35835;&#20889;&#20849;&#20139;&#25903;&#25345;&#38145;&#23450;&#65292;&#32780;&#38145;&#23450;&#25991;&#20214;&#20986;&#29616;&#22312; Subversion 1.2&#12290;
-                  </p>
-                  <p>OS X &#30340; WebDAV &#23458;&#25143;&#31471;&#26377;&#26102;&#20505;&#23545; HTTP &#37325;&#23450;&#21521;&#24456;&#25935;&#24863;&#12290;&#22914;&#26524; OS X &#19981;&#33021;&#35013;&#36733;&#29256;&#26412;&#24211;&#65292;&#20320;&#25110;&#35768;&#38656;&#35201;&#24320;&#21551;Apache &#26381;&#21153;&#22120; <code class="filename">httpd.conf</code> &#20013;&#30340; <code class="literal">BrowserMatch</code> &#25351;&#20196;&#65306;
-                  </p><pre class="screen">
-BrowserMatch "^WebDAVFS/1.[012]" redirect-carefully
-</pre></div>
-               <div class="sect3" lang="zh-cn">
-                  <div class="titlepage">
-                     <div>
-                        <div>
-                           <h4 class="title"><a name="svn.webdav.clients.fs-impl.linux"></a>C.3.3.3.&nbsp;Linux davfs2
-                           </h4>
-                        </div>
-                     </div>
-                  </div>
-                  <p>Linux davfs2 &#26159;&#19968;&#20010; Linux&#20869;&#26680;&#30340;&#25991;&#20214;&#31995;&#32479;&#27169;&#22359;&#65292;&#24320;&#21457;&#20027;&#39029;&#26159; <a class="ulink" href="http://dav.sourceforge.net/" target="_top">http://dav.sourceforge.net/</a>&#12290;&#19968;&#26086;&#23433;&#35013; davfs2&#65292;&#20320;&#23601;&#21487;&#20197;&#20351;&#29992;&#36890;&#24120;&#30340; Linux mount &#21629;&#20196;&#35013;&#36733; WebDAV &#32593;&#32476;&#20849;&#20139;&#65306;
-                  </p><pre class="screen">
-$ mount.davfs http://host/repos /mnt/dav
-</pre></div>
-            </div>
-         </div>
-         <div class="footnotes"><br><hr width="100" align="left">
-            <div class="footnote">
-               <p><sup>[<a name="ftn.d0e25825" href="#d0e25825" class="para">60</a>] </sup>WebDAV support was removed from Microsoft Access for
-                                some reason, but it exists in the rest of the Office
-                                suite.
-               </p>
-            </div>
-         </div>
-      </div>
-      <div class="navfooter">
-         <hr>
-         <table width="100%" summary="Navigation footer">
-            <tr>
-               <td width="40%" align="left"><a accesskey="p" href="svn.forcvs.html">&#19978;&#19968;&#39029;</a>&nbsp;
-               </td>
-               <td width="20%" align="center">&nbsp;</td>
-               <td width="40%" align="right">&nbsp;<a accesskey="n" href="svn.copyright.html">&#19979;&#19968;&#39029;</a></td>
-            </tr>
-            <tr>
-               <td width="40%" align="left" valign="top">&#38468;&#24405;&nbsp;B.&nbsp;CVS &#29992;&#25143;&#30340; Subversion &#25351;&#21335;&nbsp;</td>
-               <td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td>
-               <td width="40%" align="right" valign="top">&nbsp;&#38468;&#24405;&nbsp;D.&nbsp;&#29256;&#26435;</td>
-            </tr>
-         </table>
-      </div>
-   </body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>附录 C. WebDAV 和自动版本</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="index.html" title="Subversion 权威指南">
+<link rel="prev" href="svn.forcvs.convert.html" title="B.11. 迁移 CVS 版本库到 Subversion">
+<link rel="next" href="svn.webdav.autoversioning.html" title="C.2. 自动版本化">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">附录 C. WebDAV 和自动版本</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.forcvs.convert.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.webdav.autoversioning.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="appendix" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="svn.webdav"></a>附录 C. WebDAV 和自动版本</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="svn.webdav.html#svn.webdav.basic">C.1. 什么是 WebDAV？</a></span></dt>
+<dt><span class="sect1"><a href="svn.webdav.autoversioning.html">C.2. 自动版本化</a></span></dt>
+<dt><span class="sect1"><a href="svn.webdav.clients.html">C.3. 客户端交互性</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="svn.webdav.clients.html#svn.webdav.clients.standalone">C.3.1. 独立的 WebDAV 应用程序</a></span></dt>
+<dt><span class="sect2"><a href="svn.webdav.clients.html#svn.webdav.clients.file-explorer-extensions">C.3.2. 文件浏览器的 WebDAV 扩展</a></span></dt>
+<dt><span class="sect2"><a href="svn.webdav.clients.html#svn.webdav.clients.fs-impl">C.3.3. WebDAV 的文件系统实现</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p>WebDAV is an extension to HTTP, and it is growing more and more popular as a
+standard for file sharing.  Today's operating systems are becoming extremely
+web-aware, and many now have built-in support for mounting
+“<span class="quote">shares</span>” exported by WebDAV servers.</p>
+<p>If you use Apache as your Subversion network server, to some extent you are
+also running a WebDAV server.  This appendix gives some background on the
+nature of this protocol, how Subversion uses it, and how well Subversion
+interoperates with other software that is WebDAV-aware.</p>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.webdav.basic"></a>C.1. 什么是 WebDAV？</h2></div></div></div>
+<p><em class="firstterm">DAV</em> stands for “<span class="quote">Distributed Authoring and
+Versioning.</span>” RFC 2518 defines a set of concepts and accompanying
+extension methods to HTTP 1.1 that make the Web a more universal read/write
+medium.  The basic idea is that a WebDAV-compliant web server can act like a
+generic file server; clients can “<span class="quote">mount</span>” shared folders over
+HTTP that behave much like other network filesystems (such as NFS or SMB).</p>
+<p>The tragedy, though, is that despite the acronym, the RFC specification
+doesn't actually describe any sort of version control.  Basic WebDAV clients
+and servers assume that only one version of each file or directory exists,
+and that it can be repeatedly overwritten.</p>
+<p>Because RFC 2518 left out versioning concepts, another committee was left
+with the responsibility of writing RFC 3253 a few years later.  The new RFC
+adds versioning concepts to WebDAV, placing the “<span class="quote">V</span>” back in
+“<span class="quote">DAV</span>”—hence the term “<span class="quote">DeltaV.</span>”
+WebDAV/DeltaV clients and servers are often called just
+“<span class="quote">DeltaV</span>” programs, since DeltaV implies the existence of basic
+WebDAV.</p>
+<p>The original WebDAV standard has been widely successful.  Every modern
+computer operating system has a general WebDAV client built in (details to
+follow), and a number of popular standalone applications are also able to
+speak WebDAV—Microsoft Office, Dreamweaver, and Photoshop, to name a
+few.  On the server end, Apache HTTP Server has been able to provide WebDAV
+services since 1998 and is considered the de facto open source standard.
+Several other commercial WebDAV servers are available, including Microsoft's
+own IIS.</p>
+<p>DeltaV, unfortunately, has not been so successful.  It's very difficult to
+find any DeltaV clients or servers.  The few that do exist are relatively
+unknown commercial products, and thus it's very difficult to test
+interoperability.  It's not entirely clear as to why DeltaV has remained
+stagnant.  Some opine that the specification is just too complex.  Others
+argue that while WebDAV's features have mass appeal (even the least
+technical users appreciate network file sharing), its version control
+features just aren't interesting or necessary for most users.  Finally, some
+believe that DeltaV remains unpopular because there's still no open source
+server product that implements it well.</p>
+<p>When Subversion was still in its design phase, it seemed like a great idea
+to use Apache as a network server.  It already had a module to provide
+WebDAV services.  DeltaV was a relatively new specification.  The hope was
+that the Subversion server module (<span class="command"><strong>mod_dav_svn</strong></span>) would
+eventually evolve into an open source DeltaV reference implementation.
+Unfortunately, DeltaV has a very specific versioning model that doesn't
+quite line up with Subversion's model.  Some concepts were mappable; others
+were not.</p>
+<p>这是什么意思呢？</p>
+<p>First, the Subversion client is not a fully implemented DeltaV client.  It
+needs certain types of things from the server that DeltaV itself cannot
+provide, and thus is largely dependent on a number of Subversion-specific
+HTTP <code class="literal">REPORT</code> requests that only
+<span class="command"><strong>mod_dav_svn</strong></span> understands.</p>
+<p>Second, <span class="command"><strong>mod_dav_svn</strong></span> is not a fully realized DeltaV
+server.  Many portions of the DeltaV specification were irrelevant to
+Subversion, and thus were left unimplemented.</p>
+<p>There is still some debate in the developer community as to whether or not
+it's worthwhile to remedy either of these situations.  It's fairly
+unrealistic to change Subversion's design to match DeltaV, so there's
+probably no way the client can ever learn to get everything it needs from a
+general DeltaV server.  On the other hand, <span class="command"><strong>mod_dav_svn</strong></span>
+<span class="emphasis"><em>could</em></span> be further developed to implement all of DeltaV,
+but it's hard to find motivation to do so—there are almost no DeltaV
+clients to interoperate with.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.forcvs.convert.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.webdav.autoversioning.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">B.11. 迁移 CVS 版本库到 Subversion </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> C.2. 自动版本化</td>
+</tr>
+</table>
+</div>
+</body>
 </html>

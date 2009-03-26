@@ -1,0 +1,389 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.9. Lieferanten-Zweige</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.commonpatterns.html" title="4.8. Verbreitete Verzweigungsmuster">
+<link rel="next" href="svn.branchmerge.summary.html" title="4.10. Zusammenfassung">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.9. Lieferanten-Zweige</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.commonpatterns.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.summary.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.advanced.vendorbr"></a>4.9. Lieferanten-Zweige</h2></div></div></div>
+<p>Besonders in der Softwareentwicklung haben die von Ihnen
+      versionsverwalteten Daten oft einen engen Bezug zu Daten von
+      anderen, oder sind vielleicht abhängig davon. Allgemein wird der
+      Bedarf ihres Projektes erfordern, dass Sie bezüglich der
+      externen Datenquelle so aktuell wie möglich bleiben, ohne dabei
+      die Stabilität Ihres Projektes zu opfern.  Dieses Szenario
+      entfaltet sich immer dort, wo die von einer Gruppe erzeugten
+      Informationen direkte Auswirkungen auf diejenigen Informationen
+      hat, die von einer anderen Gruppe erstellt werden.</p>
+<p>So könnte es sein, dass Softwareentwickler beispielsweise an
+      einer Anwendung arbeiten, die die Bibliothek eines
+      Drittanbieters benötigt. Subversion hat eine solche Abhängigkeit
+      von der Bibliothek Apache Portable Runtime (APR) (siehe <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.apr" title="8.3.1. The Apache Portable Runtime Library">Abschnitt 8.3.1, „The Apache Portable Runtime Library“</a>). Der Quelltext von
+      Subversion hängt zur Gewährleistung der Portabilität von der
+      APR-Bibliothek ab. In der frühen Phase der Entwicklung von
+      Subversion hing das Projekt ziemlich nah am wechselnden API der
+      APR, indem es immer die neueste Version des Quelltextes
+      verwendete. Nun, da sowohl APR und Subversion gereift sind,
+      versucht sich Subversion nur zu wohldefinierten Zeitpunkten mit
+      dem APR-API zu synchronisieren, nämlich wenn dieses ausreichend
+      getestet und stabil ist.</p>
+<p>Falls nun Ihr Projekt von den Informationen anderer
+      abhängt, können Sie diese Informationen auf mehrere Arten mit
+      Ihren synchronisieren. Am umständlichsten ist es, wenn Sie
+      mündliche oder schriftliche Anweisungen an alle
+      Projektmitarbeiter ausgeben, dass sie sicherzustellen haben,
+      stets über die für Ihr Projekt benötigten Versionen der
+      Drittanbieter zu verfügen. Falls die Daten des Drittanbieters
+      sich in einem Subversion-Repository befinden, können Sie auch
+      mithilfe der Subversion-Externals-Definition bestimmte Versionen
+      dieser Daten mit Ihrer eigenen Arbeitskopie verbinden (siehe
+      <a class="xref" href="svn.advanced.externals.html" title="3.8. Externals Definitions">Abschnitt 3.8, „Externals Definitions“</a>).</p>
+<p>Allerdings möchten Sie von Zeit zu Zeit spezielle
+      Anpassungen des Drittanbieter-Codes in Ihrem eigenen
+      Versionskontrollsystem verwalten. Um auf unser Beispiel aus der
+      Softwareentwicklung zurückzukommen, müssen Entwickler manchmal
+      die Bibliothek der Drittanbieter für ihre Zwecke verändern.
+      Diese Änderungen können neue Funktionalitäten oder
+      Fehlerbehebungen beinhalten und werden nur solange intern
+      verwaltet, bis sie eines Tages Teil einer offiziellen
+      Auslieferung der Bibliothek werden. Es kann aber auch sein, dass
+      diese Änderungen niemals an die Entwickler der Bibliothek
+      zurückgegeben werden, sondern lediglich als spezielle
+      Anpassungen bestehen, um die Bibliothek für Bedürfnisse der
+      Softwareentwickler geeigneter zu machen.</p>
+<p>Nun sind Sie in einer interessanten Situation: Ihr Projekt
+      könnte seine Änderungen an den Daten von Drittanbietern auf
+      getrennte Art und Weise verwalten, etwa in Form von
+      Patch-Dateien oder als vollständig alternative Versionen. Jedoch
+      wird so etwas schnell zu einem Albtraum, wenn es um die Pflege
+      geht, da es ein Mechanismus benötigt wird, um diese Änderungen
+      auf den Code des Drittanbieters anzuwenden und diese Anpassung
+      bei jeder Folgelieferung zu wiederholen.</p>
+<p>Die Lösung dieses Problems besteht in der Verwendung von
+      <em class="firstterm">Lieferanten-Zweigen</em>.  Ein
+      Lieferanten-Zweig ist ein Verzeichnisbaum in Ihrem eigenen
+      Versionskontrollsystem, der Informationen enthält, die von einem
+      Drittanbieter – oder Lieferanten – bereitgestellt
+      wird. Jede Version der Lieferantendaten, die Sie in Ihr Projekt
+      aufnehmen wollen, wird <em class="firstterm">Zulieferung</em>
+      genannt.</p>
+<p>Lieferanten-Zweige bieten zwei Vorteile. Erstens, wird durch
+      das Vorhalten der aktuellen Zulieferung in Ihrem eigenen
+      Versionskontrollsystem sichergestellt, dass für Ihre
+      Projektmitarbeiter stets die richtige Version der
+      Lieferantendaten verfügbar ist. Sie erhalten die richtige
+      Version automatisch beim Aktualisieren ihrer Arbeitskopien.
+      Zweitens, da die Daten in Ihrem eigenen Subversion-Repository
+      vorgehalten werden, können Sie dort auch Ihren Anpassungen
+      speichern – es besteht keine Notwendigkeit mehr, Ihre
+      Änderungen automatisch (oder schlimmer noch, manuell) in die
+      Zulieferungen einzuarbeiten.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.advanced.vendorbr.general"></a>4.9.1. Allgemeines Vorgehen für die Verwaltung von Lieferanten-Zweigen</h3></div></div></div>
+<p>Die Verwaltung von Lieferanten-Zweigen funktioniert im
+        Allgemeinen so: Zunächst erzeugen Sie ein übergeordnetes
+        Hauptverzeichnis (etwa <code class="filename">/vendor</code>), um
+        Lieferanten-Zweige aufzunehmen. Dann importieren Sie den Code
+        des Drittanbieters in ein Unterverzeichnis des
+        Hauptverzeichnisses. Anschließend kopieren Sie dieses
+        Unterverzeichnis an die passende Stelle Ihres
+        Hauptentwicklungszweigs (z.B. <code class="filename">/trunk</code>).
+        Ihre lokalen Änderungen nehmen Sie stets im
+        Hauptentwicklungszweig vor. Jede erneut veröffentlichte
+        Version des von Ihnen verfolgten Codes pflegen Sie in den
+        Lieferanten-Zweig ein und überführen die Änderungen nach
+        <code class="filename">/trunk</code>, wobei eventuelle Konflikte
+        zwischen Ihren lokalen Änderungen und dem Code des Zulieferers
+        aufgelöst werden.</p>
+<p>Ein Beispiel hilft, um dieses Vorgehen zu erklären. Wir
+        gehen von einem Szenario aus, in dem Ihr Entwicklerteam ein
+        Taschenrechner-Programm entwickelt, dass mit einer Bibliothek
+        eines Drittanbieters für die Arithmetik mit komplexen Zahlen,
+        namens libcomplex, verlinkt wird. Wir beginnen mit dem Anlegen
+        des Lieferanten-Zweiges und dem Import der ersten Zulieferung.
+        Wir nennen unser Verzeichnis für den Lieferanten-Zweig
+        <code class="filename">libcomplex</code>, und die Lieferungen werden in
+        einem Unterverzeichnis namens <code class="filename">current</code>
+        abgelegt. Da <span class="command"><strong>svn import</strong></span> alle dazwischen
+        liegenden Elternverzeichnisse erzeugt, können wir all diese
+        Schritte mit einem einzigen Befehl bewerkstelligen:</p>
+<pre class="screen">
+$ svn import /path/to/libcomplex-1.0 \
+             http://svn.example.com/repos/vendor/libcomplex/current \
+             -m 'Importing der ersten 1.0 Zulieferung'
+…
+</pre>
+<p>Nun haben wir die aktuelle Version des Quelltextes von
+        libcomplex in <code class="filename">/vendor/libcomplex/current</code>.
+        Jetzt erzeugen wir ein Tag aus dieser Version (siehe <a class="xref" href="svn.branchmerge.tags.html" title="4.6. Tags">Abschnitt 4.6, „Tags“</a>) und kopieren sie dann in
+        den Hauptentwicklungszweig. Unsere Kopie erzeugt ein neues
+        Verzeichnis <code class="filename">libcomplex</code> im bestehenden
+        <code class="filename">calc</code> Projektverzeichnis. In dieser
+        kopierten Version der Lieferantendaten werden wir unsere
+        Anpassungen vornehmen:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/vendor/libcomplex/current  \
+           http://svn.example.com/repos/vendor/libcomplex/1.0      \
+           -m 'Tag libcomplex-1.0'
+…
+$ svn copy http://svn.example.com/repos/vendor/libcomplex/1.0  \
+           http://svn.example.com/repos/calc/libcomplex        \
+           -m 'libcomplex-1.0 in den Huptzweig bringen'
+…
+</pre>
+<p>Wir checken nun den Hauptzweig unseres Projektes aus
+        – der nun eine Kopie der ersten Zulieferung enthält
+        – und fangen damit an, den Quelltext von libcomplex
+        anzupassen. Ehe wir uns versehen, ist unsere angepasste
+        Version von libcomplex vollständig in unser
+        Taschenrechner-Programm integriert.
+        <sup>[<a name="id621505" href="#ftn.id621505" class="footnote">25</a>]</sup>
+      </p>
+<p>Ein paar Wochen später veröffentlichen die Entwickler von
+        libcomplex eine neue Version ihrer Bibliothek – Version
+        1.1 – die die Funktionalität enthält, die wir dringend
+        benötigen.  Wir möchten die neue Version verwenden, ohne
+        jedoch unsere Anpassungen zu verlieren, die wir in der
+        bestehenden Version vorgenommen haben. Unterm Strich möchten
+        wir die bestehende Baseline-Version libcomplex 1.0 durch eine
+        Kopie von libcomplex 1.1 ersetzen und die vorher gemachten
+        Anpassungen an dieser Bibliothek erneut auf die neue Version
+        anwenden.  Tatsächlich gehen wir das Problem allerdings aus
+        der anderen Richtung an, indem wir die Änderungen an
+        libcomplex zwischen Version 1.0 und 1.1 in unsere angepasste
+        Kopie einpflegen.</p>
+<p>Um diesen Wechsel auf die neue Version durchzuführen,
+        checken wir eine Kopie des Lieferanten-Zweigs aus und ersetzen
+        den Code im Verzeichnis <code class="filename">current</code> mit dem
+        neuen Quelltext von libcomplex 1.1. Wir kopieren im wahrsten
+        Sinne des Wortes die neuen Dateien über die bestehenden, indem
+        wir etwa das Archiv von libcomplex 1.1 in das bestehende
+        Verzeichnis entpacken. Das Ziel ist, dass das Verzeichnis
+        <code class="filename">current</code> nur den Code von libcomplex 1.1
+        enthält, und dass dieser Code unter Versionskontrolle steht.
+        Oh, und wir wollen, dass das alles mit der geringsten Störung
+        an der Versionskontroll-Historie passiert.</p>
+<p>Nachdem wir den 1.0 Code mit dem 1.1 Code ersetzt haben,
+        wird uns <span class="command"><strong>svn status</strong></span> sowohl Dateien mit
+        lokalen Änderungen als auch einige unversionierte Dateien
+        anzeigen. Wenn wir das getan haben, was wir tun sollten, sind
+        die unversionierten Dateien nur die mit Version 1.1 von
+        libcomplex hinzugekommenen neuen Dateien – wir rufen für
+        diese <span class="command"><strong>svn add</strong></span> auf, um sie unter
+        Versionskontrolle zu bringen. Falls der Code von 1.1 bestimmte
+        Dateien nicht mehr beinhaltet, die noch im Baum von 1.0
+        vorhanden waren, kann es schwierig sein, sie zu
+        identifizieren; Sie müssten die beiden Bäume mit einem
+        externen Werkzeug vergleichen und dann mit <span class="command"><strong>svn
+        delete</strong></span> Dateien entfernen, die in 1.0 jedoch nicht in
+        1.1 vorhanden sind. (Es könnte ebenso in Ordnung sein, diese
+        Dateien ungenutzt beizubehalten!) Sobald letztendlich unsere
+        Arbeitskopie von <code class="filename">current</code> nur den Code von
+        libcomplex 1.1 enthält, übergeben wir die Änderungen, die uns
+        hierher gebracht haben.</p>
+<p>Unser <code class="filename">current</code>-Zweig enthält nun die
+        neue Zulieferung. Wir erzeugen nun ein Tag 1.1 (genauso, wie
+        wie es mit der Zulieferung 1.0 gemacht haben) und arbeiten
+        dann die Unterschiede zwischen dem Tag der vorherigen Version
+        und der neuen aktuellen Version in unseren
+        Hauptentwicklungszweig ein:</p>
+<pre class="screen">
+$ cd working-copies/calc
+$ svn merge http://svn.example.com/repos/vendor/libcomplex/1.0      \
+            http://svn.example.com/repos/vendor/libcomplex/current  \
+            libcomplex
+… # alle Konflikte zwischen ihren und unseren Änderungen auflösen
+$ svn commit -m 'merging libcomplex-1.1 into the main branch'
+…
+</pre>
+<p>Im trivialen Fall würde die neue Version der
+        Drittanbieter-Bibliothek aus der Datei- und
+        Verzeichnisperspektive genau so aussehen wie die vorherige
+        Version. Keine der libcomplex Dateien wäre gelöscht, umbenannt
+        oder an einen anderen Ort verschoben worden – die neue
+        Version würde gegenüber der vorherigen lediglich textuelle
+        Änderungen enthalten. In einer vollkommenen Welt würden sich
+        unsere Anpassungen sauber in die neue Version einfügen, ganz
+        ohne Komplikationen oder Konflikte.</p>
+<p>Allerdings gestalten sich die Dinge nicht immer so
+        einfach, und tatsächlich ist es normal, dass sich
+        Quelltext-Dateien zwischen Software-Veröffentlichungen
+        verschieben. Das verkompliziert das Vorgehen, um
+        sicherzustellen, dass unsere Anpassungen für die neue Version
+        immer noch gültig sind, und es kann schnell passieren, dass
+        wir in eine Situation gelangen, in der wir unsere Anpassungen
+        manuell in die neue Version einpflegen müssen. Sobald
+        Subversion die Geschichte einer gegebenen Quelltext-Datei
+        kennt – inklusive aller früheren Orte – ist das
+        Vorgehen des Einpflegens in eine neue Version der Bibliothek
+        recht einfach. Allerdings sind wir dafür verantwortlich,
+        Subversion mitzuteilen, wie sich die Organisation des
+        Quelltextes zwischen den Zulieferungen geändert hat.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.advanced.vendorbr.svn_load_dirs"></a>4.9.2. svn_load_dirs.pl</h3></div></div></div>
+<p>Zulieferungen, die mehr als ein paar Löschungen,
+        Hinzufügungen und Verschiebungen beinhalten, verkomplizieren
+        das Vorgehen bei der Aktualisierung auf neuere Versionen der
+        Drittanbieter-Daten. Aus diesem Grund stellt Subversion das
+        Skript <span class="command"><strong>svn_load_dirs.pl</strong></span> zur Verfügung, das
+        Sie dabei unterstützt. Dieses Skript automatisiert die zum
+        Importieren notwendigen Schritte, die wir beim Vorgehen zur
+        allgemeinen Verwaltung von Lieferanten-Zweigen erwähnten, um
+        zu gewährleisten, dass es dabei zu möglichst wenig Fehlern
+        kommt. Sie werden zwar immer noch dafür verantwortlich sein,
+        mit den Zusammenführungs-Befehlen die neuen Versionen der
+        Drittanbieter-Daten in Ihren Hauptentwicklungszweig
+        einzupflegen, jedoch kann Ihnen
+        <span class="command"><strong>svn_load_dirs.pl</strong></span> dabei helfen, diesen Punkt
+        schneller und leichter zu erreichen.</p>
+<p>Kurz gesagt ist <span class="command"><strong>svn_load_dirs.pl</strong></span> eine
+        Verbesserung von <span class="command"><strong>svn import</strong></span> mit folgenden
+        wichtigen Eigenschaften:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>Es kann jederzeit aufgerufen werden, um ein
+            bestehendes Verzeichnis im Repository exakt mit einem
+            externen Verzeichnis abzugleichen, wobei alle notwendigen
+            Hinzufügungen und Löschungen ausgeführt werden und
+            darüberhinaus noch optionale Verschiebungen.</p></li>
+<li><p>Es kümmert sich um komplizierte Abfolgen von
+            Operationen zwischen denen Subversion eine eingeschobene
+            Übergabe erforderlich macht – etwa vor dem
+            zweifachen Umbenennen einer Datei oder eines
+            Verzeichnisses.</p></li>
+<li><p>Vom frisch importierten Verzeichnis wird optional ein
+            Tag angelegt.</p></li>
+<li><p>Es legt optional beliebige Propertys für Dateien und
+            Verzeichnisse an, deren Name einem regulären Ausdruck
+            entspricht.</p></li>
+</ul></div>
+<p><span class="command"><strong>svn_load_dirs.pl</strong></span> benötigt drei zwingend
+        erforderliche Argumente. Das erste Argument ist der URL zum
+        Basis-Subversion-Verzeichnis, in dem gearbeitet wird. Dieses
+        Argument wird gefolgt von dem URL – relativ zum ersten
+        Argument – wohin die aktuelle Zulieferung importiert
+        werden soll. Schließlich gibt das dritte Argument an, aus
+        welchem lokalen Verzeichnis importiert werden soll. In unserem
+        vorigen Beispiel würde ein typischer Aufruf von
+        <span class="command"><strong>svn_load_dirs.pl</strong></span> wie folgt aussehen:</p>
+<pre class="screen">
+$ svn_load_dirs.pl http://svn.example.com/repos/vendor/libcomplex \
+                   current                                        \
+                   /path/to/libcomplex-1.1
+…
+</pre>
+<p>Sie können <span class="command"><strong>svn_load_dirs.pl</strong></span> mitteilen,
+        dass Sie ein Tag von der neuen Zulieferung anlegen möchten,
+        indem Sie die Option <code class="option">-t</code> gefolgt von einem
+        Tag-Namen übergeben. Dieser Tag-Name ist auch ein URL relativ
+        zum ersten Argument des Programms.</p>
+<pre class="screen">
+$ svn_load_dirs.pl -t libcomplex-1.1                              \
+                   http://svn.example.com/repos/vendor/libcomplex \
+                   current                                        \
+                   /path/to/libcomplex-1.1
+…
+</pre>
+<p>Wenn Sie <span class="command"><strong>svn_load_dirs.pl</strong></span> aufrufen,
+        untersucht es den Inhalt Ihre existierenden Zulieferung
+        „<span class="quote">current</span>“ und vergleicht sie mit der
+        vorgeschlagenen neuen Zulieferung. Im trivialen Fall werden
+        keine Dateien ausschließlich in einer und nicht in der anderen
+        Zulieferung vorhanden sein, so dass das Skript den Import ohne
+        Probleme durchführt. Falls sich jedoch zwischen den Versionen
+        Unterschiede in der Dateistruktur ergeben sollten, fragt
+        <span class="command"><strong>svn_load_dirs.pl</strong></span> nach, wie die Unterschiede
+        aufgelöst werden sollen. So haben Sie zum Beispiel die
+        Möglichkeit, dem Skript mitzuteilen, dass die Datei
+        <code class="filename">math.c</code> aus Version 1.0 von libcomplex in
+        der Version 1.1 von libcomplex in
+        <code class="filename">arithmetic.c</code> umbenannt wurde. Alle
+        Diskrepanzen, die sich nicht durch Verschiebungen erklären
+        lassen, werden als normale Löschungen und Hinzufügungen
+        behandelt.</p>
+<p>Das Skript akzeptiert auch eine gesonderte
+        Konfigurationsdatei, in der Propertys auf Dateien und
+        Verzeichnisse gesetzt werden können, deren Name einem
+        regulären Ausdruck entspricht und dem Repository
+        <span class="emphasis"><em>hinzugefügt</em></span> werden. Diese
+        Konfigurationsdatei wird <span class="command"><strong>svn_load_dirs.pl</strong></span>
+        mit der Option <code class="option">-p</code> bekanntgegeben. Jede Zeile
+        der Konfigurationsdatei ist eine durch Leerraum begrenzte
+        Menge aus zwei oder vier Werten: ein regulärer Ausdruck wie in
+        Perl, zu dem der entsprechende Pfad passen muss, ein
+        Schlüsselwort zur Kontrolle (entweder <code class="literal">break</code>
+        oder <code class="literal">cont</code>) und optional ein Property-Name
+        und ein Wert.</p>
+<pre class="screen">
+\.png$              break   svn:mime-type   image/png
+\.jpe?g$            break   svn:mime-type   image/jpeg
+\.m3u$              cont    svn:mime-type   audio/x-mpegurl
+\.m3u$              break   svn:eol-style   LF
+.*                  break   svn:eol-style   native
+</pre>
+<p>Für jeden hinzugefügten Pfad der dem regulären Ausdruck
+        einer Zeile entspricht, werden die Property-Änderungen der
+        Reihe nach durchgeführt, es sei denn, das
+        Kontroll-Schlüsselwort ist <code class="literal">break</code> (was
+        bedeutet, dass keine weiteren Property-Änderungen für diesen
+        Pfad durchgeführt werden sollen). Falls das
+        Kontroll-Schlüsselwort <code class="literal">cont</code> ist –
+        eine Abkürzung für <code class="literal">continue</code> (fortfahren)
+        – wird mit der nächsten Zeile der Konfigurationsdatei
+        fortgefahren.</p>
+<p>Jeglicher Leerraum im regulären Ausdruck, im Namen des
+        Propertys oder im Wert des Propertys muss entweder mit
+        einfachen oder doppelten Anführungszeichen umgeben werden.
+        Anführungszeichen, die nicht zum Umfassen von Leerraum
+        verwendet werden, können mit einem vorangestellten umgekehrten
+        Schrägstrich (<code class="literal">\</code>) maskiert werden. Der
+        umgekehrte Schrägstrich maskiert nur Anführungszeichen beim
+        Lesen der Konfigurationsdatei, darum sollten Sie darüberhinaus
+        keine weiteren Zeichen maskieren.</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id621505" href="#id621505" class="para">25</a>] </sup>Und er ist natürlich völlig frei von Fehlern!</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.commonpatterns.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.summary.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.8. Verbreitete Verzweigungsmuster </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.10. Zusammenfassung</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

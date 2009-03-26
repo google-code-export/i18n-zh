@@ -1,0 +1,155 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>A.2. 快速指南</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Subversion 权威指南">
+<link rel="up" href="svn.intro.html" title="附录 A. Subversion 快速入门指南">
+<link rel="prev" href="svn.intro.html" title="附录 A. Subversion 快速入门指南">
+<link rel="next" href="svn.forcvs.html" title="附录 B. CVS 用户的 Subversion 指南">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">A.2. 快速指南</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.intro.html">上一页</a> </td>
+<th width="60%" align="center">附录 A. Subversion 快速入门指南</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.forcvs.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.intro.quickstart"></a>A.2. 快速指南</h2></div></div></div>
+<div class="blockquote"><blockquote class="blockquote"><p>“<span class="quote">Please make sure your seat backs are in their full, upright position
+and that your tray tables are stored.  Flight attendants, prepare for
+take-off….</span>”</p></blockquote></div>
+<p>这是一个快速教程，能够帮助你熟悉 Subversion 的基本配置和操作。在结束这个教程时，你应该对 Subversion 的典型用法有了一个基本认识。</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p>The examples used in this appendix assume that you have
+<span class="command"><strong>svn</strong></span>, the Subversion command-line client, and
+<span class="command"><strong>svnadmin</strong></span>, the administrative tool, ready to go on a
+Unix-like operating system.  (This tutorial also works at the Windows
+command-line prompt, assuming you make some obvious tweaks.)  We also assume
+you are using Subversion 1.2 or later (run <strong class="userinput"><code>svn
+--version</code></strong> to check.)</p></td></tr>
+</table></div>
+<p>Subversion stores all versioned data in a central repository.  To begin,
+create a new repository:</p>
+<pre class="screen">
+$ svnadmin create /var/svn/repos
+$ ls /var/svn/repos
+conf/  dav/  db/  format  hooks/  locks/  README.txt
+</pre>
+<p>This command creates a new directory, <code class="filename">/var/svn/repos</code>,
+which contains a Subversion repository.  This new directory contains (among
+other things) a collection of database files.  You won't see your versioned
+files if you peek inside.  For more information about repository creation
+and maintenance, see <a class="xref" href="svn.reposadmin.html" title="第 5 章 版本库管理">第 5 章 <i>版本库管理</i></a>.</p>
+<p>Subversion has no concept of a “<span class="quote">project.</span>” The repository is
+just a virtual versioned filesystem, a large tree that can hold anything you
+wish.  Some administrators prefer to store only one project in a repository,
+and others prefer to store multiple projects in a repository by placing them
+into separate directories.  We discuss the merits of each approach in <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. 规划你的版本库结构">第 5.2.1 节 “规划你的版本库结构”</a>.  Either way, the
+repository manages only files and directories, so it's up to humans to
+interpret particular directories as “<span class="quote">projects.</span>” So while you
+might see references to projects throughout this book, keep in mind that
+we're only ever talking about some directory (or collection of directories)
+in the repository.</p>
+<p>In this example, we assume you already have some sort of project (a
+collection of files and directories) that you wish to import into your newly
+created Subversion repository.  Begin by organizing your data into a single
+directory called <code class="filename">myproject</code> (or whatever you wish).  For
+reasons explained in <a class="xref" href="svn.branchmerge.html" title="第 4 章 分支与合并">第 4 章 <i>分支与合并</i></a>, your project's tree
+structure should contain three top-level directories named
+<code class="filename">branches</code>, <code class="filename">tags</code>, and
+<code class="filename">trunk</code>.  The <code class="filename">trunk</code> directory should
+contain all of your data, and the <code class="filename">branches</code> and
+<code class="filename">tags</code> directories should be empty:</p>
+<pre class="screen">
+/tmp/myproject/branches/
+/tmp/myproject/tags/
+/tmp/myproject/trunk/
+                     foo.c
+                     bar.c
+                     Makefile
+                     …
+</pre>
+<p><code class="filename">branches</code>, <code class="filename">tags</code> 和
+<code class="filename">trunk</code> 这三个子目录不是 Subversion 必须的。但这样做是 Subversion
+的习惯用法，我们还是遵守这个约定吧。</p>
+<p>准备好了数据之后，就可以使用<span class="command"><strong>svn import</strong></span>命令(参见<a class="xref" href="svn.tour.importing.html" title="2.2. 导入数据到你的版本库">第 2.2 节 “导入数据到你的版本库”</a>)将其导入到版本库中：</p>
+<pre class="screen">
+$ svn import /tmp/myproject file:///var/svn/repos/myproject -m "initial import"
+Adding         /tmp/myproject/branches
+Adding         /tmp/myproject/tags
+Adding         /tmp/myproject/trunk
+Adding         /tmp/myproject/trunk/foo.c
+Adding         /tmp/myproject/trunk/bar.c
+Adding         /tmp/myproject/trunk/Makefile
+…
+Committed revision 1.
+$ 
+</pre>
+<p>Now the repository contains this tree of data.  As mentioned earlier, you
+won't see your files by directly peeking into the repository; they're all
+stored within a database.  But the repository's imaginary filesystem now
+contains a top-level directory named <code class="filename">myproject</code>, which
+in turn contains your data.</p>
+<p>Note that the original <code class="filename">/tmp/myproject</code> directory is
+unchanged; Subversion is unaware of it.  (In fact, you can even delete that
+directory if you wish.)  To start manipulating repository data, you need to
+create a new “<span class="quote">working copy</span>” of the data, a sort of private
+workspace.  Ask Subversion to “<span class="quote">check out</span>” a working copy of the
+<code class="filename">myproject/trunk</code> directory in the repository:</p>
+<pre class="screen">
+$ svn checkout file:///var/svn/repos/myproject/trunk myproject
+A  myproject/foo.c
+A  myproject/bar.c
+A  myproject/Makefile
+…
+Checked out revision 1.
+</pre>
+<p>Now you have a personal copy of part of the repository in a new directory
+named <code class="filename">myproject</code>.  You can edit the files in your
+working copy and then commit those changes back into the repository.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>进入工作副本目录，编辑某个文件的内容。</p></li>
+<li><p>运行 <strong class="userinput"><code>svn diff</code></strong>，以标准差异格式查看你的修改。</p></li>
+<li><p>运行 <strong class="userinput"><code>&gt;svn commit</code></strong>，将你的修改提交到版本库中。</p></li>
+<li><p>运行 <strong class="userinput"><code>svn update</code></strong>，让你的工作副本更新到版本库的“<span class="quote">最新</span>”版本。</p></li>
+</ul></div>
+<p>完整的工作副本操作指南，请参见<a class="xref" href="svn.tour.html" title="第 2 章 基本使用">第 2 章 <i>基本使用</i></a>。</p>
+<p>At this point, you have the option of making your repository available to
+others over a network.  See <a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a> to learn
+about the different sorts of server processes available and how to configure
+them.</p>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.intro.html">上一页</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.intro.html">上一级</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.forcvs.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">附录 A. Subversion 快速入门指南 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 附录 B. CVS 用户的 Subversion 指南</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

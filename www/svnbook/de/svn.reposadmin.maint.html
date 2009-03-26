@@ -1,0 +1,2090 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>5.4. Repository-Wartung</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.reposadmin.html" title="Kapitel 5. Verwaltung des Repositorys">
+<link rel="prev" href="svn.reposadmin.create.html" title="5.3. Anlegen und konfigurieren Ihres Repositorys">
+<link rel="next" href="svn.reposadmin.maint.moving-and-removing.html" title="5.5. Moving and Removing Repositories">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">5.4. Repository-Wartung</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.reposadmin.create.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 5. Verwaltung des Repositorys</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.reposadmin.maint.moving-and-removing.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.reposadmin.maint"></a>5.4. Repository-Wartung</h2></div></div></div>
+<p>Die Wartung eines Subversion-Repositorys kann abschreckend
+      sein, was an der Komplexität liegt, die Systemen innewohnt, die
+      auf Datenbanken aufbauen. Die Arbeit gut zu machen, bedeutet,
+      die Werkzeuge zu kennen – was sie sind, wann sie zu
+      verwenden sind und wie. Dieser Abschnitt stellt Ihnen die
+      Repository-Verwaltungswerkzeuge vor, die Subversion mitbringt
+      und erörtert, wie sie gehandhabt werden, um Aufgaben zu
+      erledigen, wie etwa Repository-Datenmigration, Aktualisierungen,
+      Sicherungen und Aufräumarbeiten.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.tk"></a>5.4.1. Der Werkzeugkasten eines Administrators</h3></div></div></div>
+<p>Subversion stellt eine Handvoll Dienstprogramme zur
+        Verfügung, die nützlich zum Erstellen, Untersuchen, Verändern
+        und Reparieren Ihres Repositorys sind. Wir wollen uns diese
+        Werkzeuge einmal genauer ansehen. Anschließend werden wir kurz
+        einige der zum Berkeley-DB-Paket gehörenden Dienstprogramme
+        untersuchen, die auf die Besonderheiten der von Subversion
+        verwendeten Datenbank zugeschnittene Funktionen anbieten, die
+        mit Subversions eigenen Werkzeugen nicht verfügbar
+        sind.</p>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.svnadmin"></a>5.4.1.1. svnadmin</h4></div></div></div>
+<p>Das Programm <span class="command"><strong>svnadmin</strong></span> ist der beste
+          Freund des Repository-Administrators. Neben der Fähigkeit,
+          Subversion-Repositorys zu erzeugen, erlaubt Ihnen dieses
+          Programm verschiedene Wartungsarbeiten auf diesen
+          Repositorys auszuführen. Die Syntax von
+          <span class="command"><strong>svnadmin</strong></span> ist ähnlich wie bei anderen
+          Kommandozeilenprogrammen von Subversion:</p>
+<pre class="screen">
+$ svnadmin help
+Aufruf: svnadmin UNTERBEFEHL ARCHIV_PFAD [Optionen &amp; Parameter ...]
+Geben Sie »svnadmin help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem Unterbefehl
+          zu erhalten.
+Geben Sie »svnadmin --version« ein, um die Programmversion und die Datei-
+          systemmodule zu sehen.
+
+Verfügbare Unterbefehle:
+   crashtest
+   create
+   deltify
+…
+</pre>
+<p>Früher in diesem Kapitel (in <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.basics.creating" title="5.3.1. Anlegen des Repositorys">Abschnitt 5.3.1, „Anlegen des Repositorys“</a>), wurde uns der
+          Unterbefehl <span class="command"><strong>svnadmin create</strong></span> vorgestellt.
+          Die meisten anderen Unterbefehle von
+          <span class="command"><strong>svnadmin</strong></span> werden wir später in diesem
+          Kapitel behandeln. Und in <a class="xref" href="svn.ref.svnadmin.html" title="9.2. svnadmin">Abschnitt 9.2, „svnadmin“</a> können Sie in einer vollständigen Aufstellung der
+          Unterbefehle nachlesen, was jeder zu bieten hat.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.svnlook"></a>5.4.1.2. svnlook</h4></div></div></div>
+<p><span class="command"><strong>svnlook</strong></span> ist ein von Subversion
+          mitgeliefertes Dienstprogramm zum Untersuchen der
+          mannigfaltigen Revisionen und
+          <em class="firstterm">Transaktionen</em> (bei denen es sich um
+          Revisionen in Entstehung handelt) in einem Repository. Kein
+          Teil dieses Programms versucht, das Repository zu verändern.
+          <span class="command"><strong>svnlook</strong></span> wird üblicherweise von
+          Repository-Hooks verwendet, um die abzuliefernden Änderungen
+          zu melden (im Fall des <span class="command"><strong>pre-commit</strong></span>-Hooks)
+          oder die gerade an das Repository übergeben wurden (im Fall
+          des <span class="command"><strong>post-commit</strong></span>-hooks). Ein
+          Repository-Administrator kann dieses Programm zur Diagnose
+          benutzen.</p>
+<p><span class="command"><strong>svnlook</strong></span> besitzt eine überschaubare
+          Syntax:</p>
+<pre class="screen">
+$ svnlook help
+Aufruf: svnlook UNTERBEFEHL ARCHIV_PFAD [Optionen &amp; Parameter ...]
+Hinweis: Alle Unterbefehle, die die Parameter »--revision« und »--transaction«
+         akzeptieren, werden ohne diese Parameter die neueste
+         Revision des Projektarchivs verwenden.
+Geben Sie »svnlook help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem Unterbefehl
+         zu erhalten.
+Geben Sie »svnlook --version« ein, um die Programmversion und die Datei-
+         systemmodule zu sehen.
+…
+</pre>
+<p>Die meisten Unterbefehle von <span class="command"><strong>svnlook</strong></span>
+          können entweder auf einem Revisions- oder auf einem
+          Transaktionsbaum arbeiten, indem sie Informationen über den
+          Baum an sich ausgeben oder darüber, inwiefern er sich von
+          einer früheren Revision des Repositorys unterscheidet. Sie
+          verwenden die Optionen <code class="option">--revision</code>
+          (<code class="option">-r</code>) und <code class="option">--transaction</code>
+          (<code class="option">-t</code>), um die zu untersuchende Revision bzw.
+          Transaktion anzugeben. Ohne eine der Optionen
+          <code class="option">--revision</code> (<code class="option">-r</code>) und
+          <code class="option">--transaction</code> (<code class="option">-t</code>)
+          untersucht Subversion die jüngste (oder
+          <code class="literal">HEAD</code>) Revision des Repositorys. Das
+          heißt, die beiden folgenden Befehle machen genau dasselbe,
+          wenn 19 die jüngste Revision im Repository unter
+          <code class="filename">/var/svn/repos</code> ist:</p>
+<pre class="screen">
+$ svnlook info /var/svn/repos
+$ svnlook info /var/svn/repos -r 19
+</pre>
+<p>Eine Ausnahme von diesen Regeln zu Unterbefehlen ist der
+          Unterbefehl <span class="command"><strong>svnlook youngest</strong></span>, der keine
+          Optionen entgegennimmt und einfach die jüngste
+          Revisionsnummer des Repositorys ausgibt:</p>
+<pre class="screen">
+$ svnlook youngest /var/svn/repos
+19
+$
+</pre>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Beachten Sie, dass Sie nur Transaktionen untersuchen
+            können, die noch nicht übergeben sind. Die meisten
+            Repositorys haben keine derartigen Transaktionen, da
+            Transaktionen entweder übergeben (in diesem Fall sollten
+            Sie darauf mit der Option <code class="option">--revision</code>
+            (<code class="option">-r</code>) zugreifen) oder abgebrochen und
+            entfernt sind.</p></td></tr>
+</table></div>
+<p>Die Ausgabe <span class="command"><strong>svnlook</strong></span> ist so gestaltet,
+          dass sie sowohl für Menschen als auch für Maschinen lesbar
+          ist. Nehmen wir zum Beispiel die Ausgabe des Unterbefehls
+          <span class="command"><strong>svnlook info</strong></span>:</p>
+<pre class="screen">
+$ svnlook info /var/svn/repos
+sally
+2002-11-04 09:29:13 -0600 (Mon, 04 Nov 2002)
+43
+Den üblichen griechischen
+Baum hinzugefügt.
+$
+</pre>
+<p>Die Ausgabe von <span class="command"><strong>svnlook info</strong></span> besteht
+          aus dem Folgenden in entsprechender Reihenfolge:</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Der Autor gefolgt von einem Zeilenvorschub</p></li>
+<li><p>Das Datum gefolgt von einem Zeilenvorschub</p></li>
+<li><p>Die Anzahl der Zeichen der Protokollnachricht
+              gefolgt von einem Zeilenvorschub.</p></li>
+<li><p>Die eigentliche Protokollnachricht gefolgt von einem
+              Zeilenvorschub</p></li>
+</ol></div>
+<p>Diese Ausgabe ist für Menschen lesbar, d.h., Dinge wie
+          der Zeitstempel werden als Text dargestellt statt als
+          irgendetwas Obskures (wie die Anzahl der Nanosekunden seit
+          der Mann von Bofrost das letzte Mal da war). Jedoch ist die
+          Ausgabe auch maschinenlesbar – weil die
+          Protokollnachricht mehrere Zeilen umfassen und von der Länge
+          her unbegrenzt sein kann, liefert <span class="command"><strong>svnlook</strong></span>
+          die Länge der Nachricht vor der eigentlichen Nachricht. Das
+          erlaubt Scripten und anderen Programmen, die um diesen
+          Befehl herumgeschrieben wurden, intelligente Entscheidungen
+          in Bezug auf die Protokollnachricht zu treffen, etwa wieviel
+          Speicher für die Nachricht anzufordern ist oder zumindest
+          wieviele Bytes zu überspringen sind, falls diese Ausgabe
+          nicht das letzte Stück im Datenstrom sein sollte.</p>
+<p><span class="command"><strong>svnlook</strong></span> kann eine Auswahl anderer
+          Abfragen ausführen: Teilmengen der bereits erwähnten
+          Informationen ausgeben, versionierte Verzeichnisbäume
+          rekursiv auflisten, berichten, welche Pfade in einer
+          bestimmten Revision oder Transaktion verändert wurden,
+          textuelle und property-basierte Unterschiede an Dateien und
+          Verzeichnissen aufzeigen, usw. Siehe <a class="xref" href="svn.ref.svnlook.html" title="9.3. svnlook">Abschnitt 9.3, „svnlook“</a> für eine vollständige Referenz
+          der Funktionen von <span class="command"><strong>svnlook</strong></span>.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.svndumpfilter"></a>5.4.1.3. svndumpfilter</h4></div></div></div>
+<p>Obwohl es nicht das am meisten verwendete Werkzeug im
+          Sortiment des Administrators sein wird, bietet
+          <span class="command"><strong>svndumpfilter</strong></span> eine ganz besondere Art von
+          nützlichen Funktionen – die Fähigkeit, schnell und
+          einfach Datenströme aus der Repository-Historie zu
+          verändern, indem es als ein pfadbasierter Filter
+          arbeitet.</p>
+<p>Die Syntax von <span class="command"><strong>svndumpfilter</strong></span> lautet
+          wie folgt:</p>
+<pre class="screen">
+$ svndumpfilter help
+Aufruf: svndumpfilter UNTERBEFEHL [Optionen &amp; Parameter ...]
+Geben Sie »svndumpfilter help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem
+          Unterbefehl zu erhalten.
+Geben Sie »svndumpfilter --version« ein, um die Programmversion zu sehen.
+
+Verfügbare Unterbefehle:
+   exclude
+   include
+   help (?, h)
+</pre>
+<p>Es gibt nur zwei interessante Unterbefehle:
+          <span class="command"><strong>svndumpfilter exclude</strong></span> und
+          <span class="command"><strong>svndumpfilter include</strong></span>. Sie erlauben
+          Ihnen, zwischen einer impliziten oder expliziten
+          Einbeziehung von Pfaden im Datenstrom zu wählen. Sie können
+          mehr über diese Unterbefehle und den einzigartigen Zweck von
+          <span class="command"><strong>svndumpfilter</strong></span> später in diesem Kapitel
+          unter <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.filtering" title="5.4.6. Filtern der Repository-Historie">Abschnitt 5.4.6, „Filtern der Repository-Historie“</a>
+          erfahren.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.svnsync"></a>5.4.1.4. svnsync</h4></div></div></div>
+<p>Der Befehl <span class="command"><strong>svnsync</strong></span>, der in Subversion
+          1.4 neu hinzugekommen ist, bietet Funktionen zum Verwalten
+          eines Nur-Lese-Spiegels des Subversion-Repositorys. Das
+          Programm hat eine Aufgabe – die versionierte Historie
+          eines Repositorys in ein anderes zu übertragen. Und während
+          es nicht viele Möglichkeiten gibt, dies zu tun, liegt seine
+          hauptsächliche Stärke darin, das es aus der Ferne eingesetzt
+          werden kann – das „<span class="quote">Quell</span>“- und
+          „<span class="quote">Ziel</span>“-Repository können auf verschiedenen
+          Rechnern liegen und auf einem anderen Rechner als
+          <span class="command"><strong>svnsync</strong></span> selbst.</p>
+<p>Wie Sie vielleicht erwarten, hat
+          <span class="command"><strong>svnsync</strong></span> eine Syntax, die allen anderen
+          Programmen aus diesem Kapitel gleicht:</p>
+<pre class="screen">
+$ svnsync help
+Aufruf: svnsync UNTERBEFEHL ZIEL_URL [Optionen &amp; Parameter ...]
+Geben Sie »svnsync help &lt;Unterbefehl&gt;« ein, um Hilfe zu einem
+          Unterbefehl zu erhalten.
+Geben Sie »svnsync --version« ein, um die Programmversion und die Zugriffs-
+          module zu sehen.
+
+Verfügbare Unterbefehle:
+   initialize (init)
+   synchronize (sync)
+   copy-revprops
+   help (?, h)
+
+$
+</pre>
+<p>Später in diesem Kapitel werden wir mehr über das
+          Replizieren von Repositorys mit  <span class="command"><strong>svnsync</strong></span>
+          reden (siehe <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.replication" title="5.4.7. Repository Replikation">Abschnitt 5.4.7, „Repository Replikation“</a>).</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.fsfsreshard"></a>5.4.1.5. fsfs-reshard.py</h4></div></div></div>
+<p>Obwohl es kein offizielles Glied in der Werkzeugkette
+          von Subversion ist, handelt es sich bei dem Script
+          <span class="command"><strong>fsfs-reshard.py</strong></span> (zu finden im Verzeichnis
+          <code class="filename">tools/server-side</code> des
+          Subversion-Quelltext-Paketes) um ein nützliches Werkzeug zur
+          Leistungssteigerung für Administratoren von FSFS-basierten
+          Subversion-Repositorys. FSFS-Repositorys enthalten Dateien,
+          die die Änderungen in einer einzelnen Revision beschreiben
+          sowie Dateien, die die zu einer Revision gehörenden Eigenschaften
+          beinhalten. Repositorys, die in einer früheren Version als
+          Subversion 1.5 erzeugt wurden, legen diese Dateien in zwei
+          Verzeichnissen ab – eins pro Dateityp. Während neue
+          Revisionen an das Repository übergeben werden, legt
+          Subversion dort immer mehr Dateien ab – im Lauf der
+          Zeit kann die Anzahl der Dateien recht groß werden. Es wurde
+          festgestellt, dass dies bei bestimmten netzbasierten
+          Dateisystemen zu Leistungseinbußen kommen kann.</p>
+<p>Subversion 1.5 legt FSFS-basierte Repositorys mit einer
+          geringfügig veränderten Struktur an, in der der Inhalt
+          dieser beiden Verzeichnisse
+          <em class="firstterm">aufgebrochen</em> ist, d.h. über mehrere
+          Unterverzeichnisse aufgeteilt ist.  Das kann die Zeit
+          erheblich beschleunigen, die benötigt wird, um eine dieser
+          Dateien zu finden und führt somit zu einer allgemeinen
+          Leistungssteigerung beim Lesen aus dem Repository. Die
+          Anzahl der Unterverzeichnisse für diese Dateien ist jedoch
+          konfigurierbar, und hier setzt
+          <span class="command"><strong>fsfs-reshard.py</strong></span> an. Dieses Script mischt
+          die Dateistruktur des Repositorys und ordnet sie gemäß der
+          Anzahl der gewünschten Unterverzeichnisse neu an. Das ist
+          inbesonders dann nützlich, wenn ein älteres Repository in
+          die neue Struktur von Subversion 1.5 überführt werden soll
+          (was Subversion nicht automatisch für Sie macht) oder falls
+          ein bereits aufgeteiltes Repository noch feiner eingestellt
+          werden soll.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.tk.bdbutil"></a>5.4.1.6. Dienstprogramme von Berkeley DB</h4></div></div></div>
+<p>Falls Sie ein Repository verwenden, das auf Berkeley DB
+          basiert, befindet sich die gesamte Struktur und die Daten
+          Ihres versionierten Dateisystems in einer Menge von
+          Datenbanktabellen innerhalb des Unterverzeichnisses
+          <code class="filename">db/</code> Ihres Repositorys. Dieses
+          Unterverzeichnis ist ein gewöhnliches Verzeichnis einer
+          Berkeley-DB-Umgebung und kann deshalb mit irgendeinem der
+          Berkeley Datenbankwerkzeuge verwendet werden, die
+          normalerweise mit Berkeley DB ausgeliefert werden.</p>
+<p>Für die tägliche Arbeit mit Subversion werden diese
+          Werkzeuge nicht benötigt. Die meisten Funktionen, die
+          üblicherweise für Subversion-Repositorys gebraucht werden,
+          sind in <span class="command"><strong>svnadmin</strong></span> integriert worden.
+          Beispielsweise liefern <span class="command"><strong>svnadmin
+          list-unused-dblogs</strong></span> und <span class="command"><strong>svnadmin
+          list-dblogs</strong></span> eine Teilmenge dessen, was vom
+          Berkeley-Dienstprogramm <span class="command"><strong>db_archive</strong></span>
+          angeboten wird, und <span class="command"><strong>svnadmin recover</strong></span>
+          spiegelt die verbreiteten Anwendungsfälle von
+          <span class="command"><strong>db_recover</strong></span> wieder.</p>
+<p>Trotzdem gibt es noch ein paar Berkeley-DB-Werkzeuge,
+          die Ihnen nützlich sein könnten. Die Programme
+          <span class="command"><strong>db_dump</strong></span> und <span class="command"><strong>db_load</strong></span>
+          schreiben bzw. lesen ein spezielles Dateiformat, das die
+          Schlüssel und Werte in einer Berkeley-DB-Datenbank
+          beschreibt. Da Berkeley-Datenbanken nicht zwischen
+          Rechnerarchitekturen portierbar sind, stellt dieses Format
+          ein nützliches Verfahren zur Übertragung der Datenbanken
+          zwischen Maschinen zur Verfügung, wobei die Architektur oder
+          das Betriebssystem keine Rolle spielen. Später in diesem
+          Kapitel werden wir noch beschreiben, wie Sie auch
+          <span class="command"><strong>svnadmin dump</strong></span> und <span class="command"><strong>svnadmin
+          load</strong></span> für ähnliche Zwecke verwenden können, doch
+          <span class="command"><strong>db_dump</strong></span> und <span class="command"><strong>db_load</strong></span>
+          können bestimmte Aufgaben genausogut und viel schneller
+          erledigen. Sie können auch dabei dienlich sein, wenn der
+          erfahrene Berkeley-DB-Hacker aus irgendwelchen Gründen die
+          Daten in einem BDB-basierten Repository direkt vor Ort
+          anpassen muss, was die Dienstprogramme von Subversion
+          nicht erlauben. Ferner liefert das Dienstprogramm
+          <span class="command"><strong>db_stat</strong></span> nützliche Informationen über den
+          Zustand Ihrer Berkeley-DB-Umgebung, wozu ausführliche
+          Statistiken über das Sperr- und Speicher-Teilsystem
+          gehören.</p>
+<p>Besuchen Sie für weitergehende Informationen zur
+          Berkeley-Werkzeugsammlung den Dokumentationsabschnitt der
+          Berkeley-DB-Abteilung auf der Seite von Oracle bei <a class="ulink" href="http://www.oracle.com/technology/documentation/berkeley-db/db/" target="_top">http://www.oracle.com/technology/documentation/berkeley-db/db/</a>.</p>
+</div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.setlog"></a>5.4.2. Berichtigung des Protokolleintrags</h3></div></div></div>
+<p>Manchmal kommt es vor, dass ein Benutzer einen Fehler im
+        Protokolleintrag gemacht hat (einen Tippfehler oder vielleicht
+        eine Fehlinformation). Falls das Repository entsprechend
+        eingestellt ist (indem der Hook
+        <code class="literal">pre-revprop-change</code> verwendet wird; siehe
+        <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="5.3.2. Erstellen von Repository-Hooks">Abschnitt 5.3.2, „Erstellen von Repository-Hooks“</a>), um Änderungen
+        am Protokolleintrag vorzunehmen nachdem die Übergabe
+        abgeschlossen ist, kann der Benutzer den Protokolleintrag aus
+        der Ferne mit dem Befehl <span class="command"><strong>svn propset</strong></span> (siehe
+        <a class="xref" href="svn.ref.svn.c.propset.html" title="svn propset">svn propset</a>)
+        „<span class="quote">berichtigen</span>“.  Wegen der Möglichkeit, dadurch
+        für immer Informationen zu verlieren, sind
+        Subversion-Repositorys allerdings standardmäßig nicht so
+        eingestellt, dass Änderungen an unversionierten Propertys
+        erlaubt sind – außer für einen Administrator.</p>
+<p>Falls ein Protokolleintrag durch einen Administrator
+        geändert werden muss, kann das mit <span class="command"><strong>svnadmin
+        setlog</strong></span> geschehen. Dieser Befehl ändert den
+        Protokolleintrag (das Property <code class="literal">svn:log</code>)
+        einer gegebenen Revision eines Repositorys, indem der neue
+        Inhalt aus einer angegebenen Datei gelesen wird.</p>
+<pre class="screen">
+$ echo "Hier ist der neue, korrekte Protokolleintrag" &gt; newlog.txt
+$ svnadmin setlog myrepos newlog.txt -r 388
+</pre>
+<p>Auch der Befehl <span class="command"><strong>svnadmin setlog</strong></span> ist
+        standardmäßig durch dieselben Schutzmechanismen gegen die
+        Veränderung unversionierter Propertys eingeschränkt wie ein
+        Client aus der Ferne – die Hooks <code class="literal">pre-</code>
+        und <code class="literal">post-revprop-change</code> werden immer noch
+        ausgelöst und müssen entsprechend eingestellt werden, um
+        solche Änderungen zuzulassen. Allerdings kann ein
+        Administrator diese Schutzmechanismen umgehen, indem er die
+        Option <code class="option">--bypass-hooks</code> an den Befehl
+        <span class="command"><strong>svnadmin setlog</strong></span> übergibt.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Denken Sie trotzdem daran, dass beim Umgehen der Hooks
+          auch Dinge umgangen werden wie E-Mail-Benachrichtigungen bei
+          Property-Änderungen, Sicherungssysteme, die Änderungen an
+          unversionierten Propertys verfolgen, usw. Mit anderen
+          Worten: Seien Sie sehr vorsichtig bei der Auswahl dessen,
+          was Sie ändern und wie Sie es ändern.</p></td></tr>
+</table></div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.diskspace"></a>5.4.3. Plattenplatzverwaltung</h3></div></div></div>
+<p>Obwohl die Kosten für Speicherplatz in den letzten Jahren
+        unglaublich gefallen sind, ist Plattenplatz immer noch ein
+        berechtigtes Anliegen für Administratoren, die große Mengen
+        von Daten zu versionieren haben. Jedes im aktiven Repository
+        gespeicherte Bisschen Information über die Versionshistorie
+        muss zu einem anderen Ort gesichert werden; vielleicht sogar
+        öfter, falls eine zyklische Sicherungsstrategie angewendet
+        wird. Es ist zweckdienlich zu wissen, welche Teile von
+        Subversions Repository am Ort verbleiben müssen, welche
+        gesichert werden müssen und welche ruhig entfernt werden
+        können.</p>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.diskspace.deltas"></a>5.4.3.1. Wie Subversion Plattenplatz spart</h4></div></div></div>
+<p>Um das Repository klein zu halten, verwendet Subversion
+          innerhalb des Repositorys
+          <em class="firstterm">Delta-Kodierung</em> (oder
+          Deltaspeicherung). Unter Delta-Kodierung wird die Kodierung
+          eines Datensatzes als eine Sammlung von Unterschieden
+          gegenüber einem anderen Datensatz verstanden. Falls die
+          beiden Datensätze sehr ähnlich sind, bewirkt diese
+          Delta-Kodierung eine Einsparung an Speicherplatz für den als
+          Delta gespeicherten Datensatz – anstatt den
+          Platz der Originaldaten zu belegen, wird hierbei nur soviel
+          Platz benötigt, um zu sagen: „<span class="quote">Schau mal, ich sehe
+          genau so aus, wie der andere Datensatz da drüben, bis auf
+          die folgenden paar Änderungen.</span>“ Das Ergebnis ist,
+          dass die meisten der Daten im Repository, die normalerweise
+          recht voluminös sind – nämlich der Inhalt
+          versionierter Dateien – in einer viel geringeren Größe
+          gespeichert werden als der ursprüngliche Volltext dieser
+          Daten. Und für Repositorys, die mit Subversion 1.4 oder
+          später angelegt wurden, ist die Platzersparnis sogar noch
+          besser – jetzt sind die Volltexte der Dateiinhalte
+          selbst komprimiert.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Da alle delta-kodierten Daten in einem BDB-basierten
+            Repository in einer einzigen Berkeley-DB-Datenbankdatei
+            gespeichert werden, wird die verringerte Größe der
+            gespeicherten Werte nicht unmittelbar die Größe der
+            Datenbankdatei verringern. Berkeley DB führt jedoch intern
+            Buch über unbenutzte Bereiche der Datenbankdatei und wird
+            zunächst jene aufbrauchen, bevor die Datenbankdatei selbst
+            vergrößert wird. Während Delta-Kodierung also nicht
+            unmittelbare Platzersparnis bringt, kann sie jedoch das
+            künftige Wachstum der Datenbank drastisch
+            verlangsamen.</p></td></tr>
+</table></div>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.diskspace.deadtxns"></a>5.4.3.2. Entfernen unvollendeter Transaktionen</h4></div></div></div>
+<p>Obwohl es selten vorkommt, gibt es Umstände, unter denen
+          der Übergabeprozess mit einem Fehler abbricht und die Reste
+          einer Revision in Spe  hinterlässt – eine unvollendete
+          Transaktion samt aller Datei- und Verzeichnisänderungen, die
+          dazugehören. Dies kann aus verschiedenen Gründen passieren:
+          Vielleicht wurde die Operation des Clients vom Benutzer
+          unsauber beendet oder es trat mittendrin ein Netzfehler auf.
+          Aus welchem Grund auch immer, es können unvollendete
+          Transaktionen auftreten. Sie verursachen keine tatsächlichen
+          Schäden, außer Plattenplatz zu verschwenden. Ein penibler
+          Administrator möchte sie vielleicht dennoch
+          entfernen.</p>
+<p>Sie können den Befehl <span class="command"><strong>svnadmin lstxns</strong></span>
+          verwenden, um die Namen der aktuell ausstehenden
+          Transaktionen anzuzeigen:</p>
+<pre class="screen">
+$ svnadmin lstxns myrepos
+19
+3a1
+a45
+$
+</pre>
+<p>Jeder Eintrag der Ausgabe kann dann mit dem Befehl
+          <span class="command"><strong>svnlook</strong></span> (und seiner Option
+          <code class="option">--transaction</code> (<code class="option">-t</code>))
+          aufgerufen werden, um festzustellen, wer die Transaktion
+          erzeugt hat, wann sie erzeugt wurde und welche Änderungen
+          sie beinhaltet – Informationen, die bei der
+          Entscheidung helfen können, ob eine Transaktion ein sicherer
+          Kandidat zum Löschen ist! Wenn Sie tatsächlich eine
+          Transaktion löschen wollen, kann deren Name an den Befehl
+          <span class="command"><strong>svnadmin rmtxns</strong></span> übergeben werden, der
+          dann die Transaktion aufräumt. <span class="command"><strong>svnadmin
+          rmtxns</strong></span> kann seine Eingabe auch direkt aus der
+          Ausgabe von <span class="command"><strong>svnadmin lstxns</strong></span>
+          beziehen!</p>
+<pre class="screen">
+$ svnadmin rmtxns myrepos `svnadmin lstxns myrepos`
+$
+</pre>
+<p>Falls Sie auf diese Weise diese beiden Unterbefehle
+          verwenden, sollten Sie vorübergehend das Repository für
+          Clients unzugänglich machen. So kann niemand eine
+          berechtigte Transaktion beginnen, bevor Sie aufgeräumt
+          haben.  <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.diskspace.deadtxns.ex-1" title="Beispiel 5.1. txn-info.sh (ausstehende Transaktionen anzeigen)">Beispiel 5.1, „txn-info.sh (ausstehende Transaktionen anzeigen)“</a>
+          enthält ein kleines Shell-Script, das schnell eine Übersicht
+          über jede ausstehende Transaktion in Ihrem Repository
+          erzeugen kann.</p>
+<div class="example">
+<a name="svn.reposadmin.maint.diskspace.deadtxns.ex-1"></a><p class="title"><b>Beispiel 5.1. txn-info.sh (ausstehende Transaktionen anzeigen)</b></p>
+<div class="example-contents"><pre class="programlisting">
+#!/bin/sh
+
+### Erzeuge Informationen über alle ausstehenden Transaktionen eines
+### Subversion Repositorys.
+
+REPOS="${1}"
+if [ "x$REPOS" = x ] ; then
+  echo "Aufruf: $0 REPOS_PATH"
+  exit
+fi
+
+for TXN in `svnadmin lstxns ${REPOS}`; do 
+  echo "---[ Transaktion ${TXN} ]-------------------------------------------"
+  svnlook info "${REPOS}" -t "${TXN}"
+done
+</pre></div>
+</div>
+<br class="example-break"><p>Die Ausgabe des Scriptes ist im Grunde genommen eine
+          Aneinanderreihung mehrerer Teile von <span class="command"><strong>svnlook
+          info</strong></span>-Ausgaben (siehe <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.tk.svnlook" title="5.4.1.2. svnlook">Abschnitt 5.4.1.2, „svnlook“</a>) und sieht etwa
+          so aus:</p>
+<pre class="screen">
+$ txn-info.sh myrepos
+---[ Transaktion 19 ]-------------------------------------------
+sally
+2001-09-04 11:57:19 -0500 (Tue, 04 Sep 2001)
+0
+---[ Transaktion 3a1 ]-------------------------------------------
+harry
+2001-09-10 16:50:30 -0500 (Mon, 10 Sep 2001)
+39
+Versuch, über eine schlechte Netzverbindung abzuliefern.
+---[ Transaktion a45 ]-------------------------------------------
+sally
+2001-09-12 11:09:28 -0500 (Wed, 12 Sep 2001)
+0
+$
+</pre>
+<p>Eine vor langer Zeit aufgegebene Transaktion bedeutet
+          normalerweise eine Art fehlgeschlagenen oder unterbrochenen
+          Übergabeversuch. Der Zeitstempel einer Transaktion kann eine
+          interessante Information sein – ist es beispielsweise
+          wahrscheinlich, dass eine vor neun Monaten begonnene
+          Operation immer noch aktiv ist?</p>
+<p>Kurz gesagt, Entscheidungen zur Bereinigung von
+          Transaktionen sollten klug getroffen werden. Verschiedene
+          Informationsquellen – hierzu gehören die Fehler- und
+          Zugriffsprotokolldateien von Apache, die operativen
+          Protokolldateien von Subversion, die Revisions-Historie von
+          Subversion usw. – können während des
+          Entscheidungsprozesses hinzugezogen werden. Natürlich kann
+          sich ein Administrator auch einfach  mit dem Eigentümer
+          einer anscheinend abgebrochenen Transaktion in Verbindung
+          setzen (z.B. per E-Mail), um sicherzustellen, dass die
+          Transaktion sich tatsächlich in einem Zombiezustand
+          befindet.</p>
+</div>
+<div class="sect3" lang="de">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.diskspace.bdblogs"></a>5.4.3.3. Entfernen unbenutzter Protokolldateien von Berkeley DB</h4></div></div></div>
+<p>Bis vor kurzer Zeit waren die größten
+          Plattenplatzfresser bei BDB-basierten Subversion-Repositorys
+          die Protokolldateien, in die Berkeley DB zunächst alle
+          Schritte hineinschreibt, bevor es die eigentlichen
+          Datenbankdateien verändert. Diese Dateien halten alle
+          Aktionen der Datenbank auf dem Weg von einem Zustand zum
+          nächsten fest – während die Datenbankdateien zu jeder
+          Zeit einen bestimmten Zustand widerspiegeln, beinhalten die
+          Protokolldateien all die vielen Änderungen auf dem Weg
+          <span class="emphasis"><em>zwischen</em></span> den Zuständen. Somit können
+          sie sehr schnell wachsen und sich anhäufen.</p>
+<p>Glücklicherweise hat die Datenbankumgebung beginnend mit
+          der Version 4.2 der Berkeley DB die Fähigkeit, ihre eigenen
+          unbenutzten Protokolldateien automatisch zu entfernen. Alle
+          Repositorys, die mit einem <span class="command"><strong>svnadmin</strong></span>
+          angelegt wurden, das mit Berkeley DB Version 4.2 oder später
+          übersetzt wurde, werden mit automatischer
+          Protokolldateientfernung konfiguriert. Wenn Sie diese
+          Funktion nicht möchten, geben Sie dem Befehl
+          <span class="command"><strong>svnadmin create</strong></span> einfach die Option
+          <code class="option">--bdb-log-keep</code> mit. Sollten Sie das
+          vergessen oder es sich später anders überlegen, editieren
+          Sie einfach die Datei <code class="filename">DB_CONFIG</code> im
+          Verzeichnis <code class="filename">db</code> Ihres Repositorys indem
+          Sie die Zeile mit der Direktive <code class="literal">set_flags
+          DB_LOG_AUTOREMOVE</code> auskommentieren und starten dann
+          <span class="command"><strong>svnadmin recover</strong></span> auf Ihrem Repository, um
+          die Konfigurationsänderung zu aktivieren.  Siehe <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.bdb" title="5.3.3. Konfiguration von Berkeley DB">Abschnitt 5.3.3, „Konfiguration von Berkeley DB“</a> für weitere
+          Informationen zur Datenbankkonfiguration.</p>
+<p>Ohne eine Art automatische Protokolldateientfernung
+          aktiviert zu haben, häufen sich die Protokolldateien während
+          der Nutzung des Repositorys an. Es ist eigentlich ein
+          Merkmal des Datenbanksystems – Sie sollten
+          ausschließlich  mit Hilfe der Protokolldateien in der Lage
+          sein, Ihre gesamte Datenbank zu rekonstruieren, so dass
+          diese Protokolldateien sehr nützlich für eine
+          Wiederherstellung im Katastrophenfall sein können. Jedoch
+          möchten Sie normalerweise die nicht mehr von Berkeley DB
+          verwendeten Protokolldateien archivieren und sie zur
+          Platzersparnis von der Platte entfernen. Verwenden Sie den
+          Befehl <span class="command"><strong>svnadmin list-unused-dblogs</strong></span>, um
+          die unbenutzten Protokolldateien anzuzeigen:</p>
+<pre class="screen">
+$ svnadmin list-unused-dblogs /var/svn/repos
+/var/svn/repos/log.0000000031
+/var/svn/repos/log.0000000032
+/var/svn/repos/log.0000000033
+…
+$ rm `svnadmin list-unused-dblogs /var/svn/repos`
+## Plattenplatz zurückgewonnen!
+</pre>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>BDB-basierte Repositorys, deren Protokolldateien ein
+            Bestandteil eines Sicherungs- oder Notfallplans sind,
+            sollten <span class="emphasis"><em>nicht</em></span> die automatische
+            Entfernung verwenden. Die Wiederherstellung der Daten
+            eines Repositorys kann nur gewährleistet werden, wenn
+            <span class="emphasis"><em>alle</em></span> Protokolldateien verfügbar sind.
+            Falls einige der Protokolldateien von der Platte entfernt
+            werden, bevor das Sicherungssystem die Gelegenheit
+            bekommt, sie woandershin zu kopieren, ist die
+            unvollständige Menge gesicherter Protokolldateien
+            tatsächlich nutzlos.</p></td></tr>
+</table></div>
+</div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.recovery"></a>5.4.4. Wiederherstellung von Berkeley DB</h3></div></div></div>
+<p>Wie in <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.basics.backends.bdb" title="5.2.3.1. Berkeley DB">Abschnitt 5.2.3.1, „Berkeley DB“</a> erwähnt wurde,
+        kann ein Berkeley-DB-Repository manchmal einfrieren, falls es
+        nicht ordnungsgemäß geschlossen wird. Wenn das passiert, muss
+        ein Administrator die Datenbank in einen konsistenten Zustand
+        zurückfahren. Das gilt aber nur für BDB-basierte Repositorys
+        – falls Sie FSFS-basierte verwenden, sind Sie davon
+        nicht betroffen. Und falls Sie Subversion 1.4 mit Berkeley DB
+        4.4 oder später verwenden, werden Sie feststellen, dass
+        Subversion für diese Situationen wesentlich unempfindlicher
+        geworden ist. Trotzdem kommt es vor, dass sich
+        Berkeley-DB-Repositorys verklemmen, und Administratoren müssen
+        wissen, wie sie sicher damit umgehen.</p>
+<p>Um die Daten in Ihrem Repository zu schützen, verwendet
+        Berkeley DB einen Sperrmechanismus. Dieser Mechanismus stellt
+        sicher, dass Teile der Datenbank nicht gleichzeitig durch
+        mehrere Zugriffe verändert werden und jeder Prozess die Daten
+        beim Lesen aus der Datenbank im korrekten Zustand sieht.  Wenn
+        ein Prozess irgendetwas in der Datenbank ändern muss, prüft er
+        zunächst, ob eine Sperre auf den Zieldaten liegt.  Sind die
+        Daten nicht gesperrt, sperrt der Prozess die Daten, nimmt die
+        Änderungen vor und entsperrt die Daten wieder.  Andere
+        Prozesse müssen auf die Freigabe der Sperre warten, bevor sie
+        wieder auf diesen Datenbankabschnitt zugreifen dürfen. (Das
+        hat nichts mit den Sperren zu tun, die Sie als Benutzer auf
+        versionierte Dateien im Repository vergeben können; wir
+        versuchen die Verwirrung, die durch diese Terminologie
+        verursacht wird, in <a class="xref" href="svn.advanced.locking.html#svn.advanced.locking.meanings" title="The Three Meanings of Lock">The Three Meanings of Lock</a> zu klären.)</p>
+<p>Während der Nutzung Ihres Repositorys können fatale Fehler
+        oder Unterbrechungen einen Prozess daran hindern, die von ihm
+        in der Datenbank gesetzten Sperren wieder zu entfernen. Als
+        Ergebnis ist das Datenbanksystem „<span class="quote">verklemmt</span>“.
+        Wenn das passiert, laufen alle Versuche ins Leere, auf die
+        Datenbank zuzugreifen (da jeder neue Prozess darauf wartet,
+        dass die Sperre entfernt wird – was aber nicht passieren
+        wird).</p>
+<p>Keine Panik, falls das Ihrem Repository widerfahren
+        sollte! Das Berkeley-DB-Dateisystem nutzt die Vorteile von
+        Datenbanktransaktionen, Sicherungspunkten sowie
+        vorausschreibender Journalierung, um zu gewährleisten, dass
+        nur die katastrophalsten Ereignisse
+        <sup>[<a name="id626810" href="#ftn.id626810" class="footnote">32</a>]</sup>
+        dauerhaft die Datenbankumgebung zerstören können. Ein
+        ausreichend paranoider Repository-Administrator wird irgendwie
+        Sicherungen der Daten des Repositorys an einem anderen Ort
+        verwahren, doch rennen Sie noch nicht zum Schrank mit den
+        Sicherungsbändern.</p>
+<p>Verwenden Sie stattdessen das folgende Rezept, um Ihr
+        Repositorys zu „<span class="quote">entklemmen</span>“:</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Stellen Sie sicher, dass keine Prozesse auf das
+            Repository zugreifen (oder einen Zugriffsversuch machen).
+            Für netzbasierte Repositorys bedeutet das, auch den
+            Apache-HTTP-Server oder den svnserve-Dämon zu
+            stoppen.</p></li>
+<li><p>Melden Sie sich als der Benutzer an, dem das
+            Repository gehört und der es verwaltet. Das ist wichtig,
+            da eine Wiederherstellung unter einer falschen
+            Benutzerkennung dazu führen kann, dass die Berechtigungen
+            auf den Dateien eines Repositorys derart verändert werden
+            können, dass der Zugriff auf das Repository auch dann
+            nicht mehr möglich wird, wenn es „<span class="quote">entklemmt</span>“
+            ist.</p></li>
+<li>
+<p>Starten Sie den Befehl <strong class="userinput"><code>svnadmin recover
+            /var/svn/repos</code></strong>. Sie sollten eine Ausgabe
+              ähnlich dieser sehen:</p>
+<pre class="screen">
+Exklusiven Zugriff auf das Projektarchiv erlangt
+Bitte warten, die Wiederherstellung des Projektarchivs kann einige Zeit dauern ...
+
+Wiederherstellung vollständig abgeschlossen. 
+Die neueste Revision des Projektarchivs ist 19.
+</pre>
+<p>Die Ausführung dieses Befehls kann viele Minuten
+            dauern.</p>
+</li>
+<li><p>Machen Sie einen Neustart des Server-Prozesses.</p></li>
+</ol></div>
+<p>Dieses Vorgehen behebt fast jeden Fall von
+        Repository-Verklemmung. Stellen Sie sicher, dass Sie diesen
+        Befehl als der Benutzer ausführen, der Eigentümer und
+        Verwalter der Datenbank ist, nicht einfach als
+        <code class="literal">root</code>. Ein Teil des
+        Wiederherstellungsprozesses könnte diverse Datenbankdateien
+        völlig neu erzeugen (z.B. gemeinsame Speicherbereiche). Wenn
+        Sie die Wiederherstellung als <code class="literal">root</code>
+        ausführen, werden diese Dateien dem Benutzer
+        <code class="literal">root</code> zugeordnet, was bedeutet, dass selbst
+        nach der Wiederherstellung der Verbindung zur Außenwelt
+        gewöhnliche Benutzer keinen Zugriff mehr bekommen
+        werden.</p>
+<p>Falls das oben beschriebene Vorgehen aus irgendwelchen
+        Gründen die Verklemmung Ihres Repository nicht beseitigt,
+        sollten Sie zwei Dinge tun. Schieben Sie zunächst ihr
+        beschädigtes Repository an die Seite (indem Sie es etwa in
+        <code class="filename">repos.BROKEN</code> umbenennen) und spielen
+        seine jüngste Sicherung ein. Schicken Sie dann eine E-Mail an
+        die Subversion-Mailing-Liste
+        (<code class="email">&lt;<a class="email" href="mailto:users@subversion.tigris.org">users@subversion.tigris.org</a>&gt;</code>), in der Sie Ihr
+        Problem detailliert beschreiben. Die Integrität der Daten
+        genießt bei den Entwicklern von Subversion allerhöchste
+        Priorität.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.migrate"></a>5.4.5. Repository-Daten woandershin verschieben</h3></div></div></div>
+<p>Ein Subversion-Dateisystem hält seine Daten in Dateien,
+        die auf eine Art und Weise über das Repository verstreut sind,
+        die im Allgemeinen nur die Subversion-Entwickler selbst
+        verstehen (und auch nur sie interessieren).  Allerdings können
+        es bestimmte Umstände erforderlich machen, alle Daten oder nur
+        Teile davon in ein anderes Repository zu kopieren oder zu
+        verschieben.</p>
+<p>Subversion stellt solche Funktionen durch
+        <em class="firstterm">Repository-Auszugs-Datenströme</em>
+        (repository dump streams) bereit.  Ein
+        Repository-Auszugs-Datenstrom (oft als
+        „<span class="quote">Auszugsdatei</span>“ bezeichnet, wenn er als Datei auf
+        Platte gespeichert wird) ist ein portables, flaches
+        Dateiformat, das die zahlreichen Revisionen in Ihrem
+        Repository beschreibt – was geändert wurde, von wem usw.
+        Dieser Datenstrom ist der primäre Mechanismus zum
+        Herumschieben der versionierten Historie – als Ganzes
+        oder in Teilen, mit oder ohne Änderung – zwischen
+        Repositorys. Und Subversion stellt die Werkzeuge zum Erzeugen
+        und Laden dieser Datenströme zur Verfügung: die Unterbefehle
+        <span class="command"><strong>svnadmin dump</strong></span> bzw.  <span class="command"><strong>svnadmin
+        load</strong></span>.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Obwohl das Format der Subversion Auszugsströme
+          menschenlesbare Teile enthält und das Format eine gewohnte
+          Struktur besitzt (es gleicht einem RFC 822 Format, das
+          meistens für E-Mail verwendet wird), ist es
+          <span class="emphasis"><em>kein</em></span> reines Textformat. Es ist ein
+          Binärformat, das sehr empfindlich gegenüber Herumgepfusche
+          ist. Beispielsweise würden viele Texteditoren die Datei
+          beschädigen, indem sie automatisch die Zeilenenden
+          umformen.</p></td></tr>
+</table></div>
+<p>Es gibt viele Gründe, Auszüge von
+        Subversion-Repository-Daten zu machen und zu laden. In der
+        Anfangsphase von Subversion war der häufigste Grund die
+        Weiterentwicklung von Subversion an sich. Während Subversion
+        reifte, gab es Zeiten, als Änderungen an der Datenbankbasis zu
+        Kompatibilitätsproblemen mit früheren Repository-Versionen
+        führten, so dass Benutzer mit der vorherigen Version von
+        Subversion Auszüge von ihren Repository-Daten machen und sie
+        mit der neueren Version von Subversion in ein frisch erzeugtes
+        Repository laden mussten. Diese Schemaänderungen haben seit
+        Subversion 1.0 nicht mehr stattgefunden, und die
+        Subversion-Entwickler versprechen, dass die Benutzer zwischen
+        Unterversionen von Subversion (wie etwa von 1.3 nach 1.4)
+        keine Abzüge ihrer Repositorys machen und neu laden müssen.
+        Jedoch gibt es noch andere Gründe, die es erforderlich machen,
+        zu denen Dinge gehören wie das erneute Aufsetzen eines
+        Berkeley-DB-Repositorys auf einem neuen Betriebssystem oder
+        einer CPU-Architektur, der Wechsel von einem
+        Berkeley-DB-basierten auf ein FSFS-basiertes Repository oder
+        (was wir später in diesem Kapitel in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.filtering" title="5.4.6. Filtern der Repository-Historie">Abschnitt 5.4.6, „Filtern der Repository-Historie“</a> behandeln werden)
+        das Entfernen versionierter Daten aus der
+        Repository-Historie.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Das Auszugsformat eines Subversion Repositorys
+          beschreibt nur versionierte Änderungen. Es beinhaltet keine
+          Informationen über unvollendete Transaktionen, von Benutzern
+          gesetzte Sperren auf Pfade im Repository, Anpassungen an
+          Repository- oder Server-Konfigurationen (inklusive
+          Hook-Scripten) usw.</p></td></tr>
+</table></div>
+<p>Welche Gründe für den Umzug der Repository-Historie für
+        Sie auch immer eine Rolle spielen, die Verwendung der
+        Unterbefehle <span class="command"><strong>svnadmin dump</strong></span> und
+        <span class="command"><strong>svnadmin load</strong></span> sind der direkte Weg.
+        <span class="command"><strong>svnadmin dump</strong></span> gibt ein Intervall von
+        Repository-Revisionen im speziellen Subversion-Auszugsformat
+        aus. Der Auszug wird zur Standardausgabe geschrieben, während
+        Mitteilungen an die Standardfehlerausgabe gehen. Das erlaubt
+        Ihnen, den Ausgabestrom in eine Datei umzuleiten, während Sie
+        Statusausgaben im Terminalfenster verfolgen können. Zum
+        Beispiel:</p>
+<pre class="screen">
+$ svnlook youngest myrepos
+26
+$ svnadmin dump myrepos &gt; dumpfile
+* Revision 0 ausgegeben.
+* Revision 1 ausgegeben.
+* Revision 2 ausgegeben.
+…
+* Revision 25 ausgegeben.
+* Revision 26 ausgegeben.
+</pre>
+<p>Am Ende haben Sie eine einzelne Datei (im vorangegangenen
+        Beispiel <code class="filename">dumpfile</code>), die alle im
+        Repository gespeicherten Daten aus dem gewählten Intervall von
+        Revisionen beinhaltet. Beachten Sie, dass <span class="command"><strong>svnadmin
+        dump</strong></span> wie jeder andere „<span class="quote">lesende</span>“ Prozess
+        (z.B. <span class="command"><strong>svn checkout</strong></span>) Revisionsbäume aus dem
+        Repository liest, so dass Sie diesen Befehl jederzeit aufrufen
+        können.</p>
+<p>Der andere Unterbefehl dieses Paars, <span class="command"><strong>svnadmin
+        load</strong></span>, liest den Standardeingabestrom als eine
+        Subversion-Repository-Auszugsdatei und spielt diese Revisionen
+        aus dem Auszug gewissermaßen neu in das Ziel-Repository. Auch
+        dieser Befehl erzeugt Meldungen, dieses Mal aber über die
+        Standardausgabe:</p>
+<pre class="screen">
+$ svnadmin load newrepos &lt; dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: A ... erledigt.
+     * Füge Pfad hinzu: A/B ... erledigt.
+     …
+------- Neue Revision 1 übertragen (geladen aus Original 1) &gt;&gt;&gt;
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 2 gestartet
+     * Bearbeite Pfad: A/mu ... erledigt.
+     * Bearbeite Pfad: A/D/G/rho ... erledigt.
+
+------- Neue Revision 2 übertragen (geladen aus Original 2) &gt;&gt;&gt;
+
+…
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 25 gestartet
+     * Bearbeite Pfad: A/D/gamma ... erledigt.
+
+------- Neue Revision 25 übertragen (geladen aus Original 25) &gt;&gt;&gt;
+
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 26 gestartet
+     * Füge Pfad hinzu: A/Z/zeta ... erledigt.
+     * Bearbeite Pfad: A/mu ... erledigt.
+
+------- Neue Revision 26 übertragen (geladen aus Original 26) &gt;&gt;&gt;
+
+</pre>
+<p>Das Ergebnis eines Ladevorgangs sind neue Revisionen, die
+        dem Repository hinzugefügt wurden – dasselbe, was Sie
+        erhalten, wenn Sie mit einem normalen Subversion-Client
+        Übergaben an das Repository machen. Ebenso wie bei einer
+        Übergabe können können Sie Hook-Programme verwenden, um
+        Aktionen vor und nach jeder Übergabe während des Ladevorgangs
+        auszuführen. Indem Sie die Optionen
+        <code class="option">--use-pre-commit-hook</code> und
+        <code class="option">--use-post-commit-hook</code> an <span class="command"><strong>svnadmin
+        load</strong></span> übergeben, können Sie Subversion befehlen, für
+        jede zu ladende Revision die Hook-Programme pre-commit bzw.
+        post-commit auszuführen. Sie könnten diese beispielsweise
+        verwenden, um sicherzustellen, dass die geladenen Revisionen
+        dieselben Validierungsschritte durchlaufen müssen wie reguläre
+        Übergaben. Natürlich sollten Sie diese Optionen mit Sorgfalt
+        verwenden – wenn Ihr post-commit-Hook für jede neue
+        Übergabe E-Mails an eine Mailing-Liste verschickt, wollen Sie
+        bestimmt nicht, das innerhalb kürzester Zeit hunderte oder
+        tausende Übergabe-E-Mails in diese Liste hineinhageln! Sie
+        können mehr über Hook-Scripte in <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="5.3.2. Erstellen von Repository-Hooks">Abschnitt 5.3.2, „Erstellen von Repository-Hooks“</a> lesen.</p>
+<p>Beachten Sie, dass Menschen, die sich besonders gewitzt
+        fühlen, weil <span class="command"><strong>svnadmin</strong></span> für den Auszug und
+        den Ladevorgang den Standardeingabe- und den
+        Standardausgabestrom benutzt, Dinge wie dieses ausprobieren
+        können (vielleicht sogar unterschiedliche Versionen von
+        <span class="command"><strong>svnadmin</strong></span> auf jeder Seite der Pipe):</p>
+<pre class="screen">
+$ svnadmin create newrepos
+$ svnadmin dump oldrepos | svnadmin load newrepos
+</pre>
+<p>Im Normalfall wird die Auszugsdatei ziemlich groß –
+        viel größer als das Repository selbst. Das liegt daran, dass
+        standardmäßig jede Version jeder Datei als vollständiger Text
+        in der Auszugsdatei dargestellt wird. Dies ist das schnellste
+        und einfachste Verhalten, und es ist nett, wenn Sie die
+        Auszugsdaten über eine Pipe direkt an einen weiteren Prozess
+        weiterleiten (etwa ein Komprimierprogramm, ein Filterprogramm
+        oder einen Prozess zum Laden). Wenn Sie jedoch eine
+        Auszugsdatei für die Langzeitspeicherung erzeugen, möchten Sie
+        wahrscheinlich Plattenplatz sparen, indem Sie die Option
+        <code class="option">--deltas</code> verwenden. Mit dieser Option werden
+        aufeinanderfolgende Revisionen von Dateien als komprimierte
+        binäre Unterschiede ausgegeben – so wie Dateirevisionen
+        im Repository gespeichert werden. Diese Option ist langsamer,
+        führt jedoch zu einer Größe der Auszugsdatei, die der Größe
+        des Original-Repositorys näher kommt.</p>
+<p>Wir haben eben erwähnt, dass <span class="command"><strong>svnadmin
+        dump</strong></span> einen Bereich von Revisionen ausgibt. Verwenden
+        Sie die Option <code class="option">--revision</code>
+        (<code class="option">-r</code>), um eine einzelne Revision oder einen
+        Bereich von Revisionen für den Auszug anzugeben. Wenn Sie
+        diese Option weglassen, wird ein Auszug aller
+        Repository-Revisionen erstellt.</p>
+<pre class="screen">
+$ svnadmin dump myrepos -r 23 &gt; rev-23.dumpfile
+$ svnadmin dump myrepos -r 100:200 &gt; revs-100-200.dumpfile
+</pre>
+<p>Beim Erstellen eines Auszugs jeder Revision gibt
+        Subversion gerade soviel Information aus, dass später ein
+        Ladeprozess in der Lage ist, diese Revision auf der Basis der
+        Vorgängerrevision wiederherzustellen. Mit anderen Worten: Für
+        jede Revision befinden sich nur die Dinge in der Auszugsdatei,
+        die sich in dieser Revision geändert haben. Die einzige
+        Ausnahme von dieser Regel ist die erste Revision, die mit dem
+        aktuellen <span class="command"><strong>svnadmin dump</strong></span> erstellt
+        wird.</p>
+<p>Standardmäßig wird Subversion den Auszug der ersten
+        Revision nicht bloß als Unterschied ausdrücken, der auf die
+        Vorgängerrevision anzuwenden ist. Zum Ersten gibt es keine
+        Vorgängerrevision in der Auszugsdatei. Und zum Zweiten kann
+        Subversion den Zustand des Repositorys, in das der Auszug
+        (falls überhaupt) geladen werden soll, nicht kennen. Um
+        sicherzustellen, dass die Ausgabe jedes Aufrufs von
+        <span class="command"><strong>svnadmin dump</strong></span> unabhängig ist, ist der
+        Auszug der ersten Revision standardmäßig eine vollständige
+        Darstellung jedes Verzeichnisses, jeder Datei und jedes
+        Propertys aus dieser Revision im Repository.</p>
+<p>Sie können dieses Standardverhalten jedoch ändern. Falls
+        Sie die Option <code class="option">--incremental</code> angeben,
+        vergleicht <span class="command"><strong>svnadmin</strong></span> die erste Revision für
+        die ein Auszug erstellt werden soll mit der vorhergehenden
+        Revision im Repository – auf dieselbe Art und Weise, wie
+        jede andere Revision behandelt wird, für die ein Auszug
+        erstellt werden soll – indem lediglich die Änderungen
+        aus dieser Revision erwähnt werden. Der Vorteil dabei ist,
+        dass Sie mehrere kleinere Auszugsdateien erstellen können, die
+        hintereinander geladen werden können, anstatt eine
+        große:</p>
+<pre class="screen">
+$ svnadmin dump myrepos -r 0:1000 &gt; dumpfile1
+$ svnadmin dump myrepos -r 1001:2000 --incremental &gt; dumpfile2
+$ svnadmin dump myrepos -r 2001:3000 --incremental &gt; dumpfile3
+</pre>
+<p>Diese Auszugsdateien können mit der folgenden Befehlsfolge
+        in ein neues Repository geladen werden:</p>
+<pre class="screen">
+$ svnadmin load newrepos &lt; dumpfile1
+$ svnadmin load newrepos &lt; dumpfile2
+$ svnadmin load newrepos &lt; dumpfile3
+</pre>
+<p>Ein weiterer toller Trick, den Sie mit der Option
+        <code class="option">--incremental</code> anwenden können besteht darin,
+        einen neuen Bereich von Revisionsauszügen an eine existierende
+        Revisionsdatei anzuhängen. Beispielsweise könnten Sie einen
+        <code class="literal">post-commit</code>-Hook haben, der der Datei einen
+        Auszug derjenigen Revision anfügt, die den Hook ausgelöst hat.
+        Oder Sie haben ein Script, das jede Nacht läuft, um Auszüge
+        sämtlicher Revisionen seit dem letzten Lauf anzufügen. Wenn es
+        auf diese Weise verwendet wird, stellt <span class="command"><strong>svnadmin
+        dump</strong></span> eine Möglichkeit dar, laufend die Änderungen an
+        Ihrem Repository für den Fall eines Systemabsturzes oder eines
+        anderen katastrophalen Ereignisses zu sichern.</p>
+<p>Das Auszugsformat kann auch dazu verwendet werden, um die
+        Inhalte mehrerer verschiedener Repositorys in ein Repository
+        zusammenzuführen. Indem Sie die Option
+        <code class="option">--parent-dir</code> von <span class="command"><strong>svnadmin
+        load</strong></span> benutzen, können Sie ein neues virtuelles
+        Wurzelverzeichnis für den Ladevorgang angeben. Das heißt,
+        falls Sie beispielsweise die Auszugsdateien von drei
+        Repositorys haben – etwa
+        <code class="filename">calc-dumpfile</code>,
+        <code class="filename">cal-dumpfile</code> und
+        <code class="filename">ss-dumpfile</code> – können Sie zunächst
+        ein Repository anlegen, das alle beherbergt:</p>
+<pre class="screen">
+$ svnadmin create /var/svn/projects
+$
+</pre>
+<p>Erstellen Sie dann neue Verzeichnisse im Repository, die
+        den Inhalt der vorherigen drei Repositorys aufnehmen
+        werden:</p>
+<pre class="screen">
+$ svn mkdir -m "Initial project roots" \
+      file:///var/svn/projects/calc \
+      file:///var/svn/projects/calendar \
+      file:///var/svn/projects/spreadsheet
+Revision 1 übertragen.
+$ 
+</pre>
+<p>Laden Sie schließlich die Auszugsdateien an ihren
+        jeweiligen Ort im neuen Repository:</p>
+<pre class="screen">
+$ svnadmin load /var/svn/projects --parent-dir calc &lt; calc-dumpfile
+…
+$ svnadmin load /var/svn/projects --parent-dir calendar &lt; cal-dumpfile
+…
+$ svnadmin load /var/svn/projects --parent-dir spreadsheet &lt; ss-dumpfile
+…
+$
+</pre>
+<p>Zum Schluss erwähnen wir noch einen Anwendungsfall für
+        das Auszugsformat – die Umwandlung aus einem
+        unterschiedlichen Speicherverfahren oder gar aus einem
+        unterschiedlichen Versionskontrollsystem. Da das Format der
+        Auszugsdatei größtenteils menschenlesbar ist, sollte es
+        einfach sein, gewöhnliche Änderungsmengen – von denen
+        jede als Revision behandelt werden sollte – mit diesem
+        Format zu beschreiben. Tatsächlich verwendet das
+        Dienstprogramm <span class="command"><strong>cvs2svn</strong></span> (siehe <a class="xref" href="svn.forcvs.convert.html" title="B.11. Converting a Repository from CVS to Subversion">Abschnitt B.11, „Converting a Repository from CVS to Subversion“</a>) dieses Auszugsformat, um den
+        Inhalt eines CVS-Repositorys darzustellen, so dass er in ein
+        Subversion-Repository kopiert werden kann.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.filtering"></a>5.4.6. Filtern der Repository-Historie</h3></div></div></div>
+<p>Da Subversion Ihre versionierte Historie mindestens mit
+        binären Differenzalgorithmen und Datenkompression abspeichert
+        (optional in einem völlig undurchsichtigen Datenbanksystem),
+        ist der Versuch manueller Eingiffe unklug, zumindest
+        schwierig und unter allen Umständen nicht angeraten. Sobald
+        Daten im Repository gespeichert sind, bietet Subversion im
+        Allgemeinen keine einfache Möglichkeit, diese Daten zu
+        entfernen.
+        <sup>[<a name="id627716" href="#ftn.id627716" class="footnote">33</a>]</sup>
+        Doch zwangsläufig werden sich Gelegenheiten ergeben, bei denen
+        Sie die Historie Ihres Repositorys manipulieren müssen. Es
+        könnte sein, dass Sie alle Instanzen einer Datei entfernen
+        müssen, die versehentlich dem Repository hinzugefügt worden
+        ist, aber aus welchen Gründen auch immer nicht hineingehört).
+        <sup>[<a name="id627724" href="#ftn.id627724" class="footnote">34</a>]</sup>
+        Oder Sie haben vielleicht mehrere Projekte, die sich ein
+        Repository teilen und entscheiden sich nun, jedem Projekt sein
+        eigenes Repository zu geben. Um Aufgaben wie diese
+        bewerkstelligen zu können, benötigen Administratoren eine
+        besser handhabbare und bearbeitbare Repräsentation der Daten
+        in den Repositorys – das
+        Subversion-Repository-Auszugsformat.</p>
+<p>Wie bereits in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.migrate" title="5.4.5. Repository-Daten woandershin verschieben">Abschnitt 5.4.5, „Repository-Daten woandershin verschieben“</a> beschrieben, ist das
+        Subversion-Repository-Auszugsformat eine menschenlesbare
+        Wiedergabe der Änderungen, die Sie an Ihren versionierten
+        Daten im Laufe der Zeit vorgenommen haben. Verwenden Sie den
+        Befehl <span class="command"><strong>svnadmin dump</strong></span>, um den Auszug
+        anzulegen und <span class="command"><strong>svnadmin load</strong></span>, um ein neues
+        Repository damit zu füllen. Das Tolle an der
+        Menschenlesbarkeit des Auszugsformates ist, dass Sie, sofern
+        es Ihnen nicht egal ist, die Daten manuell untersuchen und
+        verändern können. Natürlich besteht ein Nachteil darin, dass
+        eine Auszugsdatei eines Repositorys, in das über drei Jahre
+        Änderungen eingeflossen sind, riesig groß sein wird, und es
+        Sie eine lange, lange Zeit kosten wird, die Daten manuell zu
+        untersuchen und zu verändern.</p>
+<p>Hierbei hilft <span class="command"><strong>svndumpfilter</strong></span>.  Dieses
+        Programm verhält sich wie ein pfadbasierter Filter für
+        Auszugsströme. Geben Sie ihm einfach eine Liste von Pfaden
+        mit, die Sie behalten möchten oder eine Liste von Pfaden, die
+        Sie nicht behalten möchten, und leiten Sie Ihre Auszugsdaten
+        durch diesen Filter. Das Ergebnis ist ein modifizierter Strom
+        der Auszugsdaten, der nur die versionierten Pfade beinhaltet,
+        die Sie (explizit oder implizit) verlangt haben.</p>
+<p>Lassen Sie uns an einem realistischen Beispiel betrachten,
+      wie Sie diesen Programm verwenden könnten. Früher in diesem
+      Kapitel (siehe <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. Planung der Organisation Ihres Repositorys">Abschnitt 5.2.1, „Planung der Organisation Ihres Repositorys“</a>) erörterten wir
+      das Entscheidungsfindungsverfahren, wie Sie Ihre Daten im
+      Repository anordnen sollen – ein Repository pro Projekt
+      oder kombiniert, wie Sie die Daten im Repository verteilen usw.
+      Doch manchmal, nachdem bereits einige Revisionen hinzugekommen
+      sind, überdenken Sie die Anordnung und würden gerne einige
+      Änderungen vornehmen. Eine verbreitete Änderung ist die
+      Entscheidung, mehrere Projekte, die sich ein Repository teilen,
+      auf getrennte Repositorys pro Projekt aufzuteilen.</p>
+<p>Unser imaginäres Repository beinhaltet drei Projekte:
+        <code class="literal">calc</code>, <code class="literal">calendar</code> und
+        <code class="literal">spreadsheet</code>. Sie waren miteinander in der
+        folgenden Anordnung abgelegt:</p>
+<pre class="screen">
+/
+   calc/
+      trunk/
+      branches/
+      tags/
+   calendar/
+      trunk/
+      branches/
+      tags/
+   spreadsheet/
+      trunk/
+      branches/
+      tags/
+</pre>
+<p>Um diese drei Projekte in ihre eigenen Repositorys zu
+        bekommen, erstellen wir zunächst einen Auszug des gesamten
+        Repositorys:</p>
+<pre class="screen">
+$ svnadmin dump /var/svn/repos &gt; repos-dumpfile
+* Revision 0 ausgegeben.
+* Revision 1 ausgegeben.
+* Revision 2 ausgegeben.
+* Revision 3 ausgegeben.
+…
+$
+</pre>
+<p>Dann leiten wir die Auszugsdatei durch die Filter, wobei
+        jedesmal nur jeweils eins der obersten Verzeichnisse
+        ausgewählt wird.  Als Ergebnis erhalten wir drei
+        Auszugsdateien:</p>
+<pre class="screen">
+$ svndumpfilter include calc &lt; repos-dumpfile &gt; calc-dumpfile
+…
+$ svndumpfilter include calendar &lt; repos-dumpfile &gt; cal-dumpfile
+…
+$ svndumpfilter include spreadsheet &lt; repos-dumpfile &gt; ss-dumpfile
+…
+$
+</pre>
+<p>An dieser Stelle müssen sie eine Entscheidung treffen.
+        Jede Ihrer Auszugsdateien wird ein gültiges Repository
+        erzeugen, allerdings unter Beibehaltung der Pfade wie sie im
+        ursprünglichen Repository waren. Das bedeutet, dass, obwohl
+        Sie ein Repository ausschließlich für Ihr
+        <code class="literal">calc</code> Projekt haben, wird es immer noch ein
+        Wurzelverzeichnis namens <code class="filename">calc</code> besitzen.
+        Falls Sie möchten, dass die Verzeichnisse
+        <code class="filename">trunk</code>, <code class="filename">tags</code> und
+        <code class="filename">branches</code> direkt im Wurzelverzeichnis
+        Ihres Repositorys liegen, sollten Sie Ihre Auszugsdateien
+        editieren, indem Sie die Einträge <code class="literal">Node-path</code>
+        und <code class="literal">Node-copyfrom-path</code> verändern, so dass
+        sie nicht mehr die erste Komponente <code class="filename">calc/</code>
+        im Pfad haben. Sie sollten auch den Abschnitt entfernen, der
+        das Verzeichnis <code class="filename">calc</code> anlegt. Es sollte
+        etwa wie folgt aussehen:</p>
+<pre class="screen">
+Node-path: calc
+Node-action: add
+Node-kind: dir
+Content-length: 0
+  
+</pre>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Falls Sie sich entscheiden sollten, die Auszugsdatei
+          manuell zu editieren, um eins der obersten Verzeichnisse zu
+          entfernen, sollten Sie sicherstellen, dass Ihr Editor nicht
+          automatisch Zeilenenden in das native Format umwandelt (z.B.
+          <code class="literal">\r\n</code> in <code class="literal">\n</code>), da sonst
+          der Inhalt nicht zu den Metadaten passt. Das würde Ihre
+          Auszugsdatei nutzlos machen.</p></td></tr>
+</table></div>
+<p>Alles, was jetzt noch übrig bleibt, ist, Ihre drei neuen
+        Repositorys zu erstellen und jede Auszugsdatei in das richtige
+        Repository zu laden, wobei die UUID aus dem Auszugsstrom
+        ignoriert wird:</p>
+<pre class="screen">
+$ svnadmin create calc
+$ svnadmin load --ignore-uuid calc &lt; calc-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: button.c ... erledigt.
+…
+$ svnadmin create calendar
+$ svnadmin load --ignore-uuid calendar &lt; cal-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: cal.c ... erledigt.
+…
+$ svnadmin create spreadsheet
+$ svnadmin load --ignore-uuid spreadsheet &lt; ss-dumpfile
+&lt;&lt;&lt; Neue Transaktion basierend auf Originalrevision 1 gestartet
+     * Füge Pfad hinzu: Makefile ... erledigt.
+     * Füge Pfad hinzu: ss.c ... erledigt.
+…
+$
+</pre>
+<p>Beide Unterbefehle von <span class="command"><strong>svndumpfilter</strong></span>
+        akzeptieren Optionen, die angeben, wie „<span class="quote">leere</span>“
+        Revisionen behandelt werden sollen. Falls eine Revision nur
+        Änderungen an herausgefilterten Pfaden beinhaltet, könnte die
+        neue Revision als uninteressant oder gar unerwünscht gelten.
+        Um dem Benutzer die Kontrolle darüber zu geben, wie hiermit
+        verfahren werden soll, bietet <span class="command"><strong>svndumpfilter</strong></span>
+        die folgenden Kommandozeilenoptionen:</p>
+<div class="variablelist"><dl>
+<dt><span class="term"><code class="option">--drop-empty-revs</code></span></dt>
+<dd><p>Überhaupt keine leeren Revisionen erzeugen –
+              einfach auslassen.</p></dd>
+<dt><span class="term"><code class="option">--renumber-revs</code></span></dt>
+<dd><p>Falls leere Revisionen ausgelassen werden (mit der
+              Option <code class="option">--drop-empty-revs</code>), die
+              Nummern der übrig gebliebenen Revisionen ändern, so dass
+              keine Lücken in der Nummernfolge auftreten.</p></dd>
+<dt><span class="term"><code class="option">--preserve-revprops</code></span></dt>
+<dd><p>Falls leere Revisionen nicht ausgelassen werden, die
+              Eigenschaften der leeren Revisionen bewahren
+              (Protokolleintrag, Autor, Datum, Propertys usw.). Sonst
+              beinhalten leere Revisionen lediglich den Zeitstempel
+              und einen erzeugten Protokolleintrag, der darauf
+              hinweist, dass diese Revision von
+              <span class="command"><strong>svndumpfilter</strong></span> geleert wurde.</p></dd>
+</dl></div>
+<p>Obwohl <span class="command"><strong>svndumpfilter</strong></span> sehr nützlich und
+        eine Zeitersparnis sein kann, gibt es unglücklicherweise ein
+        paar Fallstricke. Erstens ist das Dienstprogramm
+        überempfindlich gegenüber der Pfadsemantik. Achten Sie darauf,
+        ob die Pfade in Ihrer Auszugsdatei mit oder ohne führende
+        Schrägstriche angegeben werden. Sie sollten sich die Einträge
+        <code class="literal">Node-path</code> und
+        <code class="literal">Node-copyfrom-path</code> ansehen.</p>
+<pre class="screen">
+…
+Node-path: spreadsheet/Makefile
+…
+</pre>
+<p>Falls die Pfade führende Schrägstriche haben, sollten auch
+        Sie Schrägstriche in den Pfaden angeben, die Sie an
+        <span class="command"><strong>svndumpfilter include</strong></span> und
+        <span class="command"><strong>svndumpfilter exclude</strong></span> übergeben (und wenn
+        sie keine haben, sollten Sie auch keine angeben). Falls Ihre
+        Auszugsdatei aus irgendwelchen Gründen einen nicht
+        konsistenten Gebrauch von führenden Schrägstrichen macht,
+        <sup>[<a name="id628250" href="#ftn.id628250" class="footnote">35</a>]</sup>
+        sollten Sie diese Pfade normalisieren, so dass sie alle
+        entweder Schrägstriche haben oder nicht.</p>
+<p>Ebenso können kopierte Pfade Probleme bereiten. Subversion
+        unterstützt Kopieroperationen im Repository, bei denen ein
+        neuer Pfad erzeugt wird, indem ein bereits bestehender kopiert
+        wird. Es kann vorkommen, dass Sie zu irgendeinem Zeitpunkt der
+        Lebenszeit Ihres Repositorys eine Datei oder ein Verzeichnis
+        von einer durch <span class="command"><strong>svndumpfilter</strong></span> ausgelassenen
+        Stelle an eine durch <span class="command"><strong>svndumpfilter</strong></span>
+        berücksichtigte Stelle kopiert haben. Um die Auszugsdateien
+        unabhängig zu machen, muss <span class="command"><strong>svndumpfilter</strong></span>
+        trotzdem das Hinzufügen des neuen Pfades anzeigen – mit
+        dem Inhalt aller durch die Kopie erzeugten Dateien –
+        allerdings nicht als eine Kopie aus einer Quelle, die es gar
+        nicht im gefilterten Auszugsstrom gibt. Da allerdings das
+        Subversion Auszugsdateiformat nur Änderungen von Revisionen
+        beinhaltet, kann es sein, dass der Inhalt der Quelle der Kopie
+        nicht verfügbar ist. Wenn Sie mutmaßen, dass Sie solche Kopien
+        in Ihrem Repository haben, sollten Sie die Auswahl der
+        ausgelassenen/berücksichtigten Pfade überdenken, indem Sie
+        vielleicht die Pfade, die als Quellen für die problematischen
+        Kopien dienten, hinzunehmen.</p>
+<p>Schließlich behandelt <span class="command"><strong>svndumpfilter</strong></span>
+        Pfadfilterung ziemlich wörtlich. Wenn Sie die Historie eines
+        Projektes mit dem Wurzelverzeichnis
+        <code class="filename">trunk/my-project</code> kopieren und sie in ein
+        eigenes Repository verschieben möchten, werden Sie
+        selbstverständlich den Befehl <span class="command"><strong>svndumpfilter
+        include</strong></span> verwenden, um alle Änderungen in und
+        unterhalb von <code class="filename">trunk/my-project</code> zu
+        bewahren. Doch macht die entstehende Auszugsdatei keinerlei
+        Annahmen bezüglich des Repositorys, in das Sie die Daten zu
+        laden beabsichtigen. In diesem besonderen Fall könnten die
+        Auszugsdaten mit der Revision beginnen, die das Verzeichnis
+        <code class="filename">trunk/my-project</code> hinzugefügt hat, doch
+        sie werden <span class="emphasis"><em>keine</em></span> Direktiven enthalten,
+        dir das Verzeichnis <code class="filename">trunk</code> selbst anlegen
+        (weil <code class="filename">trunk</code> nicht zum Filter der zu
+        berücksichtigenden Pfade passt). Sie müssen sicherstellen,
+        dass alle Verzeichnisse, die der Auszugsstrom erwartet,
+        tatsächlich im Ziel-Repository vorhanden sind, bevor Sie
+        versuchen, den Strom in dieses Repository zu laden.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.replication"></a>5.4.7. Repository Replikation</h3></div></div></div>
+<p>Es gibt mehrere Szenarien, in denen es sehr passend ist,
+        ein Subversion-Repository zu haben, dessen Versionshistorie
+        genau dieselbe wie die eines anderen Repositorys ist.
+        Vielleicht das offensichtlichste ist die Aufrechterhaltung
+        eines Repositorys als einfache Sicherheitskopie, das verwendet
+        wird, wenn das primäre Repository wegen Materialdefekt,
+        Netzausfall oder ähnlichen Ärgernissen unzugänglich geworden
+        ist. Andere Szenarien umfassen den Einsatz von
+        Spiegel-Repositorys, um heftige Subversion-Last über mehrere
+        Server zu verteilen, zum sanften Aufrüsten usw.</p>
+<p>Seit Version 1.4 stellt Subversion ein Programm zur
+        Handhabung solcher Szenarien zur Verfügung –
+        <span class="command"><strong>svnsync</strong></span>. Im Wesentlichen funktioniert das,
+        indem der Subversion-Server aufgefordert wird, Revisionen zu
+        „<span class="quote">wiederholen</span>“, eine nach der anderen. Dann wird
+        die Information dieser Revision benutzt, um eine Übergabe
+        derselben an ein anderes Repository zu imitieren. Keins der
+        Repositorys muss lokal auf der Maschine liegen, auf der
+        <span class="command"><strong>svnsync</strong></span> läuft – seine Parameter sind
+        Repository-URLs, und es verrichtet seine gesamte Arbeit über
+        die Repository-Access-Schnittstellen (RA) von Subversion. Das
+        Einzige, was benötigt wird, ist Lesezugriff auf das
+        Quell-Repository und Lese-/Schreibzugriff auf das
+        Ziel-Repository.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Wenn Sie <span class="command"><strong>svnsync</strong></span> mit einem entfernt
+          liegenden Quell-Repository verwenden, muss auf dem
+          Subversion-Server für dieses Repository Subversion 1.4 oder
+          neuer laufen.</p></td></tr>
+</table></div>
+<p>Angenommen, Sie haben bereits ein Repository, das Sie
+        gerne spiegeln möchten. Als nächstes brauchen Sie ein leeres
+        Ziel-Repository, das als Spiegel dienen soll. Dieses
+        Repository kann eins der verfügbaren Speicherverfahren
+        benutzen (siehe <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.basics.backends" title="5.2.3. Auswahl der Datenspeicherung">Abschnitt 5.2.3, „Auswahl der Datenspeicherung“</a>), doch es darf
+        noch keine Versionshistorie enthalten. Das von
+        <span class="command"><strong>svnsync</strong></span> verwendete Protokoll zur
+        Übermittlung der Revisionsinformation ist sehr empfindlich
+        gegenüber nicht übereinstimmenden Versionshistorien im
+        Quell- und Ziel-Repository. Aus dem Grund, dass
+        <span class="command"><strong>svnsync</strong></span> nicht
+        <span class="emphasis"><em>verlangen</em></span> kann, dass das Ziel-Repository
+        nur lesbar ist,
+        <sup>[<a name="id628532" href="#ftn.id628532" class="footnote">36</a>]</sup>
+        ist die Katastrophe programmiert, wenn erlaubt wird, die
+        Revisions-Historie im Ziel-Repository mit anderen Mitteln als
+        durch das Spiegeln zu verändern.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Verändern Sie ein Spiegel-Repository
+          <span class="emphasis"><em>nicht</em></span> auf eine Art und Weise, die dazu
+          führt, dass die Versionshistorie von der des
+          Original-Repositorys abweicht. Die einzigen Übergaben und
+          Änderungen an Revisions-Propertys die in diesem
+          Spiegel-Repository stattfinden, sollten ausschließlich durch
+          den Befehl <span class="command"><strong>svnsync</strong></span> vorgenommen
+          werden.</p></td></tr>
+</table></div>
+<p>Eine weitere Anforderung an das Ziel-Repository ist, dass
+        dem <span class="command"><strong>svnsync</strong></span>-Prozess erlaubt wird,
+        Revisions-Propertys zu verändern. Da
+        <span class="command"><strong>svnsync</strong></span> im Rahmen des Hook-Systems
+        ausgeführt wird, ist der standardmäßige Zustand des
+        Repositorys (welcher keine Änderungen an Revisions-Propertys
+        zulässt; siehe <a class="xref" href="svn.ref.reposhooks.pre-revprop-change.html" title="pre-revprop-change">pre-revprop-change</a>) nicht
+        ausreichend. Sie müssen ausdrücklich den
+        pre-revprop-change-Hook bereitstellen, der
+        <span class="command"><strong>svnsync</strong></span> erlaubt, Revisions-Propertys zu
+        definieren und zu ändern. Mit diesen Vorkehrungen sind Sie
+        gerüstet, um Repository-Revisionen zu spiegeln.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Tipp]" src="images/tip.png"></td>
+<th align="left">Tipp</th>
+</tr>
+<tr><td align="left" valign="top"><p>Es ist eine gute Idee, Autorisierungsmaßnahmen zu
+          ergreifen, um Ihrem Repository-Replikations-Prozess die
+          Arbeit zu ermöglichen, wohingegen anderen Benutzern die
+          Veränderung der Inhalte des Spiegel-Repositorys verwehrt
+          wird.</p></td></tr>
+</table></div>
+<p>Lassen Sie uns nun die Benutzung von
+        <span class="command"><strong>svnsync</strong></span> bei einem Rundgang in einem
+        typischen Spiegel-Szenario erklären. Wir werden diesen Diskurs
+        mit Empfehlungen würzen, die Sie jedoch getrost missachten
+        können, falls sie für Ihre Umgebung nicht benötigt werden oder
+        nicht passend sind.</p>
+<p>Als Dienst an den ausgezeichneten Entwicklern unseres
+        Lieblings-Versionskontrollsystems wollen wir das öffentliche
+        Subversion-Quelltext-Repository spiegeln und diesen Spiegel
+        von einer anderen Maschine als der, auf der das ursprüngliche
+        Subversion-Quelltext-Repository untergebracht ist, im Internet
+        veröffentlichen. Dieser entfernt liegende Rechner besitzt eine
+        globale Konfiguration, die es anonymen Benutzern erlaubt, den
+        Inhalt von Repositorys auf diesem Rechner zu lesen, aber zum
+        Ändern dieser Repositorys eine Authentifizierung der Benutzer
+        erforderlich macht. (Vergeben Sie uns bitte, dass wir für den
+        Augenblick über die Details der
+        Subversion-Server-Konfiguration hinwegsehen – sie werden
+        in <a class="xref" href="svn.serverconfig.html" title="Kapitel 6. Die Administration eines Subversion-Servers">Kapitel 6, <i>Die Administration eines Subversion-Servers</i></a> behandelt.) Und aus dem
+        alleinigen Grund, es noch interessanter machen zu wollen,
+        werden wir den Replikationsprozess von einer dritten Maschine
+        aus steuern – diejenige, die wir aktuell
+        benutzen.</p>
+<p>Zunächst erstellen wir das Repository, das unser Spiegel
+        sein soll. Dieser und die folgenden paar Schritte erfordern
+        einen Shell-Zugang auf die Maschine, die das
+        Spiegel-Repository beherbergen soll. Sobald das Repository
+        jedoch konfiguriert ist, sollten wir nicht mehr direkt darauf
+        zugreifen müssen.</p>
+<pre class="screen">
+$ ssh admin@svn.example.com \
+      "svnadmin create /var/svn/svn-mirror"
+admin@svn.example.com's password: ********
+$
+</pre>
+<p>Zu diesem Zeitpunkt haben wir unser Repository, und wegen
+        unserer Server-Konfiguration ist das Repository nun
+        „<span class="quote">live</span>“ im Internet. Da wir aber außer unserem
+        Replikationsprozess niemanden erlauben wollen, das Repository
+        zu ändern, benötigen wir eine Möglichkeit, diesen Prozess von
+        anderen potentiellen Zugriffen zu unterscheiden. Um dies zu
+        machen, verwenden wir einen ausgezeichneten Benutzernamen für
+        unseren Prozess. Nur Übergaben und Änderungen an
+        Revisions-Propertys unter dem Benutzerkonto
+        <code class="literal">syncuser</code> werden erlaubt.</p>
+<p>Wir verwenden das Hook-System des Repositorys sowohl, um
+        dem Replikationsprozess seine Arbeit zu ermöglichen, als auch,
+        um sicherzustellen, dass nur er diese Dinge tut. Wir
+        bewerkstelligen dies, indem wir zwei der
+        Repository-Ereignis-Hooks implementieren –
+        pre-revprop-change und start-commit. Unser
+        <code class="filename">pre-revprop-change</code>-Hook-Script finden Sie
+        in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.replication.pre-revprop-change" title="Beispiel 5.2. pre-revprop-change-Hook-Script des Spiegel-Repositorys">Beispiel 5.2, „pre-revprop-change-Hook-Script des Spiegel-Repositorys“</a>; grundsätzlich stellt es sicher, dass der Benutzer, der die
+        Propertys ändern möchte, unser <code class="literal">syncuser</code>
+        ist. Falls dies zutrifft, ist die Änderung erlaubt,
+        anderenfalls wird die Änderung abgelehnt.</p>
+<div class="example">
+<a name="svn.reposadmin.maint.replication.pre-revprop-change"></a><p class="title"><b>Beispiel 5.2. pre-revprop-change-Hook-Script des Spiegel-Repositorys</b></p>
+<div class="example-contents"><pre class="programlisting">
+#!/bin/sh 
+
+USER="$3"
+
+if [ "$USER" = "syncuser" ]; then exit 0; fi
+
+echo "Ausschließlich der Benutzer syncuser darf Revisions-Propertys ändern" &gt;&amp;2
+exit 1
+</pre></div>
+</div>
+<br class="example-break"><p>Das deckt Änderungen an Revisions-Propertys ab. Nun müssen
+        wir sicherstellen, dass nur der Benutzer
+        <code class="literal">syncuser</code> neue Revisionen an das Repository
+        übergeben darf. Wir machen das, indem wir ein
+        <code class="filename">start-commit</code>-Hook-Script wie das in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.replication.start-commit" title="Beispiel 5.3. start-commit-Hook-Script des Spiegel-Repositorys">Beispiel 5.3, „start-commit-Hook-Script des Spiegel-Repositorys“</a>
+        benutzen.</p>
+<div class="example">
+<a name="svn.reposadmin.maint.replication.start-commit"></a><p class="title"><b>Beispiel 5.3. start-commit-Hook-Script des Spiegel-Repositorys</b></p>
+<div class="example-contents"><pre class="programlisting">
+#!/bin/sh 
+
+USER="$2"
+
+if [ "$USER" = "syncuser" ]; then exit 0; fi
+
+echo "Ausschließlich der Benutzer syncuser darf neue Revisionen übergeben" &gt;&amp;2
+exit 1
+</pre></div>
+</div>
+<br class="example-break"><p>Nachdem wir unsere Hook-Scripte installiert und uns
+        vergewissert haben, dass sie auf dem Subversion-Server
+        ausführbar sind, sind wir mit dem Aufsetzen des
+        Spiegel-Repositorys fertig. Nun kommen wir zum eigentlichen
+        Spiegeln.</p>
+<p>Das Erste, was wir machen müssen ist, unserem
+        Ziel-Repository mit <span class="command"><strong>svnsync</strong></span> zu sagen, dass
+        es ein Spiegel des Quell-Repositorys sein wird. Wir machen das
+        mit dem Unterbefehl <span class="command"><strong>svnsync initialize</strong></span>. Die
+        URLs, die wir mitgeben, zeigen auf die Wurzelverzeichnisse des
+        Ziel- bzw. Quell-Repositorys. In Subversion 1.4 ist das
+        erforderlich – nur die vollständige Spiegelung von
+        Repositorys ist erlaubt. In Subversion 1.5 jedoch können Sie
+        <span class="command"><strong>svnsync</strong></span> auch zum Spiegeln von Teilbäumen
+        des Repositorys verwenden.</p>
+<pre class="screen">
+$ svnsync help init
+initialize (init): Aufruf: svnsync initialize ZIEL_URL QUELL_URL
+
+Bereitet ein Zielprojektarchiv auf die Synchronisation mit einem
+anderen Projektarchiv vor.
+…
+$ svnsync initialize http://svn.example.com/svn-mirror \
+                     http://svn.collab.net/repos/svn \
+                     --sync-username syncuser --sync-password syncpass
+Eigenschaften für Revision 0 kopiert.
+$
+</pre>
+<p>Unser Ziel-Repository wird sich nun erinnern, dass es ein
+        Spiegel des öffentlichen Subversion-Quelltext-Repositorys ist.
+        Beachten Sie, dass wir einen Benutzernamen und ein Passwort an
+        <span class="command"><strong>svnsync</strong></span> übergeben haben – das war für
+        den pre-revprop-change-Hook in unserem Spiegel-Repository
+        erforderlich.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Anmerkung]" src="images/note.png"></td>
+<th align="left">Anmerkung</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>In Subversion 1.4 wurden die an die
+          Kommandozeilenoptionen <code class="option">--username</code> und
+          <code class="option">--password</code> von <span class="command"><strong>svnsync</strong></span>
+          übergebenen Werte sowohl für die Authentifizierung gegenüber
+          dem Quell-Repository als auch gegenüber dem Ziel-Repository
+          verwendet. Das führte zu Problemen, falls die Zugangsdaten
+          eines Benutzers nicht für beide Repositorys identisch waren,
+          insbesonders im nicht-interaktiven Modus (mit der Option
+          <code class="option">--non-interactive</code>).</p>
+<p>Dies ist in Subversion 1.5 mit der Einführung von zwei
+          neuen Optionspaaren behoben worden. Benutzen Sie
+          <code class="option">--source-username</code> und
+          <code class="option">--source-password</code> für die Zugangsdaten des
+          Quell-Repositorys sowie <code class="option">--sync-username</code> und
+          <code class="option">--sync-password</code> für das Ziel-Repository.
+          (Die alten Optionen <code class="option">--username</code> und
+          <code class="option">--password</code> bleiben aus
+          Kompatibilitätsgründen bestehen, doch raten wir von deren
+          Verwendung ab.)</p>
+</td></tr>
+</table></div>
+<p>Und nun kommt der lustige Teil. Mit einem einfachen
+        Unterbefehl können wir <span class="command"><strong>svnsync</strong></span> auffordern,
+        alle bislang ungespiegelten Revisionen aus dem
+        Quell-Repository zum Ziel zu kopieren.
+        <sup>[<a name="id629044" href="#ftn.id629044" class="footnote">37</a>]</sup>
+        Der Unterbefehl <span class="command"><strong>svnsync synchronize</strong></span> wird
+        die bereits vorher im Ziel-Repository gespeicherten besonderen
+        Revisions-Propertys untersuchen und sowohl ermitteln, welches
+        Repository es spiegelt und dass die zuletzt gespiegelte
+        Revision die Revision 0 war. Dann fragt es das Quell-Repository
+        ab, welches die jüngste Revision in diesem Repository ist.
+        Schließlich fordert es den Server des Quell-Repositorys auf,
+        alle Revisionen zwischen 0 und dieser letzten Revision
+        zu wiederholen. Sobald <span class="command"><strong>svnsync</strong></span> die
+        entsprechende Antwort vom Quell-Repository-Server erhält,
+        leitet es diese Revisionen als neue Übergaben an den Server
+        des Ziel-Repositorys weiter.</p>
+<pre class="screen">
+$ svnsync help synchronize
+synchronize (sync): Aufruf: svnsync synchronize ZIEL_URL
+
+Überträgt alle laufenden Revisionen von der Quelle, mit der es
+initialisiert wurde, zum Ziel.
+…
+$ svnsync synchronize http://svn.example.com/svn-mirror
+Übertrage Daten ........................................
+Revision 1 übertragen.
+Eigenschaften für Revision 1 kopiert.
+Übertrage Daten ..
+Revision 2 übertragen.
+Eigenschaften für Revision 2 kopiert.
+Übertrage Daten .....
+Revision 3 übertragen.
+Eigenschaften für Revision 3 kopiert.
+…
+Übertrage Daten ..
+Revision 23406 übertragen.
+Eigenschaften für Revision 23406 kopiert.
+Übertrage Daten .
+Revision 23407 übertragen.
+Eigenschaften für Revision 23407 kopiert.
+Übertrage Daten ....
+Revision 23408 übertragen.
+Eigenschaften für Revision 23408 kopiert.
+$
+</pre>
+<p>Von besonderem Interesse ist hier, dass für jede
+        gespiegelte Revision zunächst eine Übergabe der Revision an
+        das Ziel-Repository erfolgt und dann die Änderungen der
+        Propertys folgen. Das kommt daher, dass die anfängliche
+        Übergabe durch den Benutzer <code class="literal">syncuser</code>
+        durchgeführt (und ihm auch zugeschrieben) wird und mit dem
+        Zeitstempel der Erzeugung dieser Revision versehen wird.
+        Darüberhinaus erlauben die Subversion zugrundeliegenden
+        Repository-Zugriffs-Schnittstellen nicht das beliebige Setzen
+        von Revisions-Propertys als Teil einer Übergabe. Deshalb folgt
+        <span class="command"><strong>svnsync</strong></span> mit einer unmittelbaren Serie von
+        Änderungen an den Propertys, die all die Propertys dieser
+        Revision vom Quell-Repository ins Ziel-Repository kopieren.
+        Das hat auch den Effekt, dass der Autor und der Zeitstempel so
+        korrigiert werden, dass diese den entsprechenden Werten im
+        Quell-Repository entsprechen.</p>
+<p>Bemerkenswert ist ebenfalls, dass
+        <span class="command"><strong>svnsync</strong></span> eine sorgfältige Buchführung
+        vornimmt, die es ihm erlaubt, sicher unterbrochen und erneut
+        gestartet zu werden, ohne die Integrität der gespiegelten
+        Daten zu gefährden. Falls während des Spiegelns ein
+        Netzproblem entsteht, wiederholen Sie einfach den Befehl
+        <span class="command"><strong>svnsync synchronize</strong></span>, und er wird einfach
+        damit weitermachen, womit er aufgehört hat. Das ist
+        tatsächlich genau das, was Sie machen, um Ihren Spiegel
+        aktuell zu halten, wenn neue Revisionen im Quell-Repository
+        auftauchen.</p>
+<div class="sidebar">
+<p class="title"><b>svnsync-Buchhaltung</b></p>
+<p><span class="command"><strong>svnsync</strong></span> muss in der Lage sein,
+          Revisions-Propertys im Ziel-Repository zu setzen und zu
+          verändern, da diese Propertys Teil der Daten sind, die es
+          spiegeln soll. Wenn sich diese Propertys im Quell-Repository
+          ändern, müssen sie im Ziel-Repository nachgezogen werden.
+          Allerdings verwendet <span class="command"><strong>svnsync</strong></span> auch eine
+          Menge von speziellen Revisions-Propertys –
+          gespeichert in Revision 0 des Spiegel-Repositorys –
+          für seine eigene interne Buchhaltung. Diese Propertys
+          beinhalten Informationen wie etwa der URL oder die UUID des
+          Quell-Repositorys plus einige Informationen zur
+          Zustandsverfolgung.</p>
+<p>Ein Teil dieser Zustandsverfolgungsinformation ist ein
+          Flag, das bedeutet: „<span class="quote">momentan findet eine
+          Synchronisierung statt</span>“. Dies wird verwendet, um zu
+          verhindern, dass mehrere <span class="command"><strong>svnsync</strong></span>-Prozesse
+          miteinander kollidieren, während sie versuchen, Daten in
+          dasselbe Ziel-Repository zu spiegeln. Im Allgemeinen
+          brauchen Sie auf <span class="emphasis"><em>keins</em></span> dieser
+          besonderen Propertys zu achten (sie beginnen alle mit dem
+          Präfix <code class="literal">svn:sync-</code>). Gelegentlich jedoch,
+          falls eine Synchronisierung unerwartet fehlschlägt, bekommt
+          Subversion keine Chance, dieses besondere Zustands-Flag zu
+          entfernen. Das führt dazu, dass alle weiteren
+          Synchronisierungsversuche fehlschlagen, da es scheint, dass
+          eine Synchronisierung gerade durchgeführt wird, obwohl
+          tatsächlich keine stattfindet. Glücklicherweise kann dies
+          behoben werden, indem einfach das Property
+          <code class="literal">svn:sync-lock</code> von Revision 0 des
+          Spiegel-Repositorys entfernt wird, das als dieses Flag
+          dient.</p>
+<pre class="screen">
+$ svn propdel --revprop -r0 svn:sync-lock http://svn.example.com/svn-mirror
+Eigenschaft »svn:sync-lock« wurde von Revision 0 im Projektarchiv gelöscht
+$
+</pre>
+<p>Dass <span class="command"><strong>svnsync</strong></span> den URL des
+          Quell-Repositorys zur Buchhaltung in einem Property des
+          Spiegel-Repositorys speichert, ist der Grund dafür, dass Sie
+          diesen URL nur einmal angeben müssen: bei <span class="command"><strong>svnsync
+          init</strong></span>. Künftige Synchronisierungs-Operationen mit
+          diesem Spiegel lesen einfach das besondere Property
+          <code class="literal">svn:sync-from-url</code>, das auf dem Spiegel
+          gespeichert ist, um zu wissen, woher synchronisiert werden
+          soll. Dieser Wert wird vom Synchronisierungsprozess jedoch
+          wortwörtlich benutzt. Während Sie vielleicht innerhalb des
+          Netzes von CollabNet auf unseren Beispiel-URL
+          <code class="literal">http://svn/repos/svn</code> zugreifen können
+          (weil das erste <code class="literal">svn</code> durch
+          DNS-Voodoo-Zauber ein <code class="literal">.collab.net</code>
+          angehängt bekommt), kann der Zugriff fehlschlagen, falls Sie
+          später einmal den Spiegel von außerhalb des CollabNet-Netzes
+          aktualisieren müssen (da der Rechnername
+          <code class="literal">svn</code> mehrdeutig ist). Aus diesem Grund ist
+          es am besten, beim Initialisieren von Spiegel-Repositorys
+          vollqualifizierte Quell-Repository-URLs zu verwenden,
+          anstatt solche, die nur auf Rechnernamen oder IP-Adressen
+          verweisen (die sich im Lauf der Zeit ändern können). Aber
+          auch hier können Sie das Property zur Buchhaltung ändern,
+          falls ein bestehender Spiegel einen unterschiedlichen URL
+          für dasselbe Quell-Repository benötigt:</p>
+<pre class="screen">
+$ svn propset --revprop -r0 svn:sync-from-url <em class="replaceable"><code>NEUER-QUELL-URL</code></em> \
+      http://svn.example.com/svn-mirror
+Eigenschaft »svn:sync-from-url« wurde für Revision 0 im Projektarchiv gesetzt
+$
+</pre>
+<p>Eine weitere interessante Angelegenheit an diesen
+          speziellen Propertys zur Buchhaltung ist, dass
+          <span class="command"><strong>svnsync</strong></span> nicht versucht, diese Propertys
+          zu spiegeln, wenn sie im Quell-Repository gefunden werden.
+          Der Grund ist wahrscheinlich offensichtlich, aber im Grunde
+          läuft es darauf hinaus, dass <span class="command"><strong>svnsync</strong></span>
+          nicht zu unterscheiden vermag, welche der speziellen
+          Propertys es bloß aus dem Quell-Repository kopiert hat und
+          welche es für seine Buchhaltung benötigt und verwaltet.
+          Diese Situation kann auftreten, falls Sie beispielsweise
+          einen Spiegel eines Spiegels eines dritten Repositorys
+          vorhalten. Wenn <span class="command"><strong>svnsync</strong></span> seine eigenen
+          speziellen Propertys in Revision 0 des Quell-Repositorys
+          entdeckt, ignoriert es sie einfach.</p>
+</div>
+<p>In diesem Prozess ist jedoch eine kleine Unfeinheit. Da
+        die Revisions-Propertys von Subversion jederzeit während der
+        Lebenszeit eines Repository geändert werden können, ohne zu
+        protokollieren, wann sie geändert wurden, müssen replizierende
+        Prozesse ein besonderes Augenmerk auf sie richten. Wenn Sie
+        bereits die ersten 15 Revisionen eines Repositorys gespiegelt
+        haben, und dann jemand ein Revisions-Property von Revision 12
+        ändert, weiß <span class="command"><strong>svnsync</strong></span> nicht, dass es
+        zurückgehen und die Kopie der Revision 12 korrigieren muss.
+        Sie müssen es ihm manuell mitteilen, indem Sie den Unterbefehl
+        <span class="command"><strong>svnsync copy-revprops</strong></span> verwenden, der
+        einfach alle Propertys einer bestimmten Revision oder eines
+        Revisionsintervalls erneut repliziert.</p>
+<pre class="screen">
+$ svnsync help copy-revprops
+copy-revprops: Aufruf: svnsync copy-revprops ZIEL_URL [REV[:REV2]]
+
+Kopiert die Revisionseigenschaften in einem gegebenen Revisionsbereich
+von der Quelle, mit der es initialisiert wurde, auf das Ziel.
+…
+$ svnsync copy-revprops http://svn.example.com/svn-mirror 12
+Eigenschaften für Revision 12 kopiert.
+$
+</pre>
+<p>Das ist Repository-Replikation in aller Kürze.
+        Sehrwahrscheinlich möchten Sie einen solchen Prozess etwas
+        automatisieren. Während unser Beispiel ein
+        Ziehen-und-Schieben-Szenario beschrieb, möchten Sie
+        vielleicht, dass Ihr primäres Repository als Teil der
+        post-commit- und post-revprop-change-Hooks Änderungen an einen
+        oder mehrere ausgesuchte Spiegel weiterschiebt. Das würde es
+        ermöglichen, dass der Spiegel beinahe in Echtzeit aktuell
+        gehalten werden kann.</p>
+<p>Es ist auch möglich, wenn auch nicht sehr verbreitet, dass
+        <span class="command"><strong>svnsync</strong></span> Repositorys spiegelt, in denen der
+        Benutzer unter dessen Kennung es läuft, nur eingeschränkte
+        Rechte besitzt. Es werden dann einfach nur die Teile des
+        Repositorys kopiert, die der Benutzer sehen darf.
+        Offensichtlich taugt so ein Spiegel nicht als
+        Sicherheitskopie.</p>
+<p>In Subversion 1.5 entwickelte <span class="command"><strong>svnsync</strong></span>
+        auch die Fähigkeit, eine Teilmenge eines Repositorys statt des
+        Ganzen zu spiegeln. Das Anlegen und Pflegen eines solchen
+        Spiegels unterscheidet sich nicht vom Spiegeln eines
+        kompletten Repositorys; anstatt den Wurzel-URL des
+        Quell-Repositorys bei <span class="command"><strong>svnsync init</strong></span>
+        anzugeben, nennen Sie einfach den URL eines
+        Unterverzeichnisses dieses Repositorys. Hierbei gibt es
+        allerdings einige Einschränkungen. Als Erstes können Sie nicht
+        mehrere disjunkte Unterverzeichnisse des Quell-Repositorys in
+        ein einzelnes Ziel-Repository spiegeln – stattdessen
+        müssen Sie ein Eltern-Verzeichnis spiegeln, das allen
+        gemeinsam ist. Zum Zweiten ist die Filterlogik vollständig
+        pfadbasiert, so dass bei Verzeichnissen, die in der
+        Vergangenheit einmal umbenannt wurden, Ihr Spiegel nur die
+        Revisionen seit dem Zeitpunkt enthält an dem das Verzeichnis
+        unter diesem URL zu finden war. Auch wenn das Unterverzeichnis
+        künftig umbenannt wird, werden Revisionen nur bis zu dem
+        Zeitpunkt gespiegelt, an dem der URL ungültig wird.</p>
+<p>Was das Zusammenspiel von Benutzern mit Repositorys und
+        Spiegeln betrifft, <span class="emphasis"><em>ist</em></span> es möglich eine
+        einzelne Arbeitskopie zu haben, die mit beiden kommuniziert,
+        doch müssen Sie hierfür einige Verrenkungen machen. Zunächst
+        müssen Sie sicherstellen, dass sowohl das primäre Repository
+        als auch das Spiegel-Repository dieselbe Repository-UUID haben
+        (was standardmäßig nicht der Fall ist). Mehr darüber unter
+        <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.uuids" title="5.4.9. Managing Repository UUIDs">Abschnitt 5.4.9, „Managing Repository UUIDs“</a> später in diesem
+        Kapitel.</p>
+<p>Sobald beide Repositorys dieselbe UUID haben, können Sie
+        <span class="command"><strong>svn switch</strong></span> mit der Option
+        <code class="option">--relocate</code> benutzen, um das Repository
+        auszuwählen, mit dem Sie arbeiten wollen; dieser Prozess ist
+        in <a class="xref" href="svn.ref.svn.c.switch.html" title="svn switch">svn switch</a> beschrieben. Eine
+        mögliche Gefahr besteht allerdings, wenn das Haupt- und das
+        Spiegel-Repository nicht zeitnah synchronisiert sind. Eine
+        Arbeitskopie, die auf das Haupt-Repository zeigt und gegenüber
+        diesem aktuell ist, wird nach dem Umschalten auf den nicht
+        aktuellen Spiegel durch den plötzlichen Verlust von
+        Revisionen, die sie dort erwartet, verwirrt werden und deshalb
+        Fehler ausgeben. Falls dies auftritt, können Sie entweder Ihre
+        Arbeitskopie wieder zurück auf das Haupt-Repository schalten
+        und warten bis das Spiegel-Repository aktuell ist oder Ihre
+        Arbeitskopie auf eine Revision zurücksetzen, von der Sie
+        wissen, dass sie im synchronisierten Repository vorhanden ist,
+        und dann noch einmal das Umschalten versuchen. </p>
+<p>Zum Schluss sollte Ihnen bewusst sein, dass die von
+        <span class="command"><strong>svnsync</strong></span> angebotene revisionsbasierte
+        Replikation genau das ist – die Replikation von
+        Revisionen. Nur die durch das Format der
+        Subversion-Auszugsdateien übertragene Information ist
+        replizierbar. Somit hat <span class="command"><strong>svnsync</strong></span> dieselben
+        Einschränkungen wie der Auszugsstrom und beinhaltet nicht
+        Dinge wie Hook-Implementierungen, Repository- oder
+        Server-Konfigurationen, unvollständige Transaktionen oder
+        Benutzersperren auf Repository-Pfaden.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.backup"></a>5.4.8. Sicherung des Repositorys</h3></div></div></div>
+<p>Trotz zahlreicher technischer Fortschritte seit der Geburt
+        des modernen Computers bleibt eine Sache unglücklicherweise
+        wahr: manchmal geht etwas richtig schief. Eine kleine Auswahl
+        von schlimmen Dingen, die das Schicksal auch auf den
+        gewissenhaftesten Administrator loslassen kann, sind
+        Stromausfälle, Netzzusammenbrüche, defekter Speicher und
+        Festplattenabstürze. So kommen wir zu einem sehr wichtigen
+        Thema: Wie mache ich Sicherheitskopien von den Daten meines
+        Repositorys?</p>
+<p>Dem Administrator stehen zwei Arten von Sicherungsmethoden
+        zur Verfügung: vollständig und inkrementell. Eine vollständige
+        Sicherungskopie des Repositorys beinhaltet eine umfassende
+        Speicherung aller Informationen, die für die Wiederherstellung
+        des Repositorys im Katastrophenfall benötigt werden. Dies
+        bedeutet gewöhnlich eine Kopie des gesamten
+        Repository-Verzeichnisses (inklusive der Berkeley-DB- oder
+        FSFS-Umgebung). Inkrementelle Sicherungen haben einen
+        geringeren Umfang: nur die Teile des Repositorys, die sich
+        seit der letzten Sicherung geändert haben.</p>
+<p>Was eine vollständige Sicherung betrifft, scheint der
+        naive Ansatz vernünftig zu sein; jedoch besteht beim einfachen
+        rekursiven Kopieren des Verzeichnisses das Risiko, eine
+        fehlerhafte Sicherung zu erstellen, sofern nicht alle anderen
+        Zugriffe auf das Repository verhindert werden. Für Berkeley DB
+        beschreibt die Dokumentation eine bestimmte Reihenfolge, in
+        der die Datenbankdateien kopiert werden können, um eine
+        gültige Sicherungskopie zu gewährleisten. Eine ähnliche
+        Reihenfolge gibt es für FSFS-Daten. Allerdings brauchen Sie
+        diese Algorithmen nicht selbst zu implementieren, da das
+        Subversion-Entwicklerteam das bereits getan hat. Der Befehl
+        <span class="command"><strong>svnadmin hotcopy</strong></span> kümmert sich um die
+        Details, die für eine Sicherungskopie während des Betriebes
+        erforderlich sind. Der Aufruf ist so trivial wie die Bedienung
+        von Unix' <span class="command"><strong>cp</strong></span> oder Windows'
+        <span class="command"><strong>copy</strong></span>:</p>
+<pre class="screen">
+$ svnadmin hotcopy /var/svn/repos /var/svn/repos-backup
+</pre>
+<p>Das Ergebnis der Sicherung ist ein vollständig
+        funktionsfähiges Subversion-Repository, das jederzeit die
+        Aufgaben Ihres Repositorys übernehmen kann, falls irgendetwas
+        Schlimmes passieren sollte.</p>
+<p>Bei der Erstellung von Kopien eines
+        Berkeley-DB-Repositorys können Sie <span class="command"><strong>svnadmin
+        hotcopy</strong></span> sogar mitteilen, nach Abschluss der Kopie
+        unbenötigte Berkeley-DB-Protokolldateien (siehe <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.diskspace.bdblogs" title="5.4.3.3. Entfernen unbenutzter Protokolldateien von Berkeley DB">Abschnitt 5.4.3.3, „Entfernen unbenutzter Protokolldateien von Berkeley DB“</a>) aus dem
+        Original-Repository  zu löschen. Geben Sie einfach die Option
+        <code class="option">--clean-logs</code> auf der Kommandozeile an.</p>
+<pre class="screen">
+$ svnadmin hotcopy --clean-logs /var/svn/bdb-repos /var/svn/bdb-repos-backup
+</pre>
+<p>Ein zusätzliches Werkzeug für diesen Befehl steht auch zur
+        Verfügung. Im Verzeichnis <code class="filename">tools/backup/</code>
+        des Subversion-Quelltextpaketes liegt das Script
+        <span class="command"><strong>hot-backup.py</strong></span>. Dieses Script ergänzt
+        <span class="command"><strong>svnadmin hotcopy</strong></span> um ein wenig
+        Sicherungsverwaltung, indem es Ihnen erlaubt, lediglich eine
+        konfigurierbare Anzahl der letzten Sicherungskopien jedes
+        Repositorys zu behalten. Es verwaltet automatisch die Namen
+        der gesicherten Repository-Verzeichnisse, um Kollisionen mit
+        vorherigen Sicherungen zu vermeiden und löscht ältere
+        Sicherungen, so dass nur die jüngsten übrig bleiben. Selbst
+        wenn Sie ebenfalls eine inkrementelle Sicherung haben, sollten
+        Sie dieses Programm regelmäßig aufrufen. Sie könnten
+        beispielsweise <span class="command"><strong>hot-backup.py</strong></span> mit einem
+        Programmstarter (so wie <span class="command"><strong>cron</strong></span> auf Unix
+        Systemen) verwenden, der es jede Nacht (oder in einem
+        Zeitintervall, das Ihnen sicher erscheint) aufruft.</p>
+<p>Einige Administratoren verwenden einen unterschiedlichen
+        Sicherungsmechanismus, der auf der Erzeugung und Speicherung
+        von Repository-Auszugs-Daten basiert. In <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.migrate" title="5.4.5. Repository-Daten woandershin verschieben">Abschnitt 5.4.5, „Repository-Daten woandershin verschieben“</a> haben wir
+        beschrieben, wie <span class="command"><strong>svnadmin dump</strong></span> mit der
+        Option <code class="option">--incremental</code> verwendet werden kann,
+        um eine inkrementelle Sicherung einer Revision oder eines
+        Bereichs von Revisionen zu erstellen. Natürlich können Sie
+        davon eine vollständige Sicherung bekommen, wenn Sie die
+        Option <code class="option">--incremental</code> weglassen. Der Vorteil
+        dieser Methode besteht darin, dass das Format der gesicherten
+        Information flexibel ist – es erfordert keine bestimmte
+        Plattform, keinen bestimmten Typ eines versionierten
+        Dateisystems, keine bestimmte Version von Subversion oder
+        Berkeley DB. Diese Flexibilität kommt alledings zu dem Preis,
+        dass die Wiederherstellung der Daten sehr lange dauern kann
+        – länger mit jeder neuen Revision, die ins Repository
+        übergeben wird. Wie bei vielen verschiedenen
+        Sicherungsmethoden werden auch hier Änderungen an
+        Revisions-Propertys bereits gesicherter Revisionen nicht
+        berücksichtigt, sofern es sich um eine nicht-überlappende
+        inkrementelle Sicherung handelt. Wir raten aus diesen Gründen
+        davon ab, sich ausschließlich auf Sicherungsstrategien zu
+        verlassen, die alleine auf Auszügen basieren.</p>
+<p>Wie Sie sehen können, hat jeder der verschiedenen
+        Sicherungstypen seine Vor- und Nachteile. Bei weitem am
+        einfachsten ist die vollständige Sicherungskopie im laufenden
+        Betrieb, die stets ein perfektes, einsatzfähiges Abbild Ihres
+        Repositorys erzeugt. Falls Ihrem Repository irgendetwas
+        Schlimmes widerfahren sollte, können Sie es durch eine
+        einfache rekursive Verzeichniskopie aus der Sicherung
+        wiederherstellen. Falls Sie mehrere Sicherungen Ihres
+        Repositorys vorhalten, benötigt leider jede dieser
+        vollständigen Kopien genausoviel Plattenplatz wie das
+        Original. Im Gegensatz dazu lassen sich inkrementelle
+        Sicherungen schneller erzeugen und platzsparender sichern.
+        Allerdings kann die Wiederherstellung eine Plage sein, da oft
+        mehrere inkrementelle Sicherungen eingespielt werden müssen.
+        Andere Methoden wiederum haben auch ihre Besonderheiten.
+        Administratoren müssen das Gleichgewicht zwischen den Kosten
+        der Sicherung und den Kosten der Wiederherstellung
+        finden.</p>
+<p>Das Programm <span class="command"><strong>svnsync</strong></span> (siehe <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.replication" title="5.4.7. Repository Replikation">Abschnitt 5.4.7, „Repository Replikation“</a>) bietet
+        tatsächlich einen handlichen Ansatz dazwischen. Falls Sie
+        regelmäßig einen nur lesbaren Spiegel mit Ihrem
+        Haupt-Repository synchronisieren, stellt der Spiegel einen
+        ausgezeichneten Kandidaten dar, um für Ihr Haupt-Repository
+        einzuspringen, falls es mal umkippt. Der Hauptnachteil dieses
+        Ansatzes besteht darin, dass nur versionierte Repository-Daten
+        synchronisiert werden –
+        Repository-Konfigurationsdateien, benutzerdefinierte Sperren
+        auf Repository-Pfaden und andere Dinge, die sich zwar im
+        physikalischen Repository-Verzeichnis befinden können, jedoch
+        nicht <span class="emphasis"><em>innerhalb</em></span> des virtuellen
+        versionierten Dateisystems des Repositorys, werden durch
+        <span class="command"><strong>svnsync</strong></span> nicht berücksichtigt.</p>
+<p>In jedem Sicherungsszenario müssen sich
+        Repository-Administratoren bewusst sein, inwiefern Änderungen
+        an unversionierten Revisions-Propertys Auswirkungen auf die
+        Sicherungen haben. Da diese Änderungen allein keine Revisionen
+        erzeugen, werden auch keine post-commit-Hooks ausgelöst; es
+        kann sogar sein, dass die Hooks pre-revprop-change und
+        post-revprop-change nicht ausgelöst werden.
+        <sup>[<a name="id630011" href="#ftn.id630011" class="footnote">38</a>]</sup>  
+        Und da Sie Revisions-Propertys ohne Rücksicht auf die
+        zeitliche Abfolge ändern können – Sie können jederzeit
+        die Propertys jeder Revision ändern – könnte eine
+        inkrementelle Sicherung der letzten paar Revisionen eine
+        Änderung an einer Revision aus einer vorangegangenen Sicherung
+        übersehen.</p>
+<p>Im Allgemeinen braucht nur ein echter Paranoiker nach
+        jeder Übergabe eine vollständige Sicherung des Repositorys.
+        Eine vollständige Sicherheitskopie des Repositorys im
+        laufenden Betrieb im Rahmen einer systemweiten, nächtlichen
+        Sicherung sollte ein Repository-Administrator jedoch erwägen,
+        unter der Voraussetzung, dass das Repository bereits
+        irgendeinen Redundanzmechanismus mit der nötigen Granularität
+        verwendet (etwa Übergabe-E-Mails oder inkrementelle Auszüge).
+        Es sind Ihre Daten – schützen Sie sie, wie es Ihnen
+        passt.</p>
+<p>Oftmals ist der beste Ansatz für die Repository-Sicherung
+        ein diversifizierter, der die Stärken von Kombinationen der
+        hier beschriebenen Methoden ausspielt. Die
+        Subversion-Entwickler beispielsweise sichern jede Nacht das
+        Subversion-Quelltext-Repository mit
+        <span class="command"><strong>hot-backup.py</strong></span> und einem
+        <span class="command"><strong>rsync</strong></span> dieser vollständigen Sicherungen von
+        einem entfernten Standort aus; sie halten mehrere Archive
+        aller Übergabe- und Property-Änderungs-E-Mails vor und sie
+        haben Spiegel des Repositorys, die von Freiwilligen mit
+        <span class="command"><strong>svnsync</strong></span> verwaltet werden. Ihre Lösung
+        könnte ähnlich aussehen, sollte aber Ihren Bedürfnissen
+        entsprechen und das empfindliche Gleichgewicht zwischen
+        Bequemlichkeit und Paranoia aufrechterhalten. Egal, was Sie
+        machen: überprüfen Sie Ihre Sicherungen ab und an – was
+        nutzt ein Reservereifen mit einem Loch? Obwohl all das Ihr
+        Material nicht vor der eisernen Faust des Schicksals zu retten
+        vermag, sollte es Ihnen sicherlich helfen, sich aus diesen
+        schwierigen Zeiten zu erholen.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.maint.uuids"></a>5.4.9. Managing Repository UUIDs</h3></div></div></div>
+<p>Subversion repositories have a universally unique
+        identifier (UUID) associated with them.  This is used by
+        Subversion clients to verify the identity of a repository when
+        other forms of verification aren't good enough (such as
+        checking the repository URL, which can change over time).
+        Most Subversion repository administrators rarely, if ever,
+        need to think about repository UUIDs as anything more than a
+        trivial implementation detail of Subversion.  Sometimes,
+        however, there is cause for attention to this detail.</p>
+<p>As a general rule, you want the UUIDs of your live
+        repositories to be unique.  That is, after all, the point of
+        having UUIDs.  But there are times when you want the
+        repository UUIDs of two repositories to be exactly the same.
+        For example, if you make a copy of a repository for backup
+        purposes, you want the backup to be a perfect replica of the
+        original so that, in the event that you have to restore that
+        backup and replace the live repository, users don't suddenly
+        see what looks like a different repository.  When dumping and
+        loading repository history (as described earlier in <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.migrate" title="5.4.5. Repository-Daten woandershin verschieben">Abschnitt 5.4.5, „Repository-Daten woandershin verschieben“</a>), you get to decide
+        whether to apply the UUID encapsulated in the data dump
+        stream to the repository in which you are loading the data.  The
+        particular circumstance will dictate the correct
+        behavior.</p>
+<p>There are a couple of ways to set (or reset) a
+        repository's UUID, should you need to.  As of Subversion 1.5,
+        this is as simple as using the <span class="command"><strong>svnadmin
+        setuuid</strong></span> command.  If you provide this subcommand
+        with an explicit UUID, it will validate that the UUID is
+        well-formed and then set the repository UUID to that value.
+        If you omit the UUID, a brand-new UUID will be generated for
+        your repository.</p>
+<pre class="screen">
+$ svnlook uuid /var/svn/repos
+cf2b9d22-acb5-11dc-bc8c-05e83ce5dbec
+$ svnadmin setuuid /var/svn/repos   # generate a new UUID
+$ svnlook uuid /var/svn/repos
+3c3c38fe-acc0-11dc-acbc-1b37ff1c8e7c
+$ svnadmin setuuid /var/svn/repos \
+           cf2b9d22-acb5-11dc-bc8c-05e83ce5dbec  # restore the old UUID
+$ svnlook uuid /var/svn/repos
+cf2b9d22-acb5-11dc-bc8c-05e83ce5dbec
+$
+</pre>
+<p>For folks using versions of Subversion earlier than 1.5,
+        these tasks are a little more complicated.  You can explicitly
+        set a repository's UUID by piping a repository dump file stub
+        that carries the new UUID specification through
+        <strong class="userinput"><code>svnadmin load --force-uuid <em class="replaceable"><code>REPOS-PATH</code></em></code></strong>.</p>
+<pre class="screen">
+$ svnadmin load --force-uuid /var/svn/repos &lt;&lt;EOF
+SVN-fs-dump-format-version: 2
+
+UUID: cf2b9d22-acb5-11dc-bc8c-05e83ce5dbec
+EOF
+$ svnlook uuid /var/svn/repos
+cf2b9d22-acb5-11dc-bc8c-05e83ce5dbec
+$
+</pre>
+<p>Having older versions of Subversion generate a brand-new
+        UUID is not quite as simple to do, though.  Your best bet here
+        is to find some other way to generate a UUID, and then
+        explicitly set the repository's UUID to that value.</p>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id626810" href="#id626810" class="para">32</a>] </sup>Beispielsweise Festplatte + starker Elektromagnet =
+            Desaster.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id627716" href="#id627716" class="para">33</a>] </sup>Das ist doch überhaupt der Grund dafür,
+            Versionskontrolle einzusetzen, oder?</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id627724" href="#id627724" class="para">34</a>] </sup>Das bewusste, vorsichtige Entfernen bestimmter Teile
+            versionierter Daten wird tatsächlich von wirklichen
+            Anwendungsfällen verlangt. Das ist der Grund, warum eine
+            „<span class="quote">Auslösch</span>“-Funktion eine der am häufigsten
+            gewünschten Funktionen von Subversion ist, von der die
+            Subversion-Entwickler hoffen, sie bald zur Verfügung
+            stellen zu können.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id628250" href="#id628250" class="para">35</a>] </sup>Obwohl <span class="command"><strong>svnadmin dump</strong></span> ein
+            konsistentes Vorgehen bezüglich führender Schrägstriche
+            vorweisen kann (indem es sie nicht einfügt), sind andere
+            Programme, die Auszugsdateien erzeugen eventuell nicht so
+            konsistent.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id628532" href="#id628532" class="para">36</a>] </sup>Tatsächlich kann es gar nicht nur lesbar sein, denn
+            sonst hätte <span class="command"><strong>svnsync</strong></span> ein echtes Problem,
+            die Versionshistorie hineinzukopieren.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id629044" href="#id629044" class="para">37</a>] </sup>Seien Sie jedoch vorgewarnt, dass, obwohl der
+            durchschnittliche Leser nur ein paar Sekunden benötigt, um
+            diesen Absatz und die ihm folgende Beispielausgabe zu
+            erfassen, die tatsächlich für eine vollständige Spiegelung
+            erforderliche Zeit um Einiges länger ist.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id630011" href="#id630011" class="para">38</a>] </sup><span class="command"><strong>svnadmin setlog</strong></span> kann auf eine Art
+            aufgerufen werden, dass die Hook-Schnittstelle völlig
+            umgangen wird.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.reposadmin.create.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.reposadmin.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.reposadmin.maint.moving-and-removing.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">5.3. Anlegen und konfigurieren Ihres Repositorys </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 5.5. Moving and Removing Repositories</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

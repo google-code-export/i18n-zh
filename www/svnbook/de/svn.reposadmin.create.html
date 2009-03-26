@@ -1,0 +1,317 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>5.3. Anlegen und konfigurieren Ihres Repositorys</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.reposadmin.html" title="Kapitel 5. Verwaltung des Repositorys">
+<link rel="prev" href="svn.reposadmin.planning.html" title="5.2. Strategien für die Verwendung eines Repositorys">
+<link rel="next" href="svn.reposadmin.maint.html" title="5.4. Repository-Wartung">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">5.3. Anlegen und konfigurieren Ihres Repositorys</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.reposadmin.planning.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 5. Verwaltung des Repositorys</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.reposadmin.maint.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.reposadmin.create"></a>5.3. Anlegen und konfigurieren Ihres Repositorys</h2></div></div></div>
+<p>Weiter oben in diesem Kapitel (in <a class="xref" href="svn.reposadmin.planning.html" title="5.2. Strategien für die Verwendung eines Repositorys">Abschnitt 5.2, „Strategien für die Verwendung eines Repositorys“</a>), schauten wir auf einige
+      der wichtigen Entscheidungen, die zu treffen sind, bevor Ihr
+      Subversion-Repository angelegt und konfiguriert wird. Jetzt
+      schaffen wir es endlich, uns die Hände schmutzig zu machen! In
+      diesem Abschnitt werden wir sehen, wie ein Subversion-Repository
+      überhaupt angelegt wird und wie es konfiguriert wird, damit es
+      bei bestimmten Repository-Ereignissen spezielle Aktionen
+      ausführt.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.basics.creating"></a>5.3.1. Anlegen des Repositorys</h3></div></div></div>
+<p>Das Anlegen eines Subversion-Repositorys ist eine
+        unglaublich einfache Aufgabe. Das mit Subversion gelieferte
+        Dienstprogramm <span class="command"><strong>svnadmin</strong></span> stellt ein
+        Unterbefehl (<span class="command"><strong>svnadmin create</strong></span>) zur
+        Verfügung, der genau das macht.</p>
+<pre class="screen">
+$ # Ein Repository anlegen
+$ svnadmin create /var/svn/repos
+$
+</pre>
+<p>Damit wird ein neues Repository im Verzeichnis
+        <code class="filename">/var/svn/repos</code> mit dem
+        Standard-Speicherverfahren angelegt. Vor Subversion 1.2 war es
+        Berkeley DB, nun ist es FSFS.  Sie können den Dateisystemtypen
+        ausdrücklich wählen, indem Sie das Argument
+        <code class="option">--fs-type</code> benutzen, das als Parameter
+        entweder <code class="literal">fsfs</code> oder <code class="literal">bdb</code>
+        zulässt.</p>
+<pre class="screen">
+$ # Ein FSFS-basiertes Repository anlegen
+$ svnadmin create --fs-type fsfs /var/svn/repos
+$
+</pre>
+<pre class="screen">
+# Ein Berkeley-DB-basiertes Repository anlegen
+$ svnadmin create --fs-type bdb /var/svn/repos
+$
+</pre>
+<p>Nach dem Ausführen dieses einfachen Befehls haben Sie ein
+        Subversion-Repository.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Tipp]" src="images/tip.png"></td>
+<th align="left">Tipp</th>
+</tr>
+<tr><td align="left" valign="top"><p>Das Pfad-Argument zu <span class="command"><strong>svnadmin</strong></span> ist
+          bloß ein gewöhnlicher Pfad im Dateisystem und kein URL wie
+          ihn das Client-Programm <span class="command"><strong>svn</strong></span> verwendet, um
+          auf Repositorys zu verweisen. Sowohl
+          <span class="command"><strong>svnadmin</strong></span> als auch
+          <span class="command"><strong>svnlook</strong></span> werden als serverseitige
+          Dienstprogramme betrachtet – sie werden auf dem
+          Rechner benutzt, auf dem das Repository untergebracht ist,
+          um Aspekte des Repositorys zu untersuchen oder zu verändern;
+          tatsächlich sind sie nicht in der Lage, Aufgaben über das
+          Netz zu erledigen. Ein verbreiteter Fehler von
+          Subversion-Neulingen ist der Versuch, URLs (sogar
+          „<span class="quote">lokale</span>“ vom Typ <code class="literal">file://</code>) an
+          diese zwei Programme zu übergeben.</p></td></tr>
+</table></div>
+<p>Im Unterverzeichnis <code class="filename">db/</code> Ihres
+        Repositorys befindet sich die Implementierung des
+        versionierten Dateisystems. Das Leben des versionierten
+        Dateisystems Ihres Repositorys beginnt mit Revision 0, die aus
+        nichts anderem als dem Wurzelverzeichnis
+        (<code class="filename">/</code>) besteht. Zu Beginn hat die Revision 0
+        ein einziges Revisions-Property, <code class="literal">svn:date</code>,
+        das als Wert die Angabe des Zeitpunktes besitzt, zu dem das
+        Repository angelegt wurde.</p>
+<p>Da Sie nun ein Repository haben, ist es an der Zeit, es
+        anzupassen.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Während einige Teile des Repositorys – wie die
+          Konfigurationsdateien und Hook-Scripts – für eine
+          manuelle Untersuchung und Bearbeitung gedacht sind, sollten
+          Sie nicht (und sie sollten es auch nicht nötig haben) an den
+          anderen Teilen des Repositorys „<span class="quote">händisch</span>“
+          herumdoktern. Das Dienstprogramm <span class="command"><strong>svnadmin</strong></span>
+          sollte für alle notwendigen Änderungen an Ihrem Repository
+          ausreichen; sie können auch Dienstprogramme von
+          Drittanbietern (wie das Werkzeugpaket von Berkeley DB)
+          verwenden, um in entsprechenden Unterabschnitten des
+          Repositorys Änderungen vorzunehmen. Versuchen Sie
+          <span class="emphasis"><em>nicht</em></span>, die Historie Ihrer
+          Versionskontrolle manuell zu verändern, indem Sie in den
+          Speicherdateien des Repositorys herumstochern!</p></td></tr>
+</table></div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.create.hooks"></a>5.3.2. Erstellen von Repository-Hooks</h3></div></div></div>
+<p>Ein <em class="firstterm">Hook</em> (Haken) ist ein Programm,
+        das durch einige Repository-Ereignisse gestartet wird, wie
+        etwa die Erzeugung einer neuen Revision oder die Veränderung
+        eines unversionierten Propertys. Einige Hooks (die sogenannten
+        „<span class="quote">Pre-Hooks</span>“) starten vor einer
+        Repository-Operation und bieten eine Möglichkeit sowohl zu
+        berichten, was passieren wird, als auch zu verhindern, dass es
+        überhaupt passiert. Andere Hooks (die
+        „<span class="quote">Post-Hooks</span>“) starten nach Abschluss eines
+        Repository-Ereignisses und sind nützlich für Aufgaben, die das
+        Repository inspizieren – aber nicht verändern. Jedem
+        Hook wird ausreichend Information übergeben, damit er
+        feststellen kann, um welches Ereignis es sich handelt (oder
+        handelte), welche genauen Änderungen am Repository
+        beabsichtigt sind (oder durchgeführt wurden) und wie der Name des
+        Benutzers lautet, der das Ereignis ausgelöst hat.</p>
+<p>Das Verzeichnis für die <code class="filename">Hooks</code> ist
+        standardmäßig mit Vorlagen für verschiedene Repository-Hooks
+        gefüllt:</p>
+<pre class="screen">
+$ ls repos/hooks/
+post-commit.tmpl          post-unlock.tmpl  pre-revprop-change.tmpl
+post-lock.tmpl            pre-commit.tmpl   pre-unlock.tmpl
+post-revprop-change.tmpl  pre-lock.tmpl     start-commit.tmpl
+$
+</pre>
+<p>Es gibt eine Vorlage für jeden Hook, den Subversion
+        unterstützt. Sie können sehen, wodurch jedes dieser Scripte
+        gestartet wird und welche Daten übergeben werden, indem Sie
+        den Inhalt der Scripte inspizieren. In vielen dieser Vorlagen
+        befinden sich auch Beispiele dafür, wie dieses Script zusammen
+        mit anderen Programmen aus dem Lieferumfang von Subversion
+        verwendet werden kann, um häufige, nützliche Aufgaben zu erledigen.
+        Um einen funktionierenden Hook zu installieren, brauchen Sie
+        nur ein ausführbares Programm oder Script im Verzeichnis
+        <code class="filename">repos/hooks</code> abzulegen, das unter dem
+        Namen des Hooks (etwa <span class="command"><strong>start-commit</strong></span> oder
+        <span class="command"><strong>post-commit</strong></span>) gestartet werden kann.</p>
+<p>Auf Unix Plattformen bedeutet das, ein Script oder
+        Programm bereitzustellen (welches ein Shell-Script, ein
+        Python-Programm, ein übersetztes C-Binärprogramm oder
+        sonstetwas sein kann), das genauso heißt wie der Hook.
+        Natürlich sind die Vorlagen nicht nur zur Information da
+        – die einfachste Möglichkeit, unter Unix einen Hook zu
+        installieren, ist es, einfach die passende Vorlagedatei in
+        eine Datei zu kopieren, der die Dateiendung
+        <code class="filename">.tmpl</code> fehlt, den Inhalt anzupassen und
+        sicherzustellen, dass das Script ausführbar ist. Unter Windows
+        werden jedoch Dateiendungen verwendet, um festzustellen, ob
+        ein Programm ausführbar ist, so dass Sie ein Programm zur
+        Verfügung stellen müssen, dessen Basisname dem Hook entspricht
+        und dessen Endung einer derjenigen entspricht, die Windows für
+        ausführbare Programme hält, etwa <code class="filename">.exe</code> für
+        Programme und <code class="filename">.bat</code> für
+        Batch-Dateien.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Tipp]" src="images/tip.png"></td>
+<th align="left">Tipp</th>
+</tr>
+<tr><td align="left" valign="top"><p>Aus Sicherheitsgründen führt Subversion Hook-Programme
+          in einer leeren Umgebung aus – d.h., es sind überhaupt
+          keine Umgebungsvariablen gesetzt, nicht einmal
+          <code class="literal">$PATH</code> (oder <code class="literal">%PATH%</code>
+          unter Windows). Deshalb sind viele Administratoren verwirrt,
+          wenn deren Hook-Programme normal starten, wenn sie manuell
+          aufgerufen werden, aber nicht laufen, wenn sie Subversion
+          startet. Stellen Sie sicher, dass Sie entweder alle
+          notwendigen Umgebungsvariablen in Ihren Hook-Programmen
+          ausdrücklich setzen und/oder absolute Pfade zu Programmen
+          verwenden.</p></td></tr>
+</table></div>
+<p>Subversion führt die Hooks unter der Benutzerkennung aus,
+        die auch der Prozess besitzt, der auf das Repository zugreift.
+        Meistens wird auf das Repository über einen Subversion-Server
+        zugegriffen, so dass die Benutzerkennung der des
+        Serverprozesses entspricht. Die Hooks müssen deshalb mit den
+        entsprechenden Berechtigungen des Betriebssystems versehen
+        werden, damit diese Benutzerkennung sie ausführen kann. Das
+        bedeutet auch, dass der direkte oder indirekte Zugriff auf
+        irgendwelche Programme oder Dateien (einschließlich des
+        Subversion-Repositorys) durch den Hook auch unter derselben
+        Kennung erfolgt. Mit anderen Worten: Achten Sie auf mögliche
+        Probleme im Zusammenhang mit Zugriffsrechten, die den Hook
+        daran hindern könnten, die Ihm zugeteilten Aufgaben
+        wahrzunehmen.</p>
+<p>Es gibt mehrere im Subversion-Repository implementierte
+        Hooks; Details zu jedem können Sie in <a class="xref" href="svn.ref.reposhooks.html" title="9.11. Repository Hooks">Abschnitt 9.11, „Repository Hooks“</a> nachlesen. Als
+        Repository-Administrator müssen Sie entscheiden, welche Hooks
+        sie einrichten wollen (indem Sie ein entsprechend benanntes
+        und mit den nötigen Zugriffsrechten versehenes Hook-Programm
+        bereitstellen) und wie Sie sie einsetzen wollen. Wenn Sie diese Entscheidung
+        treffen, dann behalten Sie das Gesamtbild des
+        Repository-Einsatzes im Auge.  Wenn Sie beispielsweise die
+        Konfiguration des Servers verwenden, um festzustellen, welche
+        Benutzer Änderungen an Ihr Repository übergeben dürfen,
+        benötigen Sie für diese Zugriffskontrolle nicht das
+        Hook-System.</p>
+<p>Es gibt keinen Mangel an Subversion-Hook-Programmen und
+        Scripten, die frei verfügbar sind, entweder von der
+        Subversion-Gemeinschaft oder von woanders her. Diese Scripte
+        decken ein breites Spektrum ab – grundlegende
+        Zugriffskontrolle, Kontrolle der Prozesstreue,
+        Fehlersystemanbindung, E-Mail-basierte oder syndizierte
+        Benachrichtigungen bei Übergaben und noch viel mehr. Oder,
+        falls Sie Ihren eigenen schreiben wollen, siehe <a class="xref" href="svn.developer.html" title="Kapitel 8. Embedding Subversion">Kapitel 8, <i>Embedding Subversion</i></a>.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warnung]" src="images/warning.png"></td>
+<th align="left">Warnung</th>
+</tr>
+<tr><td align="left" valign="top"><p>Obwohl Hook-Scripts fast alles machen können, gibt es
+          eine Dimension, in der sich Hook-Script-Autoren zurückhalten
+          sollten: Ändern Sie <span class="emphasis"><em>keine</em></span>
+          Übergabe-Transaktion mithilfe von Hook-Scripten. Trotz der
+          Verlockung, Hook-Scripte zur automatischen Korrektur von
+          Fehlern, Unzulänglichkeiten oder Prozessverletzungen
+          innerhalb der zu übergebenden Dateien einzusetzen, kann das
+          zu Problemen führen. Subversion hält bestimmte
+          Repository-Daten in clientseitigen Caches vor, und wenn Sie
+          auf diese Art eine Übergabe-Transaktion verändern, werden
+          die im Cache befindlichen Informationen ungültig, ohne dass
+          jemand etwas merkt. Diese Inkonsistenz kann zu
+          überraschendem und unerwartetem Verhalten führen. Statt die
+          Transaktion zu verändern, sollten Sie sie einfach im
+          <code class="filename">pre-commit</code>-Hook auf
+          <span class="emphasis"><em>Gültigkeit</em></span> prüfen und die Übergabe
+          ablehnen, falls sie den Anforderungen nicht entspricht. Als
+          Nebeneffekt werden Ihre Benutzer lernen, wie wertvoll eine
+          sorgfältige, sich an den Vorgaben orientierende Arbeitsweise
+          ist.</p></td></tr>
+</table></div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.reposadmin.create.bdb"></a>5.3.3. Konfiguration von Berkeley DB</h3></div></div></div>
+<p>Eine Berkeley-DB-Umgebung ist eine Kapselung einer oder
+        mehrerer Datenbanken, Protokolldateien, Regionsdateien und
+        Konfigurationsdateien. Die Berkeley-DB-Umgebung hat ihre
+        eigene Menge an Konfigurationswerten für Dinge wie die
+        Maximalzahl von Datenbanksperren zu einem gegebenen Zeitpunkt,
+        die Obergrenze für die Größe der Protokolldateien usw.
+        Darüberhinaus wählt Subversions Dateisystemlogik Standardwerte
+        für einige der Berkeley-DB-Konfigurationsoptionen. Manchmal
+        jedoch benötigt Ihr besonderes Repository, welches eine
+        einzigartige Sammlung von Daten und Zugriffsmustern darstellt,
+        eine unterschiedliche Menge von Konfigurationswerten.</p>
+<p>Den Herstellern von Berkeley-DB ist bewusst, dass
+        unterschiedliche Anwendungen und Datenbankumgebungen auch
+        unterschiedliche Anforderungen haben, so dass sie einen
+        Mechanismus zur Verfügung gestellt haben, der es ermöglicht,
+        während der Laufzeit viele der Konfigurationseinstellungen für
+        die Berkeley-DB-Umgebung zu überschreiben. BDB prüft, ob es
+        eine Datei namens  <code class="filename">DB_CONFIG</code> im
+        Umgebungsverzeichnis (das Verzeichnis <code class="filename">db</code>
+        des Repositorys) gibt und liest die in dieser Datei
+        vorhandenen Optionen. Subversion erzeugt diese Datei selbst,
+        wenn der Rest eines Repositorys erstellt wird. Anfangs
+        beinhaltet diese Datei einige Standardoptionen sowie Verweise
+        zur Berkeley-DB-Dokumentation im Netz, so dass Sie
+        nachschlagen können, was diese Optionen bewirken.
+        Selbstverständlich können Sie beliebige von Berkeley DB
+        unterstützte Optionen der Datei <code class="filename">DB_CONFIG</code>
+        hinzufügen. Beachten Sie jedoch, dass Sie es vermeiden
+        sollten, obwohl Subversion niemals versucht, den Inhalt der
+        Datei zu lesen oder zu interpretieren und auch sonst keinen
+        direkten Gebrauch von den dortigen Optionseinstellungen macht,
+        die Konfiguration so zu verändern, dass sich Berkeley DB
+        anders verhält, als es Subversion erwartet. Die Änderungen an
+        <code class="filename">DB_CONFIG</code> werden außerdem erst nach einer
+        Wiederherstellung der Datenbankumgebung (mit <span class="command"><strong>svnadmin
+        recover</strong></span>) gültig.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.reposadmin.planning.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.reposadmin.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.reposadmin.maint.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">5.2. Strategien für die Verwendung eines Repositorys </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 5.4. Repository-Wartung</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

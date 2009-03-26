@@ -1,0 +1,243 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>1.2. Versionierungsmodelle</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.basic.html" title="Kapitel 1. Grundlegende Konzepte">
+<link rel="prev" href="svn.basic.html" title="Kapitel 1. Grundlegende Konzepte">
+<link rel="next" href="svn.basic.in-action.html" title="1.3. Subversion in Action">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">1.2. Versionierungsmodelle</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.basic.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 1. Grundlegende Konzepte</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.basic.in-action.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.basic.vsn-models"></a>1.2. Versionierungsmodelle</h2></div></div></div>
+<p>Die zentrale Aufgabe eines Versionskontrollsystems ist es,
+      die Zusammenarbeit beim Editieren gemeinsam benutzter Daten zu
+      ermöglichen. Jedoch verwenden unterschiedliche Systeme auch
+      unterschiedliche Strategien, um dies zu ermöglichen. Aus einer
+      Reihe von Gründen ist es wichtig, diese Unterschiede zu
+      verstehen. Erstmal hilft es dabei, bestehende
+      Versionskontrollsysteme zu vergleichen und gegenüberzustellen,
+      falls Ihnen andere Systeme begegnen, die Subversion ähneln.
+      Darüber hinaus wird es Ihnen helfen, Subversion effektiver zu
+      benutzen, da Subversion selbst eine Reihe unterschiedlicher
+      Arbeitsweisen unterstützt.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.problem-sharing"></a>1.2.1. Das Problem ??The Problem of File Sharing</h3></div></div></div>
+<p>Alle Versionskontrollsysteme haben alle die gleichen 
+        fundamentalen Probleme zu lösen: Wie soll es Anwendern
+        erlaubt werden Informationen zu teilen aber Sie davor
+        bewahren, sich gegenseitig auf die Fße zu treten?
+        Es ist allzu einfach die Änderungen eines anderen 
+        im Repository zu überschreiben?</p>
+<p>Stellen Sie sich einmal folgendes <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.problem-sharing.dia-1" title="Abbildung 1.2. The problem to avoid">Abbildung 1.2, „The problem to avoid“</a>Szenario vor:
+        Zwei Kollegen, Harry und Sally, haben sich entschieden, 
+        die gleiche Datei zur gleichen Zeit zu bearbeiten. 
+        Harry speichert seine Änderungen zuerst im Repository, 
+        es ist aber möglich, dass Sally nur einige Augenblicke 
+        später mit ihrer Datei seine überschreibt.
+        Harrys Änderungen der Datei sind zwar nicht für immer 
+        verloren (da das System jede Änderung aufzeichnet), aber 
+        alle seine Änderungen sind in Sallys später gespeicherter 
+        Version der Datei nicht vorhanden, da Sally diese Änderungen 
+        noch gar nicht kannte. Das heißt, dass Harrys Arbeit 
+        doch verloren ist, zumindest in der neuesten Version der 
+        Datei und das nur durch einen Zufall. 
+        Eine solche Situation wollen wir auf alle Fälle vermeiden.		
+      </p>
+<div class="figure">
+<a name="svn.basic.vsn-models.problem-sharing.dia-1"></a><p class="title"><b>Abbildung 1.2. The problem to avoid</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia2.png" alt="The problem to avoid"></div></div>
+</div>
+<br class="figure-break">
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.lock-unlock"></a>1.2.2. The Lock-Modify-Unlock Solution</h3></div></div></div>
+<p>Viele Versionskontrollsysteme verwenden ein
+        <em class="firstterm">Sperren - Ändern - Entsperren</em>-Modell
+        um zu verhindern, dass verschiedene Autoren sich gegenseitig die 
+        Änderungen löschen. Bei diesem Modell erlaubt das Repository nur 
+        jeweils einem Programmierer den Zugriff auf eine Datei. 
+        Harry müsste also die Datei sperren, ehe er anfängt, seine 
+        Änderungen einzugeben. Wenn Harry die Datei gesperrt hat, 
+        kann Sally sie nicht ebenfalls sperren und daher auch nichts 
+        ändern. Sie kann die Datei in der Zeit nur lesen und darauf 
+        warten, dass Harry mit seiner Arbeit fertig ist und die Datei 
+        entsperrt. <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.lock-unlock.dia-1" title="Abbildung 1.3. Die Sperren - Ändern - Entsperren - Lösung veranschaulicht diese einfache Möglichkeit">Abbildung 1.3, „Die Sperren - Ändern - Entsperren - Lösung veranschaulicht diese einfache Möglichkeit“</a></p>
+<div class="figure">
+<a name="svn.basic.vsn-models.lock-unlock.dia-1"></a><p class="title"><b>Abbildung 1.3. Die Sperren - Ändern - Entsperren - Lösung veranschaulicht diese einfache Möglichkeit</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia3.png" alt="Die Sperren - Ändern - Entsperren - Lösung veranschaulicht diese einfache Möglichkeit"></div></div>
+</div>
+<br class="figure-break"><p>Das Problem bei einem Sperren - Ändern - Entsperren - Modell liegt
+        in seinen Beschränkungen, die oft zu schier unüberwindlichen Hindernissen führen können.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><span class="emphasis"><em>Das Sperren kann zu administrativen Problemen führen.</em></span>
+            Vielleicht sperrt Harry eine Datei und vergisst dann, 
+            sie zu entsperren. In der Zwischenzeit sind Sally, 
+            die ebenfalls Änderungen an dieser Datei durchführen will, 
+            die Hände gebunden. Und dann geht Harry in Urlaub. 
+            Nun muss Sally sich an einen Administrator wenden,
+            um die Datei entsperrt zu bekommen. Das Ergebnis 
+            sind unnötige Verzögerungen und vergeudete Zeit.</p></li>
+<li><p><span class="emphasis"><em>Das Sperren kann zu einer unnötigen Serialisierung
+            führen.</em></span>
+
+            Was ist, wenn Harry z. B. den Anfang einer Textdatei 
+            bearbeiten will, während Sally einfach nur das Ende 
+            ändern möchte? Diese Änderungen würden sich überhaupt 
+            nicht gegenseitig beeinflussen und könnten problemlos 
+            gleichzeitig durchgeführt werden, vorausgesetzt, sie 
+            würden anschließend vernünftig zusammengefasst. 
+            Es gibt in dieser Situation keinen Grund, der Reihe 
+            nach zu arbeiten.</p></li>
+<li><p><span class="emphasis"><em>Das Sperren kann zu einem falschen Gefühl von
+            Sicherheit führen.</em></span>
+
+           Angenommen Harry sperrt und bearbeitet Datei A, 
+           während Sally gleichzeitig Änderungen an Datei B 
+           durchführt. Was ist, wenn A und B voneinander abhängig 
+           sind und die jeweiligen Änderungen nicht kompatibel sind? 
+           Plötzlich funktioniert das Zusammenspiel zwischen A 
+           und B nicht mehr. Das System des Sperrens hat dieses 
+           Problem nicht verhindert, doch hat es fälschlicherweise 
+           zu einem Gefühl der Sicherheit geführt. Es ist leicht, 
+           sich vorzustellen, dass Harry und Sally der Meinung 
+           waren, dass jeder von ihnen eine eigenständige, 
+           voneinander unabhängige Änderung durchgeführt hat 
+           und dass das Sperren dazu geführt hat, dass sie ihre 
+           inkompatiblen Änderungen nicht vorher miteinander 
+           besprochen haben. Sperren ist oft ein Ersatz für 
+           echte Kommunikation.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.basic.vsn-models.copy-merge"></a>1.2.3. Die „Kopieren – Ändern – Zusammenfassen“ - Lösung</h3></div></div></div>
+<p>Subversion, CVS und viele andere Versionskontrollsysteme 
+        benutzen eine „Kopieren – Ändern – Zusammenfassen“ — 
+        Version als Alternative zum Sperren. In diesem Modell erschafft 
+        jeder User sich eine eigene Arbeitskopie der im Repository 
+        vorhandenen Dateien und Verzeichnisse. Dann können die User 
+        gleichzeitig und unabhängig voneinander ihre jeweiligen 
+        Änderungen eingeben und speichern. Am Ende werden dann alle 
+        Einzelkopien zu einer neuen, aktuellen Version zusammengefasst. 
+        Das Versionskontrollsystem hilft oft bei dieser Zusammenfassung, 
+        aber letztlich ist der Mensch dafür verantwortlich, das es 
+        korrekt abläuft.</p>
+<p>Hier ist ein Beispiel: Harry und Sally haben sich 
+        jeweils eine eigene Arbeitskopie des im Repository vorhandenen 
+        Projektes geschaffen. Beide arbeiten nun am selben File A 
+        innerhalb ihrer jeweiligen Kopien. Sally speichert ihre Version 
+        zuerst im Repository ab. Wenn Harry später ebenfalls versucht, 
+        seine Änderungen zu speichern, informiert ihn das Repository, 
+        das sein File A nicht mehr aktuell ist. Das bedeutet, dass 
+        seitdem er sich seine Kopie erschaffen hat, sind irgendwelche 
+        Änderungen aufgetreten. Also bittet Harry seinen Client darum, 
+        diese neuen Änderungen in seine Arbeitskopie des File A 
+        einzuarbeiten. Die Möglichkeit besteht, dass Sallys Änderungen 
+        mit seinen nicht überlappen, wenn er also alle Änderungen 
+        eingearbeitet hat, kann er seine Arbeitskopie zurück in das 
+        Repository speichern. Die Abbildungen 
+        <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-1" title="Abbildung 1.4. „Kopieren – Ändern – Zusammenfassen“ - Lösung">Abbildung 1.4, „„Kopieren – Ändern – Zusammenfassen“ - Lösung“</a> und <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-2" title="Abbildung 1.5. „Kopieren – Ändern – Zusammenfassen“ - Lösung (Fortsetzung)">Abbildung 1.5, „„Kopieren – Ändern – Zusammenfassen“ - Lösung (Fortsetzung)“</a> zeigen diesen
+        Proczess.</p>
+<div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-1"></a><p class="title"><b>Abbildung 1.4. „Kopieren – Ändern – Zusammenfassen“ - Lösung</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia4.png" alt="„Kopieren – Ändern – Zusammenfassen“ - Lösung"></div></div>
+</div>
+<br class="figure-break"><div class="figure">
+<a name="svn.basic.vsn-models.copy-merge.dia-2"></a><p class="title"><b>Abbildung 1.5. „Kopieren – Ändern – Zusammenfassen“ - Lösung (Fortsetzung)</b></p>
+<div class="figure-contents"><div><img src="images/ch02dia5.png" alt="„Kopieren – Ändern – Zusammenfassen“ - Lösung (Fortsetzung)"></div></div>
+</div>
+<br class="figure-break"><p>
+         Was aber passiert, <span class="emphasis"><em>wenn</em></span> Sallys Änderungen
+         mit Harrys kollidieren? Diese Situation wird 
+         <em class="firstterm">Konflikt</em> genannt und ist normalerweise
+         kein allzugroßes Problem. Wenn Harry Sallys Änderungen in seine 
+         Datei einpflegen lassen will, werden in seiner Datei die 
+         miteinander in Konflikt stehenden Änderungen gekennzeichnet, 
+         er kann sämtliche Änderungen sehen und manuell zwischen ihnen 
+         wählen. Das Programm löst solche Konfliktsituationen nicht 
+         automatisch, nur Menschen sind in der Lage, die Probleme zu 
+         erkennnen und die nötigen intelligenten Änderungen durchzuführen. 
+         Wenn Harry die Konfliktsituationen — vielleicht nach 
+         einer kurzen Diskussion mit Sally — gelöst hat, 
+         kann er seine Datei problemlos ins Repository speichern.</p>
+<p>
+        Dieses <span class="emphasis"><em>Kopieren – Ändern – Zusammenfassen</em></span> - Modell
+        (engl. copy-modify-merge model) klingt vielleicht ein wenig 
+        chaotisch, in der Praxis aber läuft es völlig glatt. Die 
+        einzelnen User können parallel arbeiten, ohne einander in die 
+        Quere zu kommen oder unnötig warten zu müsssen. Wenn sie an den 
+        selben Dateien arbeiten, zeigt es sich meistens, dass ihre 
+        jeweiligen Änderungen einander überhaupt nicht stören, wirkliche 
+        Konflikte sind selten. Und die Zeit, die es beansprucht, eine 
+        solche Konfliktsituation zu lösen, ist meist wesentlich kürzer 
+        als der Zeitverlust, der durch das Sperren auftritt.</p>
+<p>Am Ende läuft alles auf einen kritischen Faktor hinaus. 
+        Die Kommunikation zwischen den Usern. Wenn diese Kommunikation 
+        eher spärlich abläuft, häufen sich sowohl semantische als 
+        auch syntaktische Konflikte. Kein System kann User dazu zwingen, 
+        vernünftig miteinander zu kommnunizieren und kein System kann 
+        semantische Konflikte erkennen. Also hat es auch keinen Sinn, 
+        sich in dem falschen Gefühl von Sicherheit zu wiegen, dass das 
+        Sperren Konflikte irgendwie vermeiden könnte. In der Praxis 
+        verringert das System des Sperrens mehr als andere die 
+        Produktivität.</p>
+<div class="sidebar">
+<a name="svn.basic.vsn-models.copy-merge.sb-1"></a><p class="title"><b>When Locking Is Necessary</b></p>
+<p>While the lock-modify-unlock model is considered
+          generally harmful to collaboration, sometimes
+          locking is appropriate.</p>
+<p>The copy-modify-merge model is based on the assumption
+          that files are contextually mergeable—that is, that the
+          majority of the files in the repository are line-based text
+          files (such as program source code).  But for files with
+          binary formats, such as artwork or sound, it's often
+          impossible to merge conflicting changes.  In these
+          situations, it really is necessary for users to take strict
+          turns when changing the file.  Without serialized access,
+          somebody ends up wasting time on changes that are ultimately
+          discarded.</p>
+<p>While Subversion is primarily a copy-modify-merge
+          system, it still recognizes the need to lock an occasional
+          file, and thus provides mechanisms for this.  We discuss
+          this feature in <a class="xref" href="svn.advanced.locking.html" title="3.7. Locking">Abschnitt 3.7, „Locking“</a>.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.basic.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.basic.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.basic.in-action.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Kapitel 1. Grundlegende Konzepte </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 1.3. Subversion in Action</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

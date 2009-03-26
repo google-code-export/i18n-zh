@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>2.6. Manchmal müssen Sie einfach nur aufräumen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.tour.html" title="Kapitel 2. Grundlegende Benutzung">
+<link rel="prev" href="svn.tour.history.html" title="2.5. Geschichtsforschung">
+<link rel="next" href="svn.tour.summary.html" title="2.7. Zusammenfassung">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">2.6. Manchmal müssen Sie einfach nur aufräumen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.tour.history.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 2. Grundlegende Benutzung</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.tour.summary.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.tour.cleanup"></a>2.6. Manchmal müssen Sie einfach nur aufräumen</h2></div></div></div>
+<p>Nachdem wir nun die täglichen Aufgaben abgehandelt haben,
+      für die Sie regelmäßig Subversion verwenden, gehen wir nun ein
+      paar Verwaltungsaufgaben für Ihre Arbeitskopie durch.</p>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.cleanup.disposal"></a>2.6.1. Entsorgen einer Arbeitskopie</h3></div></div></div>
+<p>Subversion merkt sich weder den Zustand noch das
+        Vorhandensein einer Arbeitskopie auf dem Server, so dass
+        serverseitig kein Aufwand für Arbeitskopien
+        anfälllt. Dementsprechend besteht keine Notwendigkeit, dem
+        Server mitzuteilen, dass Sie vorhaben, eine Arbeitskopie zu
+        löschen.</p>
+<p>Falls die Wahrscheinlichkeit besteht, dass Sie eine
+        Arbeitskopie wiederverwenden möchten, ist es nicht verkehrt,
+        sie einfach auf der Platte zu lassen, bis Sie sie wieder
+        benutzen wollen. Zu diesem Zeitpunkt reicht lediglich ein
+        <span class="command"><strong>svn update</strong></span> zum Aktualisieren, und sie ist
+        gebrauchsfertig.</p>
+<p>Falls Sie die Arbeitskopie jedoch bestimmt nicht mehr
+        verwenden möchten, können Sie sie ruhig löschen; jedoch
+        sollten Sie vorher darin nach unversionierten Dateien
+        suchen. Um diese Dateien zu finden, rufen Sie <strong class="userinput"><code>svn
+        status</code></strong> auf und untersuchen alle Dateien, denen ein
+        <code class="literal">?</code> voransteht, um sicherzugehen, dass sie
+        nicht wichtig sind. Wenn Sie die Untersuchung abgeschlossen
+        haben, können Sie Ihre Arbeitskopie ruhig löschen.</p>
+</div>
+<div class="sect2" lang="de">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="svn.tour.cleanup.interruption"></a>2.6.2. Wiederherstellung nach einer Unterbrechung</h3></div></div></div>
+<p>Wenn Subversion Ihre Arbeitskopie (oder irgendwelche
+        Informationen in <code class="filename">.svn</code>) verändert,
+        versucht es das so sicher wie möglich zu machen. Bevor die
+        Arbeitskopie geändert wird, schreibt Subversion seine
+        Absichten in eine Protokolldatei. Dann führt es die Befehle in
+        der Protokolldatei aus, um die Änderungen anzuwenden, wobei es
+        während der Arbeit den relevanten Teil der Arbeitskopie
+        sperrt, um andere Clients davon abzuhalten, während der
+        Änderung auf die Arbeitskopie zuzugreifen. Zuletzt entfernt
+        Subversion die Protokolldatei. Architektonisch ist dies
+        ähnlich wie bei einem Dateisystem mit Journal. Falls eine
+        Subversion-Operation unterbrochen wird (z.B. wenn der Prozess
+        abgeschossen wird oder der Rechner abstürzt), bleibt die
+        Protokolldatei auf der Platte. Durch das erneute Ausführen der
+        Protokolldatei kann Subversion die vorher begonnene Operation
+        vervollständigen und Ihre Arbeitskopie gelangt wieder in
+        einen konsistenten Zustand.</p>
+<p>Genau das macht <span class="command"><strong>svn cleanup</strong></span>: Es
+        durchsucht Ihre Arbeitskopie und führt etwaige übriggebliebene
+        Protokolldateien aus, wobei Sperren in der Arbeitskopie
+        entfernt werden. Fall Ihnen Subversion jemals mitteilt, dass
+        ein Teil Ihrer Arbeitskopie „<span class="quote">gesperrt</span>“ ist,
+        sollten Sie diesen Befehl aufrufen. Darüberhinaus zeigt
+        <span class="command"><strong>svn status</strong></span> ein <code class="literal">L</code> neben
+        gesperrten Objekten an:</p>
+<pre class="screen">
+$ svn status
+  L    somedir
+M      somedir/foo.c
+
+$ svn cleanup
+$ svn status
+M      somedir/foo.c
+</pre>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.tour.history.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.tour.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.tour.summary.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">2.5. Geschichtsforschung </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 2.7. Zusammenfassung</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

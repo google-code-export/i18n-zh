@@ -1,0 +1,196 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>4.5. Zweige durchlaufen</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
+<link rel="up" href="svn.branchmerge.html" title="Kapitel 4. Verzweigen und Zusammenführen">
+<link rel="prev" href="svn.branchmerge.advanced.html" title="4.4. Fortgeschrittenes Zusammenführen">
+<link rel="next" href="svn.branchmerge.tags.html" title="4.6. Tags">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4.5. Zweige durchlaufen</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="svn.branchmerge.advanced.html">Zurück</a> </td>
+<th width="60%" align="center">Kapitel 4. Verzweigen und Zusammenführen</th>
+<td width="20%" align="right"> <a accesskey="n" href="svn.branchmerge.tags.html">Weiter</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="sect1" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="svn.branchmerge.switchwc"></a>4.5. Zweige durchlaufen</h2></div></div></div>
+<p>Der Befehl <span class="command"><strong>svn switch</strong></span> überführt eine
+      bestehende Arbeitskopie, so dass sie einen anderen Zweig
+      repräsentiert. Obwohl dieser Befehl strenggenommen für die
+      Arbeit mit Zweigen nicht notwendig ist, stellt er eine nette
+      Abkürzung dar. In unserem früheren Beispiel haben Sie nach dem
+      Anlegen Ihres eigenen privaten Zweigs eine frische Arbeitskopie
+      des neuen Repository-Verzeichnisses ausgecheckt. Stattdessen
+      können Sie Subversion einfach mitteilen, dass es Ihre
+      Arbeitskopie von <code class="filename">/calc/trunk</code> ändern soll,
+      um den neuen Ort des Zweigs widerzuspiegeln:</p>
+<pre class="screen">
+$ cd calc
+
+$ svn info | grep URL
+URL: http://svn.example.com/repos/calc/trunk
+
+$ svn switch http://svn.example.com/repos/calc/branches/my-calc-branch
+U   integer.c
+U   button.c
+U   Makefile
+Aktualisiert zu Revision 341.
+
+$ svn info | grep URL
+URL: http://svn.example.com/repos/calc/branches/my-calc-branch
+</pre>
+<p>„<span class="quote">Das Umschalten</span>“ einer Arbeitskopie ohne lokale
+      Änderungen auf einen anderen Zweig hat zur Folge, dass die
+      Arbeitskopie genau so aussieht, als sei das Verzeichnis frisch
+      ausgecheckt worden. Es ist gewöhnlicherweise effizienter, diesen
+      Befehl zu verwenden, da sich Zweige oftmals nur in kleinen
+      Teilen unterscheiden. Der Server sendet nur die minimale Menge
+      von Änderungen, die notwendig sind, damit Ihre Arbeitskopie den
+      Inhalt des Zweig-Verzeichnisses wiedergibt.</p>
+<p>Der Befehl <span class="command"><strong>svn switch</strong></span> versteht auch die
+      Option <code class="option">--revision</code> (<code class="option">-r</code>), so
+      dass Sie nicht immer gezwungen sind, Ihre Arbeitskopie auf den
+      <code class="literal">HEAD</code> des Zweigs zu setzen.</p>
+<p>Natürlich sind die meisten Projekte komplizierter als unser
+      <code class="filename">calc</code>-Beispiel und enthalten mehrere
+      Unterverzeichnisse. Subversion-Benutzer wenden bei der
+      Verwendung von Zweigen häufig einen bestimmten Algorithmus
+      an:</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Kopiere den vollständigen „<span class="quote">Stamm</span>“ des
+            Projektes in ein neues Zweig-Verzeichnis.</p></li>
+<li><p>Schalte nur einen <span class="emphasis"><em>Teil</em></span> der
+            Arbeitskopie vom Stamm auf den Zweig um.</p></li>
+</ol></div>
+<p>In anderen Worten: Wenn ein Benutzer weiß, dass die Arbeit
+      auf dem Zweig nur in einem bestimmten Unterverzeichnis
+      stattfinden muss, verwendet er <span class="command"><strong>svn switch</strong></span>
+      lediglich, um dieses Unterverzeichnis auf den Zweig zu bringen.
+      (Manchmal schalten Benutzer sogar nur eine einzelne Datei auf
+      den Zweig um!) Auf diese Art kann ein Benutzer für einen großen
+      Teil der Arbeitskopie weiterhin normale Aktualisierungen auf dem
+      „<span class="quote">Stamm</span>“ erhalten, wohingegen die umgeschalteten
+      Teile unberührt bleiben (es sei denn, jemand übergibt etwas an
+      den Zweig). Diese Möglichkeit fügt dem Konzept einer
+      „<span class="quote">gemischten Arbeitskopie</span>“ eine völlig neue
+      Dimension hinzu – Arbeitskopien können nicht nur eine
+      Mischung unterschiedlicher Revisionen enthalten, sondern auch
+      eine Mischung unterschiedlicher Repository-Orte.</p>
+<p>Falls Ihre Arbeitskopie eine Anzahl umgeschalteter
+      Unterverzeichnisse aus unterschiedlichen Repository-Orten
+      enthält, funktioniert sie immer noch normal. Wenn Sie
+      aktualisieren, erhalten Sie entsprechende Patches für jeden
+      Unterbaum. Wenn Sie übergeben, werden Ihre lokalen Änderungen
+      nach wie vor als eine einzelne atomare Änderung auf das
+      Repository angewendet.</p>
+<p>Während es normal ist, das eine Arbeitskopie eine Mischung
+      unterschiedlicher Repository-Orte repräsentiert, ist darauf zu
+      achten, dass all diese Orte sich innerhalb
+      <span class="emphasis"><em>desselben</em></span> Repositorys befinden.
+      Subversion-Repositorys können noch nicht miteinander
+      kommunizieren; diese Möglichkeit ist für die Zukunft geplant.
+      <sup>[<a name="id619497" href="#ftn.id619497" class="footnote">24</a>]</sup>
+    </p>
+<div class="sidebar">
+<p class="title"><b>Umschalten und Aktualisierungen</b></p>
+<p>Ist Ihnen aufgefallen, dass die Ausgaben von <span class="command"><strong>svn
+        switch</strong></span> und <span class="command"><strong>svn update</strong></span> gleich
+        aussehen? Der switch-Befehl ist tatsächlich eine Obermenge des
+        update-Befehls.</p>
+<p>Wenn Sie <span class="command"><strong>svn update</strong></span> aufrufen, fordern
+        Sie das Repository auf, zwei Bäume zu vergleichen. Das
+        Repository macht es und schickt eine Beschreibung der
+        Unterschiede zurück an den Client. Der einzige Unterschied
+        zwischen <span class="command"><strong>svn switch</strong></span> und <span class="command"><strong>svn
+        update</strong></span> ist, dass letzterer Befehl stets zwei
+        identische Repository-Pfade miteinander vergleicht.</p>
+<p>Das heißt, falls Ihre Arbeitskopie
+        <code class="filename">/calc/trunk</code> widerspiegelt, wird
+        <span class="command"><strong>svn update</strong></span> automatisch Ihre Arbeitskopie
+        von <code class="filename">/calc/trunk</code> mit
+        <code class="filename">/calc/trunk</code> in der Revision
+        <code class="literal">HEAD</code> vergleichen. Falls Sie Ihre
+        Arbeitskopie auf einen Zweig umschalten, wird <span class="command"><strong>svn
+        switch</strong></span> Ihre Arbeitskopie von
+        <code class="filename">/calc/trunk</code> mit einem
+        <span class="emphasis"><em>anderen</em></span> Zweig-Verzeichnis in der
+        <code class="literal">HEAD</code>-Revision vergleichen.</p>
+<p>In anderen Worten: Eine Aktualisierung bewegt Ihre
+        Arbeitskopie durch die Zeit. Eine Umschaltung bewegt Ihre
+        Arbeitskopie durch die Zeit <span class="emphasis"><em>und</em></span> den
+        Raum.</p>
+</div>
+<p>Da <span class="command"><strong>svn switch</strong></span> eigentlich eine Variante
+      von <span class="command"><strong>svn update</strong></span> ist, teilt es dasselbe
+      Verhalten; irgendwelche lokalen Änderungen Ihrer Arbeitskopie
+      bleiben erhalten, wenn neue Daten aus dem Repository
+      ankommen.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Tipp]" src="images/tip.png"></td>
+<th align="left">Tipp</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>Haben Sie sich jemals dabei ertappt, dass Sie (in Ihrer
+          <code class="filename">/trunk</code>-Arbeitskopie) komplexe
+          Änderungen gemacht haben und plötzlich feststellen:
+          „<span class="quote">Verdammt, diese Änderungen sollten auf einen eigenen
+          Zweig!</span>“ Eine gute Technik, um das zu bewerkstelligen,
+          lässt sich in zwei Schritten zusammenfassen:</p>
+<pre class="screen">
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/branches/newbranch \
+      -m "Zweig 'newbranch' angelegt."
+Revision 353 übertragen.
+$ svn switch http://svn.example.com/repos/calc/branches/newbranch
+Revision 353.
+</pre>
+<p>Der Befehl <span class="command"><strong>svn switch</strong></span>
+          bewahrt wie <span class="command"><strong>svn update</strong></span> Ihre lokalen
+          Änderungen. An dieser Stelle spiegelt Ihre Arbeitskopie den
+          neu erzeugten Zweig wieder, und Ihr nächster Aufruf von
+          <span class="command"><strong>svn commit</strong></span> wird Ihre Änderungen dorthin
+          senden.</p>
+</td></tr>
+</table></div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.id619497" href="#id619497" class="para">24</a>] </sup>Sie <span class="emphasis"><em>können</em></span> jedoch <span class="command"><strong>svn
+          switch</strong></span> mit der Option <code class="option">--relocate</code>
+          verwenden, falls sich der URL Ihres Servers geändert hat,
+          und Sie die bestehende Arbeitskopie nicht aufgeben wollen.
+          Siehe <a class="xref" href="svn.ref.svn.c.switch.html" title="svn switch">svn switch</a> für weitere
+          Informationen und ein Beispiel.</p></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="svn.branchmerge.advanced.html">Zurück</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="svn.branchmerge.html">Nach oben</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="svn.branchmerge.tags.html">Weiter</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4.4. Fortgeschrittenes Zusammenführen </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Zum Anfang</a></td>
+<td width="40%" align="right" valign="top"> 4.6. Tags</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
