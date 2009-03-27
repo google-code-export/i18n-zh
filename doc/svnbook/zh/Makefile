@@ -1,5 +1,5 @@
 #
-# XML based Makefile for the svnbook
+# PO based Makefile for the svnbook
 #
 
 LINGUA=zh
