@@ -1,0 +1,1159 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第 5 章 团体协作</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial 权威指南">
+<link rel="up" href="index.html" title="Mercurial 权威指南">
+<link rel="prev" href="mercurial-in-daily-use.html" title="第 4 章 Mercurial 的日常使用">
+<link rel="next" href="file-names-and-pattern-matching.html" title="第 6 章 文件名称与模式匹配">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">第 5 章 团体协作</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="mercurial-in-daily-use.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="file-names-and-pattern-matching.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="cha:collab"></a>第 5 章 团体协作</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#id515003">5.1. Mercurial 的 web 接口</a></span></dt>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#id515082">5.2. 协作模型</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515096">5.2.1. 要牢记的因素</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515134">5.2.2. 无政府状态</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515206">5.2.3. 单一中央版本库</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515262">5.2.4. 使用多个分支工作</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515730">5.2.5. 特性分支</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515778">5.2.6. 发布列车</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515805">5.2.7. Linux 内核模型</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515910">5.2.8. 只读与共享写协作</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id515943">5.2.9. 协作与分支管理</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#id515963">5.3. 共享的技术因素</a></span></dt>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#sec:collab:serve">5.4. 使用 hg serve 进行非正式共享</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="collaborating-with-other-people.html#id516127">5.4.1. 要牢记的几件事</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#sec:collab:ssh">5.5. 使用 ssh 协议</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id516250">5.5.1. 如何读写 ssh 路径</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id516414">5.5.2. 为你的系统寻找 ssh 客户端</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id516532">5.5.3. 产生密钥对</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id516629">5.5.4. 使用认证代理</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id516688">5.5.5. 正确配置服务器端</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id517084">5.5.6. 通过 ssh 使用压缩</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="collaborating-with-other-people.html#sec:collab:cgi">5.6. 使用 CGI 通过 HTTP 提供服务</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id517260">5.6.1. Web 服务器配置检查表</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id517345">5.6.2. 基本 CGI 配置</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id517840">5.6.3. 使用一个 CGI 脚本共享多个版本库</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id518295">5.6.4. 下载源代码档案包</a></span></dt>
+<dt><span class="sect2"><a href="collaborating-with-other-people.html#id518340">5.6.5. Web 配置选项</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p><a name="x_44a"></a>As a completely decentralised tool, Mercurial doesn't impose any policy on
+how people ought to work with each other.  However, if you're new to
+distributed revision control, it helps to have some tools and examples in
+mind when you're thinking about possible workflow models.</p>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id515003"></a>5.1. Mercurial 的 web 接口</h2></div></div></div>
+<p><a name="x_44b"></a>Mercurial has a powerful web interface that provides several useful
+capabilities.</p>
+<p><a name="x_44c"></a>For interactive use, the web interface lets you browse a single repository
+or a collection of repositories.  You can view the history of a repository,
+examine each change (comments and diffs), and view the contents of each
+directory and file.</p>
+<p><a name="x_44d"></a>Also for human consumption, the web interface provides an RSS feed of the
+changes in a repository.  This lets you “<span class="quote">subscribe</span>” to a
+repository using your favourite feed reader, and be automatically notified
+of activity in that repository as soon as it happens.  I find this
+capability much more convenient than the model of subscribing to a mailing
+list to which notifications are sent, as it requires no additional
+configuration on the part of whoever is serving the repository.</p>
+<p><a name="x_44e"></a>The web interface also lets remote users clone a repository, pull changes
+from it, and (when the server is configured to permit it) push changes back
+to it.  Mercurial's HTTP tunneling protocol aggressively compresses data, so
+that it works efficiently even over low-bandwidth network connections.</p>
+<p><a name="x_44f"></a>The easiest way to get started with the web interface is to use your web
+browser to visit an existing repository, such as the master Mercurial
+repository at <a class="ulink" href="http://www.selenic.com/repo/hg?style=gitweb" target="_top">http://www.selenic.com/repo/hg?style=gitweb</a>.</p>
+<p><a name="x_450"></a>If you're interested in providing a web interface to your own repositories,
+Mercurial provides two ways to do this.  The first is using the <span class="command"><strong>hg serve</strong></span> command, which is best suited to short-term
+“<span class="quote">lightweight</span>” serving.  See <a class="xref" href="collaborating-with-other-people.html#sec:collab:serve" title="5.4. 使用 hg serve 进行非正式共享">第 5.4 节 “使用 hg serve 进行非正式共享”</a>
+below for details of how to use this command.  If you have a long-lived
+repository that you'd like to make permanently available, Mercurial has
+built-in support for the CGI (Common Gateway Interface) standard, which all
+common web servers support.  See <a class="xref" href="collaborating-with-other-people.html#sec:collab:cgi" title="5.6. 使用 CGI 通过 HTTP 提供服务">第 5.6 节 “使用 CGI 通过 HTTP 提供服务”</a> for
+details of CGI configuration.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id515082"></a>5.2. 协作模型</h2></div></div></div>
+<p><a name="x_451"></a>With a suitably flexible tool, making decisions about workflow is much more
+of a social engineering challenge than a technical one. Mercurial imposes
+few limitations on how you can structure the flow of work in a project, so
+it's up to you and your group to set up and live with a model that matches
+your own particular needs.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515096"></a>5.2.1. 要牢记的因素</h3></div></div></div>
+<p><a name="x_452"></a>The most important aspect of any model that you must keep in mind is how
+well it matches the needs and capabilities of the people who will be using
+it.  This might seem self-evident; even so, you still can't afford to forget
+it for a moment.</p>
+<p><a name="x_453"></a>I once put together a workflow model that seemed to make perfect sense to
+me, but that caused a considerable amount of consternation and strife within
+my development team.  In spite of my attempts to explain why we needed a
+complex set of branches, and how changes ought to flow between them, a few
+team members revolted.  Even though they were smart people, they didn't want
+to pay attention to the constraints we were operating under, or face the
+consequences of those constraints in the details of the model that I was
+advocating.</p>
+<p><a name="x_454"></a>Don't sweep foreseeable social or technical problems under the rug. Whatever
+scheme you put into effect, you should plan for mistakes and problem
+scenarios.  Consider adding automated machinery to prevent, or quickly
+recover from, trouble that you can anticipate.  As an example, if you intend
+to have a branch with not-for-release changes in it, you'd do well to think
+early about the possibility that someone might accidentally merge those
+changes into a release branch.  You could avoid this particular problem by
+writing a hook that prevents changes from being merged from an inappropriate
+branch.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515134"></a>5.2.2. 无政府状态</h3></div></div></div>
+<p><a name="x_455"></a>I wouldn't suggest an “<span class="quote">anything goes</span>” approach as something
+sustainable, but it's a model that's easy to grasp, and it works perfectly
+well in a few unusual situations.</p>
+<p><a name="x_456"></a>As one example, many projects have a loose-knit group of collaborators who
+rarely physically meet each other.  Some groups like to overcome the
+isolation of working at a distance by organising occasional
+“<span class="quote">sprints</span>”.  In a sprint, a number of people get together in a
+single location (a company's conference room, a hotel meeting room, that
+kind of place) and spend several days more or less locked in there, hacking
+intensely on a handful of projects.</p>
+<p><a name="x_457"></a>A sprint is the perfect place to use the <span class="command"><strong>hg
+serve</strong></span> command, since <span class="command"><strong>hg serve</strong></span>
+does not require any fancy server infrastructure.  You can get started with
+<span class="command"><strong>hg serve</strong></span> in moments, by reading <a class="xref" href="collaborating-with-other-people.html#sec:collab:serve" title="5.4. 使用 hg serve 进行非正式共享">第 5.4 节 “使用 hg serve 进行非正式共享”</a> below.  Then simply tell the person next to you
+that you're running a server, send the URL to them in an instant message,
+and you immediately have a quick-turnaround way to work together.  They can
+type your URL into their web browser and quickly review your changes; or
+they can pull a bugfix from you and verify it; or they can clone a branch
+containing a new feature and try it out.</p>
+<p><a name="x_458"></a>The charm, and the problem, with doing things in an ad hoc fashion like this
+is that only people who know about your changes, and where they are, can see
+them.  Such an informal approach simply doesn't scale beyond a handful
+people, because each individual needs to know about $n$ different
+repositories to pull from.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515206"></a>5.2.3. 单一中央版本库</h3></div></div></div>
+<p><a name="x_459"></a>For smaller projects migrating from a centralised revision control tool,
+perhaps the easiest way to get started is to have changes flow through a
+single shared central repository.  This is also the most common
+“<span class="quote">building block</span>” for more ambitious workflow schemes.</p>
+<p><a name="x_45a"></a>Contributors start by cloning a copy of this repository.  They can pull
+changes from it whenever they need to, and some (perhaps all) developers
+have permission to push a change back when they're ready for other people to
+see it.</p>
+<p><a name="x_45b"></a>Under this model, it can still often make sense for people to pull changes
+directly from each other, without going through the central repository.
+Consider a case in which I have a tentative bug fix, but I am worried that
+if I were to publish it to the central repository, it might subsequently
+break everyone else's trees as they pull it.  To reduce the potential for
+damage, I can ask you to clone my repository into a temporary repository of
+your own and test it.  This lets us put off publishing the potentially
+unsafe change until it has had a little testing.</p>
+<p><a name="x_45c"></a>In this kind of scenario, people usually use the <span class="command"><strong>ssh</strong></span>
+protocol to securely push changes to the central repository, as documented
+in <a class="xref" href="collaborating-with-other-people.html#sec:collab:ssh" title="5.5. 使用 ssh 协议">第 5.5 节 “使用 ssh 协议”</a>.  It's also usual to publish a read-only
+copy of the repository over HTTP using CGI, as in <a class="xref" href="collaborating-with-other-people.html#sec:collab:cgi" title="5.6. 使用 CGI 通过 HTTP 提供服务">第 5.6 节 “使用 CGI 通过 HTTP 提供服务”</a>. Publishing over HTTP satisfies the needs of
+people who don't have push access, and those who want to use web browsers to
+browse the repository's history.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515262"></a>5.2.4. 使用多个分支工作</h3></div></div></div>
+<p><a name="x_45d"></a>Projects of any significant size naturally tend to make progress on several
+fronts simultaneously.  In the case of software, it's common for a project
+to go through periodic official releases.  A release might then go into
+“<span class="quote">maintenance mode</span>” for a while after its first publication;
+maintenance releases tend to contain only bug fixes, not new features.  In
+parallel with these maintenance releases, one or more future releases may be
+under development.  People normally use the word “<span class="quote">branch</span>” to
+refer to one of these many slightly different directions in which
+development is proceeding.</p>
+<p><a name="x_45e"></a>Mercurial is particularly well suited to managing a number of simultaneous,
+but not identical, branches.  Each “<span class="quote">development direction</span>” can
+live in its own central repository, and you can merge changes from one to
+another as the need arises.  Because repositories are independent of each
+other, unstable changes in a development branch will never affect a stable
+branch unless someone explicitly merges those changes in.</p>
+<p><a name="x_45f"></a>Here's an example of how this can work in practice.  Let's say you have one
+“<span class="quote">main branch</span>” on a central server.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init main</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd main</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'This is a boring feature.' &gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'We have reached an important milestone!'</code></strong>
+adding myfile
+</pre>
+<p><a name="x_460"></a>People clone it, make changes locally, test them, and push them back.</p>
+<p><a name="x_461"></a>Once the main branch reaches a release milestone, you can use the <span class="command"><strong>hg tag</strong></span> command to give a permanent name to the
+milestone revision.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tag v1.0</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   1:7a506eec8c4f
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:08 2009 +0000
+summary:     Added tag v1.0 for changeset 9111f5487e5c
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg tags</code></strong>
+tip                                1:7a506eec8c4f
+v1.0                               0:9111f5487e5c
+</pre>
+<p><a name="x_462"></a>Let's say some ongoing development occurs on the main branch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ../main</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'This is exciting and new!' &gt;&gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Add a new feature'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat myfile</code></strong>
+This is a boring feature.
+This is exciting and new!
+</pre>
+<p><a name="x_463"></a>Using the tag that was recorded at the milestone, people who clone that
+repository at any time in the future can use <span class="command"><strong>hg
+update</strong></span> to get a copy of the working directory exactly as it was
+when that tagged revision was committed.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone -U main main-old</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd main-old</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg update v1.0</code></strong>
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cat myfile</code></strong>
+This is a boring feature.
+</pre>
+<p><a name="x_464"></a>In addition, immediately after the main branch is tagged, someone can then
+clone the main branch on the server to a new “<span class="quote">stable</span>” branch,
+also on the server.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone -rv1.0 main stable</code></strong>
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_465"></a>Someone who needs to make a change to the stable branch can then clone
+<span class="emphasis"><em>that</em></span> repository, make their changes, commit, and push
+their changes back there.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg clone stable stable-fix</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd stable-fix</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'This is a fix to a boring feature.' &gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Fix a bug'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg push</code></strong>
+pushing to /tmp/branchingxHz2ae/stable
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+</pre>
+<p><a name="x_466"></a>Because Mercurial repositories are independent, and Mercurial doesn't move
+changes around automatically, the stable and main branches are
+<span class="emphasis"><em>isolated</em></span> from each other.  The changes that you made on
+the main branch don't “<span class="quote">leak</span>” to the stable branch, and vice
+versa.</p>
+<p><a name="x_467"></a>You'll often want all of your bugfixes on the stable branch to show up on
+the main branch, too.  Rather than rewrite a bugfix on the main branch, you
+can simply pull and merge changes from the stable to the main branch, and
+Mercurial will bring those bugfixes in for you.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ../main</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull ../stable</code></strong>
+pulling from ../stable
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+merging myfile
+0 files updated, 1 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Bring in bugfix from stable branch'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat myfile</code></strong>
+This is a fix to a boring feature.
+This is exciting and new!
+</pre>
+<p><a name="x_468"></a>The main branch will still contain changes that are not on the stable
+branch, but it will also contain all of the bugfixes from the stable
+branch.  The stable branch remains unaffected by these changes.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515730"></a>5.2.5. 特性分支</h3></div></div></div>
+<p><a name="x_469"></a>For larger projects, an effective way to manage change is to break up a team
+into smaller groups.  Each group has a shared branch of its own, cloned from
+a single “<span class="quote">master</span>” branch used by the entire project.  People
+working on an individual branch are typically quite isolated from
+developments on other branches.</p>
+<div class="figure">
+<a name="fig:collab:feature-branches"></a><p class="title"><b>图 5.1. 特性分支</b></p>
+<div class="figure-contents"><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="figs/feature-branches.png" width="100%" alt="XXX add text"></td></tr></table></div></div>
+</div>
+<br class="figure-break"><p><a name="x_46b"></a>When a particular feature is deemed to be in suitable shape, someone on that
+feature team pulls and merges from the master branch into the feature
+branch, then pushes back up to the master branch.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515778"></a>5.2.6. 发布列车</h3></div></div></div>
+<p><a name="x_46c"></a>Some projects are organised on a “<span class="quote">train</span>” basis: a release is
+scheduled to happen every few months, and whatever features are ready when
+the “<span class="quote">train</span>” is ready to leave are allowed in.</p>
+<p><a name="x_46d"></a>This model resembles working with feature branches.  The difference is that
+when a feature branch misses a train, someone on the feature team pulls and
+merges the changes that went out on that train release into the feature
+branch, and the team continues its work on top of that release so that their
+feature can make the next release.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515805"></a>5.2.7. Linux 内核模型</h3></div></div></div>
+<p><a name="x_46e"></a>The development of the Linux kernel has a shallow hierarchical structure,
+surrounded by a cloud of apparent chaos.  Because most Linux developers use
+<span class="command"><strong>git</strong></span>, a distributed revision control tool with
+capabilities similar to Mercurial, it's useful to describe the way work
+flows in that environment; if you like the ideas, the approach translates
+well across tools.</p>
+<p><a name="x_46f"></a>At the center of the community sits Linus Torvalds, the creator of Linux.
+He publishes a single source repository that is considered the
+“<span class="quote">authoritative</span>” current tree by the entire developer
+community. Anyone can clone Linus's tree, but he is very choosy about whose
+trees he pulls from.</p>
+<p><a name="x_470"></a>Linus has a number of “<span class="quote">trusted lieutenants</span>”.  As a general
+rule, he pulls whatever changes they publish, in most cases without even
+reviewing those changes.  Some of those lieutenants are generally agreed to
+be “<span class="quote">maintainers</span>”, responsible for specific subsystems within
+the kernel.  If a random kernel hacker wants to make a change to a subsystem
+that they want to end up in Linus's tree, they must find out who the
+subsystem's maintainer is, and ask that maintainer to take their change.  If
+the maintainer reviews their changes and agrees to take them, they'll pass
+them along to Linus in due course.</p>
+<p><a name="x_471"></a>Individual lieutenants have their own approaches to reviewing, accepting,
+and publishing changes; and for deciding when to feed them to Linus.  In
+addition, there are several well known branches that people use for
+different purposes.  For example, a few people maintain
+“<span class="quote">stable</span>” repositories of older versions of the kernel, to which
+they apply critical fixes as needed.  Some maintainers publish multiple
+trees: one for experimental changes; one for changes that they are about to
+feed upstream; and so on.  Others just publish a single tree.</p>
+<p><a name="x_472"></a>This model has two notable features.  The first is that it's “<span class="quote">pull
+only</span>”.  You have to ask, convince, or beg another developer to take a
+change from you, because there are almost no trees to which more than one
+person can push, and there's no way to push changes into a tree that someone
+else controls.</p>
+<p><a name="x_473"></a>The second is that it's based on reputation and acclaim.  If you're an
+unknown, Linus will probably ignore changes from you without even
+responding.  But a subsystem maintainer will probably review them, and will
+likely take them if they pass their criteria for suitability. The more
+“<span class="quote">good</span>” changes you contribute to a maintainer, the more likely
+they are to trust your judgment and accept your changes.  If you're
+well-known and maintain a long-lived branch for something Linus hasn't yet
+accepted, people with similar interests may pull your changes regularly to
+keep up with your work.</p>
+<p><a name="x_474"></a>Reputation and acclaim don't necessarily cross subsystem or
+“<span class="quote">people</span>” boundaries.  If you're a respected but specialised
+storage hacker, and you try to fix a networking bug, that change will
+receive a level of scrutiny from a network maintainer comparable to a change
+from a complete stranger.</p>
+<p><a name="x_475"></a>To people who come from more orderly project backgrounds, the comparatively
+chaotic Linux kernel development process often seems completely insane.
+It's subject to the whims of individuals; people make sweeping changes
+whenever they deem it appropriate; and the pace of development is
+astounding.  And yet Linux is a highly successful, well-regarded piece of
+software.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515910"></a>5.2.8. 只读与共享写协作</h3></div></div></div>
+<p><a name="x_476"></a>A perpetual source of heat in the open source community is whether a
+development model in which people only ever pull changes from others is
+“<span class="quote">better than</span>” one in which multiple people can push changes to
+a shared repository.</p>
+<p><a name="x_477"></a>Typically, the backers of the shared-push model use tools that actively
+enforce this approach.  If you're using a centralised revision control tool
+such as Subversion, there's no way to make a choice over which model you'll
+use: the tool gives you shared-push, and if you want to do anything else,
+you'll have to roll your own approach on top (such as applying a patch by
+hand).</p>
+<p><a name="x_478"></a>A good distributed revision control tool, such as Mercurial, will support
+both models.  You and your collaborators can then structure how you work
+together based on your own needs and preferences, not on what contortions
+your tools force you into.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id515943"></a>5.2.9. 协作与分支管理</h3></div></div></div>
+<p><a name="x_479"></a>Once you and your team set up some shared repositories and start propagating
+changes back and forth between local and shared repos, you begin to face a
+related, but slightly different challenge: that of managing the multiple
+directions in which your team may be moving at once.  Even though this
+subject is intimately related to how your team collaborates, it's dense
+enough to merit treatment of its own, in <a class="xref" href="managing-releases-and-branchy-development.html" title="第 7 章 发布管理与分支开发">第 7 章 <i>发布管理与分支开发</i></a>.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id515963"></a>5.3. 共享的技术因素</h2></div></div></div>
+<p><a name="x_47a"></a>The remainder of this chapter is devoted to the question of serving data to
+your collaborators.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:collab:serve"></a>5.4. 使用 <span class="command"><strong>hg serve</strong></span> 进行非正式共享</h2></div></div></div>
+<p><a name="x_47b"></a>Mercurial's <span class="command"><strong>hg serve</strong></span> command is wonderfully
+suited to small, tight-knit, and fast-paced group environments.  It also
+provides a great way to get a feel for using Mercurial commands over a
+network.</p>
+<p><a name="x_47c"></a>Run <span class="command"><strong>hg serve</strong></span> inside a repository, and in
+under a second it will bring up a specialised HTTP server; this will accept
+connections from any client, and serve up data for that repository until you
+terminate it.  Anyone who knows the URL of the server you just started, and
+can talk to your computer over the network, can then use a web browser or
+Mercurial to read data from that repository.  A URL for a <span class="command"><strong>hg serve</strong></span> instance running on a laptop is likely to
+look something like <code class="literal">http://my-laptop.local:8000/</code>.</p>
+<p><a name="x_47d"></a>The <span class="command"><strong>hg serve</strong></span> command is
+<span class="emphasis"><em>not</em></span> a general-purpose web server. It can do only two
+things:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_47e"></a>Allow people to browse the history of the repository it's serving, from
+their normal web browsers.</p></li>
+<li><p><a name="x_47f"></a>Speak Mercurial's wire protocol, so that people can <span class="command"><strong>hg clone</strong></span> or <span class="command"><strong>hg pull</strong></span>
+changes from that repository.</p></li>
+</ul></div>
+<p><a name="x_480"></a>In particular, <span class="command"><strong>hg serve</strong></span> won't allow remote
+users to <span class="emphasis"><em>modify</em></span> your repository.  It's intended for
+read-only use.</p>
+<p><a name="x_481"></a>If you're getting started with Mercurial, there's nothing to prevent you
+from using <span class="command"><strong>hg serve</strong></span> to serve up a
+repository on your own computer, then use commands like <span class="command"><strong>hg clone</strong></span>, <span class="command"><strong>hg
+incoming</strong></span>, and so on to talk to that server as if the repository
+was hosted remotely. This can help you to quickly get acquainted with using
+commands on network-hosted repositories.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516127"></a>5.4.1. 要牢记的几件事</h3></div></div></div>
+<p><a name="x_482"></a>Because it provides unauthenticated read access to all clients, you should
+only use <span class="command"><strong>hg serve</strong></span> in an environment where
+you either don't care, or have complete control over, who can access your
+network and pull data from your repository.</p>
+<p><a name="x_483"></a>The <span class="command"><strong>hg serve</strong></span> command knows nothing about
+any firewall software you might have installed on your system or network.
+It cannot detect or control your firewall software.  If other people are
+unable to talk to a running <span class="command"><strong>hg serve</strong></span>
+instance, the second thing you should do (<span class="emphasis"><em>after</em></span> you
+make sure that they're using the correct URL) is check your firewall
+configuration.</p>
+<p><a name="x_484"></a>By default, <span class="command"><strong>hg serve</strong></span> listens for incoming
+connections on port 8000.  If another process is already listening on the
+port you want to use, you can specify a different port to listen on using
+the <code class="option">-p</code> option.</p>
+<p><a name="x_485"></a>Normally, when <span class="command"><strong>hg serve</strong></span> starts, it prints
+no output, which can be a bit unnerving.  If you'd like to confirm that it
+is indeed running correctly, and find out what URL you should send to your
+collaborators, start it with the <code class="option">-v</code>
+option.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:collab:ssh"></a>5.5. 使用 ssh 协议</h2></div></div></div>
+<p><a name="x_486"></a>You can pull and push changes securely over a network connection using the
+Secure Shell (<code class="literal">ssh</code>)  protocol.  To use this successfully,
+you may have to do a little bit of configuration on the client or server
+sides.</p>
+<p><a name="x_487"></a>If you're not familiar with ssh, it's a network protocol that lets you
+securely communicate with another computer.  To use it with Mercurial,
+you'll be setting up one or more user accounts on a server so that remote
+users can log in and execute commands.</p>
+<p><a name="x_488"></a>(If you <span class="emphasis"><em>are</em></span> familiar with ssh, you'll probably find
+some of the material that follows to be elementary in nature.)</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516250"></a>5.5.1. 如何读写 ssh 路径</h3></div></div></div>
+<p><a name="x_489"></a>An ssh URL tends to look like this:</p>
+<pre class="programlisting">ssh://bos@hg.serpentine.com:22/hg/hgbook</pre>
+<div class="orderedlist"><ol type="1">
+<li><p><a name="x_48a"></a>The “<span class="quote"><code class="literal">ssh://</code></span>” part tells Mercurial to use the
+ssh protocol.</p></li>
+<li><p><a name="x_48b"></a>The “<span class="quote"><code class="literal">bos@</code></span>” component indicates what username
+to log into the server as.  You can leave this out if the remote username is
+the same as your local username.</p></li>
+<li><p><a name="x_48c"></a>The “<span class="quote"><code class="literal">hg.serpentine.com</code></span>” gives the hostname
+of the server to log into.</p></li>
+<li><p><a name="x_48d"></a>The “<span class="quote">:22</span>” identifies the port number to connect to the server
+on.  The default port is 22, so you only need to specify a colon and port
+number if you're <span class="emphasis"><em>not</em></span> using port 22.</p></li>
+<li><p><a name="x_48e"></a>The remainder of the URL is the local path to the repository on the server.</p></li>
+</ol></div>
+<p><a name="x_48f"></a>There's plenty of scope for confusion with the path component of ssh URLs,
+as there is no standard way for tools to interpret it.  Some programs behave
+differently than others when dealing with these paths. This isn't an ideal
+situation, but it's unlikely to change.  Please read the following
+paragraphs carefully.</p>
+<p><a name="x_490"></a>Mercurial treats the path to a repository on the server as relative to the
+remote user's home directory.  For example, if user <code class="literal">foo</code>
+on the server has a home directory of <code class="filename">/home/foo</code>, then an ssh URL that contains a path
+component of <code class="filename">bar</code>
+<span class="emphasis"><em>really</em></span> refers to the directory <code class="filename">/home/foo/bar</code>.</p>
+<p><a name="x_491"></a>If you want to specify a path relative to another user's home directory, you
+can use a path that starts with a tilde character followed by the user's
+name (let's call them <code class="literal">otheruser</code>), like this.</p>
+<pre class="programlisting">ssh://server/~otheruser/hg/repo</pre>
+<p><a name="x_492"></a>And if you really want to specify an <span class="emphasis"><em>absolute</em></span> path on
+the server, begin the path component with two slashes, as in this example.</p>
+<pre class="programlisting">ssh://server//absolute/path</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516414"></a>5.5.2. 为你的系统寻找 ssh 客户端</h3></div></div></div>
+<p><a name="x_493"></a>Almost every Unix-like system comes with OpenSSH preinstalled.  If you're
+using such a system, run <code class="literal">which ssh</code> to find out if the
+<span class="command"><strong>ssh</strong></span> command is installed (it's usually in <code class="filename">/usr/bin</code>).  In the unlikely event that it isn't
+present, take a look at your system documentation to figure out how to
+install it.</p>
+<p><a name="x_494"></a>On Windows, you'll first need to download a suitable ssh client.  There are
+two alternatives.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_495"></a>Simon Tatham's excellent PuTTY package [<span class="citation">web:putty</span>]
+provides a complete suite of ssh client commands.</p></li>
+<li><p><a name="x_496"></a>If you have a high tolerance for pain, you can use the Cygwin port of
+OpenSSH.</p></li>
+</ul></div>
+<p><a name="x_497"></a>In either case, you'll need to edit your <code class="filename">hg.ini</code> file to tell Mercurial where to find the
+actual client command.  For example, if you're using PuTTY, you'll need to
+use the <span class="command"><strong>plink</strong></span> command as a command-line ssh client.</p>
+<pre class="programlisting">[ui]
+ssh = C:/path/to/plink.exe -ssh -i "C:/path/to/my/private/key"</pre>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_498"></a>  The path to <span class="command"><strong>plink</strong></span> shouldn't contain any whitespace
+characters, or Mercurial may not be able to run it correctly (so putting it
+in <code class="filename">C:\Program Files</code> is probably not a
+good idea).</p></td></tr>
+</table></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516532"></a>5.5.3. 产生密钥对</h3></div></div></div>
+<p><a name="x_499"></a>To avoid the need to repetitively type a password every time you need to use
+your ssh client, I recommend generating a key pair.  On a Unix-like system,
+the <span class="command"><strong>ssh-keygen</strong></span> command will do the trick. On Windows, if
+you're using PuTTY, the <span class="command"><strong>puttygen</strong></span> command is what you'll
+need.</p>
+<p><a name="x_49a"></a>When you generate a key pair, it's usually <span class="emphasis"><em>highly</em></span>
+advisable to protect it with a passphrase.  (The only time that you might
+not want to do this is when you're using the ssh protocol for automated
+tasks on a secure network.)</p>
+<p><a name="x_49b"></a>Simply generating a key pair isn't enough, however.  You'll need to add the
+public key to the set of authorised keys for whatever user you're logging in
+remotely as.  For servers using OpenSSH (the vast majority), this will mean
+adding the public key to a list in a file called <code class="filename">authorized_keys</code> in their <code class="filename">.ssh</code> directory.</p>
+<p><a name="x_49c"></a>On a Unix-like system, your public key will have a <code class="filename">.pub</code>
+extension.  If you're using <span class="command"><strong>puttygen</strong></span> on Windows, you can
+save the public key to a file of your choosing, or paste it from the window
+it's displayed in straight into the <code class="filename">authorized_keys</code> file.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516629"></a>5.5.4. 使用认证代理</h3></div></div></div>
+<p><a name="x_49d"></a>An authentication agent is a daemon that stores passphrases in memory (so it
+will forget passphrases if you log out and log back in again). An ssh client
+will notice if it's running, and query it for a passphrase.  If there's no
+authentication agent running, or the agent doesn't store the necessary
+passphrase, you'll have to type your passphrase every time Mercurial tries
+to communicate with a server on your behalf (e.g. whenever you pull or push
+changes).</p>
+<p><a name="x_49e"></a>The downside of storing passphrases in an agent is that it's possible for a
+well-prepared attacker to recover the plain text of your passphrases, in
+some cases even if your system has been power-cycled. You should make your
+own judgment as to whether this is an acceptable risk.  It certainly saves a
+lot of repeated typing.</p>
+<p><a name="x_49f"></a>On Unix-like systems, the agent is called <span class="command"><strong>ssh-agent</strong></span>, and
+it's often run automatically for you when you log in.  You'll need to use
+the <span class="command"><strong>ssh-add</strong></span> command to add passphrases to the agent's
+store.  On Windows, if you're using PuTTY, the <span class="command"><strong>pageant</strong></span>
+command acts as the agent.  It adds an icon to your system tray that will
+let you manage stored passphrases.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id516688"></a>5.5.5. 正确配置服务器端</h3></div></div></div>
+<p><a name="x_4a0"></a>Because ssh can be fiddly to set up if you're new to it, there's a variety
+of things that can go wrong.  Add Mercurial on top, and there's plenty more
+scope for head-scratching.  Most of these potential problems occur on the
+server side, not the client side.  The good news is that once you've gotten
+a configuration working, it will usually continue to work indefinitely.</p>
+<p><a name="x_4a1"></a>Before you try using Mercurial to talk to an ssh server, it's best to make
+sure that you can use the normal <span class="command"><strong>ssh</strong></span> or
+<span class="command"><strong>putty</strong></span> command to talk to the server first.  If you run
+into problems with using these commands directly, Mercurial surely won't
+work.  Worse, it will obscure the underlying problem.  Any time you want to
+debug ssh-related Mercurial problems, you should drop back to making sure
+that plain ssh client commands work first, <span class="emphasis"><em>before</em></span> you
+worry about whether there's a problem with Mercurial.</p>
+<p><a name="x_4a2"></a>The first thing to be sure of on the server side is that you can actually
+log in from another machine at all.  If you can't use <span class="command"><strong>ssh</strong></span>
+or <span class="command"><strong>putty</strong></span> to log in, the error message you get may give
+you a few hints as to what's wrong.  The most common problems are as
+follows.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4a3"></a>If you get a “<span class="quote">connection refused</span>” error, either there isn't an
+SSH daemon running on the server at all, or it's inaccessible due to
+firewall configuration.</p></li>
+<li><p><a name="x_4a4"></a>If you get a “<span class="quote">no route to host</span>” error, you either have an
+incorrect address for the server or a seriously locked down firewall that
+won't admit its existence at all.</p></li>
+<li><p><a name="x_4a5"></a>If you get a “<span class="quote">permission denied</span>” error, you may have mistyped
+the username on the server, or you could have mistyped your key's passphrase
+or the remote user's password.</p></li>
+</ul></div>
+<p><a name="x_4a6"></a>In summary, if you're having trouble talking to the server's ssh daemon,
+first make sure that one is running at all.  On many systems it will be
+installed, but disabled, by default.  Once you're done with this step, you
+should then check that the server's firewall is configured to allow incoming
+connections on the port the ssh daemon is listening on (usually 22).  Don't
+worry about more exotic possibilities for misconfiguration until you've
+checked these two first.</p>
+<p><a name="x_4a7"></a>If you're using an authentication agent on the client side to store
+passphrases for your keys, you ought to be able to log into the server
+without being prompted for a passphrase or a password.  If you're prompted
+for a passphrase, there are a few possible culprits.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4a8"></a>You might have forgotten to use <span class="command"><strong>ssh-add</strong></span> or
+<span class="command"><strong>pageant</strong></span> to store the passphrase.</p></li>
+<li><p><a name="x_4a9"></a>You might have stored the passphrase for the wrong key.</p></li>
+</ul></div>
+<p><a name="x_4aa"></a>If you're being prompted for the remote user's password, there are another
+few possible problems to check.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4ab"></a>Either the user's home directory or their <code class="filename">.ssh</code> directory might have excessively liberal
+permissions.  As a result, the ssh daemon will not trust or read their
+<code class="filename">authorized_keys</code> file.  For example, a
+group-writable home or <code class="filename">.ssh</code> directory will often cause this symptom.</p></li>
+<li><p><a name="x_4ac"></a>The user's <code class="filename">authorized_keys</code> file may have
+a problem. If anyone other than the user owns or can write to that file, the
+ssh daemon will not trust or read it.</p></li>
+</ul></div>
+<p><a name="x_4ad"></a>In the ideal world, you should be able to run the following command
+successfully, and it should print exactly one line of output, the current
+date and time.</p>
+<pre class="programlisting">ssh myserver date</pre>
+<p><a name="x_4ae"></a>If, on your server, you have login scripts that print banners or other junk
+even when running non-interactive commands like this, you should fix them
+before you continue, so that they only print output if they're run
+interactively.  Otherwise these banners will at least clutter up Mercurial's
+output.  Worse, they could potentially cause problems with running Mercurial
+commands remotely.  Mercurial makes tries to detect and ignore banners in
+non-interactive <span class="command"><strong>ssh</strong></span> sessions, but it is not foolproof.
+(If you're editing your login scripts on your server, the usual way to see
+if a login script is running in an interactive shell is to check the return
+code from the command <code class="literal">tty -s</code>.)</p>
+<p><a name="x_4af"></a>Once you've verified that plain old ssh is working with your server, the
+next step is to ensure that Mercurial runs on the server.  The following
+command should run successfully:</p>
+<pre class="programlisting">ssh myserver hg version</pre>
+<p><a name="x_4b0"></a>If you see an error message instead of normal <span class="command"><strong>hg
+version</strong></span> output, this is usually because you haven't installed
+Mercurial to <code class="filename">/usr/bin</code>.  Don't worry
+if this is the case; you don't need to do that.  But you should check for a
+few possible problems.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4b1"></a>Is Mercurial really installed on the server at all? I know this sounds
+trivial, but it's worth checking!</p></li>
+<li><p><a name="x_4b2"></a>Maybe your shell's search path (usually set via the <code class="envar">PATH</code>
+environment variable) is simply misconfigured.</p></li>
+<li><p><a name="x_4b3"></a>Perhaps your <code class="envar">PATH</code> environment variable is only being set to
+point to the location of the <span class="command"><strong>hg</strong></span> executable if the login
+session is interactive.  This can happen if you're setting the path in the
+wrong shell login script.  See your shell's documentation for details.</p></li>
+<li><p><a name="x_4b4"></a>The <code class="envar">PYTHONPATH</code> environment variable may need to contain the
+path to the Mercurial Python modules.  It might not be set at all; it could
+be incorrect; or it may be set only if the login is interactive.</p></li>
+</ul></div>
+<p><a name="x_4b5"></a>If you can run <span class="command"><strong>hg version</strong></span> over an ssh
+connection, well done! You've got the server and client sorted out.  You
+should now be able to use Mercurial to access repositories hosted by that
+username on that server.  If you run into problems with Mercurial and ssh at
+this point, try using the <code class="option">--debug</code>
+option to get a clearer picture of what's going on.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id517084"></a>5.5.6. 通过 ssh 使用压缩</h3></div></div></div>
+<p><a name="x_4b6"></a>Mercurial does not compress data when it uses the ssh protocol, because the
+ssh protocol can transparently compress data.  However, the default
+behaviour of ssh clients is <span class="emphasis"><em>not</em></span> to request compression.</p>
+<p><a name="x_4b7"></a>Over any network other than a fast LAN (even a wireless network), using
+compression is likely to significantly speed up Mercurial's network
+operations.  For example, over a WAN, someone measured compression as
+reducing the amount of time required to clone a particularly large
+repository from 51 minutes to 17 minutes.</p>
+<p><a name="x_4b8"></a>Both <span class="command"><strong>ssh</strong></span> and <span class="command"><strong>plink</strong></span> accept a <code class="option">-C</code> option which turns on compression.  You can
+easily edit your <code class="filename">~/.hgrc</code> to enable
+compression for all of Mercurial's uses of the ssh protocol.</p>
+<pre class="programlisting">[ui]
+ssh = ssh -C</pre>
+<p><a name="x_4b9"></a>If you use <span class="command"><strong>ssh</strong></span>, you can configure it to always use
+compression when talking to your server.  To do this, edit your <code class="filename">.ssh/config</code> file (which may not yet exist), as
+follows.</p>
+<pre class="programlisting">Host hg
+  Compression yes
+  HostName hg.example.com</pre>
+<p><a name="x_4ba"></a>This defines an alias, <code class="literal">hg</code>.  When you use it on the
+<span class="command"><strong>ssh</strong></span> command line or in a Mercurial
+<code class="literal">ssh</code>-protocol URL, it will cause <span class="command"><strong>ssh</strong></span> to
+connect to <code class="literal">hg.example.com</code> and use compression.  This
+gives you both a shorter name to type and compression, each of which is a
+good thing in its own right.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:collab:cgi"></a>5.6. 使用 CGI 通过 HTTP 提供服务</h2></div></div></div>
+<p><a name="x_4bb"></a>Depending on how ambitious you are, configuring Mercurial's CGI interface
+can take anything from a few moments to several hours.</p>
+<p><a name="x_4bc"></a>We'll begin with the simplest of examples, and work our way towards a more
+complex configuration.  Even for the most basic case, you're almost
+certainly going to need to read and modify your web server's configuration.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_4bd"></a>  Configuring a web server is a complex, fiddly, and highly system-dependent
+activity.  I can't possibly give you instructions that will cover anything
+like all of the cases you will encounter. Please use your discretion and
+judgment in following the sections below.  Be prepared to make plenty of
+mistakes, and to spend a lot of time reading your server's error logs.</p></td></tr>
+</table></div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id517260"></a>5.6.1. Web 服务器配置检查表</h3></div></div></div>
+<p><a name="x_4be"></a>Before you continue, do take a few moments to check a few aspects of your
+system's setup.</p>
+<div class="orderedlist"><ol type="1">
+<li><p><a name="x_4bf"></a>Do you have a web server installed at all? Mac OS X ships with Apache, but
+many other systems may not have a web server installed.</p></li>
+<li><p><a name="x_4c0"></a>If you have a web server installed, is it actually running? On most systems,
+even if one is present, it will be disabled by default.</p></li>
+<li><p><a name="x_4c1"></a>Is your server configured to allow you to run CGI programs in the directory
+where you plan to do so? Most servers default to explicitly disabling the
+ability to run CGI programs.</p></li>
+</ol></div>
+<p><a name="x_4c2"></a>If you don't have a web server installed, and don't have substantial
+experience configuring Apache, you should consider using the
+<code class="literal">lighttpd</code> web server instead of Apache.  Apache has a
+well-deserved reputation for baroque and confusing configuration. While
+<code class="literal">lighttpd</code> is less capable in some ways than Apache, most
+of these capabilities are not relevant to serving Mercurial repositories.
+And <code class="literal">lighttpd</code> is undeniably <span class="emphasis"><em>much</em></span>
+easier to get started with than Apache.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id517345"></a>5.6.2. 基本 CGI 配置</h3></div></div></div>
+<p><a name="x_4c3"></a>On Unix-like systems, it's common for users to have a subdirectory named
+something like <code class="filename">public_html</code> in their
+home directory, from which they can serve up web pages.  A file named
+<code class="filename">foo</code> in this directory will be accessible at a URL of
+the form <code class="literal">http://www.example.com/username/foo</code>.</p>
+<p><a name="x_4c4"></a>To get started, find the <code class="filename">hgweb.cgi</code>
+script that should be present in your Mercurial installation.  If you can't
+quickly find a local copy on your system, simply download one from the
+master Mercurial repository at <a class="ulink" href="http://www.selenic.com/repo/hg/raw-file/tip/hgweb.cgi" target="_top">http://www.selenic.com/repo/hg/raw-file/tip/hgweb.cgi</a>.</p>
+<p><a name="x_4c5"></a>You'll need to copy this script into your <code class="filename">public_html</code> directory, and ensure that it's
+executable.</p>
+<pre class="programlisting">cp .../hgweb.cgi ~/public_html
+chmod 755 ~/public_html/hgweb.cgi</pre>
+<p><a name="x_4c6"></a>The <code class="literal">755</code> argument to <span class="command"><strong>chmod</strong></span> is a little
+more general than just making the script executable: it ensures that the
+script is executable by anyone, and that “<span class="quote">group</span>” and
+“<span class="quote">other</span>” write permissions are <span class="emphasis"><em>not</em></span> set.  If
+you were to leave those write permissions enabled, Apache's
+<code class="literal">suexec</code> subsystem would likely refuse to execute the
+script.  In fact, <code class="literal">suexec</code> also insists that the
+<span class="emphasis"><em>directory</em></span> in which the script resides must not be
+writable by others.</p>
+<pre class="programlisting">chmod 755 ~/public_html</pre>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="sec:collab:wtf"></a>5.6.2.1. 什么<span class="emphasis"><em>可能</em></span>会出错?</h4></div></div></div>
+<p><a name="x_4c7"></a>Once you've copied the CGI script into place, go into a web browser, and try
+to open the URL <a class="ulink" href="http://myhostname/%20myuser/hgweb.cgi" target="_top">http://myhostname/ myuser/hgweb.cgi</a>,
+<span class="emphasis"><em>but</em></span> brace yourself for instant failure.  There's a high
+probability that trying to visit this URL will fail, and there are many
+possible reasons for this.  In fact, you're likely to stumble over almost
+every one of the possible errors below, so please read carefully.  The
+following are all of the problems I ran into on a system running Fedora 7,
+with a fresh installation of Apache, and a user account that I created
+specially to perform this exercise.</p>
+<p><a name="x_4c8"></a>Your web server may have per-user directories disabled.  If you're using
+Apache, search your config file for a <code class="literal">UserDir</code> directive.
+If there's none present, per-user directories will be disabled.  If one
+exists, but its value is <code class="literal">disabled</code>, then per-user
+directories will be disabled.  Otherwise, the string after
+<code class="literal">UserDir</code> gives the name of the subdirectory that Apache
+will look in under your home directory, for example <code class="filename">public_html</code>.</p>
+<p><a name="x_4c9"></a>Your file access permissions may be too restrictive.  The web server must be
+able to traverse your home directory and directories under your <code class="filename">public_html</code> directory, and read files under the
+latter too.  Here's a quick recipe to help you to make your permissions more
+appropriate.</p>
+<pre class="programlisting">chmod 755 ~
+find ~/public_html -type d -print0 | xargs -0r chmod 755
+find ~/public_html -type f -print0 | xargs -0r chmod 644</pre>
+<p><a name="x_4ca"></a>The other possibility with permissions is that you might get a completely
+empty window when you try to load the script.  In this case, it's likely
+that your access permissions are <span class="emphasis"><em>too permissive</em></span>.
+Apache's <code class="literal">suexec</code> subsystem won't execute a script that's
+group- or world-writable, for example.</p>
+<p><a name="x_4cb"></a>Your web server may be configured to disallow execution of CGI programs in
+your per-user web directory.  Here's Apache's default per-user configuration
+from my Fedora system.</p>
+<pre class="programlisting">&lt;Directory /home/*/public_html&gt;
+  AllowOverride FileInfo AuthConfig Limit
+  Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+  &lt;Limit GET POST OPTIONS&gt;
+    Order allow,deny
+    Allow from all
+  &lt;/Limit&gt;
+  &lt;LimitExcept GET POST OPTIONS&gt;
+    Order deny,allow Deny from all
+  &lt;/LimitExcept&gt;
+&lt;/Directory&gt;</pre>
+<p><a name="x_4cc"></a>If you find a similar-looking <code class="literal">Directory</code> group in your
+Apache configuration, the directive to look at inside it is
+<code class="literal">Options</code>. Add <code class="literal">ExecCGI</code> to the end of
+this list if it's missing, and restart the web server.</p>
+<p><a name="x_4cd"></a>If you find that Apache serves you the text of the CGI script instead of
+executing it, you may need to either uncomment (if already present) or add a
+directive like this.</p>
+<pre class="programlisting">AddHandler cgi-script .cgi</pre>
+<p><a name="x_4ce"></a>The next possibility is that you might be served with a colourful Python
+backtrace claiming that it can't import a
+<code class="literal">mercurial</code>-related module.  This is actually progress! The
+server is now capable of executing your CGI script.  This error is only
+likely to occur if you're running a private installation of Mercurial,
+instead of a system-wide version.  Remember that the web server runs the CGI
+program without any of the environment variables that you take for granted
+in an interactive session.  If this error happens to you, edit your copy of
+<code class="filename">hgweb.cgi</code> and follow the directions
+inside it to correctly set your <code class="envar">PYTHONPATH</code> environment
+variable.</p>
+<p><a name="x_4cf"></a>Finally, you are <span class="emphasis"><em>certain</em></span> to by served with another
+colourful Python backtrace: this one will complain that it can't find
+<code class="filename">/path/to/repository</code>.  Edit your
+<code class="filename">hgweb.cgi</code> script and replace the
+<code class="filename">/path/to/repository</code> string with the
+complete path to the repository you want to serve up.</p>
+<p><a name="x_4d0"></a>At this point, when you try to reload the page, you should be presented with
+a nice HTML view of your repository's history.  Whew!</p>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id517728"></a>5.6.2.2. 配置 lighttpd</h4></div></div></div>
+<p><a name="x_4d1"></a>To be exhaustive in my experiments, I tried configuring the increasingly
+popular <code class="literal">lighttpd</code> web server to serve the same repository
+as I described with Apache above.  I had already overcome all of the
+problems I outlined with Apache, many of which are not server-specific.  As
+a result, I was fairly sure that my file and directory permissions were
+good, and that my <code class="filename">hgweb.cgi</code> script was
+properly edited.</p>
+<p><a name="x_4d2"></a>Once I had Apache running, getting <code class="literal">lighttpd</code> to serve the
+repository was a snap (in other words, even if you're trying to use
+<code class="literal">lighttpd</code>, you should read the Apache section).  I first
+had to edit the <code class="literal">mod_access</code> section of its config file to
+enable <code class="literal">mod_cgi</code> and <code class="literal">mod_userdir</code>, both
+of which were disabled by default on my system.  I then added a few lines to
+the end of the config file, to configure these modules.</p>
+<pre class="programlisting">userdir.path = "public_html"
+cgi.assign = (".cgi" =&gt; "" )</pre>
+<p><a name="x_4d3"></a>With this done, <code class="literal">lighttpd</code> ran immediately for me.  If I
+had configured <code class="literal">lighttpd</code> before Apache, I'd almost
+certainly have run into many of the same system-level configuration problems
+as I did with Apache.  However, I found <code class="literal">lighttpd</code> to be
+noticeably easier to configure than Apache, even though I've used Apache for
+over a decade, and this was my first exposure to
+<code class="literal">lighttpd</code>.</p>
+</div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id517840"></a>5.6.3. 使用一个 CGI 脚本共享多个版本库</h3></div></div></div>
+<p><a name="x_4d4"></a>The <code class="filename">hgweb.cgi</code> script only lets you
+publish a single repository, which is an annoying restriction.  If you want
+to publish more than one without wracking yourself with multiple copies of
+the same script, each with different names, a better choice is to use the
+<code class="filename">hgwebdir.cgi</code> script.</p>
+<p><a name="x_4d5"></a>The procedure to configure <code class="filename">hgwebdir.cgi</code>
+is only a little more involved than for <code class="filename">hgweb.cgi</code>.  First, you must obtain a copy of the
+script.  If you don't have one handy, you can download a copy from the
+master Mercurial repository at <a class="ulink" href="http://www.selenic.com/repo/hg/raw-file/tip/hgwebdir.cgi" target="_top">http://www.selenic.com/repo/hg/raw-file/tip/hgwebdir.cgi</a>.</p>
+<p><a name="x_4d6"></a>You'll need to copy this script into your <code class="filename">public_html</code> directory, and ensure that it's
+executable.</p>
+<pre class="programlisting">cp .../hgwebdir.cgi ~/public_html
+chmod 755 ~/public_html ~/public_html/hgwebdir.cgi</pre>
+<p><a name="x_4d7"></a>With basic configuration out of the way, try to visit <a class="ulink" href="http://myhostname/%20myuser/hgwebdir.cgi" target="_top">http://myhostname/
+myuser/hgwebdir.cgi</a> in your browser.  It should display an empty
+list of repositories.  If you get a blank window or error message, try
+walking through the list of potential problems in <a class="xref" href="collaborating-with-other-people.html#sec:collab:wtf" title="5.6.2.1. 什么可能会出错?">第 5.6.2.1 节 “什么可能会出错?”</a>.</p>
+<p><a name="x_4d8"></a>The <code class="filename">hgwebdir.cgi</code> script relies on an
+external configuration file.  By default, it searches for a file named
+<code class="filename">hgweb.config</code> in the same directory as
+itself.  You'll need to create this file, and make it world-readable.  The
+format of the file is similar to a Windows “<span class="quote">ini</span>” file, as
+understood by Python's <code class="literal">ConfigParser</code>
+[<span class="citation">web:configparser</span>] module.</p>
+<p><a name="x_4d9"></a>The easiest way to configure <code class="filename">hgwebdir.cgi</code> is with a section named
+<code class="literal">collections</code>.  This will automatically publish
+<span class="emphasis"><em>every</em></span> repository under the directories you name.  The
+section should look like this:</p>
+<pre class="programlisting">[collections]
+/my/root = /my/root</pre>
+<p><a name="x_4da"></a>Mercurial interprets this by looking at the directory name on the
+<span class="emphasis"><em>right</em></span> hand side of the
+“<span class="quote"><code class="literal">=</code></span>” sign; finding repositories in that
+directory hierarchy; and using the text on the <span class="emphasis"><em>left</em></span> to
+strip off matching text from the names it will actually list in the web
+interface.  The remaining component of a path after this stripping has
+occurred is called a “<span class="quote">virtual path</span>”.</p>
+<p><a name="x_4db"></a>Given the example above, if we have a repository whose local path is
+<code class="filename">/my/root/this/repo</code>, the CGI script
+will strip the leading <code class="filename">/my/root</code> from
+the name, and publish the repository with a virtual path of <code class="filename">this/repo</code>.  If the base URL for our CGI script
+is <a class="ulink" href="http://myhostname/%20myuser/hgwebdir.cgi" target="_top">http://myhostname/
+myuser/hgwebdir.cgi</a>, the complete URL for that repository will be
+<a class="ulink" href="http://myhostname/%20myuser/hgwebdir.cgi/this/repo" target="_top">http://myhostname/
+myuser/hgwebdir.cgi/this/repo</a>.</p>
+<p><a name="x_4dc"></a>If we replace <code class="filename">/my/root</code> on the left
+hand side of this example with <code class="filename">/my</code>,
+then <code class="filename">hgwebdir.cgi</code> will only strip off
+<code class="filename">/my</code> from the repository name, and
+will give us a virtual path of <code class="filename">root/this/repo</code> instead of <code class="filename">this/repo</code>.</p>
+<p><a name="x_4dd"></a>The <code class="filename">hgwebdir.cgi</code> script will recursively
+search each directory listed in the <code class="literal">collections</code> section
+of its configuration file, but it will <code class="literal">not</code> recurse into
+the repositories it finds.</p>
+<p><a name="x_4de"></a>The <code class="literal">collections</code> mechanism makes it easy to publish many
+repositories in a “<span class="quote">fire and forget</span>” manner.  You only need to
+set up the CGI script and configuration file one time.  Afterwards, you can
+publish or unpublish a repository at any time by simply moving it into, or
+out of, the directory hierarchy in which you've configured <code class="filename">hgwebdir.cgi</code> to look.</p>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id518204"></a>5.6.3.1. 明确指出要发布的版本库</h4></div></div></div>
+<p><a name="x_4df"></a>In addition to the <code class="literal">collections</code> mechanism, the <code class="filename">hgwebdir.cgi</code> script allows you to publish a
+specific list of repositories.  To do so, create a <code class="literal">paths</code>
+section, with contents of the following form.</p>
+<pre class="programlisting">[paths]
+repo1 = /my/path/to/some/repo
+repo2 = /some/path/to/another</pre>
+<p><a name="x_4e0"></a>In this case, the virtual path (the component that will appear in a URL) is
+on the left hand side of each definition, while the path to the repository
+is on the right.  Notice that there does not need to be any relationship
+between the virtual path you choose and the location of a repository in your
+filesystem.</p>
+<p><a name="x_4e1"></a>If you wish, you can use both the <code class="literal">collections</code> and
+<code class="literal">paths</code> mechanisms simultaneously in a single configuration
+file.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_4e2"></a>  If multiple repositories have the same virtual path, <code class="filename">hgwebdir.cgi</code> will not report an error.  Instead,
+it will behave unpredictably.</p></td></tr>
+</table></div>
+</div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id518295"></a>5.6.4. 下载源代码档案包</h3></div></div></div>
+<p><a name="x_4e3"></a>Mercurial's web interface lets users download an archive of any revision.
+This archive will contain a snapshot of the working directory as of that
+revision, but it will not contain a copy of the repository data.</p>
+<p><a name="x_4e4"></a>By default, this feature is not enabled.  To enable it, you'll need to add
+an <code class="envar">allow_archive</code> item to the <code class="literal">web</code> section of your <code class="filename">~/.hgrc</code>.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id518340"></a>5.6.5. Web 配置选项</h3></div></div></div>
+<p><a name="x_4e5"></a>Mercurial's web interfaces (the <span class="command"><strong>hg serve</strong></span>
+command, and the <code class="filename">hgweb.cgi</code> and <code class="filename">hgwebdir.cgi</code> scripts) have a number of
+configuration options that you can set.  These belong in a section named
+<code class="literal">web</code>.</p>
+<div class="itemizedlist"><ul type="disc">
+<li>
+<p><a name="x_4e6"></a><code class="envar">allow_archive</code>: Determines which (if any)
+archive download mechanisms Mercurial supports.  If you enable this feature,
+users of the web interface will be able to download an archive of whatever
+revision of a repository they are viewing. To enable the archive feature,
+this item must take the form of a sequence of words drawn from the list
+below.</p>
+<div class="itemizedlist"><ul type="circle">
+<li><p><a name="x_4e7"></a><code class="literal">bz2</code>: A <span class="command"><strong>tar</strong></span> archive, compressed using
+<code class="literal">bzip2</code> compression.  This has the best compression ratio,
+but uses the most CPU time on the server.</p></li>
+<li><p><a name="x_4e8"></a><code class="literal">gz</code>: A <span class="command"><strong>tar</strong></span> archive, compressed using
+<code class="literal">gzip</code> compression.</p></li>
+<li><p><a name="x_4e9"></a><code class="literal">zip</code>: A <span class="command"><strong>zip</strong></span> archive, compressed using
+LZW compression.  This format has the worst compression ratio, but is widely
+used in the Windows world.</p></li>
+</ul></div>
+<p><a name="x_4ea"></a>  If you provide an empty list, or don't have an <code class="envar">allow_archive</code> entry at all, this feature will be
+disabled.  Here is an example of how to enable all three supported formats.</p>
+<pre class="programlisting">[web]
+allow_archive = bz2 gz zip</pre>
+</li>
+<li><p><a name="x_4eb"></a><code class="envar">allowpull</code>: Boolean.  Determines whether
+the web interface allows remote users to <span class="command"><strong>hg
+pull</strong></span> and <span class="command"><strong>hg clone</strong></span> this repository
+over HTTP.  If set to <code class="literal">no</code> or <code class="literal">false</code>,
+only the “<span class="quote">human-oriented</span>” portion of the web interface is
+available.</p></li>
+<li><p><a name="x_4ec"></a><code class="envar">contact</code>: String.  A free-form (but
+preferably brief) string identifying the person or group in charge of the
+repository.  This often contains the name and email address of a person or
+mailing list.  It often makes sense to place this entry in a repository's
+own <code class="filename">.hg/hgrc</code> file, but it can make sense
+to use in a global <code class="filename">~/.hgrc</code> if every
+repository has a single maintainer.</p></li>
+<li><p><a name="x_4ed"></a><code class="envar">maxchanges</code>: Integer.  The default maximum
+number of changesets to display in a single page of output.</p></li>
+<li><p><a name="x_4ee"></a><code class="envar">maxfiles</code>: Integer.  The default maximum
+number of modified files to display in a single page of output.</p></li>
+<li><p><a name="x_4ef"></a><code class="envar">stripes</code>: Integer.  If the web interface
+displays alternating “<span class="quote">stripes</span>” to make it easier to visually
+align rows when you are looking at a table, this number controls the number
+of rows in each stripe.</p></li>
+<li>
+<p><a name="x_4f0"></a><code class="envar">style</code>: Controls the template Mercurial
+uses to display the web interface.  Mercurial ships with two web templates,
+named <code class="literal">default</code> and <code class="literal">gitweb</code> (the latter
+is much more visually attractive).  You can also specify a custom template
+of your own; see <a class="xref" href="customizing-the-output-of-mercurial.html" title="第 10 章 定制 Mercurial 的输出">第 10 章 <i>定制 Mercurial 的输出</i></a> for details. Here, you can
+see how to enable the <code class="literal">gitweb</code> style.</p>
+<pre class="programlisting">[web]
+style = gitweb</pre>
+</li>
+<li><p><a name="x_4f1"></a><code class="envar">templates</code>: Path.  The directory in which
+to search for template files.  By default, Mercurial searches in the
+directory in which it was installed.</p></li>
+</ul></div>
+<p><a name="x_4f2"></a>If you are using <code class="filename">hgwebdir.cgi</code>, you can
+place a few configuration items in a <code class="literal">web</code>
+section of the <code class="filename">hgweb.config</code> file instead
+of a <code class="filename">~/.hgrc</code> file, for convenience.
+These items are <code class="envar">motd</code> and <code class="envar">style</code>.</p>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id518746"></a>5.6.5.1. 针对单个版本库的选项</h4></div></div></div>
+<p><a name="x_4f3"></a>A few <code class="literal">web</code> configuration items ought to be
+placed in a repository's local <code class="filename">.hg/hgrc</code>,
+rather than a user's or global <code class="filename">~/.hgrc</code>.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4f4"></a><code class="envar">description</code>: String.  A free-form (but
+preferably brief) string that describes the contents or purpose of the
+repository.</p></li>
+<li><p><a name="x_4f5"></a><code class="envar">name</code>: String.  The name to use for the
+repository in the web interface.  This overrides the default name, which is
+the last component of the repository's path.</p></li>
+</ul></div>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id518817"></a>5.6.5.2. 命令 <span class="command"><strong>hg serve</strong></span> 的选项</h4></div></div></div>
+<p><a name="x_4f6"></a>Some of the items in the <code class="literal">web</code> section of a
+<code class="filename">~/.hgrc</code> file are only for use with the
+<span class="command"><strong>hg serve</strong></span> command.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_4f7"></a><code class="envar">accesslog</code>: Path.  The name of a file into
+which to write an access log.  By default, the <span class="command"><strong>hg
+serve</strong></span> command writes this information to standard output, not to a
+file.  Log entries are written in the standard “<span class="quote">combined</span>” file
+format used by almost all web servers.</p></li>
+<li><p><a name="x_4f8"></a><code class="envar">address</code>: String.  The local address on
+which the server should listen for incoming connections.  By default, the
+server listens on all addresses.</p></li>
+<li><p><a name="x_4f9"></a><code class="envar">errorlog</code>: Path.  The name of a file into
+which to write an error log.  By default, the <span class="command"><strong>hg
+serve</strong></span> command writes this information to standard error, not to a
+file.</p></li>
+<li><p><a name="x_4fa"></a><code class="envar">ipv6</code>: Boolean.  Whether to use the IPv6
+protocol. By default, IPv6 is not used.</p></li>
+<li><p><a name="x_4fb"></a><code class="envar">port</code>: Integer.  The TCP port number on
+which the server should listen.  The default port number used is 8000.</p></li>
+</ul></div>
+</div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id518962"></a>5.6.5.3. 选择正确的 <code class="filename"> ~/.hgrc</code> 文件增加到 <code class="literal">web</code> 条目</h4></div></div></div>
+<p><a name="x_4fc"></a>It is important to remember that a web server like Apache or
+<code class="literal">lighttpd</code> will run under a user ID that is different to
+yours. CGI scripts run by your server, such as <code class="filename">hgweb.cgi</code>, will usually also run under that user
+ID.</p>
+<p><a name="x_4fd"></a>If you add <code class="literal">web</code> items to your own personal
+<code class="filename">~/.hgrc</code> file, CGI scripts won't read
+that <code class="filename">~/.hgrc</code> file.  Those settings will
+thus only affect the behaviour of the <span class="command"><strong>hg
+serve</strong></span> command when you run it.  To cause CGI scripts to see your
+settings, either create a <code class="filename">~/.hgrc</code> file
+in the home directory of the user ID that runs your web server, or add those
+settings to a system-wide <code class="filename">~/.hgrc</code> file.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="mercurial-in-daily-use.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="file-names-and-pattern-matching.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 4 章 Mercurial 的日常使用 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 6 章 文件名称与模式匹配</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

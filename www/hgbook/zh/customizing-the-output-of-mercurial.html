@@ -1,0 +1,674 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第 10 章 定制 Mercurial 的输出</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial 权威指南">
+<link rel="up" href="index.html" title="Mercurial 权威指南">
+<link rel="prev" href="handling-repository-events-with-hooks.html" title="第 9 章 使用钩子处理版本库事件">
+<link rel="next" href="managing-change-with-mercurial-queues.html" title="第 11 章 使用 MQ 管理修改">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">第 10 章 定制 Mercurial 的输出</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="handling-repository-events-with-hooks.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="managing-change-with-mercurial-queues.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:template"></a>第 10 章 定制 Mercurial 的输出</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#sec:style">10.1. 使用预定义的输出样式</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id534444">10.1.1. 设置默认样式</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#id534486">10.2. 支持样式和模版的命令</a></span></dt>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#id534548">10.3. 模版基础</a></span></dt>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#sec:template:keyword">10.4. 模版关键字</a></span></dt>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#sec:template:escape">10.5. 转义序列</a></span></dt>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#sec:template:filter">10.6. 通过过滤关键字来修改输出结果</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536104">10.6.1. 组合过滤器</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#id536178">10.7. 从模版到样式</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536202">10.7.1. 最简单的样式文件</a></span></dt>
+<dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536248">10.7.2. 样式文件语法</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="customizing-the-output-of-mercurial.html#id536355">10.8. 样式文件例子</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536368">10.8.1. 在样式文件中定位错误</a></span></dt>
+<dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536500">10.8.2. 版本库的唯一标识</a></span></dt>
+<dt><span class="sect2"><a href="customizing-the-output-of-mercurial.html#id536590">10.8.3. 模仿 Subversion 的输出</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p><a name="x_578"></a>Mercurial provides a powerful mechanism to let you control how it displays
+information.  The mechanism is based on templates.  You can use templates to
+generate specific output for a single command, or to customise the entire
+appearance of the built-in web interface.</p>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:style"></a>10.1. 使用预定义的输出样式</h2></div></div></div>
+<p><a name="x_579"></a>Packaged with Mercurial are some output styles that you can use
+immediately.  A style is simply a precanned template that someone wrote and
+installed somewhere that Mercurial can find.</p>
+<p><a name="x_57a"></a>Before we take a look at Mercurial's bundled styles, let's review its normal
+output.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1</code></strong>
+changeset:   1:9c012bbd3bb6
+tag:         mytag
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:28 2009 +0000
+summary:     added line to end of &lt;&lt;hello&gt;&gt; file.
+
+</pre>
+<p><a name="x_57b"></a>This is somewhat informative, but it takes up a lot of space—five lines of
+output per changeset.  The <code class="literal">compact</code> style reduces this to
+three lines, presented in a sparse manner.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log --style compact</code></strong>
+3[tip]   5c59bb2b090d   2009-03-31 06:55 +0000   bos
+  Added tag v0.1 for changeset d582729848dd
+
+2[v0.1]   d582729848dd   2009-03-31 06:55 +0000   bos
+  Added tag mytag for changeset 9c012bbd3bb6
+
+1[mytag]   9c012bbd3bb6   2009-03-31 06:55 +0000   bos
+  added line to end of &lt;&lt;hello&gt;&gt; file.
+
+0   44d9c7d72024   2009-03-31 06:55 +0000   bos
+  added hello
+
+</pre>
+<p><a name="x_57c"></a>The <code class="literal">changelog</code> style hints at the expressive power of
+Mercurial's templating engine.  This style attempts to follow the GNU
+Project's changelog guidelines[<span class="citation">web:changelog</span>].</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log --style changelog</code></strong>
+2009-03-31  Bryan O'Sullivan  &lt;bos@serpentine.com&gt;
+
+	* .hgtags:
+	Added tag v0.1 for changeset d582729848dd
+	[5c59bb2b090d] [tip]
+
+	* .hgtags:
+	Added tag mytag for changeset 9c012bbd3bb6
+	[d582729848dd] [v0.1]
+
+	* goodbye, hello:
+	added line to end of &lt;&lt;hello&gt;&gt; file.
+
+	in addition, added a file with the helpful name (at least i hope
+	that some might consider it so) of goodbye.
+	[9c012bbd3bb6] [mytag]
+
+	* hello:
+	added hello
+	[44d9c7d72024]
+
+</pre>
+<p><a name="x_57d"></a>You will not be shocked to learn that Mercurial's default output style is
+named <code class="literal">default</code>.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534444"></a>10.1.1. 设置默认样式</h3></div></div></div>
+<p><a name="x_57e"></a>You can modify the output style that Mercurial will use for every command by
+editing your <code class="filename">~/.hgrc</code> file, naming the
+style you would prefer to use.</p>
+<pre class="programlisting">[ui]
+style = compact</pre>
+<p><a name="x_57f"></a>If you write a style of your own, you can use it by either providing the
+path to your style file, or copying your style file into a location where
+Mercurial can find it (typically the <code class="literal">templates</code>
+subdirectory of your Mercurial install directory).</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id534486"></a>10.2. 支持样式和模版的命令</h2></div></div></div>
+<p><a name="x_580"></a>All of Mercurial's “<span class="quote"><code class="literal">log</code>-like</span>” commands let
+you use styles and templates: <span class="command"><strong>hg incoming</strong></span>,
+<span class="command"><strong>hg log</strong></span>, <span class="command"><strong>hg
+outgoing</strong></span>, and <span class="command"><strong>hg tip</strong></span>.</p>
+<p><a name="x_581"></a>As I write this manual, these are so far the only commands that support
+styles and templates.  Since these are the most important commands that need
+customisable output, there has been little pressure from the Mercurial user
+community to add style and template support to other commands.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id534548"></a>10.3. 模版基础</h2></div></div></div>
+<p><a name="x_582"></a>At its simplest, a Mercurial template is a piece of text.  Some of the text
+never changes, while other parts are <span class="emphasis"><em>expanded</em></span>, or
+replaced with new text, when necessary.</p>
+<p><a name="x_583"></a>Before we continue, let's look again at a simple example of Mercurial's
+normal output.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1</code></strong>
+changeset:   1:9c012bbd3bb6
+tag:         mytag
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:28 2009 +0000
+summary:     added line to end of &lt;&lt;hello&gt;&gt; file.
+
+</pre>
+<p><a name="x_584"></a>Now, let's run the same command, but using a template to change its output.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'i saw a changeset\n'</code></strong>
+i saw a changeset
+</pre>
+<p><a name="x_585"></a>The example above illustrates the simplest possible template; it's just a
+piece of static text, printed once for each changeset.  The <code class="option">--template</code> option to the <span class="command"><strong>hg log</strong></span> command tells Mercurial to use the given text
+as the template when printing each changeset.</p>
+<p><a name="x_586"></a>Notice that the template string above ends with the text
+“<span class="quote"><code class="literal">\n</code></span>”.  This is an <span class="emphasis"><em>escape
+sequence</em></span>, telling Mercurial to print a newline at the end of each
+template item.  If you omit this newline, Mercurial will run each piece of
+output together.  See <a class="xref" href="customizing-the-output-of-mercurial.html#sec:template:escape" title="10.5. 转义序列">第 10.5 节 “转义序列”</a> for more details
+of escape sequences.</p>
+<p><a name="x_587"></a>A template that prints a fixed string of text all the time isn't very
+useful; let's try something a bit more complex.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log --template 'i saw a changeset: {desc}\n'</code></strong>
+i saw a changeset: Added tag v0.1 for changeset d582729848dd
+i saw a changeset: Added tag mytag for changeset 9c012bbd3bb6
+i saw a changeset: added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some might consider it so) of goodbye.
+i saw a changeset: added hello
+</pre>
+<p><a name="x_588"></a>As you can see, the string “<span class="quote"><code class="literal">{desc}</code></span>” in the
+template has been replaced in the output with the description of each
+changeset.  Every time Mercurial finds text enclosed in curly braces
+(“<span class="quote"><code class="literal">{</code></span>” and
+“<span class="quote"><code class="literal">}</code></span>”), it will try to replace the braces and
+text with the expansion of whatever is inside.  To print a literal curly
+brace, you must escape it, as described in <a class="xref" href="customizing-the-output-of-mercurial.html#sec:template:escape" title="10.5. 转义序列">第 10.5 节 “转义序列”</a>.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:template:keyword"></a>10.4. 模版关键字</h2></div></div></div>
+<p><a name="x_589"></a>You can start writing simple templates immediately using the keywords below.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_58a"></a><code class="literal">author</code>: String.  The unmodified
+author of the changeset.</p></li>
+<li><p><a name="x_58b"></a><code class="literal">branches</code>: String.  The name of
+the branch on which the changeset was committed.  Will be empty if the
+branch name was <code class="literal">default</code>.</p></li>
+<li><p><a name="x_58c"></a><code class="literal">date</code>: Date information.  The date
+when the changeset was committed.  This is <span class="emphasis"><em>not</em></span>
+human-readable; you must pass it through a filter that will render it
+appropriately.  See <a class="xref" href="customizing-the-output-of-mercurial.html#sec:template:filter" title="10.6. 通过过滤关键字来修改输出结果">第 10.6 节 “通过过滤关键字来修改输出结果”</a> for more
+information on filters. The date is expressed as a pair of numbers.  The
+first number is a Unix UTC timestamp (seconds since January 1, 1970); the
+second is the offset of the committer's timezone from UTC, in seconds.</p></li>
+<li><p><a name="x_58d"></a><code class="literal">desc</code>: String.  The text of the
+changeset description.</p></li>
+<li><p><a name="x_58e"></a><code class="literal">files</code>: List of strings.  All
+files modified, added, or removed by this changeset.</p></li>
+<li><p><a name="x_58f"></a><code class="literal">file_adds</code>: List of strings.
+Files added by this changeset.</p></li>
+<li><p><a name="x_590"></a><code class="literal">file_dels</code>: List of strings.
+Files removed by this changeset.</p></li>
+<li><p><a name="x_591"></a><code class="literal">node</code>: String.  The changeset
+identification hash, as a 40-character hexadecimal string.</p></li>
+<li><p><a name="x_592"></a><code class="literal">parents</code>: List of strings.  The
+parents of the changeset.</p></li>
+<li><p><a name="x_593"></a><code class="literal">rev</code>: Integer.  The
+repository-local changeset revision number.</p></li>
+<li><p><a name="x_594"></a><code class="literal">tags</code>: List of strings.  Any tags
+associated with the changeset.</p></li>
+</ul></div>
+<p><a name="x_595"></a>A few simple experiments will show us what to expect when we use these
+keywords; you can see the results below.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'author: {author}\n'</code></strong>
+author: Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'desc:\n{desc}\n'</code></strong>
+desc:
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some might consider it so) of goodbye.
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'files: {files}\n'</code></strong>
+files: goodbye hello
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'file_adds: {file_adds}\n'</code></strong>
+file_adds: goodbye
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'file_dels: {file_dels}\n'</code></strong>
+file_dels: 
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'node: {node}\n'</code></strong>
+node: 9c012bbd3bb6364c4256e2a9356b93fc68ec0249
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'parents: {parents}\n'</code></strong>
+parents: 
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'rev: {rev}\n'</code></strong>
+rev: 1
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'tags: {tags}\n'</code></strong>
+tags: mytag
+</pre>
+<p><a name="x_596"></a>As we noted above, the date keyword does not produce human-readable output,
+so we must treat it specially.  This involves using a
+<span class="emphasis"><em>filter</em></span>, about which more in <a class="xref" href="customizing-the-output-of-mercurial.html#sec:template:filter" title="10.6. 通过过滤关键字来修改输出结果">第 10.6 节 “通过过滤关键字来修改输出结果”</a>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'date: {date}\n'</code></strong>
+date: 1238482528.00
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'date: {date|isodate}\n'</code></strong>
+date: 2009-03-31 06:55 +0000
+</pre>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:template:escape"></a>10.5. 转义序列</h2></div></div></div>
+<p><a name="x_597"></a>Mercurial's templating engine recognises the most commonly used escape
+sequences in strings.  When it sees a backslash
+(“<span class="quote"><code class="literal">\</code></span>”) character, it looks at the following
+character and substitutes the two characters with a single replacement, as
+described below.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_598"></a><code class="literal">\</code>: Backslash, “<span class="quote"><code class="literal">\</code></span>”, ASCII
+134.</p></li>
+<li><p><a name="x_599"></a><code class="literal">\n</code>: Newline, ASCII 12.</p></li>
+<li><p><a name="x_59a"></a><code class="literal">\r</code>: Carriage return, ASCII 15.</p></li>
+<li><p><a name="x_59b"></a><code class="literal">\t</code>: Tab, ASCII 11.</p></li>
+<li><p><a name="x_59c"></a><code class="literal">\v</code>: Vertical tab, ASCII 13.</p></li>
+<li><p><a name="x_59d"></a><code class="literal">{</code>: Open curly brace, “<span class="quote"><code class="literal">{</code></span>”,
+ASCII 173.</p></li>
+<li><p><a name="x_59e"></a><code class="literal">}</code>: Close curly brace,
+“<span class="quote"><code class="literal">}</code></span>”, ASCII 175.</p></li>
+</ul></div>
+<p><a name="x_59f"></a>As indicated above, if you want the expansion of a template to contain a
+literal “<span class="quote"><code class="literal">\</code></span>”,
+“<span class="quote"><code class="literal">{</code></span>”, or “<span class="quote"><code class="literal">{</code></span>”
+character, you must escape it.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:template:filter"></a>10.6. 通过过滤关键字来修改输出结果</h2></div></div></div>
+<p><a name="x_5a0"></a>Some of the results of template expansion are not immediately easy to use.
+Mercurial lets you specify an optional chain of <span class="emphasis"><em>filters</em></span>
+to modify the result of expanding a keyword.  You have already seen a common
+filter, <code class="literal">isodate</code>, in action
+above, to make a date readable.</p>
+<p><a name="x_5a1"></a>Below is a list of the most commonly used filters that Mercurial supports.
+While some filters can be applied to any text, others can only be used in
+specific circumstances.  The name of each filter is followed first by an
+indication of where it can be used, then a description of its effect.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5a2"></a><code class="literal">addbreaks</code>: Any text. Add an XHTML
+“<span class="quote"><code class="literal">&lt;br/&gt;</code></span>” tag before the end of every
+line except the last.  For example,
+“<span class="quote"><code class="literal">foo\nbar</code></span>” becomes
+“<span class="quote"><code class="literal">foo&lt;br/&gt;\nbar</code></span>”.</p></li>
+<li><p><a name="x_5a3"></a><code class="literal">age</code>: <code class="literal">date</code> keyword.  Render the age of the date,
+relative to the current time.  Yields a string like “<span class="quote"><code class="literal">10
+minutes</code></span>”.</p></li>
+<li><p><a name="x_5a4"></a><code class="literal">basename</code>: Any text, but most
+useful for the <code class="literal">files</code> keyword and
+its relatives.  Treat the text as a path, and return the basename. For
+example, “<span class="quote"><code class="literal">foo/bar/baz</code></span>” becomes
+“<span class="quote"><code class="literal">baz</code></span>”.</p></li>
+<li><p><a name="x_5a5"></a><code class="literal">date</code>: <code class="literal">date</code> keyword.  Render a date in a similar
+format to the Unix <code class="literal">date</code> command,
+but with timezone included.  Yields a string like “<span class="quote"><code class="literal">Mon Sep 04
+15:13:13 2006 -0700</code></span>”.</p></li>
+<li><p><a name="x_5a6"></a><code class="literal">domain</code>: Any text, but most
+useful for the <code class="literal">author</code> keyword.
+Finds the first string that looks like an email address, and extract just
+the domain component.  For example, “<span class="quote"><code class="literal">Bryan O'Sullivan
+&lt;bos@serpentine.com&gt;</code></span>” becomes
+“<span class="quote"><code class="literal">serpentine.com</code></span>”.</p></li>
+<li><p><a name="x_5a7"></a><code class="literal">email</code>: Any text, but most
+useful for the <code class="literal">author</code> keyword.
+Extract the first string that looks like an email address.  For example,
+“<span class="quote"><code class="literal">Bryan O'Sullivan
+&lt;bos@serpentine.com&gt;</code></span>” becomes
+“<span class="quote"><code class="literal">bos@serpentine.com</code></span>”.</p></li>
+<li><p><a name="x_5a8"></a><code class="literal">escape</code>: Any text.  Replace the
+special XML/XHTML characters “<span class="quote"><code class="literal">&amp;</code></span>”,
+“<span class="quote"><code class="literal">&lt;</code></span>” and
+“<span class="quote"><code class="literal">&gt;</code></span>” with XML entities.</p></li>
+<li><p><a name="x_5a9"></a><code class="literal">fill68</code>: Any text.  Wrap the text
+to fit in 68 columns.  This is useful before you pass text through the
+<code class="literal">tabindent</code> filter, and still want
+it to fit in an 80-column fixed-font window.</p></li>
+<li><p><a name="x_5aa"></a><code class="literal">fill76</code>: Any text.  Wrap the text
+to fit in 76 columns.</p></li>
+<li><p><a name="x_5ab"></a><code class="literal">firstline</code>: Any text.  Yield the
+first line of text, without any trailing newlines.</p></li>
+<li><p><a name="x_5ac"></a><code class="literal">hgdate</code>: <code class="literal">date</code> keyword.  Render the date as a pair
+of readable numbers.  Yields a string like “<span class="quote"><code class="literal">1157407993
+25200</code></span>”.</p></li>
+<li><p><a name="x_5ad"></a><code class="literal">isodate</code>: <code class="literal">date</code> keyword.  Render the date as a text
+string in ISO 8601 format.  Yields a string like “<span class="quote"><code class="literal">2006-09-04
+15:13:13 -0700</code></span>”.</p></li>
+<li><p><a name="x_5ae"></a><code class="literal">obfuscate</code>: Any text, but most
+useful for the <code class="literal">author</code> keyword.
+Yield the input text rendered as a sequence of XML entities.  This helps to
+defeat some particularly stupid screen-scraping email harvesting spambots.</p></li>
+<li><p><a name="x_5af"></a><code class="literal">person</code>: Any text, but most
+useful for the <code class="literal">author</code> keyword.
+Yield the text before an email address. For example, “<span class="quote"><code class="literal">Bryan
+O'Sullivan &lt;bos@serpentine.com&gt;</code></span>” becomes
+“<span class="quote"><code class="literal">Bryan O'Sullivan</code></span>”.</p></li>
+<li><p><a name="x_5b0"></a><code class="literal">rfc822date</code>: <code class="literal">date</code> keyword.  Render a date using the
+same format used in email headers.  Yields a string like
+“<span class="quote"><code class="literal">Mon, 04 Sep 2006 15:13:13 -0700</code></span>”.</p></li>
+<li><p><a name="x_5b1"></a><code class="literal">short</code>: Changeset hash.
+Yield the short form of a changeset hash, i.e. a 12-character hexadecimal
+string.</p></li>
+<li><p><a name="x_5b2"></a><code class="literal">shortdate</code>: <code class="literal">date</code> keyword.  Render the year, month, and
+day of the date.  Yields a string like
+“<span class="quote"><code class="literal">2006-09-04</code></span>”.</p></li>
+<li><p><a name="x_5b3"></a><code class="literal">strip</code>: Any text.  Strip all
+leading and trailing whitespace from the string.</p></li>
+<li><p><a name="x_5b4"></a><code class="literal">tabindent</code>: Any text.  Yield the
+text, with every line except the first starting with a tab character.</p></li>
+<li><p><a name="x_5b5"></a><code class="literal">urlescape</code>: Any text.  Escape all
+characters that are considered “<span class="quote">special</span>” by URL parsers.  For
+example, <code class="literal">foo bar</code> becomes <code class="literal">foo%20bar</code>.</p></li>
+<li><p><a name="x_5b6"></a><code class="literal">user</code>: Any text, but most
+useful for the <code class="literal">author</code> keyword.
+Return the “<span class="quote">user</span>” portion of an email address.  For example,
+“<span class="quote"><code class="literal">Bryan O'Sullivan
+&lt;bos@serpentine.com&gt;</code></span>” becomes
+“<span class="quote"><code class="literal">bos</code></span>”.</p></li>
+</ul></div>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author}\n'</code></strong>
+Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author|domain}\n'</code></strong>
+serpentine.com
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author|email}\n'</code></strong>
+bos@serpentine.com
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author|obfuscate}\n' | cut -c-76</code></strong>
+&amp;#66;&amp;#114;&amp;#121;&amp;#97;&amp;#110;&amp;#32;&amp;#79;&amp;#39;&amp;#83;&amp;#117;&amp;#108;&amp;#108;&amp;#105;&amp;#11
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author|person}\n'</code></strong>
+Bryan O'Sullivan
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{author|user}\n'</code></strong>
+bos
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'looks almost right, but actually garbage: {date}\n'</code></strong>
+looks almost right, but actually garbage: 1238482528.00
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|age}\n'</code></strong>
+2 seconds
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|date}\n'</code></strong>
+Tue Mar 31 06:55:28 2009 +0000
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|hgdate}\n'</code></strong>
+1238482528 0
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|isodate}\n'</code></strong>
+2009-03-31 06:55 +0000
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|rfc822date}\n'</code></strong>
+Tue, 31 Mar 2009 06:55:28 +0000
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{date|shortdate}\n'</code></strong>
+2009-03-31
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc}\n' | cut -c-76</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some m
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|addbreaks}\n' | cut -c-76</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.&lt;br/&gt;
+&lt;br/&gt;
+in addition, added a file with the helpful name (at least i hope that some m
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|escape}\n' | cut -c-76</code></strong>
+added line to end of &amp;lt;&amp;lt;hello&amp;gt;&amp;gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some m
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|fill68}\n'</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope
+that some might consider it so) of goodbye.
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|fill76}\n'</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some
+might consider it so) of goodbye.
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|firstline}\n'</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|strip}\n' | cut -c-76</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+in addition, added a file with the helpful name (at least i hope that some m
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{desc|tabindent}\n' | expand | cut -c-76</code></strong>
+added line to end of &lt;&lt;hello&gt;&gt; file.
+
+        in addition, added a file with the helpful name (at least i hope tha
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{node}\n'</code></strong>
+9c012bbd3bb6364c4256e2a9356b93fc68ec0249
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template '{node|short}\n'</code></strong>
+9c012bbd3bb6
+</pre>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_5b7"></a>  If you try to apply a filter to a piece of data that it cannot process,
+Mercurial will fail and print a Python exception.  For example, trying to
+run the output of the <code class="literal">desc</code>
+keyword into the <code class="literal">isodate</code>
+filter is not a good idea.</p></td></tr>
+</table></div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536104"></a>10.6.1. 组合过滤器</h3></div></div></div>
+<p><a name="x_5b8"></a>It is easy to combine filters to yield output in the form you would like.
+The following chain of filters tidies up a description, then makes sure that
+it fits cleanly into 68 columns, then indents it by a further 8 characters
+(at least on Unix-like systems, where a tab is conventionally 8 characters
+wide).</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --template 'description:\n\t{desc|strip|fill68|tabindent}\n'</code></strong>
+description:
+	added line to end of &lt;&lt;hello&gt;&gt; file.
+
+	in addition, added a file with the helpful name (at least i hope
+	that some might consider it so) of goodbye.
+</pre>
+<p><a name="x_5b9"></a>Note the use of “<span class="quote"><code class="literal">\t</code></span>” (a tab character) in
+the template to force the first line to be indented; this is necessary since
+<code class="literal">tabindent</code> indents all lines
+<span class="emphasis"><em>except</em></span> the first.</p>
+<p><a name="x_5ba"></a>Keep in mind that the order of filters in a chain is significant.  The first
+filter is applied to the result of the keyword; the second to the result of
+the first filter; and so on.  For example, using
+<code class="literal">fill68|tabindent</code> gives very different results from
+<code class="literal">tabindent|fill68</code>.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id536178"></a>10.7. 从模版到样式</h2></div></div></div>
+<p><a name="x_5bb"></a>A command line template provides a quick and simple way to format some
+output.  Templates can become verbose, though, and it's useful to be able to
+give a template a name.  A style file is a template with a name, stored in a
+file.</p>
+<p><a name="x_5bc"></a>More than that, using a style file unlocks the power of Mercurial's
+templating engine in ways that are not possible using the command line
+<code class="option">--template</code> option.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536202"></a>10.7.1. 最简单的样式文件</h3></div></div></div>
+<p><a name="x_5bd"></a>Our simple style file contains just one line:</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'changeset = "rev: {rev}\n"' &gt; rev</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -l1 --style ./rev</code></strong>
+rev: 3
+</pre>
+<p><a name="x_5be"></a>This tells Mercurial, “<span class="quote">if you're printing a changeset, use the text on
+the right as the template</span>”.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536248"></a>10.7.2. 样式文件语法</h3></div></div></div>
+<p><a name="x_5bf"></a>The syntax rules for a style file are simple.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5c0"></a>The file is processed one line at a time.</p></li>
+<li><p><a name="x_5c1"></a>Leading and trailing white space are ignored.</p></li>
+<li><p><a name="x_5c2"></a>Empty lines are skipped.</p></li>
+<li><p><a name="x_5c3"></a>If a line starts with either of the characters
+“<span class="quote"><code class="literal">#</code></span>” or “<span class="quote"><code class="literal">;</code></span>”,
+the entire line is treated as a comment, and skipped as if empty.</p></li>
+<li><p><a name="x_5c4"></a>A line starts with a keyword.  This must start with an alphabetic character
+or underscore, and can subsequently contain any alphanumeric character or
+underscore.  (In regexp notation, a keyword must match
+<code class="literal">[A-Za-z_][A-Za-z0-9_]*</code>.)</p></li>
+<li><p><a name="x_5c5"></a>The next element must be an “<span class="quote"><code class="literal">=</code></span>” character,
+which can be preceded or followed by an arbitrary amount of white space.</p></li>
+<li><p><a name="x_5c6"></a>If the rest of the line starts and ends with matching quote characters
+(either single or double quote), it is treated as a template body.</p></li>
+<li><p><a name="x_5c7"></a>If the rest of the line <span class="emphasis"><em>does not</em></span> start with a quote
+character, it is treated as the name of a file; the contents of this file
+will be read and used as a template body.</p></li>
+</ul></div>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id536355"></a>10.8. 样式文件例子</h2></div></div></div>
+<p><a name="x_5c8"></a>To illustrate how to write a style file, we will construct a few by
+example.  Rather than provide a complete style file and walk through it,
+we'll mirror the usual process of developing a style file by starting with
+something very simple, and walking through a series of successively more
+complete examples.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536368"></a>10.8.1. 在样式文件中定位错误</h3></div></div></div>
+<p><a name="x_5c9"></a>If Mercurial encounters a problem in a style file you are working on, it
+prints a terse error message that, once you figure out what it means, is
+actually quite useful.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat broken.style</code></strong>
+changeset =
+</pre>
+<p><a name="x_5ca"></a>Notice that <code class="filename">broken.style</code> attempts to define a
+<code class="literal">changeset</code> keyword, but forgets to give any content for
+it. When instructed to use this style file, Mercurial promptly complains.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r1 --style broken.style</code></strong>
+abort: broken.style:1: parse error
+</pre>
+<p><a name="x_5cb"></a>This error message looks intimidating, but it is not too hard to follow.</p>
+<div class="itemizedlist"><ul type="disc">
+<li>
+<p><a name="x_5cc"></a>The first component is simply Mercurial's way of saying “<span class="quote">I am giving
+up</span>”.</p>
+<pre class="programlisting">___abort___: broken.style:1: parse error</pre>
+</li>
+<li>
+<p><a name="x_5cd"></a>Next comes the name of the style file that contains the error.</p>
+<pre class="programlisting">abort: ___broken.style___:1: parse error</pre>
+</li>
+<li>
+<p><a name="x_5ce"></a>Following the file name is the line number where the error was encountered.</p>
+<pre class="programlisting">abort: broken.style:___1___: parse error</pre>
+</li>
+<li>
+<p><a name="x_5cf"></a>Finally, a description of what went wrong.</p>
+<pre class="programlisting">abort: broken.style:1: ___parse error___</pre>
+</li>
+<li><p><a name="x_5d0"></a>The description of the problem is not always clear (as in this case), but
+even when it is cryptic, it is almost always trivial to visually inspect the
+offending line in the style file and see what is wrong.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536500"></a>10.8.2. 版本库的唯一标识</h3></div></div></div>
+<p><a name="x_5d1"></a>If you would like to be able to identify a Mercurial repository
+“<span class="quote">fairly uniquely</span>” using a short string as an identifier, you
+can use the first revision in the repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log -r0 --template '{node}'</code></strong>
+1eef9f70c291a66e913ae14b3ff725bf1d711529</pre>
+<p><a name="x_5d2"></a>This is not guaranteed to be unique, but it is nevertheless useful in many
+cases.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5d3"></a>It will not work in a completely empty repository, because such a repository
+does not have a revision zero.</p></li>
+<li><p><a name="x_5d4"></a>Neither will it work in the (extremely rare)  case where a repository is a
+merge of two or more formerly independent repositories, and you still have
+those repositories around.</p></li>
+</ul></div>
+<p><a name="x_5d5"></a>Here are some uses to which you could put this identifier:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5d6"></a>As a key into a table for a database that manages repositories on a server.</p></li>
+<li><p><a name="x_5d7"></a>As half of a {<span class="emphasis"><em>repository ID</em></span>, <span class="emphasis"><em>revision
+ID</em></span>} tuple.  Save this information away when you run an automated
+build or other activity, so that you can “<span class="quote">replay</span>” the build
+later if necessary.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536590"></a>10.8.3. 模仿 Subversion 的输出</h3></div></div></div>
+<p><a name="x_5d8"></a>Let's try to emulate the default output format used by another revision
+control tool, Subversion.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>svn log -r9653</code></strong>
+------------------------------------------------------------------------
+r9653 | sean.hefty | 2006-09-27 14:39:55 -0700 (Wed, 27 Sep 2006) | 5 lines
+
+On reporting a route error, also include the status for the error,
+rather than indicating a status of 0 when an error has occurred.
+
+Signed-off-by: Sean Hefty &lt;sean.hefty@intel.com&gt;
+
+------------------------------------------------------------------------
+</pre>
+<p><a name="x_5d9"></a>Since Subversion's output style is fairly simple, it is easy to
+copy-and-paste a hunk of its output into a file, and replace the text
+produced above by Subversion with the template values we'd like to see
+expanded.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat svn.template</code></strong>
+r{rev} | {author|user} | {date|isodate} ({date|rfc822date})
+
+{desc|strip|fill76}
+
+------------------------------------------------------------------------
+</pre>
+<p><a name="x_5da"></a>There are a few small ways in which this template deviates from the output
+produced by Subversion.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5db"></a>Subversion prints a “<span class="quote">readable</span>” date (the “<span class="quote"><code class="literal">Wed,
+27 Sep 2006</code></span>” in the example output above) in parentheses.
+Mercurial's templating engine does not provide a way to display a date in
+this format without also printing the time and time zone.</p></li>
+<li><p><a name="x_5dc"></a>We emulate Subversion's printing of “<span class="quote">separator</span>” lines full of
+“<span class="quote"><code class="literal">-</code></span>” characters by ending the template with
+such a line. We use the templating engine's <code class="literal">header</code> keyword to print a separator line
+as the first line of output (see below), thus achieving similar output to
+Subversion.</p></li>
+<li><p><a name="x_5dd"></a>Subversion's output includes a count in the header of the number of lines in
+the commit message.  We cannot replicate this in Mercurial; the templating
+engine does not currently provide a filter that counts the number of lines
+the template generates.</p></li>
+</ul></div>
+<p><a name="x_5de"></a>It took me no more than a minute or two of work to replace literal text from
+an example of Subversion's output with some keywords and filters to give the
+template above.  The style file simply refers to the template.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat svn.style</code></strong>
+header = '------------------------------------------------------------------------\n\n'
+changeset = svn.template
+</pre>
+<p><a name="x_5df"></a>We could have included the text of the template file directly in the style
+file by enclosing it in quotes and replacing the newlines with
+“<span class="quote"><code class="literal">\n</code></span>” sequences, but it would have made the
+style file too difficult to read.  Readability is a good guide when you're
+trying to decide whether some text belongs in a style file, or in a template
+file that the style file points to.  If the style file will look too big or
+cluttered if you insert a literal piece of text, drop it into a template
+instead.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="handling-repository-events-with-hooks.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="managing-change-with-mercurial-queues.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 9 章 使用钩子处理版本库事件 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 11 章 使用 MQ 管理修改</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

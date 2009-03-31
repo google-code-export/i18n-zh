@@ -1,0 +1,1935 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chapter 9. Handling repository events with hooks</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="finding-and-fixing-mistakes.html" title="Chapter 8. Finding and fixing mistakes">
+<link rel="next" href="customizing-the-output-of-mercurial.html" title="Chapter 10. Customising the output of Mercurial">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 9. Handling repository events with hooks</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="finding-and-fixing-mistakes.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="customizing-the-output-of-mercurial.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:hook"></a>Chapter 9. Handling repository events with hooks</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id533781">9.1. An overview of hooks in Mercurial</a></span></dt>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id534052">9.2. Hooks and security</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534058">9.2.1. Hooks are run with your privileges</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534195">9.2.2. Hooks do not propagate</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534251">9.2.3. Hooks can be overridden</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534283">9.2.4. Ensuring that critical hooks are run</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id534343">9.3. Care with pretxn hooks in a
+      shared-access repository</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534460">9.3.1. The problem illustrated</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#sec:hook:simple">9.4. A short tutorial on using hooks</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id534728">9.4.1. Performing multiple actions per event</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:perm">9.4.2. Controlling whether an activity can proceed</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id535045">9.5. Writing your own hooks</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:lang">9.5.1. Choosing how your hook should run</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:param">9.5.2. Hook parameters</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535183">9.5.3. Hook return values and activity control</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535222">9.5.4. Writing an external hook</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535281">9.5.5. Telling Mercurial to use an in-process hook</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535375">9.5.6. Writing an in-process hook</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id535430">9.6. Some hook examples</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535435">9.6.1. Writing meaningful commit messages</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535521">9.6.2. Checking for trailing whitespace</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id535834">9.7. Bundled hooks</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id535865">9.7.1. acl—access
+	control for parts of a repository</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id536230">9.7.2. bugzilla—integration with
+	Bugzilla</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id537182">9.7.3. notify—send email
+	notifications</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#sec:hook:ref">9.8. Information for writers of hooks</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id537638">9.8.1. In-process hook execution</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id537806">9.8.2. External hook execution</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#id537910">9.8.3. Finding out where changesets come from</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="handling-repository-events-with-hooks.html#id538130">9.9. Hook reference</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:changegroup">9.9.1. changegroup—after
+	remote changesets added</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:commit">9.9.2. commit—after a new
+	changeset is created</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:incoming">9.9.3. incoming—after one
+	remote changeset is added</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:outgoing">9.9.4. outgoing—after
+	changesets are propagated</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:prechangegroup">9.9.5. prechangegroup—before starting
+	to add remote changesets</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:precommit">9.9.6. precommit—before
+	starting to commit a changeset</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:preoutgoing">9.9.7. preoutgoing—before
+	starting to propagate changesets</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:pretag">9.9.8. pretag—before
+	tagging a changeset</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:pretxnchangegroup">9.9.9. pretxnchangegroup—before
+	completing addition of remote changesets</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:pretxncommit">9.9.10. pretxncommit—before
+	completing commit of new changeset</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:preupdate">9.9.11. preupdate—before
+	updating or merging working directory</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:tag">9.9.12. tag—after tagging a
+	changeset</a></span></dt>
+<dt><span class="sect2"><a href="handling-repository-events-with-hooks.html#sec:hook:update">9.9.13. update—after
+	updating or merging working directory</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p><a name="x_1e6"></a>Mercurial offers a powerful mechanism to let you perform
+    automated actions in response to events that occur in a
+    repository.  In some cases, you can even control Mercurial's
+    response to those events.</p>
+<p><a name="x_1e7"></a>The name Mercurial uses for one of these actions is a
+    <span class="emphasis"><em>hook</em></span>. Hooks are called
+    “<span class="quote">triggers</span>” in some revision control systems, but the
+    two names refer to the same idea.</p>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id533781"></a>9.1. An overview of hooks in Mercurial</h2></div></div></div>
+<p><a name="x_1e8"></a>Here is a brief list of the hooks that Mercurial
+      supports. We will revisit each of these hooks in more detail
+      later, in <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:ref" title="9.8. Information for writers of hooks">Section 9.8, “Information for writers of hooks”</a>.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_1e9"></a><code class="literal">changegroup</code>: This
+	  is run after a group of changesets has been brought into the
+	  repository from elsewhere.</p></li>
+<li><p><a name="x_1ea"></a><code class="literal">commit</code>: This is
+	  run after a new changeset has been created in the local
+	  repository.</p></li>
+<li><p><a name="x_1eb"></a><code class="literal">incoming</code>: This is
+	  run once for each new changeset that is brought into the
+	  repository from elsewhere.  Notice the difference from
+	  <code class="literal">changegroup</code>, which is run
+	  once per <span class="emphasis"><em>group</em></span> of changesets brought
+	  in.</p></li>
+<li><p><a name="x_1ec"></a><code class="literal">outgoing</code>: This is
+	  run after a group of changesets has been transmitted from
+	  this repository.</p></li>
+<li><p><a name="x_1ed"></a><code class="literal">prechangegroup</code>:
+	  This is run before starting to bring a group of changesets
+	  into the repository.
+	</p></li>
+<li><p><a name="x_1ee"></a><code class="literal">precommit</code>:
+	  Controlling. This is run before starting a commit.
+	</p></li>
+<li><p><a name="x_1ef"></a><code class="literal">preoutgoing</code>:
+	  Controlling. This is run before starting to transmit a group
+	  of changesets from this repository.
+	</p></li>
+<li><p><a name="x_1f0"></a><code class="literal">pretag</code>:
+	  Controlling. This is run before creating a tag.
+	</p></li>
+<li><p><a name="x_1f1"></a><code class="literal">pretxnchangegroup</code>: Controlling. This
+	  is run after a group of changesets has been brought into the
+	  local repository from another, but before the transaction
+	  completes that will make the changes permanent in the
+	  repository.
+	</p></li>
+<li><p><a name="x_1f2"></a><code class="literal">pretxncommit</code>:
+	  Controlling. This is run after a new changeset has been
+	  created in the local repository, but before the transaction
+	  completes that will make it permanent.
+	</p></li>
+<li><p><a name="x_1f3"></a><code class="literal">preupdate</code>:
+	  Controlling. This is run before starting an update or merge
+	  of the working directory.
+	</p></li>
+<li><p><a name="x_1f4"></a><code class="literal">tag</code>: This is run
+	  after a tag is created.
+	</p></li>
+<li><p><a name="x_1f5"></a><code class="literal">update</code>: This is
+	  run after an update or merge of the working directory has
+	  finished.
+	</p></li>
+</ul></div>
+<p><a name="x_1f6"></a>Each of the hooks whose description begins with the word
+      “<span class="quote">Controlling</span>” has the ability to determine whether
+      an activity can proceed.  If the hook succeeds, the activity may
+      proceed; if it fails, the activity is either not permitted or
+      undone, depending on the hook.
+    </p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id534052"></a>9.2. Hooks and security</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534058"></a>9.2.1. Hooks are run with your privileges</h3></div></div></div>
+<p><a name="x_1f7"></a>When you run a Mercurial command in a repository, and the
+	command causes a hook to run, that hook runs on
+	<span class="emphasis"><em>your</em></span> system, under
+	<span class="emphasis"><em>your</em></span> user account, with
+	<span class="emphasis"><em>your</em></span> privilege level.  Since hooks are
+	arbitrary pieces of executable code, you should treat them
+	with an appropriate level of suspicion.  Do not install a hook
+	unless you are confident that you know who created it and what
+	it does.
+      </p>
+<p><a name="x_1f8"></a>In some cases, you may be exposed to hooks that you did
+	not install yourself.  If you work with Mercurial on an
+	unfamiliar system, Mercurial will run hooks defined in that
+	system's global <code class="filename">~/.hgrc</code>
+	file.
+      </p>
+<p><a name="x_1f9"></a>If you are working with a repository owned by another
+	user, Mercurial can run hooks defined in that user's
+	repository, but it will still run them as “<span class="quote">you</span>”.
+	For example, if you <span class="command"><strong>hg pull</strong></span>
+	from that repository, and its <code class="filename">.hg/hgrc</code> defines a local <code class="literal">outgoing</code> hook, that hook will run
+	under your user account, even though you don't own that
+	repository.
+      </p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_1fa"></a>  This only applies if you are pulling from a repository
+	  on a local or network filesystem.  If you're pulling over
+	  http or ssh, any <code class="literal">outgoing</code>
+	  hook will run under whatever account is executing the server
+	  process, on the server.
+	</p></td></tr>
+</table></div>
+<p><a name="x_1fb"></a>XXX To see what hooks are defined in a repository, use the
+	<span class="command"><strong>hg config hooks</strong></span> command.  If
+	you are working in one repository, but talking to another that
+	you do not own (e.g. using <span class="command"><strong>hg
+	  pull</strong></span> or <span class="command"><strong>hg
+	  incoming</strong></span>), remember that it is the other
+	repository's hooks you should be checking, not your own.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534195"></a>9.2.2. Hooks do not propagate</h3></div></div></div>
+<p><a name="x_1fc"></a>In Mercurial, hooks are not revision controlled, and do
+	not propagate when you clone, or pull from, a repository.  The
+	reason for this is simple: a hook is a completely arbitrary
+	piece of executable code.  It runs under your user identity,
+	with your privilege level, on your machine.
+      </p>
+<p><a name="x_1fd"></a>It would be extremely reckless for any distributed
+	revision control system to implement revision-controlled
+	hooks, as this would offer an easily exploitable way to
+	subvert the accounts of users of the revision control system.
+      </p>
+<p><a name="x_1fe"></a>Since Mercurial does not propagate hooks, if you are
+	collaborating with other people on a common project, you
+	should not assume that they are using the same Mercurial hooks
+	as you are, or that theirs are correctly configured.  You
+	should document the hooks you expect people to use.
+      </p>
+<p><a name="x_1ff"></a>In a corporate intranet, this is somewhat easier to
+	control, as you can for example provide a
+	“<span class="quote">standard</span>” installation of Mercurial on an NFS
+	filesystem, and use a site-wide <code class="filename">~/.hgrc</code> file to define hooks that all users will
+	see.  However, this too has its limits; see below.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534251"></a>9.2.3. Hooks can be overridden</h3></div></div></div>
+<p><a name="x_200"></a>Mercurial allows you to override a hook definition by
+	redefining the hook.  You can disable it by setting its value
+	to the empty string, or change its behaviour as you wish.
+      </p>
+<p><a name="x_201"></a>If you deploy a system- or site-wide <code class="filename">~/.hgrc</code> file that defines some
+	hooks, you should thus understand that your users can disable
+	or override those hooks.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534283"></a>9.2.4. Ensuring that critical hooks are run</h3></div></div></div>
+<p><a name="x_202"></a>Sometimes you may want to enforce a policy that you do not
+	want others to be able to work around.  For example, you may
+	have a requirement that every changeset must pass a rigorous
+	set of tests.  Defining this requirement via a hook in a
+	site-wide <code class="filename">~/.hgrc</code> won't
+	work for remote users on laptops, and of course local users
+	can subvert it at will by overriding the hook.
+      </p>
+<p><a name="x_203"></a>Instead, you can set up your policies for use of Mercurial
+	so that people are expected to propagate changes through a
+	well-known “<span class="quote">canonical</span>” server that you have
+	locked down and configured appropriately.
+      </p>
+<p><a name="x_204"></a>One way to do this is via a combination of social
+	engineering and technology.  Set up a restricted-access
+	account; users can push changes over the network to
+	repositories managed by this account, but they cannot log into
+	the account and run normal shell commands.  In this scenario,
+	a user can commit a changeset that contains any old garbage
+	they want.
+      </p>
+<p><a name="x_205"></a>When someone pushes a changeset to the server that
+	everyone pulls from, the server will test the changeset before
+	it accepts it as permanent, and reject it if it fails to pass
+	the test suite.  If people only pull changes from this
+	filtering server, it will serve to ensure that all changes
+	that people pull have been automatically vetted.
+      </p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id534343"></a>9.3. Care with <code class="literal">pretxn</code> hooks in a
+      shared-access repository</h2></div></div></div>
+<p><a name="x_206"></a>If you want to use hooks to do some automated work in a
+      repository that a number of people have shared access to, you
+      need to be careful in how you do this.
+    </p>
+<p><a name="x_207"></a>Mercurial only locks a repository when it is writing to the
+      repository, and only the parts of Mercurial that write to the
+      repository pay attention to locks.  Write locks are necessary to
+      prevent multiple simultaneous writers from scribbling on each
+      other's work, corrupting the repository.
+    </p>
+<p><a name="x_208"></a>Because Mercurial is careful with the order in which it
+      reads and writes data, it does not need to acquire a lock when
+      it wants to read data from the repository.  The parts of
+      Mercurial that read from the repository never pay attention to
+      locks.  This lockless reading scheme greatly increases
+      performance and concurrency.
+    </p>
+<p><a name="x_209"></a>With great performance comes a trade-off, though, one which
+      has the potential to cause you trouble unless you're aware of
+      it.  To describe this requires a little detail about how
+      Mercurial adds changesets to a repository and reads those
+      changes.
+    </p>
+<p><a name="x_20a"></a>When Mercurial <span class="emphasis"><em>writes</em></span> metadata, it
+      writes it straight into the destination file.  It writes file
+      data first, then manifest data (which contains pointers to the
+      new file data), then changelog data (which contains pointers to
+      the new manifest data).  Before the first write to each file, it
+      stores a record of where the end of the file was in its
+      transaction log.  If the transaction must be rolled back,
+      Mercurial simply truncates each file back to the size it was
+      before the transaction began.
+    </p>
+<p><a name="x_20b"></a>When Mercurial <span class="emphasis"><em>reads</em></span> metadata, it reads
+      the changelog first, then everything else.  Since a reader will
+      only access parts of the manifest or file metadata that it can
+      see in the changelog, it can never see partially written data.
+    </p>
+<p><a name="x_20c"></a>Some controlling hooks (<code class="literal">pretxncommit</code> and <code class="literal">pretxnchangegroup</code>) run when a
+      transaction is almost complete. All of the metadata has been
+      written, but Mercurial can still roll the transaction back and
+      cause the newly-written data to disappear.
+    </p>
+<p><a name="x_20d"></a>If one of these hooks runs for long, it opens a window of
+      time during which a reader can see the metadata for changesets
+      that are not yet permanent, and should not be thought of as
+      “<span class="quote">really there</span>”.  The longer the hook runs, the
+      longer that window is open.
+    </p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534460"></a>9.3.1. The problem illustrated</h3></div></div></div>
+<p><a name="x_20e"></a>In principle, a good use for the <code class="literal">pretxnchangegroup</code> hook would be to
+	automatically build and test incoming changes before they are
+	accepted into a central repository.  This could let you
+	guarantee that nobody can push changes to this repository that
+	“<span class="quote">break the build</span>”. But if a client can pull
+	changes while they're being tested, the usefulness of the test
+	is zero; an unsuspecting someone can pull untested changes,
+	potentially breaking their build.
+      </p>
+<p><a name="x_20f"></a>The safest technological answer to this challenge is to
+	set up such a “<span class="quote">gatekeeper</span>” repository as
+	<span class="emphasis"><em>unidirectional</em></span>.  Let it take changes
+	pushed in from the outside, but do not allow anyone to pull
+	changes from it (use the <code class="literal">preoutgoing</code> hook to lock it down).
+	Configure a <code class="literal">changegroup</code> hook so
+	that if a build or test succeeds, the hook will push the new
+	changes out to another repository that people
+	<span class="emphasis"><em>can</em></span> pull from.
+      </p>
+<p><a name="x_210"></a>In practice, putting a centralised bottleneck like this in
+	place is not often a good idea, and transaction visibility has
+	nothing to do with the problem.  As the size of a
+	project—and the time it takes to build and
+	test—grows, you rapidly run into a wall with this
+	“<span class="quote">try before you buy</span>” approach, where you have
+	more changesets to test than time in which to deal with them.
+	The inevitable result is frustration on the part of all
+	involved.
+      </p>
+<p><a name="x_211"></a>An approach that scales better is to get people to build
+	and test before they push, then run automated builds and tests
+	centrally <span class="emphasis"><em>after</em></span> a push, to be sure all is
+	well.  The advantage of this approach is that it does not
+	impose a limit on the rate at which the repository can accept
+	changes.
+      </p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hook:simple"></a>9.4. A short tutorial on using hooks</h2></div></div></div>
+<p><a name="x_212"></a>It is easy to write a Mercurial hook.  Let's start with a
+      hook that runs when you finish a <span class="command"><strong>hg
+	commit</strong></span>, and simply prints the hash of the changeset
+      you just created.  The hook is called <code class="literal">commit</code>.
+    </p>
+<p><a name="x_213"></a>All hooks follow the pattern in this example.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init hook-test</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd hook-test</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo '[hooks]' &gt;&gt; .hg/hgrc</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'commit = echo committed $HG_NODE' &gt;&gt; .hg/hgrc</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat .hg/hgrc</code></strong>
+[hooks]
+commit = echo committed $HG_NODE
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'testing commit hook'</code></strong>
+committed 58a88644215d8a310785c9bd241bc6dd55f09403
+</pre>
+<p><a name="x_214"></a>You add an entry to the <code class="literal">hooks</code> section of your <code class="filename">~/.hgrc</code>.  On the left is the name of
+      the event to trigger on; on the right is the action to take.  As
+      you can see, you can run an arbitrary shell command in a hook.
+      Mercurial passes extra information to the hook using environment
+      variables (look for <code class="envar">HG_NODE</code> in the example).
+    </p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id534728"></a>9.4.1. Performing multiple actions per event</h3></div></div></div>
+<p><a name="x_215"></a>Quite often, you will want to define more than one hook
+	for a particular kind of event, as shown below.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'commit.when = echo -n "date of commit: "; date' &gt;&gt; .hg/hgrc</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt;&gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'i have two hooks'</code></strong>
+committed 38fc79a5c79d8d29ce7c48ea8ef9a3d99d6156b3
+date of commit: Tue Mar 31 06:55:18 GMT 2009
+</pre>
+<p><a name="x_216"></a>Mercurial lets you do this by adding an
+	<span class="emphasis"><em>extension</em></span> to the end of a hook's name.
+	You extend a hook's name by giving the name of the hook,
+	followed by a full stop (the
+	“<span class="quote"><code class="literal">.</code></span>” character), followed by
+	some more text of your choosing.  For example, Mercurial will
+	run both <code class="literal">commit.foo</code> and
+	<code class="literal">commit.bar</code> when the
+	<code class="literal">commit</code> event occurs.
+      </p>
+<p><a name="x_217"></a>To give a well-defined order of execution when there are
+	multiple hooks defined for an event, Mercurial sorts hooks by
+	extension, and executes the hook commands in this sorted
+	order.  In the above example, it will execute
+	<code class="literal">commit.bar</code> before
+	<code class="literal">commit.foo</code>, and <code class="literal">commit</code>
+	before both.
+      </p>
+<p><a name="x_218"></a>It is a good idea to use a somewhat descriptive
+	extension when you define a new hook.  This will help you to
+	remember what the hook was for.  If the hook fails, you'll get
+	an error message that contains the hook name and extension, so
+	using a descriptive extension could give you an immediate hint
+	as to why the hook failed (see <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:perm" title="9.4.2. Controlling whether an activity can proceed">Section 9.4.2, “Controlling whether an activity can proceed”</a> for an example).
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:perm"></a>9.4.2. Controlling whether an activity can proceed</h3></div></div></div>
+<p><a name="x_219"></a>In our earlier examples, we used the <code class="literal">commit</code> hook, which is run after a
+	commit has completed.  This is one of several Mercurial hooks
+	that run after an activity finishes.  Such hooks have no way
+	of influencing the activity itself.
+      </p>
+<p><a name="x_21a"></a>Mercurial defines a number of events that occur before an
+	activity starts; or after it starts, but before it finishes.
+	Hooks that trigger on these events have the added ability to
+	choose whether the activity can continue, or will abort.
+      </p>
+<p><a name="x_21b"></a>The <code class="literal">pretxncommit</code> hook runs
+	after a commit has all but completed.  In other words, the
+	metadata representing the changeset has been written out to
+	disk, but the transaction has not yet been allowed to
+	complete.  The <code class="literal">pretxncommit</code>
+	hook has the ability to decide whether the transaction can
+	complete, or must be rolled back.
+      </p>
+<p><a name="x_21c"></a>If the <code class="literal">pretxncommit</code> hook
+	exits with a status code of zero, the transaction is allowed
+	to complete; the commit finishes; and the <code class="literal">commit</code> hook is run.  If the <code class="literal">pretxncommit</code> hook exits with a
+	non-zero status code, the transaction is rolled back; the
+	metadata representing the changeset is erased; and the
+	<code class="literal">commit</code> hook is not run.
+      </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat check_bug_id</code></strong>
+#!/bin/sh
+# check that a commit comment mentions a numeric bug id
+hg log -r $1 --template {desc} | grep -q "\&lt;bug *[0-9]"
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'pretxncommit.bug_id_required = ./check_bug_id $HG_NODE' &gt;&gt; .hg/hgrc</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt;&gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'i am not mentioning a bug id'</code></strong>
+transaction abort!
+rollback completed
+abort: pretxncommit.bug_id_required hook exited with status 1
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'i refer you to bug 666'</code></strong>
+committed ee79898719dbeff4969a50a7de583baa85f859d7
+date of commit: Tue Mar 31 06:55:18 GMT 2009
+</pre>
+<p><a name="x_21d"></a>The hook in the example above checks that a commit comment
+	contains a bug ID.  If it does, the commit can complete.  If
+	not, the commit is rolled back.
+      </p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id535045"></a>9.5. Writing your own hooks</h2></div></div></div>
+<p><a name="x_21e"></a>When you are writing a hook, you might find it useful to run
+      Mercurial either with the <code class="option">-v</code> option, or the <code class="envar">verbose</code> config item set to
+      “<span class="quote">true</span>”.  When you do so, Mercurial will print a
+      message before it calls each hook.
+    </p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:lang"></a>9.5.1. Choosing how your hook should run</h3></div></div></div>
+<p><a name="x_21f"></a>You can write a hook either as a normal
+	program—typically a shell script—or as a Python
+	function that is executed within the Mercurial process.
+      </p>
+<p><a name="x_220"></a>Writing a hook as an external program has the advantage
+	that it requires no knowledge of Mercurial's internals.  You
+	can call normal Mercurial commands to get any added
+	information you need.  The trade-off is that external hooks
+	are slower than in-process hooks.
+      </p>
+<p><a name="x_221"></a>An in-process Python hook has complete access to the
+	Mercurial API, and does not “<span class="quote">shell out</span>” to
+	another process, so it is inherently faster than an external
+	hook.  It is also easier to obtain much of the information
+	that a hook requires by using the Mercurial API than by
+	running Mercurial commands.
+      </p>
+<p><a name="x_222"></a>If you are comfortable with Python, or require high
+	performance, writing your hooks in Python may be a good
+	choice.  However, when you have a straightforward hook to
+	write and you don't need to care about performance (probably
+	the majority of hooks), a shell script is perfectly fine.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:param"></a>9.5.2. Hook parameters</h3></div></div></div>
+<p><a name="x_223"></a>Mercurial calls each hook with a set of well-defined
+	parameters.  In Python, a parameter is passed as a keyword
+	argument to your hook function.  For an external program, a
+	parameter is passed as an environment variable.
+      </p>
+<p><a name="x_224"></a>Whether your hook is written in Python or as a shell
+	script, the hook-specific parameter names and values will be
+	the same.  A boolean parameter will be represented as a
+	boolean value in Python, but as the number 1 (for
+	“<span class="quote">true</span>”) or 0 (for “<span class="quote">false</span>”) as an
+	environment variable for an external hook.  If a hook
+	parameter is named <code class="literal">foo</code>, the keyword
+	argument for a Python hook will also be named
+	<code class="literal">foo</code>, while the environment variable for an
+	external hook will be named <code class="literal">HG_FOO</code>.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535183"></a>9.5.3. Hook return values and activity control</h3></div></div></div>
+<p><a name="x_225"></a>A hook that executes successfully must exit with a status
+	of zero if external, or return boolean “<span class="quote">false</span>” if
+	in-process.  Failure is indicated with a non-zero exit status
+	from an external hook, or an in-process hook returning boolean
+	“<span class="quote">true</span>”.  If an in-process hook raises an
+	exception, the hook is considered to have failed.
+      </p>
+<p><a name="x_226"></a>For a hook that controls whether an activity can proceed,
+	zero/false means “<span class="quote">allow</span>”, while
+	non-zero/true/exception means “<span class="quote">deny</span>”.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535222"></a>9.5.4. Writing an external hook</h3></div></div></div>
+<p><a name="x_227"></a>When you define an external hook in your <code class="filename">~/.hgrc</code> and the hook is run, its
+	value is passed to your shell, which interprets it.  This
+	means that you can use normal shell constructs in the body of
+	the hook.
+      </p>
+<p><a name="x_228"></a>An executable hook is always run with its current
+	directory set to a repository's root directory.
+      </p>
+<p><a name="x_229"></a>Each hook parameter is passed in as an environment
+	variable; the name is upper-cased, and prefixed with the
+	string “<span class="quote"><code class="literal">HG_</code></span>”.
+      </p>
+<p><a name="x_22a"></a>With the exception of hook parameters, Mercurial does not
+	set or modify any environment variables when running a hook.
+	This is useful to remember if you are writing a site-wide hook
+	that may be run by a number of different users with differing
+	environment variables set. In multi-user situations, you
+	should not rely on environment variables being set to the
+	values you have in your environment when testing the hook.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535281"></a>9.5.5. Telling Mercurial to use an in-process hook</h3></div></div></div>
+<p><a name="x_22b"></a>The <code class="filename">~/.hgrc</code> syntax
+	for defining an in-process hook is slightly different than for
+	an executable hook.  The value of the hook must start with the
+	text “<span class="quote"><code class="literal">python:</code></span>”, and continue
+	with the fully-qualified name of a callable object to use as
+	the hook's value.
+      </p>
+<p><a name="x_22c"></a>The module in which a hook lives is automatically imported
+	when a hook is run.  So long as you have the module name and
+	<code class="envar">PYTHONPATH</code> right, it should “<span class="quote">just
+	  work</span>”.
+      </p>
+<p><a name="x_22d"></a>The following <code class="filename">~/.hgrc</code>
+	example snippet illustrates the syntax and meaning of the
+	notions we just described.
+      </p>
+<pre class="programlisting">[hooks]
+commit.example = python:mymodule.submodule.myhook</pre>
+<p><a name="x_22e"></a>When Mercurial runs the <code class="literal">commit.example</code>
+	hook, it imports <code class="literal">mymodule.submodule</code>, looks
+	for the callable object named <code class="literal">myhook</code>, and
+	calls it.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535375"></a>9.5.6. Writing an in-process hook</h3></div></div></div>
+<p><a name="x_22f"></a>The simplest in-process hook does nothing, but illustrates
+	the basic shape of the hook API:
+      </p>
+<pre class="programlisting">def myhook(ui, repo, **kwargs):
+    pass</pre>
+<p><a name="x_230"></a>The first argument to a Python hook is always a <code class="literal">ui</code> object.  The second
+	is a repository object; at the moment, it is always an
+	instance of <code class="literal">localrepository</code>.
+	Following these two arguments are other keyword arguments.
+	Which ones are passed in depends on the hook being called, but
+	a hook can ignore arguments it doesn't care about by dropping
+	them into a keyword argument dict, as with
+	<code class="literal">**kwargs</code> above.
+      </p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id535430"></a>9.6. Some hook examples</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535435"></a>9.6.1. Writing meaningful commit messages</h3></div></div></div>
+<p><a name="x_231"></a>It's hard to imagine a useful commit message being very
+	short. The simple <code class="literal">pretxncommit</code>
+	hook of the example below will prevent you from committing a
+	changeset with a message that is less than ten bytes long.
+      </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat .hg/hgrc</code></strong>
+[hooks]
+pretxncommit.msglen = test `hg tip --template {desc} | wc -c` -ge 10
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'too short'</code></strong>
+transaction abort!
+rollback completed
+abort: pretxncommit.msglen hook exited with status 1
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'long enough'</code></strong>
+</pre>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535521"></a>9.6.2. Checking for trailing whitespace</h3></div></div></div>
+<p><a name="x_232"></a>An interesting use of a commit-related hook is to help you
+	to write cleaner code.  A simple example of “<span class="quote">cleaner
+	  code</span>” is the dictum that a change should not add any
+	new lines of text that contain “<span class="quote">trailing
+	  whitespace</span>”.  Trailing whitespace is a series of
+	space and tab characters at the end of a line of text.  In
+	most cases, trailing whitespace is unnecessary, invisible
+	noise, but it is occasionally problematic, and people often
+	prefer to get rid of it.
+      </p>
+<p><a name="x_233"></a>You can use either the <code class="literal">precommit</code> or <code class="literal">pretxncommit</code> hook to tell whether you
+	have a trailing whitespace problem.  If you use the <code class="literal">precommit</code> hook, the hook will not know
+	which files you are committing, so it will have to check every
+	modified file in the repository for trailing white space.  If
+	you want to commit a change to just the file
+	<code class="filename">foo</code>, but the file
+	<code class="filename">bar</code> contains trailing whitespace, doing a
+	check in the <code class="literal">precommit</code> hook
+	will prevent you from committing <code class="filename">foo</code> due
+	to the problem with <code class="filename">bar</code>.  This doesn't
+	seem right.
+      </p>
+<p><a name="x_234"></a>Should you choose the <code class="literal">pretxncommit</code> hook, the check won't
+	occur until just before the transaction for the commit
+	completes.  This will allow you to check for problems only the
+	exact files that are being committed.  However, if you entered
+	the commit message interactively and the hook fails, the
+	transaction will roll back; you'll have to re-enter the commit
+	message after you fix the trailing whitespace and run <span class="command"><strong>hg commit</strong></span> again.
+      </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat .hg/hgrc</code></strong>
+[hooks]
+pretxncommit.whitespace = hg export tip | (! egrep -q '^\+.*[ \t]$')
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'a ' &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'test with trailing whitespace'</code></strong>
+adding a
+transaction abort!
+rollback completed
+abort: pretxncommit.whitespace hook exited with status 1
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'a' &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'drop trailing whitespace and try again'</code></strong>
+</pre>
+<p><a name="x_235"></a>In this example, we introduce a simple <code class="literal">pretxncommit</code> hook that checks for
+	trailing whitespace.  This hook is short, but not very
+	helpful.  It exits with an error status if a change adds a
+	line with trailing whitespace to any file, but does not print
+	any information that might help us to identify the offending
+	file or line.  It also has the nice property of not paying
+	attention to unmodified lines; only lines that introduce new
+	trailing whitespace cause problems.
+      </p>
+<p><a name="x_236"></a>The above version is much more complex, but also more
+	useful.  It parses a unified diff to see if any lines add
+	trailing whitespace, and prints the name of the file and the
+	line number of each such occurrence.  Even better, if the
+	change adds trailing whitespace, this hook saves the commit
+	comment and prints the name of the save file before exiting
+	and telling Mercurial to roll the transaction back, so you can
+	use the <code class="option">-l filename</code>
+	option to <span class="command"><strong>hg commit</strong></span> to reuse
+	the saved commit message once you've corrected the problem.
+      </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat .hg/hgrc</code></strong>
+[hooks]
+pretxncommit.whitespace = .hg/check_whitespace.py
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'a ' &gt;&gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'add new line with trailing whitespace'</code></strong>
+a, line 2: trailing whitespace added
+commit message saved to .hg/commit.save
+transaction abort!
+rollback completed
+abort: pretxncommit.whitespace hook exited with status 1
+<code class="prompt">$</code> <strong class="userinput"><code>sed -i 's, *$,,' a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'trimmed trailing whitespace'</code></strong>
+a, line 2: trailing whitespace added
+commit message saved to .hg/commit.save
+transaction abort!
+rollback completed
+abort: pretxncommit.whitespace hook exited with status 1
+</pre>
+<p><a name="x_237"></a>As a final aside, note in the example above the use of
+	<span class="command"><strong>perl</strong></span>'s in-place editing feature to get rid
+	of trailing whitespace from a file.  This is concise and
+	useful enough that I will reproduce it here.
+      </p>
+<pre class="programlisting">perl -pi -e 's,\s+$,,' filename</pre>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id535834"></a>9.7. Bundled hooks</h2></div></div></div>
+<p><a name="x_238"></a>Mercurial ships with several bundled hooks.  You can find
+      them in the <code class="filename">hgext</code>
+      directory of a Mercurial source tree.  If you are using a
+      Mercurial binary package, the hooks will be located in the
+      <code class="filename">hgext</code> directory of
+      wherever your package installer put Mercurial.
+    </p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id535865"></a>9.7.1. <code class="literal">acl</code>—access
+	control for parts of a repository</h3></div></div></div>
+<p><a name="x_239"></a>The <code class="literal">acl</code> extension lets
+	you control which remote users are allowed to push changesets
+	to a networked server.  You can protect any portion of a
+	repository (including the entire repo), so that a specific
+	remote user can push changes that do not affect the protected
+	portion.
+      </p>
+<p><a name="x_23a"></a>This extension implements access control based on the
+	identity of the user performing a push,
+	<span class="emphasis"><em>not</em></span> on who committed the changesets
+	they're pushing.  It makes sense to use this hook only if you
+	have a locked-down server environment that authenticates
+	remote users, and you want to be sure that only specific users
+	are allowed to push changes to that server.
+      </p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id535909"></a>9.7.1.1. Configuring the <code class="literal">acl</code>
+	  hook</h4></div></div></div>
+<p><a name="x_23b"></a>In order to manage incoming changesets, the <code class="literal">acl</code> hook must be used as a
+	  <code class="literal">pretxnchangegroup</code> hook.  This
+	  lets it see which files are modified by each incoming
+	  changeset, and roll back a group of changesets if they
+	  modify “<span class="quote">forbidden</span>” files.  Example:
+	</p>
+<pre class="programlisting">[hooks]
+pretxnchangegroup.acl = python:hgext.acl.hook</pre>
+<p><a name="x_23c"></a>The <code class="literal">acl</code> extension is
+	  configured using three sections.
+	</p>
+<p><a name="x_23d"></a>The <code class="literal">acl</code> section has
+	  only one entry, <code class="envar">sources</code>,
+	  which lists the sources of incoming changesets that the hook
+	  should pay attention to.  You don't normally need to
+	  configure this section.
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_23e"></a><code class="envar">serve</code>:
+	      Control incoming changesets that are arriving from a
+	      remote repository over http or ssh.  This is the default
+	      value of <code class="envar">sources</code>, and
+	      usually the only setting you'll need for this
+	      configuration item.
+	    </p></li>
+<li><p><a name="x_23f"></a><code class="envar">pull</code>:
+	      Control incoming changesets that are arriving via a pull
+	      from a local repository.
+	    </p></li>
+<li><p><a name="x_240"></a><code class="envar">push</code>:
+	      Control incoming changesets that are arriving via a push
+	      from a local repository.
+	    </p></li>
+<li><p><a name="x_241"></a><code class="envar">bundle</code>:
+	      Control incoming changesets that are arriving from
+	      another repository via a bundle.
+	    </p></li>
+</ul></div>
+<p><a name="x_242"></a>The <code class="literal">acl.allow</code>
+	  section controls the users that are allowed to add
+	  changesets to the repository.  If this section is not
+	  present, all users that are not explicitly denied are
+	  allowed.  If this section is present, all users that are not
+	  explicitly allowed are denied (so an empty section means
+	  that all users are denied).
+	</p>
+<p><a name="x_243"></a>The <code class="literal">acl.deny</code>
+	  section determines which users are denied from adding
+	  changesets to the repository.  If this section is not
+	  present or is empty, no users are denied.
+	</p>
+<p><a name="x_244"></a>The syntaxes for the <code class="literal">acl.allow</code> and <code class="literal">acl.deny</code> sections are
+	  identical.  On the left of each entry is a glob pattern that
+	  matches files or directories, relative to the root of the
+	  repository; on the right, a user name.
+	</p>
+<p><a name="x_245"></a>In the following example, the user
+	  <code class="literal">docwriter</code> can only push changes to the
+	  <code class="filename">docs</code> subtree of the
+	  repository, while <code class="literal">intern</code> can push changes
+	  to any file or directory except <code class="filename">source/sensitive</code>.
+	</p>
+<pre class="programlisting">[acl.allow]
+docs/** = docwriter
+[acl.deny]
+source/sensitive/** = intern</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id536169"></a>9.7.1.2. Testing and troubleshooting</h4></div></div></div>
+<p><a name="x_246"></a>If you want to test the <code class="literal">acl</code> hook, run it with Mercurial's
+	  debugging output enabled.  Since you'll probably be running
+	  it on a server where it's not convenient (or sometimes
+	  possible) to pass in the <code class="option">--debug</code> option, don't forget
+	  that you can enable debugging output in your <code class="filename">~/.hgrc</code>:
+	</p>
+<pre class="programlisting">[ui]
+debug = true</pre>
+<p><a name="x_247"></a>With this enabled, the <code class="literal">acl</code> hook will print enough
+	  information to let you figure out why it is allowing or
+	  forbidding pushes from specific users.
+	</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id536230"></a>9.7.2. <code class="literal">bugzilla</code>—integration with
+	Bugzilla</h3></div></div></div>
+<p><a name="x_248"></a>The <code class="literal">bugzilla</code> extension
+	adds a comment to a Bugzilla bug whenever it finds a reference
+	to that bug ID in a commit comment.  You can install this hook
+	on a shared server, so that any time a remote user pushes
+	changes to this server, the hook gets run.
+      </p>
+<p><a name="x_249"></a>It adds a comment to the bug that looks like this (you can
+	configure the contents of the comment—see below):
+      </p>
+<pre class="programlisting">Changeset aad8b264143a, made by Joe User
+	&lt;joe.user@domain.com&gt; in the frobnitz repository, refers
+	to this bug. For complete details, see
+	http://hg.domain.com/frobnitz?cmd=changeset;node=aad8b264143a
+	Changeset description: Fix bug 10483 by guarding against some
+	NULL pointers</pre>
+<p><a name="x_24a"></a>The value of this hook is that it automates the process of
+	updating a bug any time a changeset refers to it.  If you
+	configure the hook properly, it makes it easy for people to
+	browse straight from a Bugzilla bug to a changeset that refers
+	to that bug.
+      </p>
+<p><a name="x_24b"></a>You can use the code in this hook as a starting point for
+	some more exotic Bugzilla integration recipes.  Here are a few
+	possibilities:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_24c"></a>Require that every changeset pushed to the
+	    server have a valid bug ID in its commit comment.  In this
+	    case, you'd want to configure the hook as a <code class="literal">pretxncommit</code> hook.  This would
+	    allow the hook to reject changes that didn't contain bug
+	    IDs.
+	  </p></li>
+<li><p><a name="x_24d"></a>Allow incoming changesets to automatically
+	    modify the <span class="emphasis"><em>state</em></span> of a bug, as well as
+	    simply adding a comment.  For example, the hook could
+	    recognise the string “<span class="quote">fixed bug 31337</span>” as
+	    indicating that it should update the state of bug 31337 to
+	    “<span class="quote">requires testing</span>”.
+	  </p></li>
+</ul></div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="sec:hook:bugzilla:config"></a>9.7.2.1. Configuring the <code class="literal">bugzilla</code>
+	  hook</h4></div></div></div>
+<p><a name="x_24e"></a>You should configure this hook in your server's
+	  <code class="filename">~/.hgrc</code> as an <code class="literal">incoming</code> hook, for example as
+	  follows:
+	</p>
+<pre class="programlisting">[hooks]
+incoming.bugzilla = python:hgext.bugzilla.hook</pre>
+<p><a name="x_24f"></a>Because of the specialised nature of this hook, and
+	  because Bugzilla was not written with this kind of
+	  integration in mind, configuring this hook is a somewhat
+	  involved process.
+	</p>
+<p><a name="x_250"></a>Before you begin, you must install the MySQL bindings
+	  for Python on the host(s) where you'll be running the hook.
+	  If this is not available as a binary package for your
+	  system, you can download it from
+	  [<span class="citation">web:mysql-python</span>].
+	</p>
+<p><a name="x_251"></a>Configuration information for this hook lives in the
+	  <code class="literal">bugzilla</code> section of
+	  your <code class="filename">~/.hgrc</code>.
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_252"></a><code class="envar">version</code>: The version
+	      of Bugzilla installed on the server.  The database
+	      schema that Bugzilla uses changes occasionally, so this
+	      hook has to know exactly which schema to use. At the
+	      moment, the only version supported is
+	      <code class="literal">2.16</code>.
+	    </p></li>
+<li><p><a name="x_253"></a><code class="envar">host</code>:
+	      The hostname of the MySQL server that stores your
+	      Bugzilla data.  The database must be configured to allow
+	      connections from whatever host you are running the
+	      <code class="literal">bugzilla</code> hook on.
+	    </p></li>
+<li><p><a name="x_254"></a><code class="envar">user</code>:
+	      The username with which to connect to the MySQL server.
+	      The database must be configured to allow this user to
+	      connect from whatever host you are running the <code class="literal">bugzilla</code> hook on.  This user
+	      must be able to access and modify Bugzilla tables.  The
+	      default value of this item is <code class="literal">bugs</code>,
+	      which is the standard name of the Bugzilla user in a
+	      MySQL database.
+	    </p></li>
+<li><p><a name="x_255"></a><code class="envar">password</code>: The MySQL
+	      password for the user you configured above.  This is
+	      stored as plain text, so you should make sure that
+	      unauthorised users cannot read the <code class="filename">~/.hgrc</code> file where you
+	      store this information.
+	    </p></li>
+<li><p><a name="x_256"></a><code class="envar">db</code>:
+	      The name of the Bugzilla database on the MySQL server.
+	      The default value of this item is
+	      <code class="literal">bugs</code>, which is the standard name of
+	      the MySQL database where Bugzilla stores its data.
+	    </p></li>
+<li>
+<p><a name="x_257"></a><code class="envar">notify</code>: If you want
+	      Bugzilla to send out a notification email to subscribers
+	      after this hook has added a comment to a bug, you will
+	      need this hook to run a command whenever it updates the
+	      database.  The command to run depends on where you have
+	      installed Bugzilla, but it will typically look something
+	      like this, if you have Bugzilla installed in <code class="filename">/var/www/html/bugzilla</code>:
+	    </p>
+<pre class="programlisting">cd /var/www/html/bugzilla &amp;&amp;
+	      ./processmail %s nobody@nowhere.com</pre>
+</li>
+<li><p><a name="x_258"></a>  The Bugzilla
+	      <code class="literal">processmail</code> program expects to be
+	      given a bug ID (the hook replaces
+	      “<span class="quote"><code class="literal">%s</code></span>” with the bug ID)
+	      and an email address.  It also expects to be able to
+	      write to some files in the directory that it runs in.
+	      If Bugzilla and this hook are not installed on the same
+	      machine, you will need to find a way to run
+	      <code class="literal">processmail</code> on the server where
+	      Bugzilla is installed.
+	    </p></li>
+</ul></div>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id536625"></a>9.7.2.2. Mapping committer names to Bugzilla user names</h4></div></div></div>
+<p><a name="x_259"></a>By default, the <code class="literal">bugzilla</code> hook tries to use the
+	  email address of a changeset's committer as the Bugzilla
+	  user name with which to update a bug.  If this does not suit
+	  your needs, you can map committer email addresses to
+	  Bugzilla user names using a <code class="literal">usermap</code> section.
+	</p>
+<p><a name="x_25a"></a>Each item in the <code class="literal">usermap</code> section contains an
+	  email address on the left, and a Bugzilla user name on the
+	  right.
+	</p>
+<pre class="programlisting">[usermap]
+jane.user@example.com = jane</pre>
+<p><a name="x_25b"></a>You can either keep the <code class="literal">usermap</code> data in a normal
+	  <code class="filename">~/.hgrc</code>, or tell the
+	  <code class="literal">bugzilla</code> hook to read the
+	  information from an external <code class="filename">usermap</code>
+	  file.  In the latter case, you can store
+	  <code class="filename">usermap</code> data by itself in (for example)
+	  a user-modifiable repository.  This makes it possible to let
+	  your users maintain their own <code class="envar">usermap</code> entries.  The main
+	  <code class="filename">~/.hgrc</code> file might look
+	  like this:
+	</p>
+<pre class="programlisting"># regular hgrc file refers to external usermap file
+[bugzilla]
+usermap = /home/hg/repos/userdata/bugzilla-usermap.conf</pre>
+<p><a name="x_25c"></a>While the <code class="filename">usermap</code> file that it
+	  refers to might look like this:
+	</p>
+<pre class="programlisting"># bugzilla-usermap.conf - inside a hg repository
+[usermap] stephanie@example.com = steph</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id536766"></a>9.7.2.3. Configuring the text that gets added to a bug</h4></div></div></div>
+<p><a name="x_25d"></a>You can configure the text that this hook adds as a
+	  comment; you specify it in the form of a Mercurial template.
+	  Several <code class="filename">~/.hgrc</code> entries
+	  (still in the <code class="literal">bugzilla</code>
+	  section) control this behaviour.
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_25e"></a><code class="literal">strip</code>: The number of
+	      leading path elements to strip from a repository's path
+	      name to construct a partial path for a URL. For example,
+	      if the repositories on your server live under <code class="filename">/home/hg/repos</code>, and you
+	      have a repository whose path is <code class="filename">/home/hg/repos/app/tests</code>,
+	      then setting <code class="literal">strip</code> to
+	      <code class="literal">4</code> will give a partial path of
+	      <code class="filename">app/tests</code>.  The
+	      hook will make this partial path available when
+	      expanding a template, as <code class="literal">webroot</code>.
+	    </p></li>
+<li><p><a name="x_25f"></a><code class="literal">template</code>: The text of the
+	      template to use.  In addition to the usual
+	      changeset-related variables, this template can use
+	      <code class="literal">hgweb</code> (the value of the
+	      <code class="literal">hgweb</code> configuration item above) and
+	      <code class="literal">webroot</code> (the path constructed using
+	      <code class="literal">strip</code> above).
+	    </p></li>
+</ul></div>
+<p><a name="x_260"></a>In addition, you can add a <code class="envar">baseurl</code> item to the <code class="literal">web</code> section of your <code class="filename">~/.hgrc</code>.  The <code class="literal">bugzilla</code> hook will make this
+	  available when expanding a template, as the base string to
+	  use when constructing a URL that will let users browse from
+	  a Bugzilla comment to view a changeset.  Example:
+	</p>
+<pre class="programlisting">[web]
+baseurl = http://hg.domain.com/</pre>
+<p><a name="x_261"></a>Here is an example set of <code class="literal">bugzilla</code> hook config information.
+	</p>
+<pre class="programlisting">[bugzilla]
+host = bugzilla.example.com
+password = mypassword version = 2.16
+# server-side repos live in /home/hg/repos, so strip 4 leading
+# separators
+strip = 4
+hgweb = http://hg.example.com/
+usermap = /home/hg/repos/notify/bugzilla.conf
+template = Changeset {node|short}, made by {author} in the {webroot}
+  repo, refers to this bug.\n
+  For complete details, see
+  {hgweb}{webroot}?cmd=changeset;node={node|short}\n
+  Changeset description:\n
+  \t{desc|tabindent}</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id536970"></a>9.7.2.4. Testing and troubleshooting</h4></div></div></div>
+<p><a name="x_262"></a>The most common problems with configuring the <code class="literal">bugzilla</code> hook relate to running
+	  Bugzilla's <code class="filename">processmail</code> script and
+	  mapping committer names to user names.
+	</p>
+<p><a name="x_263"></a>Recall from <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:bugzilla:config" title="9.7.2.1. Configuring the bugzilla hook">Section 9.7.2.1, “Configuring the bugzilla
+	  hook”</a> above that the user
+	  that runs the Mercurial process on the server is also the
+	  one that will run the <code class="filename">processmail</code>
+	  script.  The <code class="filename">processmail</code> script
+	  sometimes causes Bugzilla to write to files in its
+	  configuration directory, and Bugzilla's configuration files
+	  are usually owned by the user that your web server runs
+	  under.
+	</p>
+<p><a name="x_264"></a>You can cause <code class="filename">processmail</code> to be run
+	  with the suitable user's identity using the
+	  <span class="command"><strong>sudo</strong></span> command.  Here is an example entry
+	  for a <code class="filename">sudoers</code> file.
+	</p>
+<pre class="programlisting">hg_user = (httpd_user)
+NOPASSWD: /var/www/html/bugzilla/processmail-wrapper %s</pre>
+<p><a name="x_265"></a>This allows the <code class="literal">hg_user</code> user to run a
+	  <code class="filename">processmail-wrapper</code> program under the
+	  identity of <code class="literal">httpd_user</code>.
+	</p>
+<p><a name="x_266"></a>This indirection through a wrapper script is necessary,
+	  because <code class="filename">processmail</code> expects to be run
+	  with its current directory set to wherever you installed
+	  Bugzilla; you can't specify that kind of constraint in a
+	  <code class="filename">sudoers</code> file.  The contents of the
+	  wrapper script are simple:
+	</p>
+<pre class="programlisting">#!/bin/sh
+cd `dirname $0` &amp;&amp; ./processmail "$1" nobody@example.com</pre>
+<p><a name="x_267"></a>It doesn't seem to matter what email address you pass to
+	  <code class="filename">processmail</code>.
+	</p>
+<p><a name="x_268"></a>If your <code class="literal">usermap</code> is
+	  not set up correctly, users will see an error message from
+	  the <code class="literal">bugzilla</code> hook when they
+	  push changes to the server.  The error message will look
+	  like this:
+	</p>
+<pre class="programlisting">cannot find bugzilla user id for john.q.public@example.com</pre>
+<p><a name="x_269"></a>What this means is that the committer's address,
+	  <code class="literal">john.q.public@example.com</code>, is not a valid
+	  Bugzilla user name, nor does it have an entry in your
+	  <code class="literal">usermap</code> that maps it to
+	  a valid Bugzilla user name.
+	</p>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537182"></a>9.7.3. <code class="literal">notify</code>—send email
+	notifications</h3></div></div></div>
+<p><a name="x_26a"></a>Although Mercurial's built-in web server provides RSS
+	feeds of changes in every repository, many people prefer to
+	receive change notifications via email.  The <code class="literal">notify</code> hook lets you send out
+	notifications to a set of email addresses whenever changesets
+	arrive that those subscribers are interested in.
+      </p>
+<p><a name="x_26b"></a>As with the <code class="literal">bugzilla</code>
+	hook, the <code class="literal">notify</code> hook is
+	template-driven, so you can customise the contents of the
+	notification messages that it sends.
+      </p>
+<p><a name="x_26c"></a>By default, the <code class="literal">notify</code>
+	hook includes a diff of every changeset that it sends out; you
+	can limit the size of the diff, or turn this feature off
+	entirely.  It is useful for letting subscribers review changes
+	immediately, rather than clicking to follow a URL.
+      </p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id537254"></a>9.7.3.1. Configuring the <code class="literal">notify</code>
+	  hook</h4></div></div></div>
+<p><a name="x_26d"></a>You can set up the <code class="literal">notify</code> hook to send one email
+	  message per incoming changeset, or one per incoming group of
+	  changesets (all those that arrived in a single pull or
+	  push).
+	</p>
+<pre class="programlisting">[hooks]
+# send one email per group of changes
+changegroup.notify = python:hgext.notify.hook
+# send one email per change
+incoming.notify = python:hgext.notify.hook</pre>
+<p><a name="x_26e"></a>Configuration information for this hook lives in the
+	  <code class="literal">notify</code> section of a
+	  <code class="filename">~/.hgrc</code> file.
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_26f"></a><code class="envar">test</code>:
+	      By default, this hook does not send out email at all;
+	      instead, it prints the message that it
+	      <span class="emphasis"><em>would</em></span> send.  Set this item to
+	      <code class="literal">false</code> to allow email to be sent. The
+	      reason that sending of email is turned off by default is
+	      that it takes several tries to configure this extension
+	      exactly as you would like, and it would be bad form to
+	      spam subscribers with a number of “<span class="quote">broken</span>”
+	      notifications while you debug your configuration.
+	    </p></li>
+<li><p><a name="x_270"></a><code class="envar">config</code>:
+	      The path to a configuration file that contains
+	      subscription information.  This is kept separate from
+	      the main <code class="filename">~/.hgrc</code> so
+	      that you can maintain it in a repository of its own.
+	      People can then clone that repository, update their
+	      subscriptions, and push the changes back to your server.
+	    </p></li>
+<li><p><a name="x_271"></a><code class="envar">strip</code>:
+	      The number of leading path separator characters to strip
+	      from a repository's path, when deciding whether a
+	      repository has subscribers.  For example, if the
+	      repositories on your server live in <code class="filename">/home/hg/repos</code>, and
+	      <code class="literal">notify</code> is considering a
+	      repository named <code class="filename">/home/hg/repos/shared/test</code>, 
+	      setting <code class="envar">strip</code> to
+	      <code class="literal">4</code> will cause <code class="literal">notify</code> to trim the path it
+	      considers down to <code class="filename">shared/test</code>, and it will
+	      match subscribers against that.
+	    </p></li>
+<li><p><a name="x_272"></a><code class="envar">template</code>: The template
+	      text to use when sending messages.  This specifies both
+	      the contents of the message header and its body.
+	    </p></li>
+<li><p><a name="x_273"></a><code class="envar">maxdiff</code>: The maximum
+	      number of lines of diff data to append to the end of a
+	      message.  If a diff is longer than this, it is
+	      truncated.  By default, this is set to 300.  Set this to
+	      <code class="literal">0</code> to omit diffs from notification
+	      emails.
+	    </p></li>
+<li><p><a name="x_274"></a><code class="envar">sources</code>: A list of
+	      sources of changesets to consider.  This lets you limit
+	      <code class="literal">notify</code> to only sending
+	      out email about changes that remote users pushed into
+	      this repository via a server, for example.  See 
+	      <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a> for the sources you
+	      can specify here.
+	    </p></li>
+</ul></div>
+<p><a name="x_275"></a>If you set the <code class="envar">baseurl</code>
+	  item in the <code class="literal">web</code> section,
+	  you can use it in a template; it will be available as
+	  <code class="literal">webroot</code>.
+	</p>
+<p><a name="x_276"></a>Here is an example set of <code class="literal">notify</code> configuration information.
+	</p>
+<pre class="programlisting">[notify]
+# really send email
+test = false
+# subscriber data lives in the notify repo
+config = /home/hg/repos/notify/notify.conf
+# repos live in /home/hg/repos on server, so strip 4 "/" chars
+strip = 4
+template = X-Hg-Repo: {webroot}\n
+  Subject: {webroot}: {desc|firstline|strip}\n
+  From: {author}
+  \n\n
+  changeset {node|short} in {root}
+  \n\ndetails:
+  {baseurl}{webroot}?cmd=changeset;node={node|short}
+  description: {desc|tabindent|strip}
+
+[web]
+baseurl =
+http://hg.example.com/</pre>
+<p><a name="x_277"></a>This will produce a message that looks like the
+	  following:
+	</p>
+<pre class="programlisting">X-Hg-Repo: tests/slave
+Subject: tests/slave: Handle error case when slave has no buffers
+Date: Wed,  2 Aug 2006 15:25:46 -0700 (PDT)
+
+changeset 3cba9bfe74b5 in /home/hg/repos/tests/slave
+
+details:
+http://hg.example.com/tests/slave?cmd=changeset;node=3cba9bfe74b5 
+
+description: Handle error case when slave has no buffers
+
+diffs (54 lines):
+diff -r 9d95df7cf2ad -r 3cba9bfe74b5 include/tests.h
+--- a/include/tests.h      Wed Aug 02 15:19:52 2006 -0700
++++ b/include/tests.h      Wed Aug 02 15:25:26 2006 -0700
+@@ -212,6 +212,15 @@ static __inline__
+void test_headers(void *h)
+[...snip...]</pre>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id537584"></a>9.7.3.2. Testing and troubleshooting</h4></div></div></div>
+<p><a name="x_278"></a>Do not forget that by default, the <code class="literal">notify</code> extension <span class="emphasis"><em>will not
+	  send any mail</em></span> until you explicitly configure it to do so,
+	  by setting <code class="envar">test</code> to
+	  <code class="literal">false</code>.  Until you do that, it simply
+	  prints the message it <span class="emphasis"><em>would</em></span> send.
+	</p>
+</div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hook:ref"></a>9.8. Information for writers of hooks</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537638"></a>9.8.1. In-process hook execution</h3></div></div></div>
+<p><a name="x_279"></a>An in-process hook is called with arguments of the
+	following form:
+      </p>
+<pre class="programlisting">def myhook(ui, repo, **kwargs): pass</pre>
+<p><a name="x_27a"></a>The <code class="literal">ui</code> parameter is a <code class="literal">ui</code> object. The
+	<code class="literal">repo</code> parameter is a <code class="literal">localrepository</code>
+	object.  The names and values of the
+	<code class="literal">**kwargs</code> parameters depend on the hook
+	being invoked, with the following common features:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_27b"></a>If a parameter is named
+	    <code class="literal">node</code> or <code class="literal">parentN</code>, it
+	    will contain a hexadecimal changeset ID. The empty string
+	    is used to represent “<span class="quote">null changeset ID</span>”
+	    instead of a string of zeroes.
+	  </p></li>
+<li><p><a name="x_27c"></a>If a parameter is named
+	    <code class="literal">url</code>, it will contain the URL of a
+	    remote repository, if that can be determined.
+	  </p></li>
+<li><p><a name="x_27d"></a>Boolean-valued parameters are represented as
+	    Python <code class="literal">bool</code> objects.
+	  </p></li>
+</ul></div>
+<p><a name="x_27e"></a>An in-process hook is called without a change to the
+	process's working directory (unlike external hooks, which are
+	run in the root of the repository).  It must not change the
+	process's working directory, or it will cause any calls it
+	makes into the Mercurial API to fail.
+      </p>
+<p><a name="x_27f"></a>If a hook returns a boolean “<span class="quote">false</span>” value, it
+	is considered to have succeeded.  If it returns a boolean
+	“<span class="quote">true</span>” value or raises an exception, it is
+	considered to have failed.  A useful way to think of the
+	calling convention is “<span class="quote">tell me if you fail</span>”.
+      </p>
+<p><a name="x_280"></a>Note that changeset IDs are passed into Python hooks as
+	hexadecimal strings, not the binary hashes that Mercurial's
+	APIs normally use.  To convert a hash from hex to binary, use
+	the <code class="literal">bin</code> function.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537806"></a>9.8.2. External hook execution</h3></div></div></div>
+<p><a name="x_281"></a>An external hook is passed to the shell of the user
+	running Mercurial. Features of that shell, such as variable
+	substitution and command redirection, are available.  The hook
+	is run in the root directory of the repository (unlike
+	in-process hooks, which are run in the same directory that
+	Mercurial was run in).
+      </p>
+<p><a name="x_282"></a>Hook parameters are passed to the hook as environment
+	variables.  Each environment variable's name is converted in
+	upper case and prefixed with the string
+	“<span class="quote"><code class="literal">HG_</code></span>”.  For example, if the
+	name of a parameter is “<span class="quote"><code class="literal">node</code></span>”,
+	the name of the environment variable representing that
+	parameter will be “<span class="quote"><code class="literal">HG_NODE</code></span>”.
+      </p>
+<p><a name="x_283"></a>A boolean parameter is represented as the string
+	“<span class="quote"><code class="literal">1</code></span>” for “<span class="quote">true</span>”,
+	“<span class="quote"><code class="literal">0</code></span>” for “<span class="quote">false</span>”.
+	If an environment variable is named <code class="envar">HG_NODE</code>,
+	<code class="envar">HG_PARENT1</code> or <code class="envar">HG_PARENT2</code>, it
+	contains a changeset ID represented as a hexadecimal string.
+	The empty string is used to represent “<span class="quote">null changeset
+	  ID</span>” instead of a string of zeroes.  If an environment
+	variable is named <code class="envar">HG_URL</code>, it will contain the
+	URL of a remote repository, if that can be determined.
+      </p>
+<p><a name="x_284"></a>If a hook exits with a status of zero, it is considered to
+	have succeeded.  If it exits with a non-zero status, it is
+	considered to have failed.
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537910"></a>9.8.3. Finding out where changesets come from</h3></div></div></div>
+<p><a name="x_285"></a>A hook that involves the transfer of changesets between a
+	local repository and another may be able to find out
+	information about the “<span class="quote">far side</span>”.  Mercurial
+	knows <span class="emphasis"><em>how</em></span> changes are being transferred,
+	and in many cases <span class="emphasis"><em>where</em></span> they are being
+	transferred to or from.
+      </p>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="sec:hook:sources"></a>9.8.3.1. Sources of changesets</h4></div></div></div>
+<p><a name="x_286"></a>Mercurial will tell a hook what means are, or were, used
+	  to transfer changesets between repositories.  This is
+	  provided by Mercurial in a Python parameter named
+	  <code class="literal">source</code>, or an environment variable named
+	  <code class="envar">HG_SOURCE</code>.
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_287"></a><code class="literal">serve</code>: Changesets are
+	      transferred to or from a remote repository over http or
+	      ssh.
+	    </p></li>
+<li><p><a name="x_288"></a><code class="literal">pull</code>: Changesets are
+	      being transferred via a pull from one repository into
+	      another.
+	    </p></li>
+<li><p><a name="x_289"></a><code class="literal">push</code>: Changesets are
+	      being transferred via a push from one repository into
+	      another.
+	    </p></li>
+<li><p><a name="x_28a"></a><code class="literal">bundle</code>: Changesets are
+	      being transferred to or from a bundle.
+	    </p></li>
+</ul></div>
+</div>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="sec:hook:url"></a>9.8.3.2. Where changes are going—remote repository
+	  URLs</h4></div></div></div>
+<p><a name="x_28b"></a>When possible, Mercurial will tell a hook the location
+	  of the “<span class="quote">far side</span>” of an activity that transfers
+	  changeset data between repositories.  This is provided by
+	  Mercurial in a Python parameter named
+	  <code class="literal">url</code>, or an environment variable named
+	  <code class="envar">HG_URL</code>.
+	</p>
+<p><a name="x_28c"></a>This information is not always known.  If a hook is
+	  invoked in a repository that is being served via http or
+	  ssh, Mercurial cannot tell where the remote repository is,
+	  but it may know where the client is connecting from.  In
+	  such cases, the URL will take one of the following forms:
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_28d"></a><code class="literal">remote:ssh:1.2.3.4</code>—remote 
+	      ssh client, at the IP address
+	      <code class="literal">1.2.3.4</code>.
+	    </p></li>
+<li><p><a name="x_28e"></a><code class="literal">remote:http:1.2.3.4</code>—remote 
+	      http client, at the IP address
+	      <code class="literal">1.2.3.4</code>.  If the client is using SSL,
+	      this will be of the form
+	      <code class="literal">remote:https:1.2.3.4</code>.
+	    </p></li>
+<li><p><a name="x_28f"></a>Empty—no information could be
+	      discovered about the remote client.
+	    </p></li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id538130"></a>9.9. Hook reference</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:changegroup"></a>9.9.1. <code class="literal">changegroup</code>—after
+	remote changesets added</h3></div></div></div>
+<p><a name="x_290"></a>This hook is run after a group of pre-existing changesets
+	has been added to the repository, for example via a <span class="command"><strong>hg pull</strong></span> or <span class="command"><strong>hg
+	  unbundle</strong></span>.  This hook is run once per operation
+	that added one or more changesets.  This is in contrast to the
+	<code class="literal">incoming</code> hook, which is run
+	once per changeset, regardless of whether the changesets
+	arrive in a group.
+      </p>
+<p><a name="x_291"></a>Some possible uses for this hook include kicking off an
+	automated build or test of the added changesets, updating a
+	bug database, or notifying subscribers that a repository
+	contains new changes.
+      </p>
+<p><a name="x_292"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_293"></a><code class="literal">node</code>: A changeset ID.  The
+	    changeset ID of the first changeset in the group that was
+	    added.  All changesets between this and
+	    <code class="literal">tip</code>, inclusive, were added by a single
+	    <span class="command"><strong>hg pull</strong></span>, <span class="command"><strong>hg push</strong></span> or <span class="command"><strong>hg unbundle</strong></span>.
+	  </p></li>
+<li><p><a name="x_294"></a><code class="literal">source</code>: A
+	    string.  The source of these changes.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a> for details.
+	  </p></li>
+<li><p><a name="x_295"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_296"></a>See also: <code class="literal">incoming</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:incoming" title="9.9.3. incoming—after one remote changeset is added">Section 9.9.3, “incoming—after one
+	remote changeset is added”</a>), <code class="literal">prechangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:prechangegroup" title="9.9.5. prechangegroup—before starting to add remote changesets">Section 9.9.5, “prechangegroup—before starting
+	to add remote changesets”</a>), <code class="literal">pretxnchangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxnchangegroup" title="9.9.9. pretxnchangegroup—before completing addition of remote changesets">Section 9.9.9, “pretxnchangegroup—before
+	completing addition of remote changesets”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:commit"></a>9.9.2. <code class="literal">commit</code>—after a new
+	changeset is created</h3></div></div></div>
+<p><a name="x_297"></a>This hook is run after a new changeset has been created.
+      </p>
+<p><a name="x_298"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_299"></a><code class="literal">node</code>: A changeset ID.  The
+	    changeset ID of the newly committed changeset.
+	  </p></li>
+<li><p><a name="x_29a"></a><code class="literal">parent1</code>: A changeset ID.
+	    The changeset ID of the first parent of the newly
+	    committed changeset.
+	  </p></li>
+<li><p><a name="x_29b"></a><code class="literal">parent2</code>: A changeset ID.
+	    The changeset ID of the second parent of the newly
+	    committed changeset.
+	  </p></li>
+</ul></div>
+<p><a name="x_29c"></a>See also: <code class="literal">precommit</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:precommit" title="9.9.6. precommit—before starting to commit a changeset">Section 9.9.6, “precommit—before
+	starting to commit a changeset”</a>), <code class="literal">pretxncommit</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxncommit" title="9.9.10. pretxncommit—before completing commit of new changeset">Section 9.9.10, “pretxncommit—before
+	completing commit of new changeset”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:incoming"></a>9.9.3. <code class="literal">incoming</code>—after one
+	remote changeset is added</h3></div></div></div>
+<p><a name="x_29d"></a>This hook is run after a pre-existing changeset has been
+	added to the repository, for example via a <span class="command"><strong>hg push</strong></span>.  If a group of changesets
+	was added in a single operation, this hook is called once for
+	each added changeset.
+      </p>
+<p><a name="x_29e"></a>You can use this hook for the same purposes as
+	the <code class="literal">changegroup</code> hook (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:changegroup" title="9.9.1. changegroup—after remote changesets added">Section 9.9.1, “changegroup—after
+	remote changesets added”</a>); it's simply more
+	convenient sometimes to run a hook once per group of
+	changesets, while other times it's handier once per changeset.
+      </p>
+<p><a name="x_29f"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2a0"></a><code class="literal">node</code>: A changeset ID.  The
+	    ID of the newly added changeset.
+	  </p></li>
+<li><p><a name="x_2a1"></a><code class="literal">source</code>: A
+	    string.  The source of these changes.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a> for details.
+	  </p></li>
+<li><p><a name="x_2a2"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_2a3"></a>See also: <code class="literal">changegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:changegroup" title="9.9.1. changegroup—after remote changesets added">Section 9.9.1, “changegroup—after
+	remote changesets added”</a>) <code class="literal">prechangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:prechangegroup" title="9.9.5. prechangegroup—before starting to add remote changesets">Section 9.9.5, “prechangegroup—before starting
+	to add remote changesets”</a>), <code class="literal">pretxnchangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxnchangegroup" title="9.9.9. pretxnchangegroup—before completing addition of remote changesets">Section 9.9.9, “pretxnchangegroup—before
+	completing addition of remote changesets”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:outgoing"></a>9.9.4. <code class="literal">outgoing</code>—after
+	changesets are propagated</h3></div></div></div>
+<p><a name="x_2a4"></a>This hook is run after a group of changesets has been
+	propagated out of this repository, for example by a <span class="command"><strong>hg push</strong></span> or <span class="command"><strong>hg
+	  bundle</strong></span> command.
+      </p>
+<p><a name="x_2a5"></a>One possible use for this hook is to notify administrators
+	that changes have been pulled.
+      </p>
+<p><a name="x_2a6"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2a7"></a><code class="literal">node</code>: A changeset ID.  The
+	    changeset ID of the first changeset of the group that was
+	    sent.
+	  </p></li>
+<li><p><a name="x_2a8"></a><code class="literal">source</code>: A string.  The
+	    source of the of the operation (see <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a>).  If a remote
+	    client pulled changes from this repository,
+	    <code class="literal">source</code> will be
+	    <code class="literal">serve</code>.  If the client that obtained
+	    changes from this repository was local,
+	    <code class="literal">source</code> will be
+	    <code class="literal">bundle</code>, <code class="literal">pull</code>, or
+	    <code class="literal">push</code>, depending on the operation the
+	    client performed.
+	  </p></li>
+<li><p><a name="x_2a9"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_2aa"></a>See also: <code class="literal">preoutgoing</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:preoutgoing" title="9.9.7. preoutgoing—before starting to propagate changesets">Section 9.9.7, “preoutgoing—before
+	starting to propagate changesets”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:prechangegroup"></a>9.9.5. <code class="literal">prechangegroup</code>—before starting
+	to add remote changesets</h3></div></div></div>
+<p><a name="x_2ab"></a>This controlling hook is run before Mercurial begins to
+	add a group of changesets from another repository.
+      </p>
+<p><a name="x_2ac"></a>This hook does not have any information about the
+	changesets to be added, because it is run before transmission
+	of those changesets is allowed to begin.  If this hook fails,
+	the changesets will not be transmitted.
+      </p>
+<p><a name="x_2ad"></a>One use for this hook is to prevent external changes from
+	being added to a repository.  For example, you could use this
+	to “<span class="quote">freeze</span>” a server-hosted branch temporarily or
+	permanently so that users cannot push to it, while still
+	allowing a local administrator to modify the repository.
+      </p>
+<p><a name="x_2ae"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2af"></a><code class="literal">source</code>: A string.  The
+	    source of these changes.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a> for details.
+	  </p></li>
+<li><p><a name="x_2b0"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_2b1"></a>See also: <code class="literal">changegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:changegroup" title="9.9.1. changegroup—after remote changesets added">Section 9.9.1, “changegroup—after
+	remote changesets added”</a>), <code class="literal">incoming</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:incoming" title="9.9.3. incoming—after one remote changeset is added">Section 9.9.3, “incoming—after one
+	remote changeset is added”</a>), <code class="literal">pretxnchangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxnchangegroup" title="9.9.9. pretxnchangegroup—before completing addition of remote changesets">Section 9.9.9, “pretxnchangegroup—before
+	completing addition of remote changesets”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:precommit"></a>9.9.6. <code class="literal">precommit</code>—before
+	starting to commit a changeset</h3></div></div></div>
+<p><a name="x_2b2"></a>This hook is run before Mercurial begins to commit a new
+	changeset. It is run before Mercurial has any of the metadata
+	for the commit, such as the files to be committed, the commit
+	message, or the commit date.
+      </p>
+<p><a name="x_2b3"></a>One use for this hook is to disable the ability to commit
+	new changesets, while still allowing incoming changesets.
+	Another is to run a build or test, and only allow the commit
+	to begin if the build or test succeeds.
+      </p>
+<p><a name="x_2b4"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2b5"></a><code class="literal">parent1</code>: A changeset ID.
+	    The changeset ID of the first parent of the working
+	    directory.
+	  </p></li>
+<li><p><a name="x_2b6"></a><code class="literal">parent2</code>: A changeset ID.
+	    The changeset ID of the second parent of the working
+	    directory.
+	  </p></li>
+</ul></div>
+<p><a name="x_2b7"></a>If the commit proceeds, the parents of the working
+	directory will become the parents of the new changeset.
+      </p>
+<p><a name="x_2b8"></a>See also: <code class="literal">commit</code>
+	(<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:commit" title="9.9.2. commit—after a new changeset is created">Section 9.9.2, “commit—after a new
+	changeset is created”</a>), <code class="literal">pretxncommit</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxncommit" title="9.9.10. pretxncommit—before completing commit of new changeset">Section 9.9.10, “pretxncommit—before
+	completing commit of new changeset”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:preoutgoing"></a>9.9.7. <code class="literal">preoutgoing</code>—before
+	starting to propagate changesets</h3></div></div></div>
+<p><a name="x_2b9"></a>This hook is invoked before Mercurial knows the identities
+	of the changesets to be transmitted.
+      </p>
+<p><a name="x_2ba"></a>One use for this hook is to prevent changes from being
+	transmitted to another repository.
+      </p>
+<p><a name="x_2bb"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2bc"></a><code class="literal">source</code>: A
+	    string.  The source of the operation that is attempting to
+	    obtain changes from this repository (see <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a>).  See the documentation
+	    for the <code class="literal">source</code> parameter to the
+	    <code class="literal">outgoing</code> hook, in
+	    <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:outgoing" title="9.9.4. outgoing—after changesets are propagated">Section 9.9.4, “outgoing—after
+	changesets are propagated”</a>, for possible values
+	    of this parameter.
+	  </p></li>
+<li><p><a name="x_2bd"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_2be"></a>See also: <code class="literal">outgoing</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:outgoing" title="9.9.4. outgoing—after changesets are propagated">Section 9.9.4, “outgoing—after
+	changesets are propagated”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:pretag"></a>9.9.8. <code class="literal">pretag</code>—before
+	tagging a changeset</h3></div></div></div>
+<p><a name="x_2bf"></a>This controlling hook is run before a tag is created.  If
+	the hook succeeds, creation of the tag proceeds.  If the hook
+	fails, the tag is not created.
+      </p>
+<p><a name="x_2c0"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2c1"></a><code class="literal">local</code>: A boolean.  Whether
+	    the tag is local to this repository instance (i.e. stored
+	    in <code class="filename">.hg/localtags</code>) or
+	    managed by Mercurial (stored in <code class="filename">.hgtags</code>).
+	  </p></li>
+<li><p><a name="x_2c2"></a><code class="literal">node</code>: A changeset ID.  The
+	    ID of the changeset to be tagged.
+	  </p></li>
+<li><p><a name="x_2c3"></a><code class="literal">tag</code>: A string.  The name of
+	    the tag to be created.
+	  </p></li>
+</ul></div>
+<p><a name="x_2c4"></a>If the tag to be created is
+	revision-controlled, the <code class="literal">precommit</code> and <code class="literal">pretxncommit</code> hooks (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:commit" title="9.9.2. commit—after a new changeset is created">Section 9.9.2, “commit—after a new
+	changeset is created”</a> and <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretxncommit" title="9.9.10. pretxncommit—before completing commit of new changeset">Section 9.9.10, “pretxncommit—before
+	completing commit of new changeset”</a>) will also be run.
+      </p>
+<p><a name="x_2c5"></a>See also: <code class="literal">tag</code>
+	(<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:tag" title="9.9.12. tag—after tagging a changeset">Section 9.9.12, “tag—after tagging a
+	changeset”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:pretxnchangegroup"></a>9.9.9. <code class="literal">pretxnchangegroup</code>—before
+	completing addition of remote changesets</h3></div></div></div>
+<p><a name="x_2c6"></a>This controlling hook is run before a
+	transaction—that manages the addition of a group of new
+	changesets from outside the repository—completes.  If
+	the hook succeeds, the transaction completes, and all of the
+	changesets become permanent within this repository.  If the
+	hook fails, the transaction is rolled back, and the data for
+	the changesets is erased.
+      </p>
+<p><a name="x_2c7"></a>This hook can access the metadata associated with the
+	almost-added changesets, but it should not do anything
+	permanent with this data. It must also not modify the working
+	directory.
+      </p>
+<p><a name="x_2c8"></a>While this hook is running, if other Mercurial processes
+	access this repository, they will be able to see the
+	almost-added changesets as if they are permanent.  This may
+	lead to race conditions if you do not take steps to avoid
+	them.
+      </p>
+<p><a name="x_2c9"></a>This hook can be used to automatically vet a group of
+	changesets.  If the hook fails, all of the changesets are
+	“<span class="quote">rejected</span>” when the transaction rolls back.
+      </p>
+<p><a name="x_2ca"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2cb"></a><code class="literal">node</code>: A changeset ID.  The
+	    changeset ID of the first changeset in the group that was
+	    added.  All changesets between this and
+	    <code class="literal">tip</code>,
+	    inclusive, were added by a single <span class="command"><strong>hg pull</strong></span>, <span class="command"><strong>hg push</strong></span> or <span class="command"><strong>hg unbundle</strong></span>.
+	  </p></li>
+<li><p><a name="x_2cc"></a><code class="literal">source</code>: A
+	    string.  The source of these changes.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:sources" title="9.8.3.1. Sources of changesets">Section 9.8.3.1, “Sources of changesets”</a> for details.
+	  </p></li>
+<li><p><a name="x_2cd"></a><code class="literal">url</code>: A URL.  The
+	    location of the remote repository, if known.  See <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:url" title="9.8.3.2. Where changes are going—remote repository URLs">Section 9.8.3.2, “Where changes are going—remote repository
+	  URLs”</a> for more information.
+	  </p></li>
+</ul></div>
+<p><a name="x_2ce"></a>See also: <code class="literal">changegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:changegroup" title="9.9.1. changegroup—after remote changesets added">Section 9.9.1, “changegroup—after
+	remote changesets added”</a>), <code class="literal">incoming</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:incoming" title="9.9.3. incoming—after one remote changeset is added">Section 9.9.3, “incoming—after one
+	remote changeset is added”</a>), <code class="literal">prechangegroup</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:prechangegroup" title="9.9.5. prechangegroup—before starting to add remote changesets">Section 9.9.5, “prechangegroup—before starting
+	to add remote changesets”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:pretxncommit"></a>9.9.10. <code class="literal">pretxncommit</code>—before
+	completing commit of new changeset</h3></div></div></div>
+<p><a name="x_2cf"></a>This controlling hook is run before a
+	transaction—that manages a new commit—completes.
+	If the hook succeeds, the transaction completes and the
+	changeset becomes permanent within this repository.  If the
+	hook fails, the transaction is rolled back, and the commit
+	data is erased.
+      </p>
+<p><a name="x_2d0"></a>This hook can access the metadata associated with the
+	almost-new changeset, but it should not do anything permanent
+	with this data.  It must also not modify the working
+	directory.
+      </p>
+<p><a name="x_2d1"></a>While this hook is running, if other Mercurial processes
+	access this repository, they will be able to see the
+	almost-new changeset as if it is permanent.  This may lead to
+	race conditions if you do not take steps to avoid them.
+      </p>
+<p><a name="x_2d2"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2d3"></a><code class="literal">node</code>: A changeset ID.  The
+	    changeset ID of the newly committed changeset.
+	  </p></li>
+<li><p><a name="x_2d4"></a><code class="literal">parent1</code>: A changeset ID.
+	    The changeset ID of the first parent of the newly
+	    committed changeset.
+	  </p></li>
+<li><p><a name="x_2d5"></a><code class="literal">parent2</code>: A changeset ID.
+	    The changeset ID of the second parent of the newly
+	    committed changeset.
+	  </p></li>
+</ul></div>
+<p><a name="x_2d6"></a>See also: <code class="literal">precommit</code> (<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:precommit" title="9.9.6. precommit—before starting to commit a changeset">Section 9.9.6, “precommit—before
+	starting to commit a changeset”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:preupdate"></a>9.9.11. <code class="literal">preupdate</code>—before
+	updating or merging working directory</h3></div></div></div>
+<p><a name="x_2d7"></a>This controlling hook is run before an update
+	or merge of the working directory begins.  It is run only if
+	Mercurial's normal pre-update checks determine that the update
+	or merge can proceed.  If the hook succeeds, the update or
+	merge may proceed; if it fails, the update or merge does not
+	start.
+      </p>
+<p><a name="x_2d8"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2d9"></a><code class="literal">parent1</code>: A
+	    changeset ID. The ID of the parent that the working
+	    directory is to be updated to.  If the working directory
+	    is being merged, it will not change this parent.
+	  </p></li>
+<li><p><a name="x_2da"></a><code class="literal">parent2</code>: A
+	    changeset ID. Only set if the working directory is being
+	    merged.  The ID of the revision that the working directory
+	    is being merged with.
+	  </p></li>
+</ul></div>
+<p><a name="x_2db"></a>See also: <code class="literal">update</code>
+	(<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:update" title="9.9.13. update—after updating or merging working directory">Section 9.9.13, “update—after
+	updating or merging working directory”</a>)</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:tag"></a>9.9.12. <code class="literal">tag</code>—after tagging a
+	changeset</h3></div></div></div>
+<p><a name="x_2dc"></a>This hook is run after a tag has been created.
+      </p>
+<p><a name="x_2dd"></a>Parameters to this hook:
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2de"></a><code class="literal">local</code>: A boolean.  Whether
+	    the new tag is local to this repository instance (i.e.
+	    stored in <code class="filename">.hg/localtags</code>) or managed by
+	    Mercurial (stored in <code class="filename">.hgtags</code>).
+	  </p></li>
+<li><p><a name="x_2df"></a><code class="literal">node</code>: A changeset ID.  The
+	    ID of the changeset that was tagged.
+	  </p></li>
+<li><p><a name="x_2e0"></a><code class="literal">tag</code>: A string.  The name of
+	    the tag that was created.
+	  </p></li>
+</ul></div>
+<p><a name="x_2e1"></a>If the created tag is revision-controlled, the <code class="literal">commit</code> hook (section <a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:commit" title="9.9.2. commit—after a new changeset is created">Section 9.9.2, “commit—after a new
+	changeset is created”</a>) is run before this hook.
+      </p>
+<p><a name="x_2e2"></a>See also: <code class="literal">pretag</code>
+	(<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:pretag" title="9.9.8. pretag—before tagging a changeset">Section 9.9.8, “pretag—before
+	tagging a changeset”</a>)
+      </p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:hook:update"></a>9.9.13. <code class="literal">update</code>—after
+	updating or merging working directory</h3></div></div></div>
+<p><a name="x_2e3"></a>This hook is run after an update or merge of the working
+	directory completes.  Since a merge can fail (if the external
+	<span class="command"><strong>hgmerge</strong></span> command fails to resolve conflicts
+	in a file), this hook communicates whether the update or merge
+	completed cleanly.
+      </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_2e4"></a><code class="literal">error</code>: A boolean.
+	    Indicates whether the update or merge completed
+	    successfully.
+	  </p></li>
+<li><p><a name="x_2e5"></a><code class="literal">parent1</code>: A changeset ID.
+	    The ID of the parent that the working directory was
+	    updated to.  If the working directory was merged, it will
+	    not have changed this parent.
+	  </p></li>
+<li><p><a name="x_2e6"></a><code class="literal">parent2</code>: A changeset ID.
+	    Only set if the working directory was merged.  The ID of
+	    the revision that the working directory was merged with.
+	  </p></li>
+</ul></div>
+<p><a name="x_2e7"></a>See also: <code class="literal">preupdate</code>
+	(<a class="xref" href="handling-repository-events-with-hooks.html#sec:hook:preupdate" title="9.9.11. preupdate—before updating or merging working directory">Section 9.9.11, “preupdate—before
+	updating or merging working directory”</a>)
+      </p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="finding-and-fixing-mistakes.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="customizing-the-output-of-mercurial.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 8. Finding and fixing mistakes </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 10. Customising the output of Mercurial</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第 2 章 Mercurial 教程: 合并工作</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial 权威指南">
+<link rel="up" href="index.html" title="Mercurial 权威指南">
+<link rel="prev" href="a-tour-of-mercurial-the-basics.html" title="第 1 章 Mercurial 教程: 基础知识">
+<link rel="next" href="behind-the-scenes.html" title="第 3 章 Mercurial 内幕">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">第 2 章 Mercurial 教程: 合并工作</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="a-tour-of-mercurial-the-basics.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="behind-the-scenes.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:tour-merge"></a>第 2 章 Mercurial 教程: 合并工作</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="a-tour-of-mercurial-merging-work.html#id509681">2.1. 合并的流程</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="a-tour-of-mercurial-merging-work.html#id509904">2.1.1. 顶点修改集</a></span></dt>
+<dt><span class="sect2"><a href="a-tour-of-mercurial-merging-work.html#id510028">2.1.2. 执行合并</a></span></dt>
+<dt><span class="sect2"><a href="a-tour-of-mercurial-merging-work.html#id510178">2.1.3. 提交合并结果</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="a-tour-of-mercurial-merging-work.html#id510265">2.2. 合并有冲突的改变</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="a-tour-of-mercurial-merging-work.html#id510344">2.2.1. 使用图形合并工具</a></span></dt>
+<dt><span class="sect2"><a href="a-tour-of-mercurial-merging-work.html#id510490">2.2.2. 合并实例</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="a-tour-of-mercurial-merging-work.html#sec:tour-merge:fetch">2.3. 简化拉-合并-提交程序</a></span></dt>
+</dl>
+</div>
+<p><a name="x_338"></a>We've now covered cloning a repository, making changes in a repository, and
+pulling or pushing changes from one repository into another.  Our next step
+is <span class="emphasis"><em>merging</em></span> changes from separate repositories.</p>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id509681"></a>2.1. 合并的流程</h2></div></div></div>
+<p><a name="x_339"></a>Merging is a fundamental part of working with a distributed revision control
+tool.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_33a"></a>Alice and Bob each have a personal copy of a repository for a project
+they're collaborating on.  Alice fixes a bug in her repository; Bob adds a
+new feature in his.  They want the shared repository to contain both the bug
+fix and the new feature.</p></li>
+<li><p><a name="x_33b"></a>I frequently work on several different tasks for a single project at once,
+each safely isolated in its own repository. Working this way means that I
+often need to merge one piece of my own work with another.</p></li>
+</ul></div>
+<p><a name="x_33c"></a>Because merging is such a common thing to need to do, Mercurial makes it
+easy.  Let's walk through the process.  We'll begin by cloning yet another
+repository (see how often they spring up?) and making a change in it.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone hello my-new-hello</code></strong>
+updating working directory
+2 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd my-new-hello</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>sed -i '/printf/i\\tprintf("once more, hello.\\n");' hello.c</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'A new hello for a new day.'</code></strong>
+</pre>
+<p><a name="x_33d"></a>We should now have two copies of <code class="filename">hello.c</code> with different
+contents.  The histories of the two repositories have also diverged, as
+illustrated in <a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:sep-repos" title="图 2.1. my-hello 与 my-new-hello 最新的历史分叉">图 2.1 “my-hello 与 my-new-hello 最新的历史分叉”</a>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat hello.c</code></strong>
+/*
+ * Placed in the public domain by Bryan O'Sullivan.  This program is
+ * not covered by patents in the United States or other countries.
+ */
+
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv)
+{
+	printf("once more, hello.\n");
+	printf("hello, world!\");
+	return 0;
+}
+<code class="prompt">$</code> <strong class="userinput"><code>cat ../my-hello/hello.c</code></strong>
+/*
+ * Placed in the public domain by Bryan O'Sullivan.  This program is
+ * not covered by patents in the United States or other countries.
+ */
+
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv)
+{
+	printf("hello, world!\");
+	printf("hello again!\n");
+	return 0;
+}
+</pre>
+<div class="figure">
+<a name="fig:tour-merge:sep-repos"></a><p class="title"><b>图 2.1. <code class="filename">my-hello</code> 与 <code class="filename">my-new-hello</code> 最新的历史分叉</b></p>
+<div class="figure-contents"><div class="mediaobject"><img src="figs/tour-merge-sep-repos.png" alt="XXX add text"></div></div>
+</div>
+<br class="figure-break"><p><a name="x_33f"></a>We already know that pulling changes from our <code class="filename">my-hello</code> repository will have no effect on the
+working directory.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg pull ../my-hello</code></strong>
+pulling from ../my-hello
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+</pre>
+<p><a name="x_340"></a>However, the <span class="command"><strong>hg pull</strong></span> command says something
+about “<span class="quote">heads</span>”.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id509904"></a>2.1.1. 顶点修改集</h3></div></div></div>
+<p><a name="x_341"></a>A head is a change that has no descendants, or children, as they're also
+known.  The tip revision is thus a head, because the newest revision in a
+repository doesn't have any children, but a repository can contain more than
+one head.</p>
+<div class="figure">
+<a name="fig:tour-merge:pull"></a><p class="title"><b>图 2.2. 从 <code class="filename">my-hello</code> 拉到 <code class="filename">my-new-hello</code> 之后版本库的内容</b></p>
+<div class="figure-contents"><div class="mediaobject"><img src="figs/tour-merge-pull.png" alt="XXX add text"></div></div>
+</div>
+<br class="figure-break"><p><a name="x_343"></a>In <a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:pull" title="图 2.2. 从 my-hello 拉到 my-new-hello 之后版本库的内容">图 2.2 “从 my-hello 拉到 my-new-hello 之后版本库的内容”</a>, you can see the effect of the pull
+from <code class="filename">my-hello</code> into <code class="filename">my-new-hello</code>.  The history that was already
+present in <code class="filename">my-new-hello</code> is untouched,
+but a new revision has been added.  By referring to <a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:sep-repos" title="图 2.1. my-hello 与 my-new-hello 最新的历史分叉">图 2.1 “my-hello 与 my-new-hello 最新的历史分叉”</a>, we can see that the
+<span class="emphasis"><em>changeset ID</em></span> remains the same in the new repository,
+but the <span class="emphasis"><em>revision number</em></span> has changed.  (This,
+incidentally, is a fine example of why it's not safe to use revision numbers
+when discussing changesets.)  We can view the heads in a repository using
+the <span class="command"><strong>hg heads</strong></span> command.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg heads</code></strong>
+changeset:   6:fb560e9a043e
+tag:         tip
+parent:      4:2278160e78d4
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:36 2009 +0000
+summary:     Added an extra line of output
+
+changeset:   5:653fccc5a39b
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:40 2009 +0000
+summary:     A new hello for a new day.
+
+</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id510028"></a>2.1.2. 执行合并</h3></div></div></div>
+<p><a name="x_344"></a>What happens if we try to use the normal <span class="command"><strong>hg
+update</strong></span> command to update to the new tip?</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg update</code></strong>
+abort: crosses branches (use 'hg merge' or 'hg update -C')
+</pre>
+<p><a name="x_345"></a>Mercurial is telling us that the <span class="command"><strong>hg update</strong></span>
+command won't do a merge; it won't update the working directory when it
+thinks we might be wanting to do a merge, unless we force it to do so.
+Instead, we use the <span class="command"><strong>hg merge</strong></span> command to
+merge the two heads.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+merging hello.c
+0 files updated, 1 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+</pre>
+<div class="figure">
+<a name="fig:tour-merge:merge"></a><p class="title"><b>图 2.3. 在合并期间，以及提交之后的工作目录与版本库</b></p>
+<div class="figure-contents"><div class="mediaobject"><img src="figs/tour-merge-merge.png" alt="XXX add text"></div></div>
+</div>
+<br class="figure-break"><p><a name="x_347"></a>This updates the working directory so that it contains changes from
+<span class="emphasis"><em>both</em></span> heads, which is reflected in both the output of
+<span class="command"><strong>hg parents</strong></span> and the contents of
+<code class="filename">hello.c</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg parents</code></strong>
+changeset:   5:653fccc5a39b
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:40 2009 +0000
+summary:     A new hello for a new day.
+
+changeset:   6:fb560e9a043e
+tag:         tip
+parent:      4:2278160e78d4
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:36 2009 +0000
+summary:     Added an extra line of output
+
+<code class="prompt">$</code> <strong class="userinput"><code>cat hello.c</code></strong>
+/*
+ * Placed in the public domain by Bryan O'Sullivan.  This program is
+ * not covered by patents in the United States or other countries.
+ */
+
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv)
+{
+	printf("once more, hello.\n");
+	printf("hello, world!\");
+	printf("hello again!\n");
+	return 0;
+}
+</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id510178"></a>2.1.3. 提交合并结果</h3></div></div></div>
+<p><a name="x_348"></a>Whenever we've done a merge, <span class="command"><strong>hg parents</strong></span>
+will display two parents until we <span class="command"><strong>hg commit</strong></span>
+the results of the merge.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Merged changes'</code></strong>
+</pre>
+<p><a name="x_349"></a>We now have a new tip revision; notice that it has <span class="emphasis"><em>both</em></span>
+of our former heads as its parents.  These are the same revisions that were
+previously displayed by <span class="command"><strong>hg parents</strong></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   7:6d61722b1432
+tag:         tip
+parent:      5:653fccc5a39b
+parent:      6:fb560e9a043e
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:40 2009 +0000
+summary:     Merged changes
+
+</pre>
+<p><a name="x_34a"></a>In <a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:merge" title="图 2.3. 在合并期间，以及提交之后的工作目录与版本库">图 2.3 “在合并期间，以及提交之后的工作目录与版本库”</a>, you can see a representation of
+what happens to the working directory during the merge, and how this affects
+the repository when the commit happens.  During the merge, the working
+directory has two parent changesets, and these become the parents of the new
+changeset.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id510265"></a>2.2. 合并有冲突的改变</h2></div></div></div>
+<p><a name="x_34b"></a>Most merges are simple affairs, but sometimes you'll find yourself merging
+changes where each modifies the same portions of the same files.  Unless
+both modifications are identical, this results in a
+<span class="emphasis"><em>conflict</em></span>, where you have to decide how to reconcile the
+different changes into something coherent.</p>
+<div class="figure">
+<a name="fig:tour-merge:conflict"></a><p class="title"><b>图 2.4. 冲突的修改</b></p>
+<div class="figure-contents"><div class="mediaobject"><img src="figs/tour-merge-conflict.png" alt="XXX add text"></div></div>
+</div>
+<br class="figure-break"><p><a name="x_34d"></a><a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:conflict" title="图 2.4. 冲突的修改">图 2.4 “冲突的修改”</a> illustrates an instance of two
+conflicting changes to a document.  We started with a single version of the
+file; then we made some changes; while someone else made different changes
+to the same text.  Our task in resolving the conflicting changes is to
+decide what the file should look like.</p>
+<p><a name="x_34e"></a>Mercurial doesn't have a built-in facility for handling conflicts. Instead,
+it runs an external program called <span class="command"><strong>hgmerge</strong></span>.  This is a
+shell script that is bundled with Mercurial; you can change it to behave
+however you please.  What it does by default is try to find one of several
+different merging tools that are likely to be installed on your system.  It
+first tries a few fully automatic merging tools; if these don't succeed
+(because the resolution process requires human guidance) or aren't present,
+the script tries a few different graphical merging tools.</p>
+<p><a name="x_34f"></a>It's also possible to get Mercurial to run another program or script instead
+of <span class="command"><strong>hgmerge</strong></span>, by setting the <code class="envar">HGMERGE</code>
+environment variable to the name of your preferred program.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id510344"></a>2.2.1. 使用图形合并工具</h3></div></div></div>
+<p><a name="x_350"></a>My preferred graphical merge tool is <span class="command"><strong>kdiff3</strong></span>, which I'll
+use to describe the features that are common to graphical file merging
+tools.  You can see a screenshot of <span class="command"><strong>kdiff3</strong></span> in action in
+<a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:kdiff3" title="图 2.5. 使用 kdiff3 合并文件的不同版本">图 2.5 “使用 kdiff3 合并文件的不同版本”</a>.  The kind of merge it is performing
+is called a <span class="emphasis"><em>three-way merge</em></span>, because there are three
+different versions of the file of interest to us.  The tool thus splits the
+upper portion of the window into three panes:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_351"></a>At the left is the <span class="emphasis"><em>base</em></span> version of the file, i.e. the
+most recent version from which the two versions we're trying to merge are
+descended.</p></li>
+<li><p><a name="x_352"></a>In the middle is “<span class="quote">our</span>” version of the file, with the contents
+that we modified.</p></li>
+<li><p><a name="x_353"></a>On the right is “<span class="quote">their</span>” version of the file, the one that from
+the changeset that we're trying to merge with.</p></li>
+</ul></div>
+<p><a name="x_354"></a>In the pane below these is the current <span class="emphasis"><em>result</em></span> of the
+merge. Our task is to replace all of the red text, which indicates
+unresolved conflicts, with some sensible merger of the “<span class="quote">ours</span>”
+and “<span class="quote">theirs</span>” versions of the file.</p>
+<p><a name="x_355"></a>All four of these panes are <span class="emphasis"><em>locked together</em></span>; if we
+scroll vertically or horizontally in any of them, the others are updated to
+display the corresponding sections of their respective files.</p>
+<div class="figure">
+<a name="fig:tour-merge:kdiff3"></a><p class="title"><b>图 2.5. 使用 <span class="command">kdiff3</span> 合并文件的不同版本</b></p>
+<div class="figure-contents"><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="figs/kdiff3.png" width="100%" alt="XXX add text"></td></tr></table></div></div>
+</div>
+<br class="figure-break"><p><a name="x_357"></a>For each conflicting portion of the file, we can choose to resolve the
+conflict using some combination of text from the base version, ours, or
+theirs.  We can also manually edit the merged file at any time, in case we
+need to make further modifications.</p>
+<p><a name="x_358"></a>There are <span class="emphasis"><em>many</em></span> file merging tools available, too many
+to cover here.  They vary in which platforms they are available for, and in
+their particular strengths and weaknesses.  Most are tuned for merging files
+containing plain text, while a few are aimed at specialised file formats
+(generally XML).</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id510490"></a>2.2.2. 合并实例</h3></div></div></div>
+<p><a name="x_359"></a>In this example, we will reproduce the file modification history of <a class="xref" href="a-tour-of-mercurial-merging-work.html#fig:tour-merge:conflict" title="图 2.4. 冲突的修改">图 2.4 “冲突的修改”</a> above.  Let's begin by creating a
+repository with a base version of our document.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat &gt; letter.txt &lt;&lt;EOF</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Greetings!</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>I am Mariam Abacha, the wife of former</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Nigerian dictator Sani Abacha.</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>EOF</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add letter.txt</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m '419 scam, first draft'</code></strong>
+</pre>
+<p><a name="x_35a"></a>We'll clone the repository and make a change to the file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone scam scam-cousin</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd scam-cousin</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat &gt; letter.txt &lt;&lt;EOF</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Greetings!</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>I am Shehu Musa Abacha, cousin to the former</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Nigerian dictator Sani Abacha.</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>EOF</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m '419 scam, with cousin'</code></strong>
+</pre>
+<p><a name="x_35b"></a>And another clone, to simulate someone else making a change to the
+file. (This hints at the idea that it's not all that unusual to merge with
+yourself when you isolate tasks in separate repositories, and indeed to find
+and resolve conflicts while doing so.)</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone scam scam-son</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd scam-son</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat &gt; letter.txt &lt;&lt;EOF</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Greetings!</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>I am Alhaji Abba Abacha, son of the former</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Nigerian dictator Sani Abacha.</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>EOF</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m '419 scam, with son'</code></strong>
+</pre>
+<p><a name="x_35c"></a>Having created two different versions of the file, we'll set up an
+environment suitable for running our merge.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone scam-cousin scam-merge</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd scam-merge</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull -u ../scam-son</code></strong>
+pulling from ../scam-son
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+not updating, since new heads added
+(run 'hg heads' to see heads, 'hg merge' to merge)
+</pre>
+<p><a name="x_35d"></a>In this example, I won't use Mercurial's normal <span class="command"><strong>hgmerge</strong></span>
+program to do the merge, because it would drop my nice automated
+example-running tool into a graphical user interface.  Instead, I'll set
+<code class="envar">HGMERGE</code> to tell Mercurial to use the non-interactive
+<span class="command"><strong>merge</strong></span> command.  This is bundled with many Unix-like
+systems. If you're following this example on your computer, don't bother
+setting <code class="envar">HGMERGE</code>.</p>
+<p><a name="x_35e"></a><span class="bold"><strong>XXX FIX THIS EXAMPLE.</strong></span></p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>export HGMERGE=merge</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'XXX this is broken and must be fixed'</code></strong>
+XXX this is broken and must be fixed
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+merging letter.txt
+sh: merge: command not found
+merging letter.txt failed!
+0 files updated, 0 files merged, 0 files removed, 1 files unresolved
+use 'hg resolve' to retry unresolved file merges or 'hg up --clean' to abandon
+<code class="prompt">$</code> <strong class="userinput"><code>cat letter.txt</code></strong>
+Greetings!
+I am Shehu Musa Abacha, cousin to the former
+Nigerian dictator Sani Abacha.
+</pre>
+<p><a name="x_35f"></a>Because <span class="command"><strong>merge</strong></span> can't resolve the conflicting changes, it
+leaves <span class="emphasis"><em>merge markers</em></span> inside the file that has
+conflicts, indicating which lines have conflicts, and whether they came from
+our version of the file or theirs.</p>
+<p><a name="x_360"></a>Mercurial can tell from the way <span class="command"><strong>merge</strong></span> exits that it
+wasn't able to merge successfully, so it tells us what commands we'll need
+to run if we want to redo the merging operation.  This could be useful if,
+for example, we were running a graphical merge tool and quit because we were
+confused or realised we had made a mistake.</p>
+<p><a name="x_361"></a>If automatic or manual merges fail, there's nothing to prevent us from
+“<span class="quote">fixing up</span>” the affected files ourselves, and committing the
+results of our merge:</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat &gt; letter.txt &lt;&lt;EOF</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Greetings!</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>I am Bryan O'Sullivan, no relation of the former</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>Nigerian dictator Sani Abacha.</code></strong>
+<code class="prompt">&gt;</code> <strong class="userinput"><code>EOF</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg resolve -m letter.txt</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Send me your money'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   3:94e1d7344b99
+tag:         tip
+parent:      1:c170ec27f609
+parent:      2:6d13d48f67bf
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:41 2009 +0000
+summary:     Send me your money
+
+</pre>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:tour-merge:fetch"></a>2.3. 简化拉-合并-提交程序</h2></div></div></div>
+<p><a name="x_362"></a>The process of merging changes as outlined above is straightforward, but
+requires running three commands in sequence.</p>
+<pre class="programlisting">hg pull
+hg merge
+hg commit -m 'Merged remote changes'</pre>
+<p><a name="x_363"></a>In the case of the final commit, you also need to enter a commit message,
+which is almost always going to be a piece of uninteresting
+“<span class="quote">boilerplate</span>” text.</p>
+<p><a name="x_364"></a>It would be nice to reduce the number of steps needed, if this were
+possible.  Indeed, Mercurial is distributed with an extension called
+<code class="literal">fetch</code> that does just this.</p>
+<p><a name="x_365"></a>Mercurial provides a flexible extension mechanism that lets people extend
+its functionality, while keeping the core of Mercurial small and easy to
+deal with.  Some extensions add new commands that you can use from the
+command line, while others work “<span class="quote">behind the scenes,</span>” for
+example adding capabilities to the server.</p>
+<p><a name="x_366"></a>The <code class="literal">fetch</code> extension adds a new command
+called, not surprisingly, <span class="command"><strong>hg fetch</strong></span>.  This
+extension acts as a combination of <span class="command"><strong>hg pull</strong></span>,
+<span class="command"><strong>hg update</strong></span> and <span class="command"><strong>hg
+merge</strong></span>.  It begins by pulling changes from another repository into
+the current repository.  If it finds that the changes added a new head to
+the repository, it begins a merge, then commits the result of the merge with
+an automatically-generated commit message.  If no new heads were added, it
+updates the working directory to the new tip changeset.</p>
+<p><a name="x_367"></a>Enabling the <code class="literal">fetch</code> extension is easy.  Edit
+your <code class="filename">.hgrc</code>, and either go to the
+<code class="literal">extensions</code> section or create an
+<code class="literal">extensions</code> section. Then add a line
+that simply reads “<span class="quote"><code class="literal">fetch </code></span>”.</p>
+<pre class="programlisting">[extensions]
+fetch =</pre>
+<p><a name="x_368"></a>(Normally, on the right-hand side of the “<span class="quote"><code class="literal">=</code></span>”
+would appear the location of the extension, but since the <code class="literal">fetch</code> extension is in the standard distribution,
+Mercurial knows where to search for it.)</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="a-tour-of-mercurial-the-basics.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="behind-the-scenes.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 1 章 Mercurial 教程: 基础知识 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 3 章 Mercurial 内幕</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

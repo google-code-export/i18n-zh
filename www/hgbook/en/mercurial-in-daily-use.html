@@ -1,0 +1,685 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chapter 4. Mercurial in daily use</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="behind-the-scenes.html" title="Chapter 3. Behind the scenes">
+<link rel="next" href="collaborating-with-other-people.html" title="Chapter 5. Collaborating with other people">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 4. Mercurial in daily use</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="behind-the-scenes.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="collaborating-with-other-people.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:daily"></a>Chapter 4. Mercurial in daily use</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="mercurial-in-daily-use.html#id518891">4.1. Telling Mercurial which files to track</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519080">4.1.1. Explicit versus implicit file naming</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519204">4.1.2. Aside: Mercurial tracks files, not directories</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="mercurial-in-daily-use.html#id519382">4.2. How to stop tracking a file</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519547">4.2.1. Removing a file does not affect its history</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519598">4.2.2. Missing files</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519810">4.2.3. Aside: why tell Mercurial explicitly to remove a
+	file?</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519833">4.2.4. Useful shorthand—adding and removing files in one
+	step</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="mercurial-in-daily-use.html#id519954">4.3. Copying files</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id519974">4.3.1. The results of copying during a merge</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#sec:daily:why-copy">4.3.2. Why should changes follow copies?</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id520381">4.3.3. How to make changes not follow a
+	copy</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id520416">4.3.4. Behaviour of the hg copy
+	command</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="mercurial-in-daily-use.html#id520655">4.4. Renaming files</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id520813">4.4.1. Renaming files and merging changes</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id520848">4.4.2. Divergent renames and merging</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id521071">4.4.3. Convergent renames and merging</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-in-daily-use.html#id521091">4.4.4. Other name-related corner cases</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="mercurial-in-daily-use.html#id521231">4.5. Recovering from mistakes</a></span></dt>
+</dl>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id518891"></a>4.1. Telling Mercurial which files to track</h2></div></div></div>
+<p><a name="x_1a3"></a>Mercurial does not work with files in your repository unless
+      you tell it to manage them.  The <span class="command"><strong>hg
+	status</strong></span> command will tell you which files Mercurial
+      doesn't know about; it uses a
+      “<span class="quote"><code class="literal">?</code></span>” to display such
+      files.</p>
+<p><a name="x_1a4"></a>To tell Mercurial to track a file, use the <span class="command"><strong>hg add</strong></span> command.  Once you have added a
+      file, the entry in the output of <span class="command"><strong>hg
+	status</strong></span> for that file changes from
+      “<span class="quote"><code class="literal">?</code></span>” to
+      “<span class="quote"><code class="literal">A</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init add-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd add-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+? a
+<code class="prompt">$</code> <strong class="userinput"><code>hg add a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+A a
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Added one file'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+</pre>
+<p><a name="x_1a5"></a>After you run a <span class="command"><strong>hg commit</strong></span>,
+      the files that you added before the commit will no longer be
+      listed in the output of <span class="command"><strong>hg
+	status</strong></span>.  The reason for this is that <span class="command"><strong>hg status</strong></span> only tells you about
+      “<span class="quote">interesting</span>” files—those that you have
+      modified or told Mercurial to do something with—by
+      default.  If you have a repository that contains thousands of
+      files, you will rarely want to know about files that Mercurial
+      is tracking, but that have not changed.  (You can still get this
+      information; we'll return to this later.)</p>
+<p><a name="x_1a6"></a>Once you add a file, Mercurial doesn't do anything with it
+      immediately.  Instead, it will take a snapshot of the file's
+      state the next time you perform a commit.  It will then continue
+      to track the changes you make to the file every time you commit,
+      until you remove the file.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519080"></a>4.1.1. Explicit versus implicit file naming</h3></div></div></div>
+<p><a name="x_1a7"></a>A useful behaviour that Mercurial has is that if you pass
+	the name of a directory to a command, every Mercurial command
+	will treat this as “<span class="quote">I want to operate on every file in
+	  this directory and its subdirectories</span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>mkdir b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo b &gt; b/b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo c &gt; b/c</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>mkdir b/d</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo d &gt; b/d/d</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add b</code></strong>
+adding b/b
+adding b/c
+adding b/d/d
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Added all files in subdirectory'</code></strong>
+</pre>
+<p><a name="x_1a8"></a>Notice in this example that Mercurial printed the names of
+	the files it added, whereas it didn't do so when we added the
+	file named <code class="filename">a</code> in the earlier
+	example.</p>
+<p><a name="x_1a9"></a>What's going on is that in the former case, we explicitly
+	named the file to add on the command line, so the assumption
+	that Mercurial makes in such cases is that you know what you
+	were doing, and it doesn't print any output.</p>
+<p><a name="x_1aa"></a>However, when we <span class="emphasis"><em>imply</em></span> the names of
+	files by giving the name of a directory, Mercurial takes the
+	extra step of printing the name of each file that it does
+	something with.  This makes it more clear what is happening,
+	and reduces the likelihood of a silent and nasty surprise.
+	This behaviour is common to most Mercurial commands.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519204"></a>4.1.2. Aside: Mercurial tracks files, not directories</h3></div></div></div>
+<p><a name="x_1ab"></a>Mercurial does not track directory information.  Instead,
+	it tracks the path to a file.  Before creating a file, it
+	first creates any missing directory components of the path.
+	After it deletes a file, it then deletes any empty directories
+	that were in the deleted file's path.  This sounds like a
+	trivial distinction, but it has one minor practical
+	consequence: it is not possible to represent a completely
+	empty directory in Mercurial.</p>
+<p><a name="x_1ac"></a>Empty directories are rarely useful, and there are
+	unintrusive workarounds that you can use to achieve an
+	appropriate effect.  The developers of Mercurial thus felt
+	that the complexity that would be required to manage empty
+	directories was not worth the limited benefit this feature
+	would bring.</p>
+<p><a name="x_1ad"></a>If you need an empty directory in your repository, there
+	are a few ways to achieve this. One is to create a directory,
+	then <span class="command"><strong>hg add</strong></span> a
+	“<span class="quote">hidden</span>” file to that directory.  On Unix-like
+	systems, any file name that begins with a period
+	(“<span class="quote"><code class="literal">.</code></span>”) is treated as hidden by
+	most commands and GUI tools.  This approach is illustrated
+	below.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init hidden-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd hidden-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>mkdir empty</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>touch empty/.hidden</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add empty/.hidden</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Manage an empty-looking directory'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>ls empty</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone hidden-example tmp</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>ls tmp</code></strong>
+empty
+<code class="prompt">$</code> <strong class="userinput"><code>ls tmp/empty</code></strong>
+</pre>
+<p><a name="x_1ae"></a>Another way to tackle a need for an empty directory is to
+	simply create one in your automated build scripts before they
+	will need it.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id519382"></a>4.2. How to stop tracking a file</h2></div></div></div>
+<p><a name="x_1af"></a>Once you decide that a file no longer belongs in your
+      repository, use the <span class="command"><strong>hg remove</strong></span>
+      command; this deletes the file, and tells Mercurial to stop
+      tracking it.  A removed file is represented in the output of
+      <span class="command"><strong>hg status</strong></span> with a
+      “<span class="quote"><code class="literal">R</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init remove-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd remove-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>mkdir b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo b &gt; b/b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add a b</code></strong>
+adding b/b
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Small example for file removal'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg remove a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+R a
+<code class="prompt">$</code> <strong class="userinput"><code>hg remove b</code></strong>
+removing b/b
+</pre>
+<p><a name="x_1b0"></a>After you <span class="command"><strong>hg remove</strong></span> a file,
+      Mercurial will no longer track changes to that file, even if you
+      recreate a file with the same name in your working directory.
+      If you do recreate a file with the same name and want Mercurial
+      to track the new file, simply <span class="command"><strong>hg
+	add</strong></span> it. Mercurial will know that the newly added
+      file is not related to the old file of the same name.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519547"></a>4.2.1. Removing a file does not affect its history</h3></div></div></div>
+<p><a name="x_1b1"></a>It is important to understand that removing a file has
+	only two effects.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_1b2"></a>It removes the current version of the file
+	    from the working directory.</p></li>
+<li><p><a name="x_1b3"></a>It stops Mercurial from tracking changes to
+	    the file, from the time of the next commit.</p></li>
+</ul></div>
+<p><a name="x_1b4"></a>Removing a file <span class="emphasis"><em>does not</em></span> in any way
+	alter the <span class="emphasis"><em>history</em></span> of the file.</p>
+<p><a name="x_1b5"></a>If you update the working directory to a changeset in
+	which a file that you have removed was still tracked, it will
+	reappear in the working directory, with the contents it had
+	when you committed that changeset.  If you then update the
+	working directory to a later changeset, in which the file had
+	been removed, Mercurial will once again remove the file from
+	the working directory.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519598"></a>4.2.2. Missing files</h3></div></div></div>
+<p><a name="x_1b6"></a>Mercurial considers a file that you have deleted, but not
+	used <span class="command"><strong>hg remove</strong></span> to delete, to
+	be <span class="emphasis"><em>missing</em></span>.  A missing file is
+	represented with “<span class="quote"><code class="literal">!</code></span>” in the
+	output of <span class="command"><strong>hg status</strong></span>.
+	Mercurial commands will not generally do anything with missing
+	files.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init missing-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd missing-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'File about to be missing'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>rm a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+! a
+</pre>
+<p><a name="x_1b7"></a>If your repository contains a file that <span class="command"><strong>hg status</strong></span> reports as missing, and
+	you want the file to stay gone, you can run <span class="command"><strong>hg remove <code class="option">--after</code></strong></span> at any
+	time later on, to tell Mercurial that you really did mean to
+	remove the file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg remove --after a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+R a
+</pre>
+<p><a name="x_1b8"></a>On the other hand, if you deleted the missing file by
+	accident, give <span class="command"><strong>hg revert</strong></span> the
+	name of the file to recover.  It will reappear, in unmodified
+	form.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg revert a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat a</code></strong>
+a
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+</pre>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519810"></a>4.2.3. Aside: why tell Mercurial explicitly to remove a
+	file?</h3></div></div></div>
+<p><a name="x_1b9"></a>You might wonder why Mercurial requires you to explicitly
+	tell it that you are deleting a file.  Early during the
+	development of Mercurial, it let you delete a file however you
+	pleased; Mercurial would notice the absence of the file
+	automatically when you next ran a <span class="command"><strong>hg
+	  commit</strong></span>, and stop tracking the file.  In practice,
+	this made it too easy to accidentally remove a file without
+	noticing.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519833"></a>4.2.4. Useful shorthand—adding and removing files in one
+	step</h3></div></div></div>
+<p><a name="x_1ba"></a>Mercurial offers a combination command, <span class="command"><strong>hg addremove</strong></span>, that adds untracked
+	files and marks missing files as removed.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init addremove-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd addremove-example</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo b &gt; b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg addremove</code></strong>
+adding a
+adding b
+</pre>
+<p><a name="x_1bb"></a>The <span class="command"><strong>hg commit</strong></span> command
+	also provides a <code class="option">-A</code>
+	option that performs this same add-and-remove, immediately
+	followed by a commit.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo c &gt; c</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'Commit with addremove'</code></strong>
+adding c
+</pre>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id519954"></a>4.3. Copying files</h2></div></div></div>
+<p><a name="x_1bc"></a>Mercurial provides a <span class="command"><strong>hg
+	copy</strong></span> command that lets you make a new copy of a
+      file.  When you copy a file using this command, Mercurial makes
+      a record of the fact that the new file is a copy of the original
+      file.  It treats these copied files specially when you merge
+      your work with someone else's.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id519974"></a>4.3.1. The results of copying during a merge</h3></div></div></div>
+<p><a name="x_1bd"></a>What happens during a merge is that changes
+	“<span class="quote">follow</span>” a copy.  To best illustrate what this
+	means, let's create an example.  We'll start with the usual
+	tiny repository that contains a single file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init my-copy</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd my-copy</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo line &gt; file</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add file</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Added a file'</code></strong>
+</pre>
+<p><a name="x_1be"></a>We need to do some work in
+	parallel, so that we'll have something to merge.  So let's
+	clone our repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone my-copy your-copy</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_1bf"></a>Back in our initial repository, let's use the <span class="command"><strong>hg copy</strong></span> command to make a copy of
+	the first file we created.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd my-copy</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg copy file new-file</code></strong>
+</pre>
+<p><a name="x_1c0"></a>If we look at the output of the <span class="command"><strong>hg
+	  status</strong></span> command afterwards, the copied file looks
+	just like a normal added file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+A new-file
+</pre>
+<p><a name="x_1c1"></a>But if we pass the <code class="option">-C</code> option to <span class="command"><strong>hg status</strong></span>, it prints another line of
+	output: this is the file that our newly-added file was copied
+	<span class="emphasis"><em>from</em></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status -C</code></strong>
+A new-file
+  file
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Copied file'</code></strong>
+</pre>
+<p><a name="x_1c2"></a>Now, back in the repository we cloned, let's make a change
+	in parallel.  We'll add a line of content to the original file
+	that we created.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ../your-copy</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'new contents' &gt;&gt; file</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Changed file'</code></strong>
+</pre>
+<p><a name="x_1c3"></a>Now we have a modified <code class="filename">file</code> in this
+	repository.  When we pull the changes from the first
+	repository, and merge the two heads, Mercurial will propagate
+	the changes that we made locally to <code class="filename">file</code>
+	into its copy, <code class="filename">new-file</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg pull ../my-copy</code></strong>
+pulling from ../my-copy
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+merging file and new-file to new-file
+0 files updated, 1 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+<code class="prompt">$</code> <strong class="userinput"><code>cat new-file</code></strong>
+line
+new contents
+</pre>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:daily:why-copy"></a>4.3.2. Why should changes follow copies?</h3></div></div></div>
+<p><a name="x_1c4"></a>This behaviour, of changes to a file propagating out to
+	copies of the file, might seem esoteric, but in most cases
+	it's highly desirable.</p>
+<p><a name="x_1c5"></a>First of all, remember that this propagation
+	<span class="emphasis"><em>only</em></span> happens when you merge.  So if you
+	<span class="command"><strong>hg copy</strong></span> a file, and
+	subsequently modify the original file during the normal course
+	of your work, nothing will happen.</p>
+<p><a name="x_1c6"></a>The second thing to know is that modifications will only
+	propagate across a copy as long as the repository that you're
+	pulling changes from <span class="emphasis"><em>doesn't know</em></span> about
+	the copy.</p>
+<p><a name="x_1c7"></a>The reason that Mercurial does this is as follows.  Let's
+	say I make an important bug fix in a source file, and commit
+	my changes. Meanwhile, you've decided to <span class="command"><strong>hg copy</strong></span> the file in your repository,
+	without knowing about the bug or having seen the fix, and you
+	have started hacking on your copy of the file.</p>
+<p><a name="x_1c8"></a>If you pulled and merged my changes, and Mercurial
+	<span class="emphasis"><em>didn't</em></span> propagate changes across copies,
+	your source file would now contain the bug, and unless you
+	remembered to propagate the bug fix by hand, the bug would
+	<span class="emphasis"><em>remain</em></span> in your copy of the file.</p>
+<p><a name="x_1c9"></a>By automatically propagating the change that fixed the bug
+	from the original file to the copy, Mercurial prevents this
+	class of problem. To my knowledge, Mercurial is the
+	<span class="emphasis"><em>only</em></span> revision control system that
+	propagates changes across copies like this.</p>
+<p><a name="x_1ca"></a>Once your change history has a record that the copy and
+	subsequent merge occurred, there's usually no further need to
+	propagate changes from the original file to the copied file,
+	and that's why Mercurial only propagates changes across copies
+	until this point, and no further.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id520381"></a>4.3.3. How to make changes <span class="emphasis"><em>not</em></span> follow a
+	copy</h3></div></div></div>
+<p><a name="x_1cb"></a>If, for some reason, you decide that this business of
+	automatically propagating changes across copies is not for
+	you, simply use your system's normal file copy command (on
+	Unix-like systems, that's <span class="command"><strong>cp</strong></span>) to make a
+	copy of a file, then <span class="command"><strong>hg add</strong></span>
+	the new copy by hand.  Before you do so, though, please do
+	reread <a class="xref" href="mercurial-in-daily-use.html#sec:daily:why-copy" title="4.3.2. Why should changes follow copies?">Section 4.3.2, “Why should changes follow copies?”</a>, and make
+	an informed
+	decision that this behaviour is not appropriate to your
+	specific case.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id520416"></a>4.3.4. Behaviour of the <span class="command"><strong>hg copy</strong></span>
+	command</h3></div></div></div>
+<p><a name="x_1cc"></a>When you use the <span class="command"><strong>hg copy</strong></span>
+	command, Mercurial makes a copy of each source file as it
+	currently stands in the working directory.  This means that if
+	you make some modifications to a file, then <span class="command"><strong>hg copy</strong></span> it without first having
+	committed those changes, the new copy will also contain the
+	modifications you have made up until that point.  (I find this
+	behaviour a little counterintuitive, which is why I mention it
+	here.)</p>
+<p><a name="x_1cd"></a>The <span class="command"><strong>hg copy</strong></span> command acts
+	similarly to the Unix <span class="command"><strong>cp</strong></span> command (you can
+	use the <span class="command"><strong>hg cp</strong></span> alias if you
+	prefer).  The last argument is the
+	<span class="emphasis"><em>destination</em></span>, and all prior arguments are
+	<span class="emphasis"><em>sources</em></span>.  If you pass it a single file as
+	the source, and the destination does not exist, it creates a
+	new file with that name.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>mkdir k</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg copy a k</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>ls k</code></strong>
+a
+</pre>
+<p><a name="x_1ce"></a>If the destination is a directory, Mercurial copies its
+	sources into that directory.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>mkdir d</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg copy a b d</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>ls d</code></strong>
+a  b
+</pre>
+<p><a name="x_1cf"></a>Copying a directory is
+	recursive, and preserves the directory structure of the
+	source.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg copy c e</code></strong>
+copying c/a/c to e/a/c
+</pre>
+<p><a name="x_1d0"></a>If the source and destination are both directories, the
+	source tree is recreated in the destination directory.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg copy c d</code></strong>
+copying c/a/c to d/c/a/c
+</pre>
+<p><a name="x_1d1"></a>As with the <span class="command"><strong>hg rename</strong></span>
+	command, if you copy a file manually and then want Mercurial
+	to know that you've copied the file, simply use the <code class="option">--after</code> option to <span class="command"><strong>hg copy</strong></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cp a z</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg copy --after a z</code></strong>
+</pre>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id520655"></a>4.4. Renaming files</h2></div></div></div>
+<p><a name="x_1d2"></a>It's rather more common to need to rename a file than to
+      make a copy of it.  The reason I discussed the <span class="command"><strong>hg copy</strong></span> command before talking about
+      renaming files is that Mercurial treats a rename in essentially
+      the same way as a copy.  Therefore, knowing what Mercurial does
+      when you copy a file tells you what to expect when you rename a
+      file.</p>
+<p><a name="x_1d3"></a>When you use the <span class="command"><strong>hg rename</strong></span>
+      command, Mercurial makes a copy of each source file, then
+      deletes it and marks the file as removed.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg rename a b</code></strong>
+</pre>
+<p><a name="x_1d4"></a>The <span class="command"><strong>hg status</strong></span> command shows
+      the newly copied file as added, and the copied-from file as
+      removed.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+A b
+R a
+</pre>
+<p><a name="x_1d5"></a>As with the results of a <span class="command"><strong>hg
+	copy</strong></span>, we must use the <code class="option">-C</code> option to <span class="command"><strong>hg status</strong></span> to see that the added file
+      is really being tracked by Mercurial as a copy of the original,
+      now removed, file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status -C</code></strong>
+A b
+  a
+R a
+</pre>
+<p><a name="x_1d6"></a>As with <span class="command"><strong>hg remove</strong></span> and
+      <span class="command"><strong>hg copy</strong></span>, you can tell Mercurial
+      about a rename after the fact using the <code class="option">--after</code> option.  In most other
+      respects, the behaviour of the <span class="command"><strong>hg
+	rename</strong></span> command, and the options it accepts, are
+      similar to the <span class="command"><strong>hg copy</strong></span>
+      command.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id520813"></a>4.4.1. Renaming files and merging changes</h3></div></div></div>
+<p><a name="x_1d7"></a>Since Mercurial's rename is implemented as
+	copy-and-remove, the same propagation of changes happens when
+	you merge after a rename as after a copy.</p>
+<p><a name="x_1d8"></a>If I modify a file, and you rename it to a new name, and
+	then we merge our respective changes, my modifications to the
+	file under its original name will be propagated into the file
+	under its new name. (This is something you might expect to
+	“<span class="quote">simply work,</span>” but not all revision control
+	systems actually do this.)</p>
+<p><a name="x_1d9"></a>Whereas having changes follow a copy is a feature where
+	you can perhaps nod and say “<span class="quote">yes, that might be
+	  useful,</span>” it should be clear that having them follow a
+	rename is definitely important.  Without this facility, it
+	would simply be too easy for changes to become orphaned when
+	files are renamed.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id520848"></a>4.4.2. Divergent renames and merging</h3></div></div></div>
+<p><a name="x_1da"></a>The case of diverging names occurs when two developers
+	start with a file—let's call it
+	<code class="filename">foo</code>—in their respective
+	repositories.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg clone orig anne</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone orig bob</code></strong>
+updating working directory
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_1db"></a>Anne renames the file to <code class="filename">bar</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd anne</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg mv foo bar</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg ci -m 'Rename foo to bar'</code></strong>
+</pre>
+<p><a name="x_1dc"></a>Meanwhile, Bob renames it to
+	<code class="filename">quux</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ../bob</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg mv foo quux</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg ci -m 'Rename foo to quux'</code></strong>
+</pre>
+<p><a name="x_1dd"></a>I like to think of this as a conflict because each
+	developer has expressed different intentions about what the
+	file ought to be named.</p>
+<p><a name="x_1de"></a>What do you think should happen when they merge their
+	work? Mercurial's actual behaviour is that it always preserves
+	<span class="emphasis"><em>both</em></span> names when it merges changesets that
+	contain divergent renames.</p>
+<pre class="screen"># See http://www.selenic.com/mercurial/bts/issue455
+<code class="prompt">$</code> <strong class="userinput"><code>cd ../orig</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull -u ../anne</code></strong>
+pulling from ../anne
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+1 files updated, 0 files merged, 1 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull ../bob</code></strong>
+pulling from ../bob
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+warning: detected divergent renames of foo to:
+ bar
+ quux
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+<code class="prompt">$</code> <strong class="userinput"><code>ls</code></strong>
+bar  quux
+</pre>
+<p><a name="x_1df"></a>Notice that Mercurial does warn about the divergent
+	renames, but it leaves it up to you to do something about the
+	divergence after the merge.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id521071"></a>4.4.3. Convergent renames and merging</h3></div></div></div>
+<p><a name="x_1e0"></a>Another kind of rename conflict occurs when two people
+	choose to rename different <span class="emphasis"><em>source</em></span> files
+	to the same <span class="emphasis"><em>destination</em></span>. In this case,
+	Mercurial runs its normal merge machinery, and lets you guide
+	it to a suitable resolution.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id521091"></a>4.4.4. Other name-related corner cases</h3></div></div></div>
+<p><a name="x_1e1"></a>Mercurial has a longstanding bug in which it fails to
+	handle a merge where one side has a file with a given name,
+	while another has a directory with the same name.  This is
+	documented as <a class="ulink" href="http://www.selenic.com/mercurial/bts/issue29" target="_top">issue
+	  29</a>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init issue29</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd issue29</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo a &gt; a</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg ci -Ama</code></strong>
+adding a
+<code class="prompt">$</code> <strong class="userinput"><code>echo b &gt; b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg ci -Amb</code></strong>
+adding b
+<code class="prompt">$</code> <strong class="userinput"><code>hg up 0</code></strong>
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>mkdir b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo b &gt; b/b</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg ci -Amc</code></strong>
+adding b/b
+created new head
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+abort: Is a directory: /tmp/issue29U-avMg/issue29/b
+</pre>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id521231"></a>4.5. Recovering from mistakes</h2></div></div></div>
+<p><a name="x_1e2"></a>Mercurial has some useful commands that will help you to
+      recover from some common mistakes.</p>
+<p><a name="x_1e3"></a>The <span class="command"><strong>hg revert</strong></span> command lets
+      you undo changes that you have made to your working directory.
+      For example, if you <span class="command"><strong>hg add</strong></span> a
+      file by accident, just run <span class="command"><strong>hg
+	revert</strong></span> with the name of the file you added, and
+      while the file won't be touched in any way, it won't be tracked
+      for adding by Mercurial any longer, either.  You can also use
+      <span class="command"><strong>hg revert</strong></span> to get rid of
+      erroneous changes to a file.</p>
+<p><a name="x_1e4"></a>It's useful to remember that the <span class="command"><strong>hg
+	revert</strong></span> command is useful for changes that you have
+      not yet committed.  Once you've committed a change, if you
+      decide it was a mistake, you can still do something about it,
+      though your options may be more limited.</p>
+<p><a name="x_1e5"></a>For more information about the <span class="command"><strong>hg revert</strong></span> command, and details about
+      how to deal with changes you have already committed, see <a class="xref" href="finding-and-fixing-mistakes.html" title="Chapter 8. Finding and fixing mistakes">Chapter 8, <i>Finding and fixing mistakes</i></a>.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="behind-the-scenes.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="collaborating-with-other-people.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 3. Behind the scenes </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 5. Collaborating with other people</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

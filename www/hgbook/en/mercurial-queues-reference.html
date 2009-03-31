@@ -1,0 +1,533 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Appendix A. Mercurial Queues reference</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="adding-functionality-with-extensions.html" title="Chapter 13. Adding functionality with extensions">
+<link rel="next" href="installing-mercurial-from-source.html" title="Appendix B. Installing Mercurial from source">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Appendix A. Mercurial Queues reference</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="adding-functionality-with-extensions.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="installing-mercurial-from-source.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="appendix" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:mqref"></a>Appendix A. Mercurial Queues reference</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="mercurial-queues-reference.html#sec:mqref:cmdref">A.1. MQ command reference</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id551843">A.1.1. qapplied—print
+	applied patches</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id551877">A.1.2. qcommit—commit
+	changes in the queue repository</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id551972">A.1.3. qdelete—delete a patch
+	from the series
+	file</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552056">A.1.4. qdiff—print a
+	diff of the topmost applied patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552094">A.1.5. qfold—merge
+	(fold) several patches into one</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552239">A.1.6. qheader—display the
+	header/description of a patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552270">A.1.7. qimport—import
+	a third-party patch into the queue</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552355">A.1.8. qinit—prepare
+	a repository to work with MQ</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552487">A.1.9. qnew—create a
+	new patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552597">A.1.10. qnext—print
+	the name of the next patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552643">A.1.11. qpop—pop
+	patches off the stack</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id552842">A.1.12. qprev—print
+	the name of the previous patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#sec:mqref:cmd:qpush">A.1.13. qpush—push
+	patches onto the stack</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553113">A.1.14. qrefresh—update the
+	topmost applied patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553294">A.1.15. qrename—rename
+	a patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553347">A.1.16. qrestore—restore saved
+	queue state</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553368">A.1.17. qsave—save
+	current queue state</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553388">A.1.18. qseries—print
+	the entire patch series</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553427">A.1.19. qtop—print the
+	name of the current patch</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553457">A.1.20. qunapplied—print patches
+	not yet applied</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553496">A.1.21. hg strip—remove a
+	revision and descendants</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="mercurial-queues-reference.html#id553602">A.2. MQ file reference</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553608">A.2.1. The series
+	file</a></span></dt>
+<dt><span class="sect2"><a href="mercurial-queues-reference.html#id553719">A.2.2. The status
+	file</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mqref:cmdref"></a>A.1. MQ command reference</h2></div></div></div>
+<p><a name="x_5e8"></a>For an overview of the commands provided by MQ, use the
+      command <span class="command"><strong>hg help mq</strong></span>.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id551843"></a>A.1.1. <span class="command"><strong>qapplied</strong></span>—print
+	applied patches</h3></div></div></div>
+<p><a name="x_5e9"></a>The <span class="command"><strong>qapplied</strong></span> command
+	prints the current stack of applied patches.  Patches are
+	printed in oldest-to-newest order, so the last patch in the
+	list is the “<span class="quote">top</span>” patch.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id551877"></a>A.1.2. <span class="command"><strong>qcommit</strong></span>—commit
+	changes in the queue repository</h3></div></div></div>
+<p><a name="x_5ea"></a>The <span class="command"><strong>qcommit</strong></span> command
+	commits any outstanding changes in the <code class="filename">.hg/patches</code>
+	repository.  This command only works if the <code class="filename">.hg/patches</code>
+	directory is a repository, i.e. you created the directory
+	using <span class="command"><strong>hg qinit <code class="option">-c</code></strong></span> or
+	ran <span class="command"><strong>hg init</strong></span> in the directory
+	after running <span class="command"><strong>qinit</strong></span>.</p>
+<p><a name="x_5eb"></a>This command is shorthand for <span class="command"><strong>hg
+	  commit --cwd .hg/patches</strong></span>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id551972"></a>A.1.3. <span class="command"><strong>qdelete</strong></span>—delete a patch
+	from the <code class="filename">series</code>
+	file</h3></div></div></div>
+<p><a name="x_5ec"></a>The <span class="command"><strong>qdelete</strong></span> command
+	removes the entry for a patch from the <code class="filename">series</code> file in the <code class="filename">.hg/patches</code>
+	directory.  It does not pop the patch if the patch is already
+	applied.  By default, it does not delete the patch file; use
+	the <code class="option">-f</code> option
+	to do that.</p>
+<p><a name="x_5ed"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc"><li><p><a name="x_5ee"></a><code class="option">-f</code>: Delete the
+	    patch file.</p></li></ul></div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552056"></a>A.1.4. <span class="command"><strong>qdiff</strong></span>—print a
+	diff of the topmost applied patch</h3></div></div></div>
+<p><a name="x_5ef"></a>The <span class="command"><strong>qdiff</strong></span> command
+	prints a diff of the topmost applied patch. It is equivalent
+	to <span class="command"><strong>hg diff -r-2:-1</strong></span>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552094"></a>A.1.5. <span class="command"><strong>qfold</strong></span>—merge
+	(“<span class="quote">fold</span>”) several patches into one</h3></div></div></div>
+<p><a name="x_5f0"></a>The <span class="command"><strong>qfold</strong></span> command
+	merges multiple patches into the topmost applied patch, so
+	that the topmost applied patch makes the union of all of the
+	changes in the patches in question.</p>
+<p><a name="x_5f1"></a>The patches to fold must not be applied; <span class="command"><strong>qfold</strong></span> will exit with an error if
+	any is.  The order in which patches are folded is significant;
+	<span class="command"><strong>hg qfold a b</strong></span> means
+	“<span class="quote">apply the current topmost patch, followed by
+	  <code class="literal">a</code>, followed by
+	  <code class="literal">b</code></span>”.</p>
+<p><a name="x_5f2"></a>The comments from the folded patches are appended to the
+	comments of the destination patch, with each block of comments
+	separated by three asterisk
+	(“<span class="quote"><code class="literal">*</code></span>”) characters.  Use the
+	<code class="option">-e</code> option to
+	edit the commit message for the combined patch/changeset after
+	the folding has completed.</p>
+<p><a name="x_5f3"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_5f4"></a><code class="option">-e</code>: Edit the
+	    commit message and patch description for the newly folded
+	    patch.</p></li>
+<li><p><a name="x_5f5"></a><code class="option">-l</code>: Use the
+	    contents of the given file as the new commit message and
+	    patch description for the folded patch.</p></li>
+<li><p><a name="x_5f6"></a><code class="option">-m</code>: Use the
+	    given text as the new commit message and patch description
+	    for the folded patch.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552239"></a>A.1.6. <span class="command"><strong>qheader</strong></span>—display the
+	header/description of a patch</h3></div></div></div>
+<p><a name="x_5f7"></a>The <span class="command"><strong>qheader</strong></span> command
+	prints the header, or description, of a patch.  By default, it
+	prints the header of the topmost applied patch. Given an
+	argument, it prints the header of the named patch.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552270"></a>A.1.7. <span class="command"><strong>qimport</strong></span>—import
+	a third-party patch into the queue</h3></div></div></div>
+<p><a name="x_5f8"></a>The <span class="command"><strong>qimport</strong></span> command
+	adds an entry for an external patch to the <code class="filename">series</code> file, and copies the patch
+	into the <code class="filename">.hg/patches</code> directory.  It adds
+	the entry immediately after the topmost applied patch, but
+	does not push the patch.</p>
+<p><a name="x_5f9"></a>If the <code class="filename">.hg/patches</code> directory is a
+	repository, <span class="command"><strong>qimport</strong></span>
+	automatically does an <span class="command"><strong>hg add</strong></span>
+	of the imported patch.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552355"></a>A.1.8. <span class="command"><strong>qinit</strong></span>—prepare
+	a repository to work with MQ</h3></div></div></div>
+<p><a name="x_5fa"></a>The <span class="command"><strong>qinit</strong></span> command
+	prepares a repository to work with MQ.  It creates a directory
+	called <code class="filename">.hg/patches</code>.</p>
+<p><a name="x_5fb"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc"><li><p><a name="x_5fc"></a><code class="option">-c</code>: Create
+	    <code class="filename">.hg/patches</code> as a repository
+	    in its own right.  Also creates a <code class="filename">.hgignore</code> file that will
+	    ignore the <code class="filename">status</code>
+	    file.</p></li></ul></div>
+<p><a name="x_5fd"></a>When the <code class="filename">.hg/patches</code> directory is a
+	repository, the <span class="command"><strong>qimport</strong></span>
+	and <span class="command"><strong>qnew</strong></span> commands
+	automatically <span class="command"><strong>hg add</strong></span> new
+	patches.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552487"></a>A.1.9. <span class="command"><strong>qnew</strong></span>—create a
+	new patch</h3></div></div></div>
+<p><a name="x_5fe"></a>The <span class="command"><strong>qnew</strong></span> command
+	creates a new patch.  It takes one mandatory argument, the
+	name to use for the patch file.  The newly created patch is
+	created empty by default.  It is added to the <code class="filename">series</code> file after the current
+	topmost applied patch, and is immediately pushed on top of
+	that patch.</p>
+<p><a name="x_5ff"></a>If <span class="command"><strong>qnew</strong></span> finds modified
+	files in the working directory, it will refuse to create a new
+	patch unless the <code class="option">-f</code> option is used
+	(see below).  This behaviour allows you to <span class="command"><strong>qrefresh</strong></span> your topmost applied
+	patch before you apply a new patch on top of it.</p>
+<p><a name="x_600"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_601"></a><code class="option">-f</code>: Create a new
+	    patch if the contents of the working directory are
+	    modified.  Any outstanding modifications are added to the
+	    newly created patch, so after this command completes, the
+	    working directory will no longer be modified.</p></li>
+<li><p><a name="x_602"></a><code class="option">-m</code>: Use the given
+	    text as the commit message. This text will be stored at
+	    the beginning of the patch file, before the patch
+	    data.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552597"></a>A.1.10. <span class="command"><strong>qnext</strong></span>—print
+	the name of the next patch</h3></div></div></div>
+<p><a name="x_603"></a>The <span class="command"><strong>qnext</strong></span> command
+	prints the name name of the next patch in the <code class="filename">series</code> file after the topmost
+	applied patch.  This patch will become the topmost applied
+	patch if you run <span class="command"><strong>qpush</strong></span>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552643"></a>A.1.11. <span class="command"><strong>qpop</strong></span>—pop
+	patches off the stack</h3></div></div></div>
+<p><a name="x_604"></a>The <span class="command"><strong>qpop</strong></span> command
+	removes applied patches from the top of the stack of applied
+	patches.  By default, it removes only one patch.</p>
+<p><a name="x_605"></a>This command removes the changesets that represent the
+	popped patches from the repository, and updates the working
+	directory to undo the effects of the patches.</p>
+<p><a name="x_606"></a>This command takes an optional argument, which it uses as
+	the name or index of the patch to pop to.  If given a name, it
+	will pop patches until the named patch is the topmost applied
+	patch.  If given a number, <span class="command"><strong>qpop</strong></span> treats the number as an
+	index into the entries in the series file, counting from zero
+	(empty lines and lines containing only comments do not count).
+	It pops patches until the patch identified by the given index
+	is the topmost applied patch.</p>
+<p><a name="x_607"></a>The <span class="command"><strong>qpop</strong></span> command does
+	not read or write patches or the <code class="filename">series</code> file.  It is thus safe to
+	<span class="command"><strong>qpop</strong></span> a patch that you have
+	removed from the <code class="filename">series</code>
+	file, or a patch that you have renamed or deleted entirely.
+	In the latter two cases, use the name of the patch as it was
+	when you applied it.</p>
+<p><a name="x_608"></a>By default, the <span class="command"><strong>qpop</strong></span>
+	command will not pop any patches if the working directory has
+	been modified.  You can override this behaviour using the
+	<code class="option">-f</code> option,
+	which reverts all modifications in the working
+	directory.</p>
+<p><a name="x_609"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_60a"></a><code class="option">-a</code>: Pop all
+	    applied patches.  This returns the repository to its state
+	    before you applied any patches.</p></li>
+<li><p><a name="x_60b"></a><code class="option">-f</code>: Forcibly
+	    revert any modifications to the working directory when
+	    popping.</p></li>
+<li><p><a name="x_60c"></a><code class="option">-n</code>: Pop a patch
+	    from the named queue.</p></li>
+</ul></div>
+<p><a name="x_60d"></a>The <span class="command"><strong>qpop</strong></span> command
+	removes one line from the end of the <code class="filename">status</code> file for each patch that it
+	pops.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id552842"></a>A.1.12. <span class="command"><strong>qprev</strong></span>—print
+	the name of the previous patch</h3></div></div></div>
+<p><a name="x_60e"></a>The <span class="command"><strong>qprev</strong></span> command
+	prints the name of the patch in the <code class="filename">series</code> file that comes before the
+	topmost applied patch. This will become the topmost applied
+	patch if you run <span class="command"><strong>qpop</strong></span>.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:mqref:cmd:qpush"></a>A.1.13. <span class="command"><strong>qpush</strong></span>—push
+	patches onto the stack</h3></div></div></div>
+<p><a name="x_60f"></a>The <span class="command"><strong>qpush</strong></span> command adds
+	patches onto the applied stack.  By default, it adds only one
+	patch.</p>
+<p><a name="x_610"></a>This command creates a new changeset to represent each
+	applied patch, and updates the working directory to apply the
+	effects of the patches.</p>
+<p><a name="x_611"></a>The default data used when creating a changeset are as
+	follows:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_612"></a>The commit date and time zone are the current
+	    date and time zone.  Because these data are used to
+	    compute the identity of a changeset, this means that if
+	    you <span class="command"><strong>qpop</strong></span> a patch and
+	    <span class="command"><strong>qpush</strong></span> it again, the
+	    changeset that you push will have a different identity
+	    than the changeset you popped.</p></li>
+<li><p><a name="x_613"></a>The author is the same as the default used by
+	    the <span class="command"><strong>hg commit</strong></span>
+	    command.</p></li>
+<li><p><a name="x_614"></a>The commit message is any text from the patch
+	    file that comes before the first diff header.  If there is
+	    no such text, a default commit message is used that
+	    identifies the name of the patch.</p></li>
+</ul></div>
+<p><a name="x_615"></a>If a patch contains a Mercurial patch header (XXX add
+	link), the information in the patch header overrides these
+	defaults.</p>
+<p><a name="x_616"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_617"></a><code class="option">-a</code>: Push all
+	    unapplied patches from the <code class="filename">series</code> file until there are
+	    none left to push.</p></li>
+<li><p><a name="x_618"></a><code class="option">-l</code>: Add the name
+	    of the patch to the end of the commit message.</p></li>
+<li><p><a name="x_619"></a><code class="option">-m</code>: If a patch
+	    fails to apply cleanly, use the entry for the patch in
+	    another saved queue to compute the parameters for a
+	    three-way merge, and perform a three-way merge using the
+	    normal Mercurial merge machinery.  Use the resolution of
+	    the merge as the new patch content.</p></li>
+<li><p><a name="x_61a"></a><code class="option">-n</code>: Use the
+	    named queue if merging while pushing.</p></li>
+</ul></div>
+<p><a name="x_61b"></a>The <span class="command"><strong>qpush</strong></span> command
+	reads, but does not modify, the <code class="filename">series</code> file.  It appends one line
+	to the <span class="command"><strong>hg status</strong></span> file for
+	each patch that it pushes.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553113"></a>A.1.14. <span class="command"><strong>qrefresh</strong></span>—update the
+	topmost applied patch</h3></div></div></div>
+<p><a name="x_61c"></a>The <span class="command"><strong>qrefresh</strong></span> command
+	updates the topmost applied patch.  It modifies the patch,
+	removes the old changeset that represented the patch, and
+	creates a new changeset to represent the modified
+	patch.</p>
+<p><a name="x_61d"></a>The <span class="command"><strong>qrefresh</strong></span> command
+	looks for the following modifications:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_61e"></a>Changes to the commit message, i.e. the text
+	    before the first diff header in the patch file, are
+	    reflected in the new changeset that represents the
+	    patch.</p></li>
+<li><p><a name="x_61f"></a>Modifications to tracked files in the working
+	    directory are added to the patch.</p></li>
+<li><p><a name="x_620"></a>Changes to the files tracked using <span class="command"><strong>hg add</strong></span>, <span class="command"><strong>hg copy</strong></span>, <span class="command"><strong>hg remove</strong></span>, or <span class="command"><strong>hg rename</strong></span>.  Added files and copy
+	    and rename destinations are added to the patch, while
+	    removed files and rename sources are removed.</p></li>
+</ul></div>
+<p><a name="x_621"></a>Even if <span class="command"><strong>qrefresh</strong></span>
+	detects no changes, it still recreates the changeset that
+	represents the patch.  This causes the identity of the
+	changeset to differ from the previous changeset that
+	identified the patch.</p>
+<p><a name="x_622"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_623"></a><code class="option">-e</code>: Modify
+	    the commit and patch description, using the preferred text
+	    editor.</p></li>
+<li><p><a name="x_624"></a><code class="option">-m</code>: Modify
+	    the commit message and patch description, using the given
+	    text.</p></li>
+<li><p><a name="x_625"></a><code class="option">-l</code>: Modify
+	    the commit message and patch description, using text from
+	    the given file.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553294"></a>A.1.15. <span class="command"><strong>qrename</strong></span>—rename
+	a patch</h3></div></div></div>
+<p><a name="x_626"></a>The <span class="command"><strong>qrename</strong></span> command
+	renames a patch, and changes the entry for the patch in the
+	<code class="filename">series</code> file.</p>
+<p><a name="x_627"></a>With a single argument, <span class="command"><strong>qrename</strong></span> renames the topmost
+	applied patch.  With two arguments, it renames its first
+	argument to its second.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553347"></a>A.1.16. <span class="command"><strong>qrestore</strong></span>—restore saved
+	queue state</h3></div></div></div>
+<p><a name="x_628"></a>XXX No idea what this does.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553368"></a>A.1.17. <span class="command"><strong>qsave</strong></span>—save
+	current queue state</h3></div></div></div>
+<p><a name="x_629"></a>XXX Likewise.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553388"></a>A.1.18. <span class="command"><strong>qseries</strong></span>—print
+	the entire patch series</h3></div></div></div>
+<p><a name="x_62a"></a>The <span class="command"><strong>qseries</strong></span> command
+	prints the entire patch series from the <code class="filename">series</code> file.  It prints only patch
+	names, not empty lines or comments.  It prints in order from
+	first to be applied to last.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553427"></a>A.1.19. <span class="command"><strong>qtop</strong></span>—print the
+	name of the current patch</h3></div></div></div>
+<p><a name="x_62b"></a>The <span class="command"><strong>qtop</strong></span> prints the
+	name of the topmost currently applied patch.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553457"></a>A.1.20. <span class="command"><strong>qunapplied</strong></span>—print patches
+	not yet applied</h3></div></div></div>
+<p><a name="x_62c"></a>The <span class="command"><strong>qunapplied</strong></span> command
+	prints the names of patches from the <code class="filename">series</code> file that are not yet
+	applied.  It prints them in order from the next patch that
+	will be pushed to the last.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553496"></a>A.1.21. <span class="command"><strong>hg strip</strong></span>—remove a
+	revision and descendants</h3></div></div></div>
+<p><a name="x_62d"></a>The <span class="command"><strong>hg strip</strong></span> command
+	removes a revision, and all of its descendants, from the
+	repository.  It undoes the effects of the removed revisions
+	from the repository, and updates the working directory to the
+	first parent of the removed revision.</p>
+<p><a name="x_62e"></a>The <span class="command"><strong>hg strip</strong></span> command
+	saves a backup of the removed changesets in a bundle, so that
+	they can be reapplied if removed in error.</p>
+<p><a name="x_62f"></a>Options:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_630"></a><code class="option">-b</code>: Save
+	    unrelated changesets that are intermixed with the stripped
+	    changesets in the backup bundle.</p></li>
+<li><p><a name="x_631"></a><code class="option">-f</code>: If a
+	    branch has multiple heads, remove all heads. XXX This
+	    should be renamed, and use <code class="literal">-f</code> to strip
+	    revs when there are pending changes.</p></li>
+<li><p><a name="x_632"></a><code class="option">-n</code>: Do
+	    not save a backup bundle.</p></li>
+</ul></div>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id553602"></a>A.2. MQ file reference</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553608"></a>A.2.1. The <code class="filename">series</code>
+	file</h3></div></div></div>
+<p><a name="x_633"></a>The <code class="filename">series</code> file
+	contains a list of the names of all patches that MQ can apply.
+	It is represented as a list of names, with one name saved per
+	line.  Leading and trailing white space in each line are
+	ignored.</p>
+<p><a name="x_634"></a>Lines may contain comments.  A comment begins with the
+	“<span class="quote"><code class="literal">#</code></span>” character, and extends to
+	the end of the line.  Empty lines, and lines that contain only
+	comments, are ignored.</p>
+<p><a name="x_635"></a>You will often need to edit the <code class="filename">series</code> file by hand, hence the
+	support for comments and empty lines noted above.  For
+	example, you can comment out a patch temporarily, and <span class="command"><strong>qpush</strong></span> will skip over that patch
+	when applying patches.  You can also change the order in which
+	patches are applied by reordering their entries in the
+	<code class="filename">series</code> file.</p>
+<p><a name="x_636"></a>Placing the <code class="filename">series</code>
+	file under revision control is also supported; it is a good
+	idea to place all of the patches that it refers to under
+	revision control, as well.  If you create a patch directory
+	using the <code class="option">-c</code>
+	option to <span class="command"><strong>qinit</strong></span>, this will
+	be done for you automatically.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id553719"></a>A.2.2. The <code class="filename">status</code>
+	file</h3></div></div></div>
+<p><a name="x_637"></a>The <code class="filename">status</code> file
+	contains the names and changeset hashes of all patches that MQ
+	currently has applied.  Unlike the <code class="filename">series</code> file, this file is not
+	intended for editing.  You should not place this file under
+	revision control, or modify it in any way.  It is used by MQ
+	strictly for internal book-keeping.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="adding-functionality-with-extensions.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="installing-mercurial-from-source.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 13. Adding functionality with extensions </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Appendix B. Installing Mercurial from source</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

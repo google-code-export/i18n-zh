@@ -1,0 +1,477 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chapter 6. File names and pattern matching</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="collaborating-with-other-people.html" title="Chapter 5. Collaborating with other people">
+<link rel="next" href="managing-releases-and-branchy-development.html" title="Chapter 7. Managing releases and branchy development">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 6. File names and pattern matching</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="collaborating-with-other-people.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="managing-releases-and-branchy-development.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:names"></a>Chapter 6. File names and pattern matching</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id525432">6.1. Simple file naming</a></span></dt>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id525506">6.2. Running commands without any file names</a></span></dt>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id525679">6.3. Telling you what's going on</a></span></dt>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id525741">6.4. Using patterns to identify files</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="file-names-and-pattern-matching.html#id525849">6.4.1. Shell-style glob patterns</a></span></dt>
+<dt><span class="sect2"><a href="file-names-and-pattern-matching.html#id526162">6.4.2. Regular expression matching with re
+	patterns</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id526239">6.5. Filtering files</a></span></dt>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#id526391">6.6. Ignoring unwanted files and directories</a></span></dt>
+<dt><span class="sect1"><a href="file-names-and-pattern-matching.html#sec:names:case">6.7. Case sensitivity</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="file-names-and-pattern-matching.html#id526513">6.7.1. Safe, portable repository storage</a></span></dt>
+<dt><span class="sect2"><a href="file-names-and-pattern-matching.html#id526534">6.7.2. Detecting case conflicts</a></span></dt>
+<dt><span class="sect2"><a href="file-names-and-pattern-matching.html#id526600">6.7.3. Fixing a case conflict</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p><a name="x_543"></a>Mercurial provides mechanisms that let you work with file
+    names in a consistent and expressive way.</p>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id525432"></a>6.1. Simple file naming</h2></div></div></div>
+<p><a name="x_544"></a>Mercurial uses a unified piece of machinery “<span class="quote">under the
+	hood</span>” to handle file names.  Every command behaves
+      uniformly with respect to file names.  The way in which commands
+      work with file names is as follows.</p>
+<p><a name="x_545"></a>If you explicitly name real files on the command line,
+      Mercurial works with exactly those files, as you would expect.
+      </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg add COPYING README examples/simple.py</code></strong>
+</pre>
+<p>
+</p>
+<p><a name="x_546"></a>When you provide a directory name, Mercurial will interpret
+      this as “<span class="quote">operate on every file in this directory and its
+	subdirectories</span>”. Mercurial traverses the files and
+      subdirectories in a directory in alphabetical order.  When it
+      encounters a subdirectory, it will traverse that subdirectory
+      before continuing with the current directory.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status src</code></strong>
+? src/main.py
+? src/watcher/_watcher.c
+? src/watcher/watcher.py
+? src/xyzzy.txt
+</pre>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id525506"></a>6.2. Running commands without any file names</h2></div></div></div>
+<p><a name="x_547"></a>Mercurial's commands that work with file names have useful
+      default behaviours when you invoke them without providing any
+      file names or patterns.  What kind of behaviour you should
+      expect depends on what the command does.  Here are a few rules
+      of thumb you can use to predict what a command is likely to do
+      if you don't give it any names to work with.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_548"></a>Most commands will operate on the entire working
+	  directory. This is what the <span class="command"><strong>hg
+	    add</strong></span> command does, for example.</p></li>
+<li><p><a name="x_549"></a>If the command has effects that are difficult or
+	  impossible to reverse, it will force you to explicitly
+	  provide at least one name or pattern (see below).  This
+	  protects you from accidentally deleting files by running
+	  <span class="command"><strong>hg remove</strong></span> with no
+	  arguments, for example.</p></li>
+</ul></div>
+<p><a name="x_54a"></a>It's easy to work around these default behaviours if they
+      don't suit you.  If a command normally operates on the whole
+      working directory, you can invoke it on just the current
+      directory and its subdirectories by giving it the name
+      “<span class="quote"><code class="filename">.</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd src</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add -n</code></strong>
+adding ../MANIFEST.in
+adding ../examples/performant.py
+adding ../setup.py
+adding main.py
+adding watcher/_watcher.c
+adding watcher/watcher.py
+adding xyzzy.txt
+<code class="prompt">$</code> <strong class="userinput"><code>hg add -n .</code></strong>
+adding main.py
+adding watcher/_watcher.c
+adding watcher/watcher.py
+adding xyzzy.txt
+</pre>
+<p><a name="x_54b"></a>Along the same lines, some commands normally print file
+      names relative to the root of the repository, even if you're
+      invoking them from a subdirectory.  Such a command will print
+      file names relative to your subdirectory if you give it explicit
+      names.  Here, we're going to run <span class="command"><strong>hg
+	status</strong></span> from a subdirectory, and get it to operate on
+      the entire working directory while printing file names relative
+      to our subdirectory, by passing it the output of the <span class="command"><strong>hg root</strong></span> command.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+A COPYING
+A README
+A examples/simple.py
+? MANIFEST.in
+? examples/performant.py
+? setup.py
+? src/main.py
+? src/watcher/_watcher.c
+? src/watcher/watcher.py
+? src/xyzzy.txt
+<code class="prompt">$</code> <strong class="userinput"><code>hg status `hg root`</code></strong>
+A ../COPYING
+A ../README
+A ../examples/simple.py
+? ../MANIFEST.in
+? ../examples/performant.py
+? ../setup.py
+? main.py
+? watcher/_watcher.c
+? watcher/watcher.py
+? xyzzy.txt
+</pre>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id525679"></a>6.3. Telling you what's going on</h2></div></div></div>
+<p><a name="x_54c"></a>The <span class="command"><strong>hg add</strong></span> example in the
+      preceding section illustrates something else that's helpful
+      about Mercurial commands.  If a command operates on a file that
+      you didn't name explicitly on the command line, it will usually
+      print the name of the file, so that you will not be surprised
+      what's going on.</p>
+<p><a name="x_54d"></a>The principle here is of <span class="emphasis"><em>least
+	surprise</em></span>.  If you've exactly named a file on the
+      command line, there's no point in repeating it back at you.  If
+      Mercurial is acting on a file <span class="emphasis"><em>implicitly</em></span>,
+      because you provided no names, or a directory, or a pattern (see
+      below), it's safest to tell you what it's doing.</p>
+<p><a name="x_54e"></a>For commands that behave this way, you can silence them
+      using the <code class="option">-q</code> option.  You
+      can also get them to print the name of every file, even those
+      you've named explicitly, using the <code class="option">-v</code> option.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id525741"></a>6.4. Using patterns to identify files</h2></div></div></div>
+<p><a name="x_54f"></a>In addition to working with file and directory names,
+      Mercurial lets you use <span class="emphasis"><em>patterns</em></span> to identify
+      files.  Mercurial's pattern handling is expressive.</p>
+<p><a name="x_550"></a>On Unix-like systems (Linux, MacOS, etc.), the job of
+      matching file names to patterns normally falls to the shell.  On
+      these systems, you must explicitly tell Mercurial that a name is
+      a pattern.  On Windows, the shell does not expand patterns, so
+      Mercurial will automatically identify names that are patterns,
+      and expand them for you.</p>
+<p><a name="x_551"></a>To provide a pattern in place of a regular name on the
+      command line, the mechanism is simple:</p>
+<pre class="programlisting">syntax:patternbody</pre>
+<p><a name="x_552"></a>That is, a pattern is identified by a short text string that
+      says what kind of pattern this is, followed by a colon, followed
+      by the actual pattern.</p>
+<p><a name="x_553"></a>Mercurial supports two kinds of pattern syntax.  The most
+      frequently used is called <code class="literal">glob</code>; this is the
+      same kind of pattern matching used by the Unix shell, and should
+      be familiar to Windows command prompt users, too.</p>
+<p><a name="x_554"></a>When Mercurial does automatic pattern matching on Windows,
+      it uses <code class="literal">glob</code> syntax.  You can thus omit the
+      “<span class="quote"><code class="literal">glob:</code></span>” prefix on Windows, but
+      it's safe to use it, too.</p>
+<p><a name="x_555"></a>The <code class="literal">re</code> syntax is more powerful; it lets
+      you specify patterns using regular expressions, also known as
+      regexps.</p>
+<p><a name="x_556"></a>By the way, in the examples that follow, notice that I'm
+      careful to wrap all of my patterns in quote characters, so that
+      they won't get expanded by the shell before Mercurial sees
+      them.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id525849"></a>6.4.1. Shell-style <code class="literal">glob</code> patterns</h3></div></div></div>
+<p><a name="x_557"></a>This is an overview of the kinds of patterns you can use
+	when you're matching on glob patterns.</p>
+<p><a name="x_558"></a>The “<span class="quote"><code class="literal">*</code></span>” character matches
+	any string, within a single directory.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg add 'glob:*.py'</code></strong>
+adding main.py
+</pre>
+<p><a name="x_559"></a>The “<span class="quote"><code class="literal">**</code></span>” pattern matches
+	any string, and crosses directory boundaries.  It's not a
+	standard Unix glob token, but it's accepted by several popular
+	Unix shells, and is very useful.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:**.py'</code></strong>
+A examples/simple.py
+A src/main.py
+? examples/performant.py
+? setup.py
+? src/watcher/watcher.py
+</pre>
+<p><a name="x_55a"></a>The “<span class="quote"><code class="literal">?</code></span>” pattern matches
+	any single character.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:**.?'</code></strong>
+? src/watcher/_watcher.c
+</pre>
+<p><a name="x_55b"></a>The “<span class="quote"><code class="literal">[</code></span>” character begins a
+	<span class="emphasis"><em>character class</em></span>.  This matches any single
+	character within the class.  The class ends with a
+	“<span class="quote"><code class="literal">]</code></span>” character.  A class may
+	contain multiple <span class="emphasis"><em>range</em></span>s of the form
+	“<span class="quote"><code class="literal">a-f</code></span>”, which is shorthand for
+	“<span class="quote"><code class="literal">abcdef</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:**[nr-t]'</code></strong>
+? MANIFEST.in
+? src/xyzzy.txt
+</pre>
+<p><a name="x_55c"></a>If the first character after the
+	“<span class="quote"><code class="literal">[</code></span>” in a character class is a
+	“<span class="quote"><code class="literal">!</code></span>”, it
+	<span class="emphasis"><em>negates</em></span> the class, making it match any
+	single character not in the class.</p>
+<p><a name="x_55d"></a>A “<span class="quote"><code class="literal">{</code></span>” begins a group of
+	subpatterns, where the whole group matches if any subpattern
+	in the group matches.  The “<span class="quote"><code class="literal">,</code></span>”
+	character separates subpatterns, and
+	“<span class="quote"><code class="literal">}</code></span>” ends the group.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:*.{in,py}'</code></strong>
+? MANIFEST.in
+? setup.py
+</pre>
+<div class="sect3" lang="en">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="id526104"></a>6.4.1.1. Watch out!</h4></div></div></div>
+<p><a name="x_55e"></a>Don't forget that if you want to match a pattern in any
+	  directory, you should not be using the
+	  “<span class="quote"><code class="literal">*</code></span>” match-any token, as this
+	  will only match within one directory.  Instead, use the
+	  “<span class="quote"><code class="literal">**</code></span>” token.  This small
+	  example illustrates the difference between the two.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:*.py'</code></strong>
+? setup.py
+<code class="prompt">$</code> <strong class="userinput"><code>hg status 'glob:**.py'</code></strong>
+A examples/simple.py
+A src/main.py
+? examples/performant.py
+? setup.py
+? src/watcher/watcher.py
+</pre>
+</div>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id526162"></a>6.4.2. Regular expression matching with <code class="literal">re</code>
+	patterns</h3></div></div></div>
+<p><a name="x_55f"></a>Mercurial accepts the same regular expression syntax as
+	the Python programming language (it uses Python's regexp
+	engine internally). This is based on the Perl language's
+	regexp syntax, which is the most popular dialect in use (it's
+	also used in Java, for example).</p>
+<p><a name="x_560"></a>I won't discuss Mercurial's regexp dialect in any detail
+	here, as regexps are not often used.  Perl-style regexps are
+	in any case already exhaustively documented on a multitude of
+	web sites, and in many books.  Instead, I will focus here on a
+	few things you should know if you find yourself needing to use
+	regexps with Mercurial.</p>
+<p><a name="x_561"></a>A regexp is matched against an entire file name, relative
+	to the root of the repository.  In other words, even if you're
+	already in subbdirectory <code class="filename">foo</code>, if you want to match files
+	under this directory, your pattern must start with
+	“<span class="quote"><code class="literal">foo/</code></span>”.</p>
+<p><a name="x_562"></a>One thing to note, if you're familiar with Perl-style
+	regexps, is that Mercurial's are <span class="emphasis"><em>rooted</em></span>.
+	That is, a regexp starts matching against the beginning of a
+	string; it doesn't look for a match anywhere within the
+	string.  To match anywhere in a string, start your pattern
+	with “<span class="quote"><code class="literal">.*</code></span>”.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id526239"></a>6.5. Filtering files</h2></div></div></div>
+<p><a name="x_563"></a>Not only does Mercurial give you a variety of ways to
+      specify files; it lets you further winnow those files using
+      <span class="emphasis"><em>filters</em></span>.  Commands that work with file
+      names accept two filtering options.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_564"></a><code class="option">-I</code>, or
+	  <code class="option">--include</code>, lets you
+	  specify a pattern that file names must match in order to be
+	  processed.</p></li>
+<li><p><a name="x_565"></a><code class="option">-X</code>, or
+	  <code class="option">--exclude</code>, gives you a
+	  way to <span class="emphasis"><em>avoid</em></span> processing files, if they
+	  match this pattern.</p></li>
+</ul></div>
+<p><a name="x_566"></a>You can provide multiple <code class="option">-I</code> and <code class="option">-X</code> options on the command line,
+      and intermix them as you please.  Mercurial interprets the
+      patterns you provide using glob syntax by default (but you can
+      use regexps if you need to).</p>
+<p><a name="x_567"></a>You can read a <code class="option">-I</code>
+      filter as “<span class="quote">process only the files that match this
+	filter</span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status -I '*.in'</code></strong>
+? MANIFEST.in
+</pre>
+<p><a name="x_568"></a>The <code class="option">-X</code> filter is best
+      read as “<span class="quote">process only the files that don't match this
+	pattern</span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status -X '**.py' src</code></strong>
+? src/watcher/_watcher.c
+? src/xyzzy.txt
+</pre>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id526391"></a>6.6. Ignoring unwanted files and directories</h2></div></div></div>
+<p><a name="x_569"></a>XXX.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:names:case"></a>6.7. Case sensitivity</h2></div></div></div>
+<p><a name="x_56a"></a>If you're working in a mixed development environment that
+      contains both Linux (or other Unix) systems and Macs or Windows
+      systems, you should keep in the back of your mind the knowledge
+      that they treat the case (“<span class="quote">N</span>” versus
+      “<span class="quote">n</span>”) of file names in incompatible ways.  This is
+      not very likely to affect you, and it's easy to deal with if it
+      does, but it could surprise you if you don't know about
+      it.</p>
+<p><a name="x_56b"></a>Operating systems and filesystems differ in the way they
+      handle the <span class="emphasis"><em>case</em></span> of characters in file and
+      directory names.  There are three common ways to handle case in
+      names.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_56c"></a>Completely case insensitive.  Uppercase and
+	  lowercase versions of a letter are treated as identical,
+	  both when creating a file and during subsequent accesses.
+	  This is common on older DOS-based systems.</p></li>
+<li><p><a name="x_56d"></a>Case preserving, but insensitive.  When a file
+	  or directory is created, the case of its name is stored, and
+	  can be retrieved and displayed by the operating system.
+	  When an existing file is being looked up, its case is
+	  ignored.  This is the standard arrangement on Windows and
+	  MacOS.  The names <code class="filename">foo</code> and
+	  <code class="filename">FoO</code> identify the same file.  This
+	  treatment of uppercase and lowercase letters as
+	  interchangeable is also referred to as <span class="emphasis"><em>case
+	    folding</em></span>.</p></li>
+<li><p><a name="x_56e"></a>Case sensitive.  The case of a name is
+	  significant at all times. The names <code class="filename">foo</code>
+	  and {FoO} identify different files.  This is the way Linux
+	  and Unix systems normally work.</p></li>
+</ul></div>
+<p><a name="x_56f"></a>On Unix-like systems, it is possible to have any or all of
+      the above ways of handling case in action at once.  For example,
+      if you use a USB thumb drive formatted with a FAT32 filesystem
+      on a Linux system, Linux will handle names on that filesystem in
+      a case preserving, but insensitive, way.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id526513"></a>6.7.1. Safe, portable repository storage</h3></div></div></div>
+<p><a name="x_570"></a>Mercurial's repository storage mechanism is <span class="emphasis"><em>case
+	  safe</em></span>.  It translates file names so that they can
+	be safely stored on both case sensitive and case insensitive
+	filesystems.  This means that you can use normal file copying
+	tools to transfer a Mercurial repository onto, for example, a
+	USB thumb drive, and safely move that drive and repository
+	back and forth between a Mac, a PC running Windows, and a
+	Linux box.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id526534"></a>6.7.2. Detecting case conflicts</h3></div></div></div>
+<p><a name="x_571"></a>When operating in the working directory, Mercurial honours
+	the naming policy of the filesystem where the working
+	directory is located.  If the filesystem is case preserving,
+	but insensitive, Mercurial will treat names that differ only
+	in case as the same.</p>
+<p><a name="x_572"></a>An important aspect of this approach is that it is
+	possible to commit a changeset on a case sensitive (typically
+	Linux or Unix) filesystem that will cause trouble for users on
+	case insensitive (usually Windows and MacOS) users.  If a
+	Linux user commits changes to two files, one named
+	<code class="filename">myfile.c</code> and the other named
+	<code class="filename">MyFile.C</code>, they will be stored correctly
+	in the repository.  And in the working directories of other
+	Linux users, they will be correctly represented as separate
+	files.</p>
+<p><a name="x_573"></a>If a Windows or Mac user pulls this change, they will not
+	initially have a problem, because Mercurial's repository
+	storage mechanism is case safe.  However, once they try to
+	<span class="command"><strong>hg update</strong></span> the working
+	directory to that changeset, or <span class="command"><strong>hg
+	  merge</strong></span> with that changeset, Mercurial will spot the
+	conflict between the two file names that the filesystem would
+	treat as the same, and forbid the update or merge from
+	occurring.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id526600"></a>6.7.3. Fixing a case conflict</h3></div></div></div>
+<p><a name="x_574"></a>If you are using Windows or a Mac in a mixed environment
+	where some of your collaborators are using Linux or Unix, and
+	Mercurial reports a case folding conflict when you try to
+	<span class="command"><strong>hg update</strong></span> or <span class="command"><strong>hg merge</strong></span>, the procedure to fix the
+	problem is simple.</p>
+<p><a name="x_575"></a>Just find a nearby Linux or Unix box, clone the problem
+	repository onto it, and use Mercurial's <span class="command"><strong>hg rename</strong></span> command to change the
+	names of any offending files or directories so that they will
+	no longer cause case folding conflicts.  Commit this change,
+	<span class="command"><strong>hg pull</strong></span> or <span class="command"><strong>hg push</strong></span> it across to your Windows or
+	MacOS system, and <span class="command"><strong>hg update</strong></span>
+	to the revision with the non-conflicting names.</p>
+<p><a name="x_576"></a>The changeset with case-conflicting names will remain in
+	your project's history, and you still won't be able to
+	<span class="command"><strong>hg update</strong></span> your working
+	directory to that changeset on a Windows or MacOS system, but
+	you can continue development unimpeded.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_577"></a>  Prior to version 0.9.3, Mercurial did not use a case
+	  safe repository storage mechanism, and did not detect case
+	  folding conflicts.  If you are using an older version of
+	  Mercurial on Windows or MacOS, I strongly recommend that you
+	  upgrade.</p></td></tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="collaborating-with-other-people.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="managing-releases-and-branchy-development.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 5. Collaborating with other people </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 7. Managing releases and branchy development</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

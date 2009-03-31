@@ -1,0 +1,640 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第 7 章 发布管理与分支开发</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial 权威指南">
+<link rel="up" href="index.html" title="Mercurial 权威指南">
+<link rel="prev" href="file-names-and-pattern-matching.html" title="第 6 章 文件名称与模式匹配">
+<link rel="next" href="finding-and-fixing-mistakes.html" title="第 8 章 查找和修改错误">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">第 7 章 发布管理与分支开发</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="file-names-and-pattern-matching.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="finding-and-fixing-mistakes.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:branch"></a>第 7 章 发布管理与分支开发</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id520418">7.1. 给版本指定一个永久的名称</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-releases-and-branchy-development.html#id521003">7.1.1. 在合并期间处理标签冲突</a></span></dt>
+<dt><span class="sect2"><a href="managing-releases-and-branchy-development.html#id521123">7.1.2. 标签与克隆</a></span></dt>
+<dt><span class="sect2"><a href="managing-releases-and-branchy-development.html#id521193">7.1.3. 当永久标签太多的时候</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id521284">7.2. 修改流程—宏观与微观</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id521360">7.3. 在版本库中管理分支</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id521627">7.4. 不要重复劳动：在分支间合并</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id521754">7.5. 版本库中的命名分支</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id522271">7.6. 在版本库中处理多个命名分支</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id522591">7.7. 分支名称与合并</a></span></dt>
+<dt><span class="sect1"><a href="managing-releases-and-branchy-development.html#id522808">7.8. 分支名称通常都很有用</a></span></dt>
+</dl>
+</div>
+<p><a name="x_369"></a>Mercurial provides several mechanisms for you to manage a project that is
+making progress on multiple fronts at once.  To understand these mechanisms,
+let's first take a brief look at a fairly normal software project structure.</p>
+<p><a name="x_36a"></a>Many software projects issue periodic “<span class="quote">major</span>” releases that
+contain substantial new features.  In parallel, they may issue
+“<span class="quote">minor</span>” releases.  These are usually identical to the major
+releases off which they're based, but with a few bugs fixed.</p>
+<p><a name="x_36b"></a>In this chapter, we'll start by talking about how to keep records of project
+milestones such as releases.  We'll then continue on to talk about the flow
+of work between different phases of a project, and how Mercurial can help
+you to isolate and manage this work.</p>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id520418"></a>7.1. 给版本指定一个永久的名称</h2></div></div></div>
+<p><a name="x_36c"></a>Once you decide that you'd like to call a particular revision a
+“<span class="quote">release</span>”, it's a good idea to record the identity of that
+revision. This will let you reproduce that release at a later date, for
+whatever purpose you might need at the time (reproducing a bug, porting to a
+new platform, etc).  </p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init mytag</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd mytag</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo hello &gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'Initial commit'</code></strong>
+adding myfile
+</pre>
+<p>
+</p>
+<p><a name="x_36d"></a>Mercurial lets you give a permanent name to any revision using the <span class="command"><strong>hg tag</strong></span> command.  Not surprisingly, these names are
+called “<span class="quote">tags</span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tag v1.0</code></strong>
+</pre>
+<p><a name="x_36e"></a>A tag is nothing more than a “<span class="quote">symbolic name</span>” for a revision.
+Tags exist purely for your convenience, so that you have a handy permanent
+way to refer to a revision; Mercurial doesn't interpret the tag names you
+use in any way.  Neither does Mercurial place any restrictions on the name
+of a tag, beyond a few that are necessary to ensure that a tag can be parsed
+unambiguously.  A tag name cannot contain any of the following characters:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_36f"></a>Colon (ASCII 58, “<span class="quote"><code class="literal">:</code></span>”)</p></li>
+<li><p><a name="x_370"></a>Carriage return (ASCII 13, “<span class="quote"><code class="literal">\r</code></span>”)</p></li>
+<li><p><a name="x_371"></a>Newline (ASCII 10, “<span class="quote"><code class="literal">\n</code></span>”)</p></li>
+</ul></div>
+<p><a name="x_372"></a>You can use the <span class="command"><strong>hg tags</strong></span> command to display
+the tags present in your repository.  In the output, each tagged revision is
+identified first by its name, then by revision number, and finally by the
+unique hash of the revision.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tags</code></strong>
+tip                                1:d19d76bf9b26
+v1.0                               0:e643c88426f6
+</pre>
+<p><a name="x_373"></a>Notice that <code class="literal">tip</code> is listed in the output of <span class="command"><strong>hg tags</strong></span>.  The <code class="literal">tip</code> tag is a
+special “<span class="quote">floating</span>” tag, which always identifies the newest
+revision in the repository.</p>
+<p><a name="x_374"></a>In the output of the <span class="command"><strong>hg tags</strong></span> command, tags
+are listed in reverse order, by revision number.  This usually means that
+recent tags are listed before older tags.  It also means that
+<code class="literal">tip</code> is always going to be the first tag listed in the
+output of <span class="command"><strong>hg tags</strong></span>.</p>
+<p><a name="x_375"></a>When you run <span class="command"><strong>hg log</strong></span>, if it displays a
+revision that has tags associated with it, it will print those tags.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg log</code></strong>
+changeset:   1:d19d76bf9b26
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:27 2009 +0000
+summary:     Added tag v1.0 for changeset e643c88426f6
+
+changeset:   0:e643c88426f6
+tag:         v1.0
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:27 2009 +0000
+summary:     Initial commit
+
+</pre>
+<p><a name="x_376"></a>Any time you need to provide a revision ID to a Mercurial command, the
+command will accept a tag name in its place.  Internally, Mercurial will
+translate your tag name into the corresponding revision ID, then use that.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo goodbye &gt; myfile2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'Second commit'</code></strong>
+adding myfile2
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r v1.0</code></strong>
+changeset:   0:e643c88426f6
+tag:         v1.0
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:27 2009 +0000
+summary:     Initial commit
+
+</pre>
+<p><a name="x_377"></a>There's no limit on the number of tags you can have in a repository, or on
+the number of tags that a single revision can have.  As a practical matter,
+it's not a great idea to have “<span class="quote">too many</span>” (a number which will
+vary from project to project), simply because tags are supposed to help you
+to find revisions.  If you have lots of tags, the ease of using them to
+identify revisions diminishes rapidly.</p>
+<p><a name="x_378"></a>For example, if your project has milestones as frequent as every few days,
+it's perfectly reasonable to tag each one of those.  But if you have a
+continuous build system that makes sure every revision can be built cleanly,
+you'd be introducing a lot of noise if you were to tag every clean build.
+Instead, you could tag failed builds (on the assumption that they're rare!),
+or simply not use tags to track buildability.</p>
+<p><a name="x_379"></a>If you want to remove a tag that you no longer want, use <span class="command"><strong>hg tag --remove</strong></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tag --remove v1.0</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tags</code></strong>
+tip                                3:78f02cad3cbf
+</pre>
+<p><a name="x_37a"></a>You can also modify a tag at any time, so that it identifies a different
+revision, by simply issuing a new <span class="command"><strong>hg tag</strong></span>
+command. You'll have to use the <code class="option">-f</code> option
+to tell Mercurial that you <span class="emphasis"><em>really</em></span> want to update the
+tag.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tag -r 1 v1.1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tags</code></strong>
+tip                                4:e6282925b493
+v1.1                               1:d19d76bf9b26
+<code class="prompt">$</code> <strong class="userinput"><code>hg tag -r 2 v1.1</code></strong>
+abort: tag 'v1.1' already exists (use -f to force)
+<code class="prompt">$</code> <strong class="userinput"><code>hg tag -f -r 2 v1.1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tags</code></strong>
+tip                                5:891ed99ac47a
+v1.1                               2:395d9183f4af
+</pre>
+<p><a name="x_37b"></a>There will still be a permanent record of the previous identity of the tag,
+but Mercurial will no longer use it.  There's thus no penalty to tagging the
+wrong revision; all you have to do is turn around and tag the correct
+revision once you discover your error.</p>
+<p><a name="x_37c"></a>Mercurial stores tags in a normal revision-controlled file in your
+repository.  If you've created any tags, you'll find them in a file named
+<code class="filename">.hgtags</code>.  When you run the <span class="command"><strong>hg tag</strong></span> command, Mercurial modifies this file, then
+automatically commits the change to it.  This means that every time you run
+<span class="command"><strong>hg tag</strong></span>, you'll see a corresponding
+changeset in the output of <span class="command"><strong>hg log</strong></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   5:891ed99ac47a
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:28 2009 +0000
+summary:     Added tag v1.1 for changeset 395d9183f4af
+
+</pre>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id521003"></a>7.1.1. 在合并期间处理标签冲突</h3></div></div></div>
+<p><a name="x_37d"></a>You won't often need to care about the <code class="filename">.hgtags</code> file, but it sometimes makes its presence
+known during a merge.  The format of the file is simple: it consists of a
+series of lines.  Each line starts with a changeset hash, followed by a
+space, followed by the name of a tag.</p>
+<p><a name="x_37e"></a>If you're resolving a conflict in the <code class="filename">.hgtags</code> file during a merge, there's one twist to
+modifying the <code class="filename">.hgtags</code> file: when
+Mercurial is parsing the tags in a repository, it <span class="emphasis"><em>never</em></span>
+reads the working copy of the <code class="filename">.hgtags</code>
+file.  Instead, it reads the <span class="emphasis"><em>most recently committed</em></span>
+revision of the file.</p>
+<p><a name="x_37f"></a>An unfortunate consequence of this design is that you can't actually verify
+that your merged <code class="filename">.hgtags</code> file is correct
+until <span class="emphasis"><em>after</em></span> you've committed a change.  So if you find
+yourself resolving a conflict on <code class="filename">.hgtags</code>
+during a merge, be sure to run <span class="command"><strong>hg tags</strong></span>
+after you commit.  If it finds an error in the <code class="filename">.hgtags</code> file, it will report the location of the
+error, which you can then fix and commit.  You should then run <span class="command"><strong>hg tags</strong></span> again, just to be sure that your fix is
+correct.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id521123"></a>7.1.2. 标签与克隆</h3></div></div></div>
+<p><a name="x_380"></a>You may have noticed that the <span class="command"><strong>hg clone</strong></span>
+command has a <code class="option">-r</code> option that lets you
+clone an exact copy of the repository as of a particular changeset.  The new
+clone will not contain any project history that comes after the revision you
+specified.  This has an interaction with tags that can surprise the unwary.</p>
+<p><a name="x_381"></a>Recall that a tag is stored as a revision to the <code class="filename">.hgtags</code> file, so that when you create a tag, the
+changeset in which it's recorded necessarily refers to an older changeset.
+When you run <span class="command"><strong>hg clone -r foo</strong></span> to clone a
+repository as of tag <code class="literal">foo</code>, the new clone <span class="emphasis"><em>will
+not contain the history that created the tag</em></span> that you used to
+clone the repository.  The result is that you'll get exactly the right
+subset of the project's history in the new repository, but
+<span class="emphasis"><em>not</em></span> the tag you might have expected.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id521193"></a>7.1.3. 当永久标签太多的时候</h3></div></div></div>
+<p><a name="x_382"></a>Since Mercurial's tags are revision controlled and carried around with a
+project's history, everyone you work with will see the tags you create.  But
+giving names to revisions has uses beyond simply noting that revision
+<code class="literal">4237e45506ee</code> is really <code class="literal">v2.0.2</code>.  If
+you're trying to track down a subtle bug, you might want a tag to remind you
+of something like “<span class="quote">Anne saw the symptoms with this revision</span>”.</p>
+<p><a name="x_383"></a>For cases like this, what you might want to use are
+<span class="emphasis"><em>local</em></span> tags. You can create a local tag with the <code class="option">-l</code> option to the <span class="command"><strong>hg
+tag</strong></span> command.  This will store the tag in a file called <code class="filename">.hg/localtags</code>.  Unlike <code class="filename">.hgtags</code>, <code class="filename">.hg/localtags</code> is not revision controlled.  Any
+tags you create using <code class="option">-l</code> remain strictly
+local to the repository you're currently working in.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id521284"></a>7.2. 修改流程—宏观与微观</h2></div></div></div>
+<p><a name="x_384"></a>To return to the outline I sketched at the beginning of a chapter, let's
+think about a project that has multiple concurrent pieces of work under
+development at once.</p>
+<p><a name="x_385"></a>There might be a push for a new “<span class="quote">main</span>” release; a new minor
+bugfix release to the last main release; and an unexpected “<span class="quote">hot
+fix</span>” to an old release that is now in maintenance mode.</p>
+<p><a name="x_386"></a>The usual way people refer to these different concurrent directions of
+development is as “<span class="quote">branches</span>”.  However, we've already seen
+numerous times that Mercurial treats <span class="emphasis"><em>all of history</em></span> as
+a series of branches and merges.  Really, what we have here is two ideas
+that are peripherally related, but which happen to share a name.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_387"></a>“<span class="quote">Big picture</span>” branches represent the sweep of a project's
+evolution; people give them names, and talk about them in conversation.</p></li>
+<li><p><a name="x_388"></a>“<span class="quote">Little picture</span>” branches are artefacts of the day-to-day
+activity of developing and merging changes.  They expose the narrative of
+how the code was developed.</p></li>
+</ul></div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id521360"></a>7.3. 在版本库中管理分支</h2></div></div></div>
+<p><a name="x_389"></a>The easiest way to isolate a “<span class="quote">big picture</span>” branch in Mercurial
+is in a dedicated repository.  If you have an existing shared
+repository—let's call it <code class="literal">myproject</code>—that reaches a
+“<span class="quote">1.0</span>” milestone, you can start to prepare for future
+maintenance releases on top of version 1.0 by tagging the revision from
+which you prepared the 1.0 release.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd myproject</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tag v1.0</code></strong>
+</pre>
+<p><a name="x_38a"></a>You can then clone a new shared <code class="literal">myproject-1.0.1</code>
+repository as of that tag.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone myproject myproject-1.0.1</code></strong>
+updating working directory
+2 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_38b"></a>Afterwards, if someone needs to work on a bug fix that ought to go into an
+upcoming 1.0.1 minor release, they clone the
+<code class="literal">myproject-1.0.1</code> repository, make their changes, and push
+them back.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg clone myproject-1.0.1 my-1.0.1-bugfix</code></strong>
+updating working directory
+2 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd my-1.0.1-bugfix</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'I fixed a bug using only echo!' &gt;&gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Important fix for 1.0.1'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg push</code></strong>
+pushing to /tmp/branch-repoPLHqJG/myproject-1.0.1
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+</pre>
+<p><a name="x_38c"></a>Meanwhile, development for the next major release can continue, isolated and
+unabated, in the <code class="literal">myproject</code> repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone myproject my-feature</code></strong>
+updating working directory
+2 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd my-feature</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'This sure is an exciting new feature!' &gt; mynewfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'New feature'</code></strong>
+adding mynewfile
+<code class="prompt">$</code> <strong class="userinput"><code>hg push</code></strong>
+pushing to /tmp/branch-repoPLHqJG/myproject
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+</pre>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id521627"></a>7.4. 不要重复劳动：在分支间合并</h2></div></div></div>
+<p><a name="x_38d"></a>In many cases, if you have a bug to fix on a maintenance branch, the chances
+are good that the bug exists on your project's main branch (and possibly
+other maintenance branches, too).  It's a rare developer who wants to fix
+the same bug multiple times, so let's look at a few ways that Mercurial can
+help you to manage these bugfixes without duplicating your work.</p>
+<p><a name="x_38e"></a>In the simplest instance, all you need to do is pull changes from your
+maintenance branch into your local clone of the target branch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone myproject myproject-merge</code></strong>
+updating working directory
+3 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd myproject-merge</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull ../myproject-1.0.1</code></strong>
+pulling from ../myproject-1.0.1
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+</pre>
+<p><a name="x_38f"></a>You'll then need to merge the heads of the two branches, and push back to
+the main branch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg merge</code></strong>
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Merge bugfix from 1.0.1 branch'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg push</code></strong>
+pushing to /tmp/branch-repoPLHqJG/myproject
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 2 changesets with 1 changes to 1 files
+</pre>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id521754"></a>7.5. 版本库中的命名分支</h2></div></div></div>
+<p><a name="x_390"></a>In most instances, isolating branches in repositories is the right
+approach.  Its simplicity makes it easy to understand; and so it's hard to
+make mistakes.  There's a one-to-one relationship between branches you're
+working in and directories on your system.  This lets you use normal
+(non-Mercurial-aware)  tools to work on files within a branch/repository.</p>
+<p><a name="x_391"></a>If you're more in the “<span class="quote">power user</span>” category
+(<span class="emphasis"><em>and</em></span> your collaborators are too), there is an
+alternative way of handling branches that you can consider.  I've already
+mentioned the human-level distinction between “<span class="quote">small picture</span>”
+and “<span class="quote">big picture</span>” branches.  While Mercurial works with
+multiple “<span class="quote">small picture</span>” branches in a repository all the time
+(for example after you pull changes in, but before you merge them), it can
+<span class="emphasis"><em>also</em></span> work with multiple “<span class="quote">big picture</span>”
+branches.</p>
+<p><a name="x_392"></a>The key to working this way is that Mercurial lets you assign a persistent
+<span class="emphasis"><em>name</em></span> to a branch.  There always exists a branch named
+<code class="literal">default</code>.  Even before you start naming branches yourself,
+you can find traces of the <code class="literal">default</code> branch if you look for
+them.</p>
+<p><a name="x_393"></a>As an example, when you run the <span class="command"><strong>hg commit</strong></span>
+command, and it pops up your editor so that you can enter a commit message,
+look for a line that contains the text “<span class="quote"><code class="literal">HG: branch
+default</code></span>” at the bottom. This is telling you that your
+commit will occur on the branch named <code class="literal">default</code>.</p>
+<p><a name="x_394"></a>To start working with named branches, use the <span class="command"><strong>hg
+branches</strong></span> command.  This command lists the named branches already
+present in your repository, telling you which changeset is the tip of each.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   0:f4a3847db93c
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:05 2009 +0000
+summary:     Initial commit
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg branches</code></strong>
+default                        0:f4a3847db93c
+</pre>
+<p><a name="x_395"></a>Since you haven't created any named branches yet, the only one that exists
+is <code class="literal">default</code>.</p>
+<p><a name="x_396"></a>To find out what the “<span class="quote">current</span>” branch is, run the <span class="command"><strong>hg branch</strong></span> command, giving it no arguments.  This
+tells you what branch the parent of the current changeset is on.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg branch</code></strong>
+default
+</pre>
+<p><a name="x_397"></a>To create a new branch, run the <span class="command"><strong>hg branch</strong></span>
+command again.  This time, give it one argument: the name of the branch you
+want to create.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg branch foo</code></strong>
+marked working directory as branch foo
+<code class="prompt">$</code> <strong class="userinput"><code>hg branch</code></strong>
+foo
+</pre>
+<p><a name="x_398"></a>After you've created a branch, you might wonder what effect the <span class="command"><strong>hg branch</strong></span> command has had.  What do the <span class="command"><strong>hg status</strong></span> and <span class="command"><strong>hg
+tip</strong></span> commands report?</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   0:f4a3847db93c
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:05 2009 +0000
+summary:     Initial commit
+
+</pre>
+<p><a name="x_399"></a>Nothing has changed in the working directory, and there's been no new
+history created.  As this suggests, running the <span class="command"><strong>hg
+branch</strong></span> command has no permanent effect; it only tells Mercurial
+what branch name to use the <span class="emphasis"><em>next</em></span> time you commit a
+changeset.</p>
+<p><a name="x_39a"></a>When you commit a change, Mercurial records the name of the branch on which
+you committed.  Once you've switched from the <code class="literal">default</code>
+branch to another and committed, you'll see the name of the new branch show
+up in the output of <span class="command"><strong>hg log</strong></span>, <span class="command"><strong>hg tip</strong></span>, and other commands that display the same
+kind of output.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'hello again' &gt;&gt; myfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Second commit'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   1:a5e0c478abe0
+branch:      foo
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Second commit
+
+</pre>
+<p><a name="x_39b"></a>The <span class="command"><strong>hg log</strong></span>-like commands will print the
+branch name of every changeset that's not on the <code class="literal">default</code>
+branch.  As a result, if you never use named branches, you'll never see this
+information.</p>
+<p><a name="x_39c"></a>Once you've named a branch and committed a change with that name, every
+subsequent commit that descends from that change will inherit the same
+branch name.  You can change the name of a branch at any time, using the
+<span class="command"><strong>hg branch</strong></span> command.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg branch</code></strong>
+foo
+<code class="prompt">$</code> <strong class="userinput"><code>hg branch bar</code></strong>
+marked working directory as branch bar
+<code class="prompt">$</code> <strong class="userinput"><code>echo new file &gt; newfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'Third commit'</code></strong>
+adding newfile
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   2:f372c63a9aec
+branch:      bar
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Third commit
+
+</pre>
+<p><a name="x_39d"></a>In practice, this is something you won't do very often, as branch names tend
+to have fairly long lifetimes.  (This isn't a rule, just an observation.)</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id522271"></a>7.6. 在版本库中处理多个命名分支</h2></div></div></div>
+<p><a name="x_39e"></a>If you have more than one named branch in a repository, Mercurial will
+remember the branch that your working directory on when you start a command
+like <span class="command"><strong>hg update</strong></span> or <span class="command"><strong>hg
+pull -u</strong></span>.  It will update the working directory to the tip of this
+branch, no matter what the “<span class="quote">repo-wide</span>” tip is.  To update to a
+revision that's on a different named branch, you may need to use the <code class="option">-C</code> option to <span class="command"><strong>hg
+update</strong></span>.</p>
+<p><a name="x_39f"></a>This behaviour is a little subtle, so let's see it in action.  First, let's
+remind ourselves what branch we're currently on, and what branches are in
+our repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg parents</code></strong>
+changeset:   2:f372c63a9aec
+branch:      bar
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Third commit
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg branches</code></strong>
+bar                            2:f372c63a9aec
+foo                            1:a5e0c478abe0 (inactive)
+default                        0:f4a3847db93c (inactive)
+</pre>
+<p><a name="x_3a0"></a>We're on the <code class="literal">bar</code> branch, but there also exists an older
+<span class="command"><strong>hg foo</strong></span> branch.</p>
+<p><a name="x_3a1"></a>We can <span class="command"><strong>hg update</strong></span> back and forth between the
+tips of the <code class="literal">foo</code> and <code class="literal">bar</code> branches
+without needing to use the <code class="option">-C</code> option,
+because this only involves going backwards and forwards linearly through our
+change history.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg update foo</code></strong>
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>hg parents</code></strong>
+changeset:   1:a5e0c478abe0
+branch:      foo
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Second commit
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg update bar</code></strong>
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>hg parents</code></strong>
+changeset:   2:f372c63a9aec
+branch:      bar
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Third commit
+
+</pre>
+<p><a name="x_3a2"></a>If we go back to the <code class="literal">foo</code> branch and then run <span class="command"><strong>hg update</strong></span>, it will keep us on
+<code class="literal">foo</code>, not move us to the tip of <code class="literal">bar</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg update foo</code></strong>
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>hg update</code></strong>
+0 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_3a3"></a>Committing a new change on the <code class="literal">foo</code> branch introduces a
+new head.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo something &gt; somefile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -A -m 'New file'</code></strong>
+adding somefile
+created new head
+<code class="prompt">$</code> <strong class="userinput"><code>hg heads</code></strong>
+changeset:   3:7e88e14af782
+branch:      foo
+tag:         tip
+parent:      1:a5e0c478abe0
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:07 2009 +0000
+summary:     New file
+
+changeset:   2:f372c63a9aec
+branch:      bar
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:06 2009 +0000
+summary:     Third commit
+
+</pre>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id522591"></a>7.7. 分支名称与合并</h2></div></div></div>
+<p><a name="x_3a4"></a>As you've probably noticed, merges in Mercurial are not symmetrical. Let's
+say our repository has two heads, 17 and 23.  If I <span class="command"><strong>hg
+update</strong></span> to 17 and then <span class="command"><strong>hg merge</strong></span>
+with 23, Mercurial records 17 as the first parent of the merge, and 23 as
+the second.  Whereas if I <span class="command"><strong>hg update</strong></span> to 23
+and then <span class="command"><strong>hg merge</strong></span> with 17, it records 23 as
+the first parent, and 17 as the second.</p>
+<p><a name="x_3a5"></a>This affects Mercurial's choice of branch name when you merge.  After a
+merge, Mercurial will retain the branch name of the first parent when you
+commit the result of the merge.  If your first parent's branch name is
+<code class="literal">foo</code>, and you merge with <code class="literal">bar</code>, the
+branch name will still be <code class="literal">foo</code> after you merge.</p>
+<p><a name="x_3a6"></a>It's not unusual for a repository to contain multiple heads, each with the
+same branch name.  Let's say I'm working on the <code class="literal">foo</code>
+branch, and so are you.  We commit different changes; I pull your changes; I
+now have two heads, each claiming to be on the <code class="literal">foo</code>
+branch.  The result of a merge will be a single head on the
+<code class="literal">foo</code> branch, as you might hope.</p>
+<p><a name="x_3a7"></a>But if I'm working on the <code class="literal">bar</code> branch, and I merge work
+from the <code class="literal">foo</code> branch, the result will remain on the
+<code class="literal">bar</code> branch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg branch</code></strong>
+bar
+<code class="prompt">$</code> <strong class="userinput"><code>hg merge foo</code></strong>
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m 'Merge'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   4:9843659c0ae7
+branch:      bar
+tag:         tip
+parent:      2:f372c63a9aec
+parent:      3:7e88e14af782
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:07 2009 +0000
+summary:     Merge
+
+</pre>
+<p><a name="x_3a8"></a>To give a more concrete example, if I'm working on the
+<code class="literal">bleeding-edge</code> branch, and I want to bring in the latest
+fixes from the <code class="literal">stable</code> branch, Mercurial will choose the
+“<span class="quote">right</span>” (<code class="literal">bleeding-edge</code>) branch name when I
+pull and merge from <code class="literal">stable</code>.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id522808"></a>7.8. 分支名称通常都很有用</h2></div></div></div>
+<p><a name="x_3a9"></a>You shouldn't think of named branches as applicable only to situations where
+you have multiple long-lived branches cohabiting in a single repository.
+They're very useful even in the one-branch-per-repository case.</p>
+<p><a name="x_3aa"></a>In the simplest case, giving a name to each branch gives you a permanent
+record of which branch a changeset originated on.  This gives you more
+context when you're trying to follow the history of a long-lived branchy
+project.</p>
+<p><a name="x_3ab"></a>If you're working with shared repositories, you can set up a <code class="literal">pretxnchangegroup</code> hook on each that will block
+incoming changes that have the “<span class="quote">wrong</span>” branch name.  This
+provides a simple, but effective, defence against people accidentally
+pushing changes from a “<span class="quote">bleeding edge</span>” branch to a
+“<span class="quote">stable</span>” branch.  Such a hook might look like this inside the
+shared repo's <code class="filename"> /.hgrc</code>.</p>
+<pre class="programlisting">[hooks]
+pretxnchangegroup.branch = hg heads --template '{branches} ' | grep mybranch</pre>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="file-names-and-pattern-matching.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="finding-and-fixing-mistakes.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 6 章 文件名称与模式匹配 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 8 章 查找和修改错误</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

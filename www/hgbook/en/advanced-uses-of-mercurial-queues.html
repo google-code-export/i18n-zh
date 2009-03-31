@@ -1,0 +1,566 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chapter 12. Advanced uses of Mercurial Queues</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="managing-change-with-mercurial-queues.html" title="Chapter 11. Managing change with Mercurial Queues">
+<link rel="next" href="adding-functionality-with-extensions.html" title="Chapter 13. Adding functionality with extensions">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 12. Advanced uses of Mercurial Queues</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="managing-change-with-mercurial-queues.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="adding-functionality-with-extensions.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:mq-collab"></a>Chapter 12. Advanced uses of Mercurial Queues</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id548205">12.1. The problem of many targets</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="advanced-uses-of-mercurial-queues.html#id548278">12.1.1. Tempting approaches that don't work well</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id548361">12.2. Conditionally applying patches with guards</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id548539">12.3. Controlling the guards on a patch</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id548769">12.4. Selecting the guards to use</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id549065">12.5. MQ's rules for applying patches</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id549120">12.6. Trimming the work environment</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id549165">12.7. Dividing up the series
+      file</a></span></dt>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id549365">12.8. Maintaining the patch series</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="advanced-uses-of-mercurial-queues.html#id549473">12.8.1. The art of writing backport patches</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="advanced-uses-of-mercurial-queues.html#id549544">12.9. Useful tips for developing with MQ</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="advanced-uses-of-mercurial-queues.html#id549550">12.9.1. Organising patches in directories</a></span></dt>
+<dt><span class="sect2"><a href="advanced-uses-of-mercurial-queues.html#mq-collab:tips:interdiff">12.9.2. Viewing the history of a patch</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<p><a name="x_15d"></a>While it's easy to pick up straightforward uses of Mercurial
+    Queues, use of a little discipline and some of MQ's less
+    frequently used capabilities makes it possible to work in
+    complicated development environments.</p>
+<p><a name="x_15e"></a>In this chapter, I will use as an example a technique I have
+    used to manage the development of an Infiniband device driver for
+    the Linux kernel.  The driver in question is large (at least as
+    drivers go), with 25,000 lines of code spread across 35 source
+    files.  It is maintained by a small team of developers.</p>
+<p><a name="x_15f"></a>While much of the material in this chapter is specific to
+    Linux, the same principles apply to any code base for which you're
+    not the primary owner, and upon which you need to do a lot of
+    development.</p>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id548205"></a>12.1. The problem of many targets</h2></div></div></div>
+<p><a name="x_160"></a>The Linux kernel changes rapidly, and has never been
+      internally stable; developers frequently make drastic changes
+      between releases. This means that a version of the driver that
+      works well with a particular released version of the kernel will
+      not even <span class="emphasis"><em>compile</em></span> correctly against,
+      typically, any other version.</p>
+<p><a name="x_161"></a>To maintain a driver, we have to keep a number of distinct
+      versions of Linux in mind.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_162"></a>One target is the main Linux kernel development
+	  tree. Maintenance of the code is in this case partly shared
+	  by other developers in the kernel community, who make
+	  “<span class="quote">drive-by</span>” modifications to the driver as they
+	  develop and refine kernel subsystems.</p></li>
+<li><p><a name="x_163"></a>We also maintain a number of
+	  “<span class="quote">backports</span>” to older versions of the Linux
+	  kernel, to support the needs of customers who are running
+	  older Linux distributions that do not incorporate our
+	  drivers.  (To <span class="emphasis"><em>backport</em></span> a piece of code
+	  is to modify it to work in an older version of its target
+	  environment than the version it was developed for.)</p></li>
+<li><p><a name="x_164"></a>Finally, we make software releases on a schedule
+	  that is necessarily not aligned with those used by Linux
+	  distributors and kernel developers, so that we can deliver
+	  new features to customers without forcing them to upgrade
+	  their entire kernels or distributions.</p></li>
+</ul></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id548278"></a>12.1.1. Tempting approaches that don't work well</h3></div></div></div>
+<p><a name="x_165"></a>There are two “<span class="quote">standard</span>” ways to maintain a
+	piece of software that has to target many different
+	environments.</p>
+<p><a name="x_166"></a>The first is to maintain a number of branches, each
+	intended for a single target.  The trouble with this approach
+	is that you must maintain iron discipline in the flow of
+	changes between repositories. A new feature or bug fix must
+	start life in a “<span class="quote">pristine</span>” repository, then
+	percolate out to every backport repository.  Backport changes
+	are more limited in the branches they should propagate to; a
+	backport change that is applied to a branch where it doesn't
+	belong will probably stop the driver from compiling.</p>
+<p><a name="x_167"></a>The second is to maintain a single source tree filled with
+	conditional statements that turn chunks of code on or off
+	depending on the intended target.  Because these
+	“<span class="quote">ifdefs</span>” are not allowed in the Linux kernel
+	tree, a manual or automatic process must be followed to strip
+	them out and yield a clean tree.  A code base maintained in
+	this fashion rapidly becomes a rat's nest of conditional
+	blocks that are difficult to understand and maintain.</p>
+<p><a name="x_168"></a>Neither of these approaches is well suited to a situation
+	where you don't “<span class="quote">own</span>” the canonical copy of a
+	source tree.  In the case of a Linux driver that is
+	distributed with the standard kernel, Linus's tree contains
+	the copy of the code that will be treated by the world as
+	canonical.  The upstream version of “<span class="quote">my</span>” driver
+	can be modified by people I don't know, without me even
+	finding out about it until after the changes show up in
+	Linus's tree.</p>
+<p><a name="x_169"></a>These approaches have the added weakness of making it
+	difficult to generate well-formed patches to submit
+	upstream.</p>
+<p><a name="x_16a"></a>In principle, Mercurial Queues seems like a good candidate
+	to manage a development scenario such as the above.  While
+	this is indeed the case, MQ contains a few added features that
+	make the job more pleasant.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id548361"></a>12.2. Conditionally applying patches with guards</h2></div></div></div>
+<p><a name="x_16b"></a>Perhaps the best way to maintain sanity with so many targets
+      is to be able to choose specific patches to apply for a given
+      situation.  MQ provides a feature called “<span class="quote">guards</span>”
+      (which originates with quilt's <code class="literal">guards</code>
+      command) that does just this.  To start off, let's create a
+      simple repository for experimenting in.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qinit</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew hello.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo hello &gt; hello</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add hello</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew goodbye.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo goodbye &gt; goodbye</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add goodbye</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+</pre>
+<p><a name="x_16c"></a>This gives us a tiny repository that contains two patches
+      that don't have any dependencies on each other, because they
+      touch different files.</p>
+<p><a name="x_16d"></a>The idea behind conditional application is that you can
+      “<span class="quote">tag</span>” a patch with a <span class="emphasis"><em>guard</em></span>,
+      which is simply a text string of your choosing, then tell MQ to
+      select specific guards to use when applying patches.  MQ will
+      then either apply, or skip over, a guarded patch, depending on
+      the guards that you have selected.</p>
+<p><a name="x_16e"></a>A patch can have an arbitrary number of guards; each one is
+      <span class="emphasis"><em>positive</em></span> (“<span class="quote">apply this patch if this
+	guard is selected</span>”) or <span class="emphasis"><em>negative</em></span>
+      (“<span class="quote">skip this patch if this guard is selected</span>”).  A
+      patch with no guards is always applied.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id548539"></a>12.3. Controlling the guards on a patch</h2></div></div></div>
+<p><a name="x_16f"></a>The <span class="command"><strong>qguard</strong></span> command lets
+      you determine which guards should apply to a patch, or display
+      the guards that are already in effect. Without any arguments, it
+      displays the guards on the current topmost patch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qguard</code></strong>
+goodbye.patch: unguarded
+</pre>
+<p><a name="x_170"></a>To set a positive guard on a patch, prefix the name of the
+      guard with a “<span class="quote"><code class="literal">+</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qguard +foo</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qguard</code></strong>
+goodbye.patch: +foo
+</pre>
+<p><a name="x_171"></a>To set a negative guard
+      on a patch, prefix the name of the guard with a
+      “<span class="quote"><code class="literal">-</code></span>”.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qguard hello.patch -quux</code></strong>
+hg qguard: option -u not recognized
+hg qguard [-l] [-n] -- [PATCH] [+GUARD]... [-GUARD]...
+
+set or print guards for a patch
+
+    Guards control whether a patch can be pushed. A patch with no
+    guards is always pushed. A patch with a positive guard ("+foo") is
+    pushed only if the qselect command has activated it. A patch with
+    a negative guard ("-foo") is never pushed if the qselect command
+    has activated it.
+
+    With no arguments, print the currently active guards.
+    With arguments, set guards for the named patch.
+    NOTE: Specifying negative guards now requires '--'.
+
+    To set guards on another patch:
+      hg qguard -- other.patch +2.6.17 -stable
+
+options:
+
+ -l --list  list all patches and guards
+ -n --none  drop all guards
+
+use "hg -v help qguard" to show global options
+<code class="prompt">$</code> <strong class="userinput"><code>hg qguard hello.patch</code></strong>
+hello.patch: unguarded
+</pre>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_172"></a>  The <span class="command"><strong>qguard</strong></span> command
+	<span class="emphasis"><em>sets</em></span> the guards on a patch; it doesn't
+	<span class="emphasis"><em>modify</em></span> them.  What this means is that if
+	you run <span class="command"><strong>hg qguard +a +b</strong></span> on a
+	patch, then <span class="command"><strong>hg qguard +c</strong></span> on
+	the same patch, the <span class="emphasis"><em>only</em></span> guard that will
+	be set on it afterwards is <code class="literal">+c</code>.</p></td></tr>
+</table></div>
+<p><a name="x_173"></a>Mercurial stores guards in the <code class="filename">series</code> file; the form in which they
+      are stored is easy both to understand and to edit by hand. (In
+      other words, you don't have to use the <span class="command"><strong>qguard</strong></span> command if you don't want
+      to; it's okay to simply edit the <code class="filename">series</code> file.)</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat .hg/patches/series</code></strong>
+hello.patch
+goodbye.patch #+foo
+</pre>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id548769"></a>12.4. Selecting the guards to use</h2></div></div></div>
+<p><a name="x_174"></a>The <span class="command"><strong>qselect</strong></span> command
+      determines which guards are active at a given time.  The effect
+      of this is to determine which patches MQ will apply the next
+      time you run <span class="command"><strong>qpush</strong></span>.  It has
+      no other effect; in particular, it doesn't do anything to
+      patches that are already applied.</p>
+<p><a name="x_175"></a>With no arguments, the <span class="command"><strong>qselect</strong></span> command lists the guards
+      currently in effect, one per line of output.  Each argument is
+      treated as the name of a guard to apply.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qpop -a</code></strong>
+patch queue now empty
+<code class="prompt">$</code> <strong class="userinput"><code>hg qselect</code></strong>
+no active guards
+<code class="prompt">$</code> <strong class="userinput"><code>hg qselect foo</code></strong>
+number of unguarded, unapplied patches has changed from 1 to 2
+<code class="prompt">$</code> <strong class="userinput"><code>hg qselect</code></strong>
+foo
+</pre>
+<p><a name="x_176"></a>In case you're interested, the currently selected guards are
+      stored in the <code class="filename">guards</code> file.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cat .hg/patches/guards</code></strong>
+foo
+</pre>
+<p><a name="x_177"></a>We can see the effect the selected guards have when we run
+      <span class="command"><strong>qpush</strong></span>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qpush -a</code></strong>
+applying hello.patch
+applying goodbye.patch
+now at: goodbye.patch
+</pre>
+<p><a name="x_178"></a>A guard cannot start with a
+      “<span class="quote"><code class="literal">+</code></span>” or
+      “<span class="quote"><code class="literal">-</code></span>” character.  The name of a
+      guard must not contain white space, but most other characters
+      are acceptable.  If you try to use a guard with an invalid name,
+      MQ will complain:</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qselect +foo</code></strong>
+abort: guard '+foo' starts with invalid character: '+'
+</pre>
+<p><a name="x_179"></a>Changing the selected guards changes the patches that are
+      applied.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qselect quux</code></strong>
+number of guarded, applied patches has changed from 0 to 1
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpop -a</code></strong>
+patch queue now empty
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpush -a</code></strong>
+applying hello.patch
+skipping goodbye.patch - guarded by ['+foo']
+now at: hello.patch
+</pre>
+<p><a name="x_17a"></a>You can see in the example below that negative guards take
+      precedence over positive guards.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qselect foo bar</code></strong>
+number of unguarded, unapplied patches has changed from 0 to 1
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpop -a</code></strong>
+patch queue now empty
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpush -a</code></strong>
+applying hello.patch
+applying goodbye.patch
+now at: goodbye.patch
+</pre>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id549065"></a>12.5. MQ's rules for applying patches</h2></div></div></div>
+<p><a name="x_17b"></a>The rules that MQ uses when deciding whether to apply a
+      patch are as follows.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_17c"></a>A patch that has no guards is always
+	  applied.</p></li>
+<li><p><a name="x_17d"></a>If the patch has any negative guard that matches
+	  any currently selected guard, the patch is skipped.</p></li>
+<li><p><a name="x_17e"></a>If the patch has any positive guard that matches
+	  any currently selected guard, the patch is applied.</p></li>
+<li><p><a name="x_17f"></a>If the patch has positive or negative guards,
+	  but none matches any currently selected guard, the patch is
+	  skipped.</p></li>
+</ul></div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id549120"></a>12.6. Trimming the work environment</h2></div></div></div>
+<p><a name="x_180"></a>In working on the device driver I mentioned earlier, I don't
+      apply the patches to a normal Linux kernel tree.  Instead, I use
+      a repository that contains only a snapshot of the source files
+      and headers that are relevant to Infiniband development.  This
+      repository is 1% the size of a kernel repository, so it's easier
+      to work with.</p>
+<p><a name="x_181"></a>I then choose a “<span class="quote">base</span>” version on top of which
+      the patches are applied.  This is a snapshot of the Linux kernel
+      tree as of a revision of my choosing.  When I take the snapshot,
+      I record the changeset ID from the kernel repository in the
+      commit message.  Since the snapshot preserves the
+      “<span class="quote">shape</span>” and content of the relevant parts of the
+      kernel tree, I can apply my patches on top of either my tiny
+      repository or a normal kernel tree.</p>
+<p><a name="x_182"></a>Normally, the base tree atop which the patches apply should
+      be a snapshot of a very recent upstream tree.  This best
+      facilitates the development of patches that can easily be
+      submitted upstream with few or no modifications.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id549165"></a>12.7. Dividing up the <code class="filename">series</code>
+      file</h2></div></div></div>
+<p><a name="x_183"></a>I categorise the patches in the <code class="filename">series</code> file into a number of logical
+      groups.  Each section of like patches begins with a block of
+      comments that describes the purpose of the patches that
+      follow.</p>
+<p><a name="x_184"></a>The sequence of patch groups that I maintain follows.  The
+      ordering of these groups is important; I'll describe why after I
+      introduce the groups.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_185"></a>The “<span class="quote">accepted</span>” group.  Patches that
+	  the development team has submitted to the maintainer of the
+	  Infiniband subsystem, and which he has accepted, but which
+	  are not present in the snapshot that the tiny repository is
+	  based on.  These are “<span class="quote">read only</span>” patches,
+	  present only to transform the tree into a similar state as
+	  it is in the upstream maintainer's repository.</p></li>
+<li><p><a name="x_186"></a>The “<span class="quote">rework</span>” group.  Patches that I
+	  have submitted, but that the upstream maintainer has
+	  requested modifications to before he will accept
+	  them.</p></li>
+<li><p><a name="x_187"></a>The “<span class="quote">pending</span>” group.  Patches that
+	  I have not yet submitted to the upstream maintainer, but
+	  which we have finished working on. These will be “<span class="quote">read
+	    only</span>” for a while.  If the upstream maintainer
+	  accepts them upon submission, I'll move them to the end of
+	  the “<span class="quote">accepted</span>” group.  If he requests that I
+	  modify any, I'll move them to the beginning of the
+	  “<span class="quote">rework</span>” group.</p></li>
+<li><p><a name="x_188"></a>The “<span class="quote">in progress</span>” group.  Patches
+	  that are actively being developed, and should not be
+	  submitted anywhere yet.</p></li>
+<li><p><a name="x_189"></a>The “<span class="quote">backport</span>” group.  Patches that
+	  adapt the source tree to older versions of the kernel
+	  tree.</p></li>
+<li><p><a name="x_18a"></a>The “<span class="quote">do not ship</span>” group.  Patches
+	  that for some reason should never be submitted upstream.
+	  For example, one such patch might change embedded driver
+	  identification strings to make it easier to distinguish, in
+	  the field, between an out-of-tree version of the driver and
+	  a version shipped by a distribution vendor.</p></li>
+</ul></div>
+<p><a name="x_18b"></a>Now to return to the reasons for ordering groups of patches
+      in this way.  We would like the lowest patches in the stack to
+      be as stable as possible, so that we will not need to rework
+      higher patches due to changes in context.  Putting patches that
+      will never be changed first in the <code class="filename">series</code> file serves this
+      purpose.</p>
+<p><a name="x_18c"></a>We would also like the patches that we know we'll need to
+      modify to be applied on top of a source tree that resembles the
+      upstream tree as closely as possible.  This is why we keep
+      accepted patches around for a while.</p>
+<p><a name="x_18d"></a>The “<span class="quote">backport</span>” and “<span class="quote">do not ship</span>”
+      patches float at the end of the <code class="filename">series</code> file.  The backport patches
+      must be applied on top of all other patches, and the “<span class="quote">do
+	not ship</span>” patches might as well stay out of harm's
+      way.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id549365"></a>12.8. Maintaining the patch series</h2></div></div></div>
+<p><a name="x_18e"></a>In my work, I use a number of guards to control which
+      patches are to be applied.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_18f"></a>“<span class="quote">Accepted</span>” patches are guarded with
+	  <code class="literal">accepted</code>.  I enable this guard most of
+	  the time.  When I'm applying the patches on top of a tree
+	  where the patches are already present, I can turn this patch
+	  off, and the patches that follow it will apply
+	  cleanly.</p></li>
+<li><p><a name="x_190"></a>Patches that are “<span class="quote">finished</span>”, but
+	  not yet submitted, have no guards.  If I'm applying the
+	  patch stack to a copy of the upstream tree, I don't need to
+	  enable any guards in order to get a reasonably safe source
+	  tree.</p></li>
+<li><p><a name="x_191"></a>Those patches that need reworking before being
+	  resubmitted are guarded with
+	  <code class="literal">rework</code>.</p></li>
+<li><p><a name="x_192"></a>For those patches that are still under
+	  development, I use <code class="literal">devel</code>.</p></li>
+<li><p><a name="x_193"></a>A backport patch may have several guards, one
+	  for each version of the kernel to which it applies.  For
+	  example, a patch that backports a piece of code to 2.6.9
+	  will have a <code class="literal">2.6.9</code> guard.</p></li>
+</ul></div>
+<p><a name="x_194"></a>This variety of guards gives me considerable flexibility in
+      determining what kind of source tree I want to end up with.  For
+      most situations, the selection of appropriate guards is
+      automated during the build process, but I can manually tune the
+      guards to use for less common circumstances.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id549473"></a>12.8.1. The art of writing backport patches</h3></div></div></div>
+<p><a name="x_195"></a>Using MQ, writing a backport patch is a simple process.
+	All such a patch has to do is modify a piece of code that uses
+	a kernel feature not present in the older version of the
+	kernel, so that the driver continues to work correctly under
+	that older version.</p>
+<p><a name="x_196"></a>A useful goal when writing a good backport patch is to
+	make your code look as if it was written for the older version
+	of the kernel you're targeting.  The less obtrusive the patch,
+	the easier it will be to understand and maintain.  If you're
+	writing a collection of backport patches to avoid the
+	“<span class="quote">rat's nest</span>” effect of lots of
+	<code class="literal">#ifdef</code>s (hunks of source code that are only
+	used conditionally) in your code, don't introduce
+	version-dependent <code class="literal">#ifdef</code>s into the patches.
+	Instead, write several patches, each of which makes
+	unconditional changes, and control their application using
+	guards.</p>
+<p><a name="x_197"></a>There are two reasons to divide backport patches into a
+	distinct group, away from the “<span class="quote">regular</span>” patches
+	whose effects they modify. The first is that intermingling the
+	two makes it more difficult to use a tool like the <code class="literal">patchbomb</code> extension to automate the
+	process of submitting the patches to an upstream maintainer.
+	The second is that a backport patch could perturb the context
+	in which a subsequent regular patch is applied, making it
+	impossible to apply the regular patch cleanly
+	<span class="emphasis"><em>without</em></span> the earlier backport patch
+	already being applied.</p>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id549544"></a>12.9. Useful tips for developing with MQ</h2></div></div></div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id549550"></a>12.9.1. Organising patches in directories</h3></div></div></div>
+<p><a name="x_198"></a>If you're working on a substantial project with MQ, it's
+	not difficult to accumulate a large number of patches.  For
+	example, I have one patch repository that contains over 250
+	patches.</p>
+<p><a name="x_199"></a>If you can group these patches into separate logical
+	categories, you can if you like store them in different
+	directories; MQ has no problems with patch names that contain
+	path separators.</p>
+</div>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mq-collab:tips:interdiff"></a>12.9.2. Viewing the history of a patch</h3></div></div></div>
+<p><a name="x_19a"></a>If you're developing a set of patches over a long time,
+	it's a good idea to maintain them in a repository, as
+	discussed in <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:repo" title="11.11. Managing patches in a repository">Section 11.11, “Managing patches in a repository”</a>.  If you do
+	so, you'll quickly
+	discover that using the <span class="command"><strong>hg
+	  diff</strong></span> command to look at the history of changes to
+	a patch is unworkable.  This is in part because you're looking
+	at the second derivative of the real code (a diff of a diff),
+	but also because MQ adds noise to the process by modifying
+	time stamps and directory names when it updates a
+	patch.</p>
+<p><a name="x_19b"></a>However, you can use the <code class="literal">extdiff</code> extension, which is bundled
+	with Mercurial, to turn a diff of two versions of a patch into
+	something readable.  To do this, you will need a third-party
+	package called <code class="literal">patchutils</code>
+	[<span class="citation">web:patchutils</span>].  This provides a command
+	named <span class="command"><strong>interdiff</strong></span>, which shows the
+	differences between two diffs as a diff.  Used on two versions
+	of the same diff, it generates a diff that represents the diff
+	from the first to the second version.</p>
+<p><a name="x_19c"></a>You can enable the <code class="literal">extdiff</code> extension in the usual way,
+	by adding a line to the <code class="literal">extensions</code> section of your
+	<code class="filename">~/.hgrc</code>.</p>
+<pre class="programlisting">[extensions]
+extdiff =</pre>
+<p><a name="x_19d"></a>The <span class="command"><strong>interdiff</strong></span> command expects to be
+	passed the names of two files, but the <code class="literal">extdiff</code> extension passes the program
+	it runs a pair of directories, each of which can contain an
+	arbitrary number of files.  We thus need a small program that
+	will run <span class="command"><strong>interdiff</strong></span> on each pair of files in
+	these two directories.  This program is available as <code class="filename">hg-interdiff</code> in the <code class="filename">examples</code> directory of the
+	source code repository that accompanies this book. </p>
+<p><a name="x_19e"></a>With the <code class="filename">hg-interdiff</code>
+	program in your shell's search path, you can run it as
+	follows, from inside an MQ patch directory:</p>
+<pre class="programlisting">hg extdiff -p hg-interdiff -r A:B my-change.patch</pre>
+<p><a name="x_19f"></a>Since you'll probably want to use this long-winded command
+	a lot, you can get <code class="literal">hgext</code> to
+	make it available as a normal Mercurial command, again by
+	editing your <code class="filename">~/.hgrc</code>.</p>
+<pre class="programlisting">[extdiff]
+cmd.interdiff = hg-interdiff</pre>
+<p><a name="x_1a0"></a>This directs <code class="literal">hgext</code> to
+	make an <code class="literal">interdiff</code> command available, so you
+	can now shorten the previous invocation of <span class="command"><strong>extdiff</strong></span> to something a
+	little more wieldy.</p>
+<pre class="programlisting">hg interdiff -r A:B my-change.patch</pre>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_1a1"></a>  The <span class="command"><strong>interdiff</strong></span> command works well
+	  only if the underlying files against which versions of a
+	  patch are generated remain the same.  If you create a patch,
+	  modify the underlying files, and then regenerate the patch,
+	  <span class="command"><strong>interdiff</strong></span> may not produce useful
+	  output.</p></td></tr>
+</table></div>
+<p><a name="x_1a2"></a>The <code class="literal">extdiff</code> extension is
+	useful for more than merely improving the presentation of MQ
+	patches.  To read more about it, go to <a class="xref" href="adding-functionality-with-extensions.html#sec:hgext:extdiff" title="13.2. Flexible diff support with the extdiff extension">Section 13.2, “Flexible diff support with the extdiff extension”</a>.</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="managing-change-with-mercurial-queues.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="adding-functionality-with-extensions.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 11. Managing change with Mercurial Queues </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Chapter 13. Adding functionality with extensions</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

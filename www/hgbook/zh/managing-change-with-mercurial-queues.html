@@ -1,0 +1,1260 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第 11 章 使用 MQ 管理修改</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial 权威指南">
+<link rel="up" href="index.html" title="Mercurial 权威指南">
+<link rel="prev" href="customizing-the-output-of-mercurial.html" title="第 10 章 定制 Mercurial 的输出">
+<link rel="next" href="advanced-uses-of-mercurial-queues.html" title="第 12 章 MQ 的高级用法">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">第 11 章 使用 MQ 管理修改</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="customizing-the-output-of-mercurial.html">上一页</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="advanced-uses-of-mercurial-queues.html">下一页</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="zh">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:mq"></a>第 11 章 使用 MQ 管理修改</h2></div></div></div>
+<div class="toc">
+<p><b>目录</b></p>
+<dl>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:patch-mgmt">11.1. 补丁的管理问题</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:history">11.2. MQ 的历史</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#sec:mq:quilt">11.2.1. A patchwork quilt</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#sec:mq:quilt-mq">11.2.2. 从 patchwork quilt 到 MQ</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id537014">11.3. MQ 的巨大优势</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:patch">11.4. 理解补丁</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:start">11.5. 开始使用 MQ</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id537586">11.5.1. 创建新补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id537791">11.5.2. 刷新补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id537967">11.5.3. 堆叠和跟踪补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538181">11.5.4. 操作补丁堆栈</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538378">11.5.5. 压入或弹出多个补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538473">11.5.6. 安全的检查，然后覆盖它们</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538600">11.5.7. 同时处理多个补丁</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:adv-patch">11.6. 关于补丁的更多信息</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538708">11.6.1. 修剪计数</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id538955">11.6.2. 应用补丁的策略</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id539088">11.6.3. 补丁的一些特性</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id539206">11.6.4. 当心毛刺</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id539256">11.6.5. 处理拒绝</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:perf">11.7. MQ 的性能</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:merge">11.8. 当基础代码改变时，更新补丁的方法</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id539977">11.9. 标识补丁</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id540239">11.10. 其它需要了解的东西</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:repo">11.11. 在版本库管理补丁</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id540396">11.11.1. MQ 支持补丁版本库</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id540637">11.11.2. 需要注意的事情</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#sec:mq:tools">11.12. 操作补丁的第三方工具</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id540854">11.13. 操作补丁的好习惯</a></span></dt>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id540973">11.14. MQ 手册</a></span></dt>
+<dd><dl>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id540978">11.14.1. 管理琐碎的补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#sec:mq:combine">11.14.2. 组合全部的补丁</a></span></dt>
+<dt><span class="sect2"><a href="managing-change-with-mercurial-queues.html#id541468">11.14.3. 合并补丁的部分内容到其它补丁</a></span></dt>
+</dl></dd>
+<dt><span class="sect1"><a href="managing-change-with-mercurial-queues.html#id541658">11.15. MQ 与 quilt 的区别</a></span></dt>
+</dl>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:patch-mgmt"></a>11.1. 补丁的管理问题</h2></div></div></div>
+<p><a name="x_3ac"></a>Here is a common scenario: you need to install a software package from
+source, but you find a bug that you must fix in the source before you can
+start using the package.  You make your changes, forget about the package
+for a while, and a few months later you need to upgrade to a newer version
+of the package.  If the newer version of the package still has the bug, you
+must extract your fix from the older source tree and apply it against the
+newer version.  This is a tedious task, and it's easy to make mistakes.</p>
+<p><a name="x_3ad"></a>This is a simple case of the “<span class="quote">patch management</span>” problem.  You
+have an “<span class="quote">upstream</span>” source tree that you can't change; you need
+to make some local changes on top of the upstream tree; and you'd like to be
+able to keep those changes separate, so that you can apply them to newer
+versions of the upstream source.</p>
+<p><a name="x_3ae"></a>The patch management problem arises in many situations.  Probably the most
+visible is that a user of an open source software project will contribute a
+bug fix or new feature to the project's maintainers in the form of a patch.</p>
+<p><a name="x_3af"></a>Distributors of operating systems that include open source software often
+need to make changes to the packages they distribute so that they will build
+properly in their environments.</p>
+<p><a name="x_3b0"></a>When you have few changes to maintain, it is easy to manage a single patch
+using the standard <span class="command"><strong>diff</strong></span> and <span class="command"><strong>patch</strong></span>
+programs (see <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:patch" title="11.4. 理解补丁">第 11.4 节 “理解补丁”</a> for a discussion of these
+tools). Once the number of changes grows, it starts to make sense to
+maintain patches as discrete “<span class="quote">chunks of work,</span>” so that for
+example a single patch will contain only one bug fix (the patch might modify
+several files, but it's doing “<span class="quote">only one thing</span>”), and you may
+have a number of such patches for different bugs you need fixed and local
+changes you require.  In this situation, if you submit a bug fix patch to
+the upstream maintainers of a package and they include your fix in a
+subsequent release, you can simply drop that single patch when you're
+updating to the newer release.</p>
+<p><a name="x_3b1"></a>Maintaining a single patch against an upstream tree is a little tedious and
+error-prone, but not difficult.  However, the complexity of the problem
+grows rapidly as the number of patches you have to maintain increases.  With
+more than a tiny number of patches in hand, understanding which ones you
+have applied and maintaining them moves from messy to overwhelming.</p>
+<p><a name="x_3b2"></a>Fortunately, Mercurial includes a powerful extension, Mercurial Queues (or
+simply “<span class="quote">MQ</span>”), that massively simplifies the patch management
+problem.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:history"></a>11.2. MQ 的历史</h2></div></div></div>
+<p><a name="x_3b3"></a>During the late 1990s, several Linux kernel developers started to maintain
+“<span class="quote">patch series</span>” that modified the behaviour of the Linux
+kernel.  Some of these series were focused on stability, some on feature
+coverage, and others were more speculative.</p>
+<p><a name="x_3b4"></a>The sizes of these patch series grew rapidly.  In 2002, Andrew Morton
+published some shell scripts he had been using to automate the task of
+managing his patch queues.  Andrew was successfully using these scripts to
+manage hundreds (sometimes thousands) of patches on top of the Linux kernel.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:mq:quilt"></a>11.2.1. A patchwork quilt</h3></div></div></div>
+<p><a name="x_3b5"></a>In early 2003, Andreas Gruenbacher and Martin Quinson borrowed the approach
+of Andrew's scripts and published a tool called “<span class="quote">patchwork
+quilt</span>” [<span class="citation">web:quilt</span>], or simply “<span class="quote">quilt</span>”
+(see [<span class="citation">gruenbacher:2005</span>] for a paper describing it).
+Because quilt substantially automated patch management, it rapidly gained a
+large following among open source software developers.</p>
+<p><a name="x_3b6"></a>Quilt manages a <span class="emphasis"><em>stack of patches</em></span> on top of a directory
+tree. To begin, you tell quilt to manage a directory tree, and tell it which
+files you want to manage; it stores away the names and contents of those
+files.  To fix a bug, you create a new patch (using a single command), edit
+the files you need to fix, then “<span class="quote">refresh</span>” the patch.</p>
+<p><a name="x_3b7"></a>The refresh step causes quilt to scan the directory tree; it updates the
+patch with all of the changes you have made.  You can create another patch
+on top of the first, which will track the changes required to modify the
+tree from “<span class="quote">tree with one patch applied</span>” to “<span class="quote">tree with two
+patches applied</span>”.</p>
+<p><a name="x_3b8"></a>You can <span class="emphasis"><em>change</em></span> which patches are applied to the tree.
+If you “<span class="quote">pop</span>” a patch, the changes made by that patch will
+vanish from the directory tree.  Quilt remembers which patches you have
+popped, though, so you can “<span class="quote">push</span>” a popped patch again, and the
+directory tree will be restored to contain the modifications in the patch.
+Most importantly, you can run the “<span class="quote">refresh</span>” command at any
+time, and the topmost applied patch will be updated.  This means that you
+can, at any time, change both which patches are applied and what
+modifications those patches make.</p>
+<p><a name="x_3b9"></a>Quilt knows nothing about revision control tools, so it works equally well
+on top of an unpacked tarball or a Subversion working copy.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:mq:quilt-mq"></a>11.2.2. 从 patchwork quilt 到 MQ</h3></div></div></div>
+<p><a name="x_3ba"></a>In mid-2005, Chris Mason took the features of quilt and wrote an extension
+that he called Mercurial Queues, which added quilt-like behaviour to
+Mercurial.</p>
+<p><a name="x_3bb"></a>The key difference between quilt and MQ is that quilt knows nothing about
+revision control systems, while MQ is <span class="emphasis"><em>integrated</em></span> into
+Mercurial.  Each patch that you push is represented as a Mercurial
+changeset.  Pop a patch, and the changeset goes away.</p>
+<p><a name="x_3bc"></a>Because quilt does not care about revision control tools, it is still a
+tremendously useful piece of software to know about for situations where you
+cannot use Mercurial and MQ.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id537014"></a>11.3. MQ 的巨大优势</h2></div></div></div>
+<p><a name="x_3bd"></a>I cannot overstate the value that MQ offers through the unification of
+patches and revision control.</p>
+<p><a name="x_3be"></a>A major reason that patches have persisted in the free software and open
+source world—in spite of the availability of increasingly capable revision
+control tools over the years—is the <span class="emphasis"><em>agility</em></span> they offer.</p>
+<p><a name="x_3bf"></a>Traditional revision control tools make a permanent, irreversible record of
+everything that you do.  While this has great value, it's also somewhat
+stifling.  If you want to perform a wild-eyed experiment, you have to be
+careful in how you go about it, or you risk leaving unneeded—or worse,
+misleading or destabilising—traces of your missteps and errors in the
+permanent revision record.</p>
+<p><a name="x_3c0"></a>By contrast, MQ's marriage of distributed revision control with patches
+makes it much easier to isolate your work.  Your patches live on top of
+normal revision history, and you can make them disappear or reappear at
+will.  If you don't like a patch, you can drop it.  If a patch isn't quite
+as you want it to be, simply fix it—as many times as you need to, until you
+have refined it into the form you desire.</p>
+<p><a name="x_3c1"></a>As an example, the integration of patches with revision control makes
+understanding patches and debugging their effects—and their interplay with
+the code they're based on—<span class="emphasis"><em>enormously</em></span> easier. Since
+every applied patch has an associated changeset, you can give <span class="command"><strong>hg log</strong></span> a file name to see which changesets and
+patches affected the file.  You can use the <span class="command"><strong>hg
+bisect</strong></span> command to binary-search through all changesets and applied
+patches to see where a bug got introduced or fixed.  You can use the
+<span class="command"><strong>hg annotate</strong></span> command to see which changeset
+or patch modified a particular line of a source file.  And so on.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:patch"></a>11.4. 理解补丁</h2></div></div></div>
+<p><a name="x_3c2"></a>Because MQ doesn't hide its patch-oriented nature, it is helpful to
+understand what patches are, and a little about the tools that work with
+them.</p>
+<p><a name="x_3c3"></a>The traditional Unix <span class="command"><strong>diff</strong></span> command compares two files, and
+prints a list of differences between them. The <span class="command"><strong>patch</strong></span>
+command understands these differences as <span class="emphasis"><em>modifications</em></span>
+to make to a file.  Take a look below for a simple example of these commands
+in action.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'this is my original thought' &gt; oldfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'i have changed my mind' &gt; newfile</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>diff -u oldfile newfile &gt; tiny.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cat tiny.patch</code></strong>
+--- oldfile	2009-03-31 06:55:20.000000000 +0000
++++ newfile	2009-03-31 06:55:20.000000000 +0000
+@@ -1 +1 @@
+-this is my original thought
++i have changed my mind
+<code class="prompt">$</code> <strong class="userinput"><code>patch &lt; tiny.patch</code></strong>
+patching file oldfile
+<code class="prompt">$</code> <strong class="userinput"><code>cat oldfile</code></strong>
+i have changed my mind
+</pre>
+<p><a name="x_3c4"></a>The type of file that <span class="command"><strong>diff</strong></span> generates (and
+<span class="command"><strong>patch</strong></span> takes as input) is called a “<span class="quote">patch</span>” or
+a “<span class="quote">diff</span>”; there is no difference between a patch and a diff.
+(We'll use the term “<span class="quote">patch</span>”, since it's more commonly used.)</p>
+<p><a name="x_3c5"></a>A patch file can start with arbitrary text; the <span class="command"><strong>patch</strong></span>
+command ignores this text, but MQ uses it as the commit message when
+creating changesets.  To find the beginning of the patch content,
+<span class="command"><strong>patch</strong></span> searches for the first line that starts with the
+string “<span class="quote"><code class="literal">diff -</code></span>”.</p>
+<p><a name="x_3c6"></a>MQ works with <span class="emphasis"><em>unified</em></span> diffs (<span class="command"><strong>patch</strong></span>
+can accept several other diff formats, but MQ doesn't).  A unified diff
+contains two kinds of header.  The <span class="emphasis"><em>file header</em></span>
+describes the file being modified; it contains the name of the file to
+modify.  When <span class="command"><strong>patch</strong></span> sees a new file header, it looks for
+a file with that name to start modifying.</p>
+<p><a name="x_3c7"></a>After the file header comes a series of <span class="emphasis"><em>hunks</em></span>.  Each
+hunk starts with a header; this identifies the range of line numbers within
+the file that the hunk should modify.  Following the header, a hunk starts
+and ends with a few (usually three) lines of text from the unmodified file;
+these are called the <span class="emphasis"><em>context</em></span> for the hunk.  If there's
+only a small amount of context between successive hunks,
+<span class="command"><strong>diff</strong></span> doesn't print a new hunk header; it just runs the
+hunks together, with a few lines of context between modifications.</p>
+<p><a name="x_3c8"></a>Each line of context begins with a space character.  Within the hunk, a line
+that begins with “<span class="quote"><code class="literal">-</code></span>” means “<span class="quote">remove
+this line,</span>” while a line that begins with
+“<span class="quote"><code class="literal">+</code></span>” means “<span class="quote">insert this line.</span>”
+For example, a line that is modified is represented by one deletion and one
+insertion.</p>
+<p><a name="x_3c9"></a>We will return to some of the more subtle aspects of patches later (in <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:adv-patch" title="11.6. 关于补丁的更多信息">第 11.6 节 “关于补丁的更多信息”</a>), but you should have enough information now to
+use MQ.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:start"></a>11.5. 开始使用 MQ</h2></div></div></div>
+<p><a name="x_3ca"></a>Because MQ is implemented as an extension, you must explicitly enable before
+you can use it.  (You don't need to download anything; MQ ships with the
+standard Mercurial distribution.)  To enable MQ, edit your <code class="filename">~/.hgrc</code> file, and add the lines below.</p>
+<pre class="programlisting">[extensions]
+hgext.mq =</pre>
+<p><a name="x_3cb"></a>Once the extension is enabled, it will make a number of new commands
+available.  To verify that the extension is working, you can use <span class="command"><strong>hg help</strong></span> to see if the <span class="command"><strong>qinit</strong></span> command is now available.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg help qinit</code></strong>
+hg qinit [-c]
+
+init a new queue repository
+
+    The queue repository is unversioned by default. If -c is
+    specified, qinit will create a separate nested repository
+    for patches (qinit -c may also be run later to convert
+    an unversioned patch repository into a versioned one).
+    You can use qcommit to commit changes to this queue repository.
+
+options:
+
+ -c --create-repo  create queue repository
+
+use "hg -v help qinit" to show global options
+</pre>
+<p><a name="x_3cc"></a>You can use MQ with <span class="emphasis"><em>any</em></span> Mercurial repository, and its
+commands only operate within that repository.  To get started, simply
+prepare the repository using the <span class="command"><strong>qinit</strong></span>
+command.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg init mq-sandbox</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd mq-sandbox</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'line 1' &gt; file1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'another line 1' &gt; file2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg add file1 file2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -m'first change'</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qinit</code></strong>
+</pre>
+<p><a name="x_3cd"></a>This command creates an empty directory called <code class="filename">.hg/patches</code>, where MQ will keep its metadata.
+As with many Mercurial commands, the <span class="command"><strong>qinit</strong></span> command prints nothing if it succeeds.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537586"></a>11.5.1. 创建新补丁</h3></div></div></div>
+<p><a name="x_3ce"></a>To begin work on a new patch, use the <span class="command"><strong>qnew</strong></span> command.  This command takes one argument,
+the name of the patch to create.</p>
+<p><a name="x_3cf"></a>MQ will use this as the name of an actual file in the <code class="filename">.hg/patches</code> directory, as you
+can see below.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   0:a6612e357891
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:24 2009 +0000
+summary:     first change
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew first.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip</code></strong>
+changeset:   1:7b2d71945ed3
+tag:         qtip
+tag:         first.patch
+tag:         tip
+tag:         qbase
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:24 2009 +0000
+summary:     [mq]: first.patch
+
+<code class="prompt">$</code> <strong class="userinput"><code>ls .hg/patches</code></strong>
+first.patch  series  status
+</pre>
+<p><a name="x_3d0"></a>Also newly present in the <code class="filename">.hg/patches</code> directory are two other files,
+<code class="filename">series</code> and <code class="filename">status</code>.  The <code class="filename">series</code> file lists all of the patches that MQ knows
+about for this repository, with one patch per line.  Mercurial uses the
+<code class="filename">status</code> file for internal book-keeping;
+it tracks all of the patches that MQ has <span class="emphasis"><em>applied</em></span> in
+this repository.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_3d1"></a>  You may sometimes want to edit the <code class="filename">series</code> file by hand; for example, to change the
+sequence in which some patches are applied.  However, manually editing the
+<code class="filename">status</code> file is almost always a bad idea,
+as it's easy to corrupt MQ's idea of what is happening.</p></td></tr>
+</table></div>
+<p><a name="x_3d2"></a>Once you have created your new patch, you can edit files in the working
+directory as you usually would.  All of the normal Mercurial commands, such
+as <span class="command"><strong>hg diff</strong></span> and <span class="command"><strong>hg
+annotate</strong></span>, work exactly as they did before.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537791"></a>11.5.2. 刷新补丁</h3></div></div></div>
+<p><a name="x_3d3"></a>When you reach a point where you want to save your work, use the <span class="command"><strong>qrefresh</strong></span> command to update the patch you are
+working on.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'line 2' &gt;&gt; file1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg diff</code></strong>
+diff -r 7b2d71945ed3 file1
+--- a/file1	Tue Mar 31 06:55:24 2009 +0000
++++ b/file1	Tue Mar 31 06:55:24 2009 +0000
+@@ -1,1 +1,2 @@
+ line 1
++line 2
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg diff</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip --style=compact --patch</code></strong>
+1[qtip,first.patch,tip,qbase]   e5fd6f9010c8   2009-03-31 06:55 +0000   bos
+  [mq]: first.patch
+
+diff -r a6612e357891 -r e5fd6f9010c8 file1
+--- a/file1	Tue Mar 31 06:55:24 2009 +0000
++++ b/file1	Tue Mar 31 06:55:24 2009 +0000
+@@ -1,1 +1,2 @@
+ line 1
++line 2
+
+</pre>
+<p><a name="x_3d4"></a>This command folds the changes you have made in the working directory into
+your patch, and updates its corresponding changeset to contain those
+changes.</p>
+<p><a name="x_3d5"></a>You can run <span class="command"><strong>qrefresh</strong></span> as often as you
+like, so it's a good way to “<span class="quote">checkpoint</span>” your work.  Refresh
+your patch at an opportune time; try an experiment; and if the experiment
+doesn't work out, <span class="command"><strong>hg revert</strong></span> your
+modifications back to the last time you refreshed.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'line 3' &gt;&gt; file1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg status</code></strong>
+M file1
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip --style=compact --patch</code></strong>
+1[qtip,first.patch,tip,qbase]   21709a0204fc   2009-03-31 06:55 +0000   bos
+  [mq]: first.patch
+
+diff -r a6612e357891 -r 21709a0204fc file1
+--- a/file1	Tue Mar 31 06:55:24 2009 +0000
++++ b/file1	Tue Mar 31 06:55:24 2009 +0000
+@@ -1,1 +1,3 @@
+ line 1
++line 2
++line 3
+
+</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id537967"></a>11.5.3. 堆叠和跟踪补丁</h3></div></div></div>
+<p><a name="x_3d6"></a>Once you have finished working on a patch, or need to work on another, you
+can use the <span class="command"><strong>qnew</strong></span> command again to create
+a new patch. Mercurial will apply this patch on top of your existing patch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qnew second.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg log --style=compact --limit=2</code></strong>
+2[qtip,second.patch,tip]   4b3a594e6d75   2009-03-31 06:55 +0000   bos
+  [mq]: second.patch
+
+1[first.patch,qbase]   21709a0204fc   2009-03-31 06:55 +0000   bos
+  [mq]: first.patch
+
+<code class="prompt">$</code> <strong class="userinput"><code>echo 'line 4' &gt;&gt; file1</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip --style=compact --patch</code></strong>
+2[qtip,second.patch,tip]   d46fdc65f477   2009-03-31 06:55 +0000   bos
+  [mq]: second.patch
+
+diff -r 21709a0204fc -r d46fdc65f477 file1
+--- a/file1	Tue Mar 31 06:55:24 2009 +0000
++++ b/file1	Tue Mar 31 06:55:25 2009 +0000
+@@ -1,3 +1,4 @@
+ line 1
+ line 2
+ line 3
++line 4
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg annotate file1</code></strong>
+0: line 1
+1: line 2
+1: line 3
+2: line 4
+</pre>
+<p><a name="x_3d7"></a>Notice that the patch contains the changes in our prior patch as part of its
+context (you can see this more clearly in the output of <span class="command"><strong>hg annotate</strong></span>).</p>
+<p><a name="x_3d8"></a>So far, with the exception of <span class="command"><strong>qnew</strong></span> and
+<span class="command"><strong>qrefresh</strong></span>, we've been careful to only use
+regular Mercurial commands.  However, MQ provides many commands that are
+easier to use when you are thinking about patches, as illustrated below.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qseries</code></strong>
+first.patch
+second.patch
+<code class="prompt">$</code> <strong class="userinput"><code>hg qapplied</code></strong>
+first.patch
+second.patch
+</pre>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_3d9"></a>The <span class="command"><strong>qseries</strong></span> command lists every patch
+that MQ knows about in this repository, from oldest to newest (most recently
+<span class="emphasis"><em>created</em></span>).</p></li>
+<li><p><a name="x_3da"></a>The <span class="command"><strong>qapplied</strong></span> command lists every patch
+that MQ has <span class="emphasis"><em>applied</em></span> in this repository, again from
+oldest to newest (most recently applied).</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538181"></a>11.5.4. 操作补丁堆栈</h3></div></div></div>
+<p><a name="x_3db"></a>The previous discussion implied that there must be a difference between
+“<span class="quote">known</span>” and “<span class="quote">applied</span>” patches, and there is.  MQ
+can manage a patch without it being applied in the repository.</p>
+<p><a name="x_3dc"></a>An <span class="emphasis"><em>applied</em></span> patch has a corresponding changeset in the
+repository, and the effects of the patch and changeset are visible in the
+working directory.  You can undo the application of a patch using the
+<span class="command"><strong>qpop</strong></span> command.  MQ still <span class="emphasis"><em>knows
+about</em></span>, or manages, a popped patch, but the patch no longer has a
+corresponding changeset in the repository, and the working directory does
+not contain the changes made by the patch.  <a class="xref" href="managing-change-with-mercurial-queues.html#fig:mq:stack" title="图 11.1. 在 MQ 补丁堆栈中应用和撤销补丁">图 11.1 “在 MQ 补丁堆栈中应用和撤销补丁”</a>
+illustrates the difference between applied and tracked patches.</p>
+<div class="figure">
+<a name="fig:mq:stack"></a><p class="title"><b>图 11.1. 在 MQ 补丁堆栈中应用和撤销补丁</b></p>
+<div class="figure-contents"><div class="mediaobject"><img src="figs/mq-stack.png" alt="XXX add text"></div></div>
+</div>
+<br class="figure-break"><p><a name="x_3de"></a>You can reapply an unapplied, or popped, patch using the <span class="command"><strong>qpush</strong></span> command.  This creates a new changeset to
+correspond to the patch, and the patch's changes once again become present
+in the working directory.  See below for examples of <span class="command"><strong>qpop</strong></span> and <span class="command"><strong>qpush</strong></span> in action.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qapplied</code></strong>
+first.patch
+second.patch
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpop</code></strong>
+now at: first.patch
+<code class="prompt">$</code> <strong class="userinput"><code>hg qseries</code></strong>
+first.patch
+second.patch
+<code class="prompt">$</code> <strong class="userinput"><code>hg qapplied</code></strong>
+first.patch
+<code class="prompt">$</code> <strong class="userinput"><code>cat file1</code></strong>
+line 1
+line 2
+line 3
+</pre>
+<p><a name="x_3df"></a>Notice that once we have popped a patch or two patches, the output of
+<span class="command"><strong>qseries</strong></span> remains the same, while that of
+<span class="command"><strong>qapplied</strong></span> has changed.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538378"></a>11.5.5. 压入或弹出多个补丁</h3></div></div></div>
+<p><a name="x_3e0"></a>While <span class="command"><strong>qpush</strong></span> and <span class="command"><strong>qpop</strong></span> each operate on a single patch at a time by
+default, you can push and pop many patches in one go.  The <code class="option">hg -a</code> option to <span class="command"><strong>qpush</strong></span> causes it to push all unapplied patches,
+while the <code class="option">-a</code> option to
+<span class="command"><strong>qpop</strong></span> causes it to pop all applied
+patches.  (For some more ways to push and pop many patches, see <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:perf" title="11.7. MQ 的性能">第 11.7 节 “MQ 的性能”</a> below.)</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qpush -a</code></strong>
+applying second.patch
+now at: second.patch
+<code class="prompt">$</code> <strong class="userinput"><code>cat file1</code></strong>
+line 1
+line 2
+line 3
+line 4
+</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538473"></a>11.5.6. 安全的检查，然后覆盖它们</h3></div></div></div>
+<p><a name="x_3e1"></a>Several MQ commands check the working directory before they do anything, and
+fail if they find any modifications.  They do this to ensure that you won't
+lose any changes that you have made, but not yet incorporated into a patch.
+The example below illustrates this; the <span class="command"><strong>qnew</strong></span> command will not create a new patch if there
+are outstanding changes, caused in this case by the <span class="command"><strong>hg add</strong></span> of <code class="filename">file3</code>.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>echo 'file 3, line 1' &gt;&gt; file3</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew add-file3.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew -f add-file3.patch</code></strong>
+abort: patch "add-file3.patch" already exists
+</pre>
+<p><a name="x_3e2"></a>Commands that check the working directory all take an “<span class="quote">I know what I'm
+doing</span>” option, which is always named <code class="option">-f</code>.  The exact
+meaning of <code class="option">-f</code> depends on the command.  For example,
+<span class="command"><strong>hg qnew <code class="option">hg
+-f</code></strong></span> will incorporate any outstanding changes into the new
+patch it creates, but <span class="command"><strong>hg qpop <code class="option">hg -f</code></strong></span> will revert
+modifications to any files affected by the patch that it is popping.  Be
+sure to read the documentation for a command's <code class="option">-f</code> option
+before you use it!</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538600"></a>11.5.7. 同时处理多个补丁</h3></div></div></div>
+<p><a name="x_3e3"></a>The <span class="command"><strong>qrefresh</strong></span> command always refreshes
+the <span class="emphasis"><em>topmost</em></span> applied patch.  This means that you can
+suspend work on one patch (by refreshing it), pop or push to make a
+different patch the top, and work on <span class="emphasis"><em>that</em></span> patch for a
+while.</p>
+<p><a name="x_3e4"></a>Here's an example that illustrates how you can use this ability. Let's say
+you're developing a new feature as two patches.  The first is a change to
+the core of your software, and the second—layered on top of the
+first—changes the user interface to use the code you just added to the
+core.  If you notice a bug in the core while you're working on the UI patch,
+it's easy to fix the core.  Simply <span class="command"><strong>qrefresh</strong></span> the UI patch to save your in-progress
+changes, and <span class="command"><strong>qpop</strong></span> down to the core
+patch.  Fix the core bug, <span class="command"><strong>qrefresh</strong></span> the
+core patch, and <span class="command"><strong>qpush</strong></span> back to the UI
+patch to continue where you left off.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:adv-patch"></a>11.6. 关于补丁的更多信息</h2></div></div></div>
+<p><a name="x_3e5"></a>MQ uses the GNU <span class="command"><strong>patch</strong></span> command to apply patches, so it's
+helpful to know a few more detailed aspects of how <span class="command"><strong>patch</strong></span>
+works, and about patches themselves.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538708"></a>11.6.1. 修剪计数</h3></div></div></div>
+<p><a name="x_3e6"></a>If you look at the file headers in a patch, you will notice that the
+pathnames usually have an extra component on the front that isn't present in
+the actual path name.  This is a holdover from the way that people used to
+generate patches (people still do this, but it's somewhat rare with modern
+revision control tools).</p>
+<p><a name="x_3e7"></a>Alice would unpack a tarball, edit her files, then decide that she wanted to
+create a patch.  So she'd rename her working directory, unpack the tarball
+again (hence the need for the rename), and use the <code class="option">-r</code> and <code class="option">-N</code>
+options to <span class="command"><strong>diff</strong></span> to recursively generate a patch between
+the unmodified directory and the modified one.  The result would be that the
+name of the unmodified directory would be at the front of the left-hand path
+in every file header, and the name of the modified directory would be at the
+front of the right-hand path.</p>
+<p><a name="x_3e8"></a>Since someone receiving a patch from the Alices of the net would be unlikely
+to have unmodified and modified directories with exactly the same names, the
+<span class="command"><strong>patch</strong></span> command has a <code class="option">-p</code> option that indicates the number of leading
+path name components to strip when trying to apply a patch.  This number is
+called the <span class="emphasis"><em>strip count</em></span>.</p>
+<p><a name="x_3e9"></a>An option of “<span class="quote"><code class="literal">-p1</code></span>” means “<span class="quote">use a strip
+count of one</span>”.  If <span class="command"><strong>patch</strong></span> sees a file name
+<code class="filename">foo/bar/baz</code> in a file header, it will strip
+<code class="filename">foo</code> and try to patch a file named
+<code class="filename">bar/baz</code>.  (Strictly speaking, the strip count refers to
+the number of <span class="emphasis"><em>path separators</em></span> (and the components that
+go with them ) to strip.  A strip count of one will turn
+<code class="filename">foo/bar</code> into <code class="filename">bar</code>, but
+<code class="filename">/foo/bar</code> (notice the extra leading slash) into
+<code class="filename">foo/bar</code>.)</p>
+<p><a name="x_3ea"></a>The “<span class="quote">standard</span>” strip count for patches is one; almost all
+patches contain one leading path name component that needs to be
+stripped. Mercurial's <span class="command"><strong>hg diff</strong></span> command
+generates path names in this form, and the <span class="command"><strong>hg
+import</strong></span> command and MQ expect patches to have a strip count of one.</p>
+<p><a name="x_3eb"></a>If you receive a patch from someone that you want to add to your patch
+queue, and the patch needs a strip count other than one, you cannot just
+<span class="command"><strong>qimport</strong></span> the patch, because <span class="command"><strong>qimport</strong></span> does not yet have a <code class="literal">-p</code>
+option (see <a class="ulink" href="http://www.selenic.com/mercurial/bts/issue311" target="_top">issue 311</a>).
+Your best bet is to <span class="command"><strong>qnew</strong></span> a patch of your
+own, then use <span class="command"><strong>patch -pN</strong></span> to apply their patch, followed by
+<span class="command"><strong>hg addremove</strong></span> to pick up any files added or
+removed by the patch, followed by <span class="command"><strong>hg
+qrefresh</strong></span>. This complexity may become unnecessary; see <a class="ulink" href="http://www.selenic.com/mercurial/bts/issue311" target="_top">issue
+311</a> for details.
+      </p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id538955"></a>11.6.2. 应用补丁的策略</h3></div></div></div>
+<p><a name="x_3ec"></a>When <span class="command"><strong>patch</strong></span> applies a hunk, it tries a handful of
+successively less accurate strategies to try to make the hunk apply. This
+falling-back technique often makes it possible to take a patch that was
+generated against an old version of a file, and apply it against a newer
+version of that file.</p>
+<p><a name="x_3ed"></a>First, <span class="command"><strong>patch</strong></span> tries an exact match, where the line
+numbers, the context, and the text to be modified must apply exactly.  If it
+cannot make an exact match, it tries to find an exact match for the context,
+without honouring the line numbering information.  If this succeeds, it
+prints a line of output saying that the hunk was applied, but at some
+<span class="emphasis"><em>offset</em></span> from the original line number.</p>
+<p><a name="x_3ee"></a>If a context-only match fails, <span class="command"><strong>patch</strong></span> removes the first
+and last lines of the context, and tries a <span class="emphasis"><em>reduced</em></span>
+context-only match.  If the hunk with reduced context succeeds, it prints a
+message saying that it applied the hunk with a <span class="emphasis"><em>fuzz
+factor</em></span> (the number after the fuzz factor indicates how many lines
+of context <span class="command"><strong>patch</strong></span> had to trim before the patch applied).</p>
+<p><a name="x_3ef"></a>When neither of these techniques works, <span class="command"><strong>patch</strong></span> prints a
+message saying that the hunk in question was rejected.  It saves rejected
+hunks (also simply called “<span class="quote">rejects</span>”) to a file with the same
+name, and an added <code class="filename">.rej</code> extension.  It
+also saves an unmodified copy of the file with a <code class="filename">.orig</code> extension; the copy of the file without any
+extensions will contain any changes made by hunks that
+<span class="emphasis"><em>did</em></span> apply cleanly.  If you have a patch that modifies
+<code class="filename">foo</code> with six hunks, and one of them fails to apply, you
+will have: an unmodified <code class="filename">foo.orig</code>, a
+<code class="filename">foo.rej</code> containing one hunk, and
+<code class="filename">foo</code>, containing the changes made by the five successful
+hunks.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id539088"></a>11.6.3. 补丁的一些特性</h3></div></div></div>
+<p><a name="x_3f0"></a>There are a few useful things to know about how <span class="command"><strong>patch</strong></span>
+works with files.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_3f1"></a>This should already be obvious, but <span class="command"><strong>patch</strong></span> cannot handle
+binary files.</p></li>
+<li><p><a name="x_3f2"></a>Neither does it care about the executable bit; it creates new files as
+readable, but not executable.</p></li>
+<li><p><a name="x_3f3"></a><span class="command"><strong>patch</strong></span> treats the removal of a file as a diff between the
+file to be removed and the empty file.  So your idea of “<span class="quote">I deleted
+this file</span>” looks like “<span class="quote">every line of this file was
+deleted</span>” in a patch.</p></li>
+<li><p><a name="x_3f4"></a>It treats the addition of a file as a diff between the empty file and the
+file to be added.  So in a patch, your idea of “<span class="quote">I added this
+file</span>” looks like “<span class="quote">every line of this file was added</span>”.</p></li>
+<li><p><a name="x_3f5"></a>It treats a renamed file as the removal of the old name, and the addition of
+the new name.  This means that renamed files have a big footprint in
+patches.  (Note also that Mercurial does not currently try to infer when
+files have been renamed or copied in a patch.)</p></li>
+<li><p><a name="x_3f6"></a><span class="command"><strong>patch</strong></span> cannot represent empty files, so you cannot use a
+patch to represent the notion “<span class="quote">I added this empty file to the
+tree</span>”.</p></li>
+</ul></div>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id539206"></a>11.6.4. 当心毛刺</h3></div></div></div>
+<p><a name="x_3f7"></a>While applying a hunk at an offset, or with a fuzz factor, will often be
+completely successful, these inexact techniques naturally leave open the
+possibility of corrupting the patched file.  The most common cases typically
+involve applying a patch twice, or at an incorrect location in the file.  If
+<span class="command"><strong>patch</strong></span> or <span class="command"><strong>qpush</strong></span> ever
+mentions an offset or fuzz factor, you should make sure that the modified
+files are correct afterwards.</p>
+<p><a name="x_3f8"></a>It's often a good idea to refresh a patch that has applied with an offset or
+fuzz factor; refreshing the patch generates new context information that
+will make it apply cleanly.  I say “<span class="quote">often,</span>” not
+“<span class="quote">always,</span>” because sometimes refreshing a patch will make it
+fail to apply against a different revision of the underlying files.  In some
+cases, such as when you're maintaining a patch that must sit on top of
+multiple versions of a source tree, it's acceptable to have a patch apply
+with some fuzz, provided you've verified the results of the patching process
+in such cases.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id539256"></a>11.6.5. 处理拒绝</h3></div></div></div>
+<p><a name="x_3f9"></a>If <span class="command"><strong>qpush</strong></span> fails to apply a patch, it will
+print an error message and exit.  If it has left <code class="filename">.rej</code> files behind, it is usually best to fix up
+the rejected hunks before you push more patches or do any further work.</p>
+<p><a name="x_3fa"></a>If your patch <span class="emphasis"><em>used to</em></span> apply cleanly, and no longer does
+because you've changed the underlying code that your patches are based on,
+Mercurial Queues can help; see <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:merge" title="11.8. 当基础代码改变时，更新补丁的方法">第 11.8 节 “当基础代码改变时，更新补丁的方法”</a> for details.</p>
+<p><a name="x_3fb"></a>Unfortunately, there aren't any great techniques for dealing with rejected
+hunks.  Most often, you'll need to view the <code class="filename">.rej</code> file and edit the target file, applying the
+rejected hunks by hand.</p>
+<p><a name="x_3fc"></a>If you're feeling adventurous, Neil Brown, a Linux kernel hacker, wrote a
+tool called <span class="command"><strong>wiggle</strong></span> [<span class="citation">web:wiggle</span>], which
+is more vigorous than <span class="command"><strong>patch</strong></span> in its attempts to make a
+patch apply.</p>
+<p><a name="x_3fd"></a>Another Linux kernel hacker, Chris Mason (the author of Mercurial Queues),
+wrote a similar tool called <span class="command"><strong>mpatch</strong></span>
+[<span class="citation">web:mpatch</span>], which takes a simple approach to automating
+the application of hunks rejected by <span class="command"><strong>patch</strong></span>.  The
+<span class="command"><strong>mpatch</strong></span> command can help with four common reasons that a
+hunk may be rejected:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_3fe"></a>The context in the middle of a hunk has changed.</p></li>
+<li><p><a name="x_3ff"></a>A hunk is missing some context at the beginning or end.</p></li>
+<li><p><a name="x_400"></a>A large hunk might apply better—either entirely or in part—if it was broken
+up into smaller hunks.</p></li>
+<li><p><a name="x_401"></a>A hunk removes lines with slightly different content than those currently
+present in the file.</p></li>
+</ul></div>
+<p><a name="x_402"></a>If you use <span class="command"><strong>wiggle</strong></span> or <span class="command"><strong>mpatch</strong></span>, you
+should be doubly careful to check your results when you're done.  In fact,
+<span class="command"><strong>mpatch</strong></span> enforces this method of double-checking the tool's
+output, by automatically dropping you into a merge program when it has done
+its job, so that you can verify its work and finish off any remaining
+merges.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:perf"></a>11.7. MQ 的性能</h2></div></div></div>
+<p><a name="x_403"></a>MQ is very efficient at handling a large number of patches.  I ran some
+performance experiments in mid-2006 for a talk that I gave at the 2006
+EuroPython conference [<span class="citation">web:europython</span>].  I used as my
+data set the Linux 2.6.17-mm1 patch series, which consists of 1,738
+patches.  I applied these on top of a Linux kernel repository containing all
+27,472 revisions between Linux 2.6.12-rc2 and Linux 2.6.17.</p>
+<p><a name="x_404"></a>On my old, slow laptop, I was able to <span class="command"><strong>hg qpush
+<code class="option">hg -a</code></strong></span> all 1,738
+patches in 3.5 minutes, and <span class="command"><strong>hg qpop <code class="option">hg -a</code></strong></span> them all in 30
+seconds.  (On a newer laptop, the time to push all patches dropped to two
+minutes.)  I could <span class="command"><strong>qrefresh</strong></span> one of the
+biggest patches (which made 22,779 lines of changes to 287 files) in 6.6
+seconds.</p>
+<p><a name="x_405"></a>Clearly, MQ is well suited to working in large trees, but there are a few
+tricks you can use to get the best performance of it.</p>
+<p><a name="x_406"></a>First of all, try to “<span class="quote">batch</span>” operations together.  Every time
+you run <span class="command"><strong>qpush</strong></span> or <span class="command"><strong>qpop</strong></span>, these commands scan the working directory
+once to make sure you haven't made some changes and then forgotten to run
+<span class="command"><strong>qrefresh</strong></span>.  On a small tree, the time
+that this scan takes is unnoticeable.  However, on a medium-sized tree
+(containing tens of thousands of files), it can take a second or more.</p>
+<p><a name="x_407"></a>The <span class="command"><strong>qpush</strong></span> and <span class="command"><strong>qpop</strong></span> commands allow you to push and pop multiple
+patches at a time.  You can identify the “<span class="quote">destination patch</span>”
+that you want to end up at.  When you <span class="command"><strong>qpush</strong></span> with a destination specified, it will push
+patches until that patch is at the top of the applied stack.  When you
+<span class="command"><strong>qpop</strong></span> to a destination, MQ will pop
+patches until the destination patch is at the top.</p>
+<p><a name="x_408"></a>You can identify a destination patch using either the name of the patch, or
+by number.  If you use numeric addressing, patches are counted from zero;
+this means that the first patch is zero, the second is one, and so on.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:merge"></a>11.8. 当基础代码改变时，更新补丁的方法</h2></div></div></div>
+<p><a name="x_409"></a>It's common to have a stack of patches on top of an underlying repository
+that you don't modify directly.  If you're working on changes to third-party
+code, or on a feature that is taking longer to develop than the rate of
+change of the code beneath, you will often need to sync up with the
+underlying code, and fix up any hunks in your patches that no longer apply.
+This is called <span class="emphasis"><em>rebasing</em></span> your patch series.</p>
+<p><a name="x_40a"></a>The simplest way to do this is to <span class="command"><strong>hg qpop <code class="option">hg -a</code></strong></span> your patches, then
+<span class="command"><strong>hg pull</strong></span> changes into the underlying
+repository, and finally <span class="command"><strong>hg qpush <code class="option">hg -a</code></strong></span> your patches again.
+MQ will stop pushing any time it runs across a patch that fails to apply
+during conflicts, allowing you to fix your conflicts, <span class="command"><strong>qrefresh</strong></span> the affected patch, and continue pushing
+until you have fixed your entire stack.</p>
+<p><a name="x_40b"></a>This approach is easy to use and works well if you don't expect changes to
+the underlying code to affect how well your patches apply. If your patch
+stack touches code that is modified frequently or invasively in the
+underlying repository, however, fixing up rejected hunks by hand quickly
+becomes tiresome.</p>
+<p><a name="x_40c"></a>It's possible to partially automate the rebasing process.  If your patches
+apply cleanly against some revision of the underlying repo, MQ can use this
+information to help you to resolve conflicts between your patches and a
+different revision.</p>
+<p><a name="x_40d"></a>The process is a little involved.</p>
+<div class="orderedlist"><ol type="1">
+<li><p><a name="x_40e"></a>To begin, <span class="command"><strong>hg qpush -a</strong></span> all of your patches
+on top of the revision where you know that they apply cleanly.</p></li>
+<li><p><a name="x_40f"></a>Save a backup copy of your patch directory using <span class="command"><strong>hg
+qsave <code class="option">hg -e</code> <code class="option">hg -c</code></strong></span>.  This prints the
+name of the directory that it has saved the patches in.  It will save the
+patches to a directory called <code class="filename">.hg/patches.N</code>, where <code class="literal">N</code> is a
+small integer.  It also commits a “<span class="quote">save changeset</span>” on top of
+your applied patches; this is for internal book-keeping, and records the
+states of the <code class="filename">series</code> and <code class="filename">status</code> files.</p></li>
+<li><p><a name="x_410"></a>Use <span class="command"><strong>hg pull</strong></span> to bring new changes into the
+underlying repository.  (Don't run <span class="command"><strong>hg pull
+-u</strong></span>; see below for why.)</p></li>
+<li><p><a name="x_411"></a>Update to the new tip revision, using <span class="command"><strong>hg update
+<code class="option">-C</code></strong></span> to override the patches
+you have pushed.</p></li>
+<li><p><a name="x_412"></a>Merge all patches using <span class="command"><strong>hg qpush -m -a</strong></span>.  The <code class="option">-m</code> option to <span class="command"><strong>qpush</strong></span> tells MQ to perform a three-way merge if
+the patch fails to apply.</p></li>
+</ol></div>
+<p><a name="x_413"></a>During the <span class="command"><strong>hg qpush <code class="option">hg -m</code></strong></span>, each patch in the
+<code class="filename">series</code> file is applied normally.  If a
+patch applies with fuzz or rejects, MQ looks at the queue you <span class="command"><strong>qsave</strong></span>d, and performs a three-way merge with the
+corresponding changeset.  This merge uses Mercurial's normal merge
+machinery, so it may pop up a GUI merge tool to help you to resolve
+problems.</p>
+<p><a name="x_414"></a>When you finish resolving the effects of a patch, MQ refreshes your patch
+based on the result of the merge.</p>
+<p><a name="x_415"></a>At the end of this process, your repository will have one extra head from
+the old patch queue, and a copy of the old patch queue will be in <code class="filename">.hg/patches.N</code>. You can remove
+the extra head using <span class="command"><strong>hg qpop -a -n
+patches.N</strong></span> or <span class="command"><strong>hg strip</strong></span>.  You can
+delete <code class="filename">.hg/patches.N</code>
+once you are sure that you no longer need it as a backup.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id539977"></a>11.9. 标识补丁</h2></div></div></div>
+<p><a name="x_416"></a>MQ commands that work with patches let you refer to a patch either by using
+its name or by a number.  By name is obvious enough; pass the name
+<code class="filename">foo.patch</code> to <span class="command"><strong>qpush</strong></span>,
+for example, and it will push patches until <code class="filename">foo.patch</code>
+is applied.</p>
+<p><a name="x_417"></a>As a shortcut, you can refer to a patch using both a name and a numeric
+offset; <code class="literal">foo.patch-2</code> means “<span class="quote">two patches before
+<code class="literal">foo.patch</code></span>”, while <code class="literal">bar.patch+4</code>
+means “<span class="quote">four patches after <code class="literal">bar.patch</code></span>”.</p>
+<p><a name="x_418"></a>Referring to a patch by index isn't much different.  The first patch printed
+in the output of <span class="command"><strong>qseries</strong></span> is patch zero
+(yes, it's one of those start-at-zero counting systems); the second is patch
+one; and so on.</p>
+<p><a name="x_419"></a>MQ also makes it easy to work with patches when you are using normal
+Mercurial commands.  Every command that accepts a changeset ID will also
+accept the name of an applied patch.  MQ augments the tags normally in the
+repository with an eponymous one for each applied patch.  In addition, the
+special tags <code class="literal">qbase</code> and <code class="literal">qtip</code> identify the “<span class="quote">bottom-most</span>” and
+topmost applied patches, respectively.</p>
+<p><a name="x_41a"></a>These additions to Mercurial's normal tagging capabilities make dealing with
+patches even more of a breeze.</p>
+<div class="itemizedlist"><ul type="disc">
+<li>
+<p><a name="x_41b"></a>Want to patchbomb a mailing list with your latest series of changes?</p>
+<pre class="programlisting">hg email qbase:qtip</pre>
+<p><a name="x_41c"></a>  (Don't know what “<span class="quote">patchbombing</span>” is? See <a class="xref" href="adding-functionality-with-extensions.html#sec:hgext:patchbomb" title="13.4. 使用扩展 patchbomb 通过 email 发送修改">第 13.4 节 “使用扩展 patchbomb 通过 email 发送修改”</a>.)</p>
+</li>
+<li>
+<p><a name="x_41d"></a>Need to see all of the patches since <code class="literal">foo.patch</code> that have
+touched files in a subdirectory of your tree?</p>
+<pre class="programlisting">hg log -r foo.patch:qtip subdir</pre>
+</li>
+</ul></div>
+<p><a name="x_41e"></a>Because MQ makes the names of patches available to the rest of Mercurial
+through its normal internal tag machinery, you don't need to type in the
+entire name of a patch when you want to identify it by name.</p>
+<p><a name="x_41f"></a>Another nice consequence of representing patch names as tags is that when
+you run the <span class="command"><strong>hg log</strong></span> command, it will display
+a patch's name as a tag, simply as part of its normal output.  This makes it
+easy to visually distinguish applied patches from underlying
+“<span class="quote">normal</span>” revisions.  The following example shows a few normal
+Mercurial commands in use with applied patches.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qapplied</code></strong>
+first.patch
+second.patch
+<code class="prompt">$</code> <strong class="userinput"><code>hg log -r qbase:qtip</code></strong>
+changeset:   1:73363a6adf1b
+tag:         first.patch
+tag:         qbase
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:22 2009 +0000
+summary:     [mq]: first.patch
+
+changeset:   2:ddec7bdc6ec2
+tag:         qtip
+tag:         second.patch
+tag:         tip
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:22 2009 +0000
+summary:     [mq]: second.patch
+
+<code class="prompt">$</code> <strong class="userinput"><code>hg export second.patch</code></strong>
+# HG changeset patch
+# User Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+# Date 1238482522 0
+# Node ID ddec7bdc6ec21520c2404a0b4b6b1deeb719a774
+# Parent  73363a6adf1bbb08c5fdbcdf6629db756e1939e2
+[mq]: second.patch
+
+diff -r 73363a6adf1b -r ddec7bdc6ec2 other.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/other.c	Tue Mar 31 06:55:22 2009 +0000
+@@ -0,0 +1,1 @@
++double u;
+</pre>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id540239"></a>11.10. 其它需要了解的东西</h2></div></div></div>
+<p><a name="x_420"></a>There are a number of aspects of MQ usage that don't fit tidily into
+sections of their own, but that are good to know.  Here they are, in one
+place.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_421"></a>Normally, when you <span class="command"><strong>qpop</strong></span> a patch and
+<span class="command"><strong>qpush</strong></span> it again, the changeset that
+represents the patch after the pop/push will have a <span class="emphasis"><em>different
+identity</em></span> than the changeset that represented the hash
+beforehand.  See <a class="xref" href="mercurial-queues-reference.html#sec:mqref:cmd:qpush" title="A.1.13. qpush—增加补丁到堆栈">第 A.1.13 节 “qpush—增加补丁到堆栈”</a> for information as to
+why this is.</p></li>
+<li><p><a name="x_422"></a>It's not a good idea to <span class="command"><strong>hg merge</strong></span> changes
+from another branch with a patch changeset, at least if you want to maintain
+the “<span class="quote">patchiness</span>” of that changeset and changesets below it on
+the patch stack.  If you try to do this, it will appear to succeed, but MQ
+will become confused.</p></li>
+</ul></div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:repo"></a>11.11. 在版本库管理补丁</h2></div></div></div>
+<p><a name="x_423"></a>Because MQ's <code class="filename">.hg/patches</code> directory resides outside a
+Mercurial repository's working directory, the “<span class="quote">underlying</span>”
+Mercurial repository knows nothing about the management or presence of
+patches.</p>
+<p><a name="x_424"></a>This presents the interesting possibility of managing the contents of the
+patch directory as a Mercurial repository in its own right.  This can be a
+useful way to work.  For example, you can work on a patch for a while,
+<span class="command"><strong>qrefresh</strong></span> it, then <span class="command"><strong>hg commit</strong></span> the current state of the patch.  This lets
+you “<span class="quote">roll back</span>” to that version of the patch later on.</p>
+<p><a name="x_425"></a>You can then share different versions of the same patch stack among multiple
+underlying repositories.  I use this when I am developing a Linux kernel
+feature.  I have a pristine copy of my kernel sources for each of several
+CPU architectures, and a cloned repository under each that contains the
+patches I am working on.  When I want to test a change on a different
+architecture, I push my current patches to the patch repository associated
+with that kernel tree, pop and push all of my patches, and build and test
+that kernel.</p>
+<p><a name="x_426"></a>Managing patches in a repository makes it possible for multiple developers
+to work on the same patch series without colliding with each other, all on
+top of an underlying source base that they may or may not control.</p>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id540396"></a>11.11.1. MQ 支持补丁版本库</h3></div></div></div>
+<p><a name="x_427"></a>MQ helps you to work with the <code class="filename">.hg/patches</code> directory as a repository; when you
+prepare a repository for working with patches using <span class="command"><strong>qinit</strong></span>, you can pass the <code class="option">hg -c</code> option to create the <code class="filename">.hg/patches</code> directory as a
+Mercurial repository.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="figs/note.png"></td>
+<th align="left">注意</th>
+</tr>
+<tr><td align="left" valign="top">
+<p><a name="x_428"></a>  If you forget to use the <code class="option">hg
+-c</code> option, you can simply go into the <code class="filename">.hg/patches</code> directory at any time and run
+<span class="command"><strong>hg init</strong></span>.  Don't forget to add an entry for
+the <code class="filename">status</code> file to the <code class="filename">.hgignore</code> file, though</p>
+<p><a name="x_429"></a>  (<span class="command"><strong>hg qinit <code class="option">hg
+-c</code></strong></span> does this for you automatically); you
+<span class="emphasis"><em>really</em></span> don't want to manage the <code class="filename">status</code> file.</p>
+</td></tr>
+</table></div>
+<p><a name="x_42a"></a>As a convenience, if MQ notices that the <code class="filename">.hg/patches</code> directory is a repository, it will
+automatically <span class="command"><strong>hg add</strong></span> every patch that you
+create and import.</p>
+<p><a name="x_42b"></a>MQ provides a shortcut command, <span class="command"><strong>qcommit</strong></span>,
+that runs <span class="command"><strong>hg commit</strong></span> in the <code class="filename">.hg/patches</code> directory.  This
+saves some bothersome typing.</p>
+<p><a name="x_42c"></a>Finally, as a convenience to manage the patch directory, you can define the
+alias <span class="command"><strong>mq</strong></span> on Unix systems. For example, on Linux systems
+using the <span class="command"><strong>bash</strong></span> shell, you can include the following
+snippet in your <code class="filename">~/.bashrc</code>.</p>
+<pre class="programlisting">alias mq=`hg -R $(hg root)/.hg/patches'</pre>
+<p><a name="x_42d"></a>You can then issue commands of the form <span class="command"><strong>mq pull</strong></span> from the
+main repository.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id540637"></a>11.11.2. 需要注意的事情</h3></div></div></div>
+<p><a name="x_42e"></a>MQ's support for working with a repository full of patches is limited in a
+few small respects.</p>
+<p><a name="x_42f"></a>MQ cannot automatically detect changes that you make to the patch
+directory.  If you <span class="command"><strong>hg pull</strong></span>, manually edit,
+or <span class="command"><strong>hg update</strong></span> changes to patches or the
+<code class="filename">series</code> file, you will have to <span class="command"><strong>hg qpop <code class="option">hg
+-a</code></strong></span> and then <span class="command"><strong>hg qpush <code class="option">hg -a</code></strong></span> in the underlying
+repository to see those changes show up there.  If you forget to do this,
+you can confuse MQ's idea of which patches are applied.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:mq:tools"></a>11.12. 操作补丁的第三方工具</h2></div></div></div>
+<p><a name="x_430"></a>Once you've been working with patches for a while, you'll find yourself
+hungry for tools that will help you to understand and manipulate the patches
+you're dealing with.</p>
+<p><a name="x_431"></a>The <span class="command"><strong>diffstat</strong></span> command [<span class="citation">web:diffstat</span>]
+generates a histogram of the modifications made to each file in a patch.  It
+provides a good way to “<span class="quote">get a sense of</span>” a patch—which files it
+affects, and how much change it introduces to each file and as a whole.  (I
+find that it's a good idea to use <span class="command"><strong>diffstat</strong></span>'s <code class="option">-p</code> option as a matter of course, as
+otherwise it will try to do clever things with prefixes of file names that
+inevitably confuse at least me.)</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>diffstat -p1 remove-redundant-null-checks.patch</code></strong>
+ drivers/char/agp/sgi-agp.c        |    5 ++---
+ drivers/char/hvcs.c               |   11 +++++------
+ drivers/message/fusion/mptfc.c    |    6 ++----
+ drivers/message/fusion/mptsas.c   |    3 +--
+ drivers/net/fs_enet/fs_enet-mii.c |    3 +--
+ drivers/net/wireless/ipw2200.c    |   22 ++++++----------------
+ drivers/scsi/libata-scsi.c        |    4 +---
+ drivers/video/au1100fb.c          |    3 +--
+ 8 files changed, 19 insertions(+), 38 deletions(-)
+<code class="prompt">$</code> <strong class="userinput"><code>filterdiff -i '*/video/*' remove-redundant-null-checks.patch</code></strong>
+--- a/drivers/video/au1100fb.c~remove-redundant-null-checks-before-free-in-drivers
++++ a/drivers/video/au1100fb.c
+@@ -743,8 +743,7 @@ void __exit au1100fb_cleanup(void)
+ {
+ 	driver_unregister(&amp;au1100fb_driver);
+ 
+-	if (drv_info.opt_mode)
+-		kfree(drv_info.opt_mode);
++	kfree(drv_info.opt_mode);
+ }
+ 
+ module_init(au1100fb_init);
+</pre>
+<p><a name="x_432"></a>The <code class="literal">patchutils</code> package
+[<span class="citation">web:patchutils</span>] is invaluable. It provides a set of
+small utilities that follow the “<span class="quote">Unix philosophy;</span>” each does
+one useful thing with a patch.  The <code class="literal">patchutils</code> command I use most is
+<span class="command"><strong>filterdiff</strong></span>, which extracts subsets from a patch file.
+For example, given a patch that modifies hundreds of files across dozens of
+directories, a single invocation of <span class="command"><strong>filterdiff</strong></span> can
+generate a smaller patch that only touches files whose names match a
+particular glob pattern.  See <a class="xref" href="advanced-uses-of-mercurial-queues.html#mq-collab:tips:interdiff" title="12.9.2. 察看补丁的历史">第 12.9.2 节 “察看补丁的历史”</a> for
+another example.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id540854"></a>11.13. 操作补丁的好习惯</h2></div></div></div>
+<p><a name="x_433"></a>Whether you are working on a patch series to submit to a free software or
+open source project, or a series that you intend to treat as a sequence of
+regular changesets when you're done, you can use some simple techniques to
+keep your work well organised.</p>
+<p><a name="x_434"></a>Give your patches descriptive names.  A good name for a patch might be
+<code class="filename">rework-device-alloc.patch</code>, because it will immediately
+give you a hint what the purpose of the patch is.  Long names shouldn't be a
+problem; you won't be typing the names often, but you
+<span class="emphasis"><em>will</em></span> be running commands like <span class="command"><strong>qapplied</strong></span> and <span class="command"><strong>qtop</strong></span> over and over. Good naming becomes
+especially important when you have a number of patches to work with, or if
+you are juggling a number of different tasks and your patches only get a
+fraction of your attention.</p>
+<p><a name="x_435"></a>Be aware of what patch you're working on.  Use the <span class="command"><strong>qtop</strong></span> command and skim over the text of your
+patches frequently—for example, using <span class="command"><strong>hg tip <code class="option">-p</code></strong></span>)—to be sure of where you stand.  I
+have several times worked on and <span class="command"><strong>qrefresh</strong></span>ed a patch other than the one I intended,
+and it's often tricky to migrate changes into the right patch after making
+them in the wrong one.</p>
+<p><a name="x_436"></a>For this reason, it is very much worth investing a little time to learn how
+to use some of the third-party tools I described in <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:tools" title="11.12. 操作补丁的第三方工具">第 11.12 节 “操作补丁的第三方工具”</a>, particularly <span class="command"><strong>diffstat</strong></span> and
+<span class="command"><strong>filterdiff</strong></span>.  The former will give you a quick idea of
+what changes your patch is making, while the latter makes it easy to splice
+hunks selectively out of one patch and into another.</p>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id540973"></a>11.14. MQ 手册</h2></div></div></div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id540978"></a>11.14.1. 管理“<span class="quote">琐碎的</span>”补丁</h3></div></div></div>
+<p><a name="x_437"></a>Because the overhead of dropping files into a new Mercurial repository is so
+low, it makes a lot of sense to manage patches this way even if you simply
+want to make a few changes to a source tarball that you downloaded.</p>
+<p><a name="x_438"></a>Begin by downloading and unpacking the source tarball, and turning it into a
+Mercurial repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>download netplug-1.2.5.tar.bz2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>tar jxf netplug-1.2.5.tar.bz2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd netplug-1.2.5</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg init</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit -q --addremove --message netplug-1.2.5</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone netplug-1.2.5 netplug</code></strong>
+updating working directory
+18 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+<p><a name="x_439"></a>Continue by creating a patch stack and making your changes.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd netplug</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qinit</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qnew -m 'fix build problem with gcc 4' build-fix.patch</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>perl -pi -e 's/int addr_len/socklen_t addr_len/' netlink.c</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg qrefresh</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg tip -p</code></strong>
+changeset:   1:5915017485fe
+tag:         qtip
+tag:         build-fix.patch
+tag:         tip
+tag:         qbase
+user:        Bryan O'Sullivan &lt;bos@serpentine.com&gt;
+date:        Tue Mar 31 06:55:23 2009 +0000
+summary:     fix build problem with gcc 4
+
+diff -r 8946caecdd4e -r 5915017485fe netlink.c
+--- a/netlink.c	Tue Mar 31 06:55:22 2009 +0000
++++ b/netlink.c	Tue Mar 31 06:55:23 2009 +0000
+@@ -275,7 +275,7 @@
+         exit(1);
+     }
+ 
+-    int addr_len = sizeof(addr);
++    socklen_t addr_len = sizeof(addr);
+ 
+     if (getsockname(fd, (struct sockaddr *) &amp;addr, &amp;addr_len) == -1) {
+         do_log(LOG_ERR, "Could not get socket details: %m");
+
+</pre>
+<p><a name="x_43a"></a>Let's say a few weeks or months pass, and your package author releases a new
+version.  First, bring their changes into the repository.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg qpop -a</code></strong>
+patch queue now empty
+<code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>download netplug-1.2.8.tar.bz2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg clone netplug-1.2.5 netplug-1.2.8</code></strong>
+updating working directory
+18 files updated, 0 files merged, 0 files removed, 0 files unresolved
+<code class="prompt">$</code> <strong class="userinput"><code>cd netplug-1.2.8</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg locate -0 | xargs -0 rm</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd ..</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>tar jxf netplug-1.2.8.tar.bz2</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>cd netplug-1.2.8</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg commit --addremove --message netplug-1.2.8</code></strong>
+</pre>
+<p><a name="x_43b"></a>The pipeline starting with <span class="command"><strong>hg locate</strong></span> above
+deletes all files in the working directory, so that <span class="command"><strong>hg commit</strong></span>'s <code class="option">--addremove</code> option can actually tell which
+files have really been removed in the newer version of the source.</p>
+<p><a name="x_43c"></a>Finally, you can apply your patches on top of the new tree.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>cd ../netplug</code></strong>
+<code class="prompt">$</code> <strong class="userinput"><code>hg pull ../netplug-1.2.8</code></strong>
+pulling from ../netplug-1.2.8
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 12 changes to 12 files
+(run 'hg update' to get a working copy)
+<code class="prompt">$</code> <strong class="userinput"><code>hg qpush -a</code></strong>
+(working directory not at tip)
+applying build-fix.patch
+now at: build-fix.patch
+</pre>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sec:mq:combine"></a>11.14.2. 组合全部的补丁</h3></div></div></div>
+<p><a name="x_43d"></a>MQ provides a command, <span class="command"><strong>qfold</strong></span> that lets
+you combine entire patches.  This “<span class="quote">folds</span>” the patches you name,
+in the order you name them, into the topmost applied patch, and concatenates
+their descriptions onto the end of its description.  The patches that you
+fold must be unapplied before you fold them.</p>
+<p><a name="x_43e"></a>The order in which you fold patches matters.  If your topmost applied patch
+is <code class="literal">foo</code>, and you <span class="command"><strong>qfold</strong></span>
+<code class="literal">bar</code> and <code class="literal">quux</code> into it, you will end up
+with a patch that has the same effect as if you applied first
+<code class="literal">foo</code>, then <code class="literal">bar</code>, followed by
+<code class="literal">quux</code>.</p>
+</div>
+<div class="sect2" lang="zh">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id541468"></a>11.14.3. 合并补丁的部分内容到其它补丁</h3></div></div></div>
+<p><a name="x_43f"></a>Merging <span class="emphasis"><em>part</em></span> of one patch into another is more
+difficult than combining entire patches.</p>
+<p><a name="x_440"></a>If you want to move changes to entire files, you can use
+<span class="command"><strong>filterdiff</strong></span>'s <code class="option">-i</code> and <code class="option">-x</code> options to choose the modifications to
+snip out of one patch, concatenating its output onto the end of the patch
+you want to merge into.  You usually won't need to modify the patch you've
+merged the changes from.  Instead, MQ will report some rejected hunks when
+you <span class="command"><strong>qpush</strong></span> it (from the hunks you moved
+into the other patch), and you can simply <span class="command"><strong>qrefresh</strong></span> the patch to drop the duplicate hunks.</p>
+<p><a name="x_441"></a>If you have a patch that has multiple hunks modifying a file, and you only
+want to move a few of those hunks, the job becomes more messy, but you can
+still partly automate it.  Use <span class="command"><strong>lsdiff -nvv</strong></span> to print some
+metadata about the patch.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>lsdiff -nvv remove-redundant-null-checks.patch</code></strong>
+22	File #1  	a/drivers/char/agp/sgi-agp.c
+	24	Hunk #1	static int __devinit agp_sgi_init(void)
+37	File #2  	a/drivers/char/hvcs.c
+	39	Hunk #1	static struct tty_operations hvcs_ops = 
+	53	Hunk #2	static int hvcs_alloc_index_list(int n)
+69	File #3  	a/drivers/message/fusion/mptfc.c
+	71	Hunk #1	mptfc_GetFcDevPage0(MPT_ADAPTER *ioc, in
+85	File #4  	a/drivers/message/fusion/mptsas.c
+	87	Hunk #1	mptsas_probe_hba_phys(MPT_ADAPTER *ioc)
+98	File #5  	a/drivers/net/fs_enet/fs_enet-mii.c
+	100	Hunk #1	static struct fs_enet_mii_bus *create_bu
+111	File #6  	a/drivers/net/wireless/ipw2200.c
+	113	Hunk #1	static struct ipw_fw_error *ipw_alloc_er
+	126	Hunk #2	static ssize_t clear_error(struct device
+	140	Hunk #3	static void ipw_irq_tasklet(struct ipw_p
+	150	Hunk #4	static void ipw_pci_remove(struct pci_de
+164	File #7  	a/drivers/scsi/libata-scsi.c
+	166	Hunk #1	int ata_cmd_ioctl(struct scsi_device *sc
+178	File #8  	a/drivers/video/au1100fb.c
+	180	Hunk #1	void __exit au1100fb_cleanup(void)
+</pre>
+<p><a name="x_442"></a>This command prints three different kinds of number:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_443"></a>(in the first column) a <span class="emphasis"><em>file number</em></span> to identify each
+file modified in the patch;</p></li>
+<li><p><a name="x_444"></a>(on the next line, indented) the line number within a modified file where a
+hunk starts; and</p></li>
+<li><p><a name="x_445"></a>(on the same line) a <span class="emphasis"><em>hunk number</em></span> to identify that hunk.</p></li>
+</ul></div>
+<p><a name="x_446"></a>You'll have to use some visual inspection, and reading of the patch, to
+identify the file and hunk numbers you'll want, but you can then pass them
+to to <span class="command"><strong>filterdiff</strong></span>'s <code class="option">--files</code> and <code class="option">--hunks</code> options, to select exactly the
+file and hunk you want to extract.</p>
+<p><a name="x_447"></a>Once you have this hunk, you can concatenate it onto the end of your
+destination patch and continue with the remainder of <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:combine" title="11.14.2. 组合全部的补丁">第 11.14.2 节 “组合全部的补丁”</a>.</p>
+</div>
+</div>
+<div class="sect1" lang="zh">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id541658"></a>11.15. MQ 与 quilt 的区别</h2></div></div></div>
+<p><a name="x_448"></a>If you are already familiar with quilt, MQ provides a similar command set.
+There are a few differences in the way that it works.</p>
+<p><a name="x_449"></a>You will already have noticed that most quilt commands have MQ counterparts
+that simply begin with a “<span class="quote"><code class="literal">q</code></span>”.  The
+exceptions are quilt's <code class="literal">add</code> and <code class="literal">remove</code>
+commands, the counterparts for which are the normal Mercurial <span class="command"><strong>hg add</strong></span> and <span class="command"><strong>hg
+remove</strong></span> commands.  There is no MQ equivalent of the quilt
+<code class="literal">edit</code> command.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="customizing-the-output-of-mercurial.html">上一页</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="advanced-uses-of-mercurial-queues.html">下一页</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">第 10 章 定制 Mercurial 的输出 </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">起始页</a></td>
+<td width="40%" align="right" valign="top"> 第 12 章 MQ 的高级用法</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chapter 13. Adding functionality with extensions</title>
+<link rel="stylesheet" href="hgbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
+<link rel="home" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="up" href="index.html" title="Mercurial: The Definitive Guide">
+<link rel="prev" href="advanced-uses-of-mercurial-queues.html" title="Chapter 12. Advanced uses of Mercurial Queues">
+<link rel="next" href="mercurial-queues-reference.html" title="Appendix A. Mercurial Queues reference">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 13. Adding functionality with extensions</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="advanced-uses-of-mercurial-queues.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="mercurial-queues-reference.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="chap:hgext"></a>Chapter 13. Adding functionality with extensions</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="sect1"><a href="adding-functionality-with-extensions.html#sec:hgext:inotify">13.1. Improve performance with the inotify extension</a></span></dt>
+<dt><span class="sect1"><a href="adding-functionality-with-extensions.html#sec:hgext:extdiff">13.2. Flexible diff support with the extdiff extension</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="adding-functionality-with-extensions.html#id551176">13.2.1. Defining command aliases</a></span></dt></dl></dd>
+<dt><span class="sect1"><a href="adding-functionality-with-extensions.html#sec:hgext:transplant">13.3. Cherrypicking changes with the transplant extension</a></span></dt>
+<dt><span class="sect1"><a href="adding-functionality-with-extensions.html#sec:hgext:patchbomb">13.4. Send changes via email with the patchbomb extension</a></span></dt>
+<dd><dl><dt><span class="sect2"><a href="adding-functionality-with-extensions.html#id551624">13.4.1. Changing the behaviour of patchbombs</a></span></dt></dl></dd>
+</dl>
+</div>
+<p><a name="x_4fe"></a>While the core of Mercurial is quite complete from a
+    functionality standpoint, it's deliberately shorn of fancy
+    features.  This approach of preserving simplicity keeps the
+    software easy to deal with for both maintainers and users.</p>
+<p><a name="x_4ff"></a>However, Mercurial doesn't box you in with an inflexible
+    command set: you can add features to it as
+    <span class="emphasis"><em>extensions</em></span> (sometimes known as
+    <span class="emphasis"><em>plugins</em></span>).  We've already discussed a few of
+    these extensions in earlier chapters.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_500"></a><a class="xref" href="a-tour-of-mercurial-merging-work.html#sec:tour-merge:fetch" title="2.3. Simplifying the pull-merge-commit sequence">Section 2.3, “Simplifying the pull-merge-commit sequence”</a>
+	covers the <code class="literal">fetch</code> extension;
+	this combines pulling new changes and merging them with local
+	changes into a single command, <span class="command"><strong>fetch</strong></span>.</p></li>
+<li><p><a name="x_501"></a>In <a class="xref" href="handling-repository-events-with-hooks.html" title="Chapter 9. Handling repository events with hooks">Chapter 9, <i>Handling repository events with hooks</i></a>, we covered
+	several extensions that are useful for hook-related
+	functionality: <code class="literal">acl</code> adds
+	access control lists; <code class="literal">bugzilla</code> adds integration with the
+	Bugzilla bug tracking system; and <code class="literal">notify</code> sends notification emails on
+	new changes.</p></li>
+<li><p><a name="x_502"></a>The Mercurial Queues patch management extension is
+	so invaluable that it merits two chapters and an appendix all
+	to itself. <a class="xref" href="managing-change-with-mercurial-queues.html" title="Chapter 11. Managing change with Mercurial Queues">Chapter 11, <i>Managing change with Mercurial Queues</i></a> covers the
+	basics; <a class="xref" href="advanced-uses-of-mercurial-queues.html" title="Chapter 12. Advanced uses of Mercurial Queues">Chapter 12, <i>Advanced uses of Mercurial Queues</i></a> discusses advanced topics;
+	and <a class="xref" href="mercurial-queues-reference.html" title="Appendix A. Mercurial Queues reference">Appendix A, <i>Mercurial Queues reference</i></a> goes into detail on
+	each
+	command.</p></li>
+</ul></div>
+<p><a name="x_503"></a>In this chapter, we'll cover some of the other extensions that
+    are available for Mercurial, and briefly touch on some of the
+    machinery you'll need to know about if you want to write an
+    extension of your own.</p>
+<div class="itemizedlist"><ul type="disc"><li><p><a name="x_504"></a>In <a class="xref" href="adding-functionality-with-extensions.html#sec:hgext:inotify" title="13.1. Improve performance with the inotify extension">Section 13.1, “Improve performance with the inotify extension”</a>,
+	we'll discuss the possibility of <span class="emphasis"><em>huge</em></span>
+	performance improvements using the <code class="literal">inotify</code> extension.</p></li></ul></div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hgext:inotify"></a>13.1. Improve performance with the <code class="literal">inotify</code> extension</h2></div></div></div>
+<p><a name="x_505"></a>Are you interested in having some of the most common
+      Mercurial operations run as much as a hundred times faster?
+      Read on!</p>
+<p><a name="x_506"></a>Mercurial has great performance under normal circumstances.
+      For example, when you run the <span class="command"><strong>hg
+	status</strong></span> command, Mercurial has to scan almost every
+      directory and file in your repository so that it can display
+      file status.  Many other Mercurial commands need to do the same
+      work behind the scenes; for example, the <span class="command"><strong>hg diff</strong></span> command uses the status
+      machinery to avoid doing an expensive comparison operation on
+      files that obviously haven't changed.</p>
+<p><a name="x_507"></a>Because obtaining file status is crucial to good
+      performance, the authors of Mercurial have optimised this code
+      to within an inch of its life.  However, there's no avoiding the
+      fact that when you run <span class="command"><strong>hg
+	status</strong></span>, Mercurial is going to have to perform at
+      least one expensive system call for each managed file to
+      determine whether it's changed since the last time Mercurial
+      checked.  For a sufficiently large repository, this can take a
+      long time.</p>
+<p><a name="x_508"></a>To put a number on the magnitude of this effect, I created a
+      repository containing 150,000 managed files.  I timed <span class="command"><strong>hg status</strong></span> as taking ten seconds to
+      run, even when <span class="emphasis"><em>none</em></span> of those files had been
+      modified.</p>
+<p><a name="x_509"></a>Many modern operating systems contain a file notification
+      facility. If a program signs up to an appropriate service, the
+      operating system will notify it every time a file of interest is
+      created, modified, or deleted.  On Linux systems, the kernel
+      component that does this is called
+      <code class="literal">inotify</code>.</p>
+<p><a name="x_50a"></a>Mercurial's <code class="literal">inotify</code>
+      extension talks to the kernel's <code class="literal">inotify</code>
+      component to optimise <span class="command"><strong>hg status</strong></span>
+      commands.  The extension has two components.  A daemon sits in
+      the background and receives notifications from the
+      <code class="literal">inotify</code> subsystem.  It also listens for
+      connections from a regular Mercurial command.  The extension
+      modifies Mercurial's behaviour so that instead of scanning the
+      filesystem, it queries the daemon.  Since the daemon has perfect
+      information about the state of the repository, it can respond
+      with a result instantaneously, avoiding the need to scan every
+      directory and file in the repository.</p>
+<p><a name="x_50b"></a>Recall the ten seconds that I measured plain Mercurial as
+      taking to run <span class="command"><strong>hg status</strong></span> on a
+      150,000 file repository.  With the <code class="literal">inotify</code> extension enabled, the time
+      dropped to 0.1 seconds, a factor of <span class="emphasis"><em>one
+	hundred</em></span> faster.</p>
+<p><a name="x_50c"></a>Before we continue, please pay attention to some
+      caveats.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_50d"></a>The <code class="literal">inotify</code>
+	  extension is Linux-specific.  Because it interfaces directly
+	  to the Linux kernel's <code class="literal">inotify</code> subsystem,
+	  it does not work on other operating systems.</p></li>
+<li><p><a name="x_50e"></a>It should work on any Linux distribution that
+	  was released after early 2005.  Older distributions are
+	  likely to have a kernel that lacks
+	  <code class="literal">inotify</code>, or a version of
+	  <code class="literal">glibc</code> that does not have the necessary
+	  interfacing support.</p></li>
+<li><p><a name="x_50f"></a>Not all filesystems are suitable for use with
+	  the <code class="literal">inotify</code> extension.
+	  Network filesystems such as NFS are a non-starter, for
+	  example, particularly if you're running Mercurial on several
+	  systems, all mounting the same network filesystem.  The
+	  kernel's <code class="literal">inotify</code> system has no way of
+	  knowing about changes made on another system.  Most local
+	  filesystems (e.g. ext3, XFS, ReiserFS) should work
+	  fine.</p></li>
+</ul></div>
+<p><a name="x_510"></a>The <code class="literal">inotify</code> extension is
+      not yet shipped with Mercurial as of May 2007, so it's a little
+      more involved to set up than other extensions.  But the
+      performance improvement is worth it!</p>
+<p><a name="x_511"></a>The extension currently comes in two parts: a set of patches
+      to the Mercurial source code, and a library of Python bindings
+      to the <code class="literal">inotify</code> subsystem.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_512"></a>  There are <span class="emphasis"><em>two</em></span> Python
+	<code class="literal">inotify</code> binding libraries.  One of them is
+	called <code class="literal">pyinotify</code>, and is packaged by some
+	Linux distributions as <code class="literal">python-inotify</code>.
+	This is <span class="emphasis"><em>not</em></span> the one you'll need, as it is
+	too buggy and inefficient to be practical.</p></td></tr>
+</table></div>
+<p><a name="x_513"></a>To get going, it's best to already have a functioning copy
+      of Mercurial installed.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="figs/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p><a name="x_514"></a>  If you follow the instructions below, you'll be
+	<span class="emphasis"><em>replacing</em></span> and overwriting any existing
+	installation of Mercurial that you might already have, using
+	the latest “<span class="quote">bleeding edge</span>” Mercurial code. Don't
+	say you weren't warned!</p></td></tr>
+</table></div>
+<div class="orderedlist"><ol type="1">
+<li>
+<p><a name="x_515"></a>Clone the Python <code class="literal">inotify</code>
+	  binding repository.  Build and install it.</p>
+<pre class="programlisting">hg clone http://hg.kublai.com/python/inotify
+cd inotify
+python setup.py build --force
+sudo python setup.py install --skip-build</pre>
+</li>
+<li>
+<p><a name="x_516"></a>Clone the <code class="filename">crew</code> Mercurial repository.
+	  Clone the <code class="literal">inotify</code> patch
+	  repository so that Mercurial Queues will be able to apply
+	  patches to your cope of the <code class="filename">crew</code> repository.</p>
+<pre class="programlisting">hg clone http://hg.intevation.org/mercurial/crew
+hg clone crew inotify
+hg clone http://hg.kublai.com/mercurial/patches/inotify inotify/.hg/patches</pre>
+</li>
+<li><p><a name="x_517"></a>Make sure that you have the Mercurial Queues
+	  extension, <code class="literal">mq</code>, enabled.  If
+	  you've never used MQ, read <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:start" title="11.5. Getting started with Mercurial Queues">Section 11.5, “Getting started with Mercurial Queues”</a> to get started
+	  quickly.</p></li>
+<li>
+<p><a name="x_518"></a>Go into the <code class="filename">inotify</code> repo, and apply all
+	  of the <code class="literal">inotify</code> patches
+	  using the <code class="option">hg
+	    -a</code> option to the <span class="command"><strong>qpush</strong></span> command.</p>
+<pre class="programlisting">cd inotify
+hg qpush -a</pre>
+</li>
+<li><p><a name="x_519"></a>  If you get an error message from <span class="command"><strong>qpush</strong></span>, you should not continue.
+	  Instead, ask for help.</p></li>
+<li>
+<p><a name="x_51a"></a>Build and install the patched version of
+	  Mercurial.</p>
+<pre class="programlisting">python setup.py build --force
+sudo python setup.py install --skip-build</pre>
+</li>
+</ol></div>
+<p><a name="x_51b"></a>Once you've build a suitably patched version of Mercurial,
+      all you need to do to enable the <code class="literal">inotify</code> extension is add an entry to
+      your <code class="filename">~/.hgrc</code>.</p>
+<pre class="programlisting">[extensions] inotify =</pre>
+<p><a name="x_51c"></a>When the <code class="literal">inotify</code> extension
+      is enabled, Mercurial will automatically and transparently start
+      the status daemon the first time you run a command that needs
+      status in a repository.  It runs one status daemon per
+      repository.</p>
+<p><a name="x_51d"></a>The status daemon is started silently, and runs in the
+      background.  If you look at a list of running processes after
+      you've enabled the <code class="literal">inotify</code>
+      extension and run a few commands in different repositories,
+      you'll thus see a few <code class="literal">hg</code> processes sitting
+      around, waiting for updates from the kernel and queries from
+      Mercurial.</p>
+<p><a name="x_51e"></a>The first time you run a Mercurial command in a repository
+      when you have the <code class="literal">inotify</code>
+      extension enabled, it will run with about the same performance
+      as a normal Mercurial command.  This is because the status
+      daemon needs to perform a normal status scan so that it has a
+      baseline against which to apply later updates from the kernel.
+      However, <span class="emphasis"><em>every</em></span> subsequent command that does
+      any kind of status check should be noticeably faster on
+      repositories of even fairly modest size.  Better yet, the bigger
+      your repository is, the greater a performance advantage you'll
+      see.  The <code class="literal">inotify</code> daemon makes
+      status operations almost instantaneous on repositories of all
+      sizes!</p>
+<p><a name="x_51f"></a>If you like, you can manually start a status daemon using
+      the <span class="command"><strong>inserve</strong></span> command.
+      This gives you slightly finer control over how the daemon ought
+      to run.  This command will of course only be available when the
+      <code class="literal">inotify</code> extension is
+      enabled.</p>
+<p><a name="x_520"></a>When you're using the <code class="literal">inotify</code> extension, you should notice
+      <span class="emphasis"><em>no difference at all</em></span> in Mercurial's
+      behaviour, with the sole exception of status-related commands
+      running a whole lot faster than they used to.  You should
+      specifically expect that commands will not print different
+      output; neither should they give different results. If either of
+      these situations occurs, please report a bug.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hgext:extdiff"></a>13.2. Flexible diff support with the <code class="literal">extdiff</code> extension</h2></div></div></div>
+<p><a name="x_521"></a>Mercurial's built-in <span class="command"><strong>hg
+	diff</strong></span> command outputs plaintext unified diffs.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg diff</code></strong>
+diff -r 251533920718 myfile
+--- a/myfile	Tue Mar 31 06:55:16 2009 +0000
++++ b/myfile	Tue Mar 31 06:55:16 2009 +0000
+@@ -1,1 +1,2 @@
+ The first line.
++The second line.
+</pre>
+<p><a name="x_522"></a>If you would like to use an external tool to display
+      modifications, you'll want to use the <code class="literal">extdiff</code> extension.  This will let you
+      use, for example, a graphical diff tool.</p>
+<p><a name="x_523"></a>The <code class="literal">extdiff</code> extension is
+      bundled with Mercurial, so it's easy to set up.  In the <code class="literal">extensions</code> section of your
+      <code class="filename">~/.hgrc</code>, simply add a
+      one-line entry to enable the extension.</p>
+<pre class="programlisting">[extensions]
+extdiff =</pre>
+<p><a name="x_524"></a>This introduces a command named <span class="command"><strong>extdiff</strong></span>, which by default uses
+      your system's <span class="command"><strong>diff</strong></span> command to generate a
+      unified diff in the same form as the built-in <span class="command"><strong>hg diff</strong></span> command.</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg extdiff</code></strong>
+--- a.251533920718/myfile	2009-03-31 06:55:16.000000000 +0000
++++ /tmp/extdiffcusFTK/a/myfile	2009-03-31 06:55:16.000000000 +0000
+@@ -1 +1,2 @@
+ The first line.
++The second line.
+</pre>
+<p><a name="x_525"></a>The result won't be exactly the same as with the built-in
+      <span class="command"><strong>hg diff</strong></span> variations, because the
+      output of <span class="command"><strong>diff</strong></span> varies from one system to
+      another, even when passed the same options.</p>
+<p><a name="x_526"></a>As the “<span class="quote"><code class="literal">making snapshot</code></span>”
+      lines of output above imply, the <span class="command"><strong>extdiff</strong></span> command works by
+      creating two snapshots of your source tree.  The first snapshot
+      is of the source revision; the second, of the target revision or
+      working directory.  The <span class="command"><strong>extdiff</strong></span> command generates
+      these snapshots in a temporary directory, passes the name of
+      each directory to an external diff viewer, then deletes the
+      temporary directory.  For efficiency, it only snapshots the
+      directories and files that have changed between the two
+      revisions.</p>
+<p><a name="x_527"></a>Snapshot directory names have the same base name as your
+      repository. If your repository path is <code class="filename">/quux/bar/foo</code>, then <code class="filename">foo</code> will be the name of each
+      snapshot directory.  Each snapshot directory name has its
+      changeset ID appended, if appropriate.  If a snapshot is of
+      revision <code class="literal">a631aca1083f</code>, the directory will be
+      named <code class="filename">foo.a631aca1083f</code>.
+      A snapshot of the working directory won't have a changeset ID
+      appended, so it would just be <code class="filename">foo</code> in this example.  To see what
+      this looks like in practice, look again at the <span class="command"><strong>extdiff</strong></span> example above.  Notice
+      that the diff has the snapshot directory names embedded in its
+      header.</p>
+<p><a name="x_528"></a>The <span class="command"><strong>extdiff</strong></span> command
+      accepts two important options. The <code class="option">hg -p</code> option
+      lets you choose a program to view differences with, instead of
+      <span class="command"><strong>diff</strong></span>.  With the <code class="option">hg -o</code> option,
+      you can change the options that <span class="command"><strong>extdiff</strong></span> passes to the program
+      (by default, these options are
+      “<span class="quote"><code class="literal">-Npru</code></span>”, which only make sense
+      if you're running <span class="command"><strong>diff</strong></span>).  In other respects,
+      the <span class="command"><strong>extdiff</strong></span> command
+      acts similarly to the built-in <span class="command"><strong>hg
+	diff</strong></span> command: you use the same option names, syntax,
+      and arguments to specify the revisions you want, the files you
+      want, and so on.</p>
+<p><a name="x_529"></a>As an example, here's how to run the normal system
+      <span class="command"><strong>diff</strong></span> command, getting it to generate context
+      diffs (using the <code class="option">-c</code> option)
+      instead of unified diffs, and five lines of context instead of
+      the default three (passing <code class="literal">5</code> as the argument
+      to the <code class="option">-C</code> option).</p>
+<pre class="screen"><code class="prompt">$</code> <strong class="userinput"><code>hg extdiff -o -NprcC5</code></strong>
+*** a.251533920718/myfile	Tue Mar 31 06:55:16 2009
+--- /tmp/extdiffcusFTK/a/myfile	Tue Mar 31 06:55:16 2009
+***************
+*** 1 ****
+--- 1,2 ----
+  The first line.
++ The second line.
+</pre>
+<p><a name="x_52a"></a>Launching a visual diff tool is just as easy.  Here's how to
+      launch the <span class="command"><strong>kdiff3</strong></span> viewer.</p>
+<pre class="programlisting">hg extdiff -p kdiff3 -o</pre>
+<p><a name="x_52b"></a>If your diff viewing command can't deal with directories,
+      you can easily work around this with a little scripting.  For an
+      example of such scripting in action with the <code class="literal">mq</code> extension and the
+      <span class="command"><strong>interdiff</strong></span> command, see <a class="xref" href="advanced-uses-of-mercurial-queues.html#mq-collab:tips:interdiff" title="12.9.2. Viewing the history of a patch">Section 12.9.2, “Viewing the history of a patch”</a>.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id551176"></a>13.2.1. Defining command aliases</h3></div></div></div>
+<p><a name="x_52c"></a>It can be cumbersome to remember the options to both the
+	<span class="command"><strong>extdiff</strong></span> command and
+	the diff viewer you want to use, so the <code class="literal">extdiff</code> extension lets you define
+	<span class="emphasis"><em>new</em></span> commands that will invoke your diff
+	viewer with exactly the right options.</p>
+<p><a name="x_52d"></a>All you need to do is edit your <code class="filename">~/.hgrc</code>, and add a section named
+	<code class="literal">extdiff</code>.  Inside this
+	section, you can define multiple commands.  Here's how to add
+	a <code class="literal">kdiff3</code> command.  Once you've defined
+	this, you can type “<span class="quote"><code class="literal">hg kdiff3</code></span>”
+	and the <code class="literal">extdiff</code> extension
+	will run <span class="command"><strong>kdiff3</strong></span> for you.</p>
+<pre class="programlisting">[extdiff]
+cmd.kdiff3 =</pre>
+<p><a name="x_52e"></a>If you leave the right hand side of the definition empty,
+	as above, the <code class="literal">extdiff</code>
+	extension uses the name of the command you defined as the name
+	of the external program to run.  But these names don't have to
+	be the same.  Here, we define a command named
+	“<span class="quote"><code class="literal">hg wibble</code></span>”, which runs
+	<span class="command"><strong>kdiff3</strong></span>.</p>
+<pre class="programlisting">[extdiff]
+ cmd.wibble = kdiff3</pre>
+<p><a name="x_52f"></a>You can also specify the default options that you want to
+	invoke your diff viewing program with.  The prefix to use is
+	“<span class="quote"><code class="literal">opts.</code></span>”, followed by the name
+	of the command to which the options apply.  This example
+	defines a “<span class="quote"><code class="literal">hg vimdiff</code></span>” command
+	that runs the <span class="command"><strong>vim</strong></span> editor's
+	<code class="literal">DirDiff</code> extension.</p>
+<pre class="programlisting">[extdiff]
+ cmd.vimdiff = vim
+opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'</pre>
+</div>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hgext:transplant"></a>13.3. Cherrypicking changes with the <code class="literal">transplant</code> extension</h2></div></div></div>
+<p><a name="x_530"></a>Need to have a long chat with Brendan about this.</p>
+</div>
+<div class="sect1" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="sec:hgext:patchbomb"></a>13.4. Send changes via email with the <code class="literal">patchbomb</code> extension</h2></div></div></div>
+<p><a name="x_531"></a>Many projects have a culture of “<span class="quote">change
+	review</span>”, in which people send their modifications to a
+      mailing list for others to read and comment on before they
+      commit the final version to a shared repository.  Some projects
+      have people who act as gatekeepers; they apply changes from
+      other people to a repository to which those others don't have
+      access.</p>
+<p><a name="x_532"></a>Mercurial makes it easy to send changes over email for
+      review or application, via its <code class="literal">patchbomb</code> extension.  The extension is
+      so named because changes are formatted as patches, and it's usual
+      to send one changeset per email message.  Sending a long series
+      of changes by email is thus much like “<span class="quote">bombing</span>” the
+      recipient's inbox, hence “<span class="quote">patchbomb</span>”.</p>
+<p><a name="x_533"></a>As usual, the basic configuration of the <code class="literal">patchbomb</code> extension takes just one or
+      two lines in your <code class="filename">
+	/.hgrc</code>.</p>
+<pre class="programlisting">[extensions]
+patchbomb =</pre>
+<p><a name="x_534"></a>Once you've enabled the extension, you will have a new
+      command available, named <span class="command"><strong>email</strong></span>.</p>
+<p><a name="x_535"></a>The safest and best way to invoke the <span class="command"><strong>email</strong></span> command is to
+      <span class="emphasis"><em>always</em></span> run it first with the <code class="option">hg -n</code> option.
+      This will show you what the command <span class="emphasis"><em>would</em></span>
+      send, without actually sending anything.  Once you've had a
+      quick glance over the changes and verified that you are sending
+      the right ones, you can rerun the same command, with the <code class="option">hg -n</code> option
+      removed.</p>
+<p><a name="x_536"></a>The <span class="command"><strong>email</strong></span> command
+      accepts the same kind of revision syntax as every other
+      Mercurial command.  For example, this command will send every
+      revision between 7 and <code class="literal">tip</code>, inclusive.</p>
+<pre class="programlisting">hg email -n 7:tip</pre>
+<p><a name="x_537"></a>You can also specify a <span class="emphasis"><em>repository</em></span> to
+      compare with.  If you provide a repository but no revisions, the
+      <span class="command"><strong>email</strong></span> command will
+      send all revisions in the local repository that are not present
+      in the remote repository.  If you additionally specify revisions
+      or a branch name (the latter using the <code class="option">hg -b</code> option),
+      this will constrain the revisions sent.</p>
+<p><a name="x_538"></a>It's perfectly safe to run the <span class="command"><strong>email</strong></span> command without the
+      names of the people you want to send to: if you do this, it will
+      just prompt you for those values interactively.  (If you're
+      using a Linux or Unix-like system, you should have enhanced
+      <code class="literal">readline</code>-style editing capabilities when
+      entering those headers, too, which is useful.)</p>
+<p><a name="x_539"></a>When you are sending just one revision, the <span class="command"><strong>email</strong></span> command will by
+      default use the first line of the changeset description as the
+      subject of the single email message it sends.</p>
+<p><a name="x_53a"></a>If you send multiple revisions, the <span class="command"><strong>email</strong></span> command will usually
+      send one message per changeset.  It will preface the series with
+      an introductory message, in which you should describe the
+      purpose of the series of changes you're sending.</p>
+<div class="sect2" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id551624"></a>13.4.1. Changing the behaviour of patchbombs</h3></div></div></div>
+<p><a name="x_53b"></a>Not every project has exactly the same conventions for
+	sending changes in email; the <code class="literal">patchbomb</code> extension tries to
+	accommodate a number of variations through command line
+	options.</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p><a name="x_53c"></a>You can write a subject for the introductory
+	    message on the command line using the <code class="option">hg -s</code>
+	    option.  This takes one argument, the text of the subject
+	    to use.</p></li>
+<li><p><a name="x_53d"></a>To change the email address from which the
+	    messages originate, use the <code class="option">hg -f</code>
+	    option.  This takes one argument, the email address to
+	    use.</p></li>
+<li><p><a name="x_53e"></a>The default behaviour is to send unified diffs
+	    (see <a class="xref" href="managing-change-with-mercurial-queues.html#sec:mq:patch" title="11.4. Understanding patches">Section 11.4, “Understanding patches”</a> for a
+	    description of the
+	    format), one per message.  You can send a binary bundle
+	    instead with the <code class="option">hg -b</code>
+	    option.</p></li>
+<li><p><a name="x_53f"></a>Unified diffs are normally prefaced with a
+	    metadata header.  You can omit this, and send unadorned
+	    diffs, with the <code class="option">hg
+	      --plain</code> option.</p></li>
+<li><p><a name="x_540"></a>Diffs are normally sent “<span class="quote">inline</span>”,
+	    in the same body part as the description of a patch.  This
+	    makes it easiest for the largest number of readers to
+	    quote and respond to parts of a diff, as some mail clients
+	    will only quote the first MIME body part in a message. If
+	    you'd prefer to send the description and the diff in
+	    separate body parts, use the <code class="option">hg -a</code>
+	    option.</p></li>
+<li><p><a name="x_541"></a>Instead of sending mail messages, you can
+	    write them to an <code class="literal">mbox</code>-format mail
+	    folder using the <code class="option">hg -m</code>
+	    option.  That option takes one argument, the name of the
+	    file to write to.</p></li>
+<li><p><a name="x_542"></a>If you would like to add a
+	    <span class="command"><strong>diffstat</strong></span>-format summary to each patch,
+	    and one to the introductory message, use the <code class="option">hg -d</code>
+	    option.  The <span class="command"><strong>diffstat</strong></span> command displays
+	    a table containing the name of each file patched, the
+	    number of lines affected, and a histogram showing how much
+	    each file is modified.  This gives readers a qualitative
+	    glance at how complex a patch is.</p></li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="advanced-uses-of-mercurial-queues.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="mercurial-queues-reference.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 12. Advanced uses of Mercurial Queues </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Appendix A. Mercurial Queues reference</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
