@@ -36,7 +36,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: svnbook 1.6\n"
-"POT-Creation-Date: 2009-03-27 12:51+0800\n"
+"POT-Creation-Date: 2009-04-02 09:54+0800\n"
 "PO-Revision-Date: 2009-03-27 14:31+0800\n"
 "Last-Translator: \n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com >\n"
@@ -3593,7 +3593,7 @@ msgstr "此工具用来显示工作副本的状态(用术语来说，就是当�
 
 #. type: Content of: <book><chapter><sect1><sect2><refentry><indexterm><primary>
 #: ../../en/book/ch00-preface.xml:952
-#: ../../en/book/ch05-repository-admin.xml:1074
+#: ../../en/book/ch05-repository-admin.xml:1122
 #: ../../en/book/ch09-reference.xml:6583 ../../en/book/ch09-reference.xml:6695
 #: ../../en/book/ch09-reference.xml:6741 ../../en/book/ch09-reference.xml:6799
 #: ../../en/book/ch09-reference.xml:6923 ../../en/book/ch09-reference.xml:6969
@@ -3613,7 +3613,7 @@ msgstr "直接查看 Subversion 版本库的工具"
 
 #. type: Content of: <book><chapter><sect1><sect2><refentry><indexterm><primary>
 #: ../../en/book/ch00-preface.xml:959
-#: ../../en/book/ch05-repository-admin.xml:1039
+#: ../../en/book/ch05-repository-admin.xml:1087
 #: ../../en/book/ch09-reference.xml:5317 ../../en/book/ch09-reference.xml:5506
 #: ../../en/book/ch09-reference.xml:5554 ../../en/book/ch09-reference.xml:5633
 #: ../../en/book/ch09-reference.xml:5673 ../../en/book/ch09-reference.xml:5775
@@ -3664,7 +3664,7 @@ msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><refentry><indexterm><primary>
 #: ../../en/book/ch00-preface.xml:985
-#: ../../en/book/ch05-repository-admin.xml:1205
+#: ../../en/book/ch05-repository-admin.xml:1253
 #: ../../en/book/ch09-reference.xml:8204 ../../en/book/ch09-reference.xml:8286
 #: ../../en/book/ch09-reference.xml:8349 ../../en/book/ch09-reference.xml:8414
 msgid "svndumpfilter"
@@ -3677,7 +3677,7 @@ msgstr "过滤 Subversion 版本库转储数据流的工具"
 
 #. type: Content of: <book><chapter><sect1><sect2><refentry><indexterm><primary>
 #: ../../en/book/ch00-preface.xml:993
-#: ../../en/book/ch05-repository-admin.xml:1242
+#: ../../en/book/ch05-repository-admin.xml:1290
 #: ../../en/book/ch09-reference.xml:7607 ../../en/book/ch09-reference.xml:7742
 #: ../../en/book/ch09-reference.xml:7812 ../../en/book/ch09-reference.xml:7852
 #: ../../en/book/ch09-reference.xml:7929
@@ -5135,7 +5135,7 @@ msgstr ""
 #: ../../en/book/ch02-basic-usage.xml:2628
 #: ../../en/book/ch03-advanced-topics.xml:4075
 #: ../../en/book/ch04-branching-and-merging.xml:3128
-#: ../../en/book/ch05-repository-admin.xml:3199
+#: ../../en/book/ch05-repository-admin.xml:3306
 #: ../../en/book/ch07-customizing-svn.xml:1328
 #: ../../en/book/ch08-embedding-svn.xml:1351
 msgid "Summary"
@@ -18045,8 +18045,48 @@ msgstr ""
 "创建并移动到修订版本目录，这保证提交是原子性的。因为一个修订版本文件是持久不可"
 "改变的，版本库也可以做到<quote>热</quote>备份，就象Berkeley DB版本库一样。"
 
+#. type: Content of: <book><chapter><sect1><sect2><sect3><sidebar><title>
+#: ../../en/book/ch05-repository-admin.xml:692
+#, fuzzy
+msgid "Revision files and shards"
+msgstr "版本清单"
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><sidebar><para>
+#: ../../en/book/ch05-repository-admin.xml:694
+msgid ""
+"FSFS repositories contain files that describe the changes made in a single "
+"revision, and files that contain the revision properties associated with a "
+"single revision.  Repositories created in versions of Subversion prior to 1.5 "
+"keep these files in two directories&mdash;one for each type of file.  As new "
+"revisions are committed to the repository, Subversion drops more files into "
+"these two directories&mdash;over time, the number of these files in each "
+"directory can grow to be quite large.  This has been observed to cause "
+"performance problems on certain network-based filesystems."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><sidebar><para>
+#: ../../en/book/ch05-repository-admin.xml:706
+msgid ""
+"Subversion 1.5 creates FSFS-backed repositories using a slightly modified "
+"layout in which the contents of these two directories are <firstterm>sharded</"
+"firstterm>, or scattered across several subdirectories.  This can greatly "
+"reduce the time it takes the system to locate any one of these files, and "
+"therefore increases the overall performance of Subversion when reading from "
+"the repository."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><sidebar><para>
+#: ../../en/book/ch05-repository-admin.xml:715
+msgid ""
+"Subversion 1.6 takes the sharded layout one step further, allowing "
+"administrators to optionally <firstterm>pack</firstterm> each of their "
+"repository shards up into a single multi-revision file.  This can have both "
+"performance and disk usage benefits.  See <xref linkend=\"svn.reposadmin."
+"maint.diskspace.fsfspacking\"/> for more information."
+msgstr ""
+
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:691
+#: ../../en/book/ch05-repository-admin.xml:726
 #, fuzzy
 msgid ""
 "The FSFS revision files describe a revision's directory structure, file "
@@ -18064,7 +18104,7 @@ msgstr ""
 "少数据库花消同时也意味着版本库的总体体积可以稍小一点。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:702
+#: ../../en/book/ch05-repository-admin.xml:737
 #, fuzzy
 msgid ""
 "FSFS has different performance characteristics, too.  When committing a "
@@ -18082,7 +18122,7 @@ msgstr ""
 "致客护端在等待回应时超时。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:713
+#: ../../en/book/ch05-repository-admin.xml:748
 #, fuzzy
 msgid ""
 "The most important distinction, however, is FSFS's imperviousness to wedging "
@@ -18097,7 +18137,7 @@ msgstr ""
 "发生同样的情况，版本库不会受到任何干扰，最坏情况下也就是会留下一些事务数据。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:722
+#: ../../en/book/ch05-repository-admin.xml:757
 #, fuzzy
 msgid ""
 "The only real argument against FSFS is its relative immaturity compared to "
@@ -18117,19 +18157,19 @@ msgstr ""
 "和私有Subversion版本库所采用，并且它承诺了在跨平台时的有较少的麻烦。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:727
+#: ../../en/book/ch05-repository-admin.xml:762
 msgid ""
 "Oracle bought Sleepycat and its flagship software, Berkeley DB, on "
 "Valentine's Day in 2006."
 msgstr "Oracle在2006情人节购买了Sleepycat和它的旗舰软件Berkeley DB。"
 
 #. type: Content of: <book><chapter><sect1><title>
-#: ../../en/book/ch05-repository-admin.xml:747
+#: ../../en/book/ch05-repository-admin.xml:782
 msgid "Creating and Configuring Your Repository"
 msgstr "创建和配置你的版本库"
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:749
+#: ../../en/book/ch05-repository-admin.xml:784
 #, fuzzy
 msgid ""
 "Earlier in this chapter (in <xref linkend=\"svn.reposadmin.planning\" />), we "
@@ -18144,12 +18184,12 @@ msgstr ""
 "看如何真实的创建一个Subversion版本库，并配置它在特定版本库事件执行自定义动作。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:759
+#: ../../en/book/ch05-repository-admin.xml:794
 msgid "Creating the Repository"
 msgstr "创建版本库"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:761
+#: ../../en/book/ch05-repository-admin.xml:796
 #, fuzzy
 msgid ""
 "Subversion repository creation is an incredibly simple task.  The "
@@ -18161,7 +18201,7 @@ msgstr ""
 "command>)。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:772
+#: ../../en/book/ch05-repository-admin.xml:807
 #, fuzzy
 msgid ""
 "This creates a new repository in the directory <filename>/var/svn/repos</"
@@ -18177,12 +18217,12 @@ msgstr ""
 "<literal>fsfs</literal>和<literal>bdb</literal>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:793
+#: ../../en/book/ch05-repository-admin.xml:828
 msgid "After running this simple command, you have a Subversion repository."
 msgstr "运行这个命令之后，你有了一个Subversion版本库。"
 
 #. type: Content of: <book><chapter><sect1><sect2><tip><para>
-#: ../../en/book/ch05-repository-admin.xml:797
+#: ../../en/book/ch05-repository-admin.xml:832
 #, fuzzy
 msgid ""
 "The path argument to <command>svnadmin</command> is just a regular filesystem "
@@ -18203,7 +18243,7 @@ msgstr ""
 "quote><literal>file:</literal>路径)传给这两个程序。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:810
+#: ../../en/book/ch05-repository-admin.xml:845
 #, fuzzy
 msgid ""
 "Present in the <filename>db/</filename> subdirectory of your repository is "
@@ -18219,12 +18259,12 @@ msgstr ""
 "literal>，设置为版本库创建的时间。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:819
+#: ../../en/book/ch05-repository-admin.xml:854
 msgid "Now that you have a repository, it's time to customize it."
 msgstr "现在你有了一个版本库，可以用户化了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:823
+#: ../../en/book/ch05-repository-admin.xml:858
 #, fuzzy
 msgid ""
 "While some parts of a Subversion repository&mdash;such as the configuration "
@@ -18243,12 +18283,12 @@ msgstr ""
 "不</emphasis>要尝试通过处理版本库数据存储文件手工修改版本控制历史！"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:841
+#: ../../en/book/ch05-repository-admin.xml:876
 msgid "Implementing Repository Hooks"
 msgstr "实现版本库钩子"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:843
+#: ../../en/book/ch05-repository-admin.xml:878
 #, fuzzy
 msgid ""
 "A <firstterm>hook</firstterm> is a program triggered by some repository "
@@ -18269,14 +18309,14 @@ msgstr ""
 "的)版本库修改细节，还有触发事件的用户名。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:857
+#: ../../en/book/ch05-repository-admin.xml:892
 msgid ""
 "The <filename>hooks</filename> subdirectory is, by default, filled with "
 "templates for various repository hooks:"
 msgstr "默认情况下，<filename>hooks</filename>子目录中包含各种版本库钩子模板。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:869
+#: ../../en/book/ch05-repository-admin.xml:904
 #, fuzzy
 msgid ""
 "There is one template for each hook that the Subversion repository supports; "
@@ -18297,7 +18337,7 @@ msgstr ""
 "或脚本。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:882
+#: ../../en/book/ch05-repository-admin.xml:917
 #, fuzzy
 msgid ""
 "On Unix platforms, this means supplying a script or program (which could be a "
@@ -18322,7 +18362,7 @@ msgstr ""
 "filename>和批处理的<filename>bat</filename>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><tip><para>
-#: ../../en/book/ch05-repository-admin.xml:900
+#: ../../en/book/ch05-repository-admin.xml:935
 #, fuzzy
 msgid ""
 "For security reasons, the Subversion repository executes hook programs with "
@@ -18339,7 +18379,7 @@ msgstr ""
 "能运行。要注意，必须在你的钩子中设置好环境变量或为你的程序指定好绝对路径。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:911
+#: ../../en/book/ch05-repository-admin.xml:946
 #, fuzzy
 msgid ""
 "Subversion executes hooks as the same user who owns the process that is "
@@ -18359,7 +18399,7 @@ msgstr ""
 "说，要注意潜在的访问控制问题，它可能会让你的钩子无法按照你的目的顺利执行。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:924
+#: ../../en/book/ch05-repository-admin.xml:959
 #, fuzzy
 msgid ""
 "There are serveral hooks implemented by the Subversion repository, and you "
@@ -18379,7 +18419,7 @@ msgstr ""
 "问控制。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:937
+#: ../../en/book/ch05-repository-admin.xml:972
 #, fuzzy
 msgid ""
 "There is no shortage of Subversion hook programs and scripts that are freely "
@@ -18395,7 +18435,7 @@ msgstr ""
 "看<xref linkend=\"svn.developer\"/>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:946
+#: ../../en/book/ch05-repository-admin.xml:981
 #, fuzzy
 msgid ""
 "While hook scripts can do almost anything, there is one dimension in which "
@@ -18421,12 +18461,12 @@ msgstr ""
 "习惯。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:969
+#: ../../en/book/ch05-repository-admin.xml:1004
 msgid "Berkeley DB Configuration"
 msgstr "Berkeley DB 配置"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:971
+#: ../../en/book/ch05-repository-admin.xml:1006
 #, fuzzy
 msgid ""
 "A Berkeley DB environment is an encapsulation of one or more databases, "
@@ -18445,7 +18485,7 @@ msgstr ""
 "你的特定版本库与它独特的数据集合和访问类型，可能需要不同的配置选项。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:983
+#: ../../en/book/ch05-repository-admin.xml:1018
 #, fuzzy
 msgid ""
 "The producers of Berkeley DB understand that different applications and "
@@ -18477,13 +18517,29 @@ msgstr ""
 "<filename>DB_CONFIG</filename>的修改在复原数据库环境(用<command>svnadmin "
 "recover</command>)之前不会产生任何效果。"
 
+#. type: Content of: <book><chapter><sect1><sect2><title>
+#: ../../en/book/ch05-repository-admin.xml:1045
+#, fuzzy
+msgid "FSFS Configuration"
+msgstr "服务配置"
+
+#. type: Content of: <book><chapter><sect1><sect2><para>
+#: ../../en/book/ch05-repository-admin.xml:1047
+msgid ""
+"As of Subversion 1.6, FSFS filesystems have several configurable parameters "
+"which an administrator can use to fine-tune the performance or disk usage of "
+"their repositories.  You can find these options&mdash;and the documentation "
+"for them&mdash;in the <filename>db/fsfs.conf</filename> file in the "
+"repository."
+msgstr ""
+
 #. type: Content of: <book><chapter><sect1><title>
-#: ../../en/book/ch05-repository-admin.xml:1014
+#: ../../en/book/ch05-repository-admin.xml:1062
 msgid "Repository Maintenance"
 msgstr "版本库维护"
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:1016
+#: ../../en/book/ch05-repository-admin.xml:1064
 #, fuzzy
 msgid ""
 "Maintaining a Subversion repository can be daunting, mostly due to the "
@@ -18500,12 +18556,12 @@ msgstr ""
 "植, 升级, 备份和整理之类的任务。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:1027
+#: ../../en/book/ch05-repository-admin.xml:1075
 msgid "An Administrator's Toolkit"
 msgstr "管理员的工具箱"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1029
+#: ../../en/book/ch05-repository-admin.xml:1077
 #, fuzzy
 msgid ""
 "Subversion provides a handful of utilities useful for creating, inspecting, "
@@ -18521,7 +18577,7 @@ msgstr ""
 "不是Subversion本身提供的工具。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1041
+#: ../../en/book/ch05-repository-admin.xml:1089
 #, fuzzy
 msgid ""
 "The <command>svnadmin</command> program is the repository administrator's "
@@ -18535,7 +18591,7 @@ msgstr ""
 "command>的语法同其他Subversion命令类似："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1062
+#: ../../en/book/ch05-repository-admin.xml:1110
 #, fuzzy
 msgid ""
 "Previously in this chapter (in <xref linkend=\"svn.reposadmin.basics.creating"
@@ -18551,7 +18607,7 @@ msgstr ""
 "ref.svnadmin\"/>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1076
+#: ../../en/book/ch05-repository-admin.xml:1124
 #, fuzzy
 msgid ""
 "<command>svnlook</command> is a tool provided by Subversion for examining the "
@@ -18571,12 +18627,12 @@ msgstr ""
 "commit</command>钩子时)修改。版本库管理员可以将这个工具用于诊断。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1088
+#: ../../en/book/ch05-repository-admin.xml:1136
 msgid "<command>svnlook</command> has a straightforward syntax:"
 msgstr "<command>svnlook</command>的语法很直接："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1102
+#: ../../en/book/ch05-repository-admin.xml:1150
 #, fuzzy
 msgid ""
 "Most of <command>svnlook</command>'s subcommands can operate on either a "
@@ -18601,7 +18657,7 @@ msgstr ""
 "新版本时，如下的两个命令起到相同的效果："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1124
+#: ../../en/book/ch05-repository-admin.xml:1172
 msgid ""
 "One exception to these rules about subcommands is the <command>svnlook "
 "youngest</command> subcommand, which takes no options and simply prints out "
@@ -18611,7 +18667,7 @@ msgstr ""
 "只会打印出版本库的最新修订版本号："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><note><para>
-#: ../../en/book/ch05-repository-admin.xml:1136
+#: ../../en/book/ch05-repository-admin.xml:1184
 #, fuzzy
 msgid ""
 "Keep in mind that the only transactions you can browse are uncommitted ones.  "
@@ -18625,7 +18681,7 @@ msgstr ""
 "本)，要么是退出的和删除的。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1145
+#: ../../en/book/ch05-repository-admin.xml:1193
 #, fuzzy
 msgid ""
 "Output from <command>svnlook</command> is designed to be both human- and "
@@ -18636,34 +18692,34 @@ msgstr ""
 "info</command>子命令举例来说："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1159
+#: ../../en/book/ch05-repository-admin.xml:1207
 msgid ""
 "The output of <command>svnlook info</command> consists of the following, in "
 "the order given:"
 msgstr "<command>svnlook info</command>的输出包含如下的内容，按照给定的顺序："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1164
+#: ../../en/book/ch05-repository-admin.xml:1212
 msgid "The author, followed by a newline"
 msgstr "作者，后接换行"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1167
+#: ../../en/book/ch05-repository-admin.xml:1215
 msgid "The date, followed by a newline"
 msgstr "日期，后接换行"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1170
+#: ../../en/book/ch05-repository-admin.xml:1218
 msgid "The number of characters in the log message, followed by a newline"
 msgstr "日志消息的字数，后接换行"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1174
+#: ../../en/book/ch05-repository-admin.xml:1222
 msgid "The log message itself, followed by a newline"
 msgstr "日志信息本身， 后接换行"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1178
+#: ../../en/book/ch05-repository-admin.xml:1226
 #, fuzzy
 msgid ""
 "This output is human-readable, meaning items such as the datestamp are "
@@ -18684,7 +18740,7 @@ msgstr ""
 "职能的决定，或仅仅是在这个输出成为最后一个字节之前应该略过多少字节。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1192
+#: ../../en/book/ch05-repository-admin.xml:1240
 #, fuzzy
 msgid ""
 "<command>svnlook</command> can perform a variety of other queries: displaying "
@@ -18700,7 +18756,7 @@ msgstr ""
 "<command>svnlook</command>命令能接受子命令的完全特性参考。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1207
+#: ../../en/book/ch05-repository-admin.xml:1255
 #, fuzzy
 msgid ""
 "While it won't be the most commonly used tool at the administrator's "
@@ -18714,12 +18770,12 @@ msgstr ""
 "过滤器。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1214
+#: ../../en/book/ch05-repository-admin.xml:1262
 msgid "The syntax of <command>svndumpfilter</command> is as follows:"
 msgstr "<command>svndumpfilter</command>的语法如下："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1229
+#: ../../en/book/ch05-repository-admin.xml:1277
 msgid ""
 "There are only two interesting subcommands: <command>svndumpfilter exclude</"
 "command> and <command>svndumpfilter include</command>.  They allow you to "
@@ -18730,7 +18786,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1244
+#: ../../en/book/ch05-repository-admin.xml:1292
 #, fuzzy
 msgid ""
 "The <command>svnsync</command> program, which is new to the 1.4 release of "
@@ -18749,12 +18805,12 @@ msgstr ""
 "算机上。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:1254
+#: ../../en/book/ch05-repository-admin.xml:1302
 msgid "Or is that, the <quote>sync</quote>?"
 msgstr "或者是, <quote>sync</quote> ？"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1259
+#: ../../en/book/ch05-repository-admin.xml:1307
 msgid ""
 "As you might expect, <command>svnsync</command> has a syntax that looks very "
 "much like every other program we've mentioned in this chapter:"
@@ -18762,7 +18818,7 @@ msgstr ""
 "就像你期望的，<command>svnsync</command>的语法与本节提到的其他命令非常类似。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1277
+#: ../../en/book/ch05-repository-admin.xml:1325
 #, fuzzy
 msgid ""
 "We talk more about replicating repositories with <command>svnsync</command> "
@@ -18773,52 +18829,45 @@ msgstr ""
 "<command>svnsync</command>实现版本库复制。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><title>
-#: ../../en/book/ch05-repository-admin.xml:1285
+#: ../../en/book/ch05-repository-admin.xml:1333
 msgid "fsfs-reshard.py"
 msgstr "fsfs-reshard.py"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1287
+#: ../../en/book/ch05-repository-admin.xml:1335
 msgid ""
 "While not an official member of the Subversion toolchain, the <command>fsfs-"
 "reshard.py</command> script (found in the <filename>tools/server-side</"
 "filename> directory of the Subversion source distribution) is a useful "
 "performance tuning tool for administrators of FSFS-backed Subversion "
-"repositories.  FSFS repositories contain files that describe the changes made "
-"in a single revision, and files that contain the revision properties "
-"associated with a single revision.  Repositories created in versions of "
-"Subversion prior to 1.5 keep these files in two directories&mdash;one for "
-"each type of file.  As new revisions are committed to the repository, "
-"Subversion drops more files into these two directories&mdash;over time, the "
-"number of these files in each directory can grow to be quite large.  This has "
-"been observed to cause performance problems on certain network-based "
-"filesystems."
+"repositories.  As described in the sidebar <xref linkend=\"svn.reposadmin."
+"basics.backends.fsfs.revfiles\"/>, FSFS repositories use individual files to "
+"house information about each revision.  Sometimes these files all live in a "
+"single directory; sometimes they are sharded across many directories.  But "
+"the neat thing is that the number of directories used used to house these "
+"files is configurable.  That's where <command>fsfs-reshard.py</command> comes "
+"in."
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1304
+#: ../../en/book/ch05-repository-admin.xml:1350
 msgid ""
-"Subversion 1.5 creates FSFS-backed repositories using a slightly modified "
-"layout in which the contents of these two directories are <firstterm>sharded</"
-"firstterm>, or scattered across several subdirectories.  This can greatly "
-"reduce the time it takes the system to locate any one of these files, and "
-"therefore increases the overall performance of Subversion when reading from "
-"the repository.  The number of subdirectories used to house these files is "
-"configurable, though, and that's where <command>fsfs-reshard.py</command> "
-"comes in.  This script reshuffles the repository's file structure into a new "
-"arrangement that reflects the requested number of sharding subdirectories.  "
-"This is especially useful for converting an older Subversion repository into "
-"the new Subversion 1.5 sharded layout (which Subversion will not "
-"automatically do for you) or for fine-tuning an already sharded repository."
+"<command>fsfs-reshard.py</command> reshuffles the repository's file structure "
+"into a new arrangement that reflects the requested number of sharding "
+"subdirectories and updates the repository configuration to preserve this "
+"change.  This is especially useful for converting an older Subversion "
+"repository into the new Subversion 1.5 sharded layout (which Subversion will "
+"not automatically do for you)  or for fine-tuning an already sharded "
+"repository."
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><title>
-#: ../../en/book/ch05-repository-admin.xml:1326
+#: ../../en/book/ch05-repository-admin.xml:1363
 msgid "Berkeley DB utilities"
 msgstr "Berkeley DB 工具"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1328
+#: ../../en/book/ch05-repository-admin.xml:1365
 #, fuzzy
 msgid ""
 "If you're using a Berkeley DB repository, all of your versioned filesystem's "
@@ -18834,7 +18883,7 @@ msgstr ""
 "这些工具随Berkeley DB发布。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1337
+#: ../../en/book/ch05-repository-admin.xml:1374
 #, fuzzy
 msgid ""
 "For day-to-day Subversion use, these tools are unnecessary.  Most of the "
@@ -18854,7 +18903,7 @@ msgstr ""
 "工具的作用。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1348
+#: ../../en/book/ch05-repository-admin.xml:1385
 #, fuzzy
 msgid ""
 "However, there are still a few Berkeley DB utilities that you might find "
@@ -18885,7 +18934,7 @@ msgstr ""
 "有用信息，包括详细的锁定和存储子系统的统计信息。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1369
+#: ../../en/book/ch05-repository-admin.xml:1406
 #, fuzzy
 msgid ""
 "For more information on the Berkeley DB tool chain, visit the documentation "
@@ -18897,12 +18946,12 @@ msgstr ""
 "\">http://www.oracle.com/technology/documentation/berkeley-db/db/</uri>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:1380
+#: ../../en/book/ch05-repository-admin.xml:1417
 msgid "Commit Log Message Correction"
 msgstr "修正提交消息"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1382
+#: ../../en/book/ch05-repository-admin.xml:1419
 #, fuzzy
 msgid ""
 "Sometimes a user will have an error in her log message (a misspelling or some "
@@ -18924,7 +18973,7 @@ msgstr ""
 "能由管理员修改非版本化属性(这也是默认的选项)。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1396
+#: ../../en/book/ch05-repository-admin.xml:1433
 #, fuzzy
 msgid ""
 "If a log message needs to be changed by an administrator, this can be done "
@@ -18937,7 +18986,7 @@ msgstr ""
 "(<literal>svn:log</literal>属性)。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1407
+#: ../../en/book/ch05-repository-admin.xml:1444
 #, fuzzy
 msgid ""
 "The <command>svnadmin setlog</command> command, by default, is still bound by "
@@ -18954,7 +19003,7 @@ msgstr ""
 "setlog</command>命令的<option>--bypass-hooks</option>选项跳过钩子。"
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:1419
+#: ../../en/book/ch05-repository-admin.xml:1456
 #, fuzzy
 msgid ""
 "Remember, though, that by bypassing the hooks, you are likely avoiding such "
@@ -18967,12 +19016,12 @@ msgstr ""
 "你所作出的修改，以及你作出修改的方式。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:1432
+#: ../../en/book/ch05-repository-admin.xml:1469
 msgid "Managing Disk Space"
 msgstr "管理磁盘空间"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1434
+#: ../../en/book/ch05-repository-admin.xml:1471
 #, fuzzy
 msgid ""
 "While the cost of storage has dropped incredibly in the past few years, disk "
@@ -18991,12 +19040,12 @@ msgstr ""
 "份, 哪些数据可以安全的删除等等。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><title>
-#: ../../en/book/ch05-repository-admin.xml:1446
+#: ../../en/book/ch05-repository-admin.xml:1483
 msgid "How Subversion saves disk space"
 msgstr "让 Subversion 节约磁盘空间"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1448
+#: ../../en/book/ch05-repository-admin.xml:1485
 #, fuzzy
 msgid ""
 "To keep the repository small, Subversion uses <firstterm>deltification</"
@@ -19024,7 +19073,7 @@ msgstr ""
 "1.4以后，空间存储变得更为节省—现在文件内容的全文本身都是压缩的了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><note><para>
-#: ../../en/book/ch05-repository-admin.xml:1469
+#: ../../en/book/ch05-repository-admin.xml:1506
 #, fuzzy
 msgid ""
 "Because all of the data that is subject to deltification in a BDB-backed "
@@ -19041,12 +19090,12 @@ msgstr ""
 "使增量化技术不能立杆见影的节省磁盘空间，也可以极大的减慢数据库的膨胀速度。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><title>
-#: ../../en/book/ch05-repository-admin.xml:1485
+#: ../../en/book/ch05-repository-admin.xml:1522
 msgid "Removing dead transactions"
 msgstr "删除终止的事务"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1487
+#: ../../en/book/ch05-repository-admin.xml:1524
 #, fuzzy
 msgid ""
 "Though they are uncommon, there are circumstances in which a Subversion "
@@ -19066,14 +19115,14 @@ msgstr ""
 "的管理员总是希望能够将它们清除出去。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1500
+#: ../../en/book/ch05-repository-admin.xml:1537
 msgid ""
 "You can use the <command>svnadmin lstxns</command> command to list the names "
 "of the currently outstanding transactions:"
 msgstr "可以使用<command>svnadmin lstxns</command>命令列出当前的事务名。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1512
+#: ../../en/book/ch05-repository-admin.xml:1549
 #, fuzzy
 msgid ""
 "Each item in the resultant output can then be used with <command>svnlook</"
@@ -19095,7 +19144,7 @@ msgstr ""
 "入进行清理。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1531
+#: ../../en/book/ch05-repository-admin.xml:1568
 #, fuzzy
 msgid ""
 "If you use these two subcommands like this, you should consider making your "
@@ -19111,12 +19160,12 @@ msgstr ""
 "库中异常事务的信息。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><example><title>
-#: ../../en/book/ch05-repository-admin.xml:1541
+#: ../../en/book/ch05-repository-admin.xml:1578
 msgid "txn-info.sh (reporting outstanding transactions)"
 msgstr "txn-info.sh (报告异常事务)"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1562
+#: ../../en/book/ch05-repository-admin.xml:1599
 #, fuzzy
 msgid ""
 "The output of the script is basically a concatenation of several chunks of "
@@ -19127,7 +19176,7 @@ msgstr ""
 "reposadmin.maint.tk.svnlook\"/>)的输出组成，类似于下面的例子："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1585
+#: ../../en/book/ch05-repository-admin.xml:1622
 #, fuzzy
 msgid ""
 "A long-abandoned transaction usually represents some sort of failed or "
@@ -19139,7 +19188,7 @@ msgstr ""
 "我们一些有趣的信息，比如一个进行了9个月的操作居然还是活动的等等。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1591
+#: ../../en/book/ch05-repository-admin.xml:1628
 #, fuzzy
 msgid ""
 "In short, transaction cleanup decisions need not be made unwisely.  Various "
@@ -19156,12 +19205,12 @@ msgstr ""
 "实已经死亡了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><title>
-#: ../../en/book/ch05-repository-admin.xml:1604
+#: ../../en/book/ch05-repository-admin.xml:1641
 msgid "Purging unused Berkeley DB logfiles"
 msgstr "删除不使用的 Berkeley DB 日志文件"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1606
+#: ../../en/book/ch05-repository-admin.xml:1643
 #, fuzzy
 msgid ""
 "Until recently, the largest offender of disk space usage with respect to BDB-"
@@ -19179,7 +19228,7 @@ msgstr ""
 "志文件则记录了所有状态变化的信息。因此，日志文件会以很快的速度膨胀起来。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1617
+#: ../../en/book/ch05-repository-admin.xml:1654
 #, fuzzy
 msgid ""
 "Fortunately, beginning with the 4.2 release of Berkeley DB, the database "
@@ -19208,7 +19257,7 @@ msgstr ""
 "息。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><para>
-#: ../../en/book/ch05-repository-admin.xml:1636
+#: ../../en/book/ch05-repository-admin.xml:1673
 #, fuzzy
 msgid ""
 "Without some sort of automatic logfile removal in place, logfiles will "
@@ -19227,7 +19276,7 @@ msgstr ""
 "件："
 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:1659
+#: ../../en/book/ch05-repository-admin.xml:1696
 #, fuzzy
 msgid ""
 "BDB-backed repositories whose logfiles are used as part of a backup or "
@@ -19243,13 +19292,87 @@ msgstr ""
 "成，如果有一些文件在别的程序将其拷贝之前就已经被删除了，不完整的备份日志文件就"
 "没有用了。"
 
+#. type: Content of: <book><chapter><sect1><sect2><sect3><title>
+#: ../../en/book/ch05-repository-admin.xml:1711
+msgid "Packing FSFS filesystems"
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1713
+msgid ""
+"As described in the sidebar <xref linkend=\"svn.reposadmin.basics.backends."
+"fsfs.revfiles\"/>, FSFS-backed Subversion repositories create, by default, a "
+"new on-disk file for each revision added to the repository.  Having thousands "
+"of these files present on your Subversion server&mdash;even when housed in "
+"separate shard directories&mdash;can lead to inefficiencies."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1721
+msgid ""
+"The first problem is that the operating system has to reference many "
+"different files over a short period of time.  This leads to inefficient use "
+"of disk caches and, as a result, more time spent seeking across large disks.  "
+"Because of this, Subversion pays a performance penalty when accessing your "
+"versioned data."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1728
+msgid ""
+"The second problem is a bit more subtle.  Because of the ways that most "
+"filesystems allocate disk space, each file claims more space on the disk than "
+"it actually uses.  The amount of extra space required to house a single file "
+"can average anywhere from 2 to 16 kilobytes <emphasis>per file</emphasis>, "
+"depending on the underlying operating system filesystem in use.  This penalty "
+"translates directly into a per-revision disk usage penalty for FSFS-backed "
+"repositories.  The effect is most pronounced in repositories which have many "
+"small revisions, since the overhead involved in storing the revision file "
+"quickly outgrows the size of the actual data being stored."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1741
+msgid ""
+"To solve these problems, Subversion 1.6 introduced the <command>svnadmin "
+"pack</command> command.  By concatenating all the files of a completed shard "
+"into a single \"pack\" file and then removing the original per-revision "
+"files, <command>svnadmin pack</command> reduces the file count within a given "
+"shard down to just a single file.  In doing so, it aids filesystem caches and "
+"reduces (to one) the number of times a file storage overhead penalty is paid."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1751
+msgid ""
+"Subversion can pack existing sharded repositories which have been upgraded to "
+"the 1.6 filesystem format (see <xref linkend=\"svn.ref.svnadmin.c.upgrade\"/"
+">).  To do so, just run <command>svnadmin pack</command> on the repository:"
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1769
+msgid ""
+"Because the packing process obtains the required locks before doing its work, "
+"you can run it on live repositories, or even as part of a post-commit hook.  "
+"Repacking packed shards is legal, but will have no effect on the disk usage "
+"of the repository."
+msgstr ""
+
+#. type: Content of: <book><chapter><sect1><sect2><sect3><para>
+#: ../../en/book/ch05-repository-admin.xml:1775
+msgid ""
+"<command>svnadmin pack</command> has no effect on BDB-backed Subversion "
+"repositories."
+msgstr ""
+
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:1676
+#: ../../en/book/ch05-repository-admin.xml:1783
 msgid "Berkeley DB Recovery"
 msgstr "Berkeley DB 恢复"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1678
+#: ../../en/book/ch05-repository-admin.xml:1785
 #, fuzzy
 msgid ""
 "As mentioned in <xref linkend=\"svn.reposadmin.basics.backends.bdb\"/>, a "
@@ -19270,7 +19393,7 @@ msgstr ""
 "员需要知道如何安全的处理种情况。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1691
+#: ../../en/book/ch05-repository-admin.xml:1798
 #, fuzzy
 msgid ""
 "To protect the data in your repository, Berkeley DB uses a locking "
@@ -19296,7 +19419,7 @@ msgstr ""
 "论因为术语冲突导致的概念混淆。)"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1708
+#: ../../en/book/ch05-repository-admin.xml:1815
 #, fuzzy
 msgid ""
 "In the course of using your Subversion repository, fatal errors or "
@@ -19312,7 +19435,7 @@ msgstr ""
 "除，但是锁已经无法解除了)。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1717
+#: ../../en/book/ch05-repository-admin.xml:1824
 #, fuzzy
 msgid ""
 "If this happens to your repository, don't panic.  The Berkeley DB filesystem "
@@ -19329,20 +19452,20 @@ msgstr ""
 "大量的版本库离线备份，不过不要急着通知你的管理员进行恢复。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:1722
+#: ../../en/book/ch05-repository-admin.xml:1829
 #, fuzzy
 msgid "For example, hard drive + huge electromagnet = disaster."
 msgstr "比如：硬盘 + 大号电磁铁 = 毁灭。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1729
+#: ../../en/book/ch05-repository-admin.xml:1836
 msgid ""
 "Instead, use the following recipe to attempt to <quote>unwedge</quote> your "
 "repository:"
 msgstr "然后，使用下面的方法试着<quote>恢复</quote>你的版本库："
 
 #. type: Content of: <book><chapter><sect1><sect2><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1734
+#: ../../en/book/ch05-repository-admin.xml:1841
 #, fuzzy
 msgid ""
 "Make sure no processes are accessing (or attempting to access) the "
@@ -19353,7 +19476,7 @@ msgstr ""
 "HTTP Server或svnserve。"
 
 #. type: Content of: <book><chapter><sect1><sect2><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1740
+#: ../../en/book/ch05-repository-admin.xml:1847
 #, fuzzy
 msgid ""
 "Become the user who owns and manages the repository.  This is important, as "
@@ -19365,7 +19488,7 @@ msgstr ""
 "会改变版本库文件的访问权限，导致在版本库<quote>恢复</quote>后依旧无法访问。"
 
 #. type: Content of: <book><chapter><sect1><sect2><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1748
+#: ../../en/book/ch05-repository-admin.xml:1855
 #, fuzzy
 msgid ""
 "Run the command <userinput>svnadmin recover /var/svn/repos</userinput>.  You "
@@ -19373,17 +19496,17 @@ msgid ""
 msgstr "运行命令<command>svnadmin recover /var/svn/repos</command>，输出如下："
 
 #. type: Content of: <book><chapter><sect1><sect2><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1759
+#: ../../en/book/ch05-repository-admin.xml:1866
 msgid "This command may take many minutes to complete."
 msgstr "此命令可能需要数分钟才能完成。"
 
 #. type: Content of: <book><chapter><sect1><sect2><orderedlist><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:1762
+#: ../../en/book/ch05-repository-admin.xml:1869
 msgid "Restart the server process."
 msgstr "重新启动服务进程。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1766
+#: ../../en/book/ch05-repository-admin.xml:1873
 #, fuzzy
 msgid ""
 "This procedure fixes almost every case of repository wedging.  Make sure that "
@@ -19401,7 +19524,7 @@ msgstr ""
 "是说，即使恢复了到版本库的连接，一般的用户也无权访问这些文件。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1777
+#: ../../en/book/ch05-repository-admin.xml:1884
 #, fuzzy
 msgid ""
 "If the previous procedure, for some reason, does not successfully unwedge "
@@ -19419,12 +19542,12 @@ msgstr ""
 "所遇到的问题。对于Subversion的开发者来说，数据安全是最重要的问题。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:1791
+#: ../../en/book/ch05-repository-admin.xml:1898
 msgid "Migrating Repository Data Elsewhere"
 msgstr "版本库数据的移植"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1793
+#: ../../en/book/ch05-repository-admin.xml:1900
 #, fuzzy
 msgid ""
 "A Subversion filesystem has its data spread throughout files in the "
@@ -19438,7 +19561,7 @@ msgstr ""
 "到另一个版本库。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1800
+#: ../../en/book/ch05-repository-admin.xml:1907
 #, fuzzy
 msgid ""
 "Subversion provides such functionality by way of <firstterm>repository dump "
@@ -19460,7 +19583,7 @@ msgstr ""
 "command>子命令。"
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:1815
+#: ../../en/book/ch05-repository-admin.xml:1922
 #, fuzzy
 msgid ""
 "While the Subversion repository dump format contains human-readable portions "
@@ -19476,7 +19599,7 @@ msgstr ""
 "换。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1824
+#: ../../en/book/ch05-repository-admin.xml:1931
 #, fuzzy
 msgid ""
 "There are many reasons for dumping and loading Subversion repository data.  "
@@ -19505,7 +19628,7 @@ msgstr ""
 "linkend=\"svn.reposadmin.maint.filtering\"/>覆盖)从版本库历史中清理文件。"
 
 #. type: Content of: <book><chapter><sect1><sect2><note><para>
-#: ../../en/book/ch05-repository-admin.xml:1845
+#: ../../en/book/ch05-repository-admin.xml:1952
 msgid ""
 "The Subversion repository dump format describes versioned repository changes "
 "only.  It will not carry any information about uncommitted transactions, user "
@@ -19514,7 +19637,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1852
+#: ../../en/book/ch05-repository-admin.xml:1959
 #, fuzzy
 msgid ""
 "Whatever your reason for migrating repository history, using the "
@@ -19533,7 +19656,7 @@ msgstr ""
 "在终端窗口中监视运行状态，例如："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1876
+#: ../../en/book/ch05-repository-admin.xml:1983
 #, fuzzy
 msgid ""
 "At the end of the process, you will have a single file (<filename>dumpfile</"
@@ -19549,7 +19672,7 @@ msgstr ""
 "的过程相同，所以可以在任何时候安全的运行这个命令。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1885
+#: ../../en/book/ch05-repository-admin.xml:1992
 #, fuzzy
 msgid ""
 "The other subcommand in the pair, <command>svnadmin load</command>, parses "
@@ -19563,7 +19686,7 @@ msgstr ""
 "中："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1921
+#: ../../en/book/ch05-repository-admin.xml:2028
 #, fuzzy
 msgid ""
 "The result of a load is new revisions added to a repository&mdash;the same "
@@ -19591,7 +19714,7 @@ msgstr ""
 "\"/>来得到更多相关信息。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1941
+#: ../../en/book/ch05-repository-admin.xml:2048
 #, fuzzy
 msgid ""
 "Note that because <command>svnadmin</command> uses standard input and output "
@@ -19604,7 +19727,7 @@ msgstr ""
 "command>："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1952
+#: ../../en/book/ch05-repository-admin.xml:2059
 #, fuzzy
 msgid ""
 "By default, the dump file will be quite large&mdash;much larger than the "
@@ -19628,7 +19751,7 @@ msgstr ""
 "则基本上与版本库的体积相当。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1967
+#: ../../en/book/ch05-repository-admin.xml:2074
 #, fuzzy
 msgid ""
 "We mentioned previously that <command>svnadmin dump</command> outputs a range "
@@ -19642,7 +19765,7 @@ msgstr ""
 "储。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1979
+#: ../../en/book/ch05-repository-admin.xml:2086
 #, fuzzy
 msgid ""
 "As Subversion dumps each new revision, it outputs only enough information to "
@@ -19658,7 +19781,7 @@ msgstr ""
 "dump</command>转储的第一个修订版本。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1988
+#: ../../en/book/ch05-repository-admin.xml:2095
 #, fuzzy
 msgid ""
 "By default, Subversion will not express the first dumped revision as merely "
@@ -19677,7 +19800,7 @@ msgstr ""
 "认情况下会完整的保存目录, 文件以及属性等数据。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:1999
+#: ../../en/book/ch05-repository-admin.xml:2106
 #, fuzzy
 msgid ""
 "However, you can change this default behavior.  If you add the <option>--"
@@ -19697,14 +19820,14 @@ msgstr ""
 "个大文件，比如："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2017
+#: ../../en/book/ch05-repository-admin.xml:2124
 msgid ""
 "These dump files could be loaded into a new repository with the following "
 "command sequence:"
 msgstr "这些转储文件可以使用下列命令装载到一个新的版本库中："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2026
+#: ../../en/book/ch05-repository-admin.xml:2133
 #, fuzzy
 msgid ""
 "Another neat trick you can perform with this <option>--incremental</option> "
@@ -19724,7 +19847,7 @@ msgstr ""
 "很好的版本库备份工具，以防万一出现系统崩溃或其它灾难性事件。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2038
+#: ../../en/book/ch05-repository-admin.xml:2145
 #, fuzzy
 msgid ""
 "The dump format can also be used to merge the contents of several different "
@@ -19742,21 +19865,21 @@ msgstr ""
 "一个新的版本库中保存所有三个转储文件中的数据："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2054
+#: ../../en/book/ch05-repository-admin.xml:2161
 msgid ""
 "Then, make new directories in the repository that will encapsulate the "
 "contents of each of the three previous repositories:"
 msgstr "然后在版本库中创建三个目录分别保存来自三个不同版本库的数据："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2067
+#: ../../en/book/ch05-repository-admin.xml:2174
 msgid ""
 "Lastly, load the individual dump files into their respective locations in the "
 "new repository:"
 msgstr "最后，将转储文件分别装载到各自的目录中："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2080
+#: ../../en/book/ch05-repository-admin.xml:2187
 #, fuzzy
 msgid ""
 "We'll mention one final way to use the Subversion repository dump "
@@ -19776,12 +19899,12 @@ msgstr ""
 "转换为转储数据格式，如此才能将CVS版本库的数据导入Subversion版本库之中。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:2096
+#: ../../en/book/ch05-repository-admin.xml:2203
 msgid "Filtering Repository History"
 msgstr "过滤版本库历史"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2098
+#: ../../en/book/ch05-repository-admin.xml:2205
 #, fuzzy
 msgid ""
 "Since Subversion stores your versioned history using, at the very least, "
@@ -19809,12 +19932,12 @@ msgstr ""
 "好的选择。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:2106
+#: ../../en/book/ch05-repository-admin.xml:2213
 msgid "That's rather the reason you use version control at all, right?"
 msgstr "那就是你是用版本控制的原因，对吗？"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:2115
+#: ../../en/book/ch05-repository-admin.xml:2222
 #, fuzzy
 msgid ""
 "Conscious, cautious removal of certain bits of versioned data is actually "
@@ -19826,7 +19949,7 @@ msgstr ""
 "Subversion要求最多的一个特性，也是Subversion开发者希望立刻提供的。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2129
+#: ../../en/book/ch05-repository-admin.xml:2236
 #, fuzzy
 msgid ""
 "As we described earlier in <xref linkend=\"svn.reposadmin.maint.migrate\" />, "
@@ -19849,7 +19972,7 @@ msgstr ""
 "花费很多时间。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2143
+#: ../../en/book/ch05-repository-admin.xml:2250
 #, fuzzy
 msgid ""
 "That's where <command>svndumpfilter</command> becomes useful.  This program "
@@ -19866,7 +19989,7 @@ msgstr ""
 "含蓄的)的转储数据流。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2152
+#: ../../en/book/ch05-repository-admin.xml:2259
 #, fuzzy
 msgid ""
 "Let's look at a realistic example of how you might use this program.  Earlier "
@@ -19886,7 +20009,7 @@ msgstr ""
 "成家。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2164
+#: ../../en/book/ch05-repository-admin.xml:2271
 #, fuzzy
 msgid ""
 "Our imaginary repository contains three projects: <literal>calc</literal>, "
@@ -19897,14 +20020,14 @@ msgstr ""
 "literal>，和 <literal>spreadsheet</literal>。它们在版本库中的布局如下："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2185
+#: ../../en/book/ch05-repository-admin.xml:2292
 msgid ""
 "To get these three projects into their own repositories, we first dump the "
 "whole repository:"
 msgstr "现在要把这三个项目转移到三个独立的版本库中。首先，转储整个版本库："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2198
+#: ../../en/book/ch05-repository-admin.xml:2305
 #, fuzzy
 msgid ""
 "Next, run that dump file through the filter, each time including only one of "
@@ -19914,7 +20037,7 @@ msgstr ""
 "件："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2212
+#: ../../en/book/ch05-repository-admin.xml:2319
 #, fuzzy
 msgid ""
 "At this point, you have to make a decision.  Each of your dump files will "
@@ -19941,7 +20064,7 @@ msgstr ""
 "<filename>calc</filename>目录的部分。一般来说，就是如下的一些内容："
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:2238
+#: ../../en/book/ch05-repository-admin.xml:2345
 #, fuzzy
 msgid ""
 "If you do plan on manually editing the dump file to remove a top-level "
@@ -19955,7 +20078,7 @@ msgstr ""
 "否则文件的内容就与所需的格式不相符，这个转储文件也就失效了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2247
+#: ../../en/book/ch05-repository-admin.xml:2354
 #, fuzzy
 msgid ""
 "All that remains now is to create your three new repositories, and load each "
@@ -19966,7 +20089,7 @@ msgstr ""
 "的UUID："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2273
+#: ../../en/book/ch05-repository-admin.xml:2380
 #, fuzzy
 msgid ""
 "Both of <command>svndumpfilter</command>'s subcommands accept options for "
@@ -19982,25 +20105,25 @@ msgstr ""
 "这些修订版本，<command>svndumpfilter</command>提供了以下命令行选项："
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><term>
-#: ../../en/book/ch05-repository-admin.xml:2284
+#: ../../en/book/ch05-repository-admin.xml:2391
 #: ../../en/book/ch09-reference.xml:8223
 msgid "<option>--drop-empty-revs</option>"
 msgstr "<option>--drop-empty-revs</option>"
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:2286
+#: ../../en/book/ch05-repository-admin.xml:2393
 #, fuzzy
 msgid "Do not generate empty revisions at all&mdash;just omit them."
 msgstr "不生成任何空修订版本，忽略它们。"
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><term>
-#: ../../en/book/ch05-repository-admin.xml:2291
+#: ../../en/book/ch05-repository-admin.xml:2398
 #: ../../en/book/ch09-reference.xml:8232
 msgid "<option>--renumber-revs</option>"
 msgstr "<option>--renumber-revs</option>"
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:2293
+#: ../../en/book/ch05-repository-admin.xml:2400
 msgid ""
 "If empty revisions are dropped (using the <option>--drop-empty-revs</option> "
 "option), change the revision numbers of the remaining revisions so that there "
@@ -20010,13 +20133,13 @@ msgstr ""
 "其它修订版本的编号，确保编号序列是连续的。"
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><term>
-#: ../../en/book/ch05-repository-admin.xml:2300
+#: ../../en/book/ch05-repository-admin.xml:2407
 #: ../../en/book/ch09-reference.xml:8251
 msgid "<option>--preserve-revprops</option>"
 msgstr "<option>--preserve-revprops</option>"
 
 #. type: Content of: <book><chapter><sect1><sect2><variablelist><varlistentry><listitem><para>
-#: ../../en/book/ch05-repository-admin.xml:2302
+#: ../../en/book/ch05-repository-admin.xml:2409
 #, fuzzy
 msgid ""
 "If empty revisions are not dropped, preserve the revision properties (log "
@@ -20030,7 +20153,7 @@ msgstr ""
 "的日志信息，表明此修订版本由<command>svndumpfilter</command>处理过。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2313
+#: ../../en/book/ch05-repository-admin.xml:2420
 #, fuzzy
 msgid ""
 "While <command>svndumpfilter</command> can be very useful and a huge "
@@ -20046,7 +20169,7 @@ msgstr ""
 "literal>这两个头参数对你有些帮助。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2327
+#: ../../en/book/ch05-repository-admin.xml:2434
 #, fuzzy
 msgid ""
 "If the paths have leading slashes, you should include leading slashes in the "
@@ -20062,7 +20185,7 @@ msgstr ""
 "需要修正这些路径，统一使用斜线开头或不使用斜线开头。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:2334
+#: ../../en/book/ch05-repository-admin.xml:2441
 msgid ""
 "While <command>svnadmin dump</command> has a consistent leading slash policy "
 "(to not include them), other programs that generate dump data might not be so "
@@ -20072,7 +20195,7 @@ msgstr ""
 "个规定就是不以斜线作为路径的开头—其它生成转储文件的程序不一定会遵守这个规定。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2342
+#: ../../en/book/ch05-repository-admin.xml:2449
 #, fuzzy
 msgid ""
 "Also, copied paths can give you some trouble.  Subversion supports copy "
@@ -20102,7 +20225,7 @@ msgstr ""
 "或许应该作为拷贝操作的源保留给你带来烦恼的路径。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2363
+#: ../../en/book/ch05-repository-admin.xml:2470
 #, fuzzy
 msgid ""
 "Finally, <command>svndumpfilter</command> takes path filtering quite "
@@ -20130,12 +20253,12 @@ msgstr ""
 "前，你需要确定任何转储流将要存在的目录必须存在于目标版本库。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:2387
+#: ../../en/book/ch05-repository-admin.xml:2494
 msgid "Repository Replication"
 msgstr "版本库复制"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2389
+#: ../../en/book/ch05-repository-admin.xml:2496
 #, fuzzy
 msgid ""
 "There are several scenarios in which it is quite handy to have a Subversion "
@@ -20152,7 +20275,7 @@ msgstr ""
 "本库。其他的场景包括，部署一个镜像版本库来分流压力，作为软升级机制等等。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2399
+#: ../../en/book/ch05-repository-admin.xml:2506
 #, fuzzy
 msgid ""
 "As of version 1.4, Subversion provides a program for managing scenarios such "
@@ -20172,7 +20295,7 @@ msgstr ""
 "库访问层(RA)接口实现的，所有要做的就是读源版本库，然后读写访问目标版本库。"
 
 #. type: Content of: <book><chapter><sect1><sect2><note><para>
-#: ../../en/book/ch05-repository-admin.xml:2414
+#: ../../en/book/ch05-repository-admin.xml:2521
 #, fuzzy
 msgid ""
 "When using <command>svnsync</command> against a remote source repository, the "
@@ -20183,7 +20306,7 @@ msgstr ""
 "是Subversion1.4或更高的版本。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2419
+#: ../../en/book/ch05-repository-admin.xml:2526
 #, fuzzy
 msgid ""
 "Assuming you already have a source repository that you'd like to mirror, the "
@@ -20207,7 +20330,7 @@ msgstr ""
 "1/>最好的办法就是只允许镜像进程修改目标版本库内容。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:2433
+#: ../../en/book/ch05-repository-admin.xml:2540
 msgid ""
 "In fact, it can't truly be read-only, or <command>svnsync</command> itself "
 "would have a tough time copying revision history into it."
@@ -20216,7 +20339,7 @@ msgstr ""
 "史拷入。"
 
 #. type: Content of: <book><chapter><sect1><sect2><warning><para>
-#: ../../en/book/ch05-repository-admin.xml:2442
+#: ../../en/book/ch05-repository-admin.xml:2549
 #, fuzzy
 msgid ""
 "Do <emphasis>not</emphasis> modify a mirror repository in such a way as to "
@@ -20229,7 +20352,7 @@ msgstr ""
 "和版本库的属性修改必须是由<command>svnsync</command>执行的。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2450
+#: ../../en/book/ch05-repository-admin.xml:2557
 #, fuzzy
 msgid ""
 "Another requirement of the target repository is that the <command>svnsync</"
@@ -20251,7 +20374,7 @@ msgstr ""
 "始镜像版本库修订版本了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><tip><para>
-#: ../../en/book/ch05-repository-admin.xml:2464
+#: ../../en/book/ch05-repository-admin.xml:2571
 msgid ""
 "It's a good idea to implement authorization measures that allow your "
 "repository replication process to perform its tasks while preventing other "
@@ -20261,7 +20384,7 @@ msgstr ""
 "意。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2470
+#: ../../en/book/ch05-repository-admin.xml:2577
 #, fuzzy
 msgid ""
 "Let's walk through the use of <command>svnsync</command> in a somewhat "
@@ -20273,7 +20396,7 @@ msgstr ""
 "讨论实践推荐，但是如果你们不需要或者感到不适合你们的环境，你可以不必去关注。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2476
+#: ../../en/book/ch05-repository-admin.xml:2583
 #, fuzzy
 msgid ""
 "As a service to the fine developers of our favorite version control system, "
@@ -20297,7 +20420,7 @@ msgstr ""
 "创建复制进程，我们正在使用的一个例子。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2492
+#: ../../en/book/ch05-repository-admin.xml:2599
 #, fuzzy
 msgid ""
 "First, we'll create the repository which will be our mirror.  This and the "
@@ -20309,7 +20432,7 @@ msgstr ""
 "本库的机器。一旦版本库配置完成，我们不必再直接碰它了。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2505
+#: ../../en/book/ch05-repository-admin.xml:2612
 #, fuzzy
 msgid ""
 "At this point, we have our repository, and due to our server's configuration, "
@@ -20326,7 +20449,7 @@ msgstr ""
 "<literal>syncuser</literal>的提交和属性修改可以被执行。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2515
+#: ../../en/book/ch05-repository-admin.xml:2622
 #, fuzzy
 msgid ""
 "We'll use the repository's hook system both to allow the replication process "
@@ -20345,12 +20468,12 @@ msgstr ""
 "<literal>syncuser</literal>，如果是，则允许修改；否则，拒绝修改。"
 
 #. type: Content of: <book><chapter><sect1><sect2><example><title>
-#: ../../en/book/ch05-repository-admin.xml:2528
+#: ../../en/book/ch05-repository-admin.xml:2635
 msgid "Mirror repository's pre-revprop-change hook script"
 msgstr "镜像版本库的 pre-revprop-change 钩子"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2542
+#: ../../en/book/ch05-repository-admin.xml:2649
 #, fuzzy
 msgid ""
 "That covers revision property changes.  Now we need to ensure that only the "
@@ -20365,12 +20488,12 @@ msgstr ""
 "filename>钩子。"
 
 #. type: Content of: <book><chapter><sect1><sect2><example><title>
-#: ../../en/book/ch05-repository-admin.xml:2551
+#: ../../en/book/ch05-repository-admin.xml:2658
 msgid "Mirror repository's start-commit hook script"
 msgstr "镜像版本库的 start-commit 钩子"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2565
+#: ../../en/book/ch05-repository-admin.xml:2672
 #, fuzzy
 msgid ""
 "After installing our hook scripts and ensuring that they are executable by "
@@ -20381,7 +20504,7 @@ msgstr ""
 "本库的配置，现在我们开始实际的镜像。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2570
+#: ../../en/book/ch05-repository-admin.xml:2677
 #, fuzzy
 msgid ""
 "The first thing we need to do with <command>svnsync</command> is to register "
@@ -20399,7 +20522,7 @@ msgstr ""
 "可以使用<command>svnsync</command>镜像版本库的子树。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2595
+#: ../../en/book/ch05-repository-admin.xml:2702
 #, fuzzy
 msgid ""
 "Our target repository will now remember that it is a mirror of the public "
@@ -20412,7 +20535,7 @@ msgstr ""
 "revprop-change钩子的要求。"
 
 #. type: Content of: <book><chapter><sect1><sect2><note><para>
-#: ../../en/book/ch05-repository-admin.xml:2602
+#: ../../en/book/ch05-repository-admin.xml:2709
 #, fuzzy
 msgid ""
 "In Subversion 1.4, the values given to <command>svnsync</command>'s <option>--"
@@ -20429,7 +20552,7 @@ msgstr ""
 "command>时会遇到这个问题。"
 
 #. type: Content of: <book><chapter><sect1><sect2><note><para>
-#: ../../en/book/ch05-repository-admin.xml:2611
+#: ../../en/book/ch05-repository-admin.xml:2718
 msgid ""
 "This has been fixed in Subversion 1.5 with the introduction of two new pairs "
 "of options.  Use <option>--source-username</option> and <option>--source-"
@@ -20441,7 +20564,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2625
+#: ../../en/book/ch05-repository-admin.xml:2732
 #, fuzzy
 msgid ""
 "And now comes the fun part.  With a single subcommand, we can tell "
@@ -20466,7 +20589,7 @@ msgstr ""
 "将其作为新的提交转发到目标版本库服务器。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:2630
+#: ../../en/book/ch05-repository-admin.xml:2737
 msgid ""
 "Be forewarned that while it will take only a few seconds for the average "
 "reader to parse this paragraph and the sample output that follows it, the "
@@ -20477,7 +20600,7 @@ msgstr ""
 "像过程花费的时间可能会非常长。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2679
+#: ../../en/book/ch05-repository-admin.xml:2786
 #, fuzzy
 msgid ""
 "Of particular interest here is that for each mirrored revision, there is "
@@ -20500,7 +20623,7 @@ msgstr ""
 "果。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2694
+#: ../../en/book/ch05-repository-admin.xml:2801
 #, fuzzy
 msgid ""
 "Also noteworthy is that <command>svnsync</command> performs careful "
@@ -20518,12 +20641,12 @@ msgstr ""
 "像不会过时。"
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><title>
-#: ../../en/book/ch05-repository-admin.xml:2705
+#: ../../en/book/ch05-repository-admin.xml:2812
 msgid "svnsync Bookkeeping"
 msgstr "关于 svnsync"
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><para>
-#: ../../en/book/ch05-repository-admin.xml:2707
+#: ../../en/book/ch05-repository-admin.xml:2814
 msgid ""
 "<command>svnsync</command> needs to be able to set and modify revision "
 "properties on the mirror repository because those properties are part of the "
@@ -20537,7 +20660,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><para>
-#: ../../en/book/ch05-repository-admin.xml:2719
+#: ../../en/book/ch05-repository-admin.xml:2826
 msgid ""
 "One of those pieces of state-tracking information is a flag that essentially "
 "just means <quote>there's a synchronization in progress right now.</quote> "
@@ -20555,7 +20678,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><para>
-#: ../../en/book/ch05-repository-admin.xml:2744
+#: ../../en/book/ch05-repository-admin.xml:2851
 msgid ""
 "That <command>svnsync</command> stores the source repository URL in a "
 "bookkeeping property on the mirror repository is the reason why you have to "
@@ -20578,12 +20701,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><screen><replaceable>
-#: ../../en/book/ch05-repository-admin.xml:2770
+#: ../../en/book/ch05-repository-admin.xml:2877
 msgid "NEW-SOURCE-URL"
 msgstr "NEW-SOURCE-URL"
 
 #. type: Content of: <book><chapter><sect1><sect2><sidebar><para>
-#: ../../en/book/ch05-repository-admin.xml:2776
+#: ../../en/book/ch05-repository-admin.xml:2883
 msgid ""
 "Another interesting thing about these special bookkeeping properties is that "
 "<command>svnsync</command> will not attempt to mirror any of those properties "
@@ -20598,7 +20721,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2792
+#: ../../en/book/ch05-repository-admin.xml:2899
 #, fuzzy
 msgid ""
 "There is, however, one bit of inelegance in the process.  Because Subversion "
@@ -20620,7 +20743,7 @@ msgstr ""
 "令，只是简单的重新复制某个特定修订版本的属性。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2818
+#: ../../en/book/ch05-repository-admin.xml:2925
 #, fuzzy
 msgid ""
 "That's repository replication in a nutshell.  You'll likely want some "
@@ -20635,7 +20758,7 @@ msgstr ""
 "主版本库将修改推倒一个或多个镜像，这样就可以近乎实时的保持镜像的时效性。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2827
+#: ../../en/book/ch05-repository-admin.xml:2934
 #, fuzzy
 msgid ""
 "Also, while it isn't very commonplace to do so, <command>svnsync</command> "
@@ -20648,7 +20771,7 @@ msgstr ""
 "优雅的镜像，它只会拷贝允许查看的版本库内容，显然这种镜像不适合备份方案。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2834
+#: ../../en/book/ch05-repository-admin.xml:2941
 msgid ""
 "In Subversion 1.5, <command>svnsync</command> grew the ability to also mirror "
 "a subset of a repository rather than the whole thing.  The process of setting "
@@ -20670,7 +20793,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2856
+#: ../../en/book/ch05-repository-admin.xml:2963
 #, fuzzy
 msgid ""
 "As far as user interaction with repositories and mirrors goes, it "
@@ -20687,7 +20810,7 @@ msgstr ""
 "讨论了这个问题。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2865
+#: ../../en/book/ch05-repository-admin.xml:2972
 #, fuzzy
 msgid ""
 "Once the two repositories have the same UUID, you can use <command>svn "
@@ -20712,7 +20835,7 @@ msgstr ""
 "本库变成最新，或者将工作副本恢复到你知道的版本库修订版本，再尝试重新定位。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2882
+#: ../../en/book/ch05-repository-admin.xml:2989
 #, fuzzy
 msgid ""
 "Finally, be aware that the revision-based replication provided by "
@@ -20731,12 +20854,12 @@ msgstr ""
 "信息。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:2897
+#: ../../en/book/ch05-repository-admin.xml:3004
 msgid "Repository Backup"
 msgstr "版本库备份"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2899
+#: ../../en/book/ch05-repository-admin.xml:3006
 #, fuzzy
 msgid ""
 "Despite numerous advances in technology since the birth of the modern "
@@ -20753,7 +20876,7 @@ msgstr ""
 "样备份你的版本库数据。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2909
+#: ../../en/book/ch05-repository-admin.xml:3016
 #, fuzzy
 msgid ""
 "There are two types of backup methods available for Subversion repository "
@@ -20770,7 +20893,7 @@ msgstr ""
 "FSFS环境)的完全复制，增量备份的内容要少一些：只包含在上次备份后改变的部分。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2921
+#: ../../en/book/ch05-repository-admin.xml:3028
 #, fuzzy
 msgid ""
 "As far as full backups go, the naïve approach might seem like a sane one, but "
@@ -20793,7 +20916,7 @@ msgstr ""
 "就像Unix的<command>cp</command>或Windows的<command>copy</command>一样琐碎："
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2940
+#: ../../en/book/ch05-repository-admin.xml:3047
 #, fuzzy
 msgid ""
 "The resultant backup is a fully functional Subversion repository, able to be "
@@ -20804,7 +20927,7 @@ msgstr ""
 "替换。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2944
+#: ../../en/book/ch05-repository-admin.xml:3051
 #, fuzzy
 msgid ""
 "When making copies of a Berkeley DB repository, you can even instruct "
@@ -20819,7 +20942,7 @@ msgstr ""
 "option>。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2956
+#: ../../en/book/ch05-repository-admin.xml:3063
 #, fuzzy
 msgid ""
 "Additional tooling around this command is available, too.  The "
@@ -20846,7 +20969,7 @@ msgstr ""
 "间间隔)。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2974
+#: ../../en/book/ch05-repository-admin.xml:3081
 #, fuzzy
 msgid ""
 "Some administrators use a different backup mechanism built around generating "
@@ -20876,7 +20999,7 @@ msgstr ""
 "采纳，因为这些原因，我们不建议你单独依赖转储为基础的备份方法。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:2994
+#: ../../en/book/ch05-repository-admin.xml:3101
 #, fuzzy
 msgid ""
 "As you can see, each of the various backup types and methods has its "
@@ -20900,7 +21023,7 @@ msgstr ""
 "复的代价之间寻求平衡。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3010
+#: ../../en/book/ch05-repository-admin.xml:3117
 #, fuzzy
 msgid ""
 "The <command>svnsync</command> program (see <xref linkend=\"svn.reposadmin."
@@ -20921,7 +21044,7 @@ msgstr ""
 "式存在于版本库路径而不存在于版本库虚拟文件系统的项目不会被svnsync处理。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3024
+#: ../../en/book/ch05-repository-admin.xml:3131
 #, fuzzy
 msgid ""
 "In any backup scenario, repository administrators need to be aware of how "
@@ -20941,14 +21064,14 @@ msgstr ""
 "修订版本的属性—因此最新版本的增量备份不会捕捉到以前特定修订版本的属性修改。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:3031
+#: ../../en/book/ch05-repository-admin.xml:3138
 msgid ""
 "<command>svnadmin setlog</command> can be called in a way that bypasses the "
 "hook interface altogether."
 msgstr "<command>svnadmin setlog</command>可以被绕过钩子程序被调用。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3041
+#: ../../en/book/ch05-repository-admin.xml:3148
 #, fuzzy
 msgid ""
 "Generally speaking, only the truly paranoid would need to back up their "
@@ -20965,7 +21088,7 @@ msgstr ""
 "足够的冗余措施，至少对于最近的提交。但是它是你的数据—你喜欢怎样保护都可以。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3051
+#: ../../en/book/ch05-repository-admin.xml:3158
 #, fuzzy
 msgid ""
 "Often, the best approach to repository backups is a diversified one that "
@@ -20992,7 +21115,7 @@ msgstr ""
 "帮助你从艰难的时光恢复过来。"
 
 #. type: Content of: <book><chapter><sect1><sect2><para><footnote><para>
-#: ../../en/book/ch05-repository-admin.xml:3066
+#: ../../en/book/ch05-repository-admin.xml:3173
 #, fuzzy
 msgid ""
 "You know&mdash;the collective term for all of her <quote>fickle fingers.</"
@@ -21000,12 +21123,12 @@ msgid ""
 msgstr "你知道的—只是对各种变化莫测的问题的统称。"
 
 #. type: Content of: <book><chapter><sect1><sect2><title>
-#: ../../en/book/ch05-repository-admin.xml:3076
+#: ../../en/book/ch05-repository-admin.xml:3183
 msgid "Managing Repository UUIDs"
 msgstr "管理版本库的 UUID"
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3078
+#: ../../en/book/ch05-repository-admin.xml:3185
 msgid ""
 "Subversion repositories have a universally unique identifier (UUID) "
 "associated with them.  This is used by Subversion clients to verify the "
@@ -21017,7 +21140,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3088
+#: ../../en/book/ch05-repository-admin.xml:3195
 msgid ""
 "As a general rule, you want the UUIDs of your live repositories to be "
 "unique.  That is, after all, the point of having UUIDs.  But there are times "
@@ -21034,7 +21157,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3104
+#: ../../en/book/ch05-repository-admin.xml:3211
 msgid ""
 "There are a couple of ways to set (or reset) a repository's UUID, should you "
 "need to.  As of Subversion 1.5, this is as simple as using the "
@@ -21045,7 +21168,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3126
+#: ../../en/book/ch05-repository-admin.xml:3233
 msgid ""
 "For folks using versions of Subversion earlier than 1.5, these tasks are a "
 "little more complicated.  You can explicitly set a repository's UUID by "
@@ -21055,7 +21178,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><sect2><para>
-#: ../../en/book/ch05-repository-admin.xml:3143
+#: ../../en/book/ch05-repository-admin.xml:3250
 msgid ""
 "Having older versions of Subversion generate a brand-new UUID is not quite as "
 "simple to do, though.  Your best bet here is to find some other way to "
@@ -21063,12 +21186,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><title>
-#: ../../en/book/ch05-repository-admin.xml:3156
+#: ../../en/book/ch05-repository-admin.xml:3263
 msgid "Moving and Removing Repositories"
 msgstr "移动和删除版本库"
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:3158
+#: ../../en/book/ch05-repository-admin.xml:3265
 msgid ""
 "Subversion repository data is wholly contained within the repository "
 "directory.  As such, you can move a Subversion repository to some other "
@@ -21082,7 +21205,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:3170
+#: ../../en/book/ch05-repository-admin.xml:3277
 msgid ""
 "Of course, there's often still more to be done when trying to cleanly affect "
 "changes such as this.  For example, you might need to update your Subversion "
@@ -21096,7 +21219,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:3182
+#: ../../en/book/ch05-repository-admin.xml:3289
 msgid ""
 "In the case of a copied repository, you should also consider the fact that "
 "Subversion uses repository UUIDs to distinguish repositories.  If you copy a "
@@ -21109,7 +21232,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:3201
+#: ../../en/book/ch05-repository-admin.xml:3308
 #, fuzzy
 msgid ""
 "By now you should have a basic understanding of how to create, configure, and "
@@ -21122,7 +21245,7 @@ msgstr ""
 "并提出了避免陷入误区的建议。"
 
 #. type: Content of: <book><chapter><sect1><para>
-#: ../../en/book/ch05-repository-admin.xml:3208
+#: ../../en/book/ch05-repository-admin.xml:3315
 #, fuzzy
 msgid ""
 "All that remains is for you to decide what exciting data to store in your "
@@ -25959,7 +26082,7 @@ msgstr "<literal>store-plaintext-passwords</literal>"
 #.  TODO: Using GNOME Keyring and KDE Wallet needs to
 #.                            be documented. Then:
 #.                  "See section xyz for information on how to configure
-#.                  an encrypted password cache on your system."
+#.                  an encrypted password cache on your system." 
 #. type: Content of: <book><chapter><sect1><sect2><sect3><variablelist><varlistentry><listitem><para>
 #: ../../en/book/ch07-customizing-svn.xml:456
 msgid ""
@@ -37378,8 +37501,8 @@ msgid ""
 "<literal>Increase&nbsp;Productivity</literal>, then&hellip;"
 msgstr ""
 "A：许多客户希望知道怎样利用我们革命性的专利办公套件最大程度的提高生产率。答案"
-"非常简单：首先，点击<literal>文件</literal>菜单，找到"
-"<literal>提高生产率</literal>条目，然后 …"
+"非常简单：首先，点击<literal>文件</literal>菜单，找到<literal>提高生产率</"
+"literal>条目，然后 …"
 
 #. type: Content of: <book><preface><para>
 #: ../../en/book/foreword.xml:37
