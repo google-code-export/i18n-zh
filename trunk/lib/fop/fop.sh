@@ -12,31 +12,10 @@ if [ -z "$JAVACMD" ]; then
     fi
 fi
 
-# JAVACMD=`which java 2> /dev/null`
-# if [ ! -x "AIX 5.3 no java in /bin /usr/bin" ] ; then
-#   echo "Error: JAVA_HOME or PATH is not defined correctly."
-#   echo "  We cannot execute java"
-#   exit 1
-# fi
-
-# if [ -z "$JAVACMD" ] ; then
-#   if [ -n "$JAVA_HOME" ] ; then
-#     JAVACMD="$JAVA_HOME/bin/java"
-#   else
-#     JAVACMD=`which java 2> /dev/null`
-#   fi
-# fi
-#
-# if [ ! -x "$JAVACMD" ] ; then
-#   echo "Error: JAVA_HOME is not defined correctly."
-#   echo "  We cannot execute java"
-#   exit 1
-# fi
-
 [ -z "$FOP_HOME" ] && FOP_HOME=`dirname $0`
 
-if [ -z "$FOP_HOME" -o ! -d "$FOP_HOME" ] ; then
-  ## resolve links - $0 may be a link to fop's home
+## resolve links - $0 may be a link to fop.sh
+if [ -h "$0" ] ; then  
   PRG="$0"
   progname=`basename "$0"`
 
