@@ -71,15 +71,6 @@
     </copy>
     <copy file="../en/book/styles.css" todir="build/source" overwrite="true"/>
 
-    <exec dir="${basedir}" osfamily="windows" executable="xmllint" failonerror="true">
-      <env key="SGML_CATALOG_FILES" value="${sgml.catalog.files}"/>
-      <arg line="--catalogs --nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml"/>
-    </exec>
-
-    <exec dir="${basedir}" osfamily="unix" executable="xmllint" failonerror="true">
-      <arg line="--nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml"/>
-    </exec>
-
     <exec dir="${basedir}" executable="perl" failonerror="true">
       <env key="PERLLIB" value="${po4a.lib}"/>
       <env key="PERL5LIB" value="${po4a.lib}"/>
@@ -90,12 +81,18 @@
       <arg value="docbook"/>
       <arg value="-o"/>
       <arg value="doctype=docbook"/>
+      <arg value="-o"/>
+      <arg value="includeexternal"/>
+      <arg value="-o"/>
+      <arg value="nodefault=&lt;programlisting&gt; &lt;screen&gt;"/>
+      <arg value="-o"/>
+      <arg value="untranslated=&lt;programlisting&gt; &lt;screen&gt;"/>
       <arg value="-k"/>
       <arg value="0"/>
       <arg value="-p"/>
       <arg value="po/svnbook.po"/>
       <arg value="-m"/>
-      <arg value="build/source/svnbook-en.xml"/>
+      <arg value="../en/book/book.xml"/>
       <arg value="-l"/>
       <arg value="build/source/svnbook-tmp.xml"/>
     </exec>
