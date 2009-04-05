@@ -10,7 +10,9 @@ UPDATEPO = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-updatepo -M UTF-8 \
        -o nodefault='<programlisting> <screen>' \
        -o untranslated='<programlisting> <screen>'
 TRANSLATE = PERLLIB=$(PO4A_LIB) $(PO4A_HOME)/po4a-translate -M UTF-8 \
-       -f docbook -o doctype='docbook' \
+       -f docbook -o doctype='docbook' -o includeexternal \
+       -o nodefault='<programlisting> <screen>' \
+       -o untranslated='<programlisting> <screen>' \
        -k 0
 
 help:
@@ -58,18 +60,16 @@ build/source/svnbook.xml: $(filter-out ../en/book/version.xml, $(wildcard ../en/
 	mkdir -p build/source/images
 	cp ../en/book/styles.css build/source
 	cp ../en/book/images/*.png build/source/images
-	xmllint --nonet --noent --xinclude --postvalid --output build/source/svnbook-en.xml ../en/book/book.xml
-	$(TRANSLATE) -m build/source/svnbook-en.xml -p po/svnbook.po -l build/source/svnbook.xml
+
+	$(TRANSLATE) -m ../en/book/book.xml -p po/svnbook.po -l build/source/svnbook.xml
 	$(MAKE) validate
 
 epub: build/epub/svnbook.epub
-
 build/epub/svnbook.epub: build/source/svnbook.xml
 	mkdir -p build/epub
 	(cd build/source; $(DB2EPUB) -c styles.css -v svnbook.xml; mv svnbook.epub ../epub)
 
 html: build/html/index.html
-
 build/html/index.html: build/source/svnbook.xml ../stylesheets/html.xsl ../stylesheets/$(LINGUA)/html.xsl
 	mkdir -p build/html/images
 	cp ../en/book/styles.css build/html
@@ -78,7 +78,6 @@ build/html/index.html: build/source/svnbook.xml ../stylesheets/html.xsl ../style
 	    ../stylesheets/$(LINGUA)/html.xsl build/source/svnbook.xml
 
 html-single: build/html-single/svnbook.html
-
 build/html-single/svnbook.html: build/source/svnbook.xml ../stylesheets/html-single.xsl ../stylesheets/$(LINGUA)/html-single.xsl
 	mkdir -p build/html-single/images
 	cp ../en/book/styles.css build/html-single
@@ -87,7 +86,6 @@ build/html-single/svnbook.html: build/source/svnbook.xml ../stylesheets/html-sin
 	    ../stylesheets/$(LINGUA)/html-single.xsl build/source/svnbook.xml
 
 pdf: build/pdf/svnbook.pdf
-
 build/pdf/svnbook.pdf: build/source/svnbook.xml ../stylesheets/fo.xsl ../stylesheets/$(LINGUA)/fo.xsl
 	mkdir -p build/pdf
 	java -classpath $(JAVA_LIB)/saxon65.jar:$(JAVA_LIB)/saxon65-dbxsl.jar:$(JAVA_LIB)/xml-commons-resolver-1.2.jar:$(JAVA_LIB) \
