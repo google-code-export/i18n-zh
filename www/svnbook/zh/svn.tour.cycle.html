@@ -26,10 +26,7 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.tour.cycle"></a>2.4. 基本的工作循环</h2></div></div></div>
-<p>Subversion has numerous features, options, bells, and whistles, but on a
-day-to-day basis, odds are that you will use only a few of them.  In this
-section, we'll run through the most common things that you might find
-yourself doing with Subversion in the course of a day's work.</p>
+<p>Subversion 有许多特性, 选项和华而不实的高级功能，但日常的工作中你只使用其中的一小部分，在这一节里，我们会介绍许多你在日常工作中常用的命令。</p>
 <p>典型的工作周期是这样的：</p>
 <div class="orderedlist"><ol type="1">
 <li>
@@ -71,10 +68,8 @@ yourself doing with Subversion in the course of a day's work.</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.cycle.update"></a>2.4.1. 更新你的工作副本</h3></div></div></div>
-<p>When working on a project with a team, you'll want to update your working
-copy to receive any changes other developers on the project have made since
-your last update.  Use <span class="command"><strong>svn update</strong></span> to bring your working
-copy into sync with the latest revision in the repository:</p>
+<p>当你在一个团队的项目里工作时，你希望更新你的工作副本得到所有其他人这段时间作出的修改，使用 <span class="command"><strong>svn update</strong></span>
+让你的工作副本与最新的版本同步：</p>
 <pre class="screen">
 $ svn update
 U  foo.c
@@ -82,107 +77,66 @@ U  bar.c
 Updated to revision 2.
 </pre>
 <p>这种情况下，其他人在你上次更新之后提交了对<code class="filename">foo.c</code>和<code class="filename">bar.c</code>的修改，因此Subversion更新你的工作副本来引入这些更改。</p>
-<p>When the server sends changes to your working copy via <span class="command"><strong>svn
-update</strong></span>, a letter code is displayed next to each item to let you
-know what actions Subversion performed to bring your working copy up to
-date.  To find out what these letters mean, run <strong class="userinput"><code>svn help
-update</code></strong>.</p>
+<p>当服务器通过 <span class="command"><strong>svn update</strong></span> 将修改传递到你的工作副本时，每一个项目之前会有一个字母，来让你知道
+Subversion 为保持最新对你的工作副本作了哪些工作。关于这些字母的详细含义，可以执行 <strong class="userinput"><code>svn help
+update</code></strong>。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.cycle.edit"></a>2.4.2. 修改你的工作副本</h3></div></div></div>
-<p>Now you can get to work and make changes in your working copy.  It's usually
-most convenient to decide on a discrete change (or set of changes) to make,
-such as writing a new feature, fixing a bug, and so on.  The Subversion
-commands that you will use here are <span class="command"><strong>svn add</strong></span>, <span class="command"><strong>svn
-delete</strong></span>, <span class="command"><strong>svn copy</strong></span>, <span class="command"><strong>svn move</strong></span>,
-and <span class="command"><strong>svn mkdir</strong></span>.  However, if you are merely editing files
-that are already in Subversion, you may not need to use any of these
-commands until you commit.</p>
-<p>You can make two kinds of changes to your working copy: <em class="firstterm">file
-changes</em> and <em class="firstterm">tree changes</em>.  You don't need
-to tell Subversion that you intend to change a file; just make your changes
-using your text editor, word processor, graphics program, or whatever tool
-you would normally use.  Subversion automatically detects which files have
-been changed, and in addition, it handles binary files just as easily as it
-handles text files—and just as efficiently, too.  For tree changes,
-you can ask Subversion to “<span class="quote">mark</span>” files and directories for
-scheduled removal, addition, copying, or moving.  These changes may take
-place immediately in your working copy, but no additions or removals will
-happen in the repository until you commit them.</p>
+<p>现在你可以开始工作，并且修改你的工作副本了。你很容易决定作出一个修改(或者是一组)，像写一个新的特性，修正一个错误等等。这时可以使用的
+Subversion 命令包括 <span class="command"><strong>svn add</strong></span>, <span class="command"><strong>svn delete</strong></span>,
+<span class="command"><strong>svn copy</strong></span>, <span class="command"><strong>svn move</strong></span> 和 <span class="command"><strong>svn
+mkdir</strong></span>。如果你只是修改版本库中已经存在的文件，在你提交之前，不必使用上面的任何一个命令。</p>
+<p>你可以对工作副本做出两种修改：<em class="firstterm">文件修改</em>和<em class="firstterm">目录树</em>修改。你不需要告诉
+Subversion 你希望修改一个文件，只需要用你的编辑器, 字处理器, 图形程序，或任何工具做出修改，Subversion
+会自动检测到文件的修改。此外，二进制文件的处理方式和文本文件一样，也有同样的效率。对于目录树更改，你可以告诉 Subversion
+将文件和目录“<span class="quote">标记</span>”为调度删除, 添加, 拷贝或移动。这些动作会在工作副本上立刻发生效果，但只有提交后才会在版本库里生效。</p>
 <div class="sidebar">
 <p class="title"><b>版本控制符号连接</b></p>
-<p>On non-Windows platforms, Subversion is able to version files of the special
-type <em class="firstterm">symbolic link</em> (or “<span class="quote">symlink</span>”).  A
-symlink is a file that acts as a sort of transparent reference to some other
-object in the filesystem, allowing programs to read and write to those
-objects indirectly by way of performing operations on the symlink itself.</p>
-<p>When a symlink is committed into a Subversion repository, Subversion
-remembers that the file was in fact a symlink, as well as the object to
-which the symlink “<span class="quote">points.</span>” When that symlink is checked out to
-another working copy on a non-Windows system, Subversion reconstructs a real
-filesystem-level symbolic link from the versioned symlink.  But that doesn't
-in any way limit the usability of working copies on systems such as Windows
-that do not support symlinks.  On such systems, Subversion simply creates a
-regular text file whose contents are the path to which to the original
-symlink pointed.  While that file can't be used as a symlink on a Windows
-system, it also won't prevent Windows users from performing their other
-Subversion-related activities.</p>
+<p>在非 Windows 平台，Subversion 可以将特殊类型<em class="firstterm">符号链接</em>(或
+“<span class="quote">symlink</span>”)版本化。一个符号链接是对文件系统中其他对象的透明引用，可以通过对符号链接操作，实现对引用对象的读写操作。</p>
+<p>当符号链提交到 Subversion 版本库，Subversion
+会记住这个文件实际上是一个符号链接，也会知道这个符号链接指向的“<span class="quote">对象</span>”。当这个符号链接检出到另一个支持符号链接的操作系统上时，Subversion
+会重新构建文件系统级的符号链接。当然这样不会影响在 Windows 这类不支持符号链接的系统上的操作，在此类系统上，Subversion
+只会创建一个包含指向对象路径的文本文件，因为这个文件不能在 Windows 系统上作为符号链接使用，所以它也会防止 Windows 用户作其他
+Subversion 相关的操作。</p>
 </div>
 <p>下面是 Subversion 用来修改目录树结构的五个最常用的子命令。</p>
 <div class="variablelist"><dl>
 <dt><span class="term"><strong class="userinput"><code>svn add foo</code></strong></span></dt>
-<dd><p>Schedule file, directory, or symbolic link <code class="filename">foo</code> to be
-added to the repository.  When you next commit, <code class="filename">foo</code>
-will become a child of its parent directory.  Note that if
-<code class="filename">foo</code> is a directory, everything underneath
-<code class="filename">foo</code> will be scheduled for addition.  If you want only
-to add <code class="filename">foo</code> itself, pass the <code class="option">--depth
-empty</code> option.</p></dd>
+<dd><p>调度将文件, 目录或者符号链接 <code class="filename">foo</code>
+添加到版本库。当你下次提交后，<code class="filename">foo</code> 会成为其父目录的一个子对象。注意，如果
+<code class="filename">foo</code> 是目录，所有 foo 中的内容也会调度增加。如果你只想添加
+<code class="filename">foo</code> 本身，请使用 <code class="option">--non-recursive (-N)</code> 参数。</p></dd>
 <dt><span class="term"><strong class="userinput"><code>svn delete foo</code></strong></span></dt>
-<dd><p>Schedule file, directory, or symbolic link <code class="filename">foo</code> to be
-deleted from the repository.  If <code class="filename">foo</code> is a file or link,
-it is immediately deleted from your working copy.  If
-<code class="filename">foo</code> is a directory, it is not deleted, but Subversion
-schedules it for deletion.  When you commit your changes,
-<code class="filename">foo</code> will be entirely removed from your working copy and
-the repository.  <sup>[<a name="id361386" href="#ftn.id361386" class="footnote">3</a>]</sup>
+<dd><p>调度将文件, 目录或者符号链接 <code class="filename">foo</code> 从版本库中删除，如果 <code class="filename">foo</code>
+是文件或符号链接，它会马上从工作副本中删除。如果 <code class="filename">foo</code> 是目录，不会被删除，但是 Subversion
+调度删除它。当你提交修改后，<code class="filename">foo</code> 就会在你的工作副本和版本库中被删除。<sup>[<a name="id352059" href="#ftn.id352059" class="footnote">3</a>]</sup>
             </p></dd>
 <dt><span class="term"><strong class="userinput"><code>svn copy foo bar</code></strong></span></dt>
-<dd><p>Create a new item <code class="filename">bar</code> as a duplicate of
-<code class="filename">foo</code> and automatically schedule <code class="filename">bar</code>
-for addition.  When <code class="filename">bar</code> is added to the repository on
-the next commit, its copy history is recorded (as having originally come
-from <code class="filename">foo</code>).  <span class="command"><strong>svn copy</strong></span> does not create
-intermediate directories unless you pass the <code class="option">--parents</code>
-option.</p></dd>
+<dd><p>建立一个新条目 <code class="filename">bar</code> 作为 <code class="filename">foo</code> 的复制品，并且自动调度增加
+<code class="filename">bar</code>，当在下次提交时会将 <code class="filename">bar</code>
+添加到版本库，这种复制会记录下来历史(按照来自 <code class="filename">foo</code> 的方式记录)。如果不传递
+<code class="option">--parents</code>，<span class="command"><strong>svn copy</strong></span> 并不建立中介目录。</p></dd>
 <dt><span class="term"><strong class="userinput"><code>svn move foo bar</code></strong></span></dt>
-<dd><p>This command is exactly the same as running <strong class="userinput"><code>svn copy foo bar; svn
-delete foo</code></strong>.  That is, <code class="filename">bar</code> is scheduled for
-addition as a copy of <code class="filename">foo</code>, and <code class="filename">foo</code>
-is scheduled for removal.  <span class="command"><strong>svn move</strong></span> does not create
-intermediate directories unless you pass the <code class="option">--parents</code>
-option.</p></dd>
+<dd><p>这个命令与与运行 <strong class="userinput"><code>svn copy foo bar; svn delete foo</code></strong>
+完全相同，<code class="filename">bar</code> 作为 <code class="filename">foo</code>
+的拷贝调度添加，<code class="filename">foo</code> 已经调度删除。如果不传递
+<code class="option">--parents</code>，<span class="command"><strong>svn move</strong></span> 不建立中介的目录。</p></dd>
 <dt><span class="term"><strong class="userinput"><code>svn mkdir blort</code></strong></span></dt>
-<dd><p>This command is exactly the same as running <strong class="userinput"><code>mkdir blort; svn add
-blort</code></strong>.  That is, a new directory named
-<code class="filename">blort</code> is created and scheduled for addition.</p></dd>
+<dd><p>这个命令同运行 <strong class="userinput"><code>mkdir blort; svn add blort</code></strong> 相同，也就是创建一个叫做
+<code class="filename">blort</code> 的文件，并且调度增加到版本库。</p></dd>
 </dl></div>
 <div class="sidebar">
 <p class="title"><b>不通过工作副本修改版本库</b></p>
-<p>There <span class="emphasis"><em>are</em></span> some use cases that immediately commit tree
-changes to the repository.  This happens only when a subcommand is operating
-directly on a URL, rather than on a working-copy path.  In particular,
-specific uses of <span class="command"><strong>svn mkdir</strong></span>, <span class="command"><strong>svn copy</strong></span>,
-<span class="command"><strong>svn move</strong></span>, and <span class="command"><strong>svn delete</strong></span> can work with
-URLs (and don't forget that <span class="command"><strong>svn import</strong></span> always makes
-changes to a URL).</p>
-<p>URL operations behave in this manner because commands that operate on a
-working copy can use the working copy as a sort of “<span class="quote">staging
-area</span>” to set up your changes before committing them to the
-repository.  Commands that operate on URLs don't have this luxury, so when
-you operate directly on a URL, any of the aforementioned actions represents
-an immediate commit.</p>
+<p>有些情况会立刻提交目录树的修改到版本库，这只发生在子命令直接操作 URL，而不是工作副本路径时。以特定的方式使用 <span class="command"><strong>svn
+mkdir</strong></span>, <span class="command"><strong>svn copy</strong></span>, <span class="command"><strong>svn move</strong></span> 和
+<span class="command"><strong>svn delete</strong></span> 可以针对 URL 操作(并且不要忘记 <span class="command"><strong>svn
+import</strong></span> 只针对 URL 操作)。</p>
+<p>与指定 URL
+的操作方式有些区别，因为在使用工作副本的运作方式时，工作副本成为一个“<span class="quote">集结地</span>”，可以在提交之前整理组织所要做的修改，直接对
+URL 操作就没有这种奢侈，所以当你直接操作 URL 的时候，所有以上的动作代表一个立即的提交。</p>
 </div>
 </div>
 <div class="sect2" lang="zh">
@@ -205,18 +159,18 @@ diff</strong></span>, and <span class="command"><strong>svn revert</strong></spa
 even if your repository <span class="emphasis"><em>is</em></span> across the network.  This
 makes it easy to manage your changes-in-progress when you are somewhere
 without a network connection, such as traveling on an airplane, riding a
-commuter train, or hacking on the beach.  <sup>[<a name="id361641" href="#ftn.id361641" class="footnote">4</a>]</sup>
+commuter train, or hacking on the beach.  <sup>[<a name="id352321" href="#ftn.id352321" class="footnote">4</a>]</sup>
         </p>
 <p>Subversion does this by keeping private caches of pristine versions of each
 versioned file inside the <code class="filename">.svn</code> administrative areas.
-This allows Subversion to report—and revert—local
-modifications to those files <span class="emphasis"><em>without network access</em></span>.
-This cache (called the “<span class="quote">text-base</span>”) also allows Subversion to
-send the user's local modifications during a commit to the server as a
-compressed <em class="firstterm">delta</em> (or “<span class="quote">difference</span>”)
-against the pristine version.  Having this cache is a tremendous
-benefit—even if you have a fast Internet connection, it's much faster
-to send only a file's changes rather than the whole file to the server.</p>
+This allows Subversion to report—and revert—local modifications
+to those files <span class="emphasis"><em>without network access</em></span>.  This cache
+(called the “<span class="quote">text-base</span>”) also allows Subversion to send the
+user's local modifications during a commit to the server as a compressed
+<em class="firstterm">delta</em> (or “<span class="quote">difference</span>”) against the
+pristine version.  Having this cache is a tremendous benefit—even if
+you have a fast Internet connection, it's much faster to send only a file's
+changes rather than the whole file to the server.</p>
 </div>
 <p>Subversion has been optimized to help you with this task, and it is able to
 do many things without communicating with the repository.  In particular,
@@ -238,11 +192,11 @@ changes you've made to your working copy.  <span class="command"><strong>svn sta
 will give you all the information you need regarding what has changed in
 your working copy—without accessing the repository or potentially
 incorporating new changes published by other users.</p>
-<p>In Subversion, <span class="command"><strong>svn update</strong></span> does just that—it
-updates your working copy with any changes committed to the repository since
-the last time you updated your working copy.  You may have to break the
-habit of using the <span class="command"><strong>update</strong></span> command to see what local
-modifications you've made.</p>
+<p>In Subversion, <span class="command"><strong>svn update</strong></span> does just that—it updates
+your working copy with any changes committed to the repository since the
+last time you updated your working copy.  You may have to break the habit of
+using the <span class="command"><strong>update</strong></span> command to see what local modifications
+you've made.</p>
 </div>
 <p>If you run <span class="command"><strong>svn status</strong></span> at the top of your working copy
 with no arguments, it will detect all file and tree changes you've made.
@@ -512,8 +466,7 @@ contents—basically that you've “<span class="quote">resolved</span>” the c
 <dt><span class="term">(<code class="computeroutput">t</code>)heirs-(<code class="computeroutput">f</code>)ull</span></dt>
 <dd><p>丢弃你对查看文件的本地修改，只使用从服务器新接收的变更。</p></dd>
 <dt><span class="term">(<code class="computeroutput">l</code>)aunch</span></dt>
-<dd><p>Launch an external program to perform the conflict resolution.  This
-requires a bit of preparation beforehand.</p></dd>
+<dd><p>启动外部程序来执行冲突解决，这需要一些预先的准备。</p></dd>
 <dt><span class="term">(<code class="computeroutput">h</code>)elp</span></dt>
 <dd><p>显示所有在冲突解决时可能使用的命令。</p></dd>
 </dl></div>
@@ -722,7 +675,7 @@ Grilled Chicken
 changes—she's going to be awfully surprised when the sandwich arrives
 and it's not what she wanted.  This is where you pick up the phone or walk
 across the office and explain to Sally that you can't get sauerkraut from an
-Italian deli.  <sup>[<a name="id363110" href="#ftn.id363110" class="footnote">5</a>]</sup> Once you've agreed on
+Italian deli.  <sup>[<a name="id353502" href="#ftn.id353502" class="footnote">5</a>]</sup> Once you've agreed on
 the changes you will commit, edit your file and remove the conflict markers:</p>
 <pre class="screen">
 Top piece of bread
@@ -863,12 +816,10 @@ cover a few more commands that you'll use fairly often.</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id361386" href="#id361386" class="para">3</a>] </sup>Of course, nothing is ever totally deleted from the repository—just
-from the <code class="literal">HEAD</code> of the repository.  You can get back
-anything you delete by checking out (or updating your working copy to) a
-revision earlier than the one in which you deleted it. Also see <a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.resurrect" title="4.3.5. 找回删除的项目">第 4.3.5 节 “找回删除的项目”</a>.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id361641" href="#id361641" class="para">4</a>] </sup>而且你也没有无线上网卡。不要妄想连接到我们，哈!</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id363110" href="#id363110" class="para">5</a>] </sup>如果你向他们询问，他们非常有理由把你带到城外的铁轨上。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id352059" href="#id352059" class="para">3</a>] </sup>当然没有任何东西是在版本库里被删除了—只是在版本库的 <code class="literal">HEAD</code>
+里消失了。你可以通过检出(或者更新你的工作副本到)你做出删除操作的前一个修订版本，来找回所有的东西，详情参见<a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.resurrect" title="4.3.5. 找回删除的项目">第 4.3.5 节 “找回删除的项目”</a>。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id352321" href="#id352321" class="para">4</a>] </sup>而且你也没有无线上网卡。不要妄想连接到我们，哈!</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id353502" href="#id353502" class="para">5</a>] </sup>如果你向他们询问，他们非常有理由把你带到城外的铁轨上。</p></div>
 </div>
 </div>
 <div class="navfooter">

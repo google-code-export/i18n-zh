@@ -28,26 +28,19 @@
 <a name="svn.forcvs.status-vs-update"></a>B.4. 区分状态和更新</h2></div></div></div>
 <p>在Subversion，我们已经设法抹去<span class="command"><strong>cvs status</strong></span>和<span class="command"><strong>cvs
 update</strong></span>之间的混乱。</p>
-<p>The <span class="command"><strong>cvs status</strong></span> command has two purposes: first, to show
-the user any local modifications in the working copy, and second, to show
-the user which files are out of date.  Unfortunately, because of CVS's
-hard-to-read status output, many CVS users don't take advantage of this
-command at all.  Instead, they've developed a habit of running
-<strong class="userinput"><code>cvs update</code></strong> or <strong class="userinput"><code>cvs -n update</code></strong> to
-quickly see their changes.  If users forget to use the <code class="option">-n</code>
-option, this has the side effect of merging repository changes they may not
-be ready to deal with.</p>
-<p>Subversion removes this muddle by making the output of <span class="command"><strong>svn
-status</strong></span> easy to read for both humans and parsers.  Also,
-<span class="command"><strong>svn update</strong></span> prints only information about files that are
-updated, <span class="emphasis"><em>not</em></span> local modifications.</p>
+<p>命令 <span class="command"><strong>cvs status</strong></span>
+有两个目的：第一，显示用户在工作副本的所有本地修改，第二，显示给用户哪些文件是最新的。很不幸，因为 CVS 的输出难以阅读，许多 CVS
+用户并没有充分利用这个命令的好处。相反，他们慢慢习惯运行 <span class="command"><strong>cvs update</strong></span> 或 <span class="command"><strong>cvs -n
+update</strong></span> 来快速查看区别，如果用户忘记使用 <code class="option">-n</code>
+选项，副作用就是将还没有准备好处理的版本库修改合并到工作副本。</p>
+<p>对于 Subversion，我们通过修改 <span class="command"><strong>svn status</strong></span>
+的输出，使之同时满足阅读和解析的需要来努力消除这种混乱。同样，<span class="command"><strong>svn update</strong></span>
+只会打印将要更新的文件信息，而<span class="emphasis"><em>不是</em></span>本地修改。</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.forcvs.status-vs-update.status"></a>B.4.1. 状态</h3></div></div></div>
-<p><span class="command"><strong>svn status</strong></span> prints all files that have local
-modifications.  By default, the repository is not contacted.  While this
-subcommand accepts a fair number of options, the following are the most
-commonly used ones:</p>
+<p><span class="command"><strong>svn status</strong></span>
+打印所有本地修改的文件。缺省情况下，不会连接版本库。然而这个命令接受一些选项，下面是是一些最常用的：</p>
 <div class="variablelist"><dl>
 <dt><span class="term"><code class="option">-u</code></span></dt>
 <dd><p>访问版本库检测并显示过期的信息。</p></dd>
@@ -56,8 +49,7 @@ commonly used ones:</p>
 <dt><span class="term"><code class="option">-N</code></span></dt>
 <dd><p>非递归方式运行(不会访问子目录)。</p></dd>
 </dl></div>
-<p>The <span class="command"><strong>svn status</strong></span> command has two output formats.  In the
-default “<span class="quote">short</span>” format, local modifications look like this:</p>
+<p><span class="command"><strong>svn status</strong></span> 命令有两种输出格式。默认是“<span class="quote">短</span>”格式，本地修改的输出就像这样：</p>
 <pre class="screen">
 $ svn status
 M      foo.c
@@ -72,17 +64,10 @@ M            1047   foo.c
 M            1050   bar/baz.c
 Status against revision:   1066
 </pre>
-<p>In this case, two new columns appear.  The second column contains an
-asterisk if the file or directory is out of date.  The third column shows
-the working copy's revision number of the item.  In the previous example,
-the asterisk indicates that <code class="filename">faces.html</code> would be patched
-if we updated, and that <code class="filename">bloo.png</code> is a newly added file
-in the repository.  (The absence of any revision number next to
-<code class="filename">bloo.png</code> means that it doesn't yet exist in the working
-copy.)</p>
-<p>At this point, you should take a quick look at the list of all possible
-status codes in <a class="xref" href="svn.ref.svn.c.status.html" title="svn status">svn status</a>.  Here are a few of
-the more common status codes you'll see:</p>
+<p>在这个例子里，增加了两列。第二列的星号表示了文件或目录是否过期。第三列显示了工作副本的版本号。在上面的例子里，星号表示如果进行更新，<code class="filename">faces.html</code>
+会被修改，而 <code class="filename">bloo.png</code>
+则是版本库新加的文件(<code class="filename">bloo.png</code>前面的版本号为空，表示这个文件在工作副本不存在)。</p>
+<p>此刻，你应该赶快看一下<a class="xref" href="svn.ref.svn.c.status.html" title="svn status">svn status</a>中所说的可能属性代码。下面是一些你会看到的常用状态代码：</p>
 <pre class="screen">
 A    Resource is scheduled for Addition
 D    Resource is scheduled for Deletion
@@ -95,17 +80,16 @@ X    Resource is eXternal to this working copy (may come from another
 !    Resource is missing or incomplete (removed by a tool other than
        Subversion)
 </pre>
-<p>For a more detailed discussion of <span class="command"><strong>svn status</strong></span>, see <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a>.</p>
+<p>关于 <span class="command"><strong>svn status</strong></span> 的详细讨论，参见<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a>。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.forcvs.status-vs-update.update"></a>B.4.2. 更新</h3></div></div></div>
 <p><span class="command"><strong>svn update</strong></span>会更新你的工作副本，只打印这次更新的文件。</p>
-<p>Subversion has combined CVS's <code class="literal">P</code> and <code class="literal">U</code>
-codes into just <code class="literal">U</code>.  When a merge or conflict occurs,
-Subversion simply prints <code class="literal">G</code> or <code class="literal">C</code>,
-rather than a whole sentence about it.</p>
-<p>For a more detailed discussion of <span class="command"><strong>svn update</strong></span>, see <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.update" title="2.4.1. 更新你的工作副本">第 2.4.1 节 “更新你的工作副本”</a>.</p>
+<p>Subversion 将 CVS 的 <code class="literal">P</code> 和 <code class="literal">U</code> 合并为
+<code class="literal">U</code>。当合并或冲突发生时，Subversion 会简单的打印 <code class="literal">G</code> 或
+<code class="literal">C</code>，而不是大段相关内容。</p>
+<p>关于 <span class="command"><strong>svn update</strong></span> 的详细讨论，参见<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.update" title="2.4.1. 更新你的工作副本">第 2.4.1 节 “更新你的工作副本”</a>。</p>
 </div>
 </div>
 <div class="navfooter">

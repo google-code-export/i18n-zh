@@ -196,7 +196,7 @@ read-only mirror of a Subversion repository.  The program really has one
 job—to transfer one repository's versioned history into another
 repository.  And while there are few ways to do that, its primary strength
 is that it can operate remotely—the “<span class="quote">source</span>” and
-“<span class="quote">sink</span>” <sup>[<a name="id379214" href="#ftn.id379214" class="footnote">33</a>]</sup> repositories may
+“<span class="quote">sink</span>” <sup>[<a name="id369604" href="#ftn.id369604" class="footnote">33</a>]</sup> repositories may
 be on different computers from each other and from
 <span class="command"><strong>svnsync</strong></span> itself.</p>
 <p>就像你期望的，<span class="command"><strong>svnsync</strong></span>的语法与本节提到的其他命令非常类似。</p>
@@ -223,28 +223,19 @@ later in this chapter (see <a class="xref" href="svn.reposadmin.maint.html#svn.r
 <span class="command"><strong>fsfs-reshard.py</strong></span> script (found in the
 <code class="filename">tools/server-side</code> directory of the Subversion source
 distribution) is a useful performance tuning tool for administrators of
-FSFS-backed Subversion repositories.  FSFS repositories contain files that
-describe the changes made in a single revision, and files that contain the
-revision properties associated with a single revision.  Repositories created
-in versions of Subversion prior to 1.5 keep these files in two
-directories—one for each type of file.  As new revisions are
-committed to the repository, Subversion drops more files into these two
-directories—over time, the number of these files in each directory
-can grow to be quite large.  This has been observed to cause performance
-problems on certain network-based filesystems.</p>
-<p>Subversion 1.5 creates FSFS-backed repositories using a slightly modified
-layout in which the contents of these two directories are
-<em class="firstterm">sharded</em>, or scattered across several subdirectories.
-This can greatly reduce the time it takes the system to locate any one of
-these files, and therefore increases the overall performance of Subversion
-when reading from the repository.  The number of subdirectories used to
-house these files is configurable, though, and that's where
-<span class="command"><strong>fsfs-reshard.py</strong></span> comes in.  This script reshuffles the
-repository's file structure into a new arrangement that reflects the
-requested number of sharding subdirectories.  This is especially useful for
-converting an older Subversion repository into the new Subversion 1.5
-sharded layout (which Subversion will not automatically do for you) or for
-fine-tuning an already sharded repository.</p>
+FSFS-backed Subversion repositories.  As described in the sidebar <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.basics.backends.fsfs.revfiles" title="Revision files and shards">Revision files and shards</a>, FSFS repositories
+use individual files to house information about each revision.  Sometimes
+these files all live in a single directory; sometimes they are sharded
+across many directories.  But the neat thing is that the number of
+directories used used to house these files is configurable.  That's where
+<span class="command"><strong>fsfs-reshard.py</strong></span> comes in.</p>
+<p><span class="command"><strong>fsfs-reshard.py</strong></span> reshuffles the repository's file
+structure into a new arrangement that reflects the requested number of
+sharding subdirectories and updates the repository configuration to preserve
+this change.  This is especially useful for converting an older Subversion
+repository into the new Subversion 1.5 sharded layout (which Subversion will
+not automatically do for you)  or for fine-tuning an already sharded
+repository.</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
@@ -444,8 +435,8 @@ $
 </pre>
 <p>A long-abandoned transaction usually represents some sort of failed or
 interrupted commit.  A transaction's datestamp can provide interesting
-information—for example, how likely is it that an operation begun
-nine months ago is still active?</p>
+information—for example, how likely is it that an operation begun nine
+months ago is still active?</p>
 <p>In short, transaction cleanup decisions need not be made unwisely.  Various
 sources of information—including Apache's error and access logs,
 Subversion's operational logs, Subversion revision history, and so
@@ -461,10 +452,10 @@ fact, in a zombie state.</p>
 BDB-backed Subversion repositories were the logfiles in which Berkeley DB
 performs its prewrites before modifying the actual database files.  These
 files capture all the actions taken along the route of changing the database
-from one state to another—while the database files, at any given
-time, reflect a particular state, the logfiles contain all of the many
-changes along the way <span class="emphasis"><em>between</em></span> states.  Thus, they can
-grow and accumulate quite rapidly.</p>
+from one state to another—while the database files, at any given time,
+reflect a particular state, the logfiles contain all of the many changes
+along the way <span class="emphasis"><em>between</em></span> states.  Thus, they can grow and
+accumulate quite rapidly.</p>
 <p>Fortunately, beginning with the 4.2 release of Berkeley DB, the database
 environment has the ability to remove its own unused logfiles
 automatically.  Any repositories created using <span class="command"><strong>svnadmin</strong></span>
@@ -510,6 +501,57 @@ before the backup system has a chance to copy them elsewhere, the incomplete
 set of backed-up logfiles is essentially useless.</p></td></tr>
 </table></div>
 </div>
+<div class="sect3" lang="zh">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="svn.reposadmin.maint.diskspace.fsfspacking"></a>5.4.3.4. 打包 FSFS 文件系统</h4></div></div></div>
+<p>As described in the sidebar <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.basics.backends.fsfs.revfiles" title="Revision files and shards">Revision files and shards</a>, FSFS-backed
+Subversion repositories create, by default, a new on-disk file for each
+revision added to the repository.  Having thousands of these files present
+on your Subversion server—even when housed in separate shard
+directories—can lead to inefficiencies.</p>
+<p>The first problem is that the operating system has to reference many
+different files over a short period of time.  This leads to inefficient use
+of disk caches and, as a result, more time spent seeking across large
+disks.  Because of this, Subversion pays a performance penalty when
+accessing your versioned data.</p>
+<p>The second problem is a bit more subtle.  Because of the ways that most
+filesystems allocate disk space, each file claims more space on the disk
+than it actually uses.  The amount of extra space required to house a single
+file can average anywhere from 2 to 16 kilobytes <span class="emphasis"><em>per
+file</em></span>, depending on the underlying operating system filesystem in
+use.  This penalty translates directly into a per-revision disk usage
+penalty for FSFS-backed repositories.  The effect is most pronounced in
+repositories which have many small revisions, since the overhead involved in
+storing the revision file quickly outgrows the size of the actual data being
+stored.</p>
+<p>To solve these problems, Subversion 1.6 introduced the <span class="command"><strong>svnadmin
+pack</strong></span> command.  By concatenating all the files of a completed shard
+into a single "pack" file and then removing the original per-revision files,
+<span class="command"><strong>svnadmin pack</strong></span> reduces the file count within a given shard
+down to just a single file.  In doing so, it aids filesystem caches and
+reduces (to one) the number of times a file storage overhead penalty is
+paid.</p>
+<p>Subversion can pack existing sharded repositories which have been upgraded
+to the 1.6 filesystem format (see <a class="xref" href="svn.ref.svnadmin.c.upgrade.html" title="svnadmin upgrade">svnadmin upgrade</a>).  To do so, just run
+<span class="command"><strong>svnadmin pack</strong></span> on the repository:</p>
+<pre class="screen">
+$ svnadmin pack /var/svn/repos
+Packing shard 0...done.
+Packing shard 1...done.
+Packing shard 2...done.
+…
+Packing shard 34...done.
+Packing shard 35...done.
+Packing shard 36...done.
+$
+</pre>
+<p>Because the packing process obtains the required locks before doing its
+work, you can run it on live repositories, or even as part of a post-commit
+hook.  Repacking packed shards is legal, but will have no effect on the disk
+usage of the repository.</p>
+<p><span class="command"><strong>svnadmin pack</strong></span> has no effect on BDB-backed Subversion
+repositories.</p>
+</div>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
@@ -544,7 +586,7 @@ to access the repository hang indefinitely (since each new accessor is
 waiting for a lock to go away—which isn't going to happen).</p>
 <p>If this happens to your repository, don't panic.  The Berkeley DB filesystem
 takes advantage of database transactions, checkpoints, and prewrite
-journaling to ensure that only the most catastrophic of events <sup>[<a name="id380006" href="#ftn.id380006" class="footnote">34</a>]</sup> can permanently destroy a database environment.  A
+journaling to ensure that only the most catastrophic of events <sup>[<a name="id370460" href="#ftn.id370460" class="footnote">34</a>]</sup> can permanently destroy a database environment.  A
 sufficiently paranoid repository administrator will have made off-site
 backups of the repository data in some fashion, but don't head off to the
 tape backup storage closet just yet.</p>
@@ -764,9 +806,9 @@ revision of the repository.</p>
 the previous revision in the repository—the same way it treats every
 other revision that gets dumped.  It will then output the first revision
 exactly as it does the rest of the revisions in the dump
-range—mentioning only the changes that occurred in that revision.
-The benefit of this is that you can create several small dump files that can
-be loaded in succession, instead of one large one, like so:</p>
+range—mentioning only the changes that occurred in that revision.  The
+benefit of this is that you can create several small dump files that can be
+loaded in succession, instead of one large one, like so:</p>
 <pre class="screen">
 $ svnadmin dump myrepos -r 0:1000 &gt; dumpfile1
 $ svnadmin dump myrepos -r 1001:2000 --incremental &gt; dumpfile2
@@ -793,8 +835,8 @@ repositories into a single repository.  By using the
 you can specify a new virtual root directory for the load process.  That
 means if you have dump files for three repositories—say
 <code class="filename">calc-dumpfile</code>, <code class="filename">cal-dumpfile</code>, and
-<code class="filename">ss-dumpfile</code>—you can first create a new
-repository to hold them all:</p>
+<code class="filename">ss-dumpfile</code>—you can first create a new repository
+to hold them all:</p>
 <pre class="screen">
 $ svnadmin create /var/svn/projects
 $
@@ -836,11 +878,11 @@ binary differencing algorithms and data compression (optionally in a
 completely opaque database system), attempting manual tweaks is unwise if
 not quite difficult, and at any rate strongly discouraged.  And once data
 has been stored in your repository, Subversion generally doesn't provide an
-easy way to remove that data.  <sup>[<a name="id380595" href="#ftn.id380595" class="footnote">35</a>]</sup> But
+easy way to remove that data.  <sup>[<a name="id371024" href="#ftn.id371024" class="footnote">35</a>]</sup> But
 inevitably, there will be times when you would like to manipulate the
 history of your repository.  You might need to strip out all instances of a
 file that was accidentally added to the repository (and shouldn't be there
-for whatever reason).  <sup>[<a name="id380604" href="#ftn.id380604" class="footnote">36</a>]</sup> Or, perhaps you
+for whatever reason).  <sup>[<a name="id371033" href="#ftn.id371033" class="footnote">36</a>]</sup> Or, perhaps you
 have multiple projects sharing a single repository, and you decide to split
 them up into their own repositories.  To accomplish tasks such as these,
 administrators need a more manageable and malleable representation of the
@@ -998,7 +1040,7 @@ Node-path: spreadsheet/Makefile
 paths you pass to <span class="command"><strong>svndumpfilter include</strong></span> and
 <span class="command"><strong>svndumpfilter exclude</strong></span> (and if they don't, you
 shouldn't).  Further, if your dump file has an inconsistent usage of leading
-slashes for some reason, <sup>[<a name="id380970" href="#ftn.id380970" class="footnote">37</a>]</sup> you should
+slashes for some reason, <sup>[<a name="id371384" href="#ftn.id371384" class="footnote">37</a>]</sup> you should
 probably normalize those paths so that they all have, or all lack, leading
 slashes.</p>
 <p>Also, copied paths can give you some trouble.  Subversion supports copy
@@ -1008,14 +1050,14 @@ your repository, you might have copied a file or directory from some
 location that <span class="command"><strong>svndumpfilter</strong></span> is excluding, to a location
 that it is including.  To make the dump data self-sufficient,
 <span class="command"><strong>svndumpfilter</strong></span> needs to still show the addition of the new
-path—including the contents of any files created by the
-copy—and not represent that addition as a copy from a source that
-won't exist in your filtered dump data stream.  But because the Subversion
-repository dump format shows only what was changed in each revision, the
-contents of the copy source might not be readily available.  If you suspect
-that you have any copies of this sort in your repository, you might want to
-rethink your set of included/excluded paths, perhaps including the paths
-that served as sources of your troublesome copy operations, too.</p>
+path—including the contents of any files created by the copy—and
+not represent that addition as a copy from a source that won't exist in your
+filtered dump data stream.  But because the Subversion repository dump
+format shows only what was changed in each revision, the contents of the
+copy source might not be readily available.  If you suspect that you have
+any copies of this sort in your repository, you might want to rethink your
+set of included/excluded paths, perhaps including the paths that served as
+sources of your troublesome copy operations, too.</p>
 <p>Finally, <span class="command"><strong>svndumpfilter</strong></span> takes path filtering quite
 literally.  If you are trying to copy the history of a project rooted at
 <code class="filename">trunk/my-project</code> and move it into a repository of its
@@ -1044,15 +1086,14 @@ scenarios include deploying mirror repositories to distribute heavy
 Subversion load across multiple servers, use as a soft-upgrade mechanism,
 and so on.</p>
 <p>As of version 1.4, Subversion provides a program for managing scenarios such
-as these—<span class="command"><strong>svnsync</strong></span>.  This works by essentially
-asking the Subversion server to “<span class="quote">replay</span>” revisions, one at a
-time.  It then uses that revision information to mimic a commit of the same
-to another repository.  Neither repository needs to be locally accessible to
-the machine on which <span class="command"><strong>svnsync</strong></span> is running—its
-parameters are repository URLs, and it does all its work through
-Subversion's Repository Access (RA)  interfaces.  All it requires is read
-access to the source repository and read/write access to the destination
-repository.</p>
+as these—<span class="command"><strong>svnsync</strong></span>.  This works by essentially asking
+the Subversion server to “<span class="quote">replay</span>” revisions, one at a time.  It
+then uses that revision information to mimic a commit of the same to another
+repository.  Neither repository needs to be locally accessible to the
+machine on which <span class="command"><strong>svnsync</strong></span> is running—its parameters
+are repository URLs, and it does all its work through Subversion's
+Repository Access (RA)  interfaces.  All it requires is read access to the
+source repository and read/write access to the destination repository.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png"></td>
@@ -1071,7 +1112,7 @@ communicate revision information is highly sensitive to mismatches between
 the versioned histories contained in the source and target repositories.
 For this reason, while <span class="command"><strong>svnsync</strong></span> cannot
 <span class="emphasis"><em>demand</em></span> that the target repository be read-only,
-<sup>[<a name="id381163" href="#ftn.id381163" class="footnote">38</a>]</sup> allowing the revision history in the
+<sup>[<a name="id371565" href="#ftn.id371565" class="footnote">38</a>]</sup> allowing the revision history in the
 target repository to change by any mechanism other than the mirroring
 process is a recipe for disaster.</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
@@ -1223,7 +1264,7 @@ advise against using them.)</p>
 </table></div>
 <p>And now comes the fun part.  With a single subcommand, we can tell
 <span class="command"><strong>svnsync</strong></span> to copy all the as-yet-unmirrored revisions from
-the source repository to the target.  <sup>[<a name="id381503" href="#ftn.id381503" class="footnote">39</a>]</sup>
+the source repository to the target.  <sup>[<a name="id371894" href="#ftn.id371894" class="footnote">39</a>]</sup>
 The <span class="command"><strong>svnsync synchronize</strong></span> subcommand will peek into the
 special revision properties previously stored on the target repository, and
 determine both what repository it is mirroring as well as that the most
@@ -1287,10 +1328,10 @@ properties on the mirror repository because those properties are part of the
 data it is tasked with mirroring.  As those properties change in the source
 repository, those changes need to be reflected in the mirror repository,
 too.  But <span class="command"><strong>svnsync</strong></span> also uses a set of custom revision
-properties—stored in revision 0 of the mirror repository—for
-its own internal bookkeeping.  These properties contain information such as
-the URL and UUID of the source repository, plus some additional
-state-tracking information.</p>
+properties—stored in revision 0 of the mirror repository—for its
+own internal bookkeeping.  These properties contain information such as the
+URL and UUID of the source repository, plus some additional state-tracking
+information.</p>
 <p>One of those pieces of state-tracking information is a flag that essentially
 just means “<span class="quote">there's a synchronization in progress right now.</span>”
 This is used to prevent multiple <span class="command"><strong>svnsync</strong></span> processes from
@@ -1432,8 +1473,8 @@ computer, one thing unfortunately rings true with crystalline
 clarity—sometimes things go very, very awry.  Power outages, network
 connectivity dropouts, corrupt RAM, and crashed hard drives are but a taste
 of the evil that Fate is poised to unleash on even the most conscientious
-administrator.  And so we arrive at a very important topic—how to
-make backup copies of your repository data.</p>
+administrator.  And so we arrive at a very important topic—how to make
+backup copies of your repository data.</p>
 <p>There are two types of backup methods available for Subversion repository
 administrators—full and incremental.  A full backup of the repository
 involves squirreling away in one sweeping action all the information
@@ -1442,8 +1483,8 @@ catastrophe.  Usually, it means, quite literally, the duplication of the
 entire repository directory (which includes either a Berkeley DB or FSFS
 environment).  Incremental backups are lesser things: backups of only the
 portion of the repository data that has changed since the previous backup.</p>
-<p>As far as full backups go, the naïve approach might seem like a sane
-one, but unless you temporarily disable all other access to your repository,
+<p>As far as full backups go, the naïve approach might seem like a sane one,
+but unless you temporarily disable all other access to your repository,
 simply doing a recursive directory copy runs the risk of generating a faulty
 backup.  In the case of Berkeley DB, the documentation describes a certain
 order in which database files can be copied that will guarantee a valid
@@ -1489,13 +1530,12 @@ course, you can achieve a full backup variation of this by omitting the
 in these methods, in that the format of your backed-up information is
 flexible—it's not tied to a particular platform, versioned filesystem
 type, or release of Subversion or Berkeley DB.  But that flexibility comes
-at a cost, namely that restoring that data can take a long
-time—longer with each new revision committed to your repository.
-Also, as is the case with so many of the various backup methods, revision
-property changes that are made to already backed-up revisions won't get
-picked up by a nonoverlapping, incremental dump generation.  For these
-reasons, we recommend against relying solely on dump-based backup
-approaches.</p>
+at a cost, namely that restoring that data can take a long time—longer
+with each new revision committed to your repository.  Also, as is the case
+with so many of the various backup methods, revision property changes that
+are made to already backed-up revisions won't get picked up by a
+nonoverlapping, incremental dump generation.  For these reasons, we
+recommend against relying solely on dump-based backup approaches.</p>
 <p>As you can see, each of the various backup types and methods has its
 advantages and disadvantages.  The easiest is by far the full hot backup,
 which will always result in a perfect working replica of your repository.
@@ -1522,7 +1562,7 @@ repository's virtual versioned filesystem are not handled by
 modifications to unversioned revision properties affect their backups.
 Since these changes do not themselves generate new revisions, they will not
 trigger post-commit hooks, and may not even trigger the pre-revprop-change
-and post-revprop-change hooks.  <sup>[<a name="id382130" href="#ftn.id382130" class="footnote">40</a>]</sup> And
+and post-revprop-change hooks.  <sup>[<a name="id372475" href="#ftn.id372475" class="footnote">40</a>]</sup> And
 since you can change revision properties without respect to chronological
 order—you can change any revision's properties at any time—an
 incremental backup of the latest few revisions might not catch a property
@@ -1543,10 +1583,10 @@ all the commit and property change notification emails; and have repository
 mirrors maintained by various volunteers using <span class="command"><strong>svnsync</strong></span>.
 Your solution might be similar, but should be catered to your needs and that
 delicate balance of convenience with paranoia.  And whatever you do,
-validate your backups from time to time—what good is a spare tire
-that has a hole in it? While all of this might not save your hardware from
-the iron fist of Fate, <sup>[<a name="id382185" href="#ftn.id382185" class="footnote">41</a>]</sup> it should
-certainly help you recover from those trying times.</p>
+validate your backups from time to time—what good is a spare tire that
+has a hole in it? While all of this might not save your hardware from the
+iron fist of Fate, <sup>[<a name="id372497" href="#ftn.id372497" class="footnote">41</a>]</sup> it should certainly
+help you recover from those trying times.</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
@@ -1610,19 +1650,19 @@ value.</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id379214" href="#id379214" class="para">33</a>] </sup>或者是, “<span class="quote">sync</span>” ？</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id380006" href="#id380006" class="para">34</a>] </sup>For example, hard drive + huge electromagnet = disaster.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id380595" href="#id380595" class="para">35</a>] </sup>那就是你是用版本控制的原因，对吗？</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id380604" href="#id380604" class="para">36</a>] </sup>Conscious, cautious removal of certain bits of versioned data is actually
+<div class="footnote"><p><sup>[<a name="ftn.id369604" href="#id369604" class="para">33</a>] </sup>或者是, “<span class="quote">sync</span>” ？</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id370460" href="#id370460" class="para">34</a>] </sup>For example, hard drive + huge electromagnet = disaster.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id371024" href="#id371024" class="para">35</a>] </sup>那就是你是用版本控制的原因，对吗？</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id371033" href="#id371033" class="para">36</a>] </sup>Conscious, cautious removal of certain bits of versioned data is actually
 supported by real use cases.  That's why an “<span class="quote">obliterate</span>”
 feature has been one of the most highly requested Subversion features, and
 one which the Subversion developers hope to soon provide.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id380970" href="#id380970" class="para">37</a>] </sup>尽管<span class="command"><strong>svnadmin
+<div class="footnote"><p><sup>[<a name="ftn.id371384" href="#id371384" class="para">37</a>] </sup>尽管<span class="command"><strong>svnadmin
 dump</strong></span>对是否以斜线作为路径的开头有统一的规定—这个规定就是不以斜线作为路径的开头—其它生成转储文件的程序不一定会遵守这个规定。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id381163" href="#id381163" class="para">38</a>] </sup>实际上，它不是真的完全只读，或者<span class="command"><strong>svnsync</strong></span>本身有时间将版本库历史拷入。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id381503" href="#id381503" class="para">39</a>] </sup>要预先警告一下，尽管对于普通读者只需要几秒钟就可以理解下面的输出，而对于整个镜像过程花费的时间可能会非常长。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id382130" href="#id382130" class="para">40</a>] </sup><span class="command"><strong>svnadmin setlog</strong></span>可以被绕过钩子程序被调用。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id382185" href="#id382185" class="para">41</a>] </sup>You know—the collective term for all of her “<span class="quote">fickle
+<div class="footnote"><p><sup>[<a name="ftn.id371565" href="#id371565" class="para">38</a>] </sup>实际上，它不是真的完全只读，或者<span class="command"><strong>svnsync</strong></span>本身有时间将版本库历史拷入。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id371894" href="#id371894" class="para">39</a>] </sup>要预先警告一下，尽管对于普通读者只需要几秒钟就可以理解下面的输出，而对于整个镜像过程花费的时间可能会非常长。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id372475" href="#id372475" class="para">40</a>] </sup><span class="command"><strong>svnadmin setlog</strong></span>可以被绕过钩子程序被调用。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id372497" href="#id372497" class="para">41</a>] </sup>You know—the collective term for all of her “<span class="quote">fickle
 fingers.</span>”</p></div>
 </div>
 </div>

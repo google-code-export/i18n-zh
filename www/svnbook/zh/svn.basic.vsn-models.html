@@ -26,29 +26,18 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.basic.vsn-models"></a>1.2. 版本模型</h2></div></div></div>
-<p>The core mission of a version control system is to enable collaborative
-editing and sharing of data.  But different systems use different strategies
-to achieve this.  It's important to understand these different strategies,
-for a couple of reasons.  First, it will help you compare and contrast
-existing version control systems, in case you encounter other systems
-similar to Subversion.  Beyond that, it will also help you make more
-effective use of Subversion, since Subversion itself supports a couple of
-different ways of working.</p>
+<p>版本控制系统的核心任务是实现协作编辑和数据共享，但是不同的系统使用不同的策略实现这个目的。我们有许多理由要去理解这些策略的区别，首先，如果你遇到了其它类似
+Subversion 的系统，可以帮助你比较现有的版本控制系统。此外，可以帮助你更有效的使用 Subversion，因为 Subversion
+本身支持不同的工作方式。</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.vsn-models.problem-sharing"></a>1.2.1. 文件共享的问题</h3></div></div></div>
 <p>所有的版本控制系统都需要解决这样一个基础问题：怎样让系统允许用户共享信息，而不会让他们因意外而互相干扰？版本库里意外覆盖别人的更改非常的容易。</p>
-<p>Consider the scenario shown in <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.problem-sharing.dia-1" title="图 1.2. 需要避免的问题">图 1.2 “需要避免的问题”</a>.  Suppose we have two
-coworkers, Harry and Sally.  They each decide to edit the same repository
-file at the same time.  If Harry saves his changes to the repository first,
-it's possible that (a few moments later) Sally could accidentally overwrite
-them with her own new version of the file.  While Harry's version of the
-file won't be lost forever (because the system remembers every change), any
-changes Harry made <span class="emphasis"><em>won't</em></span> be present in Sally's newer
-version of the file, because she never saw Harry's changes to begin with.
-Harry's work is still effectively lost—or at least missing from the
-latest version of the file—and probably by accident.  This is
-definitely a situation we want to avoid!</p>
+<p>考虑<a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.problem-sharing.dia-1" title="图 1.2. 需要避免的问题">图 1.2 “需要避免的问题”</a>的情景。假设我们有两个共同工作者，Harry
+和 Sally。他们想同时编辑版本库里的同一个文件，如果 Harry 先保存它的修改，(过了一会)Sally
+可能凑巧用自己的版本覆盖了这些文件，Harry 的更改不会永远消失(因为系统记录了每次修改)，但 Harry
+所有的修改<span class="emphasis"><em>不会</em></span>出现在 Sally 新版本的文件中，因为她没有在开始的时候看到 Harry 的修改。所以
+Harry 的工作还是丢失了—至少是从最新的版本中丢失了—而且可能是意外的。这就是我们要明确避免的情况！</p>
 <div class="figure">
 <a name="svn.basic.vsn-models.problem-sharing.dia-1"></a><p class="title"><b>图 1.2. 需要避免的问题</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia2.png" alt="需要避免的问题"></div></div>
@@ -58,68 +47,31 @@ definitely a situation we want to avoid!</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.vsn-models.lock-unlock"></a>1.2.2. “锁定-修改-解锁”方案</h3></div></div></div>
-<p>Many version control systems use a <em class="firstterm">lock-modify-unlock</em>
-model to address the problem of many authors clobbering each other's work.
-In this model, the repository allows only one person to change a file at a
-time.  This exclusivity policy is managed using locks.  Harry must
-“<span class="quote">lock</span>” a file before he can begin making changes to it.  If
-Harry has locked a file, Sally cannot also lock it, and therefore cannot
-make any changes to that file.  All she can do is read the file and wait for
-Harry to finish his changes and release his lock.  After Harry unlocks the
-file, Sally can take her turn by locking and editing the file.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.lock-unlock.dia-1" title="图 1.3. “锁定-修改-解锁”方案">图 1.3 ““锁定-修改-解锁”方案”</a> demonstrates this simple
-solution.</p>
+<p>许多版本控制系统使用<em class="firstterm">锁定-修改-解锁</em>机制解决这种问题，在这样的模型里，在一个时间段里版本库的一个文件只允许被一个人修改。首先在修改之前，Harry要“<span class="quote">锁定</span>”住这个文件，锁定很像是从图书馆借一本书，如果Harry锁住这个文件，Sally不能做任何修改，如果Sally想请求得到一个锁，版本库会拒绝这个请求。在Harry结束编辑并且放开这个锁之前，她只可以阅读文件。Harry解锁后，就要换班了，Sally得到自己的轮换位置，锁定并且开始编辑这个文件。<a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.lock-unlock.dia-1" title="图 1.3. “锁定-修改-解锁”方案">图 1.3 ““锁定-修改-解锁”方案”</a>描述了这样的解决方案。</p>
 <div class="figure">
 <a name="svn.basic.vsn-models.lock-unlock.dia-1"></a><p class="title"><b>图 1.3. “锁定-修改-解锁”方案</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia3.png" alt="“锁定-修改-解锁”方案"></div></div>
 </div>
 <br class="figure-break"><p>锁定-修改-解锁模型有一点问题就是限制太多，经常会成为用户的障碍：</p>
 <div class="itemizedlist"><ul type="disc">
-<li><p><span class="emphasis"><em>Locking may cause administrative problems.</em></span> Sometimes
-Harry will lock a file and then forget about it.  Meanwhile, because Sally
-is still waiting to edit the file, her hands are tied.  And then Harry goes
-on vacation.  Now Sally has to get an administrator to release Harry's
-lock.  The situation ends up causing a lot of unnecessary delay and wasted
-time.</p></li>
-<li><p><span class="emphasis"><em>Locking may cause unnecessary serialization.</em></span> What if
-Harry is editing the beginning of a text file, and Sally simply wants to
-edit the end of the same file? These changes don't overlap at all.  They
-could easily edit the file simultaneously, and no great harm would come,
-assuming the changes were properly merged together.  There's no need for
-them to take turns in this situation.</p></li>
-<li><p><span class="emphasis"><em>Locking may create a false sense of security.</em></span> Suppose
-Harry locks and edits file A, while Sally simultaneously locks and edits
-file B.  But what if A and B depend on one another, and the changes made to
-each are semantically incompatible? Suddenly A and B don't work together
-anymore.  The locking system was powerless to prevent the problem—yet
-it somehow provided a false sense of security.  It's easy for Harry and
-Sally to imagine that by locking files, each is beginning a safe, insulated
-task, and thus they need not bother discussing their incompatible changes
-early on.  Locking often becomes a substitute for real communication.</p></li>
+<li><p><span class="emphasis"><em>锁定可能导致管理问题。</em></span>有时候 Harry 会锁住文件然后忘了此事，这就是说 Sally
+一直等待解锁来编辑这些文件，她在这里僵住了。然后 Harry 去旅行了，现在 Sally 只好去找管理员放开锁，这种情况会导致不必要的耽搁和时间浪费。</p></li>
+<li><p><span class="emphasis"><em>锁定可能导致不必要的串行开发。</em></span>如果 Harry 编辑一个文件的开始，Sally
+想编辑同一个文件的结尾，这种修改不会冲突，设想修改可以正确的合并到一起，他们可以轻松的并行工作而没有太多的坏处，没有必要让他们轮流工作。</p></li>
+<li><p><span class="emphasis"><em>锁定可能导致错误的安全状态。</em></span>假设 Harry 锁定和编辑一个文件 A，同时 Sally 锁定并编辑文件
+B。但是如果 A 和 B 互相依赖，修改导致它们不兼容会怎么样呢？这样 A 和 B
+不能正确的工作了，锁定机制对防止此类问题将无能为力—从而产生了一种处于安全状态的假相。很容易想象 Harry 和 Sally
+都以为自己锁住了文件，而且从一个安全，孤立的情况开始工作，因而没有尽早发现他们不匹配的修改。锁定经常成为真正交流的替代品。</p></li>
 </ul></div>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.vsn-models.copy-merge"></a>1.2.3. “拷贝-修改-合并”方案</h3></div></div></div>
-<p>Subversion, CVS, and many other version control systems use a
-<em class="firstterm">copy-modify-merge</em> model as an alternative to
-locking.  In this model, each user's client contacts the project repository
-and creates a personal <em class="firstterm">working copy</em>—a local
-reflection of the repository's files and directories.  Users then work
-simultaneously and independently, modifying their private copies.  Finally,
-the private copies are merged together into a new, final version.  The
-version control system often assists with the merging, but ultimately, a
-human being is responsible for making it happen correctly.</p>
-<p>Here's an example.  Say that Harry and Sally each create working copies of
-the same project, copied from the repository.  They work concurrently and
-make changes to the same file A within their copies.  Sally saves her
-changes to the repository first.  When Harry attempts to save his changes
-later, the repository informs him that his file A is <em class="firstterm">out of
-date</em>.  In other words, file A in the repository has somehow
-changed since he last copied it.  So Harry asks his client to
-<em class="firstterm">merge</em> any new changes from the repository into his
-working copy of file A.  Chances are that Sally's changes don't overlap with
-his own; once he has both sets of changes integrated, he saves his working
-copy back to the repository.  <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-1" title="图 1.4. “拷贝-修改-合并”方案">图 1.4 ““拷贝-修改-合并”方案”</a> and <a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-2" title="图 1.5. “拷贝-修改-合并”方案(续)">图 1.5 ““拷贝-修改-合并”方案(续)”</a> show this process.</p>
+<p>Subversion，CVS和一些版本控制系统使用<em class="firstterm">拷贝-修改-合并</em>模型，在这种模型里，每一个客户联系项目版本库建立一个个人<em class="firstterm">工作副本</em>—版本库中文件和目录的本地映射。用户并行工作，修改各自的工作副本，最终，各个私有的拷贝合并在一起，成为最终的版本，这种系统通常可以辅助合并操作，但是最终要靠人工去确定正误。</p>
+<p>这是一个例子，Harry 和 Sally 为同一个项目各自建立了一个工作副本，工作是并行的，修改了同一个文件 A，Sally 首先保存修改到版本库，当
+Harry 想去提交修改的时候，版本库提示文件 A
+已经<em class="firstterm">过期</em>，换句话说，A在他上次更新之后已经更改了，所以当他通过客户端请求<em class="firstterm">合并</em>版本库和他的工作副本之后，碰巧
+Sally 的修改和他的不冲突，所以一旦他把所有的修改集成到一起，他可以将工作拷贝保存到版本库，<a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-1" title="图 1.4. “拷贝-修改-合并”方案">图 1.4 ““拷贝-修改-合并”方案”</a>和<a class="xref" href="svn.basic.vsn-models.html#svn.basic.vsn-models.copy-merge.dia-2" title="图 1.5. “拷贝-修改-合并”方案(续)">图 1.5 ““拷贝-修改-合并”方案(续)”</a>展示了这一过程。</p>
 <div class="figure">
 <a name="svn.basic.vsn-models.copy-merge.dia-1"></a><p class="title"><b>图 1.4. “拷贝-修改-合并”方案</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia4.png" alt="“拷贝-修改-合并”方案"></div></div>
@@ -128,44 +80,18 @@ copy back to the repository.  <a class="xref" href="svn.basic.vsn-models.html#sv
 <a name="svn.basic.vsn-models.copy-merge.dia-2"></a><p class="title"><b>图 1.5. “拷贝-修改-合并”方案(续)</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia5.png" alt="“拷贝-修改-合并”方案(续)"></div></div>
 </div>
-<br class="figure-break"><p>But what if Sally's changes <span class="emphasis"><em>do</em></span> overlap with Harry's
-changes? What then? This situation is called a
-<em class="firstterm">conflict</em>, and it's usually not much of a problem.
-When Harry asks his client to merge the latest repository changes into his
-working copy, his copy of file A is somehow flagged as being in a state of
-conflict: he'll be able to see both sets of conflicting changes and manually
-choose between them.  Note that software can't automatically resolve
-conflicts; only humans are capable of understanding and making the necessary
-intelligent choices.  Once Harry has manually resolved the overlapping
-changes—perhaps after a discussion with Sally—he can safely
-save the merged file back to the repository.</p>
-<p>The copy-modify-merge model may sound a bit chaotic, but in practice, it
-runs extremely smoothly.  Users can work in parallel, never waiting for one
-another.  When they work on the same files, it turns out that most of their
-concurrent changes don't overlap at all; conflicts are infrequent.  And the
-amount of time it takes to resolve conflicts is usually far less than the
-time lost by a locking system.</p>
-<p>In the end, it all comes down to one critical factor: user communication.
-When users communicate poorly, both syntactic and semantic conflicts
-increase.  No system can force users to communicate perfectly, and no system
-can detect semantic conflicts.  So there's no point in being lulled into a
-false sense of security that a locking system will somehow prevent
-conflicts; in practice, locking seems to inhibit productivity more than
-anything else.</p>
+<br class="figure-break"><p>但是如果 Sally 和 Harry
+的修改<span class="emphasis"><em>交迭</em></span>了该怎么办？这种情况叫做<em class="firstterm">冲突</em>，这通常不是个大问题，当
+Harry 告诉他的客户端去合并版本库的最新修改到自己的工作副本时，他的文件 A
+就会处于冲突状态：他可以看到一对冲突的修改集，并手工的选择保留一组修改。需要注意的是软件不能自动的解决冲突，只有人可以理解并作出智能的选择，一旦
+Harry 手工的解决了冲突—也许需要与 Sally 讨论—它可以安全的把合并的文件保存到版本库。</p>
+<p>拷贝-修改-合并模型感觉有一点混乱，但在实践中，通常运行的很平稳，用户可以并行的工作，不必等待别人，当工作在同一个文件上时，也很少会有交迭发生，冲突并不频繁，处理冲突的时间远比等待解锁花费的时间少。</p>
+<p>最后，一切都要归结到一条重要的因素：用户交流。当用户交流贫乏，语法和语义的冲突就会增加，没有系统可以强制用户完美的交流，没有系统可以检测语义上的冲突，所以没有任何证据能够承诺锁定系统可以防止冲突，实践中，锁定除了约束了生产力，并没有做什么事。</p>
 <div class="sidebar">
 <a name="svn.basic.vsn-models.copy-merge.sb-1"></a><p class="title"><b>什么时候锁定是必需的</b></p>
 <p>锁定-修改-解锁模型被认为不利于协作，但有时候锁定会更好。</p>
-<p>The copy-modify-merge model is based on the assumption that files are
-contextually mergeable—that is, that the majority of the files in the
-repository are line-based text files (such as program source code).  But for
-files with binary formats, such as artwork or sound, it's often impossible
-to merge conflicting changes.  In these situations, it really is necessary
-for users to take strict turns when changing the file.  Without serialized
-access, somebody ends up wasting time on changes that are ultimately
-discarded.</p>
-<p>While Subversion is primarily a copy-modify-merge system, it still
-recognizes the need to lock an occasional file, and thus provides mechanisms
-for this.  We discuss this feature in <a class="xref" href="svn.advanced.locking.html" title="3.7. 锁定">第 3.7 节 “锁定”</a>.</p>
+<p>拷贝-修改-合并模型假定文件是可以根据上下文合并的：就是版本库的文件主要是以行为基础的文本文件(例如程序源代码)。但对于二进制格式，例如艺术品或声音，在这种情况下，十分有必要让用户轮流修改文件，如果没有线性的访问，有些人的许多工作就最终要被放弃。</p>
+<p>尽管 Subversion 一直主要是一个拷贝-修改-合并系统，但是它也意识到了需要锁定一些文件，并且提供这种锁定机制，这个特性的讨论可以见<a class="xref" href="svn.advanced.locking.html" title="3.7. 锁定">第 3.7 节 “锁定”</a>。</p>
 </div>
 </div>
 </div>

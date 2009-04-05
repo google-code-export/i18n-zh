@@ -26,55 +26,33 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.intro.quickstart"></a>A.2. 快速指南</h2></div></div></div>
-<div class="blockquote"><blockquote class="blockquote"><p>“<span class="quote">Please make sure your seat backs are in their full, upright position
-and that your tray tables are stored.  Flight attendants, prepare for
-take-off….</span>”</p></blockquote></div>
+<div class="blockquote"><blockquote class="blockquote"><p>“<span class="quote">请确定你坐在了正确的位置，你的盘桌已经关闭，乘务员们，准备起飞 …。</span>”</p></blockquote></div>
 <p>这是一个快速教程，能够帮助你熟悉 Subversion 的基本配置和操作。在结束这个教程时，你应该对 Subversion 的典型用法有了一个基本认识。</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png"></td>
 <th align="left">注意</th>
 </tr>
-<tr><td align="left" valign="top"><p>The examples used in this appendix assume that you have
-<span class="command"><strong>svn</strong></span>, the Subversion command-line client, and
-<span class="command"><strong>svnadmin</strong></span>, the administrative tool, ready to go on a
-Unix-like operating system.  (This tutorial also works at the Windows
-command-line prompt, assuming you make some obvious tweaks.)  We also assume
-you are using Subversion 1.2 or later (run <strong class="userinput"><code>svn
---version</code></strong> to check.)</p></td></tr>
+<tr><td align="left" valign="top"><p>在类 Unix 操作系统上运行附录中的例子(假定你做了显而易见的调整，本教程也能在 Windows 命令行执行)，首先需要正确安装 Subversion
+客户端程序 <span class="command"><strong>svn</strong></span>，以及管理工具 <span class="command"><strong>svnadmin</strong></span>。我们还假定你使用
+Subversion 1.2 或更新版本(可以运行 <strong class="userinput"><code>svn --version</code></strong> 来检查)。</p></td></tr>
 </table></div>
-<p>Subversion stores all versioned data in a central repository.  To begin,
-create a new repository:</p>
+<p>Subversion 的所有版本化数据都储存在中心版本库中。因此我们需要先创建一个版本库：</p>
 <pre class="screen">
 $ svnadmin create /var/svn/repos
 $ ls /var/svn/repos
 conf/  dav/  db/  format  hooks/  locks/  README.txt
 </pre>
-<p>This command creates a new directory, <code class="filename">/var/svn/repos</code>,
-which contains a Subversion repository.  This new directory contains (among
-other things) a collection of database files.  You won't see your versioned
-files if you peek inside.  For more information about repository creation
-and maintenance, see <a class="xref" href="svn.reposadmin.html" title="第 5 章 版本库管理">第 5 章 <i>版本库管理</i></a>.</p>
-<p>Subversion has no concept of a “<span class="quote">project.</span>” The repository is
-just a virtual versioned filesystem, a large tree that can hold anything you
-wish.  Some administrators prefer to store only one project in a repository,
-and others prefer to store multiple projects in a repository by placing them
-into separate directories.  We discuss the merits of each approach in <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. 规划你的版本库结构">第 5.2.1 节 “规划你的版本库结构”</a>.  Either way, the
-repository manages only files and directories, so it's up to humans to
-interpret particular directories as “<span class="quote">projects.</span>” So while you
-might see references to projects throughout this book, keep in mind that
-we're only ever talking about some directory (or collection of directories)
-in the repository.</p>
-<p>In this example, we assume you already have some sort of project (a
-collection of files and directories) that you wish to import into your newly
-created Subversion repository.  Begin by organizing your data into a single
-directory called <code class="filename">myproject</code> (or whatever you wish).  For
-reasons explained in <a class="xref" href="svn.branchmerge.html" title="第 4 章 分支与合并">第 4 章 <i>分支与合并</i></a>, your project's tree
-structure should contain three top-level directories named
-<code class="filename">branches</code>, <code class="filename">tags</code>, and
-<code class="filename">trunk</code>.  The <code class="filename">trunk</code> directory should
-contain all of your data, and the <code class="filename">branches</code> and
-<code class="filename">tags</code> directories should be empty:</p>
+<p>这个命令创建了一个新目录 <code class="filename">/var/svn/repos</code>，并在其中创建了一个 Subversion
+版本库。这个目录里主要保存了数据库文件(还有其它一些文件)。如果你察看它，不会找到你的版本化文件。参见<a class="xref" href="svn.reposadmin.html" title="第 5 章 版本库管理">第 5 章 <i>版本库管理</i></a>，以了解更多版本库创建和维护方面的信息。</p>
+<p>在 Subversion 中没有“<span class="quote">项目</span>”的概念。Subversion
+的版本库只是一个虚拟的版本化文件系统，可以存放你想要存放的任何文件。有些管理员喜欢为每个项目建立一个独立的版本库，而另外一些管理员则喜欢将多个项目存放到同一个版本库的不同目录里。这两种方式各有各的优点，关于这方面内容的论述，参见<a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. 规划你的版本库结构">第 5.2.1 节 “规划你的版本库结构”</a>。不论是哪种方式，版本库都只是负责管理文件和目录，而“<span class="quote">项目</span>”则是人为指定的概念。因此，尽管本书中遍布着项目这个词，但是请记住我们只不过是在谈论版本库中的某些特定目录(或者是一组目录)。</p>
+<p>在这个例子中，我们假定已经有一些需要导入到 Subversion 版本库的条目(一组文件和目录)。接下来，我们需要把这些条目整理到一个名为
+<code class="filename">myproject</code>
+的目录(或者其它任意目录)里。在这个目录下，创建三个顶级子目录：<code class="filename">branches</code>,
+<code class="filename">tags</code> 和 <code class="filename">trunk</code>。将所有需版本化的数据保存到
+<code class="filename">trunk</code> 目录下，同时保持 <code class="filename">branches</code> 和
+<code class="filename">tags</code> 目录为空：</p>
 <pre class="screen">
 /tmp/myproject/branches/
 /tmp/myproject/tags/
@@ -100,17 +78,12 @@ Adding         /tmp/myproject/trunk/Makefile
 Committed revision 1.
 $ 
 </pre>
-<p>Now the repository contains this tree of data.  As mentioned earlier, you
-won't see your files by directly peeking into the repository; they're all
-stored within a database.  But the repository's imaginary filesystem now
-contains a top-level directory named <code class="filename">myproject</code>, which
-in turn contains your data.</p>
-<p>Note that the original <code class="filename">/tmp/myproject</code> directory is
-unchanged; Subversion is unaware of it.  (In fact, you can even delete that
-directory if you wish.)  To start manipulating repository data, you need to
-create a new “<span class="quote">working copy</span>” of the data, a sort of private
-workspace.  Ask Subversion to “<span class="quote">check out</span>” a working copy of the
-<code class="filename">myproject/trunk</code> directory in the repository:</p>
+<p>现在版本库中已经保存了目录中的数据。如前所述，直接查看版本库是看不到文件和目录的；它们存放在数据库之中。但是版本库的虚拟文件系统中则包含了一个名为
+<code class="filename">myproject</code> 的顶级目录，其中保存了所有的数据。</p>
+<p>注意我们在一开始创建的那个 <code class="filename">/tmp/myproject</code> 目录并没有改变，Subversion
+并不在意它(事实上，完全可以删除这个目录)。要开始使用版本库数据，我们还要创建一个新的用于存储数据的“<span class="quote">工作副本</span>”，这是一个私有工作区。从
+Subversion 版本库里“<span class="quote">检出</span>” <code class="filename">myproject/trunk</code>
+工作副本的操作如下：</p>
 <pre class="screen">
 $ svn checkout file:///var/svn/repos/myproject/trunk myproject
 A  myproject/foo.c
@@ -119,9 +92,8 @@ A  myproject/Makefile
 …
 Checked out revision 1.
 </pre>
-<p>Now you have a personal copy of part of the repository in a new directory
-named <code class="filename">myproject</code>.  You can edit the files in your
-working copy and then commit those changes back into the repository.</p>
+<p>现在，<code class="filename">myproject</code>
+目录下有一个版本库数据的个人副本。我们可以在这个工作副本中编辑文件，并将修改提交到版本库中。</p>
 <div class="itemizedlist"><ul type="disc">
 <li><p>进入工作副本目录，编辑某个文件的内容。</p></li>
 <li><p>运行 <strong class="userinput"><code>svn diff</code></strong>，以标准差异格式查看你的修改。</p></li>
@@ -129,10 +101,7 @@ working copy and then commit those changes back into the repository.</p>
 <li><p>运行 <strong class="userinput"><code>svn update</code></strong>，让你的工作副本更新到版本库的“<span class="quote">最新</span>”版本。</p></li>
 </ul></div>
 <p>完整的工作副本操作指南，请参见<a class="xref" href="svn.tour.html" title="第 2 章 基本使用">第 2 章 <i>基本使用</i></a>。</p>
-<p>At this point, you have the option of making your repository available to
-others over a network.  See <a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a> to learn
-about the different sorts of server processes available and how to configure
-them.</p>
+<p>现在，你可以选择将 Subversion 版本库发布到网络上。参见<a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a>，以了解不同服务器软件的使用以及配置方法。</p>
 </div>
 <div class="navfooter">
 <hr>

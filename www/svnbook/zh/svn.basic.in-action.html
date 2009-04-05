@@ -26,62 +26,46 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.basic.in-action"></a>1.3. Subversion 实践</h2></div></div></div>
-<p>It's time to move from the abstract to the concrete.  In this section, we'll
-show real examples of Subversion being used.</p>
+<p>是时候从抽象转到具体了，在本小节，我们会展示一个 Subversion 真实使用的例子。</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.advanced.reposurls"></a>1.3.1. Subversion 版本库的 URL</h3></div></div></div>
-<p>Throughout this book, Subversion uses URLs to identify versioned files and
-directories in Subversion repositories.  For the most part, these URLs use
-the standard syntax, allowing for server names and port numbers to be
-specified as part of the URL:</p>
+<p>正如我们在整本书里描述的，Subversion 使用 URL 来识别 Subversion 版本库中的版本化资源，通常情况下，这些 URL
+使用标准的语法，允许服务器名称和端口作为 URL 的一部分：</p>
 <pre class="screen">
 $ svn checkout http://svn.example.com:9834/repos
 …
 </pre>
-<p>But there are some nuances in Subversion's handling of URLs that are
-notable.  For example, URLs containing the <code class="literal">file://</code> access
-method (used for local repositories) must, in accordance with convention,
-have either a server name of <code class="literal">localhost</code> or no server name
-at all:</p>
+<p>但 是Subversion 处理 URL 的一些细微的不同之处需要注意，例如，使用 <code class="literal">file://</code> 访问方法的
+URL (用来访问本地版本库)必须与习惯一致，可以包括一个 <code class="literal">localhost</code> 服务器名或者没有服务器名：</p>
 <pre class="screen">
 $ svn checkout file:///var/svn/repos
 …
 $ svn checkout file://localhost/var/svn/repos
 …
 </pre>
-<p>Also, users of the <code class="literal">file://</code> scheme on Windows platforms
-will need to use an unofficially “<span class="quote">standard</span>” syntax for
-accessing repositories that are on the same machine, but on a different
-drive than the client's current working drive.  Either of the two following
-URL path syntaxes will work, where <code class="literal">X</code> is the drive on
-which the repository resides:</p>
+<p>同样，在 Windows 平台下使用 <code class="literal">file://</code>
+模式时需要使用一个非正式的“<span class="quote">标准</span>”语法来访问本机上不在同一个磁盘分区中的版本库。下面的任意一个 URL
+路径语法都可以工作，其中的 <code class="literal">X</code> 表示版本库所在的磁盘分区：</p>
 <pre class="screen">
 C:\&gt; svn checkout file:///X:/var/svn/repos
 …
 C:\&gt; svn checkout "file:///X|/var/svn/repos"
 …
 </pre>
-<p>In the second syntax, you need to quote the URL so that the vertical bar
-character is not interpreted as a pipe.  Also, note that a URL uses forward
-slashes even though the native (non-URL) form of a path on Windows uses
-backslashes.</p>
+<p>在第二个语法里，你需要使用引号包含整个 URL，这样竖线字符才不会被解释为管道。当然，也要注意 URL 使用普通的斜线而不是 Windows 本地(不是
+URL)的反斜线。</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[注意]" src="images/note.png"></td>
 <th align="left">注意</th>
 </tr>
-<tr><td align="left" valign="top"><p>You cannot use Subversion's <code class="literal">file://</code> URLs in a regular web
-browser the way typical <code class="literal">file://</code> URLs can.  When you
-attempt to view a <code class="literal">file://</code> URL in a regular web browser,
-it reads and displays the contents of the file at that location by examining
-the filesystem directly.  However, Subversion's resources exist in a virtual
-filesystem (see <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos" title="8.1.1. 版本库层">第 8.1.1 节 “版本库层”</a>), and your
-browser will not understand how to interact with that filesystem.</p></td></tr>
+<tr><td align="left" valign="top"><p>也必须意识到 Subversion 的 <code class="literal">file://</code> URL 不能在普通的 web 服务器中工作。当你尝试在
+web 服务器查看一个 <code class="literal">file://</code> URL 时，它会通过直接检测文件系统读取和显示那个位置的文件内容，但是
+Subversion 的资源存在于虚拟文件系统(见<a class="xref" href="svn.developer.html#svn.developer.layerlib.repos" title="8.1.1. 版本库层">第 8.1.1 节 “版本库层”</a>)中，你的浏览器不会理解怎样读取这个文件系统。</p></td></tr>
 </table></div>
-<p>The Subversion client will automatically encode URLs as necessary, just like
-a web browser does.  For example, if a URL contains a space or upper-ASCII
-character as in the following:</p>
+<p>最后，必须注意 Subversion 的客户端会根据需要自动编码 URL，这一点和一般的 web 浏览器一样，举个例子，如果一个 URL
+包含了空格或是一个字符编码大于 128 的 ASCII 字符：</p>
 <pre class="screen">
 $ svn checkout "http://host/path with space/project/españa"
 </pre>
@@ -104,11 +88,8 @@ client knows the repository's root URL by looking at the working copy's
 metadata.</p>
 <div class="sidebar">
 <a name="svn.basic.in-action.wc.sb-1"></a><p class="title"><b>版本库的 URL</b></p>
-<p>You can access Subversion repositories through many different
-methods—on local disk or through various network protocols, depending
-on how your administrator has set things up for you.  A repository location,
-however, is always a URL.  <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.tbl-1" title="表 1.1. 版本库访问 URL">表 1.1 “版本库访问 URL”</a>
-describes how different URL schemes map to the available access methods.</p>
+<p>Subversion 可以通过多种方式访问—本地磁盘访问，或各种各样不同的网络协议，这要看你的管理员是如何设置。但一个版本库地址永远都只是一个
+URL。<a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.tbl-1" title="表 1.1. 版本库访问 URL">表 1.1 “版本库访问 URL”</a>描述了不同的 URL 模式对应的访问方法。</p>
 <div class="table">
 <a name="svn.basic.in-action.wc.tbl-1"></a><p class="title"><b>表 1.1. 版本库访问 URL</b></p>
 <div class="table-contents"><table summary="版本库访问 URL" border="1">
@@ -144,52 +125,35 @@ describes how different URL schemes map to the available access methods.</p>
 </tbody>
 </table></div>
 </div>
-<br class="table-break"><p>For more information on how Subversion parses URLs, see <a class="xref" href="svn.basic.in-action.html#svn.advanced.reposurls" title="1.3.1. Subversion 版本库的 URL">第 1.3.1 节 “Subversion 版本库的 URL”</a>.  For more information on the different
-types of network servers available for Subversion, see <a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a>.</p>
+<br class="table-break"><p>关于 Subversion 解析 URL 的更多信息，见<a class="xref" href="svn.basic.in-action.html#svn.advanced.reposurls" title="1.3.1. Subversion 版本库的 URL">第 1.3.1 节 “Subversion 版本库的 URL”</a>。关于不同的网络服务器类型，见<a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a>。</p>
 </div>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.in-action.wc"></a>1.3.2. 工作副本</h3></div></div></div>
 <p>你已经阅读过了关于工作副本的内容；现在我们要讲一讲客户端怎样建立和使用它。</p>
-<p>A Subversion working copy is an ordinary directory tree on your local
-system, containing a collection of files.  You can edit these files however
-you wish, and if they're source code files, you can compile your program
-from them in the usual way.  Your working copy is your own private work
-area: Subversion will never incorporate other people's changes, nor make
-your own changes available to others, until you explicitly tell it to do
-so.  You can even have multiple working copies of the same project.</p>
-<p>After you've made some changes to the files in your working copy and
-verified that they work properly, Subversion provides you with commands to
-“<span class="quote">publish</span>” your changes to the other people working with you on
-your project (by writing to the repository).  If other people publish their
-own changes, Subversion provides you with commands to merge those changes
-into your working copy (by reading from the repository).</p>
-<p>A working copy also contains some extra files, created and maintained by
-Subversion, to help it carry out these commands.  In particular, each
-directory in your working copy contains a subdirectory named
-<code class="filename">.svn</code>, also known as the working copy's
-<em class="firstterm">administrative directory</em>.  The files in each
-administrative directory help Subversion recognize which files contain
-unpublished changes, and which files are out of date with respect to others'
-work.</p>
-<p>A typical Subversion repository often holds the files (or source code) for
-several projects; usually, each project is a subdirectory in the
-repository's filesystem tree.  In this arrangement, a user's working copy
-will usually correspond to a particular subtree of the repository.</p>
-<p>For example, suppose you have a repository that contains two software
-projects, <code class="literal">paint</code> and <code class="literal">calc</code>.  Each
-project lives in its own top-level subdirectory, as shown in <a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.dia-1" title="图 1.6. 版本库的文件系统">图 1.6 “版本库的文件系统”</a>.</p>
+<p>一个 Subversion工
+作副本是你本地机器上的一个普通目录，保存着一些文件，你可以任意的编辑文件，而且如果是源代码文件，你可以像平常一样编译，你的工作副本是你的私有工作区，在你明确的做了特定操作之前，Subversion
+不会把你的修改与其他人的合并，也不会把你的修改展示给别人，你甚至可以拥有同一个项目的多个工作副本。</p>
+<p>当你在工作副本作了一些修改并且确认它们工作正常之后，Subversion
+提供了一个命令可以“<span class="quote">发布</span>”你的修改给项目中的其他人(通过写到版本库)，如果别人发布了各自的修改，Subversion
+提供了手段可以把这些修改与你的工作目录进行合并(通过读取版本库)。</p>
+<p>工作副本也包括一些由 Subversion 创建并维护的额外文件，用来协助执行命令。通常情况下，你的工作副本的每个文件夹都有一个以
+<code class="filename">.svn</code>
+为名的文件夹，也被叫做工作副本的<em class="firstterm">管理目录</em>，这个目录里的文件能够帮助 Subversion
+识别哪些文件做过修改，哪些文件相对于别人的工作已经过期。</p>
+<p>一个典型的 Subversion
+版本库经常包含许多项目的文件(或者说源代码)，通常每一个项目都是版本库的子目录，在这种布局下，一个用户的工作副本往往对应版本库的的一个子目录。</p>
+<p>举一个例子，你的版本库包含两个软件项目，<code class="literal">paint</code> 和
+<code class="literal">calc</code>。每个项目在它们各自的顶级子目录下，见<a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.wc.dia-1" title="图 1.6. 版本库的文件系统">图 1.6 “版本库的文件系统”</a>。</p>
 <div class="figure">
 <a name="svn.basic.in-action.wc.dia-1"></a><p class="title"><b>图 1.6. 版本库的文件系统</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia6.png" alt="版本库的文件系统"></div></div>
 </div>
-<br class="figure-break"><p>To get a working copy, you must <em class="firstterm">check out</em> some
-subtree of the repository.  (The term <span class="emphasis"><em>check out</em></span> may
-sound like it has something to do with locking or reserving resources, but
-it doesn't; it simply creates a private copy of the project for you.) For
-example, if you check out <code class="filename">/calc</code>, you will get a working
-copy like this:</p>
+<br class="figure-break"><p>为了得到一个工作副本，你必须<em class="firstterm">检出</em>(<em class="firstterm">check
+out</em>)版本库的一个子树(术语“<span class="quote">check
+out</span>”听起来像是锁定或者保留资源，实际上不是，只是简单的得到一个项目的私有拷贝)，举个例子，检出
+<code class="filename">/calc</code> 后，你可以得到这样的工作副本：</p>
 <pre class="screen">
 $ svn checkout http://svn.example.com/repos/calc
 A    calc/Makefile
@@ -200,18 +164,11 @@ Checked out revision 56.
 $ ls -A calc
 Makefile  button.c integer.c .svn/
 </pre>
-<p>The list of letter <code class="literal">A</code>s in the left margin indicates that
-Subversion is adding a number of items to your working copy.  You now have a
-personal copy of the repository's <code class="filename">/calc</code> directory, with
-one additional entry—<code class="filename">.svn</code>—which holds the
-extra information needed by Subversion, as mentioned earlier.</p>
-<p>Suppose you make changes to <code class="filename">button.c</code>.  Since the
-<code class="filename">.svn</code> directory remembers the file's original
-modification date and contents, Subversion can tell that you've changed the
-file.  However, Subversion does not make your changes public until you
-explicitly tell it to.  The act of publishing your changes is more commonly
-known as <em class="firstterm">committing</em> (or <em class="firstterm">checking
-in</em>) changes to the repository.</p>
+<p>列表中的 A 表示 Subversion 增加了一些条目到工作副本，你现在有了一个 <code class="filename">/calc</code>
+的个人拷贝，有一个附加的目录—<code class="filename">.svn</code>—保存着前面提及的 Subversion 需要的额外信息。</p>
+<p>假定你修改了 <code class="filename">button.c</code>，因为 <code class="filename">.svn</code>
+目录记录着文件的修改日期和原始内容，Subversion 可以告诉你已经修改了文件，然而，在你明确告诉它之前，Subversion
+不会将你的改变公开，将改变公开的操作被叫做提交(<em class="firstterm">committing</em>，或者是<em class="firstterm">检入</em>)修改到版本库。</p>
 <p>将你的修改发布给别人，你可以使用 Subversion 的 <span class="command"><strong>commit</strong></span> 命令：</p>
 <pre class="screen">
 $ svn commit button.c -m "Fixed a typo in button.c."
@@ -219,20 +176,14 @@ Sending        button.c
 Transmitting file data .
 Committed revision 57.
 </pre>
-<p>Now your changes to <code class="filename">button.c</code> have been committed to the
-repository, with a note describing your change (namely, that you fixed a
-typo).  If another user checks out a working copy of
-<code class="filename">/calc</code>, she will see your changes in the latest version
-of the file.</p>
-<p>Suppose you have a collaborator, Sally, who checked out a working copy of
-<code class="filename">/calc</code> at the same time you did.  When you commit your
-change to <code class="filename">button.c</code>, Sally's working copy is left
-unchanged; Subversion modifies working copies only at the user's request.</p>
-<p>To bring her project up to date, Sally can ask Subversion to
-<em class="firstterm">update</em> her working copy, by using the <span class="command"><strong>svn
-update</strong></span> command.  This will incorporate your changes into her
-working copy, as well as any others that have been committed since she
-checked it out.</p>
+<p>这时你对 <code class="filename">button.c</code>
+的修改已经提交到了版本库，其中包含了关于此次提交的日志信息(例如是修改了拼写错误)。如果其他人取出了
+<code class="filename">/calc</code> 的一个工作副本，他们会看到这个文件最新的版本。</p>
+<p>假设你有个合作者 Sally，她和你同时取出了 <code class="filename">/calc</code> 的一个工作拷贝，你提交了对
+<code class="filename">button.c</code> 的修改，Sally 的工作副本并没有改变，Subversion
+只在用户要求的时候才改变工作副本。</p>
+<p>要使项目最新，Sally 可以通过使用 <span class="command"><strong>svn update</strong></span> 命令，要求 Subversion
+<em class="firstterm">更新</em>她的工作副本。这将结合你和所有其他人在她上次更新之后的改变到她的工作副本。</p>
 <pre class="screen">
 $ pwd
 /home/sally/calc
@@ -244,224 +195,131 @@ $ svn update
 U    button.c
 Updated to revision 57.
 </pre>
-<p>The output from the <span class="command"><strong>svn update</strong></span> command indicates that
-Subversion updated the contents of <code class="filename">button.c</code>.  Note that
-Sally didn't need to specify which files to update; Subversion uses the
-information in the <code class="filename">.svn</code> directory as well as further
-information in the repository, to decide which files need to be brought up
-to date.</p>
+<p><span class="command"><strong>svn update</strong></span> 命令的输出表明 Subversion 更新了
+<code class="filename">button.c</code> 的内容，注意，Sally 不必指定要更新的文件，subversion 利用
+<code class="filename">.svn</code> 以及版本库的进一步信息决定哪些文件需要更新。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.in-action.revs"></a>1.3.3. 修订版本</h3></div></div></div>
-<p>An <span class="command"><strong>svn commit</strong></span> operation publishes changes to any number
-of files and directories as a single atomic transaction.  In your working
-copy, you can change files' contents; create, delete, rename, and copy files
-and directories; and then commit a complete set of changes as an atomic
-transaction.</p>
-<p>By atomic transaction, we mean simply this: either all of the changes happen
-in the repository, or none of them happens.  Subversion tries to retain this
-atomicity in the face of program crashes, system crashes, network problems,
-and other users' actions.</p>
-<p>Each time the repository accepts a commit, this creates a new state of the
-filesystem tree, called a <em class="firstterm">revision</em>.  Each revision is
-assigned a unique natural number, one greater than the number of the
-previous revision.  The initial revision of a freshly created repository is
-numbered 0 and consists of nothing but an empty root directory.</p>
-<p><a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.revs.dia-1" title="图 1.7. 版本库">图 1.7 “版本库”</a> illustrates a nice way to
-visualize the repository.  Imagine an array of revision numbers, starting at
-0, stretching from left to right.  Each revision number has a filesystem
-tree hanging below it, and each tree is a “<span class="quote">snapshot</span>” of the way
-the repository looked after a commit.</p>
+<p><span class="command"><strong>svn commit</strong></span>
+操作可以作为一个原子事务，发布任意数量文件和目录的修改。在你的工作副本里，你可以改变文件内容, 删除,
+改名，以及复制文件和目录，然后作为一个原子事务提交。</p>
+<p>原子事务的意思是：要么所有的改变发生，要么都不发生。Subversion 努力保持原子性，以应对程序错误, 系统错误, 网络问题和其它用户行为。</p>
+<p>每当版本库接受了一个提交，文件系统进入了一个新的状态，叫做一次修订(<em class="firstterm">revision</em>)，每一个修订版本被赋予一个独一无二的自然数，一个比一个大，初始修订号是
+0，只创建了一个空目录，没有任何内容。</p>
+<p><a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.revs.dia-1" title="图 1.7. 版本库">图 1.7 “版本库”</a>可以更形象的描述版本库，想象有一组修订号，从 0
+开始，从左到右，每一个修订号有一个目录树挂在它下面，每一个树好像是一次提交后的版本库“<span class="quote">快照</span>”。</p>
 <div class="figure">
 <a name="svn.basic.in-action.revs.dia-1"></a><p class="title"><b>图 1.7. 版本库</b></p>
 <div class="figure-contents"><div><img src="images/ch02dia7.png" alt="版本库"></div></div>
 </div>
 <br class="figure-break"><div class="sidebar">
 <p class="title"><b>全局版本号</b></p>
-<p>Unlike most version control systems, Subversion's revision numbers apply to
-<span class="emphasis"><em>entire trees</em></span>, not individual files.  Each revision
-number selects an entire tree, a particular state of the repository after
-some committed change.  Another way to think about it is that revision N
-represents the state of the repository filesystem after the Nth commit.
-When Subversion users talk about “<span class="quote">revision 5 of
-<code class="filename">foo.c</code>,</span>” they really mean
-“<span class="quote"><code class="filename">foo.c</code> as it appears in revision 5.</span>”
-Notice that in general, revisions N and M of a file do
-<span class="emphasis"><em>not</em></span> necessarily differ! Many other version control
-systems use per-file revision numbers, so this concept may seem unusual at
-first. (Former CVS users might want to see <a class="xref" href="svn.forcvs.html" title="附录 B. CVS 用户的 Subversion 指南">附录 B, <i>CVS 用户的 Subversion 指南</i></a> for
-more details.)</p>
+<p>不像其他版本控制系统，Subversion
+的修订号是针对整个<span class="emphasis"><em>目录树</em></span>的，而不是单个文件。每一个修订号代表了一次提交后版本库整个目录树的特定状态，另一种理解是修订号
+N 代表版本库已经经过了 N 次提交。当 Subversion 用户讨论“<span class="quote"> <code class="filename">foo.c</code> 的修订号
+5</span>” 时，他们的实际意思是“<span class="quote">在修订号 5 时的
+<code class="filename">foo.c</code></span>”。需要注意的是，一个文件的修订版本 N 和 M
+并<span class="emphasis"><em>不必</em></span>有所不同。许多其它版本控制系统使用每文件一个修订号的策略，所以会感觉这些概念有点不一样。(以前的 CVS
+用户可能希望察看<a class="xref" href="svn.forcvs.html" title="附录 B. CVS 用户的 Subversion 指南">附录 B, <i>CVS 用户的 Subversion 指南</i></a>来得到更多细节。)</p>
 </div>
-<p>It's important to note that working copies do not always correspond to any
-single revision in the repository; they may contain files from several
-different revisions.  For example, suppose you check out a working copy from
-a repository whose most recent revision is 4:</p>
+<p>需要特别注意的是，工作副本并不一定对应版本库中的单个修订版本，他们可能包含多个修订版本的文件。举个例子，你从版本库检出一个工作副本，最近的修订号是 4：</p>
 <pre class="screen">
 calc/Makefile:4
      integer.c:4
      button.c:4
 </pre>
-<p>At the moment, this working directory corresponds exactly to revision 4 in
-the repository.  However, suppose you make a change to
-<code class="filename">button.c</code>, and commit that change.  Assuming no other
-commits have taken place, your commit will create revision 5 of the
-repository, and your working copy will now look like this:</p>
+<p>此刻，工作目录与版本库的修订版本 4 完全对应，然而，你修改了 <code class="filename">button.c</code>
+并且提交之后，假设没有别的提交出现，你的提交会在版本库建立修订版本 5，你的工作副本会是这个样子的：</p>
 <pre class="screen">
 calc/Makefile:4
      integer.c:4
      button.c:5
 </pre>
-<p>Suppose that, at this point, Sally commits a change to
-<code class="filename">integer.c</code>, creating revision 6.  If you use
-<span class="command"><strong>svn update</strong></span> to bring your working copy up to date, it will
-look like this:</p>
+<p>假设此刻，Sally 提交了对 <code class="filename">integer.c</code> 的修改，建立修订版本 6，如果你使用
+<span class="command"><strong>svn update</strong></span> 来更新你的工作副本，你会看到：</p>
 <pre class="screen">
 calc/Makefile:6
      integer.c:6
      button.c:6
 </pre>
-<p>Sally's change to <code class="filename">integer.c</code> will appear in your working
-copy, and your change will still be present in
-<code class="filename">button.c</code>.  In this example, the text of
-<code class="filename">Makefile</code> is identical in revisions 4, 5, and 6, but
-Subversion will mark your working copy of <code class="filename">Makefile</code> with
-revision 6 to indicate that it is still current.  So, after you do a clean
-update at the top of your working copy, it will generally correspond to
-exactly one revision in the repository.</p>
+<p>Sally 对 <code class="filename">integer.c</code> 的改变会出现在你的工作副本，你对
+<code class="filename">button.c</code> 的改变还在，在这个例子里，<code class="filename">Makefile</code> 在
+4, 5, 6 的修订版本都是一样的，但是 Subversion 会把他的 <code class="filename">Makefile</code> 的修订号设为 6
+来表明它是最新的，所以你在工作副本顶级目录作一次干净的更新，会使得所有内容对应版本库的同一修订版本。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.in-action.track-repos"></a>1.3.4. 工作副本怎样跟踪版本库</h3></div></div></div>
 <p>对于工作副本的每一个文件，Subversion在管理区域<code class="filename">.svn/</code>记录两项关键的信息：</p>
 <div class="itemizedlist"><ul type="disc">
-<li><p>What revision your working file is based on (this is called the file's
-<em class="firstterm">working revision</em>)</p></li>
+<li><p>作为工作文件基准的版本(叫做文件的<em class="firstterm">工作版本</em>)</p></li>
 <li><p>本地副本最近一次被版本库更新的时间戳。</p></li>
 </ul></div>
 <p>给定这些信息，通过与版本库通讯，Subversion可以告诉我们工作文件是处于如下四种状态的那一种：</p>
 <div class="variablelist"><dl>
 <dt><span class="term">未修改且是当前的</span></dt>
-<dd><p>The file is unchanged in the working directory, and no changes to that file
-have been committed to the repository since its working revision.  An
-<span class="command"><strong>svn commit</strong></span> of the file will do nothing, and an
-<span class="command"><strong>svn update</strong></span> of the file will do nothing.</p></dd>
+<dd><p>文件在工作目录里没有修改，在工作版本之后没有修改提交到版本库。<span class="command"><strong>svn commit</strong></span>
+操作不做任何事情，<span class="command"><strong>svn update</strong></span> 不做任何事情。</p></dd>
 <dt><span class="term">本地已修改且是当前的</span></dt>
-<dd><p>The file has been changed in the working directory, and no changes to that
-file have been committed to the repository since you last updated.  There
-are local changes that have not been committed to the repository; thus an
-<span class="command"><strong>svn commit</strong></span> of the file will succeed in publishing your
-changes, and an <span class="command"><strong>svn update</strong></span> of the file will do nothing.</p></dd>
+<dd><p>在工作目录已经修改，从基本修订版本之后没有修改提交到版本库。本地修改没有提交，因此 <span class="command"><strong>svn commit</strong></span>
+会成功提交，<span class="command"><strong>svn update</strong></span> 不做任何事情。</p></dd>
 <dt><span class="term">本地未修改，已过时</span></dt>
-<dd><p>The file has not been changed in the working directory, but it has been
-changed in the repository.  The file should eventually be updated in order
-to make it current with the latest public revision.  An <span class="command"><strong>svn
-commit</strong></span> of the file will do nothing, and an <span class="command"><strong>svn
-update</strong></span> of the file will fold the latest changes into your working
-copy.</p></dd>
+<dd><p>这个文件在工作目录没有修改，但在版本库中已经修改了。这个文件最终将更新到最新版本，成为当时的公共修订版本。<span class="command"><strong>svn
+commit</strong></span> 不做任何事情，<span class="command"><strong>svn update</strong></span> 将会取得最新的版本到工作副本。</p></dd>
 <dt><span class="term">本地已修改，已过时</span></dt>
-<dd><p>The file has been changed both in the working directory and in the
-repository.  An <span class="command"><strong>svn commit</strong></span> of the file will fail with an
-“<span class="quote">out-of-date</span>” error.  The file should be updated first; an
-<span class="command"><strong>svn update</strong></span> command will attempt to merge the public
-changes with the local changes.  If Subversion can't complete the merge in a
-plausible way automatically, it leaves it to the user to resolve the
-conflict.</p></dd>
+<dd><p>这个文件在工作目录和版本库都得到修改。一个 <span class="command"><strong>svn commit</strong></span>
+将会失败，这个文件必须首先更新，<span class="command"><strong>svn update</strong></span> 命令会合并公共和本地修改，如果 Subversion
+不可以自动完成，将会让用户解决冲突。</p></dd>
 </dl></div>
-<p>This may sound like a lot to keep track of, but the <span class="command"><strong>svn
-status</strong></span> command will show you the state of any item in your working
-copy.  For more information on that command, see <a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a>.</p>
+<p>这看起来需要记录很多事情，但是 <span class="command"><strong>svn status</strong></span>
+命令可以告诉你工作拷贝中文件的状态，关于此命令更多的信息，请看<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a>。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.basic.in-action.mixedrevs"></a>1.3.5. 混合修订版本的工作副本</h3></div></div></div>
-<p>As a general principle, Subversion tries to be as flexible as possible.  One
-special kind of flexibility is the ability to have a working copy containing
-files and directories with a mix of different working revision numbers.
-Unfortunately, this flexibility tends to confuse a number of new users.  If
-the earlier example showing mixed revisions perplexed you, here's a primer
-on why the feature exists and how to make use of it.</p>
+<p>作为一个普遍原理，Subversion
+努力做到尽可能的灵活，一个特殊的灵活特性就是让工作拷贝包含不同工作修订版本的文件和目录，不幸的是，这个灵活性会让许多新用户感到迷惑。如果上一个混合修订版本的例子让你感到困惑，这里是一个为何有这种特性和如何利用这个特性的基础介绍。</p>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.basic.in-action.mixedrevs.update-commit"></a>1.3.5.1. 更新和提交是分开的</h4></div></div></div>
-<p>One of the fundamental rules of Subversion is that a “<span class="quote">push</span>”
-action does not cause a “<span class="quote">pull,</span>” nor vice versa.  Just because
-you're ready to submit new changes to the repository doesn't mean you're
-ready to receive changes from other people.  And if you have new changes
-still in progress, <span class="command"><strong>svn update</strong></span> should gracefully merge
-repository changes into your own, rather than forcing you to publish them.</p>
-<p>The main side effect of this rule is that it means a working copy has to do
-extra bookkeeping to track mixed revisions as well as be tolerant of the
-mixture.  It's made more complicated by the fact that directories themselves
-are versioned.</p>
-<p>For example, suppose you have a working copy entirely at revision 10.  You
-edit the file <code class="filename">foo.html</code> and then perform an <span class="command"><strong>svn
-commit</strong></span>, which creates revision 15 in the repository.  After the
-commit succeeds, many new users would expect the working copy to be entirely
-at revision 15, but that's not the case! Any number of changes might have
-happened in the repository between revisions 10 and 15.  The client knows
-nothing of those changes in the repository, since you haven't yet run
-<span class="command"><strong>svn update</strong></span>, and <span class="command"><strong>svn commit</strong></span> doesn't
-pull down new changes.  If, on the other hand, <span class="command"><strong>svn commit</strong></span>
-were to automatically download the newest changes, it would be possible to
-set the entire working copy to revision 15—but then we'd be breaking
-the fundamental rule of “<span class="quote">push</span>” and “<span class="quote">pull</span>”
-remaining separate actions.  Therefore, the only safe thing the Subversion
-client can do is mark the one
-file—<code class="filename">foo.html</code>—as being at revision 15.
-The rest of the working copy remains at revision 10.  Only by running
-<span class="command"><strong>svn update</strong></span> can the latest changes be downloaded and the
-whole working copy be marked as revision 15.</p>
+<p>Subversion
+有一个基本原则就是一个“<span class="quote">推</span>”动作不会导致“<span class="quote">拉</span>”，反之亦然，因为你准备好了提交你的修改并不意味着你已经准备好了从其他人那里接受修改。如果你的新的修改还在进行，<span class="command"><strong>svn
+update</strong></span> 将会优雅的合并版本库的修改到你的工作副本，而不会强迫将修改发布。</p>
+<p>这个规则的主要副作用就是，工作副本需要记录额外的信息来追踪混合修订版本，并且也需要能容忍这种混合，当目录本身也是版本化的时候情况更加复杂。</p>
+<p>举个例子，假定你有一个工作副本，修订版本号是10。你修改了 <code class="filename">foo.html</code>，然后执行
+<span class="command"><strong>svn
+commit</strong></span>，在版本库里创建了修订版本15。当成功提交之后，许多用户希望工作副本完全变成修订版本15，但是事实并非如此。修订版本从10到15会发生任何修改，可是客户端在运行
+<span class="command"><strong>svn update</strong></span> 之前不知道版本库发生了怎样的改变，<span class="command"><strong>svn commit</strong></span>
+不会拖出任何新的修改。另一方面，如果 <span class="command"><strong>svn commit</strong></span>
+会自动下载最新的修改，可以使得整个工作副本成为修订版本15—但是，那样我们会打破“<span class="quote">推</span>”和“<span class="quote">拉</span>”完全分开的原则。因此，Subversion
+客户端最安全的方式是标记一个文件— <code class="filename">foo.html</code>
+—为修订版本15，工作副本余下的部分还是修订版本10。只有运行 <span class="command"><strong>svn update</strong></span>
+才会下载最新的修改，整个工作副本被标记为修订版本15。</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.basic.in-action.mixedrevs.normal"></a>1.3.5.2. 混合修订版本很常见</h4></div></div></div>
-<p>The fact is, <span class="emphasis"><em>every time</em></span> you run <span class="command"><strong>svn
-commit</strong></span> your working copy ends up with some mixture of revisions.
-The things you just committed are marked as having larger working revisions
-than everything else.  After several commits (with no updates in between),
-your working copy will contain a whole mixture of revisions.  Even if you're
-the only person using the repository, you will still see this phenomenon.
-To examine your mixture of working revisions, use the <span class="command"><strong>svn
-status</strong></span> command with the <code class="option">--verbose</code> option (see
-<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a> for more information).</p>
-<p>Often, new users are completely unaware that their working copy contains
-mixed revisions.  This can be confusing, because many client commands are
-sensitive to the working revision of the item they're examining.  For
-example, the <span class="command"><strong>svn log</strong></span> command is used to display the
-history of changes to a file or directory (see <a class="xref" href="svn.tour.history.html#svn.tour.history.log" title="2.5.1. 产生历史修改列表">第 2.5.1 节 “产生历史修改列表”</a>).  When the user invokes this command on a
-working copy object, he expects to see the entire history of the object.
-But if the object's working revision is quite old (often because
-<span class="command"><strong>svn update</strong></span> hasn't been run in a long time), the history
-of the <span class="emphasis"><em>older</em></span> version of the object is shown.</p>
+<p>事实上，<span class="emphasis"><em>每次</em></span>运行 <span class="command"><strong>svn
+commit</strong></span>，你的工作拷贝都会进入混合多个修订版本的状态，刚刚提交的文件会比其他文件有更高的修订版本号。经过多次提交(之间没有更新)，你的工作副本会完全是混合的修订版本。即使只有你一个人使用版本库，你依然会见到这个现象。为了检验混合工作修订版本，可以使用
+<span class="command"><strong>svn status --verbose</strong></span> 命令(详细信息见<a class="xref" href="svn.tour.cycle.html#svn.tour.cycle.examine.status" title="2.4.3.1. 查看你的修改概况">第 2.4.3.1 节 “查看你的修改概况”</a>)。</p>
+<p>通常，新用户对于工作副本的混合修订版本一无所知，这会让人糊涂，因为许多客户端命令对于所检验条目的修订版本很敏感。例如 <span class="command"><strong>svn
+log</strong></span> 命令显示一个文件或目录的历史修改信息(见<a class="xref" href="svn.tour.history.html#svn.tour.history.log" title="2.5.1. 产生历史修改列表">第 2.5.1 节 “产生历史修改列表”</a>)，当用户对一个工作副本对象调用这个命令，他们希望看到这个对象的整个历史信息。但是如果这个对象的修订版本已经相当老了(通常因为很长时间没有运行
+<span class="command"><strong>svn update</strong></span>)，此时会显示比这个对象<span class="emphasis"><em>更老的</em></span>历史。</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.basic.in-action.mixedrevs.useful"></a>1.3.5.3. 混合版本很有用</h4></div></div></div>
-<p>If your project is sufficiently complex, you'll discover that it's sometimes
-nice to forcibly <em class="firstterm">backdate</em> (or update to a revision
-older than the one you already have) portions of your working copy to an
-earlier revision; you'll learn how to do that in <a class="xref" href="svn.tour.html" title="第 2 章 基本使用">第 2 章 <i>基本使用</i></a>.  Perhaps you'd like to test an earlier version of a
-submodule contained in a subdirectory, or perhaps you'd like to figure out
-when a bug first came into existence in a specific file.  This is the
-“<span class="quote">time machine</span>” aspect of a version control system—the
-feature that allows you to move any portion of your working copy forward and
-backward in history.</p>
+<p>如果你的项目十分复杂，有时候你会发现强制工作副本的一部分“<span class="quote">回溯</span>”到过去非常有用(或者更新到过去的某个修订版本)，你将在<a class="xref" href="svn.tour.html" title="第 2 章 基本使用">第 2 章 <i>基本使用</i></a>学习到如何这样做。或许你很希望测试某一子目录下某一子模块的早期版本，又或是要测试一个 bug
+什么时候发生，这是版本控制系统像“<span class="quote">时间机器</span>”的一个方面—这个特性允许工作副本的任何一个部分在历史中前进或后退。</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.basic.in-action.mixedrevs.limits"></a>1.3.5.4. 混合版本有限制</h4></div></div></div>
 <p>无论你如何在工作副本中利用混合修订版本，这种灵活性还是有限制的。</p>
-<p>First, you cannot commit the deletion of a file or directory that isn't
-fully up to date.  If a newer version of the item exists in the repository,
-your attempt to delete will be rejected to prevent you from accidentally
-destroying changes you've not yet seen.</p>
-<p>Second, you cannot commit a metadata change to a directory unless it's fully
-up to date.  You'll learn about attaching “<span class="quote">properties</span>” to items
-in <a class="xref" href="svn.advanced.html" title="第 3 章 高级主题">第 3 章 <i>高级主题</i></a>.  A directory's working revision defines a
-specific set of entries and properties, and thus committing a property
-change to an out-of-date directory may destroy properties you've not yet
-seen.</p>
+<p>首先，你不可以提交一个不是完全最新的文件或目录，如果有个新的版本存在于版本库，你的删除操作会被拒绝，这防止你不小心破坏你没有见到的东西。</p>
+<p>第二，如果目录已经不是最新的了，你不能提交一个目录的元数据更改。你将会在<a class="xref" href="svn.advanced.html" title="第 3 章 高级主题">第 3 章 <i>高级主题</i></a>学习附加“<span class="quote">属性</span>”，一个目录的工作修订版本定义了许多条目和属性，因而对一个过期的版本提交属性会破坏一些你没有见到的属性。</p>
 </div>
 </div>
 </div>

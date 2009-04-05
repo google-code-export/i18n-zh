@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Kapitel 7. Customizing Your Subversion Experience</title>
+<title>Kapitel 7. Subversion an Ihre Bedürfnisse anpassen</title>
 <link rel="stylesheet" href="styles.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.74.3">
 <link rel="home" href="index.html" title="Versionskontrolle mit Subversion">
@@ -12,7 +12,7 @@
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <div class="navheader">
 <table width="100%" summary="Navigation header">
-<tr><th colspan="3" align="center">Kapitel 7. Customizing Your Subversion Experience</th></tr>
+<tr><th colspan="3" align="center">Kapitel 7. Subversion an Ihre Bedürfnisse anpassen</th></tr>
 <tr>
 <td width="20%" align="left">
 <a accesskey="p" href="svn.serverconfig.multimethod.html">Zurück</a> </td>
@@ -25,15 +25,15 @@
 </div>
 <div class="chapter" lang="de">
 <div class="titlepage"><div><div><h2 class="title">
-<a name="svn.customization"></a>Kapitel 7. Customizing Your Subversion Experience</h2></div></div></div>
+<a name="svn.customization"></a>Kapitel 7. Subversion an Ihre Bedürfnisse anpassen</h2></div></div></div>
 <div class="toc">
 <p><b>Inhaltsverzeichnis</b></p>
 <dl>
-<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.confarea">7.1. Runtime Configuration Area</a></span></dt>
+<dt><span class="sect1"><a href="svn.customization.html#svn.advanced.confarea">7.1. Laufzeit-Konfigurationsbereich</a></span></dt>
 <dd><dl>
-<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.layout">7.1.1. Configuration Area Layout</a></span></dt>
-<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.windows-registry">7.1.2. Configuration and the Windows Registry</a></span></dt>
-<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.opts">7.1.3. Configuration Options</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.layout">7.1.1. Aufbau des Konfigurationsbereichs</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.windows-registry">7.1.2. Konfiguration und die Windows-Registrierungsdatenbank</a></span></dt>
+<dt><span class="sect2"><a href="svn.customization.html#svn.advanced.confarea.opts">7.1.3. Konfigurationsoptionen</a></span></dt>
 </dl></dd>
 <dt><span class="sect1"><a href="svn.advanced.l10n.html">7.2. Localization</a></span></dt>
 <dd><dl>
@@ -49,145 +49,170 @@
 <dt><span class="sect1"><a href="svn.customization.summary.html">7.5. Summary</a></span></dt>
 </dl>
 </div>
-<p>Version control can be a complex subject, as much art as
-    science, that offers myriad ways of getting stuff done.
-    Throughout this book, you've read of the various Subversion
-    command-line client subcommands and the options that modify their
-    behavior.  In this chapter, we'll look into still more ways to
-    customize the way Subversion works for you—setting up the
-    Subversion runtime configuration, using external helper
-    applications, Subversion's interaction with the operating system's
-    configured locale, and so on.</p>
+<p>Versionskontrolle kann eine komplizierte Angelegenheit sein,
+    ebensosehr Kunst wie auch Wissenschaft, die unzählige Methoden
+    anbietet, Dinge zu erledigen. Sie haben in diesem Buch über die
+    verschiedenen Unterbefehle des Subversion-Kommandozeilen-Clients
+    gelesen und die Optionen, die deren Verhalten verändern. In
+    diesem Kapitel werden wir uns weitere Möglichkeiten ansehen, mit
+    denen Sie Subversion an Ihre Arbeit anpassen können – die
+    Einrichtung der Subversion-Laufzeitkonfiguration, die Verwendung
+    externer Hilfsprogramme, wie Subversion mit der Locale Ihres
+    Betriebssystems zusammenarbeitet, usw.</p>
 <div class="sect1" lang="de">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="svn.advanced.confarea"></a>7.1. Runtime Configuration Area</h2></div></div></div>
-<p>Subversion provides many optional behaviors that the user can
-      control.  Many of these options are of the kind
-      that a user would wish to apply to all Subversion operations.
-      So, rather than forcing users to remember command-line arguments
-      for specifying these options and to use them for every
-      operation they perform, Subversion uses configuration files,
-      segregated into a Subversion configuration area.</p>
-<p>The Subversion <em class="firstterm">configuration area</em> is
-      a two-tiered hierarchy of option names and their values.
-      Usually, this boils down to a special directory that contains
-      <em class="firstterm">configuration files</em> (the first tier),
-      which are just text files in standard INI format (with
-      „<span class="quote">sections</span>“ providing the second tier).  You can
-      easily edit these files using your favorite text editor (such as
-      Emacs or vi), and they contain directives read by the client to
-      determine which of several optional behaviors the user
-      prefers.</p>
+<a name="svn.advanced.confarea"></a>7.1. Laufzeit-Konfigurationsbereich</h2></div></div></div>
+<p>Subversion bietet viele optionale Verhaltensweisen, die der
+      Benutzer kontrollieren kann. Viele dieser Optionen möchte ein
+      Benutzer für alle Subversion-Operationen auswählen.  Anstatt die
+      Benutzer jedoch dazu zu zwingen, sich die
+      Kommandozeilenargumente für diese Optionen zu merken, und sie
+      bei jeder Operation anzugeben, verwendet Subversion
+      Konfigurationsdateien, die in einen
+      Subversion-Konfigurationsbereich ausgelagert sind.</p>
+<p>Der <em class="firstterm">Konfigurationsbereich</em> von
+      Subversion ist eine zweistufige Hierarchie aus Optionsnamen und
+      deren Werten. Üblicherweise läuft es darauf hinaus, dass es ein
+      Verzeichnis mit <em class="firstterm">Konfigurationsdateien</em>
+      gibt (die erste Stufe), die einfache Textdateien im normalen
+      INI-Format sind (mit „<span class="quote">Abschnitten</span>“, die die zweite
+      Stufe liefern). Sie können diese Dateien einfach mit Ihrem
+      Lieblingseditor (etwa Emacs oder vi) bearbeiten. Sie beinhalten
+      Anweisungen, die vom Client gelesen werden, um festzustellen,
+      welche der verschiedenen optionalen Verhaltensweisen die
+      Benutzer bevorzugen.</p>
 <div class="sect2" lang="de">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="svn.advanced.confarea.layout"></a>7.1.1. Configuration Area Layout</h3></div></div></div>
-<p>The first time the <span class="command"><strong>svn</strong></span>
-        command-line client is executed, it creates a per-user
-        configuration area.  On Unix-like systems, this area appears
-        as a directory named <code class="filename">.subversion</code> in the
-        user's home directory.  On Win32 systems, Subversion creates a
-        folder named <code class="filename">Subversion</code>, typically inside
-        the <code class="filename">Application Data</code> area of the user's
-        profile directory (which, by the way, is usually a hidden
-        directory).  However, on this platform, the exact location
-        differs from system to system and is dictated by the Windows
-        Registry.
-        <sup>[<a name="id637957" href="#ftn.id637957" class="footnote">47</a>]</sup>
-        We will refer to the per-user configuration area using its Unix
-        name, <code class="filename">.subversion</code>.</p>
-<p>In addition to the per-user configuration area, Subversion
-        also recognizes the existence of a system-wide configuration
-        area.  This gives system administrators the ability to
-        establish defaults for all users on a given machine.  Note
-        that the system-wide configuration area alone does not dictate
-        mandatory policy—the settings in the per-user
-        configuration area override those in the system-wide one, and
-        command-line arguments supplied to the <span class="command"><strong>svn</strong></span>
-        program have the final word on behavior.  On Unix-like
-        platforms, the system-wide configuration area is
-        expected to be the <code class="filename">/etc/subversion</code>
-        directory; on Windows machines, it looks for a
-        <code class="filename">Subversion</code> directory inside the common
-        <code class="filename">Application Data</code> location (again, as
-        specified by the Windows Registry).  Unlike the per-user
-        case, the <span class="command"><strong>svn</strong></span> program does not attempt
-        to create the system-wide configuration area.</p>
-<p>The per-user configuration area currently contains three
-        files—two configuration files (<code class="filename">config</code> and
-        <code class="filename">servers</code>), and a <code class="filename">README.txt</code> 
-        file, which describes the INI format.  At the time of their
-        creation, the files contain default values for each of the
-        supported Subversion options, mostly commented out and grouped
-        with textual descriptions about how the values for the key
-        affect Subversion's behavior.  To change a certain behavior,
-        you need only to load the appropriate configuration file into
-        a text editor, and to modify the desired option's value.  If at
-        any time you wish to have the default configuration settings
-        restored, you can simply remove (or rename) your configuration
-        directory and then run some innocuous <span class="command"><strong>svn</strong></span>
-        command, such as <strong class="userinput"><code>svn --version</code></strong>.  A new
-        configuration directory with the default contents will be
-        created.</p>
-<p>The per-user configuration area also contains a cache of
-        authentication data.  The <code class="filename">auth</code> directory
-        holds a set of subdirectories that contain pieces of cached
-        information used by Subversion's various supported
-        authentication methods.  This directory is created in such a
-        way that only the user herself has permission to read its
-        contents.</p>
+<a name="svn.advanced.confarea.layout"></a>7.1.1. Aufbau des Konfigurationsbereichs</h3></div></div></div>
+<p>Beim ersten Aufruf des
+        <span class="command"><strong>svn</strong></span>-Kommandozeilen-Clients legt er einen
+        benutzereigenen Konfigurationsbereich an. Auf Unix-Systemen
+        erscheint dieser Bereich als ein Verzeichnis namens
+        <code class="filename">.subversion</code> im Heimatverzeichnis des
+        Benutzers. Auf Win32-Systemen erzeugt Subversion einen Ordner
+        namens <code class="filename">Subversion</code> normalerweise innerhalb
+        des Bereichs <code class="filename">Anwendungsdaten</code> im
+        Verzeichnis für das Benutzerprofil (welches, nebenbei bemerkt,
+        gewöhnlich ein verstecktes Verzeichnis ist). Jedoch ist dieser
+        Ablageort auf dieser Plattform von System zu System
+        verschieden und wird durch die Windows-Registrierungsdatenbank
+        bestimmt.
+        <sup>[<a name="id469038" href="#ftn.id469038" class="footnote">47</a>]</sup>
+        Wir werden uns auf den benutzereigenen Konfigurationsbereich
+        beziehen, indem wir dessen Unix-Namen
+        <code class="filename">.subversion</code> verwenden.</p>
+<p>Neben dem benutzereigenen Konfigurationsbereich
+        berücksichtigt Subversion das Vorhandensein eines systemweiten
+        Konfigurationsbereichs. Dieser erlaubt Administratoren,
+        Standardeinstellungen für alle Benutzer auf einer Maschine
+        vorzunehmen. Beachten Sie, dass der systemweite
+        Konfigurationsbereich allein keine zwingende Verfahrensweise
+        bestimmt – die Einstellungen im benutzereigenen
+        Konfigurationsbereich heben die systemweiten auf, und
+        letztendlich bestimmen an das Programm <span class="command"><strong>svn</strong></span>
+        übergebene Kommandozeilenargumente das Verhalten.  Auf
+        Unix-ähnlichen Plattformen wird erwartet, dass der systemweite
+        Konfigurationsbereich das Verzeichnis
+        <code class="filename">/etc/subversion</code> ist; auf
+        Windows-Maschinen wird nach dem Verzeichnis
+        <code class="filename">Subversion</code> innerhalb des gemeinsamen
+        <code class="filename">Anwendungsdaten</code>-Bereichs gesucht (auch
+        hier, wie in der Windows-Registrierungsdatenbank angegeben).
+        Anders als beim benutzereigenen Bereich versucht
+        <span class="command"><strong>svn</strong></span> nicht, den systemweiten
+        Konfigurationsbereich anzulegen.</p>
+<p>Der benutzereigene Konfigurationsbereich enthält
+        gegenwärtig drei Dateien – zwei Konfigurationsdateien
+        (<code class="filename">config</code> und <code class="filename">servers</code>)
+        und eine Datei <code class="filename">README.txt</code>, die das
+        INI-Format beschreibt. Beim Anlegen enthalten die Dateien
+        Standardwerte für alle unterstützten Optionen von Subversion,
+        die meisten davon auskommentiert und in Gruppen
+        zusammengefasst, mit Beschreibungen, wie die Werte das
+        Verhalten von Subversion beeinflussen. Um ein bestimmtes
+        Verhalten zu ändern, brauchen Sie nur die entsprechende
+        Konfigurationsdatei in einen Editor zu laden und den Wert der
+        passenden Option zu ändern. Falls Sie irgendwann auf die
+        Standardeinstellungen zurückschalten wollen, können Sie
+        einfach das Konfigurationsverzeichnis löschen (oder
+        umbenennen) und dann irgendeinen harmlosen
+        <span class="command"><strong>svn</strong></span>-Befehl ausführen, wie etwa
+        <strong class="userinput"><code>svn --version</code></strong>.  Ein neues
+        Konfigurationsverzeichnis mit dem Standardinhalt wird dann
+        angelegt.</p>
+<p>Der benutzereigene Konfigurationsbereich enthält auch
+        einen Zwischenspeicher mit Authentifizierungsdaten. Das
+        Verzeichnis <code class="filename">auth</code> beinhaltet eine Reihe
+        Unterverzeichnisse, die Teile zwischengespeicherter
+        Informationen enthalten, welche von den verschiedenen durch
+        Subversion unterstützten Authentifizierungsmethoden benutzt
+        werden. Dieses Verzeichnis wird so erzeugt, dass nur der
+        Benutzer selbst den Inhalt lesen kann.</p>
 </div>
 <div class="sect2" lang="de">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="svn.advanced.confarea.windows-registry"></a>7.1.2. Configuration and the Windows Registry</h3></div></div></div>
-<p>In addition to the usual INI-based configuration area,
-        Subversion clients running on Windows platforms may also use
-        the Windows Registry to hold the configuration data.  The
-        option names and their values are the same as in the INI
-        files.  The „<span class="quote">file/section</span>“ hierarchy is
-        preserved as well, though addressed in a slightly different
-        fashion—in this schema, files and sections are just
-        levels in the Registry key tree.</p>
-<p>Subversion looks for system-wide configuration values
-        under the
-        <code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion</code>
-        key.  For example, the <code class="literal">global-ignores</code> option,
-        which is in the <code class="literal">miscellany</code> section of the
-        <code class="filename">config</code> file, would be found at
-        <code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion\Config\Miscellany\global-ignores</code>.
-        Per-user configuration values should be stored under
-        <code class="literal">HKEY_CURRENT_USER\Software\Tigris.org\Subversion</code>.
+<a name="svn.advanced.confarea.windows-registry"></a>7.1.2. Konfiguration und die Windows-Registrierungsdatenbank</h3></div></div></div>
+<p>Neben dem üblichen INI-basierten Konfigurationsbereich
+        können Subversion-Clients auf Windows-Plattformen auch die
+        Windows-Registrierungsdatenbank für die Konfigurationsdaten
+        verwenden. Die Namen der Optionen und deren Werte sind die
+        gleichen wie in den INI-Dateien. Die
+        „<span class="quote">Datei/Abschnitt-Hierarchie</span>“ wird hierbei
+        beibehalten, jedoch in einer etwas anderen Weise – bei
+        diesem Schema sind Dateien und Abschnitte lediglich Ebenen im
+        Schlüsselbaum der Registrierungsdatenbank.</p>
+<p>Für systemweite Konfigurationswerte sucht Subversion unter
+        dem Schlüssel
+        <code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion</code>.
+        Beispielsweise wird die Option
+        <code class="literal">global-ignores</code>, die sich im Abschnitt
+        <code class="literal">miscellany</code> der Datei
+        <code class="filename">config</code> befindet, unter
+        <code class="literal">HKEY_LOCAL_MACHINE\Software\Tigris.org\Subversion\Config\Miscellany\global-ignores</code>
+        gefunden. Benutzereigene Konfigurationswerte sollten unter
+        <code class="literal">HKEY_CURRENT_USER\Software\Tigris.org\Subversion</code>
+        gespeichert werden.
       </p>
-<p>Registry-based configuration options are parsed
-        <span class="emphasis"><em>before</em></span> their file-based counterparts, so
-        they are overridden by values found in the configuration files.  In
-        other words, Subversion looks for configuration information in
-        the following locations on a Windows system; lower-numbered
-        locations take precedence over higher-numbered locations:</p>
+<p>Konfigurationsoptionen aus der Registrierungsdatenbank
+        werden <span class="emphasis"><em>vor</em></span> den entsprechenden
+        dateibasierten Optionen gelesen, so dass die in den
+        Konfigurationsdateien gefundenen Werte die entsprechenden
+        Werte aus der Registrierungsdatenbank überschreiben. Mit
+        anderen Worten: Subversion sucht auf Windows-Systemen nach
+        Konfigurationsinformationen an den folgenden Stellen
+        (niedrigere Nummern haben Vorrang vor höheren Nummern):</p>
 <div class="orderedlist"><ol type="1">
-<li><p>Command-line options</p></li>
-<li><p>The per-user INI files</p></li>
-<li><p>The per-user Registry values</p></li>
-<li><p>The system-wide INI files</p></li>
-<li><p>The system-wide Registry values</p></li>
+<li><p>Kommandozeilenoptionen</p></li>
+<li><p>Die benutzereigenen INI-Dateien</p></li>
+<li><p>Die benutzereigenen Werte in der
+            Registrierungsdatenbank</p></li>
+<li><p>Die systemweiten INI-Dateien</p></li>
+<li><p>Die systemweiten Werte in der
+            Registrierungsdatenbank</p></li>
 </ol></div>
-<p>Also, the Windows Registry doesn't really support the
-        notion of something being „<span class="quote">commented out.</span>“
-        However, Subversion will ignore any option key whose name
-        begins with a hash (<code class="literal">#</code>) character.  This
-        allows you to effectively comment out a Subversion option
-        without deleting the entire key from the Registry, obviously
-        simplifying the process of restoring that option.</p>
-<p>The <span class="command"><strong>svn</strong></span> command-line client never
-        attempts to write to the Windows Registry and will not attempt
-        to create a default configuration area there.  You can create
-        the keys you need using the <span class="command"><strong>REGEDIT</strong></span>
-        program.  Alternatively, you can create a
-        <code class="filename">.reg</code> file (such as the one in <a class="xref" href="svn.customization.html#svn.advanced.confarea.windows-registry.ex-1" title="Beispiel 7.1. Sample registration entries (.reg) file">Beispiel 7.1, „Sample registration entries (.reg) file“</a>), and
-        then double-click on that file's icon in the Explorer shell,
-        which will cause the data to be merged into your
-        Registry.</p>
+<p>Darüberhinaus unterstützt die
+        Windows-Registrierungsdatenbank keine
+        „<span class="quote">Auskommentierungen</span>“. Trotzdem ignoriert
+        Subversion alle Optionsschlüssel, die mit einem Rautezeichen
+        (<code class="literal">#</code>) beginnen. Das erlaubt Ihnen, eine
+        Subversion-Option auszukommentieren, ohne gleich den gesamten
+        Schlüssel aus der Registrierungsdatenbank zu löschen;
+        hierdurch wird die Wiederherstellung der Option wesentlich
+        erleichtert.</p>
+<p>Niemals versucht der
+        <span class="command"><strong>svn</strong></span>-Kommandozeilen-Client, in die
+        Windows-Registrierungsdatenbank zu schreiben oder dort einen
+        Standard-Konfigurationsbereich anzulegen. Sie können benötigte
+        Schlüssel mit dem Programm <span class="command"><strong>REGEDIT</strong></span>
+        erzeugen. Alternativ können Sie auch eine
+        <code class="filename">.reg</code>-Datei anlegen (so wie die in <a class="xref" href="svn.customization.html#svn.advanced.confarea.windows-registry.ex-1" title="Beispiel 7.1. Beispieldatei mit Einträgen für die Registrierungsdatenbank (.reg)">Beispiel 7.1, „Beispieldatei mit Einträgen für die
+          Registrierungsdatenbank (.reg)“</a>) und
+        dann im Windows-Explorer auf das Icon dieser Datei
+        doppelklicken, was bewirkt, dass die Daten mit der
+        Registrierungsdatenbank zusammengeführt werden.</p>
 <div class="example">
-<a name="svn.advanced.confarea.windows-registry.ex-1"></a><p class="title"><b>Beispiel 7.1. Sample registration entries (.reg) file</b></p>
+<a name="svn.advanced.confarea.windows-registry.ex-1"></a><p class="title"><b>Beispiel 7.1. Beispieldatei mit Einträgen für die
+          Registrierungsdatenbank (.reg)</b></p>
 <div class="example-contents"><pre class="programlisting">
 REGEDIT4
 
@@ -229,23 +254,22 @@ REGEDIT4
 [HKEY_CURRENT_USER\Software\Tigris.org\Subversion\Config\auto-props]
 </pre></div>
 </div>
-<br class="example-break"><p>The previous example shows the contents of a
-        <code class="filename">.reg</code> file, which contains some of the most
-        commonly used configuration options and their default values.
-        Note the presence of both system-wide (for network
-        proxy-related options) and per-user settings (editor programs
-        and password storage, among others).  Also note that all the
-        options are effectively commented out.  You need only to
-        remove the hash (<code class="literal">#</code>) character from the
-        beginning of the option names and set the values as you
-        desire.</p>
+<br class="example-break"><p>Das vorangegangene Beispiel zeigt den Inhalt einer
+        <code class="filename">.reg</code>-Datei: einige der meistbenutzten
+        Konfigurationsoptionen mit deren Standardwerten. Beachten Sie
+        das Auftreten von systemweiten (für Netz-Proxy-Optionen) und
+        benutzereigenen (u.a. Editoren und Passwortspeicherung)
+        Einstellungen. Beachten Sie weiterhin, dass alle Optionen
+        auskommentiert sind. Sie brauchen nur das Rautezeichen
+        (<code class="literal">#</code>) vom Anfang des Optionsnamens zu
+        entfernen und den Wert nach Ihren Wünschen zu setzen.</p>
 </div>
 <div class="sect2" lang="de">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="svn.advanced.confarea.opts"></a>7.1.3. Configuration Options</h3></div></div></div>
-<p>In this section, we will discuss the specific
-        runtime configuration options that Subversion currently 
-        supports.</p>
+<a name="svn.advanced.confarea.opts"></a>7.1.3. Konfigurationsoptionen</h3></div></div></div>
+<p>In diesem Abschnitt werden wir die besonderen
+        Laufzeit-Konfigurationsoptionen erörtern, die Subversion
+        momentan unterstützt.</p>
 <div class="sect3" lang="de">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.advanced.confarea.opts.servers"></a>7.1.3.1. Servers</h4></div></div></div>
@@ -471,7 +495,7 @@ collabnet = svn.collab.net
           client connections.  For more details, see <a class="xref" href="svn.serverconfig.svnserve.html#svn.serverconfig.svnserve.sshauth" title="6.3.4. Tunneling over SSH">Abschnitt 6.3.4, „Tunneling over SSH“</a>.</p>
 <p>The <code class="literal">miscellany</code> section is where
           everything that doesn't belong elsewhere winds up.
-          <sup>[<a name="id639123" href="#ftn.id639123" class="footnote">48</a>]</sup>
+          <sup>[<a name="id470332" href="#ftn.id470332" class="footnote">48</a>]</sup>
           In this section, you can find:</p>
 <div class="variablelist"><dl>
 <dt><span class="term"><code class="literal">global-ignores</code></span></dt>
@@ -641,11 +665,12 @@ collabnet = svn.collab.net
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id637957" href="#id637957" class="para">47</a>] </sup>The <code class="literal">APPDATA</code> environment variable
-            points to the <code class="filename">Application Data</code> area,
-            so you can always refer to this folder as
-            <code class="filename">%APPDATA%\Subversion</code>.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id639123" href="#id639123" class="para">48</a>] </sup>Anyone for potluck dinner?</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id469038" href="#id469038" class="para">47</a>] </sup>Die Umgebungsvariable <code class="literal">APPDATA</code> zeigt
+            auf den Bereich <code class="filename">Anwendungsdaten</code>, so
+            dass Sie stets über
+            <code class="filename">%APPDATA%\Subversion</code> auf diesen
+            Ordner zugreifen können.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id470332" href="#id470332" class="para">48</a>] </sup>Anyone for potluck dinner?</p></div>
 </div>
 </div>
 <div class="navfooter">

@@ -91,7 +91,7 @@
         their project lately, the youngest revision number for the
         repository keeps climbing because other projects are actively
         adding new revisions.
-        <sup>[<a name="id427920" href="#ftn.id427920" class="footnote">28</a>]</sup>
+        <sup>[<a name="id371296" href="#ftn.id371296" class="footnote">28</a>]</sup>
       </p>
 <p>A middle-ground approach can be taken, too.  For example,
         projects can be grouped by how well they relate to each other.
@@ -118,7 +118,7 @@
         and <code class="filename">tags</code>, which is a collection of tree
         snapshots that are created, and perhaps destroyed, but never
         changed.
-        <sup>[<a name="id427984" href="#ftn.id427984" class="footnote">29</a>]</sup>
+        <sup>[<a name="id371359" href="#ftn.id371359" class="footnote">29</a>]</sup>
         </p>
 <p>For example, your repository might look like this:</p>
 <pre class="screen">
@@ -253,7 +253,7 @@
         ordinary flat files, using a custom format.  Subversion
         developers have adopted the habit of referring to this latter
         data storage mechanism as <em class="firstterm">FSFS</em>
-        <sup>[<a name="id428175" href="#ftn.id428175" class="footnote">30</a>]</sup> 
+        <sup>[<a name="id371551" href="#ftn.id371551" class="footnote">30</a>]</sup> 
         —a versioned filesystem implementation that uses the
         native OS filesystem directly—rather than via a database
         library or some other abstraction layer—to store data.</p>
@@ -424,7 +424,7 @@
           Windows 2000 or later.</p>
 <p>While Berkeley DB promises to behave correctly on
           network shares that meet a particular set of specifications,
-          <sup>[<a name="id428549" href="#ftn.id428549" class="footnote">31</a>]</sup>
+          <sup>[<a name="id371926" href="#ftn.id371926" class="footnote">31</a>]</sup>
           most networked filesystem types and appliances do
           <span class="emphasis"><em>not</em></span> actually meet those requirements.
           And in no case can you allow a BDB-backed repository that
@@ -507,6 +507,36 @@
           unchanging, the repository also can be backed up while
           “<span class="quote">hot,</span>” just like a BDB-backed
           repository.</p>
+<div class="sidebar">
+<a name="svn.reposadmin.basics.backends.fsfs.revfiles"></a><p class="title"><b>Revision files and shards</b></p>
+<p>FSFS repositories contain files that describe the
+            changes made in a single revision, and files that contain
+            the revision properties associated with a single revision.
+            Repositories created in versions of Subversion prior to
+            1.5 keep these files in two directories—one for each
+            type of file.  As new revisions are committed to the
+            repository, Subversion drops more files into these two
+            directories—over time, the number of these files in
+            each directory can grow to be quite large.  This has been
+            observed to cause performance problems on certain
+            network-based filesystems.</p>
+<p>Subversion 1.5 creates FSFS-backed repositories using
+            a slightly modified layout in which the contents of these
+            two directories are <em class="firstterm">sharded</em>, or
+            scattered across several subdirectories.  This can greatly
+            reduce the time it takes the system to locate any one of
+            these files, and therefore increases the overall
+            performance of Subversion when reading from the
+            repository.</p>
+<p>Subversion 1.6 takes the sharded layout one step
+            further, allowing administrators to
+            optionally <em class="firstterm">pack</em> each of their
+            repository shards up into a single multi-revision file.
+            This can have both performance and disk usage benefits.
+            See
+            <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.diskspace.fsfspacking" title="5.4.3.4. Packing FSFS filesystems">Section 5.4.3.4, “Packing FSFS filesystems”</a>
+            for more information.</p>
+</div>
 <p>The FSFS revision files describe a revision's
           directory structure, file contents, and deltas against files
           in other revision trees.  Unlike a Berkeley DB database,
@@ -539,7 +569,7 @@
           immaturity compared to Berkeley DB.  Unlike Berkeley DB,
           which has years of history, its own dedicated development
           team, and, now, Oracle's mighty name attached to it,
-          <sup>[<a name="id428717" href="#ftn.id428717" class="footnote">32</a>]</sup>
+          <sup>[<a name="id372149" href="#ftn.id372149" class="footnote">32</a>]</sup>
           FSFS is a newer bit of engineering.  Prior to Subversion
           1.4, it was still shaking out some pretty serious data
           integrity bugs, which, while triggered in only very rare
@@ -551,24 +581,24 @@
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id427920" href="#id427920" class="para">28</a>] </sup>Whether founded in ignorance or in poorly considered
+<div class="footnote"><p><sup>[<a name="ftn.id371296" href="#id371296" class="para">28</a>] </sup>Whether founded in ignorance or in poorly considered
             concepts about how to derive legitimate software
             development metrics, global revision numbers are a silly
             thing to fear, and <span class="emphasis"><em>not</em></span> the kind of
             thing you should weigh when deciding how to arrange your
             projects and repositories.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id427984" href="#id427984" class="para">29</a>] </sup>The <code class="filename">trunk</code>, <code class="filename">tags</code>, 
+<div class="footnote"><p><sup>[<a name="ftn.id371359" href="#id371359" class="para">29</a>] </sup>The <code class="filename">trunk</code>, <code class="filename">tags</code>, 
             and <code class="filename">branches</code> trio is sometimes referred
             to as “<span class="quote">the TTB directories.</span>”</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id428175" href="#id428175" class="para">30</a>] </sup>Often pronounced “<span class="quote">fuzz-fuzz,</span>” if Jack
+<div class="footnote"><p><sup>[<a name="ftn.id371551" href="#id371551" class="para">30</a>] </sup>Often pronounced “<span class="quote">fuzz-fuzz,</span>” if Jack
             Repenning has anything to say about it.  (This book,
             however, assumes that the reader is thinking
             “<span class="quote">eff-ess-eff-ess.</span>”)</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id428549" href="#id428549" class="para">31</a>] </sup>Berkeley DB requires that the underlying filesystem
+<div class="footnote"><p><sup>[<a name="ftn.id371926" href="#id371926" class="para">31</a>] </sup>Berkeley DB requires that the underlying filesystem
               implement strict POSIX locking semantics, and more
               importantly, the ability to map files directly into
               process memory.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id428717" href="#id428717" class="para">32</a>] </sup>Oracle bought Sleepycat and its flagship software,
+<div class="footnote"><p><sup>[<a name="ftn.id372149" href="#id372149" class="para">32</a>] </sup>Oracle bought Sleepycat and its flagship software,
               Berkeley DB, on Valentine's Day in 2006.</p></div>
 </div>
 </div>

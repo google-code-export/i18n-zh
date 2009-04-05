@@ -26,46 +26,27 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.forcvs.directories"></a>B.2. 目录的版本</h2></div></div></div>
-<p>Subversion tracks tree structures, not just file contents.  It's one of the
-biggest reasons Subversion was written to replace CVS.</p>
+<p>Subversion 会记录目录树的结构，不仅仅是文件的内容。这是编写 Subversion 替代 CVS 最重要的一个原因。</p>
 <p>以下是对你这意味着什么的说明，作为一个前CVS用户：</p>
 <div class="itemizedlist"><ul type="disc">
-<li><p>The <span class="command"><strong>svn add</strong></span> and <span class="command"><strong>svn delete</strong></span> commands
-work on directories now, just as they work on files.  So do <span class="command"><strong>svn
-copy</strong></span> and <span class="command"><strong>svn move</strong></span>.  However, these commands do
-<span class="emphasis"><em>not</em></span> cause any kind of immediate change in the
-repository.  Instead, the working items are simply “<span class="quote">scheduled</span>”
-for addition or deletion.  No repository changes happen until you run
-<strong class="userinput"><code>svn commit</code></strong>.</p></li>
-<li><p>Directories aren't dumb containers anymore; they have revision numbers like
-files.  (Or more properly, it's correct to talk about “<span class="quote">directory
-<code class="filename">foo/</code> in revision 5.</span>”)</p></li>
+<li><p><span class="command"><strong>svn add</strong></span> 和 <span class="command"><strong>svn delete</strong></span>
+现在也工作在目录上了，就像在文件上一样，还有 <span class="command"><strong>svn copy</strong></span> 和 <span class="command"><strong>svn
+move</strong></span>
+也一样。然而，这些命令<span class="emphasis"><em>不</em></span>会导致版本库即时的变化，相反，工作的项目只是“<span class="quote">调度</span>”添加和删除，在运行
+<strong class="userinput"><code>svn commit</code></strong> 之前没有版本库的修改。</p></li>
+<li><p>目录不再是哑容器了；它们也有文件一样的版本号。(更准确的说，谈论“<span class="quote">版本 5
+的目录<code class="filename">foo/</code></span>”是正确的。)</p></li>
 </ul></div>
-<p>Let's talk more about that last point.  Directory versioning is a hard
-problem; because we want to allow mixed-revision working copies, there are
-some limitations on how far we can abuse this model.</p>
-<p>From a theoretical point of view, we define “<span class="quote">revision 5 of directory
-<code class="filename">foo</code></span>” to mean a specific collection of directory
-entries and properties.  Now suppose we start adding and removing files from
-<code class="filename">foo</code>, and then commit.  It would be a lie to say that we
-still have revision 5 of <code class="filename">foo</code>.  However, if we bumped
-<code class="filename">foo</code>'s revision number after the commit, that would be a
-lie too; there may be other changes to <code class="filename">foo</code> we haven't
-yet received, because we haven't updated yet.</p>
-<p>Subversion deals with this problem by quietly tracking committed adds and
-deletes in the <code class="filename">.svn</code> area.  When you eventually run
-<strong class="userinput"><code>svn update</code></strong>, all accounts are settled with the
-repository, and the directory's new revision number is set correctly.
-<span class="emphasis"><em>Therefore, only after an update is it truly safe to say that you
-have a “<span class="quote">perfect</span>” revision of a directory.</em></span> Most of
-the time, your working copy will contain “<span class="quote">imperfect</span>” directory
-revisions.</p>
-<p>Similarly, a problem arises if you attempt to commit property changes on a
-directory.  Normally, the commit would bump the working directory's local
-revision number.  But again, that would be a lie, as there may be adds or
-deletes that the directory doesn't yet have, because no update has
-happened.  <span class="emphasis"><em>Therefore, you are not allowed to commit property
-changes on a directory unless the directory is up to date.</em></span></p>
+<p>让我们再讨论最后一点。目录版本化是一个困难的问题；因为我们希望允许混合版本的工作副本，有一些防止我们滥用这个模型的限制。</p>
+<p>从理论观点，我们定义“<span class="quote">目录<code class="filename">foo</code>的版本 5</span>”
+意味着一组目录条目和属性。现在假定我们从 <code class="filename">foo</code> 开始添加和删除文件，然后提交。如果说我们还有
+<code class="filename">foo</code> 的版本 5 就是一个谎言。然而，如果说我们在提交之后增加了
+<code class="filename">foo</code> 的版本号码，这也是一个谎言；还有一些 <code class="filename">foo</code>
+的修改我们没有得到，因为我们还没有更新。</p>
+<p>Subversion 通过在 <code class="filename">.svn</code> 区域偷偷的纪录添加和删除来处理这些问题，当你最后运行
+<span class="command"><strong>svn
+update</strong></span>，所有的变更都会与版本库同步，并且目录的新版本号会正确设置。<span class="emphasis"><em>因此，只有在更新之后才可以真正安全地说我们有了一个“<span class="quote">完美的</span>”修订版本目录。</em></span>在大多数时候，你的工作副本会保存“<span class="quote">不完美的</span>”目录修订版本。</p>
+<p>同样的，如果你尝试提交目录的属性修改会有一个问题。通常情况下，提交应该会提高工作目录的本地修订版本号。但是再次说，这还是一个谎言，因为这个目录还没有发生添加和删除，因为还没有发生更新。<span class="emphasis"><em>因此，在你的目录不是最新的时候不允许你提交属性修改。</em></span></p>
 <p>关于目录版本的更多讨论见<a class="xref" href="svn.basic.in-action.html#svn.basic.in-action.mixedrevs" title="1.3.5. 混合修订版本的工作副本">第 1.3.5 节 “混合修订版本的工作副本”</a>。</p>
 </div>
 <div class="navfooter">

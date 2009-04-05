@@ -57,7 +57,7 @@ or datatype.</p>
 APIs is the project's own hacking guidelines, which you can find at <a class="ulink" href="http://subversion.tigris.org/hacking.html" target="_top">http://subversion.tigris.org/hacking.html</a>.  This document contains
 useful information, which, while aimed at developers and would-be developers
 of Subversion itself, is equally applicable to folks developing against
-Subversion as a set of third-party libraries.  <sup>[<a name="id393295" href="#ftn.id393295" class="footnote">54</a>]</sup>
+Subversion as a set of third-party libraries.  <sup>[<a name="id383481" href="#ftn.id383481" class="footnote">54</a>]</sup>
     </p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
@@ -76,14 +76,14 @@ Also, it means that the Subversion client compiles and runs anywhere that
 the Apache HTTP Server does.  Currently, this list includes all flavors of
 Unix, Win32, BeOS, OS/2, and Mac OS X.</p>
 <p>In addition to providing consistent implementations of system calls that
-differ across operating systems, <sup>[<a name="id393348" href="#ftn.id393348" class="footnote">55</a>]</sup> APR
+differ across operating systems, <sup>[<a name="id383522" href="#ftn.id383522" class="footnote">55</a>]</sup> APR
 gives Subversion immediate access to many custom datatypes, such as dynamic
 arrays and hash tables.  Subversion uses these types extensively.  But
 perhaps the most pervasive APR datatype, found in nearly every Subversion
 API prototype, is the <code class="literal">apr_pool_t</code>—the APR memory
 pool.  Subversion uses pools internally for all its memory allocation needs
 (unless an external library requires a different memory management mechanism
-for data passed through its API), <sup>[<a name="id393367" href="#ftn.id393367" class="footnote">56</a>]</sup> and
+for data passed through its API), <sup>[<a name="id383539" href="#ftn.id383539" class="footnote">56</a>]</sup> and
 while a person coding against the Subversion APIs is not required to do the
 same, she <span class="emphasis"><em>is</em></span> required to provide pools to the API
 functions that need them.  This means that users of the Subversion API must
@@ -155,13 +155,13 @@ respectively.</p>
 <a name="svn.developer.usingapi.otherlangs"></a>8.3.3. 使用 C 和 C++ 以外的语言</h3></div></div></div>
 <p>If you are interested in using the Subversion libraries in conjunction with
 something other than a C program—say, a Python or Perl
-script—Subversion has some support for this via the Simplified
-Wrapper and Interface Generator (SWIG).  The SWIG bindings for Subversion
-are located in <code class="filename">subversion/bindings/swig</code>.  They are
-still maturing, but they are usable.  These bindings allow you to call
-Subversion API functions indirectly, using wrappers that translate the
-datatypes native to your scripting language into the datatypes needed by
-Subversion's C libraries.</p>
+script—Subversion has some support for this via the Simplified Wrapper
+and Interface Generator (SWIG).  The SWIG bindings for Subversion are
+located in <code class="filename">subversion/bindings/swig</code>.  They are still
+maturing, but they are usable.  These bindings allow you to call Subversion
+API functions indirectly, using wrappers that translate the datatypes native
+to your scripting language into the datatypes needed by Subversion's C
+libraries.</p>
 <p>Significant efforts have been made toward creating functional SWIG-generated
 bindings for Python, Perl, and Ruby.  To some extent, the work done
 preparing the SWIG interface files for these languages is reusable in
@@ -188,8 +188,8 @@ aren't provided by the Subversion development community at all.  You can
 find links to these alternative bindings on the Subversion project's links
 page (at <a class="ulink" href="http://subversion.tigris.org/links.html" target="_top">http://subversion.tigris.org/links.html</a>), but there
 are a couple of popular ones we feel are especially noteworthy.  First,
-Barry Scott's PySVN bindings (<a class="ulink" href="http://pysvn.tigris.org/" target="_top">http://pysvn.tigris.org/</a>) are a
-popular option for binding with Python.  PySVN boasts of a more Pythonic
+Barry Scott's PySVN bindings (<a class="ulink" href="http://pysvn.tigris.org/" target="_top">http://pysvn.tigris.org/</a>) are
+a popular option for binding with Python.  PySVN boasts of a more Pythonic
 interface than the more C-like APIs provided by Subversion's own Python
 bindings.  And if you're looking for a pure Java implementation of
 Subversion, check out SVNKit (<a class="ulink" href="http://svnkit.com/" target="_top">http://svnkit.com/</a>), which is
@@ -351,9 +351,9 @@ Subversion repository to automatically perform some set of non-Subversion
 tasks every time you commit a transaction (e.g., sending an email that
 describes all the changes made in that transaction to your developer mailing
 list), you need to use the <code class="filename">libsvn_repos</code>-wrapped version
-of that function, which adds the hook triggering functionality—in
-this case, <code class="function">svn_repos_fs_commit_txn()</code>.  (For more
-information regarding Subversion's repository hooks, see <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="5.3.2. 实现版本库钩子">第 5.3.2 节 “实现版本库钩子”</a>.)</p>
+of that function, which adds the hook triggering functionality—in this
+case, <code class="function">svn_repos_fs_commit_txn()</code>.  (For more information
+regarding Subversion's repository hooks, see <a class="xref" href="svn.reposadmin.create.html#svn.reposadmin.create.hooks" title="5.3.2. 实现版本库钩子">第 5.3.2 节 “实现版本库钩子”</a>.)</p>
 <p>Now let's switch languages.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="例 8.2. 使用 Python 处理版本库层">例 8.2 “使用 Python 处理版本库层”</a> is a sample program that
 uses Subversion's SWIG Python bindings to recursively crawl the youngest
 repository revision, and to print the various paths reached during the
@@ -440,8 +440,8 @@ for users of that language.</p>
 <p>The Subversion Python bindings can be used for working copy operations,
 too.  In the previous section of this chapter, we mentioned the
 <code class="filename">libsvn_client</code> interface and how it exists for the sole
-purpose of simplifying the process of writing a Subversion client.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-2" title="例 8.3. 一个 Python 状态爬虫">例 8.3 “一个 Python 状态爬虫”</a> is a brief example of how
-that library can be accessed via the SWIG Python bindings to re-create a
+purpose of simplifying the process of writing a Subversion client.  <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-2" title="例 8.3. 一个 Python 状态爬虫">例 8.3 “一个 Python 状态爬虫”</a> is a brief example of
+how that library can be accessed via the SWIG Python bindings to re-create a
 scaled-down version of the <span class="command"><strong>svn status</strong></span> command.</p>
 <div class="example">
 <a name="svn.developer.usingapi.otherlangs.ex-2"></a><p class="title"><b>例 8.3. 一个 Python 状态爬虫</b></p>
@@ -531,8 +531,7 @@ if __name__ == '__main__':
         sys.exit(1)
 </pre></div>
 </div>
-<br class="example-break"><p>As was the case in <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="例 8.2. 使用 Python 处理版本库层">例 8.2 “使用 Python 处理版本库层”</a>,
-this program is pool-free and uses, for the most part, normal Python
+<br class="example-break"><p>As was the case in <a class="xref" href="svn.developer.usingapi.html#svn.developer.usingapi.otherlangs.ex-1" title="例 8.2. 使用 Python 处理版本库层">例 8.2 “使用 Python 处理版本库层”</a>, this program is pool-free and uses, for the most part, normal Python
 datatypes.  The call to <code class="function">svn_client_ctx_t()</code> is deceiving
 because the public Subversion API has no such function—this just
 happens to be a case where SWIG's automatic language generation bleeds
@@ -546,9 +545,9 @@ rather immediate and unceremonious program abortion.</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id393295" href="#id393295" class="para">54</a>] </sup>当然，Subversion使用Subversion的API。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id393348" href="#id393348" class="para">55</a>] </sup>Subversion使用尽可能多ANSI系统调用和数据类型。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id393367" href="#id393367" class="para">56</a>] </sup>Neon和Berkeley DB就是这种库的例子。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id383481" href="#id383481" class="para">54</a>] </sup>当然，Subversion使用Subversion的API。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id383522" href="#id383522" class="para">55</a>] </sup>Subversion使用尽可能多ANSI系统调用和数据类型。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id383539" href="#id383539" class="para">56</a>] </sup>Neon和Berkeley DB就是这种库的例子。</p></div>
 </div>
 </div>
 <div class="navfooter">

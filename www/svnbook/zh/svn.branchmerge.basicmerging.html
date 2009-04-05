@@ -74,17 +74,17 @@ metadata.  In more common speak, a changeset is just a patch with a name you
 can refer to.</p>
 <p>In Subversion, a global revision number N names a tree in the repository:
 it's the way the repository looked after the Nth commit.  It's also the name
-of an implicit changeset: if you compare tree N with tree N−1, you
-can derive the exact patch that was committed.  For this reason, it's easy
-to think of revision N as not just a tree, but a changeset as well.  If you
-use an issue tracker to manage bugs, you can use the revision numbers to
-refer to particular patches that fix bugs—for example, “<span class="quote">this
-issue was fixed by r9238.</span>” Somebody can then run <strong class="userinput"><code>svn log
--r 9238</code></strong> to read about the exact changeset that fixed the bug,
-and run <strong class="userinput"><code>svn diff -c 9238</code></strong> to see the patch itself.
-And (as you'll see shortly)  Subversion's <span class="command"><strong>svn merge</strong></span>
-command is able to use revision numbers.  You can merge specific changesets
-from one branch to another by naming them in the merge arguments: passing
+of an implicit changeset: if you compare tree N with tree N−1, you can
+derive the exact patch that was committed.  For this reason, it's easy to
+think of revision N as not just a tree, but a changeset as well.  If you use
+an issue tracker to manage bugs, you can use the revision numbers to refer
+to particular patches that fix bugs—for example, “<span class="quote">this issue was
+fixed by r9238.</span>” Somebody can then run <strong class="userinput"><code>svn log -r
+9238</code></strong> to read about the exact changeset that fixed the bug, and
+run <strong class="userinput"><code>svn diff -c 9238</code></strong> to see the patch itself.  And
+(as you'll see shortly)  Subversion's <span class="command"><strong>svn merge</strong></span> command
+is able to use revision numbers.  You can merge specific changesets from one
+branch to another by naming them in the merge arguments: passing
 <strong class="userinput"><code>-c 9238</code></strong> to <span class="command"><strong>svn merge</strong></span> would merge
 changeset r9238 into your working copy.</p>
 </div>
@@ -119,7 +119,7 @@ U    integer.c
 <em class="replaceable"><code>URL</code></em></code></strong>—tells Subversion to merge
 all recent changes from the URL to the current working directory (which is
 typically the root of your working copy).  Also notice that we're using the
-caret (<code class="literal">^</code>) syntax<sup>[<a name="id372270" href="#ftn.id372270" class="footnote">21</a>]</sup> to
+caret (<code class="literal">^</code>) syntax<sup>[<a name="id362684" href="#ftn.id362684" class="footnote">21</a>]</sup> to
 avoid having to type out the entire <code class="filename">/trunk</code> URL.</p>
 <p>After running the prior example, your branch working copy now contains new
 local modifications, and these edits are duplications of all of the changes
@@ -333,13 +333,13 @@ reflect a different repository directory.  We'll discuss this more in <a class="
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.branchmerge.basicmerging.mergeinfo"></a>4.3.3. 合并信息和预览</h3></div></div></div>
-<p>The basic mechanism Subversion uses to track changesets—that is,
-which changes have been merged to which branches—is by recording data
-in properties.  Specifically, merge data is tracked in the
+<p>The basic mechanism Subversion uses to track changesets—that is, which
+changes have been merged to which branches—is by recording data in
+properties.  Specifically, merge data is tracked in the
 <code class="literal">svn:mergeinfo</code> property attached to files and
 directories.  (If you're not familiar with Subversion properties, now is the
 time to skim <a class="xref" href="svn.advanced.props.html" title="3.2. 属性">第 3.2 节 “属性”</a>.)</p>
-<p>You can examine the property, just like any other:</p>
+<p>你可以用与其它属性一样的方法，检查合并信息属性：</p>
 <pre class="screen">
 $ cd my-calc-branch
 $ svn propget svn:mergeinfo .
@@ -415,10 +415,10 @@ by the merge operation, which will remind you about what you've just merged.</p>
 </table></div>
 <p>Of course, the best way to preview a merge operation is to just do it!
 Remember, running <span class="command"><strong>svn merge</strong></span> isn't an inherently risky
-thing (unless you've made local modifications to your working
-copy—but we've already stressed that you shouldn't be merging into
-such an environment).  If you don't like the results of the merge, simply
-run <strong class="userinput"><code>svn revert . -R</code></strong> to revert the changes from your
+thing (unless you've made local modifications to your working copy—but
+we've already stressed that you shouldn't be merging into such an
+environment).  If you don't like the results of the merge, simply run
+<strong class="userinput"><code>svn revert . -R</code></strong> to revert the changes from your
 working copy and retry the command with different options.  The merge isn't
 final until you actually <span class="command"><strong>svn commit</strong></span> the results.</p>
 <div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip">
@@ -500,7 +500,7 @@ document.)  This isn't so easy, it turns out, because Subversion was
 deliberately designed to never lose information.  Revisions are immutable
 trees that build upon one another.  Removing a revision from history would
 cause a domino effect, creating chaos in all subsequent revisions and
-possibly invalidating all working copies.  <sup>[<a name="id373049" href="#ftn.id373049" class="footnote">22</a>]</sup>
+possibly invalidating all working copies.  <sup>[<a name="id363449" href="#ftn.id363449" class="footnote">22</a>]</sup>
       </p>
 </div>
 <div class="sect2" lang="zh">
@@ -615,8 +615,8 @@ Updated to revision 1390.
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id372270" href="#id372270" class="para">21</a>] </sup>这是 svn 1.6 新增的。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id373049" href="#id373049" class="para">22</a>] </sup>The Subversion project has plans, however, to someday implement a command
+<div class="footnote"><p><sup>[<a name="ftn.id362684" href="#id362684" class="para">21</a>] </sup>这是 svn 1.6 新增的。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id363449" href="#id363449" class="para">22</a>] </sup>The Subversion project has plans, however, to someday implement a command
 that would accomplish the task of permanently deleting information.  In the
 meantime, see <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.tk.svndumpfilter" title="5.4.1.3. svndumpfilter">第 5.4.1.3 节 “svndumpfilter”</a> for a
 possible workaround.</p></div>

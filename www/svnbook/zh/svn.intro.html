@@ -46,41 +46,25 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.intro.install"></a>A.1. 安装 Subversion</h2></div></div></div>
-<p>Subversion is built on a portability layer called APR—the Apache
-Portable Runtime library.  The APR library provides all the interfaces that
-Subversion needs to function on different operating systems: disk access,
-network access, memory management, and so on.  While Subversion is able to
-use Apache as one of its network server programs, its dependence on APR
-<span class="emphasis"><em>does not</em></span> mean that Apache is a required component.  APR
-is a standalone library usable by any application.  It does mean, however,
-that like Apache, Subversion clients and servers run on any operating system
-that the Apache <span class="command"><strong>httpd</strong></span> server runs on: Windows, Linux, all
-flavors of BSD, Mac OS X, NetWare, and others.</p>
+<p>Subversion 是基于 APR—Apache 可移植运行库构建的。APR 提供了 Subversion
+需要的全部与操作系统相关的操作接口，如磁盘访问, 网络访问，内存管理等。这使得 Subversion 能够使用 Apache
+作为其网络服务器程序之一，Subversion 对 APR 的依赖<span class="emphasis"><em>并不</em></span>意味着必须使用 Apache
+作为它的网络服务器程序。APR是一个独立的程序库，任何应用程序都可以使用它。相反，它意味着 Subversion 能够在所有可运行 Apache
+服务器的操作系统上运行，如 Windows, Linux, 各种 BSD, Mac OS X, Netware 等。</p>
 <p>最简单的安装 Subversion 的方法就是下载与你的操作系统对应的二进制程序包。在 Subversion 的网站(<a class="ulink" href="http://subversion.tigris.org" target="_top">http://subversion.tigris.org</a>)上通常可以找到由志愿者提供下载的程序包。在这个网站上，会提供微软操作系统上的图形化应用程序安装包。而对于类
 Unix 系统，则可以使用其自身的程序包系统(RPM, DEB, ports 等)来获取 Subversion。</p>
-<p>Alternatively, you can build Subversion directly from source code, though
-it's not always an easy task. (If you're not experienced at building open
-source software packages, you're probably better off downloading a binary
-distribution instead!)  From the Subversion web site, download the latest
-source code release.  After unpacking it, follow the instructions in the
-<code class="filename">INSTALL</code> file to build it.  Note that a released source
-package may not contain everything you need to build a command-line client
-capable of talking to a remote repository.  Starting with Subversion 1.4 and
-later, the libraries Subversion depends on (apr, apr-util, and neon) are
-distributed in a separate source package suffixed with
-<code class="filename">-deps</code>.  These libraries are now common enough that they
-may already be installed on your system.  If not, you'll need to unpack the
-dependency package into the same directory where you unpacked the main
-Subversion source.  Regardless, it's possible that you may want to fetch
-other optional dependencies such as Berkeley DB and possibly Apache
-<span class="command"><strong>httpd</strong></span>.  If you want to do a complete build, make sure you
-have all of the packages documented in the <code class="filename">INSTALL</code>
-file.</p>
-<p>If you're one of those folks that likes to use bleeding-edge software, you
-can also get the Subversion source code from the Subversion repository in
-which it lives.  Obviously, you'll need to already have a Subversion client
-on hand to do this.  But once you do, you can check out a working copy of
-the Subversion source repository from <a class="ulink" href="http://svn.collab.net/repos/svn/trunk/" target="_top">http://svn.collab.net/repos/svn/trunk/</a>: <sup>[<a name="id413389" href="#ftn.id413389" class="footnote">60</a>]</sup>
+<p>此外，还可以通过编译源代码包直接生成 Subversion
+程序，尽管这不是一件简单的任务(如果你没有构建过开源软件包，你最好下载二进制发布版本！)。首先，从 Subversion
+网站下载最新的源代码包，然后解压缩。然后，根据 <code class="filename">INSTALL</code>
+文件的指示进行编译。需要注意的是，正式发布的源代码包中可能没有包含构建命令行客户端工具所需的全部内容，从 Subversion 1.4
+开始，所有依赖的库(如 apr，apr-util 和 neon 库)以 <code class="filename">-deps</code>
+为名称单独发布，这些库应该可以满足你在你的系统上的安装，你需要将依赖库解压缩到 Subversion
+源程序相同的目录。但是一些可选的组件则依赖于其它一些程序库，如 Berkeley DB 和 Apache
+<span class="command"><strong>httpd</strong></span>。因此，如果想要进行完整的编译，请根据 <code class="filename">INSTALL</code>
+文件中的内容确认这些程序库是否可用。</p>
+<p>如果你是一个喜欢使用最新软件的人，你可以从 Subversion 本身的版本库得到 Subversion 最新的源代码，显然，你首先需要一个
+Subversion 客户端，有了之后，你就可以从 <a class="ulink" href="http://svn.collab.net/repos/svn/trunk/" target="_top">http://svn.collab.net/repos/svn/trunk/</a>
+检出一个Subversion源代码的工作副本：<sup>[<a name="id403458" href="#ftn.id403458" class="footnote">60</a>]</sup>
     </p>
 <pre class="screen">
 $ svn checkout http://svn.collab.net/repos/svn/trunk subversion
@@ -91,22 +75,16 @@ A    subversion/autogen.sh
 A    subversion/build.conf
 …
 </pre>
-<p>The preceding command will create a working copy of the latest (unreleased)
-Subversion source code into a subdirectory named
-<code class="filename">subversion</code> in your current working directory.  You can
-adjust that last argument as you see fit.  Regardless of what you call the
-new working copy directory, though, after this operation completes, you will
-now have the Subversion source code.  Of course, you will still need to
-fetch a few helper libraries (apr, apr-util, etc.)—see the
-<code class="filename">INSTALL</code> file in the top level of the working copy for
-details.</p>
+<p>上面的命令会检出最新(尚未发布)的 Subversion 源代码版本到你的当前工作目录的名为
+<code class="filename">subversion</code>
+的子目录中。很明显，你可以调整最后的参数改为你需要的。不管你怎么称呼它，在操作完成后，你已经有了 Subversion
+的源代码。当然，你还是需要得到一些支持库(apr，apr-util 等等)—参见工作副本根目录的
+<code class="filename">INSTALL</code> 以了解详情。</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id413389" href="#id413389" class="para">60</a>] </sup>Note that the URL checked out in the example ends not with
-<code class="literal">svn</code>, but with a subdirectory thereof called
-<code class="literal">trunk</code>.  See our discussion of Subversion's branching and
-tagging model for the reasoning behind this.</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id403458" href="#id403458" class="para">60</a>] </sup>注意上面例子中检出的 URL 并不是以 <code class="literal">svn</code> 结尾，而是它的一个叫做
+<code class="literal">trunk</code> 的子目录，可以看我们对 Subversion 的分支和标签模型的讨论来理解背后的原因。</p></div>
 </div>
 </div>
 <div class="navfooter">

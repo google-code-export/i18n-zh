@@ -26,36 +26,22 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.forcvs.binary-and-trans"></a>B.8. 二进制文件和行结束标记转换</h2></div></div></div>
-<p>In the most general sense, Subversion handles binary files more gracefully
-than CVS does.  Because CVS uses RCS, it can only store successive full
-copies of a changing binary file.  Subversion, however, expresses
-differences between files using a binary differencing algorithm, regardless
-of whether they contain textual or binary data.  That means all files are
-stored differentially (compressed) in the repository.</p>
-<p>CVS users have to mark binary files with <code class="option">-kb</code> flags to
-prevent data from being garbled (due to keyword expansion and line-ending
-translations).  They sometimes forget to do this.</p>
-<p>Subversion takes the more paranoid route.  First, it never performs any kind
-of keyword or line-ending translation unless you explicitly ask it to do so
-(see <a class="xref" href="svn.advanced.props.special.keywords.html" title="3.5. 关键字替换">第 3.5 节 “关键字替换”</a> and <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.eol-style" title="3.3.3. 行结束字符序列">第 3.3.3 节 “行结束字符序列”</a> for more details).  By
-default, Subversion treats all file data as literal byte strings, and files
-are always stored in the repository in an untranslated state.</p>
-<p>Second, Subversion maintains an internal notion of whether a file is
-“<span class="quote">text</span>” or “<span class="quote">binary</span>” data, but this notion is
-<span class="emphasis"><em>only</em></span> extant in the working copy.  During an
-<span class="command"><strong>svn update</strong></span>, Subversion will perform contextual merges on
-locally modified text files, but will not attempt to do so for binary files.</p>
-<p>To determine whether a contextual merge is possible, Subversion examines the
-<code class="literal">svn:mime-type</code> property.  If the file has no
-<code class="literal">svn:mime-type</code> property, or has a MIME type that is
-textual (e.g., <code class="literal">text/*</code>), Subversion assumes it is text.
-Otherwise, Subversion assumes the file is binary.  Subversion also helps
-users by running a binary-detection algorithm in the <span class="command"><strong>svn
-import</strong></span> and <span class="command"><strong>svn add</strong></span> commands.  These commands
-will make a good guess and then (possibly) set a binary
-<code class="literal">svn:mime-type</code> property on the file being added.  (If
-Subversion guesses wrong, the user can always remove or hand-edit the
-property.)</p>
+<p>在大多数情况下，Subversion 比 CVS 能更好的处理二进制文件。因为 CVS 使用 RCS，它只能存储已经修改的二进制文件的完整副本。但是
+Subversion 使用二进制差异算法来表示文件的区别，不管文件是文本文件还是二进制文件。这意味着所有的文件是以增量的(压缩的)形式存放在版本库。</p>
+<p>CVS 用户需要使用 <code class="option">-kb</code>
+选项来标记二进制文件，防止数据的混淆(因为关键字扩展和行结束符号的转换)。他们有时候会忘记这样做。</p>
+<p>Subversion 使用更加异想天开的方法。第一，如果你不明确的告诉它(详情见<a class="xref" href="svn.advanced.props.special.keywords.html" title="3.5. 关键字替换">第 3.5 节 “关键字替换”</a>和<a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.eol-style" title="3.3.3. 行结束字符序列">第 3.3.3 节 “行结束字符序列”</a>)这样做，它不会做任何关键字扩展或行结束符号的转换操作。缺省情况下，Subversion
+会把所有的数据看作字节串，所有的储存在版本库的文件都处于未转换的状态。</p>
+<p>第二，Subversion
+维护了一个内部的观念来区别一个文件是“<span class="quote">文本</span>”文件，还是“<span class="quote">二进制</span>”文件，但这个观念<span class="emphasis"><em>只</em></span>在工作副本非常重要。在执行
+<span class="command"><strong>svn update</strong></span> 期间，Subversion
+会对本地修改的文本文件执行基于上下文的合并，但是对二进制文件不会。</p>
+<p>为了检测一个基于上下文的合并是可能的，Subversion 检测 <code class="literal">svn:mime-type</code> 属性。如果没有
+<code class="literal">svn:mime-type</code> 属性，或者这个属性是文本的(例如
+<code class="literal">text/*</code>)，Subversion 会假定它是文本。否则 Subversion
+认为它是二进制文件。Subversion 也会在执行 <span class="command"><strong>svn import</strong></span> 和 <span class="command"><strong>svn
+add</strong></span> 命令时通过运行一个二进制检测算法来帮助用户。这些命令会做出很好的猜测，然后(如果可能)设置添加文件的
+<code class="literal">svn:mime-type</code> 属性(如果 Subversion 猜测错误，用户可以删除或手工编辑这个属性)。</p>
 </div>
 <div class="navfooter">
 <hr>

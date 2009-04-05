@@ -26,20 +26,15 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.tour.importing"></a>2.2. 导入数据到你的版本库</h2></div></div></div>
-<p>You can get new files into your Subversion repository in two ways:
-<span class="command"><strong>svn import</strong></span> and <span class="command"><strong>svn add</strong></span>.  We'll discuss
-<span class="command"><strong>svn import</strong></span> now and will discuss <span class="command"><strong>svn
-add</strong></span> later in this chapter when we review a typical day with
-Subversion.</p>
+<p>有两种方法可以将新文件引入 Subversion 版本库：<span class="command"><strong>svn import</strong></span> 和 <span class="command"><strong>svn
+add</strong></span>，我们将在本章讨论 <span class="command"><strong>svn import</strong></span>，而会在回顾 Subversion
+的典型一天时讨论 <span class="command"><strong>svn add</strong></span>。</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.importing.import"></a>2.2.1. svn import</h3></div></div></div>
-<p>The <span class="command"><strong>svn import</strong></span> command is a quick way to copy an
-unversioned tree of files into a repository, creating intermediate
-directories as necessary.  <span class="command"><strong>svn import</strong></span> doesn't require a
-working copy, and your files are immediately committed to the repository.
-You typically use this when you have an existing tree of files that you want
-to begin tracking in your Subversion repository.  For example:</p>
+<p><span class="command"><strong>svn import</strong></span> 是将未版本化文件导入版本库的最快方法，会根据需要创建中介目录。<span class="command"><strong>svn
+import</strong></span> 不需要一个工作副本，你的文件会直接提交到版本库，这通常用在你希望将一组文件加入到 Subversion
+版本库时，例如：</p>
 <pre class="screen">
 $ svnadmin create /var/svn/newrepos
 $ svn import mytree file:///var/svn/newrepos/some/project \
@@ -58,29 +53,22 @@ bar.c
 foo.c
 subdir/
 </pre>
-<p>Note that after the import is finished, the original tree is
-<span class="emphasis"><em>not</em></span> converted into a working copy.  To start working,
-you still need to <span class="command"><strong>svn checkout</strong></span> a fresh working copy of
-the tree.</p>
+<p>注意，在导入之后，原来的目录树并<span class="emphasis"><em>没有</em></span>转化成工作副本，为了开始工作，你还是需要运行 <span class="command"><strong>svn
+checkout</strong></span> 导出一个工作副本。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.importing.layout"></a>2.2.2. 推荐的版本库布局</h3></div></div></div>
-<p>While Subversion's flexibility allows you to lay out your repository in any
-way that you choose, we recommend that you create a
-<code class="filename">trunk</code> directory to hold the “<span class="quote">main line</span>” of
-development, a <code class="filename">branches</code> directory to contain branch
-copies, and a <code class="filename">tags</code> directory to contain tag copies.
-For example:</p>
+<p>尽管 Subversion 的灵活性允许你自由布局版本库，但我们有一套推荐的方式，创建一个 <code class="filename">trunk</code>
+目录来保存开发的“<span class="quote">主线</span>”，一个 <code class="filename">branches</code>
+目录存放分支拷贝，<code class="filename">tags</code> 目录保存标签拷贝，例如：</p>
 <pre class="screen">
 $ svn list file:///var/svn/repos
 /trunk
 /branches
 /tags
 </pre>
-<p>You'll learn more about tags and branches in <a class="xref" href="svn.branchmerge.html" title="第 4 章 分支与合并">第 4 章 <i>分支与合并</i></a>.  For details and how to set up multiple
-projects, see <a class="xref" href="svn.branchmerge.maint.html#svn.branchmerge.maint.layout" title="4.7.1. 版本库布局">第 4.7.1 节 “版本库布局”</a> and <a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. 规划你的版本库结构">第 5.2.1 节 “规划你的版本库结构”</a> to read more about project
-roots.</p>
+<p>你将会在<a class="xref" href="svn.branchmerge.html" title="第 4 章 分支与合并">第 4 章 <i>分支与合并</i></a>看到标签和分支的详细内容，关于设置多个项目的信息，可以看<a class="xref" href="svn.branchmerge.maint.html#svn.branchmerge.maint.layout" title="4.7.1. 版本库布局">第 4.7.1 节 “版本库布局”</a>和<a class="xref" href="svn.reposadmin.planning.html#svn.reposadmin.projects.chooselayout" title="5.2.1. 规划你的版本库结构">第 5.2.1 节 “规划你的版本库结构”</a>中关于“<span class="quote">项目根目录</span>”的内容。</p>
 </div>
 </div>
 <div class="navfooter">

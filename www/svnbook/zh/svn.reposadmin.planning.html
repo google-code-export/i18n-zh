@@ -66,16 +66,15 @@ any historical versioning information.</p>
 have different requirements in terms of the repository event triggers, such
 as needing to send commit notification emails to different mailing lists, or
 having different definitions about what does and does not constitute a
-legitimate commit.  These aren't insurmountable problems, of
-course—it just means that all of your hook scripts have to be
-sensitive to the layout of your repository rather than assuming that the
-whole repository is associated with a single group of people.  Also,
-remember that Subversion uses repository-global revision numbers.  While
-those numbers don't have any particular magical powers, some folks still
-don't like the fact that even though no changes have been made to their
-project lately, the youngest revision number for the repository keeps
-climbing because other projects are actively adding new revisions.
-<sup>[<a name="id377462" href="#ftn.id377462" class="footnote">28</a>]</sup>
+legitimate commit.  These aren't insurmountable problems, of course—it
+just means that all of your hook scripts have to be sensitive to the layout
+of your repository rather than assuming that the whole repository is
+associated with a single group of people.  Also, remember that Subversion
+uses repository-global revision numbers.  While those numbers don't have any
+particular magical powers, some folks still don't like the fact that even
+though no changes have been made to their project lately, the youngest
+revision number for the repository keeps climbing because other projects are
+actively adding new revisions.  <sup>[<a name="id367723" href="#ftn.id367723" class="footnote">28</a>]</sup>
       </p>
 <p>A middle-ground approach can be taken, too.  For example, projects can be
 grouped by how well they relate to each other.  You might have a few
@@ -96,7 +95,7 @@ the directory under which the main project development occurs;
 <code class="filename">branches</code>, which is a directory in which to create
 various named branches of the main development line; and
 <code class="filename">tags</code>, which is a collection of tree snapshots that are
-created, and perhaps destroyed, but never changed.  <sup>[<a name="id377517" href="#ftn.id377517" class="footnote">29</a>]</sup>
+created, and perhaps destroyed, but never changed.  <sup>[<a name="id367895" href="#ftn.id367895" class="footnote">29</a>]</sup>
         </p>
 <p>For example, your repository might look like this:</p>
 <pre class="screen">
@@ -192,14 +191,14 @@ firewall or the whole world out on the open Internet), what other services
 you'll be providing around Subversion (repository browsing interfaces,
 email-based commit notification, etc.), your data backup strategy, and so
 on.</p>
-<p>We cover server choice and configuration in <a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a>, but the point we'd like to briefly make here
-is simply that the answers to some of these other questions might have
-implications that force your hand when deciding where your repository will
-live.  For example, certain deployment scenarios might require accessing the
-repository via a remote filesystem from multiple computers, in which case
-(as you'll read in the next section) your choice of a repository backend
-data store turns out not to be a choice at all because only one of the
-available backends will work in this scenario.</p>
+<p>We cover server choice and configuration in <a class="xref" href="svn.serverconfig.html" title="第 6 章 服务配置">第 6 章 <i>服务配置</i></a>, but the point we'd like to briefly make here is simply that the answers
+to some of these other questions might have implications that force your
+hand when deciding where your repository will live.  For example, certain
+deployment scenarios might require accessing the repository via a remote
+filesystem from multiple computers, in which case (as you'll read in the
+next section) your choice of a repository backend data store turns out not
+to be a choice at all because only one of the available backends will work
+in this scenario.</p>
 <p>Addressing each possible way to deploy Subversion is both impossible and
 outside the scope of this book.  We simply encourage you to evaluate your
 options using these pages and other sources as your reference material and
@@ -216,7 +215,7 @@ repository uses.  One type of data store keeps everything in a Berkeley DB
 referred to as being “<span class="quote">BDB-backed.</span>” The other type stores data
 in ordinary flat files, using a custom format.  Subversion developers have
 adopted the habit of referring to this latter data storage mechanism as
-<em class="firstterm">FSFS</em> <sup>[<a name="id377708" href="#ftn.id377708" class="footnote">30</a>]</sup> —a
+<em class="firstterm">FSFS</em> <sup>[<a name="id368073" href="#ftn.id368073" class="footnote">30</a>]</sup> —a
 versioned filesystem implementation that uses the native OS filesystem
 directly—rather than via a database library or some other abstraction
 layer—to store data.</p>
@@ -312,8 +311,8 @@ provides quite a bit more flexibility in terms of its supported deployment
 scenarios.  More flexibility means you have to work a little harder to find
 ways to deploy it incorrectly.  Those reasons—plus the fact that not
 using Berkeley DB means there's one fewer component in the
-system—largely explain why today almost everyone uses the FSFS
-backend when creating new repositories.</p>
+system—largely explain why today almost everyone uses the FSFS backend
+when creating new repositories.</p>
 <p>Fortunately, most programs that access Subversion repositories are
 blissfully ignorant of which backend data store is in use.  And you aren't
 even necessarily stuck with your first choice of a data store—in the
@@ -360,11 +359,10 @@ simply copy a Subversion repository that was created on a Unix system onto a
 Windows system and expect it to work.  While much of the Berkeley DB
 database format is architecture-independent, other aspects of the
 environment are not.  Second, Subversion uses Berkeley DB in a way that will
-not operate on Windows 95/98 systems—if you need to house a
-BDB-backed repository on a Windows machine, stick with Windows 2000 or
-later.</p>
+not operate on Windows 95/98 systems—if you need to house a BDB-backed
+repository on a Windows machine, stick with Windows 2000 or later.</p>
 <p>While Berkeley DB promises to behave correctly on network shares that meet a
-particular set of specifications, <sup>[<a name="id378074" href="#ftn.id378074" class="footnote">31</a>]</sup> most
+particular set of specifications, <sup>[<a name="id368427" href="#ftn.id368427" class="footnote">31</a>]</sup> most
 networked filesystem types and appliances do <span class="emphasis"><em>not</em></span>
 actually meet those requirements.  And in no case can you allow a BDB-backed
 repository that resides on a network share to be accessed by multiple
@@ -376,10 +374,10 @@ having the repository live on a network share in the first place).</p>
 <th align="left">警告</th>
 </tr>
 <tr><td align="left" valign="top"><p>If you attempt to use Berkeley DB on a noncompliant remote filesystem, the
-results are unpredictable—you may see mysterious errors right away,
-or it may be months before you discover that your repository database is
-subtly corrupted.  You should strongly consider using the FSFS data store
-for repositories that need to live on a network share.</p></td></tr>
+results are unpredictable—you may see mysterious errors right away, or
+it may be months before you discover that your repository database is subtly
+corrupted.  You should strongly consider using the FSFS data store for
+repositories that need to live on a network share.</p></td></tr>
 </table></div>
 <p>Finally, because Berkeley DB is a library linked directly into Subversion,
 it's more sensitive to interruptions than a typical relational database
@@ -431,6 +429,27 @@ into the revisions directory, thus guaranteeing that commits are atomic.
 And because a revision file is permanent and unchanging, the repository also
 can be backed up while “<span class="quote">hot,</span>” just like a BDB-backed
 repository.</p>
+<div class="sidebar">
+<a name="svn.reposadmin.basics.backends.fsfs.revfiles"></a><p class="title"><b>Revision files and shards</b></p>
+<p>FSFS repositories contain files that describe the changes made in a single
+revision, and files that contain the revision properties associated with a
+single revision.  Repositories created in versions of Subversion prior to
+1.5 keep these files in two directories—one for each type of file.  As
+new revisions are committed to the repository, Subversion drops more files
+into these two directories—over time, the number of these files in
+each directory can grow to be quite large.  This has been observed to cause
+performance problems on certain network-based filesystems.</p>
+<p>Subversion 1.5 creates FSFS-backed repositories using a slightly modified
+layout in which the contents of these two directories are
+<em class="firstterm">sharded</em>, or scattered across several subdirectories.
+This can greatly reduce the time it takes the system to locate any one of
+these files, and therefore increases the overall performance of Subversion
+when reading from the repository.</p>
+<p>Subversion 1.6 takes the sharded layout one step further, allowing
+administrators to optionally <em class="firstterm">pack</em> each of their
+repository shards up into a single multi-revision file.  This can have both
+performance and disk usage benefits.  See <a class="xref" href="svn.reposadmin.maint.html#svn.reposadmin.maint.diskspace.fsfspacking" title="5.4.3.4. 打包 FSFS 文件系统">第 5.4.3.4 节 “打包 FSFS 文件系统”</a> for more information.</p>
+</div>
 <p>The FSFS revision files describe a revision's directory structure, file
 contents, and deltas against files in other revision trees.  Unlike a
 Berkeley DB database, this storage format is portable across different
@@ -456,7 +475,7 @@ at all.  At worst, some transaction data is left behind.</p>
 <p>The only real argument against FSFS is its relative immaturity compared to
 Berkeley DB.  Unlike Berkeley DB, which has years of history, its own
 dedicated development team, and, now, Oracle's mighty name attached to it,
-<sup>[<a name="id378232" href="#ftn.id378232" class="footnote">32</a>]</sup> FSFS is a newer bit of engineering.
+<sup>[<a name="id368622" href="#ftn.id368622" class="footnote">32</a>]</sup> FSFS is a newer bit of engineering.
 Prior to Subversion 1.4, it was still shaking out some pretty serious data
 integrity bugs, which, while triggered in only very rare cases, nonetheless
 did occur.  That said, FSFS has quickly become the backend of choice for
@@ -466,15 +485,15 @@ promises a lower barrier to entry for Subversion across the board.</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id377462" href="#id377462" class="para">28</a>] </sup>无论是在忽略情况下建立或很少考虑过如何产生正确的软件开发矩阵，都不应该愚蠢的担心全局的修订版本号码，这不应该成为安排项目和版本库的理由。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id377517" href="#id377517" class="para">29</a>] </sup>The <code class="filename">trunk</code>, <code class="filename">tags</code>, and
+<div class="footnote"><p><sup>[<a name="ftn.id367723" href="#id367723" class="para">28</a>] </sup>无论是在忽略情况下建立或很少考虑过如何产生正确的软件开发矩阵，都不应该愚蠢的担心全局的修订版本号码，这不应该成为安排项目和版本库的理由。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id367895" href="#id367895" class="para">29</a>] </sup>The <code class="filename">trunk</code>, <code class="filename">tags</code>, and
 <code class="filename">branches</code> trio is sometimes referred to as “<span class="quote">the
 TTB directories.</span>”</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id377708" href="#id377708" class="para">30</a>] </sup>Often pronounced “<span class="quote">fuzz-fuzz,</span>” if Jack Repenning has anything to
+<div class="footnote"><p><sup>[<a name="ftn.id368073" href="#id368073" class="para">30</a>] </sup>Often pronounced “<span class="quote">fuzz-fuzz,</span>” if Jack Repenning has anything to
 say about it.  (This book, however, assumes that the reader is thinking
 “<span class="quote">eff-ess-eff-ess.</span>”)</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id378074" href="#id378074" class="para">31</a>] </sup>Berkeley DB需要底层的文件系统实现严格的POSIX锁定语法，更重要的是，将文件直接映射到内存的能力。</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id378232" href="#id378232" class="para">32</a>] </sup>Oracle在2006情人节购买了Sleepycat和它的旗舰软件Berkeley DB。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id368427" href="#id368427" class="para">31</a>] </sup>Berkeley DB需要底层的文件系统实现严格的POSIX锁定语法，更重要的是，将文件直接映射到内存的能力。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id368622" href="#id368622" class="para">32</a>] </sup>Oracle在2006情人节购买了Sleepycat和它的旗舰软件Berkeley DB。</p></div>
 </div>
 </div>
 <div class="navfooter">

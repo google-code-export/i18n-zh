@@ -26,11 +26,9 @@
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.tour.initial"></a>2.3. 初始化检出</h2></div></div></div>
-<p>Most of the time, you will start using a Subversion repository by doing a
-<em class="firstterm">checkout</em> of your project.  Checking out a repository
-creates a “<span class="quote">working copy</span>” of it on your local machine.  This
-copy contains the <code class="literal">HEAD</code> (latest revision) of the
-Subversion repository that you specify on the command line:</p>
+<p>大多数时候，你会使用 <em class="firstterm">checkout</em> 从版本库取出一个新拷贝，开始使用
+Subversion，这样会在本机创建一个项目的“<span class="quote">本地拷贝</span>”，这个拷贝包括了命令行指定版本库中的
+<code class="literal">顶点</code>(最新的)版本：</p>
 <pre class="screen">
 $ svn checkout http://svn.collab.net/repos/svn/trunk
 A    trunk/Makefile.in
@@ -43,39 +41,17 @@ Checked out revision 8810.
 </pre>
 <div class="sidebar">
 <p class="title"><b>名称中有什么？</b></p>
-<p>Subversion tries hard not to limit the type of data you can place under
-version control.  The contents of files and property values are stored and
-transmitted as binary data, and <a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.mime-type" title="3.3.1. 文件内容类型">第 3.3.1 节 “文件内容类型”</a> tells you how to give
-Subversion a hint that “<span class="quote">textual</span>” operations don't make sense
-for a particular file.  There are a few places, however, where Subversion
-places restrictions on information it stores.</p>
-<p>Subversion internally handles certain bits of data—for example,
-property names, pathnames, and log messages—as UTF-8-encoded
-Unicode.  This is not to say that all your interactions with Subversion must
-involve UTF-8, though.  As a general rule, Subversion clients will
-gracefully and transparently handle conversions between UTF-8 and the
-encoding system in use on your computer, if such a conversion can
-meaningfully be done (which is the case for most common encodings in use
-today).</p>
-<p>In WebDAV exchanges and older versions of some of Subversion's
-administrative files, paths are used as XML attribute values, and property
-names in XML tag names.  This means that pathnames can contain only legal
-XML (1.0)  characters, and properties are further limited to ASCII
-characters.  Subversion also prohibits <code class="literal">TAB</code>,
-<code class="literal">CR</code>, and <code class="literal">LF</code> characters in path names to
-prevent paths from being broken up in diffs or in the output of commands
-such as <span class="command"><strong>svn log</strong></span> or <span class="command"><strong>svn status</strong></span>.</p>
-<p>While it may seem like a lot to remember, in practice these limitations are
-rarely a problem.  As long as your locale settings are compatible with UTF-8
-and you don't use control characters in path names, you should have no
-trouble communicating with Subversion.  The command-line client adds an
-extra bit of help—to create “<span class="quote">legally correct</span>” versions
-for internal use it will automatically escape illegal path characters as
-needed in URLs that you type.</p>
+<p>Subversion 努力不限制版本控制的数据类型。文件的内容和属性值都是按照二进制数据存储和传递，并且<a class="xref" href="svn.advanced.props.file-portability.html#svn.advanced.props.special.mime-type" title="3.3.1. 文件内容类型">第 3.3.1 节 “文件内容类型”</a>给 Subversion
+提示，以说明对于特定文件“<span class="quote">文本化的</span>”操作是没有意义的，也有一些地方，Subversion 对存放的信息有限制。</p>
+<p>Subversion 内部使用二进制处理数据—例如，属性名称，路径名和日志信息— UTF-8 编码的 Unicode，这并不意味着与
+Subversion 的交互必须完全使用 UTF-8。作为一个惯例，Subversion 的客户端能够透明的转化 UTF-8
+和你所使用系统的编码，前提是可以进行有意义的转换(当然是大多数目前常见的编码)。</p>
+<p>此外，路径名称在 WebDAV 交换中会作为 XML 属性值，就像 Subversion 的管理文件。这意味着路径名称只能包含合法的 XML(1.0)
+字符，Subversion 也会禁止路径名称中出现 TAB, CR 或 LF 字符，所以它们才不会在区别程序或如<a class="xref" href="svn.ref.svn.c.log.html" title="svn log">svn log</a>和<a class="xref" href="svn.ref.svn.c.status.html" title="svn status">svn status</a>的输出命令中断掉。</p>
+<p>虽然看起来要记住很多事情，但在实践中这些限制很少会成为问题。只要你的本地设置兼容 UTF-8，也不在路径名称中使用控制字符，与 Subversion
+的通讯就不会有问题。命令行客户端会添加一些额外的帮助字节—自动将你输入的 URL 路径字符转化为“<span class="quote">合法正确的</span>”内部用版本。</p>
 </div>
-<p>Although the preceding example checks out the trunk directory, you can just
-as easily check out any deep subdirectory of a repository by specifying the
-subdirectory in the checkout URL:</p>
+<p>尽管上面的例子取出了 trunk 目录，你也完全可以通过输入特定 URL 取出任意深度的子目录：</p>
 <pre class="screen">
 $ svn checkout \
       http://svn.collab.net/repos/svn/trunk/subversion/tests/cmdline/
@@ -87,44 +63,28 @@ A    cmdline/xmltests/svn-test.sh
 …
 Checked out revision 8810.
 </pre>
-<p>Since Subversion uses a copy-modify-merge model instead of
-lock-modify-unlock (see <a class="xref" href="svn.basic.vsn-models.html" title="1.2. 版本模型">第 1.2 节 “版本模型”</a>), you can
-immediately make changes to the files and directories in your working copy.
-Your working copy is just like any other collection of files and directories
-on your system.  You can edit and change it, move it around, even delete the
-entire working copy and forget about it.</p>
+<p>因为 Subversion
+使用“<span class="quote">拷贝-修改-合并</span>”模型，而不是“<span class="quote">锁定-修改-解锁</span>”模型(见<a class="xref" href="svn.basic.vsn-models.html" title="1.2. 版本模型">第 1.2 节 “版本模型”</a>)，你可以在工作副本中开始修改的目录和文件，你的工作副本和你的系统中的其它文件和目录完全一样，你可以编辑并改变它，移动它，也可以完全的删掉它，把它忘了。</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[警告]" src="images/warning.png"></td>
 <th align="left">警告</th>
 </tr>
-<tr><td align="left" valign="top"><p>While your working copy is “<span class="quote">just like any other collection of files
-and directories on your system,</span>” you can edit files at will, but you
-must tell Subversion about <span class="emphasis"><em>everything else</em></span> that you
-do.  For example, if you want to copy or move an item in a working copy, you
-should use <span class="command"><strong>svn copy</strong></span> or <span class="command"><strong>svn move</strong></span>
-instead of the copy and move commands provided by your operating system.
-We'll talk more about them later in this chapter.</p></td></tr>
+<tr><td align="left" valign="top"><p>因为你的工作副本“<span class="quote">同你系统上的文件和目录没有任何区别</span>”，你可以随意修改文件，但是你必须告诉 Subversion
+你做的<span class="emphasis"><em>其他任何事</em></span>。例如，你希望拷贝或移动工作副本的一个文件，你应该使用 <span class="command"><strong>svn
+copy</strong></span> 或者 <span class="command"><strong>svn move</strong></span>，而不要使用操作系统的拷贝移动命令，我们会在本章后面详细介绍。</p></td></tr>
 </table></div>
 <p>除非你准备好了提交一个新文件或目录，或改变了已存在的，否则没有必要通知Subversion你做了什么。</p>
 <div class="sidebar">
 <p class="title"><b>目录 .svn 中有什么？</b></p>
-<p>Every directory in a working copy contains an administrative area—a
-subdirectory named <code class="filename">.svn</code>.  Usually, directory listing
-commands won't show this subdirectory, but it is nevertheless an important
-directory.  Whatever you do, don't delete or change anything in the
-administrative area! Subversion depends on it to manage your working copy.</p>
-<p>If you accidentally remove the <code class="filename">.svn</code> subdirectory, the
-easiest way to fix the problem is to remove the entire containing directory
-(a normal system deletion, not <span class="command"><strong>svn delete</strong></span>), then run
-<strong class="userinput"><code>svn update</code></strong> from a parent directory.  The Subversion
-client will download the directory you've deleted, with a new
-<code class="filename">.svn</code> area as well.</p>
+<p>工作副本中的任何一个目录包括一个名为 <code class="filename">.svn</code>
+管理区域。通常列表操作不显示这个目录，但它仍然是一个非常重要的目录。无论你做什么，不要删除或是更改这个管理区域的任何东西，Subversion
+使用它来管理工作副本。</p>
+<p>如果你不小心删除了子目录 <code class="filename">.svn</code>，最简单的解决办法是删除包含的目录(普通的文件系统删除，而不是
+<span class="command"><strong>svn delete</strong></span>)，然后在父目录运行 <span class="command"><strong>svn
+update</strong></span>，Subversion 客户端会重新下载你删除的目录，并包含新的 <code class="filename">.svn</code>。</p>
 </div>
-<p>While you can certainly check out a working copy with the URL of the
-repository as the only argument, you can also specify a directory after your
-repository URL.  This places your working copy in the new directory that you
-name.  For example:</p>
+<p>因为你可以使用版本库的 URL 作为唯一参数取出一个工作副本，你也可以在版本库 URL 之后指定一个目录，这样会将你的工作目录放到你的新目录，举个例子：</p>
 <pre class="screen">
 $  svn checkout http://svn.collab.net/repos/svn/trunk subv
 A    subv/Makefile.in
@@ -135,23 +95,13 @@ A    subv/build.conf
 …
 Checked out revision 8810.
 </pre>
-<p>That will place your working copy in a directory named
-<code class="literal">subv</code> instead of a directory named
-<code class="literal">trunk</code> as we did previously.  The directory
-<code class="literal">subv</code> will be created if it doesn't already exist.</p>
+<p>这样将把你的工作副本放到 <code class="literal">subv</code>，而不是和前面那样放到 <code class="literal">trunk</code>，如果
+<code class="literal">subv</code> 不存在，将会自动创建。</p>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.initial.disabling-password-caching"></a>2.3.1. 禁用密码缓存</h3></div></div></div>
-<p>When you perform a Subversion operation that requires you to authenticate,
-by default Subversion tries to cache your authentication credentials on disk
-in encrypted form.  On some systems, Subversion may be unable to encrypt
-your authentication data. You will then be asked whether you want to cache
-your credentials to disk in plaintext.  You can choose to do so for
-convenience so that you don't have to continually reenter your password for
-future operations.  If you're concerned about caching your Subversion
-passwords in plaintext and do not want to be asked about it again and again,
-you can disable caching of plaintext passwords either permanently, or on a
-server-per-server basis.</p>
+<p>当你执行的 Subversion 命令需要认证时，缺省情况下 Subversion 会在磁盘缓存认证信息。在某些系统中，Subversion
+不能加密你的认证数据。你会被询问，是否缓存你的明文密码到磁盘。你可以选择缓存，这样做比较方便，在接下来的操作中你就可以不必输入密码。但如果你很在乎明文密码缓存，不想每次都被询问，你可以永久关闭明文缓存，或者针对每个服务器设置。</p>
 <p>To permanently disable caching of passwords in plaintext, you can add the
 line <code class="literal">store-plaintext-passwords = no</code> to the global section
 in the <code class="filename">servers</code> configuration file on the local
@@ -160,23 +110,16 @@ use the same setting in the appropriate group section in the
 <code class="filename">servers</code> configuration file.  See <a class="xref" href="svn.customization.html#svn.advanced.confarea.opts" title="7.1.3. 配置选项">第 7.1.3 节 “配置选项”</a> in <a class="xref" href="svn.customization.html" title="第 7 章 定制你的 Subversion 体验">第 7 章 <i>定制你的 Subversion 体验</i></a> for details.</p>
 <p>You can also disable caching of authentication credentials entirely,
 regardless of whether the credentials are stored in encrypted form or not.</p>
-<p>To disable password caching entirely for a particular one-time command, pass
-the <code class="option">--no-auth-cache</code> option on the command line.  To
-permanently disable caching entirely, you can add the line
-<code class="literal">store-passwords = no</code> to your local machine's Subversion
-configuration file.  See <a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="3.11.2. 客户端凭证缓存">第 3.11.2 节 “客户端凭证缓存”</a> for details.</p>
+<p>在某个命令中关闭密码缓存，可以使用 <code class="option">--no-auth-cache</code> 选项，如果希望永久关闭缓存，可以在本机
+Subversion 的配置文件中添加 <code class="literal">store-passwords = no</code> 这一行，详情请见<a class="xref" href="svn.serverconfig.netmodel.html#svn.serverconfig.netmodel.credcache" title="3.11.2. 客户端凭证缓存">第 3.11.2 节 “客户端凭证缓存”</a>。</p>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.tour.initial.different-user"></a>2.3.2. 认证为其它用户</h3></div></div></div>
-<p>Since Subversion caches auth credentials by default (both username and
-password), it conveniently remembers who you were acting as the last time
-you modified your working copy.  But sometimes that's not
-helpful—particularly if you're working in a shared working copy such
-as a system configuration directory or a web server document root.  In this
-case, just pass the <code class="option">--username</code> option on the command line,
-and Subversion will attempt to authenticate as that user, prompting you for
-a password if necessary.</p>
+<p>因为 Subversion
+认证缓存是缺省设置(包含用户名和密码)，用来记住上一次修改工作副本的人非常方便。但是有时候会不好用—特别是如果你使用的是共享工作副本，例如系统配置目录，或者是
+WEB 服务器文档目录。在这种情况下，你只需要为命令行传递 <code class="option">--username</code> 选项，Subversion
+就会尝试使用该用户认证，如果需要也提示你输入密码。</p>
 </div>
 </div>
 <div class="navfooter">

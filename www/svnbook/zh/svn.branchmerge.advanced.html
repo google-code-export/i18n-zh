@@ -133,7 +133,7 @@ conflict resolution trickier.  If the first range of changes creates
 conflicts, you <span class="emphasis"><em>must</em></span> resolve them interactively for the
 merge process to continue and apply the second range of changes.  If you
 postpone a conflict from the first wave of changes, the whole merge command
-will bail out with an error message.  <sup>[<a name="id373457" href="#ftn.id373457" class="footnote">23</a>]</sup> 
+will bail out with an error message.  <sup>[<a name="id363853" href="#ftn.id363853" class="footnote">23</a>]</sup> 
         </p></td></tr>
 </table></div>
 <p>A word of warning: while <span class="command"><strong>svn diff</strong></span> and <span class="command"><strong>svn
@@ -236,7 +236,7 @@ related to each other, a patch will still be generated and applied to your
 working copy, but no merging metadata will be created.  There's no common
 history between the two sources, and future “<span class="quote">smart</span>” merges
 depend on that common history.</p></dd>
-<dt><span class="term">Merging from foreign repositories</span></dt>
+<dt><span class="term">从外部版本库合并</span></dt>
 <dd><p>While it's possible to run a command such as <strong class="userinput"><code>svn merge -r 100:200
 <em class="replaceable"><code>http://svn.foreignproject.com/repos/trunk</code></em></code></strong>,
 the resultant patch will also lack any historical merge metadata.  At time
@@ -247,13 +247,13 @@ URLs within the <code class="literal">svn:mergeinfo</code> property.</p></dd>
 merging logic to mindlessly generate differences the same way that
 <span class="command"><strong>svn diff</strong></span> does, ignoring any historical relationships.  We
 discuss this later in the chapter in <a class="xref" href="svn.branchmerge.advanced.html#svn.branchmerge.advanced.ancestry" title="4.4.7. 关注还是忽视祖先">第 4.4.7 节 “关注还是忽视祖先”</a>.</p></dd>
-<dt><span class="term">Applying reverse merges to a target's natural history</span></dt>
+<dt><span class="term">应用反向合并到目标的自然历史</span></dt>
 <dd><p>Earlier in this chapter (<a class="xref" href="svn.branchmerge.basicmerging.html#svn.branchmerge.basicmerging.undo" title="4.3.4. 取消修改">第 4.3.4 节 “取消修改”</a>)  we discussed how to use
 <span class="command"><strong>svn merge</strong></span> to apply a “<span class="quote">reverse patch</span>” as a
 way of rolling back changes.  If this technique is used to undo a change to
 an object's personal history (e.g., commit r5 to the trunk, then immediately
 roll back r5 using <strong class="userinput"><code>svn merge . -c -5</code></strong>), this sort of
-merge doesn't affect the recorded mergeinfo.  <sup>[<a name="id373853" href="#ftn.id373853" class="footnote">24</a>]</sup>
+merge doesn't affect the recorded mergeinfo.  <sup>[<a name="id364249" href="#ftn.id364249" class="footnote">24</a>]</sup>
             </p></dd>
 </dl></div>
 </div>
@@ -366,10 +366,10 @@ problem is that we're not clearly differentiating between the ideas of
 “<span class="quote">I already have this change</span>” and “<span class="quote">I don't have this
 change.</span>” We're effectively lying to the system, making it think that
 the change was previously merged.  This puts the responsibility on
-you—the user—to remember that the change wasn't actually
-merged, it just wasn't wanted.  There's no way to ask Subversion for a list
-of “<span class="quote">blocked changelists.</span>” If you want to track them (so that
-you can unblock them someday). you'll need to record them in a text file
+you—the user—to remember that the change wasn't actually merged,
+it just wasn't wanted.  There's no way to ask Subversion for a list of
+“<span class="quote">blocked changelists.</span>” If you want to track them (so that you
+can unblock them someday). you'll need to record them in a text file
 somewhere, or perhaps in an invented property.  In Subversion 1.5,
 unfortunately, this is the only way to manage blocked revisions; the plans
 are to make a better interface for this in future versions.</p>
@@ -539,10 +539,8 @@ software projects.  Files and directories are shuffled around and renamed,
 often causing great disruption to everyone working on the project.  Sounds
 like a perfect case to use a branch, doesn't it? Just create a branch,
 shuffle things around, and then merge the branch back to the trunk, right?</p>
-<p>Alas, this scenario doesn't work so well right now and is considered one of
-Subversion's current weak spots.  The problem is that Subversion's
-<span class="command"><strong>svn update</strong></span> command isn't as robust as it should be,
-particularly when dealing with copy and move operations.</p>
+<p>唉，这个场景下这样并不正确，可以看作 Subversion 当前的弱点。这个问题是因为 Subversion 的
+<span class="command"><strong>update</strong></span> 还不是足够强壮，特别是针对拷贝和移动操作。</p>
 <p>When you use <span class="command"><strong>svn copy</strong></span> to duplicate a file, the repository
 remembers where the new file came from, but it fails to transmit that
 information to the client which is running <span class="command"><strong>svn update</strong></span> or
@@ -573,8 +571,8 @@ U   .
 you or Sally expected.  The merge operation has deleted the latest version
 of the <code class="filename">integer.c</code> file (the one containing Sally's
 latest changes), and blindly added your new <code class="filename">whole.c</code>
-file—which is a duplicate of the <span class="emphasis"><em>older</em></span> version
-of <code class="filename">integer.c</code>.  The net effect is that merging your
+file—which is a duplicate of the <span class="emphasis"><em>older</em></span> version of
+<code class="filename">integer.c</code>.  The net effect is that merging your
 “<span class="quote">rename</span>” to the branch has removed Sally's recent changes from
 the latest revision!</p>
 <p>This isn't true data loss.  Sally's changes are still in the repository's
@@ -651,9 +649,9 @@ and that your target working copy has no sparse directories.</p></li>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id373457" href="#id373457" class="para">23</a>] </sup>At least, this is true in Subversion 1.5 at the time of this writing.  This
+<div class="footnote"><p><sup>[<a name="ftn.id363853" href="#id363853" class="para">23</a>] </sup>At least, this is true in Subversion 1.5 at the time of this writing.  This
 behavior may improve in future versions of Subversion.</p></div>
-<div class="footnote"><p><sup>[<a name="ftn.id373853" href="#id373853" class="para">24</a>] </sup>Interestingly, after rolling back a revision like this, we wouldn't be able
+<div class="footnote"><p><sup>[<a name="ftn.id364249" href="#id364249" class="para">24</a>] </sup>Interestingly, after rolling back a revision like this, we wouldn't be able
 to reapply the revision using <strong class="userinput"><code>svn merge . -c 5</code></strong>, since
 the mergeinfo would already list r5 as being applied.  We would have to use
 the <code class="option">--ignore-ancestry</code> option to make the merge command

@@ -162,15 +162,15 @@ WebDAV support.</p>
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.standalone.windows"></a>C.3.1.1. Microsoft Office，Dreamweaver，Photoshop</h4></div></div></div>
 <p>On Windows, several well-known applications contain integrated WebDAV client
-functionality, such as Microsoft's Office, <sup>[<a name="id415842" href="#ftn.id415842" class="footnote">62</a>]</sup> Adobe's Photoshop and Dreamweaver programs.  They're able to
+functionality, such as Microsoft's Office, <sup>[<a name="id405918" href="#ftn.id405918" class="footnote">62</a>]</sup> Adobe's Photoshop and Dreamweaver programs.  They're able to
 directly open and save to URLs, and tend to make heavy use of WebDAV locks
 when editing a file.</p>
 <p>Note that while many of these programs also exist for Mac OS X, they do not
 appear to support WebDAV directly on that platform.  In fact, on Mac OS X,
-the <span class="guimenu">File→Open</span> dialog box doesn't allow one to type
-a path or URL at all.  It's likely that the WebDAV features were
-deliberately left out of Macintosh versions of these programs, since OS X
-already provides such excellent low-level filesystem support for WebDAV.</p>
+the <span class="guimenu">File→Open</span> dialog box doesn't allow one to type a
+path or URL at all.  It's likely that the WebDAV features were deliberately
+left out of Macintosh versions of these programs, since OS X already
+provides such excellent low-level filesystem support for WebDAV.</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
@@ -230,28 +230,18 @@ interface.</p>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.file-explorer-extensions.windows"></a>C.3.2.1. Microsoft Web 文件夹</h4></div></div></div>
-<p>Microsoft was one of the original backers of the WebDAV specification, and
-first started shipping a client in Windows 98, which was known as Web
-Folders.  This client was also shipped in Windows NT 4.0 and Windows 2000.</p>
-<p>The original Web Folders client was an extension to Explorer, the main GUI
-program used to browse filesystems.  It works well enough.  In Windows 98,
-the feature might need to be explicitly installed if Web Folders aren't
-already visible inside My Computer.  In Windows 2000, simply add a new
-“<span class="quote">network place,</span>” enter the URL, and the WebDAV share will pop
-up for browsing.</p>
-<p>With the release of Windows XP, Microsoft started shipping a new
-implementation of Web Folders, known as the WebDAV Mini-Redirector.  The new
-implementation is a filesystem-level client, allowing WebDAV shares to be
-mounted as drive letters.  Unfortunately, this implementation is incredibly
-buggy.  The client usually tries to convert HTTP URLs
-(<code class="literal">http://host/repos</code>) into UNC share notation
-(<code class="literal">\\host\repos</code>); it also often tries to use Windows Domain
-authentication to respond to basic-auth HTTP challenges, sending usernames
-as <code class="literal">HOST\username</code>.  These interoperability problems are
-severe and are documented in numerous places around the Web, to the
-frustration of many users.  Even Greg Stein, the original author of Apache's
-WebDAV module, bluntly states that XP Web Folders simply can't operate
-against an Apache server.</p>
+<p>Microsoft 是 WebDAV 规范最早的支持者，从 Windows 98
+开始提供客户端，被称作“<span class="quote">网络文件夹</span>”。这个客户端在 Windows NT 4.0 和 Windows 2000 上也存在。</p>
+<p>最早的网络文件夹客户端是浏览器的扩展，它是浏览文件系统的 GUI 程序。它工作良好。在 Windows
+98，如果“<span class="quote">我的电脑</span>”里没有网络文件夹，这个特性需要明确安装。在 Windows
+2000，只需要添加一个新的“<span class="quote">网络位置</span>”，输入 URL，WebDAV 共享就会弹出让你浏览。</p>
+<p>伴随着 Windows XP 的发行，Microsoft 开始了网络文件夹的新实现，叫做“<span class="quote">WebDAV
+Mini-Redirector.</span>”。这个新的实现是文件系统级的客户端，允许 WebDAV
+装载到驱动器盘符上。不幸的是，这个实现充满难以相信的问题。客户端经常会尝试把 HTTP 的
+URL(<code class="literal">http://host/repos</code>)转化为 UNC
+共享符号(<code class="literal">\\host\repos</code>)；它也经常使用 Windows 域认证来回应 HTTP 基本认证，按照
+<code class="literal">HOST\username</code> 格式发送用户名。这类互操作性问题在网络上大量传播，使大量用户受挫。即使是 Apache
+WebDAV 的作者 Greg Stein 也建议不要对 Apache 服务器使用 XP 的网络文件夹。</p>
 <p>Windows Vista's initial implementation of Web Folders seems to be almost the
 same as XP's, so it has the same sort of problems.  With luck, Microsoft
 will remedy these issues in a Vista Service Pack.</p>
@@ -288,67 +278,47 @@ or NetDrive.</p>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.file-explorer-extensions.linux-de"></a>C.3.2.2. Nautilus，Konqueror</h4></div></div></div>
-<p>Nautilus is the official file manager/browser for the GNOME desktop (<a class="ulink" href="http://www.gnome.org" target="_top">http://www.gnome.org</a>), and Konqueror is the manager/browser for the
-KDE desktop (<a class="ulink" href="http://www.kde.org" target="_top">http://www.kde.org</a>).  Both of these applications
-have an explorer-level WebDAV client built in, and they operate just fine
-against an autoversioning repository.</p>
-<p>In GNOME's Nautilus, select the <span class="guimenuitem">File→Open
-location</span> menu item and enter the URL in the dialog box
-presented.  The repository should then be displayed like any other
-filesystem.</p>
-<p>In KDE's Konqueror, you need to use the <code class="literal">webdav://</code> scheme
-when entering the URL in the location bar.  If you enter an
-<code class="literal">http://</code> URL, Konqueror will behave like an ordinary web
-browser.  You'll likely see the generic HTML directory listing produced by
-<span class="command"><strong>mod_dav_svn</strong></span>.  When you enter
-<strong class="userinput"><code>webdav://host/repos</code></strong> instead of
-<strong class="userinput"><code>http://host/repos</code></strong>, Konqueror becomes a WebDAV client
-and displays the repository as a filesystem.</p>
+<p>Nautilus 是 GNOME 桌面(<a class="ulink" href="http://www.gnome.org" target="_top">http://www.gnome.org</a>)的官方文件管理/浏览器，KDE
+桌面(<a class="ulink" href="http://www.kde.org" target="_top">http://www.kde.org</a>)的则是 Konqueror。两个应用程序都是浏览器级别的 WebDAV
+客户端，对自动版本化的版本库工作良好。</p>
+<p>在 GNOME 的 Nautilus 中，选择 <span class="guimenuitem">File→Open
+location</span>，在显示的对话框中输入 URL。版本库就会象其它文件系统一样显示。</p>
+<p>在 KDE 的 Konqueror 中，你需要在地址栏使用 <code class="literal">webdav://</code> 方案来输入 URL。如果你输入
+<code class="literal">http://</code> URL，Konqueror 会像普通的 web 浏览器。你会看到
+<span class="command"><strong>mod_dav_svn</strong></span> 输出的普通 HTML 目录列表。通过输入
+<strong class="userinput"><code>webdav://host/repos</code></strong>，而不是
+<strong class="userinput"><code>http://host/repos</code></strong>，Konqueror 就成为了一个 WebDAV
+客户端，并且按照文件系统的方式显示版本库。</p>
 </div>
 </div>
 <div class="sect2" lang="zh">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="svn.webdav.clients.fs-impl"></a>C.3.3. WebDAV 的文件系统实现</h3></div></div></div>
-<p>The WebDAV filesystem implementation is arguably the best sort of WebDAV
-client.  It's implemented as a low-level filesystem module, typically within
-the operating system's kernel.  This means that the DAV share is mounted
-like any other network filesystem, similar to mounting an NFS share on Unix
-or attaching an SMB share as a drive letter in Windows.  As a result, this
-sort of client provides completely transparent read/write WebDAV access to
-all programs.  Applications aren't even aware that WebDAV requests are
-happening.</p>
+<p>WebDAV 文件系统实现被认为是最佳的 WebDAV 客户端。它通过低级的文件系统模块实现，通常在操作系统的核心。这意味着 DAV
+共享像网络的其他文件系统一样装载，就像在 Unix 下面装载 NFS，或者在 Windows 下装载一个 SMB
+共享。结果就是这种客户端为所有程序提供了对 WebDAV 的透明访问，应用程序甚至意识不到发生了 WebDAV 请求。</p>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.fs-impl.windows"></a>C.3.3.1. WebDrive，NetDrive</h4></div></div></div>
-<p>Both WebDrive and NetDrive are excellent commercial products that allow a
-WebDAV share to be attached as drive letters in Windows.  As a result, you
-can operate on the contents of these WebDAV-backed pseudodrives as easily as
-you can against real local hard drives, and in the same ways.  You can
-purchase WebDrive from South River Technologies (<a class="ulink" href="http://www.southrivertech.com" target="_top">http://www.southrivertech.com</a>).  Novell's NetDrive is freely
-available online, but requires users to have a NetWare license.</p>
+<p>WebDrive 和 NetDrive 都是优秀的商业产品，允许将 WebDAV 绑定到 Windows 的盘符。从而你可以同对真实硬盘一样操作这些
+WebDAV 后端支持的共享。WebDrive 可以从 South River Technologies(<a class="ulink" href="http://www.southrivertech.com" target="_top">http://www.southrivertech.com</a>) 购买。Novell 的 NetDrive
+可以在网络上免费下载，但用户还是需要有一个 NetWare 许可证。</p>
 </div>
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.fs-impl.macosx"></a>C.3.3.2. Mac OS X</h4></div></div></div>
-<p>Apple's OS X operating system has an integrated filesystem-level WebDAV
-client.  From the Finder, select the <span class="guimenuitem">Go→Connect to
-Server</span> menu item.  Enter a WebDAV URL, and it appears as a
-disk on the desktop, just like any other mounted volume.  You can also mount
-a WebDAV share from the Darwin terminal by using the
-<code class="literal">webdav</code> filesystem type with the <span class="command"><strong>mount</strong></span>
-command:</p>
+<p>Apple 的 OS X 操作系统是集成的文件系统级的 WebDAV 客户端。通过 Finder，选择
+<span class="guimenuitem">Go→Connect to Server</span> 菜单项。输入 WebDAV 的
+URL，会在桌面显示一个磁盘，就像其它装载的卷。你也可以从 Darwin 终端通过 <span class="command"><strong>mount</strong></span> 命令装载类型为
+<code class="literal">webdav</code> 的文件系统：</p>
 <pre class="screen">
 $ mount -t webdav http://svn.example.com/repos/project /some/mountpoint
 $
 </pre>
-<p>Note that if your <span class="command"><strong>mod_dav_svn</strong></span> is older than version 1.2,
-OS X will refuse to mount the share as read/write; it will appear as
-read-only.  This is because OS X insists on locking support for read/write
-shares, and the ability to lock files first appeared in Subversion 1.2.</p>
-<p>Also, OS X's WebDAV client can sometimes be overly sensitive to HTTP
-redirects.  If OS X is unable to mount the repository at all, you may need
-to enable the <code class="literal">BrowserMatch</code> directive in the Apache
-server's <code class="filename">httpd.conf</code>:</p>
+<p>注意如果 <span class="command"><strong>mod_dav_svn</strong></span> 是 1.2 之前的版本，OS X
+不能装载为可读写，而是会成为只读。这是因为，OS X 坚持要读写共享支持锁定，而锁定文件出现在 Subversion 1.2。</p>
+<p>OS X 的 WebDAV 客户端有时候对 HTTP 重定向很敏感。如果 OS X 不能装载版本库，你或许需要开启 Apache 服务器
+<code class="filename">httpd.conf</code> 中的 <code class="literal">BrowserMatch</code> 指令：</p>
 <pre class="screen">
 BrowserMatch "^WebDAVFS/1.[012]" redirect-carefully
 </pre>
@@ -356,10 +326,8 @@ BrowserMatch "^WebDAVFS/1.[012]" redirect-carefully
 <div class="sect3" lang="zh">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="svn.webdav.clients.fs-impl.linux"></a>C.3.3.3. Linux davfs2</h4></div></div></div>
-<p>Linux davfs2 is a filesystem module for the Linux kernel, whose development
-is organized at <a class="ulink" href="http://dav.sourceforge.net/" target="_top">http://dav.sourceforge.net/</a>.  Once you
-install davfs2, you can mount a WebDAV network share using the usual Linux
-mount command:</p>
+<p>Linux davfs2 是一个 Linux 内核的文件系统模块，开发主页是 <a class="ulink" href="http://dav.sourceforge.net/" target="_top">http://dav.sourceforge.net/</a>。一旦安装 davfs2，你就可以使用通常的 Linux mount 命令装载
+WebDAV 网络共享：</p>
 <pre class="screen">
 $ mount.davfs http://host/repos /mnt/dav
 </pre>
@@ -367,7 +335,7 @@ $ mount.davfs http://host/repos /mnt/dav
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id415842" href="#id415842" class="para">62</a>] </sup>WebDAV support was removed from Microsoft Access for some reason, but it
+<div class="footnote"><p><sup>[<a name="ftn.id405918" href="#id405918" class="para">62</a>] </sup>WebDAV support was removed from Microsoft Access for some reason, but it
 exists in the rest of the Office suite.</p></div>
 </div>
 </div>

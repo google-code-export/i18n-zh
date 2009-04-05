@@ -39,34 +39,22 @@
 </dl></dd>
 </dl>
 </div>
-<p>WebDAV is an extension to HTTP, and it is growing more and more popular as a
-standard for file sharing.  Today's operating systems are becoming extremely
-web-aware, and many now have built-in support for mounting
-“<span class="quote">shares</span>” exported by WebDAV servers.</p>
-<p>If you use Apache as your Subversion network server, to some extent you are
-also running a WebDAV server.  This appendix gives some background on the
-nature of this protocol, how Subversion uses it, and how well Subversion
-interoperates with other software that is WebDAV-aware.</p>
+<p>WebDAV 是 HTTP 的一个扩展，作为一个文件共享的标准不断流行。当今的操作系统变得极端的 web 化，许多内置了对装载 WebDAV
+服务器导出的“<span class="quote">共享</span>”的支持。</p>
+<p>如果你使用 Apache 作为你的 Subversion 网络服务器，某种程度上，你也是在运行一个 WebDAV
+服务器。这个附录提供了这种协议一些背景知识，Subversion 如何使用它，Subversion 如何与支持 WebDAV 的软件交互工作。</p>
 <div class="sect1" lang="zh">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.webdav.basic"></a>C.1. 什么是 WebDAV？</h2></div></div></div>
-<p><em class="firstterm">DAV</em> stands for “<span class="quote">Distributed Authoring and
-Versioning.</span>” RFC 2518 defines a set of concepts and accompanying
-extension methods to HTTP 1.1 that make the Web a more universal read/write
-medium.  The basic idea is that a WebDAV-compliant web server can act like a
-generic file server; clients can “<span class="quote">mount</span>” shared folders over
-HTTP that behave much like other network filesystems (such as NFS or SMB).</p>
-<p>The tragedy, though, is that despite the acronym, the RFC specification
-doesn't actually describe any sort of version control.  Basic WebDAV clients
-and servers assume that only one version of each file or directory exists,
-and that it can be repeatedly overwritten.</p>
-<p>Because RFC 2518 left out versioning concepts, another committee was left
-with the responsibility of writing RFC 3253 a few years later.  The new RFC
-adds versioning concepts to WebDAV, placing the “<span class="quote">V</span>” back in
-“<span class="quote">DAV</span>”—hence the term “<span class="quote">DeltaV.</span>”
-WebDAV/DeltaV clients and servers are often called just
-“<span class="quote">DeltaV</span>” programs, since DeltaV implies the existence of basic
-WebDAV.</p>
+<p><em class="firstterm">DAV</em> 的意思是 “<span class="quote">Distributed Authoring and
+Versioning</span>”。RFC 2518 为 HTTP 1.1 定义了一组概念和附加的扩展方法来把 web
+变成一个更加普遍的读/写媒体。基本思想是一个 WebDAV 兼容的 web 服务器可以像普通的文件服务器一样工作；客户端可以通过 HTTP 加载(类似于
+NFS 或 SMB) WebDAV 共享文件夹。</p>
+<p>悲惨的是，RFC 规范并没有提供任何版本控制模型。基本的 DAV 客户端和服务器只是假定每个文件或目录只有一个版本存在，可以重复的覆盖。</p>
+<p>因为 RFC 2518 遗漏了版本概念，几年之后，另一个委员会负责撰写 RFC 3253。新的 RFC 为 WebDAV 增加了版本概念，将
+“<span class="quote">V</span>” 加入
+“<span class="quote">DAV</span>”—也就是“<span class="quote">DeltaV</span>”。WebDAV/DeltaV 客户端和服务器经常叫做
+“<span class="quote">DeltaV</span>”客户端和服务器，因为 DeltaV 包含了基本的 WebDAV。</p>
 <p>The original WebDAV standard has been widely successful.  Every modern
 computer operating system has a general WebDAV client built in (details to
 follow), and a number of popular standalone applications are also able to

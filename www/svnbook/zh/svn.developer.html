@@ -71,13 +71,13 @@ Subversion user will not be affected.</p>
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="svn.developer.layerlib"></a>8.1. 分层的库设计</h2></div></div></div>
 <p>Each of Subversion's core libraries can be said to exist in one of three
-main layers—the Repository layer, the Repository Access (RA) layer,
-or the Client layer (see <a class="xref" href="svn.intro.whatis.html#svn.intro.architecture.dia-1" title="图 1. Subversion 的架构">图 1 “Subversion 的架构”</a> in
-the Preface).  We will examine these layers shortly, but first, let's
-briefly summarize Subversion's various libraries.  For the sake of
-consistency, we will refer to the libraries by their extensionless Unix
-library names (<code class="filename">libsvn_fs</code>,
-<code class="filename">libsvn_wc</code>, <code class="filename">mod_dav_svn</code>, etc.).</p>
+main layers—the Repository layer, the Repository Access (RA) layer, or
+the Client layer (see <a class="xref" href="svn.intro.whatis.html#svn.intro.architecture.dia-1" title="图 1. Subversion 的架构">图 1 “Subversion 的架构”</a> in the
+Preface).  We will examine these layers shortly, but first, let's briefly
+summarize Subversion's various libraries.  For the sake of consistency, we
+will refer to the libraries by their extensionless Unix library names
+(<code class="filename">libsvn_fs</code>, <code class="filename">libsvn_wc</code>,
+<code class="filename">mod_dav_svn</code>, etc.).</p>
 <div class="variablelist"><dl>
 <dt><span class="term">libsvn_client</span></dt>
 <dd><p>客户端程序的主要接口</p></dd>
@@ -242,19 +242,19 @@ representation of a tree as exactly that.</p>
 <div class="figure-contents"><div><img src="images/ch08dia1.png" alt="二维的文件和目录"></div></div>
 </div>
 <br class="figure-break"><p>The difference here is that the Subversion filesystem has a nifty third
-dimension that most filesystems do not have—Time! <sup>[<a name="id392423" href="#ftn.id392423" class="footnote">53</a>]</sup> In the filesystem interface, nearly every function
+dimension that most filesystems do not have—Time! <sup>[<a name="id382584" href="#ftn.id382584" class="footnote">53</a>]</sup> In the filesystem interface, nearly every function
 that has a <em class="parameter"><code>path</code></em> argument also expects a
 <em class="parameter"><code>root</code></em> argument.  This <code class="literal">svn_fs_root_t</code>
 argument describes either a revision or a Subversion transaction (which is
 simply a revision in the making) and provides that third dimension of
 context needed to understand the difference between
 <code class="filename">/foo/bar</code> in revision 32, and the same path as it exists
-in revision 98.  <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.dia-2" title="图 8.2. Versioning time—the third dimension!">图 8.2 “Versioning time—the third dimension!”</a> shows
+in revision 98.  <a class="xref" href="svn.developer.html#svn.developer.layerlib.repos.dia-2" title="图 8.2. 版本时间 - 第三维！">图 8.2 “版本时间 - 第三维！”</a> shows
 revision history as an added dimension to the Subversion filesystem
 universe.</p>
 <div class="figure">
-<a name="svn.developer.layerlib.repos.dia-2"></a><p class="title"><b>图 8.2. Versioning time—the third dimension!</b></p>
-<div class="figure-contents"><div><img src="images/ch08dia2.png" alt="Versioning time—the third dimension!"></div></div>
+<a name="svn.developer.layerlib.repos.dia-2"></a><p class="title"><b>图 8.2. 版本时间 - 第三维！</b></p>
+<div class="figure-contents"><div><img src="images/ch08dia2.png" alt="版本时间 - 第三维！"></div></div>
 </div>
 <br class="figure-break"><p>As we mentioned earlier, the <code class="filename">libsvn_fs</code> API looks and
 feels like any other filesystem, except that it has this wonderful
@@ -390,15 +390,15 @@ working copy to disk (<code class="filename">.svn</code> directories and all).</
 Subversion source code includes a standard command-line client, it should be
 very easy to write any number of GUI clients on top of the client library.
 New GUIs (or any new client, really) for Subversion need not be clunky
-wrappers around the included command-line client—they have full
-access via the <code class="filename">libsvn_client</code> API to the same
-functionality, data, and callback mechanisms that the command-line client
-uses.  In fact, the Subversion source code tree contains a small C program
-(which you can find at <code class="filename">tools/examples/minimal_client.c</code>)
-that exemplifies how to wield the Subversion API to create a simple client
+wrappers around the included command-line client—they have full access
+via the <code class="filename">libsvn_client</code> API to the same functionality,
+data, and callback mechanisms that the command-line client uses.  In fact,
+the Subversion source code tree contains a small C program (which you can
+find at <code class="filename">tools/examples/minimal_client.c</code>) that
+exemplifies how to wield the Subversion API to create a simple client
 program.</p>
 <div class="sidebar">
-<p class="title"><b>Binding Directly—A Word About Correctness</b></p>
+<p class="title"><b>直接绑定 - 关于正确性</b></p>
 <p>Why should your GUI program bind directly with a
 <code class="filename">libsvn_client</code> instead of acting as a wrapper around a
 command-line program? Besides simply being more efficient, it can be more
@@ -430,7 +430,7 @@ change from release to release.</p>
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.id392423" href="#id392423" class="para">53</a>] </sup>我们理解这一定会给科幻小说迷带来一个震撼，他们认为时间是<span class="emphasis"><em>第四</em></span>维的，我们要为提出这样一个不同理论的断言而伤害了他们的作出道歉。</p></div>
+<div class="footnote"><p><sup>[<a name="ftn.id382584" href="#id382584" class="para">53</a>] </sup>我们理解这一定会给科幻小说迷带来一个震撼，他们认为时间是<span class="emphasis"><em>第四</em></span>维的，我们要为提出这样一个不同理论的断言而伤害了他们的作出道歉。</p></div>
 </div>
 </div>
 <div class="navfooter">
