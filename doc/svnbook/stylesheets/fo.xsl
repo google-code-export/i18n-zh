@@ -51,7 +51,7 @@
   <xsl:param name="body.end.indent">0pt</xsl:param>
 
   <!-- Breaking long lines -->
-  <xsl:param name="hyphenate.verbatim">1</xsl:param>
+  <xsl:param name="hyphenate.verbatim">0</xsl:param>
   <xsl:attribute-set name="monospace.verbatim.properties"
                      use-attribute-sets="verbatim.properties monospace.properties">
     <xsl:attribute name="wrap-option">wrap</xsl:attribute>
