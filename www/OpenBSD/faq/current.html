@@ -8,7 +8,7 @@
 <meta name= "description"   content= "the OpenBSD FAQ page">
 <meta name= "keywords"      content= "openbsd,faq">
 <meta name= "distribution"  content= "global">
-<meta name= "copyright"     content= "This document copyright 2005-2008 by OpenBSD">
+<meta name= "copyright"     content= "This document copyright 2005-2009 by OpenBSD">
 </head>
 
 <body bgcolor= "#ffffff" text= "#000000">
@@ -41,6 +41,17 @@
 <li><a href="#20081107">2008/11/07 - Perl updated to 5.10.0</a>
 <li><a href="#20081111">2008/11/11 - PIE support added to gcc 3.3.5 & csu</a>
 <li><a href="#20081116">2008/11/16 - mixerctl(1) name changes</a>
+<li><a href="#20081126">2008/11/26 - btd needs user and group</a>
+<li><a href="#20090204">2009/02/04 - Perl updated to 5.10.0</a>
+<li><a href="#20090215">2009/02/15 - ifconfig(8) syntax change</a>
+<li><a href="#20090218">2009/02/18 - pfsync(4) version number incremented</a>
+<!-- 4.5 -->
+<li><a href="#20090304">2009/03/04 - new user and group for smtpd</a>
+<li><a href="#20090316">2009/03/16 - makemap(8) now run through mailwrapper(8)</a>
+<li><a href="#20090324">2009/03/24 - "redistribute default" behaviour change in ospfd(8) and ripd(8)</a>
+<li><a href="#20090406">2009/04/06 - incompatible changes to pf(4)</a>
+<li><a href="#20090407">2009/04/07 - fragment reassembly on by default</a>
+<li><a href="#20090426">2009/04/26 - require-order off by default in pfctl(8)</a>
 <!-- New additions go on the bottom, please -->
 </ul>
     
@@ -78,15 +89,12 @@ an upgrade procedure guide.
 <a name="20080907"></a>
 <h3>2008/09/07 - ifconfig(8) syntax change</h3>
 Some <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ifconfig&amp;sektion=8">ifconfig(8)</a>
-options have changed. To scan for wireless networks you should
-now use:
-<pre>
-    <b>ifconfig &lt;interface&gt; chan</b>
-</pre>
-and to list supported media types, you should now use:
+options have changed. To list supported media types, you should now use:
 <pre>
     <b>ifconfig &lt;interface&gt; media</b>
 </pre>
+The option to scan for wireless networks was also changed, but was
+<a href="#20090215">revised later</a>.
 
 <p>
 <a name="20080913"></a>
@@ -214,11 +222,127 @@ and <tt>speaker</tt> was shortened to <tt>spkr</tt>.
 This may require changes to mixerctl.conf(5).
 
 <p>
+<a name="20081126"></a>
+<h3>2008/11/26 - btd needs new user and group</h3>
+The newly added Bluetooth daemon <tt>btd</tt> drops privileges to a new user
+and group _btd.
+As <i>root</i>, add both the new user and its corresponding group using
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=useradd&amp;sektion=8">useradd(8)</a>:
+<blockquote><pre>
+# useradd -u94 -g=uid -c"Bluetooth Daemon" -d/var/empty -s/sbin/nologin _btd</b>
+</pre></blockquote>
+
+<p>
+<a name="20090204"></a>
+<h3>2009/02/04 - update to Perl 5.10.0</h3>
+Another module moved to base, please remove it.
+<pre>
+    # pkg_delete p5-Module-Loaded
+</pre>
+
+<p>
+<a name="20090215"></a>
+<h3>2009/02/15 - ifconfig(8) syntax change</h3>
+The <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ifconfig&amp;sektion=8">ifconfig(8)</a>
+option for scanning wireless networks has changed.
+You should now use:
+<pre>
+    <b>ifconfig &lt;interface&gt; scan</b>
+</pre>
+
+<p>
+<a name="20090218"></a>
+<h3>2009/02/18 - pfsync(4) version number incremented</h3>
+Due to protocol and implementation changes to the pfsync(4) interface, the
+pfsync(4) protocol number has been incremented. Firewalls with differing
+versions will be unable to synchronise state tables, and existing connections
+will be terminated on failover.
+
+<!-- cut-off point for 4.5 -->
+
+<p>
+<a name="20090304"></a>
+<h3>2009/03/04 - new user and group for smtpd</h3>
+The following needs to be run:
+<pre>
+useradd -u 95 -g =uid -c "SMTP Daemon" -d /var/empty -s /sbin/nologin _smtpd
+</pre>
+
+<p>
+<a name="20090316"></a>
+<h3>2009/03/16 - makemap(8) now run through mailwrapper(8)</h3>
+Since the connection of smtpd(8) to the build, makemap(8) is run through
+mailwrapper(8) to avoid conflict between sendmail and smtpd version of
+the binary. For this to work, one has to manually add the following line to
+/etc/mailer.conf:
+<pre>
+makemap		/usr/libexec/sendmail/makemap
+</pre>
+
+<p>
+<a name="20090324"></a>
+<h3>2009/03/24 - "redistribute default" behaviour change in ospfd(8) and ripd(8)</h3>
+"redistribute default", set in ospfd.conf(5) and ripd.conf(5) configuration
+files, require now the presence of a default route in the kernel routing
+table otherwise no route will be announced by ospfd(8) and ripd(8).
+
+<p>
+<a name="20090406"></a>
+<h3>2009/04/06 - incompatible changes to pf(4)</h3>
+Packet normalization ("scrubbing") has been integrated with the
+main ruleset. This is now specified by adding the "scrub (options)"
+parameter to rules. For example:
+
+<pre>
+        scrub in all no-df max-mss 1440
+</pre>
+
+can be replaced with a rule using the new "match" action:
+
+<pre>
+        match in all scrub (no-df max-mss 1440)
+</pre>
+
+Since ruleset ordering is enforced by default, this will either
+have to be moved to the main ruleset (before "pass quick" rules),
+or ruleset order checking must be disabled:
+
+<pre>
+        set require-order no
+</pre>
+
+Packet reassembly has been simplified. "Crop" and "drop-ovl" have
+been removed; only full reassembly remains. It's enabled like this:
+
+<pre>
+        set reassemble yes|no [no-df]
+</pre>
+
+If "no-df" is given, fragments (and only fragments!) with the df bit
+set have it cleared before entering the fragment cache, and thus the
+reassembled packet doesn't have df set either. Non-fragmented packets
+are unaffected by no-df.
+
+<p>
+<a name="20090407"></a>
+<h3>2009/04/07 - fragment reassembly on by default in pf(4)</h3>
+Since there is little to no reason not to use fragment reassembly,
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pf&sektion=4">pf(4)</a>
+was changed so that it is now enabled by default.
+
+<p>
+<a name="20090426"></a>
+<h3>2009/04/26 - require-order off by default in pfctl(8)</h3>
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pfctl&sektion=8">pfctl(8)</a>
+was changed so that "set require-order" is now disabled by default.
+This is advisory only, no configuration change is necessary.
+
+<p>
 <hr>
 <a href= "index.html"><img height= "24" width= "24" src= "../images/back.gif" border= "0" alt="[back]"></a>
 <a href="mailto:www@openbsd.org">www@openbsd.org</a>
 <br>
-<small>$OpenBSD: current.html,v 1.134 2008/11/17 03:23:22 jakemsr Exp $</small>
+<small>$OpenBSD: current.html,v 1.149 2009/04/26 12:34:55 sthen Exp $</small>
 
 </body>
 </html>

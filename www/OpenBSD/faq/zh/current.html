@@ -8,7 +8,7 @@
 <meta name= "description"   content= "the OpenBSD FAQ page">
 <meta name= "keywords"      content= "openbsd,faq">
 <meta name= "distribution"  content= "global">
-<meta name= "copyright"     content= "This document copyright 2005-2008 by OpenBSD">
+<meta name= "copyright"     content= "This document copyright 2005-2009 by OpenBSD">
 </head>
 
 <body bgcolor= "#ffffff" text= "#000000">
@@ -41,6 +41,17 @@
 <li><a href="#20081107">2008/11/07 - Perl 升级到 5.10.0</a>
 <li><a href="#20081111">2008/11/11 - PIE 支持被增加到 gcc 3.3.5 & csu</a>
 <li><a href="#20081116">2008/11/16 - mixerctl(1) 的名称改变</a>
+<li><a href="#20081126">2008/11/26 - btd 需要增加新用户和组</a>
+<li><a href="#20090204">2009/02/04 - Perl 升级到 5.10.0</a>
+<li><a href="#20090215">2009/02/15 - ifconfig(8) 的语法修改</a>
+<li><a href="#20090218">2009/02/18 - pfsync(4) 的版本号增加</a>
+<!-- 4.5 -->
+<li><a href="#20090304">2009/03/04 - smtpd 需要增加新用户和组</a>
+<li><a href="#20090316">2009/03/16 - 现在通过 mailwrapper(8) 运行 makemap(8)</a>
+<li><a href="#20090324">2009/03/24 - ospfd(8) 和 ripd(8) 的 "redistribute default" 行为改变</a>
+<li><a href="#20090406">2009/04/06 - pf(4) 的不兼容修改</a>
+<li><a href="#20090407">2009/04/07 - pf(4) 默认执行碎片重组</a>
+<li><a href="#20090426">2009/04/26 - pfctl(8) 默认关闭 require-order</a>
 
 <!-- New additions go on the bottom, please -->
 </ul>
@@ -51,13 +62,13 @@
 <!-- XXXversion -->
 <h2>介绍</h2>
 此文档针对跟踪 <i>-current</i> 的用户。
-它包含了从 4.3-release 到 <i>-current</i> 的修改信息，不能用于从 4.2
+它包含了从 4.5-release 到 <i>-current</i> 的修改信息，不能用于从 4.4
 或更早版本的升级，或者想跟踪
 <a href="../../stable.html"><i>-stable</i></a> 的用户。
 
 <p>
-如果你想从旧版本更新到 4.3-release 或
-4.3-stable，参见<a href="../upgrade43.html">升级指南</a>。
+如果你想从旧版本更新到 4.5-release 或
+4.5-stable，参见<a href="../upgrade45.html">升级指南</a>。
 
 <p>
 在使用 -current 和执行下述操作之前，请确认已经阅读和理解了
@@ -76,14 +87,11 @@
 <a name="20080907"></a>
 <h3>2008/09/07 - ifconfig(8) 的语法修改</h3>
 某些 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ifconfig&amp;sektion=8">ifconfig(8)</a>
-的选项已经修改。现在扫描无线网络时应该使用：
-<pre>
-    <b>ifconfig &lt;interface&gt; chan</b>
-</pre>
-枚举媒体类型时应该使用：
+的选项已经修改。要列出支持的媒体类型时应该使用：
 <pre>
     <b>ifconfig &lt;interface&gt; media</b>
 </pre>
+扫描无线网络的选项也改变了，但是被<a href="#20090215">稍后修订</a>。
 
 <p>
 <a name="20080913"></a>
@@ -199,15 +207,121 @@ More modules moved to base, as above.
 被缩短为 <tt>spkr</tt>。它导致 mixerctl.conf(5) 可能需要修改。
 
 <p>
+<a name="20081126"></a>
+<h3>2008/11/26 - btd 需要增加新用户和组</h3>
+新增加的蓝牙后台程序 <tt>btd</tt> 放弃特权后，使用新用户和组 _btd。
+以 <i>root</i> 身份，使用
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=useradd&amp;sektion=8">useradd(8)</a>
+增加新用户和组:
+<blockquote><pre>
+# useradd -u94 -g=uid -c"Bluetooth Daemon" -d/var/empty -s/sbin/nologin _btd</b>
+</pre></blockquote>
+
+<p>
+<a name="20090204"></a>
+<h3>2009/02/04 - Perl 升级到 5.10.0</h3>
+新模块移到基本包 - 请删除它。
+<pre>
+    # pkg_delete p5-Module-Loaded
+</pre>
+
+<p>
+<a name="20090215"></a>
+<h3>2009/02/15 - ifconfig(8) 的语法修改</h3>
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ifconfig&amp;sektion=8">ifconfig(8)</a>
+扫描无线网络的选项已经修改。现在应该使用：
+<pre>
+    <b>ifconfig &lt;interface&gt; scan</b>
+</pre>
+
+<p>
+<a name="20090218"></a>
+<h3>2009/02/18 - pfsync(4) 的版本号增加</h3>
+由于 pfsync(4) 接口的协议和实现的修改，pfsync(4) 协议的版本号已经增加。
+不同版本的防火墙将不能同步状态表，在出现故障时，现有的连接会被终止。
+
+<!-- cut-off point for 4.5 -->
+
+<p>
+<a name="20090304"></a>
+<h3>2009/03/04 - smtpd 需要增加新用户和组</h3>
+需要执行下述命令:
+<pre>
+useradd -u 95 -g =uid -c "SMTP Daemon" -d /var/empty -s /sbin/nologin _smtpd
+</pre>
+
+<p>
+<a name="20090316"></a>
+<h3>2009/03/16 - 现在通过 mailwrapper(8) 运行 makemap(8)</h3>
+由于 smtpd(8) 加入构建，所以现在通过 mailwrapper(8) 运行 makemap(8)，以避免其
+sendmail 和 smtpd 版本的二进制冲突。所以，用户需要手工增加下行到
+/etc/mailer.conf:
+<pre>
+makemap		/usr/libexec/sendmail/makemap
+</pre>
+
+<p>
+<a name="20090324"></a>
+<h3>2009/03/24 - ospfd(8) 和 ripd(8) 的 "redistribute default" 行为改变</h3>
+"redistribute default" 在 ospfd.conf(5) 和 ripd.conf(5)
+的配置文件中设置，现在需要出现在内河路由表的默认路由中，否则
+ospfd(8) 和 ripd(8) 不会广播路由。
+
+<p>
+<a name="20090406"></a>
+<h3>2009/04/06 - pf(4) 的不兼容修改</h3>
+包的标准化("擦洗")已经集成到主规则集中。现在可以增加参数
+"scrub" 到规则中。例如:
+
+<pre>
+        scrub in all no-df max-mss 1440
+</pre>
+
+可以被在规则中使用新的 "match" 动作替换:
+
+<pre>
+        match in all scrub (no-df max-mss 1440)
+</pre>
+
+由于默认强制规则集排序，它或者必须放到主规则集(在
+"pass quick" 规则之前)，或者禁止检查规则集顺序:
+
+<pre>
+        set require-order no
+</pre>
+
+包重组已经简化。删除了 "Crop" 和 "drop-ovl"；只剩余全部重组。可以这样打开:
+
+<pre>
+        set reassemble yes|no [no-df]
+</pre>
+
+如果指定了 "no-df"，设置了 df 位的碎片(只有碎片!)在进入碎片缓存之前会被清除
+df 位，从而重组后的包没有设置 df 位。"no-df" 不影响非碎片包。
+
+<p>
+<a name="20090407"></a>
+<h3>2009/04/07 - pf(4) 默认执行碎片重组</h3>
+由于没有什么理由不使用碎片重组，所以
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pf&sektion=4">pf(4)</a>
+改为默认启用碎片重组。
+
+<p>
+<a name="20090426"></a>
+<h3>2009/04/26 - pfctl(8) 默认关闭 require-order</h3>
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pfctl&sektion=8">pfctl(8)</a>
+改为默认禁用 "set require-order"。它只是建议，不需要修改配置。
+
+<p>
 <hr>
 <a href= "index.html"><img height= "24" width= "24" src= "../../images/back.gif" border= "0" alt="[back]"></a>
 <a href="mailto:www@openbsd.org">www@openbsd.org</a>
 <br>
-<small>$OpenBSD: current.html,v 1.134 2008/11/17 03:23:22 jakemsr Exp $</small>
+<small>$OpenBSD: current.html,v 1.149 2009/04/26 12:34:55 sthen Exp $</small>
 
 </body>
 </html>
 <!--
-Originally [OpenBSD: current.html,v 1.134]<br>
-$Translation: current.html,v 1.17 2008/11/23 07:09:27 dongsheng Exp $<br>
+Originally [OpenBSD: current.html,v 1.149]<br>
+$Translation: current.html,v 1.21 2009/04/29 05:48:04 dongsheng Exp $<br>
 -->

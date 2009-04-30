@@ -8,7 +8,7 @@
 <meta name= "description"   content= "the OpenBSD FAQ page">
 <meta name= "keywords"      content= "openbsd,faq">
 <meta name= "distribution"  content= "global">
-<meta name= "copyright"     content= "This document copyright 2003-2008 by OpenBSD.">
+<meta name= "copyright"     content= "This document copyright 2003-2009 by OpenBSD.">
 </head>
 
 <body bgcolor= "#ffffff" text= "#000000">
@@ -66,13 +66,15 @@ Questions</font></h1>
   <li><a href="#i386smouse">12.7.4 - My keyboard/mouse keeps locking
        up (or goes crazy)!</a>
   <li><a href="#i386soekris">12.7.5 - My Soekris performs poorly</a>
+  <li><a href="#i386flash">12.7.6 - I get "missing interrupt" errors on
+       my CF device</a>
   </ul>
 <li><a href="#landisk">12.8 - Landisk</a>
 <li><a href="#luna88k">12.9 - Luna88k</a>
 <li><a href="#mac68k">12.10 - Mac68k</a>
 <li><a href="#macppc">12.11 - MacPPC</a>
   <ul>
-  <li><a href="#macppcbm">12.11.1 - Why is my bm(4) driver so slow?</a>
+  <li><a href="#macppcbm">12.11.1 - My bm(4) network adapter doesn't work!</a>
   </ul>
 <li><a href="#mvme68k">12.12 - MVME68k</a>
 <li><a href="#mvme88k">12.13 - MVME88k</a>
@@ -117,12 +119,12 @@ not work in a PCI2.1 specification system.
 Also, many cards with on-board bridges (such as, multi-port network
 cards) will not work well in older systems.
 
-<li>The PCI bus supports two levels of signaling, 3.3v and 5v.
-Cards that work with 3.3v signaling have a second notch cut in their
+<li>The PCI bus supports two levels of signaling, 3.3V and 5V.
+Cards that work with 3.3V signaling have a second notch cut in their
 PCI connector.
-Most PCI cards use 5v signaling, which is used by most computers.
+Most PCI cards use 5V signaling, which is used by most computers.
 The Soekris single-board computers (Net45x1 and Net4801) are
-commonly-encountered computers that only support 3.3v signaling.
+commonly-encountered computers that only support 3.3V signaling.
 
 </ul>
 
@@ -503,6 +505,32 @@ on the system are all chosen for low power consumption, not performance.
 While they are suitable for many applications, they are not high
 performance machines.
 
+<a name="i386flash"></a>
+<h3>12.7.6 - I get "missing interrupt" errors on my CF device</h3>
+With some CF systems, such as early Soekris 4801 systems and some CF
+adapters, the DMA support is not properly wired up, so you might see
+messages such as:
+
+<blockquote><pre>
+pciide0:0:0: bus-master DMA error: missing interrupt, status=0x20
+</pre></blockquote>
+
+In these cases, you will need to disable DMA in the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=wd&amp;sektion=4">wd(4)</a>
+driver to avoid this problem.
+This can be done using <a href="faq5.html#ukc">ukc</a> to install, then
+<a href="faq5.html">config(8)</a> to change it permanently:
+
+<blockquote><pre>
+ukc&gt; <b>change wd</b>
+ 42 wd* at wdc*|pciide* channel -1 flags 0x0
+change [n] <b>y</b>
+channel [-1] ? 
+flags [0] ? <b>0x0ff0</b>
+ 42 wd* changed
+ 42 wd* at wdc*|pciide* channel -1 flags 0xff0
+ukc&gt; <b>quit</b>
+</pre></blockquote>
 
 <a name="landisk"></a>
 <h2>12.8 - Landisk</h2>
@@ -520,15 +548,14 @@ performance machines.
 <h2>12.11 - MacPPC</h2>
 
 <a name="macppcbm"></a>
-<h3>12.11.1 - Why is my bm(4) network adapter so slow?</h3>
+<h3>12.11.1 - My bm(4) network adapter doesn't work!</h3>
 The
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=bm&amp;sektion=4&amp;arch=macppc">bm</a>
 driver, supporting the BMAC chip used on some MacPPC systems (including
-early iMacs) has issues when run at 100Mbps.
-It is highly recommended that you force the driver to 10Mbps by using
-a <tt>"media 10baseT"</tt> option in your <tt>/etc/hostname.bm0</tt> 
-file, or otherwise force it to 10Mbps at your hub or switch.
-
+early iMacs) has issues.
+A
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=usb&amp;sektion=4">usb</a>
+NIC is recommended for these systems at this time.
 
 <a name="mvme68k"></a>
 <h2>12.12 - MVME68k</h2>
@@ -620,6 +647,6 @@ You will need to use a powered USB hub to run these devices.
 <a href= "index.html"><img height= "24" width= "24" src= "../images/back.gif" border= "0" alt="[back]"></a>
 <a href="mailto:www@openbsd.org">www@openbsd.org</a>
 <br>
-<small>$OpenBSD: faq12.html,v 1.93 2008/11/12 02:59:41 nick Exp $</small>
+<small>$OpenBSD: faq12.html,v 1.97 2009/03/18 01:42:36 nick Exp $</small>
 </body>
 </html>

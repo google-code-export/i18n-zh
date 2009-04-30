@@ -8,7 +8,7 @@
 <meta name="description"   content="OpenBSD Upgrade Process for 4.4 -> 4.5">
 <meta name="keywords"      content="openbsd,faq,upgrade,4.5">
 <meta name="distribution"  content="global">
-<meta name="copyright"     content="This document copyright 2008 by OpenBSD">
+<meta name="copyright"     content="This document copyright 2009 by OpenBSD">
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
@@ -32,10 +32,7 @@
 </font>
 
 <h1><font color="#e00000">
-<!--
 Upgrade Guide: 4.4 to 4.5
--->
-Work In Progress, don't even try it (yet)!
 </font></h1>
 <hr>
 
@@ -67,8 +64,13 @@ Table of Contents:
 <ul>
 <li><a href="#before">Before upgrading</a>
   <ul>
+  <li><a href="#newInstReboot">New install/reboot sequence</a>
+  <li><a href="#newPerl">Upgrade to Perl 5.10</a>
+  <li><a href="#ifconfig">ifconfig(8) options changes</a>
+  <li><a href="#Xchanges">X changes</a>
+  <li><a href="#mixerctl">mixerctl(1) name changes</a>
+  <li><a href="#pfsync">pfsync version number change</a>
   <li><a href="#newsysmerge">New sysmerge tool</a>
-<!-- XXX Fill in here -->
   <li><a href="#rc.conf">rc.conf</a>
   <li><a href="#kern">Modified kernel</a>
   </ul>
@@ -77,6 +79,8 @@ Table of Contents:
   <ul>
   <li><a href="#UsersGroups">New and changed Users and Groups</a>
   <li><a href="#etcUpgrade">Upgrading <tt>/etc</tt></a>
+  <li><a href="#patchfile">Merging locally changed files via patch file</a>
+  <li><a href="#sysmerge">Merging locally changed files via sysmerge(8)</a>
   <li><a href="#Kernchk">Checking the kernel</a>
   <li><a href="#Pkgup">Upgrading packages</a>
   </ul> 
@@ -92,12 +96,87 @@ impact a large number of users in the upgrade process.
 For a more complete list of changes, see
 <a href="../plus45.html">plus45.html</a> and the CVS change logs.
 
-<a name="newsysmerge"></a>
+<a name="newInstReboot"></a>
 <ul>
-<li><b>New
-<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sysmerge&amp;sektion=8">sysmerge(8)</a>
+<li><b>New file install/reboot sequence (non-install kernel
+process)</b><br>
+Previous upgrade processes used a process of install kernel,
+reboot, install userland.
+For OpenBSD 4.5, we suggest a different process -- install
+everything, THEN reboot.
+This must be done very carefully, otherwise one could end up with a
+system where the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=reboot&amp;sektion=1">reboot(1)</a>
+command is inoperable.
+Understand and follow the directions below before doing your upgrade
+remotely
+
+<p>
+<a name="newPerl"></a>
+<li><b>Upgrade to Perl 5.10.0</b><br>
+The new Perl 5.10.0 includes a number of modules that were packages in
+the past.
+You will need to remove these packages, we'll cover that with the other
+package updates <a href="#Pkgup">below</a>.
+
+<p>
+<li><a name="ifconfig"></a>
+<b>Some
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ifconfig&amp;sektion=8">ifconfig(8)</a>
+options have changed.</b><br>
+To scan for wireless networks, you should now use:
+<blockquote><pre>
+ifconfig <i>interface</i> scan
+</pre></blockquote>
+
+To list supported media types, you should now use:
+<blockquote><pre>
+ifconfig <i>interface</i> media
+</pre></blockquote>
+
+<p>
+<a name="Xchanges"></a>
+<li><b>X changes</b><br>
+<tt>RgbPath</tt> is no longer a valid keyword in the <b>Files</b>
+section of the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=xorg.conf&amp;sektion=5">xorg.conf</a>
+file, and should be removed from existing configuration files.
+
+<p>
+The i810(4) driver has been completely replaced by the
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=intel&amp;sektion=4">intel(4)</a>
+driver, so your xorg.conf(5) file should be updated accordingly.
+
+<p>
+Several existing xserver modules and drivers have been depreciated.
+To make sure <tt>X -configure</tt> doesn't try to configure the obsolete
+modules, we'll have you remove the contents of <tt>/usr/X11R6/lib/modules/</tt>
+before upgrading.
+
+<p>
+<a name="mixerctl"></a>
+<li><b>mixerctl(1) name changes</b><br>
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mixerctl&amp;sektion=1">mixerctl(1)</a>
+item name <tt>headphones</tt> has been shorted to <tt>hp</tt> and
+<tt>speaker</tt> was shortened to <tt>spkr</tt>.
+You may need to update your
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=mixerctl&amp;sektion=5">mixerctl.conf(5)</a>
+with the new names.
+
+<p>
+<a name="pfsync"></a>
+<li><b>pfsync(4) version number incremented</b><br>
+Due to protocol and implementation changes to the pfsync(4) interface,
+the pfsync(4) protocol number has been incremented.
+Firewalls with differing versions will be unable to synchronise state
+tables, and existing connections will be terminated on failover.
+
+
+<p>
+<a name="newsysmerge"></a>
+<li><b><a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sysmerge&amp;sektion=8">sysmerge(8)</a>
 utility:</b><br>
-OpenBSD 4.5 includes the new
+OpenBSD 4.5 includes the
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sysmerge&amp;sektion=8">sysmerge(8)</a>
 utility, which helps administrators update configuration files after
 upgrading their system.
@@ -111,7 +190,9 @@ copied over "as-is", and a list of files which should be changed, and a
 patch file that applies those changes to what might be in those files on
 your system.
 For the 4.4 to 4.5 upgrade, instead of using the patch file, you may
-opt to use sysmerge to make the changes.
+opt to use sysmerge to make the changes, or you may wish to use the
+patch file first, and then follow up with a sysmerge session to clean
+up any loose ends.
 
 <p>
 <b>Who should use sysmerge(8):</b><br>
@@ -140,10 +221,6 @@ update your user and group accounts, as it is very easy to chose the
 wrong option leading to erasing your entire user base and setting the
 root password to an empty value, preventing remote login to fix the
 problem.
-
-<p>
-<a name="newbla"></a>
-<li><b>New bla</b>
 
 <p>
 <a name="rc.conf"></a>
@@ -179,6 +256,14 @@ If you have access to the system's console, the easiest and safest way
 to upgrade is to boot from install media or
 <a href="faq4.html#bsd.rd">bsd.rd</a> and follow the upgrade steps,
 which are very similar to the <a href="faq4.html">install process</a>.
+
+<p>
+BEFORE upgrading, however, do the following if you have X installed:
+
+<blockquote><pre>
+<b>rm -rf /usr/X11R6/lib/modules/*</b>
+</pre></blockquote>
+
 Afterwards, complete the upgrade by following the <a href="#final">final
 steps</a> as detailed below.
 
@@ -205,14 +290,13 @@ One can usually do this by carefully following this process:
 Make sure you have sufficient space!
 
 <p>
-<li><b>Stop any "insecure" applications from starting at boot:</b>
-There will be a time when PF will be unlikely to be running during this
-upgrade process, but your applications may still start and run properly.
-Any application dependent upon PF for security should be disabled 
-before this happens, and should not be re-enabled until proper PF
-operation is verified after upgrade.
+<li><b>Stop any appropriate applications:</b>
+During this process, all the userland applications will be replaced but
+may not be runnable, and strange things may happen as a result.
+If this is a concern to you, shut down any applications that may
+be impacted.
 There may be other applications which you wish to keep from running
-during the upgrade, stop and disable them as well.
+immediately after the upgrade, stop and disable them as well.
 
 <p>
 <li><b>Check the kernel:</b>
@@ -226,7 +310,7 @@ This can be as simple as modifying a specific device using config(8),
 or it can involve a recompilation if the option you need is not included
 in the GENERIC kernel.
 Please consult <a href="faq5.html">FAQ 5 - Building the system from source</a>
-before considering to recompile your kernel.
+before deciding to recompile your kernel.
 
 <p>
 <li><b>Install new kernel(s)</b>
@@ -249,41 +333,32 @@ that the system can boot from should there be a really badly timed power
 outage or system crash.
 
 <p>
-<li><b>Install new <tt>/etc/firmware</tt> files and
-<tt>/sbin/ifconfig</tt> utility:</b>
-Due to the fact that some uploaded "firmware" files may have been updated,
-you may need to update the files in the <tt>/etc/firmware</tt> directory.
-This will impact users of only a few devices, though all users can use
-this step without harm.
-Sometimes the network drivers (especially more complex devices such as
-<tt>pppoe(4)</tt>) in the new kernel need an updated <tt>ifconfig</tt>
-utility to be configured properly after the reboot in the next step.
-Again, it's something that all users can do without harm, but if you are
-performing your remote upgrade over a <tt>pppoe(4)</tt> connection this
-step can be crucial.
-To extract the firmware files and ifconfig from <tt>base44.tgz</tt>,
-use the following as root:
-
+<li><b>Remove old X modules:</b>  These will be replaced with new
+ones shortly:
 <blockquote><pre>
-<b>tar -C / -xzphf ${RELEASEPATH}/base45.tgz ./etc/firmware ./sbin/ifconfig</b>
+<b>rm -rf /usr/X11R6/lib/modules/*</b>
 </pre></blockquote>
 
+
 <p>
-<li><b>Reboot on the new kernel:</b>
-This might be a tempting step to skip, but it should be done now, as
-usually, the new kernel will run old userland apps (such as the soon to
-be important <tt>reboot</tt>!), but often a new userland will NOT
-work on the old kernel.
+<li><b>Save yourself a copy of the old reboot(1) command:</b>
+You are still running the old kernel, it is possible the new reboot
+command will not run on the old kernel.
+
+<blockquote><pre>
+<b>cp /sbin/reboot /sbin/oreboot</b>
+</pre></blockquote>
 
 <p>
 <li><b>Install new userland applications.</b>
 <i>Do NOT install <tt>etc45.tgz</tt> and <tt>xetc45.tgz</tt> now, because
 that will overwrite your current configuration files!</i>
+Note that we are installing base45.tgz LAST, because it will include a new
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=tar&amp;sektion=1">tar(1)</a>
+utility, which may or may not run on the old kernel.
+We reboot immediately, as the system is probably barely runnable now.
 
 <blockquote><pre>
-<b>export RELEASEPATH=</b><i>/usr/rel</i>
-<b>cd ${RELEASEPATH}</b>
-<b>tar -C / -xzphf base45.tgz</b>
 <b>tar -C / -xzphf comp45.tgz</b>
 <b>tar -C / -xzphf game45.tgz</b>
 <b>tar -C / -xzphf man45.tgz</b>
@@ -292,48 +367,31 @@ that will overwrite your current configuration files!</i>
 <b>tar -C / -xzphf xfont45.tgz</b>
 <b>tar -C / -xzphf xserv45.tgz</b>
 <b>tar -C / -xzphf xshare45.tgz</b>
+<b>tar -C / -xzphf base45.tgz</b> # Install last!
+<b>/sbin/oreboot</b>
 </pre></blockquote>
 
-Note: not all file sets will need to be installed for all applications,
+Not all file sets will need to be installed for all applications,
 however if you installed a file set originally, you should certainly
 upgrade it with the new file set now.
 
 <p>
-Note: the files in <tt>/etc</tt> are handled separately below, so
+Again, the files in <tt>/etc</tt> are handled separately below, so
 <tt>etc45.tgz</tt> and <tt>xetc45.tgz</tt> are NOT unpacked here.
 
+
 <p>
-<li><b>Upgrade <tt>/dev</tt>.</b>
+<li><b>After reboot completes, upgrade <tt>/dev</tt>.</b>
 The new 
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=MAKEDEV&amp;sektion=8&amp;arch=i386">MAKEDEV</a>
-file will be copied to /dev by the installation of
+file was copied to /dev by the installation of
 <tt>base45.tgz</tt>, so you simply need to do the following:
 <blockquote><pre>
 <b>cd /dev</b>
 <b>./MAKEDEV all</b>
 </pre></blockquote>
 
-<p>
-<li><b>Upgrade <tt>/etc</tt> as below</b>.
-
-<p>
-<li><b>Reboot</b>
 </ul>
-
-During this process,
-<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sendmail&amp;sektion=8">sendmail(8)</a>
-may produce some error messages like the following:
-<pre>
-    Nov 1 12:47:05 puffy sm-mta[16733]: filesys_update failed: No such file or dire
-    ctory, fs=., avail=-1, blocksize=380204
-</pre>
-These messages can be safely ignored for the moment, or you may wish to
-halt sendmail(8) during the upgrade process.
-Note that sendmail is not working properly at this point, and will need
-to be restarted (as part of the reboot) before mail is expected to be
-handled properly.
-
-<p>
 
 <hr>
 <a name="final"></a>
@@ -345,14 +403,12 @@ manual steps that have to be performed.
   
 <a name="UsersGroups"></a>
 <h3>1. New Users and Groups</h3>
-New users are needed for
-<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=bla&amp;sektion=8">bla</a>,
-and bla.
+A new user is needed for
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=bluetooth&amp;sektion=4">Bluetooth</a>.
 Create the users and groups using
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=useradd&amp;sektion=8">useradd(8)</a>
 <blockquote><pre>
-<b>useradd -uXX -g=uid -c"bla Daemon" -d/var/empty -s/sbin/nologin _</b>
-<b>useradd -uXX -g=uid -c"bla Daemon" -d/var/empty -s/sbin/nologin _bla</b>
+<b>useradd -u94 -g=uid -c"Bluetooth Daemon" -d/var/empty -s/sbin/nologin _btd</b>
 </pre></blockquote>
 
 <a name="etcUpgrade"></a>
@@ -361,6 +417,7 @@ Create the users and groups using
 You will want to extract the <tt>etc45.tgz</tt> files to a temporary
 location:
 <blockquote><pre>
+<b>export RELEASEPATH=/usr/rel</b>
 <b>tar -C /tmp -xzphf ${RELEASEPATH}/etc45.tgz</b>
 </pre></blockquote>
 
@@ -368,42 +425,58 @@ location:
 Files that can probably be copied from <tt>etc45.tgz</tt> "as is":
 
 <blockquote><pre>
-XXXX
+netstart
+rc
+rc.conf
+services
+afs/CellServDB
+mail/README
+mail/submit.cf
+mtree/4.4BSD.dist
+mtree/special
+/var/named/etc/root.hint
+/var/named/etc/named*
 </pre></blockquote>
 
 Note that it IS possible to locally modify these files, if this has been
 done, do NOT copy over those files, and use the
 <a href="#sysmerge">sysmerge(8) process</a> instead.
-Pay special attention to <tt>mail/*</tt> if you are using something
-other than the default Sendmail(8) configuration.
+<!-- Pay special attention to <tt>mail/*</tt> if you are using something
+other than the default Sendmail(8) configuration. -->
 Here are copy/paste lines for copying these files, assuming you unpacked 
 <tt>etc45.tgz</tt> in the above recommended place:
 
 <blockquote><pre>
 <b>cd /tmp/etc
-XXX
+cp netstart rc rc.conf services /etc
+cp afs/CellServDB /etc/afs
 cp mtree/* /etc/mtree
-cp mail/*.cf /etc/mail</b> <i># Careful on this one!!</i>
+cp mail/README mail/submit.cf /etc/mail 
+cp ../var/named/etc/root.hint ../var/named/etc/named-*.conf /var/named/etc
+cp ../var/named/etc/named.conf /var/named/etc/</b>  # IF no local changes!
 </pre></blockquote>
 
 <p>
 <a name="patchfile"></a>
 <h3>3a.  Merging locally changed files via a patch file</h3>
-<i>Use either this patch file process OR the
-<a href="#sysmerge">sysmerge</a> process below, not both.</i>
-
 
 <p>
 These files likely have local changes, but should be updated for
 4.5.  IF you have not altered these files, you can copy over the
-new version, otherwise the changes must be merged with your files:
+new version, otherwise the changes should be merged with your files:
 
 <blockquote><pre>
-XXX
+/etc/changelist
+/etc/ftpusers
+/etc/ksh.kshrc
+/etc/lynx.cfg
+/etc/mail/aliases
+/etc/mail/trusted-users
+/etc/shells
+/etc/ssh/ssh_config
 </pre></blockquote>
 
 The changes to these files are in <a href="upgrade45.patch">this
-not yet existing
 patch file</a>.
 You can attempt to use this by executing the following as root:
 <blockquote><pre>
@@ -427,19 +500,12 @@ using pf.conf, look at the suggested change of strategy, and decide if
 it is appropriate for your use).
 
 <blockquote><pre>
-etc/dhclient.conf
+etc/dhcpd.conf
+etc/ntpd.conf
 etc/pf.conf
-var/www/conf/httpd.conf
 </pre></blockquote>
 
 <p>
-There is a file that can be deleted as it is no longer used
-in 4.5:
-
-<blockquote><pre>
-<b>rm /etc/dhcpd.interfaces</b>
-</pre></blockquote>
-
 
 Finally, use
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=newaliases&amp;sektion=8">newaliases(8)</a>
@@ -454,8 +520,6 @@ create any new directories:
 
 <a name="sysmerge"></a>
 <h3>3b. Merging locally changed files via sysmerge(8)</h3>
-<i>Use either this sysmerge(8) process, OR the
-<a href="#patchfile">patchfile</a> process above, not both.</i>
 
 <p>
 The new
@@ -558,8 +622,16 @@ You must do some homework on the applications YOU use.
 
 <ul>
 <li>
-<li><b>bla:</b> you must dump your bla before upgrade and
-restore it after
+<li><b>subversion:</b> New features (e.g. merge-tracking) require the
+repository to be upgraded manually by using the 'svnadmin upgrade'
+command. See the
+<a href="http://subversion.tigris.org/svn_1.5_releasenotes.html#repos-upgrades">release
+notes</a>.
+
+<li><b>kqemu:</b> Must be kept in sync with the kernel. pkg_delete prior
+to the upgrade, then pkg_add the new package once the upgrade has been
+completed.
+
 </ul>
 
 <p>
@@ -578,6 +650,31 @@ some ambiguity. Read the
 <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=pkg_add&amp;sektion=1&amp;manpath=OpenBSD+4.5">pkg_add(1)</a>
 manual page and the <a href="faq15.html#PkgMgmt">package management</a>
 chapter of the FAQ for more information.
+
+<p>
+A number of Perl modules which used to be separate packages are now
+included with Perl 5.10.0 in the base system, so <b>after</b> updating
+the other packages, their packages must now be removed.
+In addition,
+<a href="http://www.openbsd.org/cgi-bin/man.cgi?query=xcompmgr&amp;sektion=1">xcompmgr(1)</a>
+is now part of xbase45.tgz, and no longer a package, so it must also
+be removed.
+
+<blockquote><pre>
+<b>pkg_delete p5-Archive-Tar p5-Compress-Raw-Zlib p5-Compress-Zlib \
+p5-IO-Compress-Base p5-IO-Compress-Zlib p5-IO-Zlib p5-Module-Build \
+p5-Module-CoreList p5-Module-Load p5-version p5-Digest-SHA \
+p5-Locale-Maketext-Simple p5-Pod-Escapes p5-Pod-Simple \
+p5-ExtUtils-ParseXS p5-ExtUtils-CBuilder p5-Module-Pluggable \
+p5-Time-Piece p5-Module-Loaded xcompmgr</b>
+</pre></blockquote>
+
+Note that if you copy and paste this command into your system, you will
+probably get a lot of error messages from packages you don't have
+installed.
+That's ok.
+
+
 
 <p>
 <font color="#0000e0">
@@ -600,7 +697,7 @@ chapter of the FAQ for more information.
 <a href="index.html"><img height="24" width="24" src="../images/back.gif" border="0" alt="[back]"></a>
 <a href="mailto:www@openbsd.org">www@openbsd.org</a>
 <br>
-<small>$OpenBSD: upgrade45.html,v 1.1 2008/11/12 03:34:41 nick Exp $</small>
+<small>$OpenBSD: upgrade45.html,v 1.16 2009/04/12 08:09:22 ajacoutot Exp $</small>
 
 </body>
 </html>

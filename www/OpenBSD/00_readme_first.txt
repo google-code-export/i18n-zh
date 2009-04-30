@@ -93,8 +93,8 @@ $ iconv -f ISO-8859-1 -t UTF-8 example.html > zh/example.html
  * 尽量保证行长不大于 72 个英文字符。
  * 注意换行引入的额外空格。尽量在需要加入空格的地方或标点符号之后换行。
  * 不许修改版权信息，包括年份。
- * 由于http://steelix.kd85.com/translation/tagreport/#zh[标签报告]的问题，建议使用文本编辑器从事翻译工作。
- * 经常浏览http://steelix.kd85.com/translation/status.html#zh[翻译状态页面]，及时更新。
+ * 由于http://steelix.bsdfrog.org/status/tagdiff.html#zh[标签报告]的问题，建议使用文本编辑器从事翻译工作。
+ * 经常浏览http://steelix.bsdfrog.org/status/makereport.html#zh[翻译状态页面]，及时更新。
 
 === 校验文档
 
@@ -125,13 +125,13 @@ $ linkchecker -r 1 example.html
 
 
 在完成翻译，通过各种检查后，由 http://code.google.com/p/i18n-zh/[i18n-zh]
-小组将文档提交到位于 steelix.kd85.com 的 CVS 版本库(steelix-www)，然后回写 CVS 标签到
+小组将文档提交到位于 steelix.bsdfrog.org 的 CVS 版本库(steelix-www)，然后回写 CVS 标签到
 http://hg.sharesource.org/g11n/[sharesource]，可能还有
 http://code.google.com/p/i18n-zh/[i18n-zh] 和
 http://code.google.com/p/openbsdonly/[openbsdonly]。
 
 
-目前官方版本库(openbsd-www)不对翻译人员开放。在 steelix.kd85.com 有一个不对外提供匿名
+目前官方版本库(openbsd-www)不对翻译人员开放。在 steelix.bsdfrog.org 有一个不对外提供匿名
 CVS 服务的翻译版本库(steelix-www)。翻译人员与翻译协调者联系，取得账户后，
 可以提交到此版本库中。然后统一由翻译协调者将所有语言的翻译同步到官方版本库中。
 
@@ -157,7 +157,7 @@ cd ${WC_HG}/os/OpenBSD/www/ && hg purge -f .
 对于 steelix 的文档，不需要全部检出，只检出我们需要的部分即可。首先执行非递归检出，例如：
 ----------------------------------------------------------------
 cd /home/dongsheng/var/cvs
-cvs -d dongsheng@steelix.kd85.com:/cvs co -l -d steelix-www www
+cvs -d dongsheng@steelix.bsdfrog.org:/cvs co -l -d steelix-www www
 ----------------------------------------------------------------
 
 然后就可以执行非递归更新了，例如只检出/更新当前翻译相关部分：
