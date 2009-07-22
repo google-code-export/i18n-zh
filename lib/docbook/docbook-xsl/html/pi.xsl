@@ -6,7 +6,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: pi.xsl 8097 2008-08-03 13:20:21Z mzjn $
+     $Id: pi.xsl 8394 2009-04-02 20:31:30Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -17,7 +17,7 @@
 
 <doc:reference xmlns=""><info><title>HTML Processing Instruction Reference</title>
     <releaseinfo role="meta">
-      $Id: pi.xsl 8097 2008-08-03 13:20:21Z mzjn $
+      $Id: pi.xsl 8394 2009-04-02 20:31:30Z mzjn $
     </releaseinfo>
   </info>
   <partintro xml:id="partintro">
@@ -610,7 +610,7 @@
     <variablelist>
       <varlistentry><term>row-height="<replaceable>height</replaceable>"</term>
         <listitem>
-          <para>Specifies the label height (including units)</para>
+          <para>Specifies the row height (including units)</para>
         </listitem>
       </varlistentry>
     </variablelist>

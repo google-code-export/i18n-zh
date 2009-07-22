@@ -5,7 +5,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 <!-- ********************************************************************
-     $Id: param.xweb 8177 2008-12-15 22:21:16Z bobstayton $
+     $Id: param.xweb 8345 2009-03-16 06:44:07Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -18,7 +18,7 @@
 <xsl:param name="admon.graphics" select="0"/>
 <xsl:param name="admon.graphics.path">images/</xsl:param>
 <xsl:param name="admon.style">
-  <xsl:text>margin-left: 0.5in; margin-right: 0.5in;</xsl:text>
+  <xsl:value-of select="concat('margin-', $direction.align.start,            ': 0.5in; margin-', $direction.align.end, ': 0.5in;')"/>
 </xsl:param>
 <xsl:param name="admon.textlabel" select="1"/>
 <xsl:param name="annotate.toc" select="1"/>
@@ -139,6 +139,12 @@ http://docbook.sourceforge.net/release/images/annot-close.png</xsl:param>
 <xsl:param name="email.delimiters.enabled" select="1"/>
 <xsl:param name="emphasis.propagates.style" select="1"/>
 <xsl:param name="entry.propagates.style" select="1"/>
+<xsl:param name="exsl.node.set.available"> 
+  <xsl:choose>
+    <xsl:when xmlns:exsl="http://exslt.org/common" exsl:foo="" test="function-available('exsl:node-set') or                        contains(system-property('xsl:vendor'),                          'Apache Software Foundation')">1</xsl:when>
+    <xsl:otherwise>0</xsl:otherwise>
+  </xsl:choose>
+</xsl:param>
 <xsl:param name="firstterm.only.link" select="0"/>
 <xsl:param name="footer.rule" select="1"/>
 <xsl:param name="footnote.number.format">1</xsl:param>
@@ -259,6 +265,7 @@ set       toc,title
 <xsl:param name="id.warnings" select="0"/>
 <xsl:param name="index.method">basic</xsl:param>
 <xsl:param name="index.on.role" select="0"/>
+<xsl:param name="index.links.to.section" select="1"/>
 <xsl:param name="index.on.type" select="0"/>
 <xsl:param name="index.number.separator"/>
 <xsl:param name="index.term.separator"/>

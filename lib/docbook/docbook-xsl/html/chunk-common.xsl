@@ -7,7 +7,7 @@
                 exclude-result-prefixes="exsl cf ng db">
 
 <!-- ********************************************************************
-     $Id: chunk-common.xsl 8178 2008-12-15 22:26:38Z bobstayton $
+     $Id: chunk-common.xsl 8420 2009-05-04 02:17:33Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -29,7 +29,7 @@
 <xsl:variable name="chunk.hierarchy">
   <xsl:if test="$chunk.fast != 0">
     <xsl:choose>
-      <xsl:when test="function-available('exsl:node-set')">
+      <xsl:when test="$exsl.node.set.available != 0">
         <xsl:message>Computing chunks...</xsl:message>
         <xsl:apply-templates select="/*" mode="find.chunks"/>
       </xsl:when>
@@ -51,7 +51,7 @@
   </xsl:param>
 
   <xsl:choose>
-    <xsl:when test="$chunk.fast != 0 and function-available('exsl:node-set')">
+    <xsl:when test="$chunk.fast != 0 and $exsl.node.set.available != 0">
       <xsl:variable name="chunks" select="exsl:node-set($chunk.hierarchy)//cf:div"/>
       <xsl:variable name="genid" select="generate-id()"/>
 
@@ -1090,9 +1090,18 @@
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="href.from.uri">
-    <xsl:call-template name="href.target.uri">
-      <xsl:with-param name="object" select="$context"/>
-    </xsl:call-template>
+    <xsl:choose>
+      <xsl:when test="not($toc-context = .)">
+        <xsl:call-template name="href.target.uri">
+          <xsl:with-param name="object" select="$toc-context"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="href.target.uri">
+          <xsl:with-param name="object" select="$context"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:variable>
   <!-- * <xsl:message>toc-context: <xsl:value-of select="local-name($toc-context)"/></xsl:message> -->
   <!-- * <xsl:message>node: <xsl:value-of select="local-name(.)"/></xsl:message> -->
@@ -1191,7 +1200,7 @@
   <xsl:if test="$olink.key != ''">
     <xsl:variable name="target.href" >
       <xsl:for-each select="$target.database" >
-        <xsl:value-of select="key('targetptr-key', $olink.key)/@href" />
+        <xsl:value-of select="key('targetptr-key', $olink.key)[1]/@href" />
       </xsl:for-each>
     </xsl:variable>
   

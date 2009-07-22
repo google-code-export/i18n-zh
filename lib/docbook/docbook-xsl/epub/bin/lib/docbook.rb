@@ -61,19 +61,20 @@ module DocBook
 
     private
     def render_to_epub(output_file, verbose)  
+      @collapsed_docbook_file = collapse_docbook()
+
       chunk_quietly =   "--stringparam chunk.quietly " + (verbose ? '0' : '1')
       callout_path =    "--stringparam callout.graphics.path #{CALLOUT_PATH}/"
       callout_limit =   "--stringparam callout.graphics.number.limit #{CALLOUT_LIMIT}"
       callout_ext =     "--stringparam callout.graphics.extension #{CALLOUT_EXT}" 
       html_stylesheet = "--stringparam html.stylesheet #{File.basename(@css_file)}" if @css_file
-      base =            "--stringparam base.dir #{@oebps_dir}/" 
+      base =            "--stringparam base.dir #{OEBPS_DIR}/" 
       unless @embedded_fonts.empty? 
         font =            "--stringparam epub.embedded.font \"#{File.basename(@embedded_fonts.first)}\"" 
       end  
-      meta =            "--stringparam epub.metainf.dir #{@meta_dir}/" 
-      oebps =           "--stringparam epub.oebps.dir #{@oebps_dir}/" 
-      options = ["--xinclude", 
-                 chunk_quietly, 
+      meta =            "--stringparam epub.metainf.dir #{META_DIR}/" 
+      oebps =           "--stringparam epub.oebps.dir #{OEBPS_DIR}/" 
+      options = [chunk_quietly, 
                  callout_path, 
                  callout_limit, 
                  callout_ext, 
@@ -84,7 +85,7 @@ module DocBook
                  html_stylesheet,
                 ].join(" ")
       # Double-quote stylesheet & file to help Windows cmd.exe
-      db2epub_cmd = "#{XSLT_PROCESSOR} #{options} \"#{@stylesheet}\" \"#{@docbook_file}\""
+      db2epub_cmd = "cd #{@output_dir} && #{XSLT_PROCESSOR} #{options} \"#{@stylesheet}\" \"#{@collapsed_docbook_file}\""
       STDERR.puts db2epub_cmd if $DEBUG
       success = system(db2epub_cmd)
       raise "Could not render as .epub to #{output_file} (#{db2epub_cmd})" unless success
@@ -93,6 +94,7 @@ module DocBook
     end  
 
     def bundle_epub(output_file, verbose)  
+
       quiet = verbose ? "" : "-q"
       mimetype_filename = write_mimetype()
       meta   = File.basename(@meta_dir)
@@ -108,6 +110,24 @@ module DocBook
       success = system(zip_cmd)
       raise "Could not bundle into .epub file to #{output_file}" unless success
     end
+
+    # Input must be collapsed because REXML couldn't find figures in files that
+    # were XIncluded or added by ENTITY
+    #   http://sourceforge.net/tracker/?func=detail&aid=2750442&group_id=21935&atid=373747
+    def collapse_docbook
+      collapsed_file = File.join(File.expand_path(File.dirname(@docbook_file)), 
+                                 '.collapsed.' + File.basename(@docbook_file))
+      entity_collapse_command = "xmllint --loaddtd --noent -o '#{collapsed_file}' '#{@docbook_file}'"
+      entity_success = system(entity_collapse_command)
+      raise "Could not collapse named entites in #{@docbook_file}" unless entity_success
+
+      xinclude_collapse_command = "xmllint --xinclude -o '#{collapsed_file}' '#{collapsed_file}'"
+      xinclude_success = system(xinclude_collapse_command)
+      raise "Could not collapse XIncludes in #{@docbook_file}" unless xinclude_success
+
+      @to_delete << collapsed_file
+      return collapsed_file
+    end  
 
     def copy_callouts
       new_callout_images = []
@@ -180,7 +200,7 @@ module DocBook
 
     # Returns an Array of all of the (image) @filerefs in a document
     def get_image_refs
-      parser = REXML::Parsers::PullParser.new(File.new(@docbook_file))
+      parser = REXML::Parsers::PullParser.new(File.new(@collapsed_docbook_file))
       image_refs = []
       while parser.has_next?
         el = parser.pull
@@ -193,7 +213,7 @@ module DocBook
 
     # Returns true if the document has code callouts
     def has_callouts?
-      parser = REXML::Parsers::PullParser.new(File.new(@docbook_file))
+      parser = REXML::Parsers::PullParser.new(File.new(@collapsed_docbook_file))
       while parser.has_next?
         el = parser.pull
         if el.start_element? and (el[0] == "calloutlist" or el[0] == "co")

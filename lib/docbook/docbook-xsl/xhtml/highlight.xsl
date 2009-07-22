@@ -4,7 +4,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xslthl="http://xslthl.sf.net" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xslthl" version="1.0">
 
 <!-- ********************************************************************
-     $Id: highlight.xsl 8093 2008-07-21 16:43:53Z kosek $
+     $Id: highlight.xsl 8419 2009-04-29 20:37:52Z kosek $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -12,6 +12,8 @@
      and other information.
 
      ******************************************************************** -->
+
+<xsl:import href="../highlighting/common.xsl"/>
 
 <xsl:template match="xslthl:keyword" mode="xslthl">
   <b class="hl-keyword"><xsl:apply-templates mode="xslthl"/></b>

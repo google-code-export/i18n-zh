@@ -5,7 +5,7 @@
                 exclude-result-prefixes="exsl cf">
 
 <!-- ********************************************************************
-     $Id: chunk-changebars.xsl 8130 2008-09-29 17:28:40Z mzjn $
+     $Id: chunk-changebars.xsl 8399 2009-04-08 07:37:42Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -42,7 +42,7 @@
   </xsl:param>
 
   <xsl:choose>
-    <xsl:when test="$chunk.fast != 0 and function-available('exsl:node-set')">
+    <xsl:when test="$chunk.fast != 0 and $exsl.node.set.available != 0">
       <xsl:variable name="chunks" select="exsl:node-set($chunk.hierarchy)//cf:div"/>
       <xsl:variable name="genid" select="generate-id()"/>
 
