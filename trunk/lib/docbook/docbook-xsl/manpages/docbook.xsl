@@ -14,7 +14,7 @@
               encoding="UTF-8"
               indent="no"/>
   <!-- ********************************************************************
-       $Id: docbook.xsl 8239 2009-02-09 19:56:29Z xmldoc $
+       $Id: docbook.xsl 8486 2009-07-14 19:33:56Z mzjn $
        ********************************************************************
 
        This file is part of the XSL DocBook Stylesheet distribution.
@@ -45,6 +45,8 @@
   <!-- * can potentially be reused for more than just man output) -->
   <xsl:param name="tbl.font.headings" select="$man.font.table.headings"/>
   <xsl:param name="tbl.font.title" select="$man.font.table.title"/>
+
+  <xsl:param name="stylesheet.result.type" select="'manpages'"/>
 
   <!-- ==================================================================== -->
 

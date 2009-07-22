@@ -10,7 +10,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: index.xsl 8111 2008-08-28 14:13:42Z xmldoc $
+     $Id: index.xsl 8317 2009-03-12 06:14:02Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -447,8 +447,12 @@
   <fo:block>
     <xsl:attribute name="start-indent">
       <xsl:choose>
-        <xsl:when test="preceding-sibling::tertiaryie">3pc</xsl:when>
-        <xsl:when test="preceding-sibling::secondaryie">2pc</xsl:when>
+        <xsl:when test="(preceding-sibling::tertiaryie |
+                         preceding-sibling::secondaryie)[last()]
+                         [self::tertiaryie]">3pc</xsl:when>
+        <xsl:when test="(preceding-sibling::tertiaryie |
+                         preceding-sibling::secondaryie)[last()]
+                         [self::secondaryie]">2pc</xsl:when>
         <xsl:otherwise>1pc</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>

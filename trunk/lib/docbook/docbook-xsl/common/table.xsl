@@ -5,7 +5,7 @@
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: table.xsl 8167 2008-11-19 20:36:45Z mzjn $
+     $Id: table.xsl 8392 2009-04-01 08:47:55Z bobstayton $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -258,7 +258,7 @@ or 0 (the empty string)</para>
 
   <xsl:variable name="table" select="($tgroup/ancestor::table
                                      |$tgroup/ancestor::informaltable
-				     |$entry/ancestor::entrytbl)[last()]"/>
+                                     |$entry/ancestor::entrytbl)[last()]"/>
 
   <xsl:variable name="entry.value">
     <xsl:call-template name="get-attribute">
@@ -411,7 +411,7 @@ or 0 (the empty string)</para>
   <xsl:param name="attribute" select="'colname'"/>
   <xsl:param name="colspec.ancestor" 
              select="(ancestor::tgroup|ancestor::entrytbl)
-	             [position() = last()]"/>
+                     [position() = last()]"/>
   <xsl:param name="colspecs" select="$colspec.ancestor/colspec"/>
   <xsl:param name="count" select="1"/>
 

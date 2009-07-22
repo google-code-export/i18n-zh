@@ -8,7 +8,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: synop.xsl 8116 2008-09-06 16:27:22Z mzjn $
+     $Id: synop.xsl 8334 2009-03-15 14:26:23Z mzjn $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -972,6 +972,11 @@
     <xsl:text> { ... };</xsl:text>
     <xsl:call-template name="synop-break"/>
   </fo:block>
+</xsl:template>
+
+<!-- Used when not occurring as a child of classsynopsis -->
+<xsl:template match="ooclass|oointerface|ooexception">
+  <xsl:apply-templates/>
 </xsl:template>
 
 <!-- ==================================================================== -->

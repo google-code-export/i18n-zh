@@ -3,7 +3,7 @@
                 version='1.0'>
 
 <!-- ********************************************************************
-     $Id: block.xsl 8178 2008-12-15 22:26:38Z bobstayton $
+     $Id: block.xsl 8441 2009-05-24 02:14:56Z abdelazer $
      ********************************************************************
 
      This file is part of the XSL DocBook Stylesheet distribution.
@@ -23,7 +23,7 @@
 
 <xsl:template name="block.object">
   <div>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
     <xsl:call-template name="anchor"/>
     <xsl:apply-templates/>
   </div>
@@ -57,12 +57,16 @@
 
   <xsl:variable name="p">
     <p>
-      <xsl:call-template name="dir"/>
-      <xsl:if test="$class != ''">
-        <xsl:apply-templates select="." mode="class.attribute">
-          <xsl:with-param name="class" select="$class"/>
-        </xsl:apply-templates>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="$class != ''">
+          <xsl:call-template name="common.html.attributes">
+            <xsl:with-param name="class" select="$class"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="locale.html.attributes"/>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:copy-of select="$content"/>
     </p>
   </xsl:variable>
@@ -82,6 +86,7 @@
 <xsl:template match="simpara">
   <!-- see also listitem/simpara in lists.xsl -->
   <p>
+    <xsl:call-template name="locale.html.attributes"/>
     <xsl:if test="@role and $para.propagates.style != 0">
       <xsl:apply-templates select="." mode="class.attribute">
         <xsl:with-param name="class" select="@role"/>
@@ -140,10 +145,7 @@
 
 <xsl:template match="blockquote">
   <div>
-    <xsl:apply-templates select="." mode="class.attribute"/>
-    <xsl:if test="@lang or @xml:lang">
-      <xsl:call-template name="language.attribute"/>
-    </xsl:if>
+    <xsl:call-template name="common.html.attributes"/>
     <xsl:call-template name="anchor"/>
 
     <xsl:choose>
@@ -169,7 +171,7 @@
       </xsl:when>
       <xsl:otherwise>
         <blockquote>
-          <xsl:apply-templates select="." mode="class.attribute"/>
+          <xsl:call-template name="common.html.attributes"/>
           <xsl:apply-templates/>
         </blockquote>
       </xsl:otherwise>
@@ -187,13 +189,14 @@
   </div>
 </xsl:template>
 
+<!-- Use an em dash per Chicago Manual of Style and https://sourceforge.net/tracker/index.php?func=detail&aid=2793878&group_id=21935&atid=373747 -->
 <xsl:template match="epigraph">
   <div>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
       <xsl:apply-templates select="para|simpara|formalpara|literallayout"/>
       <xsl:if test="attribution">
         <div class="attribution">
-          <span>--<xsl:apply-templates select="attribution"/></span>
+          <span>&#x2014;<xsl:apply-templates select="attribution"/></span>
         </div>
       </xsl:if>
   </div>
@@ -201,7 +204,7 @@
 
 <xsl:template match="attribution">
   <span>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
     <xsl:apply-templates/>
   </span>
 </xsl:template>
@@ -210,7 +213,7 @@
 
 <xsl:template match="abstract|sidebar">
   <div>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
     <xsl:call-template name="anchor"/>
     <xsl:call-template name="formal.object.heading">
       <xsl:with-param name="title">
@@ -326,7 +329,7 @@
 
 <xsl:template match="revhistory">
   <div>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
     <table border="0" width="100%" summary="Revision history">
       <tr>
         <th align="{$direction.align.start}" valign="top" colspan="3">
@@ -416,9 +419,9 @@
 
 <!-- ==================================================================== -->
 
-<xsl:template match="ackno">
+<xsl:template match="ackno|acknowledgements[parent::article]">
   <p>
-    <xsl:apply-templates select="." mode="class.attribute"/>
+    <xsl:call-template name="common.html.attributes"/>
     <xsl:apply-templates/>
   </p>
 </xsl:template>

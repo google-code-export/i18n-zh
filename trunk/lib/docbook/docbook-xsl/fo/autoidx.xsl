@@ -13,7 +13,7 @@
                 version="1.0">
 
 <!-- ********************************************************************
-     $Id: autoidx.xsl 8131 2008-10-01 00:11:49Z bobstayton $
+     $Id: autoidx.xsl 8399 2009-04-08 07:37:42Z bobstayton $
      ********************************************************************
 
      This file is part of the DocBook XSL Stylesheet distribution.
@@ -169,8 +169,7 @@
   </xsl:if>
 
 
-  <xsl:if test="not(function-available('exslt:node-set') or
-                    function-available('exslt:nodeSet'))">
+  <xsl:if test="$exsl.node.set.available = 0">
     <xsl:message terminate="yes">
       <xsl:text>ERROR: the 'kosek' index method requires the </xsl:text>
       <xsl:text>exslt:node-set() function. Use a processor that </xsl:text>
@@ -294,6 +293,13 @@
     <xsl:if test="$axf.extensions != 0">
       <xsl:attribute name="axf:suppress-duplicate-page-number">true</xsl:attribute>
     </xsl:if>
+
+    <xsl:for-each select="$refs/primary">
+      <xsl:if test="@id or @xml:id">
+        <fo:inline id="{(@id|@xml:id)[1]}"/>
+      </xsl:if>
+    </xsl:for-each>
+
     <xsl:value-of select="primary"/>
 
     <xsl:choose>
@@ -403,6 +409,13 @@
     <xsl:if test="$axf.extensions != 0">
       <xsl:attribute name="axf:suppress-duplicate-page-number">true</xsl:attribute>
     </xsl:if>
+
+    <xsl:for-each select="$refs/secondary">
+      <xsl:if test="@id or @xml:id">
+        <fo:inline id="{(@id|@xml:id)[1]}"/>
+      </xsl:if>
+    </xsl:for-each>
+
     <xsl:value-of select="secondary"/>
 
     <xsl:choose>
@@ -522,6 +535,13 @@
     <xsl:if test="$axf.extensions != 0">
       <xsl:attribute name="axf:suppress-duplicate-page-number">true</xsl:attribute>
     </xsl:if>
+
+    <xsl:for-each select="$refs/tertiary">
+      <xsl:if test="@id or @xml:id">
+        <fo:inline id="{(@id|@xml:id)[1]}"/>
+      </xsl:if>
+    </xsl:for-each>
+
     <xsl:value-of select="tertiary"/>
 
     <xsl:choose>
