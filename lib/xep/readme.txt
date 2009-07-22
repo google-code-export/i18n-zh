@@ -1,7 +1,7 @@
 XEP - XSL Formatting Engine for Paged Media
 
-Version 4.14 build 20081212
-December 12th, 2008
+Version 4.16 build 20090707
+July 7th, 2009
 
 
 CONTENTS
@@ -37,7 +37,7 @@ on older Java machines.
     You  can run  the jar  by typing  the following  command  on the
     prompt:
     
-      java -jar setup-4.14-20081212-personal.jar
+      java -jar setup-4.16-20090707-personal.jar
       
     You will be prompted for the  target  directory name.  Type  the 
     path in the edit box, or choose a directory by pressing "Browse" 
@@ -47,10 +47,15 @@ on older Java machines.
     You can also  run setup in console mode by adding '-c' switch to
     the command line:
 
-      java -jar setup-4.14-20081212-personal.jar -c
+      java -jar setup-4.16-20090707-personal.jar -c
     
     During the installation system copies all files to the specified
     location  and sets up necessary configuration files. 
+
+    NOTE: Make sure you have enough privileges to write to the
+    installation folder you choose. You may need to run the
+    installer with administrator privileges to be able to install
+    into "Program Files" folder on Microsoft Windows Vista.
 
  C. Activate your copy of the software. This  step is necessary only
     if you choose to skip activation  during XEP setup. In this case
