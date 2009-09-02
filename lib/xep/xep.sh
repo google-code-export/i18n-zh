@@ -22,5 +22,5 @@ then
 fi
 
 $JAVACMD -Xmx1024m "-DCONFIG=%XEP_HOME%/xep.xml" \
-    -cp $XEP_HOME/lib/xep.jar:$XEP_HOME/lib/saxon.jar:$XEP_HOME/lib/xt.jar  \
+    -cp $XEP_HOME/lib/empty-stamp.jar:$XEP_HOME/lib/xep.jar:$XEP_HOME/lib/saxon.jar:$XEP_HOME/lib/xt.jar  \
     org.apache.tools.XEP.launch.Launcher -lib $XEP_HOME/lib "$@"
