@@ -32,4 +32,4 @@ goto runFop
 if "%JAVACMD%" == "" set JAVACMD=java
 
 :runFop
-"%JAVACMD%" -Xmx1024m %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %*
+"%JAVACMD%" -Xmx1024m %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main -c %LOCAL_FOP_HOME%conf\userconfig.xml %*

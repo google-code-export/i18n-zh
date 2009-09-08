@@ -11,11 +11,16 @@ if [ -z "$JAVACMD" ]; then
         JAVACMD=java
     fi
 fi
+JAVACMD=`which $JAVACMD 2> /dev/null `
 
-[ -z "$FOP_HOME" ] && FOP_HOME=`dirname $0`
+if [ ! -x "$JAVACMD" ] ; then
+    echo "Error: JAVA_HOME is not defined correctly, we cannot execute $JAVACMD"
+    exit 1
+fi
 
-## resolve links - $0 may be a link to fop.sh
-if [ -h "$0" ] ; then  
+# [ -z "$FOP_HOME" ] && FOP_HOME=`dirname $0`
+if [ -z "$FOP_HOME" -o ! -d "$FOP_HOME" ] ; then
+  ## resolve links - $0 may be a link to xep's home
   PRG="$0"
   progname=`basename "$0"`
 
@@ -24,16 +29,22 @@ if [ -h "$0" ] ; then
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`
     if expr "$link" : '/.*' > /dev/null; then
-      PRG="$link"
+    PRG="$link"
     else
-      PRG=`dirname "$PRG"`"/$link"
+    PRG=`dirname "$PRG"`"/$link"
     fi
   done
 
   FOP_HOME=`dirname "$PRG"`
 
   # make it fully qualified
-  FOP_HOME=`cd "$FOP_HOME" && pwd`
+  FOP_HOME=`cd "$FOP_HOME" > /dev/null && pwd`
+fi
+
+if [ ! -e "$FOP_HOME/build/fop.jar" ]
+then
+    echo "Error: The FOP_HOME environment variable is not defined correctly"
+    exit 1
 fi
 
 # add fop.jar, fop-sandbox and fop-hyph.jar, which reside in $FOP_HOME/build
@@ -47,4 +58,5 @@ done
 LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
 LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=WARN
 
-$JAVACMD -Xmx1024m $LOGCHOICE $LOGLEVEL -classpath $LOCALCLASSPATH org.apache.fop.cli.Main $@
+echo "FOP_HOME: $FOP_HOME"
+$JAVACMD -Xmx1024m $LOGCHOICE $LOGLEVEL -classpath $LOCALCLASSPATH org.apache.fop.cli.Main -c $FOP_HOME/conf/userconfig.xml $@

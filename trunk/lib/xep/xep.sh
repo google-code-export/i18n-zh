@@ -11,16 +11,44 @@ if [ -z "$JAVACMD" ]; then
         JAVACMD=java
     fi
 fi
+JAVACMD=`which $JAVACMD 2> /dev/null `
 
-echo "JAVACMD: $JAVACMD"
-
-[ -z "$XEP_HOME" ] && XEP_HOME=`dirname $0`
-if [ ! -e "$XEP_HOME/lib/xep.jar" ]
-then
-    echo The XEP_HOME environment variable is not defined correctly
+if [ ! -x "$JAVACMD" ] ; then
+    echo "Error: JAVA_HOME is not defined correctly, we cannot execute $JAVACMD"
     exit 1
 fi
 
-$JAVACMD -Xmx1024m "-DCONFIG=%XEP_HOME%/xep.xml" \
+# [ -z "$XEP_HOME" ] && XEP_HOME=`dirname $0`
+if [ -z "$XEP_HOME" -o ! -d "$XEP_HOME" ] ; then
+  ## resolve links - $0 may be a link to xep's home
+  PRG="$0"
+  progname=`basename "$0"`
+
+  # need this for relative symlinks
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+    PRG="$link"
+    else
+    PRG=`dirname "$PRG"`"/$link"
+    fi
+  done
+
+  XEP_HOME=`dirname "$PRG"`
+
+  # make it fully qualified
+  XEP_HOME=`cd "$XEP_HOME" > /dev/null && pwd`
+fi
+
+if [ ! -e "$XEP_HOME/lib/xep.jar" ]
+then
+    echo "Error: The XEP_HOME environment variable is not defined correctly"
+    exit 1
+fi
+
+echo "XEP_HOME: $XEP_HOME"
+
+$JAVACMD -Xmx1024m \
     -cp $XEP_HOME/lib/empty-stamp.jar:$XEP_HOME/lib/xep.jar:$XEP_HOME/lib/saxon.jar:$XEP_HOME/lib/xt.jar  \
-    org.apache.tools.XEP.launch.Launcher -lib $XEP_HOME/lib "$@"
+    com.renderx.xep.XSLDriver "-DCONFIG=$XEP_HOME/xep.xml" "$@"
