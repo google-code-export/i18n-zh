@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ant pdf html html-single
+-->
+<project name="docbook" default="html">
+
+    <!-- load properties -->
+    <property file="build.properties"/>
+
+    <!-- Set build directories for all formats. -->
+    <property name="build.dir" value="${basedir}/build"/>
+
+    <!-- Classpath for the build tools. -->
+    <path id="lib.classpath">
+        <fileset dir="${usr.share.java}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${usr.share.java}"/>
+        <fileset dir="${xep.home}/lib">
+          <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="xep.classpath">
+        <fileset dir="${xep.home}/lib">
+          <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <!-- Delete build directory. -->
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="all" depends="clean">
+        <!-- Compile the documentation in all formats. -->
+        <antcall target="pdf"/>
+        <antcall target="html"/>
+        <antcall target="html-single"/>
+    </target>
+
+    <target name="pdf">
+
+        <mkdir dir="${build.dir}/pdf"/>
+
+        <!-- Create the XSL/FO temporary file. -->
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${basedir}" maxmemory="512m" >
+            <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="${build.dir}/pdf/${doc.name}.fo"/>
+            <arg value="${basedir}/book.xml"/>
+            <arg value="xsl/fo.xsl"/>
+            <arg value="xep.extensions=1"/>
+        </java>
+
+        <!-- Create a PDF from the XSL/FO -->
+        <java classname="com.renderx.xep.XSLDriver" fork="true" maxmemory="512m"
+                failonerror="true" dir="${build.dir}/pdf">
+            <jvmarg value="-Xss512k"/>
+            <classpath refid="lib.classpath"/>
+            <arg value="-DCONFIG=${xep.home}/xep.xml"/>
+            <arg value="-quiet"/>
+            <arg value="${doc.name}.fo"/>
+            <arg value="${doc.name}.pdf"/>
+        </java>
+    </target>
+
+    <target name="html">
+
+        <!-- Make the output dir. -->
+        <mkdir dir="${build.dir}/html"/>
+
+        <!-- Create html files -->
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${build.dir}/html" maxmemory="512m" >
+            <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="index.html"/>
+            <arg value="../../book.xml"/>
+            <arg value="../../xsl/html.xsl"/>
+        </java>
+
+        <!-- Copy html stylesheet to the output location. -->
+        <copy file="xsl/styles.css" todir="${build.dir}/html"/>
+    </target>
+
+    <target name="html-single">
+
+        <!-- Make the output dir. -->
+        <mkdir dir="${build.dir}/html_single"/>
+
+        <!-- Create html files -->
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${build.dir}/html_single" maxmemory="512m" >
+            <classpath refid="lib.classpath"/>
+            <arg value="-o"/>
+            <arg value="index.html"/>
+            <arg value="../../book.xml"/>
+            <arg value="../../xsl/html-single.xsl"/>
+        </java>
+
+        <!-- Copy html stylesheet to the output location. -->
+        <copy file="xsl/styles.css" todir="${build.dir}/html_single"/>
+    </target>
+
+</project>
