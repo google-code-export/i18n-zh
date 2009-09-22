@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
+        '../../../lib/docbook/docbook4/docbookx.dtd'>
+<!--
+<!DOCTYPE book PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
+        'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>
+-->
+<book lang="en">
+    <title>Solutions of improved availability and scalability</title>
+
+    <bookinfo>
+        <pubdate>2009-08-21</pubdate>
+        <copyright>
+            <year>2009</year>
+            <holder>Elephant Talk Communications, Inc.</holder>
+        </copyright>
+        <authorgroup>
+          <author>
+            <personname>Cauchy Song</personname>
+            <email>cauchy.song@elephanttalk.com</email>
+          </author>
+        </authorgroup>
+    </bookinfo>
+
+  <chapter>
+     <title>Available solutions</title>
+     <section>
+        <title>Introduction</title>
+
+        <para>For provide improved availability and scalability, we have 3 solutions,
+        Multiple-Source Replication (MSR<indexterm><primary>MSR</primary></indexterm>),
+        Real Application Clusters (RAC<indexterm><primary>RAC</primary></indexterm>),
+        Active/Standby Failover (ASF<indexterm><primary>ASF</primary></indexterm>).</para>
+    </section>
+
+    <section>
+        <title>Multiple-Source Replication (MSR)</title>
+        <para>Oracle has two replication solution, ‘Advanced Replication’, or
+          ‘Streams Replication’. For symmetry replication, they called ‘Multiple-Master
+          Replication (MMR)’ or ‘Multiple-Source Replication (MSR)’.</para>
+
+        <para>Oracle said, ‘Advanced Replication’ was obsolete, ‘Streams Replication’
+          have many advantage.  Oracle Streams captures and distributes database updates,
+          events, and application messages. It can automatically apply updates to destination
+          databases; provide an extremely flexible solution for replication. It can support
+          both data changes (DML<indexterm><primary>DML</primary></indexterm>) and structure
+          changes (DDL<indexterm><primary>DDL</primary></indexterm>).</para>
+
+      <section>
+          <title>Prerequisites</title>
+          <para>For provide improved availability and scalability, we have 3 solutions,
+        Multiple-Source Replication (MSR), Real Application Clusters (RAC),
+        Active/Standby Failover (ASF).</para>
+      <itemizedlist mark='opencircle'>
+        <listitem><para>Any database producing changes that will be captured must be running
+          in ARCHIVELOG mode.</para></listitem>
+        <listitem><para>Set the following initialization parameters to the values indicated
+          at each database in the Oracle Streams environment:</para>
+          <itemizedlist>
+            <listitem><para>GLOBAL_NAMES: This parameter must be set to TRUE.</para></listitem>
+            <listitem><para>COMPATIBLE: This parameter must be set to 10.2.0 or higher.</para></listitem>
+            <listitem><para>Ensure that the PROCESSES and SESSIONS initialization parameters are set high enough for all of the Oracle Streams clients.</para></listitem>
+            <listitem><para>STREAMS_POOL_SIZE: This parameter specifies the size of the Oracle Streams pool. The Oracle Streams pool stores messages in a buffered queue and is used for internal communications during parallel capture and apply. When the MEMORY_TARGET, MEMORY_MAX_TARGET, or SGA_TARGET initialization parameter is set to a nonzero value, the Oracle Streams pool size is managed automatically.</para></listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+      </section>
+
+      <section>
+          <title>Using Oracle Streams for Replication</title>
+          <para>The following figure is copy from Oracle N-Way replication example.</para>
+      <figure>
+        <title>Oracle N-Way replication</title>
+        <mediaobject><imageobject>
+          <imagedata width="96%" align="center" fileref="figures/msr.png"/>
+        </imageobject></mediaobject>
+      </figure>
+      </section>
+
+      <section>
+          <title>Configuring a Replication Environment</title>
+
+      <itemizedlist>
+        <listitem><para>Create Queues and Database Links: 9 steps.</para></listitem>
+        <listitem><para>Configuring N-Way Replication: 25 steps!</para></listitem>
+        <listitem><para>For 2-way replication, we require 24 (7 + 17) steps!
+          We must setup every replicate table for Conflict Resolution!</para></listitem>
+      </itemizedlist>
+      </section>
+
+      <section>
+          <title>Replication Performance</title>
+
+      <para>Oracle Database 11g contains numerous Streams performance improvements.
+        Oracle report Oracle Database 11g can replicate over 20,000 row changes
+        per second with sub-second latency on common simple workloads and using common hardware.</para>
+      </section>
+
+      <section>
+          <title>Conflict Resolution</title>
+
+      <para>When Oracle Streams is used to support replication, both the source and
+        destination databases are fully available to end-users for reading and writing
+        during any replication activity. Because users can update different copies of
+        the same table anywhere, it is possible resulting in an update conflict. Oracle
+        provides built-in conflict resolution routines, such as “latest timestamp”
+        or “overwrite”, to automatically resolve potential conflicts. Users can choose
+        different resolution methods for different tables. Users also haven the option
+        to create their own routines to employ resolution rules tailored to their
+        particular business needs. Any unresolved conflicts are logged in the database
+        for special handing or re-execution after the conflict is resolved manually.</para>
+      </section>
+
+      <section>
+          <title>Conclusion</title>
+
+      <variablelist>
+        <varlistentry>
+          <term>Cost</term>
+          <listitem><para>Requires 2 machines, and 2 oracle licenses.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Advantage</term>
+          <listitem><para>Oracle Streams Multiple-Source Replication can gain a great
+            performance, improved availability and scalability.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Disadvantage</term>
+          <listitem><para>Configure is very complex, and maybe potential require manual
+            interfere or maintain.</para></listitem>
+        </varlistentry>
+      </variablelist>
+      </section>
+  </section>
+
+  <section>
+    <title>Real Application Clusters (RAC)</title>
+
+    <para>Oracle RAC allows multiple computers to run Oracle RDBMS software simultaneously
+      while accessing a single database, thus providing a clustered database.</para>
+
+      <section>
+        <title>Oracle Database with Oracle RAC Architecture</title>
+      <para>The following figure is copy from Oracle RAC example. </para>
+      <figure>
+        <title>Oracle RAC</title>
+        <mediaobject><imageobject>
+          <imagedata width="80%" align="center" fileref="figures/rac.png"/>
+        </imageobject></mediaobject>
+      </figure>
+      </section>
+
+      <section>
+        <title>Benefits</title>
+
+      <para>Since Oracle RAC allows multiple computers (instances) to access a single
+        database simultaneously, it addresses several areas of database management.
+        These areas include:</para>
+
+      <itemizedlist>
+        <listitem><para>Fault tolerance (24/7 availability)—Provide continuous uptime
+          for database applications</para></listitem>
+        <listitem><para>On-demand scalability—Expand capacity by simply adding servers
+          to your cluster</para></listitem>
+        <listitem><para>Flexibility and connection load balancing —Virtualized single
+          instance databases with Oracle RAC One Node</para></listitem>
+        <listitem><para>Lower computing costs—Use low-cost commodity hardware and reduce
+          cost of downtime</para></listitem>
+        <listitem><para>World-record performance—Runs faster than the fastest mainframe</para></listitem>
+      </itemizedlist>
+      </section>
+
+      <section>
+          <title>Conclusion</title>
+
+      <variablelist>
+        <varlistentry>
+          <term>Cost</term>
+          <listitem><para>Requires 2 machines, 3 oracle licenses, 2 additional NIC and private network, and SAN.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Advantage</term>
+          <listitem><para>Oracle RAC much stable than MSR, no potential data conflicts.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Disadvantage</term>
+          <listitem><para>Very expensive, require a good cluster hardware environment, and setup is complex.</para></listitem>
+        </varlistentry>
+      </variablelist>
+      </section>
+  </section>
+
+  <section>
+    <title>Active/Standby Failover (ASF)</title>
+
+      <section>
+        <title>Active standby pair</title>
+
+      <figure>
+        <title>Active/Standby Failover</title>
+        <mediaobject><imageobject>
+          <imagedata width="80%" align="center" fileref="figures/asf.png"/>
+        </imageobject></mediaobject>
+      </figure>
+      </section>
+
+      <section>
+          <title>Conclusion</title>
+
+      <variablelist>
+        <varlistentry>
+          <term>Cost</term>
+          <listitem><para>Requires 2 machines, 1 oracle licenses, 2 additional NIC with
+            private network, and SAN.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Advantage</term>
+          <listitem><para>Cheaper (for already have SAN), setup and configure is simple,
+            no potential data conflicts or loss.</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Disadvantage</term>
+          <listitem><para>No any scalability, waste one machine.</para></listitem>
+        </varlistentry>
+      </variablelist>
+      </section>
+
+  </section>
+
+  <section>
+    <title>MSR vs Data Guard</title>
+
+    <variablelist>
+
+      <varlistentry>
+        <term>Availability and scalability</term>
+        <listitem><para>Logical standby database can only for queries and reporting purposes.</para>
+          <para>In Multiple-Source Replication (MSR) Environment, all databases can be read and write.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Network sensitivity</term>
+        <listitem><para>Someone report, if the network have jitter, the primary database can
+          not talk to the standby database for a while, users will NOT access the primary
+          database for 30 seconds (Maybe down to 15 seconds for good tuning).</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Automatic</term>
+        <listitem><para>The standby databases are synchronized with the primary
+          database, without manual intervention by the DBA.</para>
+          <para>Replication maybe potential require manual interfere or maintain.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Performance</term>
+        <listitem><para>Replication capture row changes, data guard capture redo data,
+          so data guard is fast.</para></listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Data integrity</term>
+        <listitem><para>Data Guard can ensure no data loss, a standby database is a
+          transactionally consistent copy of the primary database.</para>
+
+          <para>In Replication, no transactionally guaranty.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Automatic role transitions</term>
+        <listitem><para>When fast-start failover is enabled, the Data Guard broker
+          automatically fails over to a synchronized standby site in the event of a
+          disaster at the primary site, requiring no intervention by the DBA. In addition,
+          applications are automatically notified of the role transition(I DON'T KNOWN HOW
+          TO DO IT YET).</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Configuration and maintenance</term>
+        <listitem><para>Configuring and maintenance a Data Guard Environment is easy
+          than replication.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+        </section>
+    </chapter>
+</book>
