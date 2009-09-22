@@ -1,8 +1,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
       xmlns:fo="http://www.w3.org/1999/XSL/Format"
       xmlns:rx="http://www.renderx.com/XSL/Extensions"
-      xmlns:exsl="http://exslt.org/common"
-      exclude-result-prefixes="exsl"
       version='1.0'>
 
   <xsl:import href="../../../../lib/docbook/docbook-xsl/fo/docbook.xsl"/>
@@ -11,6 +9,7 @@
 
   <xsl:param name="l10n.gentext.language" select="'en'"/>
   <xsl:param name="paper.type" select="'A4'"></xsl:param>
+  <xsl:param name="draft.mode" select="no"/>
 
   <!-- These extensions are required for table printing and other stuff -->
   <xsl:param name="use.extensions">1</xsl:param>
@@ -26,14 +25,24 @@
     <xsl:attribute name="background-color">#EEEEEE</xsl:attribute>
   </xsl:attribute-set>
 
+  <!-- Font related Settings
+  <xsl:param name="title.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="body.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
+  <xsl:param name="sans.font.family">Arial,Calibri,sans-serif,SimHei</xsl:param>
+  <xsl:param name="dingbat.font.family">Times New Roman,Cambria,Cambria Math,serif,SimSun</xsl:param>
+  <xsl:param name="monospace.font.family">Courier New,monospace,FangSong</xsl:param>
+   -->
+
   <!-- titlepage settings -->
   <xsl:template name="book.titlepage">
-    <fo:block text-align="left">
+    <fo:block>
         <fo:table table-layout="fixed" space-after.optimum="10pt" width="100%">
             <fo:table-body>
                 <fo:table-row>
                     <fo:table-cell>
-                        <fo:block text-align="center"> <fo:external-graphic src="url(figures/et-cover-logo.png)"/></fo:block>
+                        <fo:block text-align="center">
+                          <fo:external-graphic src="url(figures/et-cover-logo.png)"/>
+                        </fo:block>
                     </fo:table-cell>
                 </fo:table-row>
             </fo:table-body>
@@ -41,13 +50,13 @@
     </fo:block>
 
     <fo:block text-align="center" color="#000000" margin-left="2.5cm" margin-right="1cm"
-        space-before.optimum="6cm" space-after.optimum="3.0cm"
+        space-before.optimum="4cm" space-after.optimum="3.0cm"
         font-family="sans-serif" font-weight="900" font-size="36pt">
-      <xsl:value-of select="bookinfo/title"/>
+      <xsl:value-of select="title"/>
     </fo:block>
 
     <fo:block text-align="center" color="#000000" margin-left="2.5cm" margin-right="1cm"
-        space-before.optimum="3cm" space-after.optimum="5cm"
+        space-before.optimum="4cm" space-after.optimum="5cm"
         font-family="sans-serif" font-weight="600" font-size="24pt">
 
       <xsl:call-template name="person.name.list">
@@ -84,21 +93,23 @@
   </xsl:template>
 
   <!-- header settings -->
-  <xsl:param name="header.column.widths">1 3 1</xsl:param>
+  <xsl:param name="header.column.widths">1 1 8</xsl:param>
   <xsl:template name="header.content">
     <xsl:param name="pageclass" select="''"/>
     <xsl:param name="sequence" select="''"/>
     <xsl:param name="position" select="''"/>
 
     <fo:block color="#7C1C51">
+      <xsl:if test="$position='right'">
+         pageclass=<xsl:value-of select="$pageclass"/>,
+         <xsl:apply-templates select="." mode="title.markup"/>
+         <fo:retrieve-marker retrieve-class-name="currentSectionTitle" />
+      </xsl:if>
 
       <xsl:choose>
         <xsl:when test="$pageclass = 'lot'">
           <xsl:if test="$position='left'">
              <xsl:value-of select="/book/bookinfo/title"/>
-          </xsl:if>
-          <xsl:if test="$position='right'">
-             Table of Contents
           </xsl:if>
         </xsl:when>
 
@@ -106,20 +117,11 @@
           <xsl:if test="$position='left'">
              <xsl:value-of select="/book/bookinfo/title"/>
           </xsl:if>
-
-          <xsl:if test="$position='right'">
-             <xsl:apply-templates select="." mode="title.markup"/>
-             <fo:retrieve-marker retrieve-class-name="currentSectionTitle" />
-          </xsl:if>
         </xsl:when>
 
         <xsl:otherwise>
           <xsl:if test="$position='left'">
              other-left-<xsl:value-of select="$pageclass"/>
-          </xsl:if>
-
-          <xsl:if test="$position='right'">
-             <fo:retrieve-marker retrieve-class-name="currentSectionTitle" />
           </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
