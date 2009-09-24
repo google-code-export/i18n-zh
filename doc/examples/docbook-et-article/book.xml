@@ -1,296 +1,837 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE book PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
-        '../../../lib/docbook/docbook4/docbookx.dtd'>
-<!--
-<!DOCTYPE book PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
-        'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>
--->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../../../lib/docbook/docbook4/docbookx.dtd">
+<!--<!DOCTYPE book PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
+        'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>-->
 <article lang="en">
-    <articleinfo>
-        <title>Solutions of improved availability and scalability</title>
-        <pubdate>2009-09-21</pubdate>
-        <copyright>
-            <year>1998</year>
-            <year>2009</year>
-            <holder>Elephant Talk Communications, Inc.</holder>
-        </copyright>
-        <authorgroup>
-            <author>
-                <personname>Cauchy Song</personname>
-                <email>cauchy.song@elephanttalk.com</email>
-            </author>
-        </authorgroup>
-    </articleinfo>
+  <articleinfo>
+    <title>Solutions of improved Oracle availability and scalability</title>
+    <pubdate>2009-09-24</pubdate>
+    <copyright>
+      <year>2009</year>
+      <holder>Elephant Talk Communications, Inc.</holder>
+    </copyright>
+    <authorgroup>
+      <author>
+        <personname>Cauchy Song</personname>
+        <email>cauchy.song@elephanttalk.com</email>
+      </author>
+    </authorgroup>
+    <revhistory>
+      <revision>
+        <revnumber>1.1</revnumber>
+        <date>2009-9-24</date>
+        <authorinitials>Cauchy Song</authorinitials>
+        <revremark>Struct adjustment according to discussion</revremark>
+      </revision>
+      <revision>
+        <revnumber>1.0</revnumber>
+        <date>2009-9-18</date>
+        <authorinitials>Cauchy Song</authorinitials>
+        <revremark>First revision</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+  <section>
+    <title>Introduction</title>
+    <para>
+      For provide improved Oracle availability and scalability, we have the following solutions,
+      Traditional Active/Standby Failover (<emphasis>ASF</emphasis>
+      <indexterm><primary>ASF</primary><secondary>Active/Standby Failover</secondary></indexterm>),
+      Multiple-Source Replication (<emphasis>MSR</emphasis>
+      <indexterm><primary>MSR</primary><secondary>Multiple-Source Replication</secondary></indexterm>),
+      <emphasis>Data Guard</emphasis><indexterm><primary>Data Guard</primary></indexterm>,
+      and Real Application Clusters (<emphasis>RAC</emphasis>
+      <indexterm><primary>RAC</primary><secondary>Real Application Clusters</secondary></indexterm>).
+    </para>
+  </section>
 
+  <section>
+    <title>Active/Standby Failover (ASF)</title>
     <section>
-        <title>Introduction</title>
-
-        <para>For provide improved availability and scalability, we have 3 solutions,
-            Multiple-Source Replication (MSR<indexterm><primary>MSR</primary></indexterm>),
-            Real Application Clusters (RAC<indexterm><primary>RAC</primary></indexterm>),
-            Active/Standby Failover (ASF<indexterm><primary>ASF</primary></indexterm>).</para>
+      <title>Active standby pair</title>
+      <para>
+        In traditional, we use the share storage(SAN or NAS) to store datafiles.
+        In the mean time, the Oracle instance on primary machine is up, the
+        Oracle instance on secondary machine is down. The HA software automatic
+        startup the Oracle instance on secondary machine and takeover the
+        service when it found the Oracle instance on primary machine is out of
+        service.
+      </para>
+      <figure>
+        <title>Active/Standby Failover</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="80%" align="center" fileref="figures/asf.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
     </section>
-
     <section>
-        <title>Multiple-Source Replication (MSR)</title>
-        <para>Oracle has two replication solution, ‘Advanced Replication’, or
-            ‘Streams Replication’. For symmetry replication, they called ‘Multiple-Master
-            Replication (MMR)’ or ‘Multiple-Source Replication (MSR)’.</para>
+      <title>Comments</title>
 
-        <para>Oracle said, ‘Advanced Replication’ was obsolete, ‘Streams Replication’
-            have many advantage.  Oracle Streams captures and distributes database updates,
-            events, and application messages. It can automatically apply updates to destination
-            databases; provide an extremely flexible solution for replication. It can support
-            both data changes (DML<indexterm><primary>DML</primary></indexterm>) and structure
-            changes (DDL<indexterm><primary>DDL</primary></indexterm>).</para>
+      <itemizedlist>
+        <listitem>
+          <para>Cost</para>
+          <orderedlist>
+            <listitem>
+              <para>Requires 2 machines, 2 additional NIC with private network</para>
+            </listitem>
+            <listitem>
+              <para>1 oracle licenses</para>
+            </listitem>
+            <listitem>
+              <para>SAN</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
 
-        <section>
-            <title>Prerequisites</title>
-            <para>For provide improved availability and scalability, we have 3 solutions,
-                Multiple-Source Replication (MSR), Real Application Clusters (RAC),
-                Active/Standby Failover (ASF).</para>
-            <itemizedlist mark='opencircle'>
-                <listitem><para>Any database producing changes that will be captured must be running
-                    in ARCHIVELOG mode.</para></listitem>
-                <listitem><para>Set the following initialization parameters to the values indicated
+        <listitem>
+          <para>Advantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Cheaper (for already have SAN)</para>
+            </listitem>
+            <listitem>
+              <para>setup and configure is simple</para>
+            </listitem>
+            <listitem>
+              <para>no potential data conflicts or loss</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+
+        <listitem>
+          <para>Disadvantage</para>
+          <orderedlist>
+            <listitem>
+              <para>No any scalability</para>
+            </listitem>
+            <listitem>
+              <para>waste one machine</para>
+            </listitem>
+            <listitem>
+              <para>Switchover is slowly</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section>
+    <title>Multiple-Source Replication (MSR)</title>
+    <para>
+      Oracle has two replication solution, ‘Advanced Replication’, or
+      ‘Streams Replication’. For symmetry replication, they called
+      ‘Multiple-Master Replication (MMR)’
+      <indexterm><primary>MMR</primary><secondary>Multiple-Master Replication</secondary></indexterm>
+      or ‘Multiple-Source Replication (MSR)’<indexterm><primary>MSR</primary></indexterm>.
+    </para>
+    <para>
+      Oracle said, ‘Advanced Replication’ was obsolete, ‘Streams Replication’
+      have many advantage.  Oracle Streams captures and distributes database updates,
+      events, and application messages. It can automatically apply updates to destination
+      databases; provide an extremely flexible solution for replication. It can support
+      both data changes (DML
+      <indexterm>
+        <primary>DML</primary><secondary>data manipulation language</secondary>
+      </indexterm>
+      ) and structure changes (DDL
+      <indexterm>
+        <primary>DDL</primary><secondary>data definition language</secondary>
+      </indexterm>
+      ).
+    </para>
+    <section>
+      <title>Prerequisites</title>
+      <itemizedlist mark="opencircle">
+        <listitem>
+          <para>Any database producing changes that will be captured must be running
+                    in <emphasis>ARCHIVELOG</emphasis> mode.</para>
+        </listitem>
+        <listitem>
+          <para>Set the following initialization parameters to the values indicated
                     at each database in the Oracle Streams environment:</para>
-                    <itemizedlist>
-                        <listitem><para>GLOBAL_NAMES: This parameter must be set to TRUE.</para></listitem>
-                        <listitem><para>COMPATIBLE: This parameter must be set to 10.2.0 or higher.</para></listitem>
-                        <listitem><para>Ensure that the PROCESSES and SESSIONS initialization parameters are set high enough for all of the Oracle Streams clients.</para></listitem>
-                        <listitem><para>STREAMS_POOL_SIZE: This parameter specifies the size of the Oracle Streams pool. The Oracle Streams pool stores messages in a buffered queue and is used for internal communications during parallel capture and apply. When the MEMORY_TARGET, MEMORY_MAX_TARGET, or SGA_TARGET initialization parameter is set to a nonzero value, the Oracle Streams pool size is managed automatically.</para></listitem>
-                    </itemizedlist>
-                </listitem>
-            </itemizedlist>
-        </section>
-
-        <section>
-            <title>Using Oracle Streams for Replication</title>
-            <para>The following figure is copy from Oracle N-Way replication example.</para>
-            <figure>
-                <title>Oracle N-Way replication</title>
-                <mediaobject><imageobject>
-                    <imagedata width="96%" align="center" fileref="figures/msr.png"/>
-                </imageobject></mediaobject>
-            </figure>
-        </section>
-
-        <section>
-            <title>Configuring a Replication Environment</title>
-
-            <itemizedlist>
-                <listitem><para>Create Queues and Database Links: 9 steps.</para></listitem>
-                <listitem><para>Configuring N-Way Replication: 25 steps!</para></listitem>
-                <listitem><para>For 2-way replication, we require 24 (7 + 17) steps!
-                    We must setup every replicate table for Conflict Resolution!</para></listitem>
-            </itemizedlist>
-        </section>
-
-        <section>
-            <title>Replication Performance</title>
-
-            <para>Oracle Database 11g contains numerous Streams performance improvements.
-                Oracle report Oracle Database 11g can replicate over 20,000 row changes
-                per second with sub-second latency on common simple workloads and using common hardware.</para>
-        </section>
-
-        <section>
-            <title>Conflict Resolution</title>
-
-            <para>When Oracle Streams is used to support replication, both the source and
-                destination databases are fully available to end-users for reading and writing
-                during any replication activity. Because users can update different copies of
-                the same table anywhere, it is possible resulting in an update conflict. Oracle
-                provides built-in conflict resolution routines, such as “latest timestamp”
-                or “overwrite”, to automatically resolve potential conflicts. Users can choose
-                different resolution methods for different tables. Users also haven the option
-                to create their own routines to employ resolution rules tailored to their
-                particular business needs. Any unresolved conflicts are logged in the database
-                for special handing or re-execution after the conflict is resolved manually.</para>
-        </section>
-
-        <section>
-            <title>Conclusion</title>
-
-            <variablelist>
-                <varlistentry>
-                    <term>Cost</term>
-                    <listitem><para>Requires 2 machines, and 2 oracle licenses.</para></listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Advantage</term>
-                    <listitem><para>Oracle Streams Multiple-Source Replication can gain a great
-                        performance, improved availability and scalability.</para></listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Disadvantage</term>
-                    <listitem><para>Configure is very complex, and maybe potential require manual
-                        interfere or maintain.</para></listitem>
-                </varlistentry>
-            </variablelist>
-        </section>
+          <orderedlist>
+            <listitem>
+              <para><emphasis>GLOBAL_NAMES</emphasis>: This parameter must be set to <emphasis>TRUE</emphasis>.</para>
+            </listitem>
+            <listitem>
+              <para><emphasis>COMPATIBLE</emphasis>: This parameter must be set to <emphasis>10.2.0</emphasis> or higher.</para>
+            </listitem>
+            <listitem>
+              <para>Ensure that the <emphasis>PROCESSES</emphasis> and <emphasis>SESSIONS</emphasis> initialization
+                parameters are set <emphasis>high enough</emphasis> for all of the Oracle Streams clients.</para>
+            </listitem>
+            <listitem>
+              <para><emphasis>STREAMS_POOL_SIZE</emphasis>: This parameter specifies the size of the Oracle Streams pool.
+                The Oracle Streams pool stores messages in a buffered queue and is used for internal communications
+                during parallel capture and apply. When the <emphasis>MEMORY_TARGET</emphasis>,
+                <emphasis>MEMORY_MAX_TARGET</emphasis>, or <emphasis>SGA_TARGET</emphasis> initialization parameter
+                is set to a <emphasis>nonzero</emphasis> value, the Oracle Streams pool size is managed
+                <emphasis>automatically</emphasis>.</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </itemizedlist>
+    </section>
+    <section>
+      <title>Using Oracle Streams for Replication</title>
+      <para>The following figure is copy from Oracle N-Way replication example.</para>
+      <figure>
+        <title>Oracle N-Way replication</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="96%" align="center" fileref="figures/msr.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Configuring a Replication Environment</title>
+      <itemizedlist>
+        <listitem>
+          <para>For 2-way replication, we require <emphasis>24</emphasis> (Create Queues and Database
+            Links, and Configuring 2-Way Replication) steps!</para>
+        </listitem>
+        <listitem>
+          <para>We must setup every replicate table for Conflict Resolution!</para>
+          <note><title>Conflict Resolution</title>
+          <para>When Oracle Streams is used to support replication, both the source and
+            destination databases are fully available to end-users for
+            <emphasis>reading and writing</emphasis>
+            during any replication activity. Because users can update different copies of
+            the same table anywhere, it is possible resulting in an update conflict. Oracle
+            provides built-in conflict resolution routines, such as
+            “<emphasis>latest timestamp</emphasis>” or “<emphasis>overwrite</emphasis>”,
+            to automatically resolve potential conflicts. Users can choose
+            different resolution methods for different tables. Users also haven the option
+            to create their own routines to employ resolution rules tailored to their
+            particular business needs. Any unresolved conflicts are logged in the database
+            for special handing or re-execution after the conflict is resolved manually.
+          </para></note>
+        </listitem>
+      </itemizedlist>
     </section>
 
     <section>
-        <title>Real Application Clusters (RAC)</title>
+      <title>Replication Performance</title>
+      <para>Oracle Database 11g contains numerous Streams performance improvements.
+        Oracle report Oracle Database 11g can replicate <emphasis>over 20,000</emphasis>
+        row changes per second with <emphasis>sub-second latency</emphasis> on
+        common simple workloads and using common hardware, with <emphasis>over 7 MB/s</emphasis>
+        netword bandwidth utilization.</para>
+    </section>
 
-        <para>Oracle RAC allows multiple computers to run Oracle RDBMS software simultaneously
+    <section>
+      <title>Comments</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>Cost</para>
+          <orderedlist>
+            <listitem>
+              <para>Requires 2 machines</para>
+            </listitem>
+            <listitem>
+              <para>2 oracle licenses</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+
+        <listitem>
+          <para>Advantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Oracle Streams Multiple-Source Replication can gain a great
+                        performance, improved availability and scalability.</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+
+        <listitem>
+          <para>Disadvantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Configure is very complex</para>
+            </listitem>
+            <listitem>
+              <para>Maybe potential require manual interfere or maintain</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section>
+    <title>Real Application Clusters (RAC)</title>
+    <para>Oracle RAC allows multiple computers to run Oracle RDBMS software simultaneously
             while accessing a single database, thus providing a clustered database.</para>
-
-        <section>
-            <title>Oracle Database with Oracle RAC Architecture</title>
-            <para>The following figure is copy from Oracle RAC example. </para>
-            <figure>
-                <title>Oracle RAC</title>
-                <mediaobject><imageobject>
-                    <imagedata width="80%" align="center" fileref="figures/rac.png"/>
-                </imageobject></mediaobject>
-            </figure>
-        </section>
-
-        <section>
-            <title>Benefits</title>
-
-            <para>Since Oracle RAC allows multiple computers (instances) to access a single
+    <section>
+      <title>Oracle Database with Oracle RAC Architecture</title>
+      <para>The following figure is copy from Oracle RAC example.</para>
+      <figure>
+        <title>Oracle RAC</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="80%" align="center" fileref="figures/rac.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section>
+      <title>Benefits</title>
+      <para>Since Oracle RAC allows multiple computers (instances) to access a single
                 database simultaneously, it addresses several areas of database management.
                 These areas include:</para>
-
-            <itemizedlist>
-                <listitem><para>Fault tolerance (24/7 availability)—Provide continuous uptime
-                    for database applications</para></listitem>
-                <listitem><para>On-demand scalability—Expand capacity by simply adding servers
-                    to your cluster</para></listitem>
-                <listitem><para>Flexibility and connection load balancing —Virtualized single
-                    instance databases with Oracle RAC One Node</para></listitem>
-                <listitem><para>Lower computing costs—Use low-cost commodity hardware and reduce
-                    cost of downtime</para></listitem>
-                <listitem><para>World-record performance—Runs faster than the fastest mainframe</para></listitem>
-            </itemizedlist>
-        </section>
-
-        <section>
-            <title>Conclusion</title>
-
-            <variablelist>
-                <varlistentry>
-                    <term>Cost</term>
-                    <listitem><para>Requires 2 machines, 3 oracle licenses, 2 additional NIC and private network, and SAN.</para></listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Advantage</term>
-                    <listitem><para>Oracle RAC much stable than MSR, no potential data conflicts.</para></listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Disadvantage</term>
-                    <listitem><para>Very expensive, require a good cluster hardware environment, and setup is complex.</para></listitem>
-                </varlistentry>
-            </variablelist>
-        </section>
+      <itemizedlist>
+        <listitem>
+          <para>Fault tolerance (24/7 availability)—Provide continuous uptime
+                    for database applications</para>
+        </listitem>
+        <listitem>
+          <para>On-demand scalability—Expand capacity by simply adding servers
+                    to your cluster</para>
+        </listitem>
+        <listitem>
+          <para>Flexibility and connection load balancing —Virtualized single
+                    instance databases with Oracle RAC One Node</para>
+        </listitem>
+        <listitem>
+          <para>Lower computing costs—Use low-cost commodity hardware and reduce
+                    cost of downtime</para>
+        </listitem>
+        <listitem>
+          <para>World-record performance—Runs faster than the fastest mainframe</para>
+        </listitem>
+      </itemizedlist>
     </section>
 
     <section>
-        <title>Active/Standby Failover (ASF)</title>
+      <title>Comments</title>
+      <itemizedlist>
+        <listitem>
+          <para>Cost</para>
+          <orderedlist>
+            <listitem>
+              <para>Requires 2 machines, 2 additional NIC with private network</para>
+            </listitem>
+            <listitem>
+              <para>3 oracle licenses</para>
+            </listitem>
+            <listitem>
+              <para>SAN</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
 
-        <section>
-            <title>Active standby pair</title>
+        <listitem>
+          <para>Advantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Oracle RAC much stable than MSR</para>
+            </listitem>
+            <listitem>
+              <para>Switchover is fast</para>
+            </listitem>
+            <listitem>
+              <para>no potential data conflicts</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
 
-            <figure>
-                <title>Active/Standby Failover</title>
-                <mediaobject><imageobject>
-                    <imagedata width="80%" align="center" fileref="figures/asf.png"/>
-                </imageobject></mediaobject>
-            </figure>
-        </section>
+        <listitem>
+          <para>Disadvantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Very expensive</para>
+            </listitem>
+            <listitem>
+              <para>Require a good cluster hardware environment</para>
+            </listitem>
+            <listitem>
+              <para>Setup is complex</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
 
-        <section>
-            <title>Conclusion</title>
+  <section>
+    <title>Oracle Data Guard</title>
+    <para>Oracle Data Guard ensures high availability, data protection, and disaster
+      recovery<indexterm><primary>Disaster recovery</primary></indexterm> for
+      enterprise data. Data Guard provides a comprehensive set of services
+      that create, maintain, manage, and monitor one or more standby databases to enable
+      production Oracle databases to survive disasters and data corruptions. Data Guard
+      maintains these standby databases as copies of the production database. Then, if
+      the production database becomes unavailable because of a planned or an unplanned
+      outage, Data Guard can switch any standby database to the production role, minimizing
+      the downtime associated with the outage. Data Guard can be used with traditional
+      backup, restoration, and cluster techniques to provide a high level of data
+      protection and data availability.</para>
 
-            <variablelist>
-                <varlistentry>
-                    <term>Cost</term>
-                    <listitem><para>Requires 2 machines, 1 oracle licenses, 2 additional NIC with
-                        private network, and SAN.</para></listitem>
-                </varlistentry>
+    <para>With Data Guard, administrators can optionally improve production database
+      performance by offloading resource-intensive backup and reporting operations
+      to standby systems.</para>
 
-                <varlistentry>
-                    <term>Advantage</term>
-                    <listitem><para>Cheaper (for already have SAN), setup and configure is simple,
-                        no potential data conflicts or loss.</para></listitem>
-                </varlistentry>
+    <section>
+      <title>Data Guard Configurations</title>
+      <para>A Data Guard configuration consists of one production database and
+        one or more standby databases. The databases in a Data Guard configuration
+        are connected by Oracle Net and may be dispersed geographically.
+      </para>
 
-                <varlistentry>
-                    <term>Disadvantage</term>
-                    <listitem><para>No any scalability, waste one machine.</para></listitem>
-                </varlistentry>
-            </variablelist>
-        </section>
+      <section>
+        <title>Primary Database</title>
+        <para>A Data Guard configuration contains <emphasis>one</emphasis> production database, also referred
+          to as the <emphasis>primary database</emphasis><indexterm><primary>Primary database</primary></indexterm>,
+          that functions in the primary role. This is the
+          database that is accessed by most of your applications.
+        </para>
+      </section>
 
+      <section>
+        <title>Standby Databases</title>
+        <para>A <emphasis>standby database</emphasis>
+          <indexterm><primary>Physical standby database</primary></indexterm>
+          <indexterm><primary>Logical standby database</primary></indexterm>
+          <indexterm><primary>Snapshot standby database</primary></indexterm>
+          is a transactionally consistent copy of the primary database.
+          Using a backup copy of the primary database, you can create up to <emphasis>thirty</emphasis> standby
+          databases and incorporate them in a Data Guard configuration. Once created, Data
+          Guard automatically maintains each standby database by transmitting redo data from
+          the primary database and then applying the redo to the standby database.
+        </para>
+        <para>The types of standby databases are as follows:</para>
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>Physical standby</emphasis>
+              <indexterm><primary>Physical standby database</primary></indexterm> database</para>
+
+            <para>Provides a physically identical copy of the primary database, with on disk
+              database structures that are identical to the primary database on a
+              <emphasis>block-for-block</emphasis> basis. The database schemas, including indexes, are the same.
+              A physical standby database is kept synchronized with the primary database,
+              through <emphasis>Redo Apply</emphasis>, which recovers the redo data received from the primary
+              database and applies the redo to the physical standby database.</para>
+
+            <para>As of Oracle Database <emphasis>11g</emphasis> release 1 (11.1),
+              a physical standby database
+              can receive and apply redo while it is open for <emphasis>read-only</emphasis>
+              access. A physical standby database can therefore be used concurrently for
+              <emphasis>data protection and reporting</emphasis>.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>Logical standby</emphasis>
+              <indexterm><primary>Logical standby database</primary></indexterm> database</para>
+
+              <para>Contains the same logical information as the production database,
+              although the physical organization and structure of the data can be different.
+              The logical standby database is kept synchronized with the primary database
+              through <emphasis>SQL Apply</emphasis>, which transforms the data in the redo received from the
+              primary database into SQL statements and then executes the SQL statements
+              on the standby database.</para>
+
+              <para>A logical standby database can be used for other business purposes
+                in addition to disaster recovery requirements. This allows users to access
+                a logical standby database for <emphasis>queries and reporting</emphasis> purposes at any time.
+                Also, using a logical standby database, you can upgrade Oracle Database
+                software and patch sets with almost no downtime. Thus, a logical standby
+                database can be used concurrently for data protection, reporting, and
+                database upgrades</para>
+
+          </listitem>
+          <listitem>
+            <para><emphasis>Snapshot standby</emphasis>
+              <indexterm><primary>Snapshot standby database</primary></indexterm> database</para>
+
+            <para>A snapshot standby database is a fully updatable standby database.</para>
+
+            <para>Like a physical or logical standby database, a snapshot standby database
+              receives and archives redo data from a primary database. Unlike a physical
+              or logical standby database, a snapshot standby database does not apply
+              the redo data that it receives. The redo data received by a snapshot standby
+              database is <emphasis>not applied until the snapshot standby is converted back
+              into a physical standby database</emphasis>, after first <emphasis>discarding
+              any local updates</emphasis> made to the snapshot standby database.</para>
+          </listitem>
+        </itemizedlist>
+      </section>
     </section>
 
     <section>
-        <title>MSR vs Data Guard</title>
+      <title>Typical Data Guard Configuration</title>
+      <para>The following figure is copy from Oracle data guard example.</para>
+      <figure>
+        <title>Oracle Data Guard</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center" fileref="figures/dataguard.gif"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
 
-        <variablelist>
+    <section>
+      <title>Data Guard Protection Modes</title>
+      <para>In some situations, a business cannot afford to lose data regardless
+        of the circumstances. In other situations, the availability of the database
+        may be more important than any potential data loss in the unlikely event
+        of a multiple failure. Finally, some applications require maximum database
+        performance at all times, and can therefore tolerate a small amount of data
+        loss if any component should fail. The following descriptions summarize
+        the three distinct modes of data protection.</para>
 
-            <varlistentry>
-                <term>Availability and scalability</term>
-                <listitem><para>Logical standby database can only for queries and reporting purposes.</para>
-                    <para>In Multiple-Source Replication (MSR) Environment, all databases can be read and write.</para>
-                </listitem>
-            </varlistentry>
+       <itemizedlist>
+        <listitem><para>Maximum availability</para>
+          <indexterm><primary>Maximum availability</primary></indexterm>
+          <para>This protection mode provides the <emphasis>highest level of data
+          protection</emphasis> that is possible without compromising the availability
+          of a primary database. Transactions do not commit until all redo data needed
+          to recover those transactions has been written to the online redo log and
+          to the standby redo log on at least one synchronized standby database.
+          If the primary database cannot write its redo stream to at least one
+          <emphasis>synchronized</emphasis> standby database, it operates as if
+          it were in maximum performance mode to preserve primary database
+          availability until it is again able to write its redo stream to a
+          synchronized standby database.</para>
 
-            <varlistentry>
-                <term>Network sensitivity</term>
-                <listitem><para>Someone report, if the network have jitter, the primary database can
-                    not talk to the standby database for a while, users will NOT access the primary
-                    database for 30 seconds (Maybe down to 15 seconds for good tuning).</para>
-                </listitem>
-            </varlistentry>
+          <para>This protection mode ensures <emphasis>zero data loss</emphasis> except
+          in the case of certain double faults, such as failure of a primary database
+          after failure of the standby database.</para>
+        </listitem>
 
-            <varlistentry>
-                <term>Automatic</term>
-                <listitem><para>The standby databases are synchronized with the primary
-                    database, without manual intervention by the DBA.</para>
-                    <para>Replication maybe potential require manual interfere or maintain.</para>
-                </listitem>
-            </varlistentry>
+        <listitem><para>Maximum performance</para>
+          <indexterm><primary>Maximum performance</primary></indexterm>
+          <para>This is the default protection mode. It provides the highest level of
+            data protection that is possible without affecting the performance of a
+            primary database. This is accomplished by allowing transactions to commit
+            as soon as all redo data generated by those transactions has been written
+            to the online log. Redo data is also written to one or more standby databases,
+            but this is done <emphasis>asynchronously</emphasis> with respect to
+            transaction commitment, so primary database performance is unaffected by
+            delays in writing redo data to the standby database(s).</para>
 
-            <varlistentry>
-                <term>Performance</term>
-                <listitem><para>Replication capture row changes, data guard capture redo data,
-                    so data guard is fast.</para></listitem>
-            </varlistentry>
+          <para>This protection mode offers slightly less data protection than maximum
+            availability mode and has minimal impact on primary database performance.</para>
+        </listitem>
 
-            <varlistentry>
-                <term>Data integrity</term>
-                <listitem><para>Data Guard can ensure no data loss, a standby database is a
-                    transactionally consistent copy of the primary database.</para>
+        <listitem><para>Maximum protection</para>
+          <indexterm><primary>Maximum protection</primary></indexterm>
+          <para>This protection mode ensures that <emphasis>no data loss</emphasis> will
+            occur if the primary database fails. To provide this level of protection,
+            the redo data needed to recover a transaction must be written to both the
+            online redo log and to the standby redo log on at least one
+            <emphasis>synchronized</emphasis> standby database before the transaction
+            commits. To ensure that data loss cannot occur, the primary database will
+            <emphasis>shut down</emphasis>, rather than continue processing transactions,
+            if it cannot write its redo stream to at least one synchronized standby database.</para>
+        </listitem>
+       </itemizedlist>
 
-                    <para>In Replication, no transactionally guaranty.</para>
-                </listitem>
-            </varlistentry>
+      <para>All three protection modes require that specific redo transport options
+        be used to send redo data to at least one standby database.</para>
+    </section>
 
-            <varlistentry>
-                <term>Automatic role transitions</term>
-                <listitem><para>When fast-start failover is enabled, the Data Guard broker
-                    automatically fails over to a synchronized standby site in the event of a
-                    disaster at the primary site, requiring no intervention by the DBA. In addition,
-                    applications are automatically notified of the role transition(I DON'T KNOWN HOW
-                    TO DO IT YET).</para>
-                </listitem>
-            </varlistentry>
+    <section>
+      <title>Comments</title>
+      <itemizedlist>
+        <listitem>
+          <para>Cost</para>
+          <orderedlist>
+            <listitem>
+              <para>Requires 2 machines</para>
+            </listitem>
+            <listitem>
+              <para>2.25 oracle licenses</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
 
-            <varlistentry>
-                <term>Configuration and maintenance</term>
-                <listitem><para>Configuring and maintenance a Data Guard Environment is easy
+        <listitem>
+          <para>Advantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Oracle Data Guard can gain a great performance, data protection, improved availability and scalability.</para>
+            </listitem>
+            <listitem>
+              <para>no potential data conflicts</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+
+        <listitem>
+          <para>Disadvantage</para>
+          <orderedlist>
+            <listitem>
+              <para>Configure is complex</para>
+            </listitem>
+            <listitem>
+              <para>Sstandby databases only can be read access</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section>
+    <title>MSR vs Data Guard</title>
+
+    <variablelist>
+      <varlistentry>
+        <term>Availability and scalability</term>
+        <listitem>
+          <para>(Data Guard) Logical standby database can only for queries and reporting purposes.</para>
+          <para>In Multiple-Source Replication (MSR)<indexterm><primary>MSR</primary></indexterm>
+            Environment, all databases can be read and write.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Network sensitivity</term>
+        <listitem>
+          <para>(Data Guard) Someone report, if the network have <emphasis>jitter</emphasis>,
+            the primary database (work on <emphasis>maximum availability</emphasis> mode
+            <indexterm><primary>Maximum availability</primary></indexterm>
+            or <emphasis>maximum performance</emphasis> mode
+            <indexterm><primary>Maximum performance</primary></indexterm>) can not
+            talk to the standby database for a while, users will <emphasis>NOT</emphasis>
+            access the primary database for 30 seconds (Maybe down to 15 seconds for good tuning).</para>
+
+          <warning><para>If the primary database work on <emphasis>maximum protection</emphasis> mode,
+            <indexterm><primary>Maximum protection</primary></indexterm>
+            it will <emphasis>shut down</emphasis> when it cannot write its redo stream
+            to at least one synchronized standby database.</para></warning>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Automatic</term>
+        <listitem>
+          <para>(Data Guard) The standby databases are synchronized with the primary
+            database, without manual intervention by the DBA.</para>
+          <para>Replication maybe potential require manual interfere or maintain.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Performance</term>
+        <listitem>
+          <para>Replication capture row changes, data guard capture redo data,
+            so data guard is fast.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Data integrity</term>
+        <listitem>
+          <para>Data Guard can ensure no data loss, a standby database is a
+            transactionally consistent copy of the primary database.</para>
+          <para>In Replication, no transactionally guaranty.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Automatic role transitions</term>
+        <listitem>
+          <para>When <emphasis>fast-start failover</emphasis> (FSF)
+            <indexterm><primary>FSF</primary><secondary>Fast-start failover</secondary></indexterm> is enabled,
+            the Data Guard broker automatically fails over to a synchronized
+            standby site in the event of a disaster at the primary site, requiring
+            <emphasis>no</emphasis> intervention by the DBA. In addition,
+            applications are automatically notified of the role transition.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Configuration and maintenance</term>
+        <listitem>
+          <para>Configuring and maintenance a Data Guard Environment is easy
                     than replication.</para>
-                </listitem>
-            </varlistentry>
-        </variablelist>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
 
+  <section>
+    <title>Conclusion</title>
+
+    <section>
+      <title>Why not ASF?</title>
+      <para>As we said, Active/Standby Failover (<emphasis>ASF</emphasis>)
+        <indexterm><primary>ASF</primary></indexterm> require share storage,
+        waste one machine, no any scalability, and switchover is slowly.</para>
     </section>
+
+    <section>
+      <title>Why not RAC?</title>
+      <para>Real Application Clusters (<emphasis>RAC</emphasis>)
+        <indexterm><primary>RAC</primary></indexterm> can be more
+        suitable for large concurrent users. Currently, our concurrent user
+        for database not great than 30, and will not great than 100 for a long term.</para>
+
+      <para>So most features of RAC no valuable for us except fault tolerance.
+        Since RAC very expensive, and require share storage, we should avoid use it.</para>
+    </section>
+
+    <section>
+      <title>Our decision</title>
+      <para>It's clear to use Multiple-Source Replication (<emphasis>MSR</emphasis>)
+        <indexterm><primary>MSR</primary></indexterm>
+        for improved Oracle availability and scalability
+        for us from the discourses at above. For disaster recovery, we use
+        Oracle <emphasis>Data Guard</emphasis>.</para>
+
+      <figure>
+        <title>Oracle deployment</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="96%" align="center" fileref="figures/deploy.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+  </section>
+
+  <section>
+    <title>Propose of deployment</title>
+
+    <section>
+      <title>deployment architecture</title>
+      <para>The following figure is our system deployment architecture. In Madrid,
+        we deploy a high availability and scalability system; In Barcelona,
+        we deploy a backup system for disaster recovery.</para>
+      <figure>
+        <title>deployment architecture</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="100%" align="center" fileref="figures/deployment.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Switchover to replication database</title>
+      <para>If our primary Oracle database out of service, DRE can use the replication
+        database automatically, no performance degrade.</para>
+      <para>For the switchover, we can use
+        <ulink url="http://linux-ha.org/"><citetitle>Linux HA</citetitle></ulink>
+        or hard coding in the DRE.</para>
+    </section>
+
+    <section>
+      <title>Switchover to physical standby database of Data Guard</title>
+      <para>We have very very small chance for both primary and replication database failure.
+        In this case, if our DRE and IN can working yet, we should switchover to
+        the standby database of Data Guard manually. </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Propose of procurement</title>
+
+    <section>
+      <title>Why not standard edition?</title>
+      <para>The price of <emphasis>standard edition</emphasis>
+        <indexterm><primary>Standard edition</primary></indexterm>
+        is <emphasis>36%</emphasis> of <emphasis>enterprise edition</emphasis>
+        <indexterm><primary>Enterprise edition</primary></indexterm>, why not
+        standard edition? Because some import features which we should have but
+        standard edition missing:</para>
+
+      <orderedlist>
+        <listitem><para>Oracle <emphasis>diagnostic</emphasis> pack</para>
+        </listitem>
+
+        <listitem><para>Oracle <emphasis>tuning</emphasis> pack</para>
+        </listitem>
+
+        <listitem><para><emphasis>Asynchronous change data capture</emphasis></para>
+        </listitem>
+
+        <listitem><para>Oracle <emphasis>Streams Replication</emphasis>,
+          <emphasis>Advanced Replication</emphasis>
+          <indexterm><primary>Multiple-Source Replication</primary><secondary>Multiple-Master Replication</secondary></indexterm>
+          </para>
+        </listitem>
+
+        <listitem><para>Active <emphasis>Data Guard</emphasis>
+          <indexterm><primary>Data Guard</primary></indexterm></para>
+
+          <para>Enhances <emphasis>disaster protection</emphasis> investments
+            by offloading resource intensive operations to a single <emphasis>physical
+            standby</emphasis> database, enhancing overall quality of service.</para>
+        </listitem>
+
+        <listitem><para>In-Memory Database Cache</para>
+          <para>Increases responsiveness and throughput by caching frequently
+            used data in memory. The In-Memory Database Cache option of Oracle
+            Database Enterprise Edition is based on Oracle Times-Ten In-Memory Database.</para>
+        </listitem>
+
+        <listitem><para>Partitioning</para>
+          <indexterm><primary>Partitioning</primary></indexterm>
+          <para>Enables large tables and indexes to be split into smaller, more
+            manageable components, without requiring changes to underlying applications</para>
+        </listitem>
+
+        <listitem><para>Real Application Testing</para>
+          <indexterm><primary>RAT</primary><secondary>Real Application Testing</secondary></indexterm>
+          <para>Reduces risk and costs of adopting new technologies, whether it's
+            operating systems, servers, or software.</para>
+        </listitem>
+
+        <listitem><para>Materialized View Query Rewrite</para>
+          <indexterm><primary>MV</primary><secondary>Materialized View</secondary></indexterm>
+          <para>Automatically recognizing materialized view usage to satisfy requests.</para>
+          <note><para>Materialized View can be used for fast query or simple replication.</para></note>
+        </listitem>
+
+      </orderedlist>
+    </section>
+
+    <section>
+      <title>Processor License vs. Named User License</title>
+      <para>If our machine have 2 CPU, each CPU have 4 cores, from
+        <ulink url="http://www.oracle.com/corporate/pricing/technology-price-list.pdf">
+        <citetitle>Oracle Technology Global Price List (July 1, 2009)</citetitle></ulink>, and
+        <ulink url="http://www.oracle.com/corporate/contracts/library/processor-core-factor-table.pdf">
+        <citetitle>Oracle Processor Core Factor Table (March 16, 2009)</citetitle>
+        </ulink>, we known the processor license be equal to 200 Named User License.
+      </para>
+
+      <para>Since our concurrent user will not great than 100 for a long term, I
+        think we should use Named User License.</para>
+    </section>
+
+    <section>
+      <title>Oracle version</title>
+      <section>
+        <title>32bit or 64bit</title>
+        <para>Database is RAM sensitive application, we should pay attention to
+          RAM more than CPU.
+        </para>
+
+        <para>If our machine RAM great than 4G, we should use 64bit Oracle and
+          64bit Operate System.
+        </para>
+      </section>
+
+      <section>
+        <title>10g or 11g</title>
+        <para>Oracle said, 11g have many improvement and enhancement, new users should use 11g.</para>
+        <para>You know the adage: "<emphasis>If it ain't broke, don't fix it</emphasis>". After we
+          setup the database, I think we should not change the major version, so I suggest use 11g
+          for a long term good support and maintenance.
+        </para>
+      </section>
+    </section>
+  </section>
+
+  <index/>
 </article>
