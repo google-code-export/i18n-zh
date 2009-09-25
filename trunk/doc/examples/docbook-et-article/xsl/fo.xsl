@@ -18,7 +18,7 @@
   <xsl:param name="admon.textlabel" select="0" />
   <xsl:param name="admon.graphics" select="1" />
   <xsl:param name="admon.graphics.path">figures/</xsl:param>
-  <xsl:param name="admon.graphics.extension">.svg</xsl:param>
+  <xsl:param name="admon.graphics.extension">.png</xsl:param>
   <xsl:param name="section.autolabel" select="1" />
   <xsl:attribute-set name="sidebar.properties" use-attribute-sets="formal.object.properties">
     <xsl:attribute name="border-style">solid</xsl:attribute>
