@@ -18,6 +18,12 @@
     </authorgroup>
     <revhistory>
       <revision>
+        <revnumber>1.2</revnumber>
+        <date>2009-9-27</date>
+        <authorinitials>Cauchy Song</authorinitials>
+        <revremark>Add active data guard, and Oracle optional license</revremark>
+      </revision>
+      <revision>
         <revnumber>1.1</revnumber>
         <date>2009-9-24</date>
         <authorinitials>Cauchy Song</authorinitials>
@@ -418,11 +424,22 @@
               through <emphasis>Redo Apply</emphasis>, which recovers the redo data received from the primary
               database and applies the redo to the physical standby database.</para>
 
-            <para>As of Oracle Database <emphasis>11g</emphasis> release 1 (11.1),
-              a physical standby database
+            <para>As of Oracle Database <emphasis>11g</emphasis>, a physical standby database
               can receive and apply redo while it is open for <emphasis>read-only</emphasis>
               access. A physical standby database can therefore be used concurrently for
-              <emphasis>data protection and reporting</emphasis>.</para>
+              <emphasis>data protection and reporting</emphasis>. This enhancement feature
+              of data guard named as <emphasis>active data guard</emphasis>, it's cost about
+              <emphasis>1/8</emphasis> oracle license.</para>
+
+              <figure>
+                <title>Oracle Active Data Guard</title>
+                <mediaobject>
+                  <imageobject>
+                    <imagedata align="center" fileref="figures/active-dataguard.png"/>
+                  </imageobject>
+                </mediaobject>
+              </figure>
+
           </listitem>
           <listitem>
             <para><emphasis>Logical standby</emphasis>
@@ -695,6 +712,19 @@
           </imageobject>
         </mediaobject>
       </figure>
+
+      <para>Or if we use Oracle 11g, we can use active data guard
+        (<emphasis>1/8</emphasis> oracle license) for both improved
+        Oracle availability and scalability, as well for disaster recovery.</para>
+
+      <figure>
+        <title>Oracle deployment with active data guard</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="96%" align="center" fileref="figures/deploy2.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
     </section>
   </section>
 
@@ -711,6 +741,17 @@
         <mediaobject>
           <imageobject>
             <imagedata width="100%" align="center" fileref="figures/deployment.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>We also can use active data guard (<emphasis>1/8</emphasis> oracle license) with Oracle 11g.</para>
+
+      <figure>
+        <title>deployment architecture with active data guard</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata width="100%" align="center" fileref="figures/deployment2.png"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -806,7 +847,7 @@
         </ulink>, we known the processor license be equal to 200 Named User License.
       </para>
 
-      <para>Bu in <ulink url="http://www.oracle.com/corporate/pricing/sig.pdf">
+      <para>But in <ulink url="http://www.oracle.com/corporate/pricing/sig.pdf">
         <citetitle>Oracle software investment guide</citetitle></ulink>,
         chapter 'Licensing Policies', section 'Multiplexing', page 27 and 30:</para>
 
@@ -832,6 +873,38 @@
     </section>
 
     <section>
+      <title>Oracle optional license</title>
+
+      <section>
+        <title>Active Data Guard</title>
+        <para>With active data guard (<emphasis>1/8</emphasis> oracle license), we can use
+          <emphasis>query and reporting</emphasis> on physical standby database,
+          without waste compute resource like logical standby database.
+          I don't think the performance characteristics of a logical standby database
+          can satisfy our requirements when we require <emphasis>query and reporting</emphasis>
+          on standby database.
+        </para>
+      </section>
+
+      <section>
+        <title>Advanced Compression</title>
+        <para>Oracle Advanced Compression (<emphasis>1/4</emphasis> oracle license) delivers
+          compression rates of <emphasis>2-4x</emphasis>
+          across all types of data and applications. Storage savings from compression will cascade
+          throughout the data center, <emphasis>reducing network traffic</emphasis> and data
+          backups as well. And, by reading fewer blocks off disk, Oracle Advanced Compression
+          also improves query performance.
+        </para>
+
+        <para>I dont't known our bandwidth requirement for remote disaster recovery without
+          monitoring or authoritative estimation. But when we meet the bandwidth limitation,
+          we can use advanced compression.
+        </para>
+
+      </section>
+    </section>
+
+    <section>
       <title>Oracle version</title>
       <section>
         <title>32bit or 64bit</title>
@@ -853,6 +926,8 @@
         </para>
       </section>
     </section>
+
+
   </section>
 
   <index/>
