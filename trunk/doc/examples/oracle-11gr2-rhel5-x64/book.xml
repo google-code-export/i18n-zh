@@ -4,8 +4,8 @@
         'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>-->
 <article lang="en">
   <articleinfo>
-    <title>Solutions of improved Oracle availability and scalability</title>
-    <pubdate>2009-09-30</pubdate>
+    <title>Install Oracle 11g R2 within RHEL 5.4 x64</title>
+    <pubdate>2009-10-09</pubdate>
     <copyright>
       <year>2009</year>
       <holder>Elephant Talk Communications, Inc.</holder>
@@ -17,6 +17,12 @@
       </author>
     </authorgroup>
     <revhistory>
+      <revision>
+        <revnumber>1.1</revnumber>
+        <date>2009-10-09</date>
+        <authorinitials>Cauchy Song</authorinitials>
+        <revremark>Add physical standby database</revremark>
+      </revision>
       <revision>
         <revnumber>1.0</revnumber>
         <date>2009-9-30</date>
@@ -62,6 +68,14 @@ rpm -ivh unixODBC-devel-2.2.11-7.1.x86_64.rpm unixODBC-2.2.11-7.1.x86_64.rpm</sc
           <section>
             <title>Set domainname</title>
             <para>Edit <filename>/etc/sysctl.conf</filename>, set <emphasis>kernel.domainname</emphasis> to <replaceable>songdongsheng.info</replaceable>.</para>
+          </section>
+
+          <section>
+            <title>Update hosts</title>
+            <para>Edit <filename>/etc/hosts</filename>, you should update to fit your machine.</para>
+            <screen>192.168.30.126 x64-ORA-01.songdongsheng.info x64-ORA-01
+192.168.30.148 x64-ORA-02.songdongsheng.info x64-ORA-02
+</screen>
           </section>
 
           <section>
@@ -138,6 +152,9 @@ Verify:</screen>
 
           <para>For beautiful UI, edit <filename>~/.vnc/xstartup</filename>:</para>
           <screen>gnome-session &amp;</screen>
+
+          <para>change <filename>~/.vnc/xstartup</filename> access permissions:</para>
+          <screen>[oracle@x64-ORA-01 .vnc]$ chmod +x xstartup</screen>
         </section>
 
         <section>
@@ -188,42 +205,58 @@ NLSRTL Version 11.2.0.1.0 - Production
     <section>
       <title>Preparing the Primary Database</title>
 
-        <section>
-          <title>Enable Forced Logging</title>
-          <screen>SQL> ALTER DATABASE FORCE LOGGING;</screen>
-        </section>
+      <section>
+        <title>Enable Forced Logging</title>
+        <screen>SQL> alter database force logging;
+SQL> select inst_id , force_logging from gv$database;
+</screen>
+      </section>
 
-        <section>
-          <title>Configure Redo Transport Authentication</title>
-          <para>Data Guard uses Oracle Net sessions to transport redo data and
-            control messages between the members of a Data Guard configuration.
-            These redo transport sessions are authenticated using either the
-            Secure Sockets Layer (SSL) protocol or a remote login password file.</para>
+      <section>
+        <title>Enable Archiving</title>
+        <para>If archiving is not enabled, issue the following statements to
+          put the primary database in ARCHIVELOG mode and enable automatic
+          archiving:</para>
+        <screen>SQL> shutdown immediate;
+SQL> startup mount;
+SQL> alter database archivelog;
+SQL> alter database open;
+</screen>
+      </section>
 
-          <para>If the SSL authentication requirements are not met, each member
-            of a Data Guard configuration must be configured to use a remote
-            login password file and every physical standby database in the
-            configuration must have an up-to-date copy of the password file
-            from the primary database.<screen>
-[oracle@x64-ORA-01 dbs]$ cd $ORACLE_HOME/dbs
+      <section>
+        <title>Configure Redo Transport Authentication</title>
+        <para>Data Guard uses Oracle Net sessions to transport redo data and
+          control messages between the members of a Data Guard configuration.
+          These redo transport sessions are authenticated using either the
+          Secure Sockets Layer (SSL) protocol or a remote login password file.</para>
+
+        <para>If the SSL authentication requirements are not met, each member
+          of a Data Guard configuration must be configured to use a remote
+          login password file and every physical standby database in the
+          configuration must have an up-to-date copy of the password file
+          from the primary database.<screen>
+[oracle@x64-ORA-01 ~]$ cd $ORACLE_HOME/dbs
 [oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y
 </screen><note><para>Whenever you grant or revoke
-            the SYSDBA or SYSOPER privileges or change the login password of
-            a user who has these privileges, you must replace the password
-            file at each physical or snapshot standby database in the
-            configuration with a fresh copy of the password file from the
-            primary database.</para></note></para>
+          the SYSDBA or SYSOPER privileges or change the login password of
+          a user who has these privileges, you must replace the password
+          file at each physical or snapshot standby database in the
+          configuration with a fresh copy of the password file from the
+          primary database.</para></note></para>
+      </section>
 
-        </section>
+      <section>
+        <title>Set Primary Database Initialization Parameters</title>
+        <para>On the primary database, you define initialization parameters
+          that control redo transport services while the database is in the
+          primary role. There are additional parameters you need to add that
+          control the receipt of the redo data and apply services when the
+          primary database is transitioned to the standby role.</para>
+        <screen>
+[oracle@x64-ORA-01 ~]$ mkdir -p /opt/oracle/oradata/dg01/archive
 
-        <section>
-          <title>Set Primary Database Initialization Parameters</title>
-          <para>On the primary database, you define initialization parameters
-            that control redo transport services while the database is in the
-            primary role. There are additional parameters you need to add that
-            control the receipt of the redo data and apply services when the
-            primary database is transitioned to the standby role.</para>
-          <screen>
+[oracle@x64-ORA-01 ~]$ sqlplus "/ as sysdba"
 SQL> alter system set log_archive_config='dg_config=(dg01,dg02)' scope=both;
 
 System altered.
@@ -232,63 +265,54 @@ SQL> alter system set log_archive_dest_1='location=/opt/oracle/oradata/dg01/arch
 
 System altered.
 
+SQL> alter system set log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg02' scope=both;
+
+System altered.
 </screen>
-        </section>
+      </section>
 
-        <section>
-          <title>Enable Archiving</title>
-          <para>If archiving is not enabled, issue the following statements to
-            put the primary database in ARCHIVELOG mode and enable automatic
-            archiving:</para>
-          <screen>SQL> SHUTDOWN IMMEDIATE;
-SQL> STARTUP MOUNT;
-SQL> ALTER DATABASE ARCHIVELOG;
-SQL> ALTER DATABASE OPEN;
-</screen>
-        </section>
+      <section>
+        <title>Create a Backup Copy of the Primary Database Datafiles</title>
+        <screen>
+RMAN> connect target sys/machine4in
+RMAN> backup as compressed backupset full database tag 'dg01-full-20091009' format '/opt/oracle/rman/dg01-full-20091009-%s'; </screen>
 
-        <section>
-          <title>Create a Backup Copy of the Primary Database Datafiles</title>
-          <screen>SQL> select name from v$datafile;
+        <!--screen>
+rman &lt;&lt;EOF
+connect target sys/machine4in
+run {
+sql "alter system archive log current";
+allocate channel backup_disk1 device type disk maxpiecesize 2000m;
+allocate channel backup_disk2 device type disk maxpiecesize 2000m;
+backup as compressed backupset
+    full database format '/opt/oracle/rman/database_%d_%Y%M%D_%s.dbf'
+    skip inaccessible
+    plus archivelog format '/opt/oracle/rman/archivelog_%d_%Y%M%D_%s.log' ;
+release channel backup_disk1;
+release channel backup_disk2;
+sql "alter system archive log current";
+}
+EOF</screen-->
+      </section>
 
-NAME
---------------------------------------------------------------------------------
-/opt/oracle/oradata/dg01/system01.dbf
-/opt/oracle/oradata/dg01/sysaux01.dbf
-/opt/oracle/oradata/dg01/undotbs01.dbf
-/opt/oracle/oradata/dg01/users01.dbf
+      <section>
+        <title>Create a Control File for the Standby Database</title>
+        <screen>SQL> shutdown immediate;
+SQL> startup mount;</screen>
 
-SQL> shutdown immediate
-Database closed.
-Database dismounted.
-ORACLE instance shut down.
-SQL> exit
-Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
-With the Partitioning, OLAP, Data Mining and Real Application Testing options
-[oracle@x64-ORA-01 ~]$ cd /opt/oracle/oradata
-[oracle@x64-ORA-01 oradata]$ tar cvzf dg01.tar.gz dg01
-dg01/
-dg01/control01.ctl
-dg01/redo01.log
-dg01/redo02.log
-dg01/redo03.log
-dg01/sysaux01.dbf
-dg01/system01.dbf
-dg01/temp01.dbf
-dg01/undotbs01.dbf
-dg01/users01.dbf
-</screen>
-        </section>
+        <para>Then, create the control file for the standby database, and open
+          the primary database to user access, as shown in the following example:</para>
 
-        <section>
-          <title>Create a Control File for the Standby Database</title>
-          <screen>SQL> STARTUP MOUNT;</screen>
+        <screen>SQL> alter database create standby controlfile as '/opt/oracle/rman/control01.ctl';
+SQL> create pfile='/opt/oracle/rman/dg02.ora' from spfile;
 
-          <para>Then, create the control file for the standby database, and open
-            the primary database to user access, as shown in the following example:</para>
+File created.
 
-          <screen>SQL> alter database create standby controlfile as '/tmp/dg02.ctl';
-  SQL> alter database open;
+SQL> create spfile from pfile='/tmp/dg02.ora';
+
+File created.
+
+SQL> alter database open;
 
   Database altered.
 
@@ -299,11 +323,11 @@ dg01/users01.dbf
   Oldest online log sequence     6
   Current log sequence           8
   </screen>
-        </section>
+      </section>
 
-        <section>
-          <title>$ORACLE_HOME/network/admin/listener.ora</title>
-          <screen>LISTENER =
+      <section>
+        <title>$ORACLE_HOME/network/admin/listener.ora</title>
+        <screen>LISTENER =
   (DESCRIPTION_LIST =
     (DESCRIPTION =
       (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
@@ -314,9 +338,9 @@ dg01/users01.dbf
 ADR_BASE_LISTENER = /opt/oracle</screen>
       </section>
 
-        <section>
-          <title>$ORACLE_HOME/network/admin/tnsnames.ora</title>
-          <screen>DG01 =
+      <section>
+        <title>$ORACLE_HOME/network/admin/tnsnames.ora</title>
+        <screen>DG01 =
   (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-01.songdongsheng.info)(PORT = 1521))
     (CONNECT_DATA =
@@ -330,62 +354,264 @@ DG02 =
     (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-02.songdongsheng.info)(PORT = 1521))
     (CONNECT_DATA =
       (SERVER = DEDICATED)
-      (SERVICE_NAME = dg02.songdongsheng.info)
+      (SERVICE_NAME = dg01.songdongsheng.info)
+    )
+  )
+</screen>
+      </section>
+    </section>
+
+
+    <section>
+      <title>Creating a Physical Standby Database</title>
+
+      <section>
+        <title>Install Physical Standby Database Software</title>
+        <para>Install as the primary database, but select 'Install database software only',
+          do not create database instance.</para>
+      </section>
+
+      <section>
+        <title>Create password file</title>
+        <screen>
+[oracle@x64-ORA-01 dbs]$ cd $ORACLE_HOME/dbs
+[oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y
+</screen>
+      </section>
+
+      <section>
+        <title>Create pfile - $ORACLE_HOME/dbs/initstandby.ora</title>
+        <warning><para>On a primary database, DB_NAME specify the name used when the database was created.
+          On a physical standby database, use the DB_NAME of the primary database.</para></warning>
+
+        <screen>
+*.audit_file_dest='/opt/oracle/admin/dg02/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.0.0'
+*.control_files='/opt/oracle/oradata/dg02/control01.ctl'
+*.db_block_size=8192
+*.db_domain='songdongsheng.info'
+*.db_name='dg01'
+*.db_unique_name='dg02'
+*.db_recovery_file_dest='/opt/oracle/recovery_area'
+*.db_recovery_file_dest_size=4070572032
+*.diagnostic_dest='/opt/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=dg02XDB)'
+*.memory_target=419430400
+*.open_cursors=300
+*.processes=150
+*.remote_login_passwordfile='EXCLUSIVE'
+*.undo_management=auto
+*.undo_tablespace='UNDOTBS1'
+
+*.log_archive_config='dg_config=(dg01,dg02)'
+
+# for primary database
+# *.log_archive_dest_1='location=/opt/oracle/oradata/dg01/archive'
+# *.log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg02'
+
+# for standby database
+*.log_archive_dest_1='location=/opt/oracle/oradata/dg02/archive'
+*.log_archive_dest_2='service=dg01 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg01'
+
+*.fal_server=dg01
+*.fal_client=dg02
+
+*.standby_file_management=auto
+</screen>
+      </section>
+
+      <section>
+        <title>Copy data files and control files</title>
+        <screen>[oracle@x64-ORA-01 rman]$ rsync -e ssh -v --progress * x64-ORA-02:/opt/oracle/rman
+archivelog_DG01_20091009_30.log
+    19303936 100%    4.80MB/s    0:00:03 (xfer#1, to-check=9/10)
+archivelog_DG01_20091009_31.log
+     7548416 100%    2.76MB/s    0:00:02 (xfer#2, to-check=8/10)
+archivelog_DG01_20091009_32.log
+      634880 100%    1.03MB/s    0:00:00 (xfer#3, to-check=7/10)
+archivelog_DG01_20091009_37.log
+       55808 100%   92.06kB/s    0:00:00 (xfer#4, to-check=6/10)
+database_DG01_20091009_33.dbf
+   187252736 100%    6.89MB/s    0:00:25 (xfer#5, to-check=5/10)
+database_DG01_20091009_34.dbf
+    82771968 100%    6.19MB/s    0:00:12 (xfer#6, to-check=4/10)
+database_DG01_20091009_35.dbf
+     1114112 100%    2.14MB/s    0:00:00 (xfer#7, to-check=3/10)
+database_DG01_20091009_36.dbf
+       98304 100%  189.72kB/s    0:00:00 (xfer#8, to-check=2/10)
+
+sent 298819670 bytes  received 240 bytes  6036765.86 bytes/sec
+total size is 298782519  speedup is 1.00</screen>
+
+        <screen>mkdir $ORACLE_BASE/admin/$ORACLE_SID/pfile
+mkdir /opt/oracle/admin/dg02/adump
+mkdir /opt/oracle/recovery_area
+mkdir /opt/oracle/oradata/dg02/archive
+</screen>
+
+      </section>
+
+      <section>
+        <title>$ORACLE_HOME/network/admin/listener.ora</title>
+        <screen>LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+      (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-02.songdongsheng.info)(PORT = 1521))
+    )
+  )
+
+ADR_BASE_LISTENER = /opt/oracle</screen>
+      </section>
+
+      <section>
+        <title>$ORACLE_HOME/network/admin/tnsnames.ora</title>
+        <screen>DG01 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-01.songdongsheng.info)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dg01.songdongsheng.info)
+    )
+  )
+
+DG02 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-02.songdongsheng.info)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dg01.songdongsheng.info)
     )
   )
 </screen>
       </section>
 
-
       <section>
-        <title>Prepare an Initialization Parameter File for the Standby Database</title>
-        <procedure>
-          <title>Prepare an Initialization Parameter File for the Standby Database</title>
-          <step>
-            <title>Copy the primary database parameter file to the standby database</title>
-            <para>Create a text initialization parameter file (PFILE) from the server
-              parameter file (SPFILE) used by the primary database; a text initialization
-              parameter file can be copied to the standby location and modified. For example:</para>
-            <screen>SQL> CREATE PFILE='/tmp/dg02.ora' FROM SPFILE;</screen>
-            <para>Later, in Section 3.2.5, you will convert this file back to a server
-              parameter file after it is modified to contain the parameter values appropriate
-              for use with the physical standby database.</para>
-          </step>
+        <title>Mount standby database </title>
+        <screen>
+[oracle@x64-ORA-02 dg02]$ sqlplus "/ as sysdba"
 
-          <step>
-            <title>Set initialization parameters on the physical standby database.</title>
-            <para>Although most of the initialization parameter settings in the text
-              initialization parameter file that you copied from the primary system are also
-              appropriate for the physical standby database, some modifications need to be made.</para>
-              <screen>...
-*.audit_file_dest='/opt/oracle/admin/dg02/adump'
-*.control_files='/opt/oracle/oradata/dg02/control01.ctl','/opt/oracle/recovery_area/dg02/control02.ctl'
-*.db_name='dg02'
-*.db_unique_name='dg02'
-*.dispatchers='(PROTOCOL=TCP) (SERVICE=dg02XDB)'
+SQL*Plus: Release 11.2.0.1.0 Production on Fri Oct 9 05:57:48 2009
 
-*.log_archive_start=true
-*.log_archive_config='dg_config=(dg01,dg02)'
-*.log_archive_dest_1='location=/opt/oracle/oradata/dg01/archive valid_for=(all_logfiles,all_roles) db_unique_name=dg01'
-*.log_archive_dest_2='service=dg02 async valid_for=(online_logfiles,primary_role) db_unique_name=dg02'
+Copyright (c) 1982, 2009, Oracle.  All rights reserved.
 
-*.fal_server=dg01
-*.fal_client=dg02
-*.db_file_name_convert='dg01','dg02'
-*.log_file_name_convert='/arch1/boston/','/arch1/chicago/','/arch2/boston/','/arch2/chicago/'
+Connected to an idle instance.
 
-*.standby_file_management=auto
-...
+SQL> create spfile from pfile='$ORACLE_HOME/dbs/initstandby.ora';
+SQL> create pfile='/opt/oracle/product/11.2/dg_02/dbs/initdg02.ora' from spfile;
+SQL> startup nomount
+ORACLE instance started.
+
+Total System Global Area  417546240 bytes
+Fixed Size                  2213936 bytes
+Variable Size             268437456 bytes
+Database Buffers          138412032 bytes
+Redo Buffers                8482816 bytes
+SQL> alter database mount standby database;
 </screen>
-          </step>
-        </procedure>
       </section>
 
       <section>
-        <title>TBD</title>
+        <title>restore standby database</title>
+        <screen>rman &lt;&lt;EOF
+connect target sys/machine4in
+run {
+SET ARCHIVELOG DESTINATION TO '/opt/oracle/rman';
+RESTORE DATABASE;
+RECOVER DATABASE; # restores and recovers logs automatically
+}
+EOF</screen>
       </section>
 
+      <section>
+        <title>Prepare the Standby Database to Receive Redo Data</title>
+        <screen>
+SQL> SELECT GROUP#, BYTES FROM V$LOG;
+SQL> SELECT GROUP#, BYTES FROM V$STANDBY_LOG;
+SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo01.log') SIZE 50M;
+SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo02.log') SIZE 50M;
+SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo03.log') SIZE 50M;
+SQL> ALTER DATABASE ARCHIVELOG;
+</screen>
+      </section>
 
+      <section>
+        <title>Start Redo Apply.</title>
+        <screen>
+SQL> alter database recover managed standby database using current logfile disconnect from session;
+SQL> alter database open read only;
+</screen>
+      </section>
+
+      <section>
+        <title>Verify the Physical Standby Database Is Performing Properly</title>
+
+        <section>
+          <title>Test connection</title>
+          <para>On the primary and standby machine, run:</para>
+          <screen>
+  sqlplus system/machine4in@dg01
+  sqlplus system/machine4in@dg02
+  </screen>
+        </section>
+
+        <section>
+          <title>Identify the existing archived redo log files</title>
+          <para>On the standby database, query the V$ARCHIVED_LOG view to identify existing
+            files in the archived redo log. For example:</para>
+          <screen>
+SQL> SELECT SEQUENCE#, APPLIED,
+    to_char(FIRST_TIME, 'YYYY-MM-DD HH24:MI:SS') as FIRST_TIME,
+    to_char(NEXT_TIME, 'YYYY-MM-DD HH24:MI:SS') as NEXT_TIME
+    FROM V$ARCHIVED_LOG
+    ORDER BY SEQUENCE#;
+  </screen>
+        </section>
+
+        <section>
+          <title>Force a log switch to archive the current online redo log file</title>
+          <para>On the primary database, issue the ALTER SYSTEM SWITCH LOGFILE statement to
+            force a log switch and archive the current online redo log file group:</para>
+          <screen>
+SQL> ALTER SYSTEM SWITCH LOGFILE;
+SQL> select max(sequence#) from v$archived_log;
+  </screen>
+        </section>
+
+        <section>
+          <title>Verify the new redo data was archived on the standby database</title>
+          <para>On the standby database, query the V$ARCHIVED_LOG view to verify the redo
+            data was received and archived on the standby database:</para>
+          <screen>
+SQL> SELECT SEQUENCE#, APPLIED,
+    to_char(FIRST_TIME, 'YYYY-MM-DD HH24:MI:SS') as FIRST_TIME,
+    to_char(NEXT_TIME, 'YYYY-MM-DD HH24:MI:SS') as NEXT_TIME
+    FROM V$ARCHIVED_LOG
+    ORDER BY SEQUENCE#;
+  </screen>
+        </section>
+
+        <section>
+          <title>Verify that received redo has been applied</title>
+          <para>On the standby database, query the V$ARCHIVED_LOG view to verify that received redo has been applied:</para>
+          <screen>
+SQL> SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;
+
+  </screen>
+        </section>
+
+        <section>
+          <title>Some useful check</title>
+          <screen>
+SQL> select dest_name,status,error from v$archive_dest where error is not null;
+SQL> select sequence# from v$log_history;
+SQL> select sequence#,applied from v$archived_log;
+SQL> select process,status from v$managed_standby;
+  </screen>
+        </section>
+
+      </section>
     </section>
   </section>
 </article>
