@@ -34,6 +34,14 @@
   <xsl:param name="monospace.font.family">Courier New,monospace,FangSong</xsl:param>
    -->
 
+  <!-- Breaking long lines -->
+  <xsl:param name="hyphenate.verbatim">0</xsl:param>
+  <xsl:attribute-set name="monospace.verbatim.properties"
+                     use-attribute-sets="verbatim.properties monospace.properties">
+    <xsl:attribute name="wrap-option">wrap</xsl:attribute>
+    <xsl:attribute name="hyphenation-character">&#x25BA;</xsl:attribute>
+  </xsl:attribute-set>
+
   <!-- toc settings -->
   <xsl:attribute-set name="toc.margin.properties">
     <xsl:attribute name="break-after">page</xsl:attribute>
