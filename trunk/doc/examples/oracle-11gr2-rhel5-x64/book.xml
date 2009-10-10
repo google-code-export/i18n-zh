@@ -117,6 +117,7 @@ export ORACLE_BASE=/opt/oracle
 export ORACLE_HOME=/opt/oracle/product/11.2/dg_01
 export ORACLE_SID=dg01
 export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+export NLS_DATE_FORMAT="YYYY-MM-DD HH24:MI:SS"
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$ORACLE_HOME/bin
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib
@@ -265,7 +266,7 @@ SQL> alter system set log_archive_dest_1='location=/opt/oracle/oradata/dg01/arch
 
 System altered.
 
-SQL> alter system set log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg02' scope=both;
+SQL> alter system set log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable valid_for=(online_logfiles,primary_role) db_unique_name=dg02' scope=both;
 
 System altered.
 </screen>
@@ -274,8 +275,9 @@ System altered.
       <section>
         <title>Create a Backup Copy of the Primary Database Datafiles</title>
         <screen>
+$ rman nocatalog
 RMAN> connect target sys/machine4in
-RMAN> backup as compressed backupset full database tag 'dg01-full-20091009' format '/opt/oracle/rman/dg01-full-20091009-%s'; </screen>
+RMAN> backup as compressed backupset database tag 'dg01-full-20091010' format '/opt/oracle/rman/dg01-full-20091010-%s'; </screen>
 
         <!--screen>
 rman &lt;&lt;EOF
@@ -408,11 +410,11 @@ DG02 =
 
 # for primary database
 # *.log_archive_dest_1='location=/opt/oracle/oradata/dg01/archive'
-# *.log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg02'
+# *.log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable valid_for=(online_logfiles,primary_role) db_unique_name=dg02'
 
 # for standby database
 *.log_archive_dest_1='location=/opt/oracle/oradata/dg02/archive'
-*.log_archive_dest_2='service=dg01 async net_timeout=10 reopen=60 compression=enable db_unique_name=dg01'
+*.log_archive_dest_2='service=dg01 async net_timeout=10 reopen=60 compression=enable valid_for=(online_logfiles,primary_role) db_unique_name=dg01'
 
 *.fal_server=dg01
 *.fal_client=dg02
@@ -545,6 +547,15 @@ SQL> alter database open read only;
       </section>
 
       <section>
+        <title>Shutting Down a Physical Standby Database</title>
+        <screen>
+SQL> SELECT PROCESS, STATUS FROM V$MANAGED_STANDBY;
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+SQL> SHUTDOWN;
+</screen>
+      </section>
+
+      <section>
         <title>Verify the Physical Standby Database Is Performing Properly</title>
 
         <section>
@@ -602,16 +613,500 @@ SQL> SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;
         </section>
 
         <section>
-          <title>Some useful check</title>
+          <title>Some useful commands</title>
           <screen>
 SQL> select dest_name,status,error from v$archive_dest where error is not null;
+
 SQL> select sequence# from v$log_history;
 SQL> select sequence#,applied from v$archived_log;
 SQL> select process,status from v$managed_standby;
+
+$ rman nocatalog
+RMAN> show all;
+RMAN> connect target sys/machine4in@dg02
+RMAN> report obsolete;
+RMAN> delete obsolete;
+
+RMAN> list backup;
+RMAN> list expired backup;
+RMAN> crosscheck backup;
+RMAN> delete expired backup;
+RMAN> crosscheck backupset 36,37;
+
+RMAN> list archivelog all;
+RMAN> list expired archivelog all;
+RMAN> crosscheck archivelog all;
+RMAN> delete expired archivelog all;
+RMAN> delete archivelog all completed before 'sysdate';
+
+RMAN> backup as compressed backupset format '/opt/oracle/rman/archivelog-%d-%I-%T-%s.log' archivelog all delete input;
+RMAN> backup as compressed backupset format '/opt/oracle/rman/spfile-%d-%I-%T-%s' spfile;
+RMAN> backup as compressed backupset format '/opt/oracle/rman/controlfile-%d-%I-%T-%s' current controlfile;
+RMAN> backup as compressed backupset database tag 'dg02-full-%d-%I-%T-%s' format '/opt/oracle/rman/dg02-full-%d-%I-%T-%s';
   </screen>
         </section>
-
       </section>
     </section>
   </section>
+
+  <section>
+    <title>Configure Streams Replication</title>
+
+    <section>
+      <title>Preparing for Oracle Streams Replication</title>
+
+      <section>
+        <title>Overview of Oracle Streams Replication</title>
+        <para><emphasis>Replication</emphasis> is the process of sharing database objects and data at multiple databases.
+          To maintain replicated database objects and data at multiple databases, a change to one of
+          these database objects at a database is shared with the other databases. Through this
+          process, the database objects and data are kept synchronized at all of the databases in
+          the replication environment. In an Oracle Streams replication environment, the database
+          where a change originates is called the <emphasis>source database</emphasis>, and a database where a change
+          is shared is called a <emphasis>destination database</emphasis>.</para>
+        <para>When you use Oracle Streams, replication of a data manipulation language (DML) or data definition
+          language (DDL) change typically includes three steps:</para>
+        <orderedlist>
+          <listitem><para>A capture process, a synchronous capture, or an application creates
+            one or more logical change records (LCRs) and enqueues them. An LCR is a message
+            with a specific format that describes a database change. A capture process reformats
+            changes captured from the redo log into LCRs, a synchronous capture uses an internal
+            mechanism to reformat changes into LCRs, and an application can construct LCRs.
+            If the change was a DML operation, then each row LCR encapsulates a row change
+            resulting from the DML operation to a replicated table at the source database.
+            If the change was a DDL operation, then a DDL LCR encapsulates the DDL change that
+            was made to a replicated database object at a source database.</para></listitem>
+          <listitem><para>A propagation propagates the staged LCRs to another queue, which
+            usually resides in a database that is separate from the database where the LCRs
+            were captured. An LCR can be propagated to several different queues before it
+            arrives at a destination database.</para></listitem>
+          <listitem><para>At a destination database, an apply process consumes the change.
+            An apply process can dequeue the LCR and apply it directly to the replicated
+            database object, or an apply process can dequeue the LCR and send it to an apply
+            handler. In an Oracle Streams replication environment, an apply handler performs
+            customized processing of an LCR. An apply handler can apply the change in the
+            LCR to the replicated database object, or it can consume the LCR in some other way.</para></listitem>
+        </orderedlist>
+      </section>
+
+      <section>
+        <title>Decisions to Make Before Configuring Oracle Streams Replication</title>
+
+        <para>Make the following decisions before configuring Oracle Streams replication:</para>
+          <itemizedlist>
+            <listitem><para>Decide Which Type of Replication Environment to Configure</para></listitem>
+            <listitem><para>Decide Whether to Configure Local or Downstream Capture for the Source Database</para></listitem>
+            <listitem><para>Decide Whether Changes Are Allowed at One Database or at Multiple Databases</para></listitem>
+            <listitem><para>Decide Whether the Replication Environment Will Have Nonidentical Replicas</para></listitem>
+            <listitem><para>Decide Whether the Replication Environment Will Use Apply Handlers</para></listitem>
+            <listitem><para>Decide Whether to Maintain DDL Changes</para></listitem>
+            <listitem><para>Decide How to Configure the Replication Environment</para></listitem>
+          </itemizedlist>
+      </section>
+
+      <section>
+        <title>Tasks to Complete Before Configuring Oracle Streams Replication</title>
+          <itemizedlist>
+            <listitem><para>Configuring an Oracle Streams Administrator on All Databases</para></listitem>
+            <listitem><para>Configuring Network Connectivity and Database Links</para></listitem>
+            <listitem><para>Ensuring That Each Source Database Is In ARCHIVELOG Mode</para></listitem>
+            <listitem><para>Setting Initialization Parameters Relevant to Oracle Streams</para></listitem>
+            <listitem><para>Configuring the Oracle Streams Pool</para></listitem>
+            <listitem><para>Specifying Supplemental Logging</para></listitem>
+            <listitem><para>Configuring Log File Transfer to a Downstream Capture Database</para></listitem>
+            <listitem><para>Adding Standby Redo Logs for Real-Time Downstream Capture</para></listitem>
+          </itemizedlist>
+      </section>
+
+    </section>
+
+    <section>
+      <title>Two-Way Replication Environment</title>
+      <section>
+        <title>Configuring an Oracle Streams Administrator on All Databases</title>
+        <para>To configure and manage an Oracle Streams environment, either create a new user
+          with the appropriate privileges or grant these privileges to an existing user. You
+          should not use the SYS or SYSTEM user as an Oracle Streams administrator, and the
+          Oracle Streams administrator should not use the SYSTEM tablespace as its default
+          tablespace.</para>
+
+        <para>Typically, the user name for the Oracle Streams administrator is strmadmin,
+          but any user with the proper privileges can be an Oracle Streams administrator.
+          The examples in this section use strmadmin for the Oracle Streams administrator
+          user name.</para>
+
+        <para>Create a separate tablespace for the Oracle Streams administrator at each
+          participating Oracle Streams database. This tablespace stores any objects
+          created in the Oracle Streams administrator schema, including any spillover of
+          messages from the buffered queues owned by the schema.</para>
+
+        <para>The following statement creates a new tablespace for the Oracle Streams administrator:</para>
+        <screen>
+SQL> CREATE TABLESPACE streams_tbs
+  DATAFILE '/home/oracle/oracle/product/10.2/dre/oradata/dre/streams_tbs.dbf'
+  SIZE 24M REUSE AUTOEXTEND ON NEXT 8M MAXSIZE UNLIMITED;</screen>
+        <!--screen>
+SQL> ALTER DATABASE
+    DATAFILE '/opt/oracle/oradata/dg01/streams_tbs.dbf'
+    AUTOEXTEND ON NEXT 8M;
+
+SQL> CREATE TABLESPACE streams_tbs
+  DATAFILE '/opt/oracle/oradata/dg01/streams_tbs.dbf'
+  SIZE 24M REUSE AUTOEXTEND ON NEXT 8M MAXSIZE UNLIMITED;<screen-->
+
+        <para>Create a user named strmadmin and specify that this user uses the streams_tbs tablespace,
+          run the following statement:</para>
+        <screen>
+SQL> CREATE USER strmadmin IDENTIFIED BY machine4in
+   DEFAULT TABLESPACE streams_tbs
+   QUOTA UNLIMITED ON streams_tbs;</screen>
+
+        <para>Grant the Oracle Streams administrator DBA role:</para>
+        <screen>SQL> GRANT DBA TO strmadmin;</screen>
+
+        <para>Run the GRANT_ADMIN_PRIVILEGE procedure in the DBMS_STREAMS_AUTH package.</para>
+        <screen>
+BEGIN
+  DBMS_STREAMS_AUTH.GRANT_ADMIN_PRIVILEGE(
+    grantee          => 'strmadmin',
+    grant_privileges => TRUE);
+END;
+/
+</screen>
+      </section>
+
+      <section>
+        <title>Configuring Network Connectivity and Database Links</title>
+
+        <para>Check or update <emphasis>global_name</emphasis> of Oracle.</para>
+        <screen>
+SQL> alter database rename global_name to DRE.SONGDONGSHENG.INFO;
+SQL> select count(*) from dre.abc@dg01.songdongsheng.info;
+SQL> select count(*) from dre.abc@dre.songdongsheng.info;
+
+$ sqlplus strmadmin/machine4in@dre
+SQL> select * from global_name;
+
+$ sqlplus strmadmin/machine4in@dg01
+SQL> select * from global_name;
+DG01.SONGDONGSHENG.INFO
+        </screen>
+
+        <para>Edit <filename>/etc/hosts</filename>, you should update to fit your machine.</para>
+        <screen>192.168.30.76   IN-ORACLE-01.songdongsheng.info IN-ORACLE-01
+192.168.30.126  x64-ORA-01.songdongsheng.info x64-ORA-01</screen>
+
+        <para>Edit <filename>$ORACLE_HOME/network/admin/tnsnames.ora</filename>, you should update to fit your machine.</para>
+        <screen>DRE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.30.76)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dre)
+    )
+  )
+
+DG01 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-01.songdongsheng.info)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dg01.songdongsheng.info)
+    )
+  )</screen>
+
+        <para>The following statement creates the database link from the source database to the destination database:</para>
+<screen>
+$ sqlplus strmadmin/machine4in@dre
+SQL> drop database link DG01.SONGDONGSHENG.INFO;
+SQL> CREATE DATABASE LINK DG01.SONGDONGSHENG.INFO CONNECT TO strmadmin
+   IDENTIFIED BY machine4in USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.126)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dg01.songdongsheng.info)))';</screen>
+
+<!--screen>
+CREATE DATABASE LINK "DG01.SONGDONGSHENG.INFO" connect to "STRMADMIN" identified by "machine4in" using '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.126)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dg01.songdongsheng.info)))';
+</screen-->
+
+        <para>The following statement creates the database link from the source database to the destination database:</para>
+<screen>
+$ sqlplus strmadmin/machine4in@dg01
+SQL> drop database link DRE.SONGDONGSHENG.INFO;
+SQL> CREATE DATABASE LINK DRE.SONGDONGSHENG.INFO CONNECT TO strmadmin
+   IDENTIFIED BY machine4in USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.76)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dre)))';</screen>
+      </section>
+
+      <section>
+        <title>Ensuring That Each Source Database Is In ARCHIVELOG Mode</title>
+<screen>
+SQL> archive log list;
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            /home/oracle/oracle/product/10.2/dre/dbs/arch
+Oldest online log sequence     110
+Current log sequence           112
+
+SQL> shutdown immediate;
+SQL> startup mount;
+SQL> alter database archivelog;
+SQL> alter database open;
+</screen>
+      </section>
+
+      <section>
+        <title>Setting Initialization Parameters Relevant to Oracle Streams</title>
+        <para></para>
+        <screen>SQL> alter system set log_archive_config='send, receive, nodg_config' scope=both;</screen>
+        <screen>SQL> alter system set log_archive_config='send, receive, dg_config=(dg01,dg02)' scope=both;</screen>
+      </section>
+
+
+      <section>
+        <title>Set up streams at the destination database</title>
+        <para></para>
+        <screen>
+$ sqlplus strmadmin/machine4in@dg01
+
+REM
+REM    Create streams queue
+REM
+BEGIN
+ DBMS_STREAMS_ADM.SET_UP_QUEUE(
+   queue_user => 'STRMADMIN');
+END;
+/
+
+REM
+REM    Add apply rules for tables at the destination database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_TABLE_RULES(
+   table_name => '"DRE"."ABC"',
+   streams_type => 'APPLY',
+   streams_name => 'STRMADMIN_DRE_REGRESS_RDB',
+   queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
+   include_dml => true,
+   include_ddl => true,
+   source_database => 'DRE.SONGDONGSHENG.INFO');
+END;
+/
+</screen>
+      </section>
+
+      <section>
+        <title>Set up streams at the source database</title>
+        <para></para>
+        <screen>
+$ sqlplus strmadmin/machine4in@dre
+
+REM
+REM    Turn on supplemental logging
+REM
+ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY,UNIQUE INDEX) COLUMNS;
+
+
+REM
+REM    Switch log file
+REM
+ALTER SYSTEM SWITCH LOGFILE;
+
+REM
+REM    Create streams queue
+REM
+BEGIN
+ DBMS_STREAMS_ADM.SET_UP_QUEUE(
+   queue_user => 'STRMADMIN');
+END;
+/
+
+REM
+REM    Add capture rules for tables at the source database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_TABLE_RULES(
+   table_name => '"DRE"."ABC"',
+   streams_type => 'CAPTURE',
+   streams_name => 'STRMADMIN_CAPTURE',
+   queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
+   include_dml => true,
+   include_ddl => true);
+END;
+/
+
+REM
+REM    Add propagation rules for tables at the source database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_TABLE_PROPAGATION_RULES(
+   table_name => '"DRE"."ABC"',
+   streams_name => 'STRMADMIN_PROPAGATE',
+   source_queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
+   destination_queue_name => '"STRMADMIN"."STREAMS_QUEUE"@DG01.SONGDONGSHENG.INFO',
+   include_dml => true,
+   include_ddl => true);
+END;
+/
+
+begin
+  dbms_aqadm.alter_propagation_schedule(
+  queue_name => 'STREAMS_QUEUE',
+  destination => 'DG01.SONGDONGSHENG.INF',
+  latency => 0);
+end;
+/
+</screen>
+      </section>
+
+
+      <section>
+        <title>Set the Instantiation SCN for the tables at the destination database</title>
+<screen>
+exp strmadmin/machine4in@dre TABLES=DRE.ABC FILE=tables.dmp OBJECT_CONSISTENT=Y
+
+imp strmadmin/machine4in@dg01 FULL=Y FILE=tables.dmp IGNORE=Y COMMIT=Y STREAMS_CONFIGURATION=N STREAMS_INSTANTIATION=Y
+</screen>
+        <!--screen>
+$ sqlplus strmadmin/machine4in@dre
+DECLARE
+  iscn  NUMBER;         /* Variable to hold instantiation SCN value */
+BEGIN
+  iscn := DBMS_FLASHBACK.GET_SYSTEM_CHANGE_NUMBER();
+  DBMS_APPLY_ADM.SET_TABLE_INSTANTIATION_SCN@DG01.SONGDONGSHENG.INFO(
+    source_object_name    => 'DRE.ABC',
+    source_database_name  => 'DRE.SONGDONGSHENG.INFO',
+    instantiation_scn     => iscn);
+END;
+/
+        </screen-->
+      </section>
+
+      <section>
+        <title>Start apply process at the destination database</title>
+        <screen>
+$ sqlplus strmadmin/machine4in@dg01
+
+REM
+REM Set the disable_on_error parameter to n so that the apply process will not be disabled
+REM if it encounters an error, and start the apply process at DG01.SONGDONGSHENG.INFO.
+REM
+
+BEGIN
+  DBMS_APPLY_ADM.SET_PARAMETER(
+    apply_name  => 'STRMADMIN_DRE_REGRESS_RDB',
+    parameter   => 'disable_on_error',
+    value       => 'N');
+END;
+/
+
+REM
+REM    Start apply process at the destination database
+REM
+DECLARE
+ v_started number;
+BEGIN
+  SELECT decode(status, 'ENABLED', 1, 0) INTO v_started
+    FROM DBA_APPLY WHERE APPLY_NAME = 'STRMADMIN_DRE_REGRESS_RDB';
+
+  if (v_started = 0) then
+    DBMS_APPLY_ADM.START_APPLY(apply_name  => 'STRMADMIN_DRE_REGRESS_RDB');
+  end if;
+END;
+/
+
+$ sqlplus strmadmin/machine4in@dre
+
+DECLARE
+ v_started number;
+BEGIN
+  SELECT decode(status, 'ENABLED', 1, 0) INTO v_started
+    FROM DBA_CAPTURE WHERE CAPTURE_NAME = 'STRMADMIN_CAPTURE';
+
+  if (v_started = 0) then
+    DBMS_CAPTURE_ADM.START_CAPTURE(capture_name  => 'STRMADMIN_CAPTURE');
+  end if;
+END;
+/
+</screen>
+      </section>
+    </section>
+
+    <section>
+      <title>Stop Streams</title>
+      <screen>
+$ sqlplus strmadmin/machine4in@dre
+begin
+  dbms_capture_adm.stop_capture(
+  capture_name => 'STRMADMIN_CAPTURE');
+end;
+/
+
+$ sqlplus strmadmin/machine4in@dg01
+begin
+  dbms_apply_adm.stop_apply(
+  apply_name => 'STRMADMIN_DRE_REGRESS_RDB');
+end;
+/
+      </screen>
+    </section>
+
+    <section>
+      <title>Remove Streams</title>
+      <para>After stop Streams, run:</para>
+      <screen>
+$ sqlplus strmadmin/machine4in@dre
+exec DBMS_STREAMS_ADM.remove_streams_configuration();
+/
+
+$ sqlplus strmadmin/machine4in@dg01
+exec DBMS_STREAMS_ADM.remove_streams_configuration();
+      </screen>
+    </section>
+
+    <section>
+      <title>Check Streams</title>
+      <screen>
+$ sqlplus strmadmin/machine4in@dre
+SQL> SELECT CAPTURE_NAME, QUEUE_NAME, RULE_SET_NAME, NEGATIVE_RULE_SET_NAME, STATUS FROM DBA_CAPTURE;
+
+SQL> SELECT CAPTURE_NAME, QUEUE_NAME, STATUS, CAPTURED_SCN, APPLIED_SCN FROM DBA_CAPTURE;
+
+如果APPLIED_SCN小于CAPTURED_SCN，则表示在主数据库一端，要么LCR没有被dequeue，要么Propagation进程尚未传播到从数据库一端
+
+$ sqlplus strmadmin/machine4in@dg01
+SQL> SELECT apply_name, apply_captured, status FROM dba_apply;
+      </screen>
+    </section>
+
+  </section>
 </article>
+
+<!--
+
+$ sqlplus dre/dre@dre
+SQL> select * from abc order by lastupdate;
+insert into abc values('1', '100', 'one', sysdate);
+/
+insert into abc values('2', '200', 'two', sysdate);
+/
+insert into abc values('3', '300', 'thi', sysdate);
+/
+insert into abc values('4', '400', 'fou', sysdate);
+/
+insert into abc values('5', '500', 'fiv', sysdate);
+/
+insert into abc values('6', '600', 'six', sysdate);
+/
+commit;
+/
+
+$ sqlplus dre/dre@dg01
+SQL> select * from abc order by lastupdate
+
+在Oracle 10g中建立没有域名的DB_LINK
+http://www.wangchao.net.cn/bbsdetail_1785801.html;
+
+Step by step 配置Oracle Stream
+http://www.techrss.cn/html/2008/09-04/88954.htm
+
+
+Oracle Stream配置详细步骤(用户模式)
+http://www.diybl.com/course/7_databases/oracle/oraclexl/20090821/169406_5.html
+-->
