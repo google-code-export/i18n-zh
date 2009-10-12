@@ -35,11 +35,15 @@
    -->
 
   <!-- Breaking long lines -->
-  <xsl:param name="hyphenate.verbatim">0</xsl:param>
+  <xsl:param name="hyphenate.verbatim">1</xsl:param>
   <xsl:attribute-set name="monospace.verbatim.properties"
                      use-attribute-sets="verbatim.properties monospace.properties">
+    <xsl:attribute name="border-color">blue</xsl:attribute>
+    <xsl:attribute name="border-width">thin</xsl:attribute>
+    <xsl:attribute name="border-style">solid</xsl:attribute>
+    <xsl:attribute name="font-size">8pt</xsl:attribute>
     <xsl:attribute name="wrap-option">wrap</xsl:attribute>
-    <xsl:attribute name="hyphenation-character">&#x25BA;</xsl:attribute>
+    <xsl:attribute name="hyphenation-character">&#x27A4;</xsl:attribute>
   </xsl:attribute-set>
 
   <!-- toc settings -->

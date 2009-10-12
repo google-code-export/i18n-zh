@@ -74,8 +74,7 @@ rpm -ivh unixODBC-devel-2.2.11-7.1.x86_64.rpm unixODBC-2.2.11-7.1.x86_64.rpm</sc
             <title>Update hosts</title>
             <para>Edit <filename>/etc/hosts</filename>, you should update to fit your machine.</para>
             <screen>192.168.30.126 x64-ORA-01.songdongsheng.info x64-ORA-01
-192.168.30.148 x64-ORA-02.songdongsheng.info x64-ORA-02
-</screen>
+192.168.30.148 x64-ORA-02.songdongsheng.info x64-ORA-02</screen>
           </section>
 
           <section>
@@ -104,8 +103,7 @@ net.core.wmem_max = 1048576</screen>
       <section>
         <title>Create user oracle</title>
         <screen># useradd -m -G disk oracle
-# passwd oracle
-</screen>
+# passwd oracle</screen>
       </section>
 
       <section>
@@ -120,8 +118,7 @@ export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
 export NLS_DATE_FORMAT="YYYY-MM-DD HH24:MI:SS"
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$ORACLE_HOME/bin
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib
-</screen>
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib</screen>
       </section>
 
       <section>
@@ -166,8 +163,7 @@ Verify:</screen>
 New 'x64-ORA-01:1 (oracle)' desktop is x64-ORA-01:1
 
 Starting applications specified in /home/oracle/.vnc/xstartup
-Log file is /home/oracle/.vnc/x64-ORA-01:1.log
-</screen>
+Log file is /home/oracle/.vnc/x64-ORA-01:1.log</screen>
           <para>Then you can use vnc client connect the machine, enjoy it!</para>
         </section>
 
@@ -176,8 +172,7 @@ Log file is /home/oracle/.vnc/x64-ORA-01:1.log
 
           <para>When you no longer need VNC server:</para>
           <screen>[oracle@x64-ORA-01 ~]$ vncserver -kill :1
-Killing Xvnc process ID 2838
-</screen>
+Killing Xvnc process ID 2838</screen>
         </section>
     </section>
 
@@ -199,8 +194,7 @@ Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
 PL/SQL Release 11.2.0.1.0 - Production
 CORE    11.2.0.1.0      Production
 TNS for Linux: Version 11.2.0.1.0 - Production
-NLSRTL Version 11.2.0.1.0 - Production
-</screen>
+NLSRTL Version 11.2.0.1.0 - Production</screen>
     </section>
 
     <section>
@@ -209,8 +203,7 @@ NLSRTL Version 11.2.0.1.0 - Production
       <section>
         <title>Enable Forced Logging</title>
         <screen>SQL> alter database force logging;
-SQL> select inst_id , force_logging from gv$database;
-</screen>
+SQL> select inst_id , force_logging from gv$database;</screen>
       </section>
 
       <section>
@@ -221,8 +214,7 @@ SQL> select inst_id , force_logging from gv$database;
         <screen>SQL> shutdown immediate;
 SQL> startup mount;
 SQL> alter database archivelog;
-SQL> alter database open;
-</screen>
+SQL> alter database open;</screen>
       </section>
 
       <section>
@@ -238,8 +230,8 @@ SQL> alter database open;
           configuration must have an up-to-date copy of the password file
           from the primary database.<screen>
 [oracle@x64-ORA-01 ~]$ cd $ORACLE_HOME/dbs
-[oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y
-</screen><note><para>Whenever you grant or revoke
+[oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y</screen>
+          <note><para>Whenever you grant or revoke
           the SYSDBA or SYSOPER privileges or change the login password of
           a user who has these privileges, you must replace the password
           file at each physical or snapshot standby database in the
@@ -268,8 +260,7 @@ System altered.
 
 SQL> alter system set log_archive_dest_2='service=dg02 async net_timeout=10 reopen=60 compression=enable valid_for=(online_logfiles,primary_role) db_unique_name=dg02' scope=both;
 
-System altered.
-</screen>
+System altered.</screen>
       </section>
 
       <section>
@@ -323,8 +314,7 @@ SQL> alter database open;
   Automatic archival             Disabled
   Archive destination            USE_DB_RECOVERY_FILE_DEST
   Oldest online log sequence     6
-  Current log sequence           8
-  </screen>
+  Current log sequence           8</screen>
       </section>
 
       <section>
@@ -358,8 +348,7 @@ DG02 =
       (SERVER = DEDICATED)
       (SERVICE_NAME = dg01.songdongsheng.info)
     )
-  )
-</screen>
+  )</screen>
       </section>
     </section>
 
@@ -377,14 +366,13 @@ DG02 =
         <title>Create password file</title>
         <screen>
 [oracle@x64-ORA-01 dbs]$ cd $ORACLE_HOME/dbs
-[oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y
-</screen>
+[oracle@x64-ORA-01 dbs]$ orapwd file=orapwdg01 password=machine4in force=y</screen>
       </section>
 
       <section>
         <title>Create pfile - $ORACLE_HOME/dbs/initstandby.ora</title>
-        <warning><para>On a primary database, DB_NAME specify the name used when the database was created.
-          On a physical standby database, use the DB_NAME of the primary database.</para></warning>
+        <important><para>On a primary database, DB_NAME specify the name used when the database was created.
+          On a physical standby database, use the DB_NAME of the primary database.</para></important>
 
         <screen>
 *.audit_file_dest='/opt/oracle/admin/dg02/adump'
@@ -419,8 +407,7 @@ DG02 =
 *.fal_server=dg01
 *.fal_client=dg02
 
-*.standby_file_management=auto
-</screen>
+*.standby_file_management=auto</screen>
       </section>
 
       <section>
@@ -449,8 +436,7 @@ total size is 298782519  speedup is 1.00</screen>
         <screen>mkdir $ORACLE_BASE/admin/$ORACLE_SID/pfile
 mkdir /opt/oracle/admin/dg02/adump
 mkdir /opt/oracle/recovery_area
-mkdir /opt/oracle/oradata/dg02/archive
-</screen>
+mkdir /opt/oracle/oradata/dg02/archive</screen>
 
       </section>
 
@@ -485,8 +471,7 @@ DG02 =
       (SERVER = DEDICATED)
       (SERVICE_NAME = dg01.songdongsheng.info)
     )
-  )
-</screen>
+  )</screen>
       </section>
 
       <section>
@@ -510,8 +495,7 @@ Fixed Size                  2213936 bytes
 Variable Size             268437456 bytes
 Database Buffers          138412032 bytes
 Redo Buffers                8482816 bytes
-SQL> alter database mount standby database;
-</screen>
+SQL> alter database mount standby database;</screen>
       </section>
 
       <section>
@@ -534,16 +518,14 @@ SQL> SELECT GROUP#, BYTES FROM V$STANDBY_LOG;
 SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo01.log') SIZE 50M;
 SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo02.log') SIZE 50M;
 SQL> ALTER DATABASE ADD STANDBY LOGFILE ('/opt/oracle/oradata/dg02/sredo03.log') SIZE 50M;
-SQL> ALTER DATABASE ARCHIVELOG;
-</screen>
+SQL> ALTER DATABASE ARCHIVELOG;</screen>
       </section>
 
       <section>
         <title>Start Redo Apply.</title>
         <screen>
 SQL> alter database recover managed standby database using current logfile disconnect from session;
-SQL> alter database open read only;
-</screen>
+SQL> alter database open read only;</screen>
       </section>
 
       <section>
@@ -551,8 +533,7 @@ SQL> alter database open read only;
         <screen>
 SQL> SELECT PROCESS, STATUS FROM V$MANAGED_STANDBY;
 SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
-SQL> SHUTDOWN;
-</screen>
+SQL> SHUTDOWN;</screen>
       </section>
 
       <section>
@@ -563,8 +544,7 @@ SQL> SHUTDOWN;
           <para>On the primary and standby machine, run:</para>
           <screen>
   sqlplus system/machine4in@dg01
-  sqlplus system/machine4in@dg02
-  </screen>
+  sqlplus system/machine4in@dg02  </screen>
         </section>
 
         <section>
@@ -576,8 +556,7 @@ SQL> SELECT SEQUENCE#, APPLIED,
     to_char(FIRST_TIME, 'YYYY-MM-DD HH24:MI:SS') as FIRST_TIME,
     to_char(NEXT_TIME, 'YYYY-MM-DD HH24:MI:SS') as NEXT_TIME
     FROM V$ARCHIVED_LOG
-    ORDER BY SEQUENCE#;
-  </screen>
+    ORDER BY SEQUENCE#;</screen>
         </section>
 
         <section>
@@ -586,8 +565,7 @@ SQL> SELECT SEQUENCE#, APPLIED,
             force a log switch and archive the current online redo log file group:</para>
           <screen>
 SQL> ALTER SYSTEM SWITCH LOGFILE;
-SQL> select max(sequence#) from v$archived_log;
-  </screen>
+SQL> select max(sequence#) from v$archived_log;</screen>
         </section>
 
         <section>
@@ -599,17 +577,14 @@ SQL> SELECT SEQUENCE#, APPLIED,
     to_char(FIRST_TIME, 'YYYY-MM-DD HH24:MI:SS') as FIRST_TIME,
     to_char(NEXT_TIME, 'YYYY-MM-DD HH24:MI:SS') as NEXT_TIME
     FROM V$ARCHIVED_LOG
-    ORDER BY SEQUENCE#;
-  </screen>
+    ORDER BY SEQUENCE#;</screen>
         </section>
 
         <section>
           <title>Verify that received redo has been applied</title>
           <para>On the standby database, query the V$ARCHIVED_LOG view to verify that received redo has been applied:</para>
           <screen>
-SQL> SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;
-
-  </screen>
+SQL> SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;</screen>
         </section>
 
         <section>
@@ -642,8 +617,7 @@ RMAN> delete archivelog all completed before 'sysdate';
 RMAN> backup as compressed backupset format '/opt/oracle/rman/archivelog-%d-%I-%T-%s.log' archivelog all delete input;
 RMAN> backup as compressed backupset format '/opt/oracle/rman/spfile-%d-%I-%T-%s' spfile;
 RMAN> backup as compressed backupset format '/opt/oracle/rman/controlfile-%d-%I-%T-%s' current controlfile;
-RMAN> backup as compressed backupset database tag 'dg02-full-%d-%I-%T-%s' format '/opt/oracle/rman/dg02-full-%d-%I-%T-%s';
-  </screen>
+RMAN> backup as compressed backupset database tag 'dg02-full-%d-%I-%T-%s' format '/opt/oracle/rman/dg02-full-%d-%I-%T-%s';</screen>
         </section>
       </section>
     </section>
@@ -721,7 +695,100 @@ RMAN> backup as compressed backupset database tag 'dg02-full-%d-%I-%T-%s' format
     </section>
 
     <section>
-      <title>Two-Way Replication Environment</title>
+      <title>Common Tasks of Replication Environment</title>
+
+      <section>
+        <title>Setting Initialization Parameters Relevant to Oracle Streams</title>
+        <screen>$ sqlplus strmadmin/machine4in@dre
+SQL> alter system set global_names=true scope=both;
+SQL> alter system set log_archive_config='send, receive, nodg_config' scope=both;
+
+$ sqlplus strmadmin/machine4in@dg01
+SQL> alter system set global_names=true scope=both;
+SQL> alter system set log_archive_config='send, receive, dg_config=(dg01,dg02)' scope=both;</screen>
+      </section>
+
+      <section>
+        <title>Configuring Network Connectivity and Database Links</title>
+
+        <para>Check or update <emphasis>global_name</emphasis> of Oracle.</para>
+
+        <important><para>You must validate the <emphasis>global_name</emphasis>,
+          and set the <emphasis>database link name</emphasis> to the
+          <emphasis>global_name</emphasis> in the other database.</para></important>
+
+        <screen>
+SQL> alter database rename global_name to DRE.SONGDONGSHENG.INFO;
+
+$ sqlplus strmadmin/machine4in@dre
+SQL> select * from global_name;
+DRE.SONGDONGSHENG.INFO
+
+$ sqlplus strmadmin/machine4in@dg01
+SQL> select * from global_name;
+DG01.SONGDONGSHENG.INFO
+
+SQL> select count(1) from dre.abc@dg01.songdongsheng.info;
+SQL> select count(1) from dre.abc@dre.songdongsheng.info;</screen>
+
+        <para>Edit <filename>/etc/hosts</filename>, you should update to fit your machine.</para>
+        <screen>192.168.30.76   IN-ORACLE-01.songdongsheng.info IN-ORACLE-01
+192.168.30.126  x64-ORA-01.songdongsheng.info x64-ORA-01</screen>
+
+        <para>Edit <filename>$ORACLE_HOME/network/admin/tnsnames.ora</filename>, you should update to fit your machine.</para>
+        <screen>DRE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.30.76)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dre)
+    )
+  )
+
+DG01 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-01.songdongsheng.info)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = dg01.songdongsheng.info)
+    )
+  )</screen>
+
+        <para>The following statement creates the database link from the source database to the destination database:</para>
+<screen>
+$ sqlplus strmadmin/machine4in@dre
+SQL> drop database link DG01.SONGDONGSHENG.INFO;
+SQL> CREATE DATABASE LINK DG01.SONGDONGSHENG.INFO
+     CONNECT TO strmadmin IDENTIFIED BY machine4in
+     USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.126)(PORT=1521))
+     (CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dg01.songdongsheng.info)))';</screen>
+
+        <para>The following statement creates the database link from the source database to the destination database:</para>
+<screen>
+$ sqlplus strmadmin/machine4in@dg01
+SQL> drop database link DRE.SONGDONGSHENG.INFO;
+SQL> CREATE DATABASE LINK DRE.SONGDONGSHENG.INFO
+     CONNECT TO strmadmin IDENTIFIED BY machine4in
+     USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.76)(PORT=1521))
+     (CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dre)))';</screen>
+      </section>
+
+      <section>
+        <title>Ensuring That Each Source Database Is In ARCHIVELOG Mode</title>
+<screen>
+SQL> archive log list;
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            /home/oracle/oracle/product/10.2/dre/dbs/arch
+Oldest online log sequence     110
+Current log sequence           112
+
+SQL> shutdown immediate;
+SQL> startup mount;
+SQL> alter database archivelog;
+SQL> alter database open;</screen>
+      </section>
+
       <section>
         <title>Configuring an Oracle Streams Administrator on All Databases</title>
         <para>To configure and manage an Oracle Streams environment, either create a new user
@@ -771,94 +838,12 @@ BEGIN
     grantee          => 'strmadmin',
     grant_privileges => TRUE);
 END;
-/
-</screen>
+/</screen>
       </section>
+    </section>
 
-      <section>
-        <title>Configuring Network Connectivity and Database Links</title>
-
-        <para>Check or update <emphasis>global_name</emphasis> of Oracle.</para>
-        <screen>
-SQL> alter database rename global_name to DRE.SONGDONGSHENG.INFO;
-SQL> select count(*) from dre.abc@dg01.songdongsheng.info;
-SQL> select count(*) from dre.abc@dre.songdongsheng.info;
-
-$ sqlplus strmadmin/machine4in@dre
-SQL> select * from global_name;
-
-$ sqlplus strmadmin/machine4in@dg01
-SQL> select * from global_name;
-DG01.SONGDONGSHENG.INFO
-        </screen>
-
-        <para>Edit <filename>/etc/hosts</filename>, you should update to fit your machine.</para>
-        <screen>192.168.30.76   IN-ORACLE-01.songdongsheng.info IN-ORACLE-01
-192.168.30.126  x64-ORA-01.songdongsheng.info x64-ORA-01</screen>
-
-        <para>Edit <filename>$ORACLE_HOME/network/admin/tnsnames.ora</filename>, you should update to fit your machine.</para>
-        <screen>DRE =
-  (DESCRIPTION =
-    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.30.76)(PORT = 1521))
-    (CONNECT_DATA =
-      (SERVER = DEDICATED)
-      (SERVICE_NAME = dre)
-    )
-  )
-
-DG01 =
-  (DESCRIPTION =
-    (ADDRESS = (PROTOCOL = TCP)(HOST = x64-ORA-01.songdongsheng.info)(PORT = 1521))
-    (CONNECT_DATA =
-      (SERVER = DEDICATED)
-      (SERVICE_NAME = dg01.songdongsheng.info)
-    )
-  )</screen>
-
-        <para>The following statement creates the database link from the source database to the destination database:</para>
-<screen>
-$ sqlplus strmadmin/machine4in@dre
-SQL> drop database link DG01.SONGDONGSHENG.INFO;
-SQL> CREATE DATABASE LINK DG01.SONGDONGSHENG.INFO CONNECT TO strmadmin
-   IDENTIFIED BY machine4in USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.126)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dg01.songdongsheng.info)))';</screen>
-
-<!--screen>
-CREATE DATABASE LINK "DG01.SONGDONGSHENG.INFO" connect to "STRMADMIN" identified by "machine4in" using '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.126)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dg01.songdongsheng.info)))';
-</screen-->
-
-        <para>The following statement creates the database link from the source database to the destination database:</para>
-<screen>
-$ sqlplus strmadmin/machine4in@dg01
-SQL> drop database link DRE.SONGDONGSHENG.INFO;
-SQL> CREATE DATABASE LINK DRE.SONGDONGSHENG.INFO CONNECT TO strmadmin
-   IDENTIFIED BY machine4in USING '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.30.76)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=dre)))';</screen>
-      </section>
-
-      <section>
-        <title>Ensuring That Each Source Database Is In ARCHIVELOG Mode</title>
-<screen>
-SQL> archive log list;
-Database log mode              No Archive Mode
-Automatic archival             Disabled
-Archive destination            /home/oracle/oracle/product/10.2/dre/dbs/arch
-Oldest online log sequence     110
-Current log sequence           112
-
-SQL> shutdown immediate;
-SQL> startup mount;
-SQL> alter database archivelog;
-SQL> alter database open;
-</screen>
-      </section>
-
-      <section>
-        <title>Setting Initialization Parameters Relevant to Oracle Streams</title>
-        <para></para>
-        <screen>SQL> alter system set log_archive_config='send, receive, nodg_config' scope=both;</screen>
-        <screen>SQL> alter system set log_archive_config='send, receive, dg_config=(dg01,dg02)' scope=both;</screen>
-      </section>
-
-
+    <section>
+      <title>Replication - Table Based</title>
       <section>
         <title>Set up streams at the destination database</title>
         <para></para>
@@ -879,16 +864,15 @@ REM    Add apply rules for tables at the destination database
 REM
 BEGIN
  DBMS_STREAMS_ADM.ADD_TABLE_RULES(
-   table_name => '"DRE"."ABC"',
+   table_name => 'DRE.ABC',
    streams_type => 'APPLY',
-   streams_name => 'STRMADMIN_DRE_REGRESS_RDB',
-   queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
+   streams_name => 'STRMADMIN_APPLY',
+   queue_name => 'STRMADMIN.STREAMS_QUEUE',
    include_dml => true,
    include_ddl => true,
    source_database => 'DRE.SONGDONGSHENG.INFO');
 END;
-/
-</screen>
+/</screen>
       </section>
 
       <section>
@@ -922,10 +906,10 @@ REM    Add capture rules for tables at the source database
 REM
 BEGIN
  DBMS_STREAMS_ADM.ADD_TABLE_RULES(
-   table_name => '"DRE"."ABC"',
+   table_name => 'DRE.ABC',
    streams_type => 'CAPTURE',
    streams_name => 'STRMADMIN_CAPTURE',
-   queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
+   queue_name => 'STRMADMIN.STREAMS_QUEUE',
    include_dml => true,
    include_ddl => true);
 END;
@@ -936,10 +920,10 @@ REM    Add propagation rules for tables at the source database
 REM
 BEGIN
  DBMS_STREAMS_ADM.ADD_TABLE_PROPAGATION_RULES(
-   table_name => '"DRE"."ABC"',
+   table_name => 'DRE.ABC',
    streams_name => 'STRMADMIN_PROPAGATE',
-   source_queue_name => '"STRMADMIN"."STREAMS_QUEUE"',
-   destination_queue_name => '"STRMADMIN"."STREAMS_QUEUE"@DG01.SONGDONGSHENG.INFO',
+   source_queue_name => 'STRMADMIN.STREAMS_QUEUE',
+   destination_queue_name => 'STRMADMIN.STREAMS_QUEUE@DG01.SONGDONGSHENG.INFO',
    include_dml => true,
    include_ddl => true);
 END;
@@ -947,23 +931,21 @@ END;
 
 begin
   dbms_aqadm.alter_propagation_schedule(
-  queue_name => 'STREAMS_QUEUE',
-  destination => 'DG01.SONGDONGSHENG.INF',
+  queue_name => 'STRMADMIN.STREAMS_QUEUE',
+  destination => 'DG01.SONGDONGSHENG.INFO',
   latency => 0);
 end;
-/
-</screen>
+/</screen>
       </section>
 
 
       <section>
         <title>Set the Instantiation SCN for the tables at the destination database</title>
 <screen>
-exp strmadmin/machine4in@dre TABLES=DRE.ABC FILE=tables.dmp OBJECT_CONSISTENT=Y
+$ exp strmadmin/machine4in@dre TABLES=DRE.ABC FILE=tables.dmp OBJECT_CONSISTENT=Y
 
-imp strmadmin/machine4in@dg01 FULL=Y FILE=tables.dmp IGNORE=Y COMMIT=Y STREAMS_CONFIGURATION=N STREAMS_INSTANTIATION=Y
-</screen>
-        <!--screen>
+$ imp strmadmin/machine4in@dg01 FULL=Y FILE=tables.dmp IGNORE=Y COMMIT=Y STREAMS_CONFIGURATION=N STREAMS_INSTANTIATION=Y
+
 $ sqlplus strmadmin/machine4in@dre
 DECLARE
   iscn  NUMBER;         /* Variable to hold instantiation SCN value */
@@ -975,7 +957,7 @@ BEGIN
     instantiation_scn     => iscn);
 END;
 /
-        </screen-->
+        </screen>
       </section>
 
       <section>
@@ -990,7 +972,7 @@ REM
 
 BEGIN
   DBMS_APPLY_ADM.SET_PARAMETER(
-    apply_name  => 'STRMADMIN_DRE_REGRESS_RDB',
+    apply_name  => 'STRMADMIN_APPLY',
     parameter   => 'disable_on_error',
     value       => 'N');
 END;
@@ -1003,10 +985,10 @@ DECLARE
  v_started number;
 BEGIN
   SELECT decode(status, 'ENABLED', 1, 0) INTO v_started
-    FROM DBA_APPLY WHERE APPLY_NAME = 'STRMADMIN_DRE_REGRESS_RDB';
+    FROM DBA_APPLY WHERE APPLY_NAME = 'STRMADMIN_APPLY';
 
   if (v_started = 0) then
-    DBMS_APPLY_ADM.START_APPLY(apply_name  => 'STRMADMIN_DRE_REGRESS_RDB');
+    DBMS_APPLY_ADM.START_APPLY(apply_name  => 'STRMADMIN_APPLY');
   end if;
 END;
 /
@@ -1023,8 +1005,318 @@ BEGIN
     DBMS_CAPTURE_ADM.START_CAPTURE(capture_name  => 'STRMADMIN_CAPTURE');
   end if;
 END;
-/
-</screen>
+/</screen>
+      </section>
+
+      <section>
+        <title>Two-Way Replication</title>
+        <para>If we redo the replicate process with exchange the destination
+          database and the source database, then we have two-way replication.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Replication - Schema Based</title>
+    </section>
+
+    <section>
+      <title>Replication - Conflict Resolution</title>
+      <para>A <emphasis>conflict</emphasis> is a mismatch between the old values in an LCR
+        and the expected data in a table. Conflicts can occur in an Oracle Streams
+        environment that permits <emphasis>concurrent</emphasis> data manipulation language
+        (DML) operations on the same data at <emphasis>multiple databases</emphasis>.
+        In an Oracle Streams environment, DML conflicts can occur only when an apply process
+        is applying a message that contains a row change resulting from a DML operation.
+        This type of message is called a row logical change record, or row LCR. An apply
+        process automatically detects conflicts caused by row LCRs.</para>
+      <para>For example, when two transactions originating at different databases update the
+        same row at nearly the same time, a conflict can occur. When you configure an Oracle
+        Streams environment, you must consider whether conflicts can occur. You can configure
+        conflict resolution to resolve conflicts automatically, if your system design permits
+        conflicts.</para>
+      <para>In general, you <emphasis>should</emphasis> try to design an Oracle Streams
+        environment that <emphasis>avoids</emphasis> the possibility of conflicts. Using the
+        conflict avoidance techniques, most system designs can avoid conflicts in all or a
+        large percentage of the shared data. However, many applications require that some
+        percentage of the shared data be updatable at multiple databases at any time. If
+        this is the case, then you must address the possibility of conflicts.</para>
+
+      <section>
+        <title>Conflict Types in an Oracle Streams Environment</title>
+        <itemizedlist>
+          <listitem><para>Update Conflicts in an Oracle Streams Environment</para></listitem>
+          <listitem><para>Uniqueness Conflicts in an Oracle Streams Environment</para></listitem>
+          <listitem><para>Delete Conflicts in an Oracle Streams Environment</para></listitem>
+          <listitem><para>Foreign Key Conflicts in an Oracle Streams Environment</para></listitem>
+          <listitem><para>Ordering conflicts can occur in an Oracle Streams environment
+            when three or more databases share data and the data is updated at two or
+            more of these databases.</para></listitem>
+        </itemizedlist>
+      </section>
+
+      <section>
+        <title>Conflict Detection in an Oracle Streams Environment</title>
+        <para>An apply process detects update, uniqueness, delete, and foreign key conflicts
+          as follows:</para>
+
+        <itemizedlist>
+          <listitem><para>An apply process detects an update conflict if there is any
+            difference between the old values for a row in a row LCR and the current
+            values of the same row at the destination database.</para></listitem>
+          <listitem><para>An apply process detects a uniqueness conflict if a uniqueness
+            constraint violation occurs when applying an LCR that contains an insert or
+            update operation.</para></listitem>
+          <listitem><para>An apply process detects a delete conflict if it cannot find
+            a row when applying an LCR that contains an update or delete operation,
+            because the primary key of the row does not exist.</para></listitem>
+          <listitem><para>An apply process detects a foreign key conflict if a foreign
+            key constraint violation occurs when applying an LCR.</para></listitem>
+        </itemizedlist>
+
+        <para>A conflict can be detected when an apply process attempts to apply an LCR
+          directly or when an apply process handler, such as a DML handler, runs the
+          EXECUTE member procedure for an LCR. A conflict can also be detected when either
+          the EXECUTE_ERROR or EXECUTE_ALL_ERRORS procedure in the DBMS_APPLY_ADM package
+          is run.</para>
+
+      </section>
+
+      <section>
+        <title>Conflict Avoidance in an Oracle Streams Environment</title>
+
+        <section>
+          <title>Use a Primary Database Ownership Model</title>
+          <para>You can avoid the possibility of conflicts by limiting the number of databases
+            in the system that have simultaneous update access to the tables containing shared
+            data. Primary ownership prevents all conflicts, because only a single database
+            permits updates to a set of shared data. Applications can even use row and column
+            subsetting to establish more granular ownership of data than at the table level.
+            For example, applications might have update access to specific columns or rows in
+            a shared table on a database-by-database basis.</para>
+        </section>
+
+        <section>
+          <title>Avoid Specific Types of Conflicts</title>
+          <para>If a primary database ownership model is too restrictive for your application
+            requirements, then you can use a shared ownership data model, which means that
+            conflicts might be possible. Even so, typically you can use some simple strategies
+            to avoid specific types of conflicts.</para>
+        </section>
+
+        <section>
+          <title>Avoid Uniqueness Conflicts in an Oracle Streams Environment</title>
+          <para>You can avoid uniqueness conflicts by ensuring that each database uses unique
+            identifiers for shared data.</para>
+        </section>
+
+        <section>
+          <title>Avoid Delete Conflicts in an Oracle Streams Environment</title>
+          <para>Always avoid delete conflicts in shared data environments. In general,
+            applications that operate within a shared ownership data model should not delete
+            rows using DELETE statements. Instead, applications should mark rows for deletion
+            and then configure the system to purge logically deleted rows periodically.</para>
+        </section>
+
+        <section>
+          <title>Avoid Update Conflicts in an Oracle Streams Environment</title>
+          <para>After trying to eliminate the possibility of uniqueness and delete conflicts,
+            you should also try to limit the number of possible update conflicts. However,
+            in a shared ownership data model, update conflicts cannot be avoided in all cases.
+            If you cannot avoid all update conflicts, then you must understand the types of
+            conflicts possible and configure the system to resolve them if they occur.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Conflict Resolution in an Oracle Streams Environment</title>
+        <para>After an update conflict has been detected, a conflict handler can attempt to
+          resolve it. Oracle Streams provides prebuilt conflict handlers to resolve update
+          conflicts, but not uniqueness, delete, foreign key, or ordering conflicts. However,
+          you can build your own custom conflict handler to resolve data conflicts specific
+          to your business rules. Such a conflict handler can be part of a procedure DML
+          handler or an error handler.</para>
+
+        <para>Oracle provides the following types of prebuilt update conflict handlers for an
+          Oracle Streams environment: <emphasis>OVERWRITE</emphasis>,
+          <emphasis>DISCARD</emphasis>, <emphasis>MAXIMUM</emphasis>,
+          and <emphasis>MINIMUM</emphasis>.</para>
+      </section>
+
+      <section>
+        <title>Managing Oracle Streams Conflict Detection and Resolution</title>
+
+        <section>
+          <title>Setting an Update Conflict Handler</title>
+          <para>Set an update conflict handler using the SET_UPDATE_CONFLICT_HANDLER procedure
+            in the DBMS_APPLY_ADM package. e.g.</para>
+          <screen>DECLARE
+  cols DBMS_UTILITY.NAME_ARRAY;
+  BEGIN
+    cols(1) := 'job_title';
+    cols(2) := 'min_salary';
+    cols(3) := 'max_salary';
+    DBMS_APPLY_ADM.SET_UPDATE_CONFLICT_HANDLER(
+      object_name       => 'hr.jobs',
+      method_name       => 'OVERWRITE',
+      resolution_column => 'job_title',
+      column_list       => cols);
+END;
+/</screen>
+        </section>
+
+        <section>
+          <title>Modifying an Existing Update Conflict Handler</title>
+          <para>You can modify an existing update conflict handler by running the
+            SET_UPDATE_CONFLICT_HANDLER procedure in the DBMS_APPLY_ADM package. To update an
+            existing conflict handler, specify the same table and resolution column as the
+            existing conflict handler. e.g.</para>
+            <screen>DECLARE
+  cols DBMS_UTILITY.NAME_ARRAY;
+  BEGIN
+    cols(1) := 'job_title';
+    cols(2) := 'min_salary';
+    cols(3) := 'max_salary';
+    DBMS_APPLY_ADM.SET_UPDATE_CONFLICT_HANDLER(
+      object_name       => 'hr.jobs',
+      method_name       => 'DISCARD',
+      resolution_column => 'job_title',
+      column_list       => cols);
+END;
+/</screen>
+        </section>
+
+        <section>
+          <title>Removing an Existing Update Conflict Handler</title>
+          <para>You can remove an existing update conflict handler by running the
+            SET_UPDATE_CONFLICT_HANDLER procedure in the DBMS_APPLY_ADM package. To remove a an
+            existing conflict handler, specify NULL for the method, and specify the same table,
+            column list, and resolution column as the existing conflict handler. e.g.</para>
+            <screen>DECLARE
+  cols DBMS_UTILITY.NAME_ARRAY;
+  BEGIN
+    cols(1) := 'job_title';
+    cols(2) := 'min_salary';
+    cols(3) := 'max_salary';
+    DBMS_APPLY_ADM.SET_UPDATE_CONFLICT_HANDLER(
+      object_name       => 'hr.jobs',
+      method_name       => NULL,
+      resolution_column => 'job_title',
+      column_list       => cols);
+END;
+/</screen>
+        </section>
+
+        <section>
+          <title>Stopping Conflict Detection for Nonkey Columns</title>
+          <para>You can stop conflict detection for nonkey columns using the COMPARE_OLD_VALUES
+            procedure in the DBMS_APPLY_ADM package. e.g.</para>
+            <screen>DECLARE
+  cols DBMS_UTILITY.LNAME_ARRAY;
+  BEGIN
+    cols(1) := 'first_name';
+    cols(2) := 'last_name';
+    cols(3) := 'email';
+    cols(4) := 'phone_number';
+    cols(5) := 'hire_date';
+    cols(6) := 'job_id';
+    cols(7) := 'salary';
+    cols(8) := 'commission_pct';
+  DBMS_APPLY_ADM.COMPARE_OLD_VALUES(
+    object_name  => 'hr.employees',
+    column_table => cols,
+    operation    => '*',
+    compare      => FALSE);
+END;
+/</screen>
+        </section>
+      </section>
+
+      <section>
+        <title>Monitoring Conflict Detection and Update Conflict Handlers</title>
+
+        <section>
+          <title>Displaying Information About Conflict Detection</title>
+
+          <para>You can stop conflict detection for nonkey columns using the COMPARE_OLD_VALUES
+            procedure in the DBMS_APPLY_ADM package. When you use this procedure, conflict
+            detection is stopped for updates and deletes on the specified columns for all apply
+            processes at a destination database. To display each column for which conflict
+            detection has been stopped, run the following query:</para>
+
+          <screen>COLUMN OBJECT_OWNER HEADING 'Table Owner' FORMAT A15
+COLUMN OBJECT_NAME HEADING 'Table Name' FORMAT A20
+COLUMN COLUMN_NAME HEADING 'Column Name' FORMAT A20
+COLUMN COMPARE_OLD_ON_DELETE HEADING 'Compare|Old On|Delete' FORMAT A7
+COLUMN COMPARE_OLD_ON_UPDATE HEADING 'Compare|Old On|Update' FORMAT A7
+
+SELECT OBJECT_OWNER,
+       OBJECT_NAME,
+       COLUMN_NAME,
+       COMPARE_OLD_ON_DELETE,
+       COMPARE_OLD_ON_UPDATE
+  FROM DBA_APPLY_TABLE_COLUMNS
+  WHERE APPLY_DATABASE_LINK IS NULL;</screen>
+
+          <para>Your output should look similar to the following:</para>
+          <screen>Compare Compare
+                                                          Old On  Old On
+Table Owner     Table Name           Column Name          Delete  Update
+--------------- -------------------- -------------------- ------- -------
+HR              EMPLOYEES            COMMISSION_PCT       NO      NO
+HR              EMPLOYEES            EMAIL                NO      NO
+HR              EMPLOYEES            FIRST_NAME           NO      NO
+HR              EMPLOYEES            HIRE_DATE            NO      NO
+HR              EMPLOYEES            JOB_ID               NO      NO
+HR              EMPLOYEES            LAST_NAME            NO      NO
+HR              EMPLOYEES            PHONE_NUMBER         NO      NO
+HR              EMPLOYEES            SALARY               NO      NO</screen>
+
+        </section>
+
+        <section>
+          <title>Monitoring Conflict Detection and Update Conflict Handlers</title>
+
+          <para>When you specify an update conflict handler using the
+            SET_UPDATE_CONFLICT_HANDLER procedure in the DBMS_APPLY_ADM package, the update
+            conflict handler is run for all apply processes in the database, when a relevant
+            conflict occurs.</para>
+
+          <para>The query in this section displays all of the columns for which conflict
+            resolution has been specified using a prebuilt update conflict handler. That is,
+            it shows the columns in all of the column lists specified in the database. This
+            query also shows the type of prebuilt conflict handler specified and the resolution
+            column specified for the column list.</para>
+
+          <para>To display information about all of the update conflict handlers in a
+            database, run the following query:</para>
+
+          <screen>COLUMN OBJECT_OWNER HEADING 'Table|Owner' FORMAT A5
+COLUMN OBJECT_NAME HEADING 'Table Name' FORMAT A12
+COLUMN METHOD_NAME HEADING 'Method' FORMAT A12
+COLUMN RESOLUTION_COLUMN HEADING 'Resolution|Column' FORMAT A13
+COLUMN COLUMN_NAME HEADING 'Column Name' FORMAT A30
+
+SELECT OBJECT_OWNER,
+       OBJECT_NAME,
+       METHOD_NAME,
+       RESOLUTION_COLUMN,
+       COLUMN_NAME
+  FROM DBA_APPLY_CONFLICT_COLUMNS
+  ORDER BY OBJECT_OWNER, OBJECT_NAME, RESOLUTION_COLUMN;</screen>
+
+          <para>Your output looks similar to the following:</para>
+
+          <screen>Table                           Resolution
+Owner Table Name   Method       Column        Column Name
+----- ------------ ------------ ------------- ------------------------------
+HR    COUNTRIES    MAXIMUM      TIME          COUNTRY_NAME
+HR    COUNTRIES    MAXIMUM      TIME          REGION_ID
+HR    COUNTRIES    MAXIMUM      TIME          TIME
+HR    DEPARTMENTS  MAXIMUM      TIME          DEPARTMENT_NAME
+HR    DEPARTMENTS  MAXIMUM      TIME          LOCATION_ID
+HR    DEPARTMENTS  MAXIMUM      TIME          MANAGER_ID
+HR    DEPARTMENTS  MAXIMUM      TIME          TIME</screen>
+        </section>
       </section>
     </section>
 
@@ -1041,10 +1333,9 @@ end;
 $ sqlplus strmadmin/machine4in@dg01
 begin
   dbms_apply_adm.stop_apply(
-  apply_name => 'STRMADMIN_DRE_REGRESS_RDB');
+  apply_name => 'STRMADMIN_APPLY');
 end;
-/
-      </screen>
+/</screen>
     </section>
 
     <section>
@@ -1056,8 +1347,7 @@ exec DBMS_STREAMS_ADM.remove_streams_configuration();
 /
 
 $ sqlplus strmadmin/machine4in@dg01
-exec DBMS_STREAMS_ADM.remove_streams_configuration();
-      </screen>
+exec DBMS_STREAMS_ADM.remove_streams_configuration();</screen>
     </section>
 
     <section>
@@ -1065,14 +1355,15 @@ exec DBMS_STREAMS_ADM.remove_streams_configuration();
       <screen>
 $ sqlplus strmadmin/machine4in@dre
 SQL> SELECT CAPTURE_NAME, QUEUE_NAME, RULE_SET_NAME, NEGATIVE_RULE_SET_NAME, STATUS FROM DBA_CAPTURE;
+STRMADMIN_CAPTURE, STREAMS_QUEUE, RULESET$_57, , ENABLED
+
 
 SQL> SELECT CAPTURE_NAME, QUEUE_NAME, STATUS, CAPTURED_SCN, APPLIED_SCN FROM DBA_CAPTURE;
-
-如果APPLIED_SCN小于CAPTURED_SCN，则表示在主数据库一端，要么LCR没有被dequeue，要么Propagation进程尚未传播到从数据库一端
+STRMADMIN_CAPTURE, STREAMS_QUEUE, ENABLED, 3440980, 3440980
 
 $ sqlplus strmadmin/machine4in@dg01
 SQL> SELECT apply_name, apply_captured, status FROM dba_apply;
-      </screen>
+STRMADMIN_APPLY, YES, ENABLED</screen>
     </section>
 
   </section>
@@ -1094,19 +1385,12 @@ insert into abc values('5', '500', 'fiv', sysdate);
 /
 insert into abc values('6', '600', 'six', sysdate);
 /
-commit;
+insert into abc values('7', '700', 'sev', sysdate);
 /
+insert into abc values('8', '800', 'eig', sysdate);
+/
+commit;
 
-$ sqlplus dre/dre@dg01
-SQL> select * from abc order by lastupdate
-
-在Oracle 10g中建立没有域名的DB_LINK
-http://www.wangchao.net.cn/bbsdetail_1785801.html;
-
-Step by step 配置Oracle Stream
-http://www.techrss.cn/html/2008/09-04/88954.htm
-
-
-Oracle Stream配置详细步骤(用户模式)
-http://www.diybl.com/course/7_databases/oracle/oraclexl/20090821/169406_5.html
+SQL> select count(1) from dre.abc@dg01.songdongsheng.info;
+SQL> select count(1) from dre.abc@dre.songdongsheng.info;
 -->
