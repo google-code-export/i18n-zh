@@ -886,7 +886,6 @@ REM    Turn on supplemental logging
 REM
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY,UNIQUE INDEX) COLUMNS;
 
-
 REM
 REM    Switch log file
 REM
@@ -929,12 +928,19 @@ BEGIN
 END;
 /
 
-begin
-  dbms_aqadm.alter_propagation_schedule(
+REM
+REM    Propagation latency is the maximum wait, in seconds, in the propagation
+REM    window for a message to be propagated after it is enqueued. Set the
+REM    propagation latency to an appropriate value for each propagation in your
+REM    Oracle Streams replication environment. The default propagation latency
+REM    value is 60.
+REM
+BEGIN
+  DBMS_AQADM.ALTER_PROPAGATION_SCHEDULE(
   queue_name => 'STRMADMIN.STREAMS_QUEUE',
   destination => 'DG01.SONGDONGSHENG.INFO',
   latency => 0);
-end;
+END;
 /</screen>
       </section>
 
@@ -962,8 +968,7 @@ END;
 
       <section>
         <title>Start apply process at the destination database</title>
-        <screen>
-$ sqlplus strmadmin/machine4in@dg01
+        <screen>$ sqlplus strmadmin/machine4in@dg01
 
 REM
 REM Set the disable_on_error parameter to n so that the apply process will not be disabled
@@ -1017,6 +1022,146 @@ END;
 
     <section>
       <title>Replication - Schema Based</title>
+
+      <section>
+        <title>Set up streams at the destination database</title>
+        <screen>$ sqlplus strmadmin/machine4in@dg01
+
+REM
+REM    Add apply rules for schemes at the destination database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_SCHEMA_RULES(
+   schema_name => 'SCOTT',
+   streams_type => 'APPLY',
+   streams_name => 'STRMADMIN_APPLY',
+   queue_name => 'STRMADMIN.STREAMS_QUEUE',
+   include_dml => true,
+   include_ddl => true,
+   source_database => 'DRE.SONGDONGSHENG.INFO');
+END;
+/</screen>
+      </section>
+
+      <section>
+        <title>Set up streams at the source database</title>
+        <screen>$ sqlplus strmadmin/machine4in@dre
+
+REM
+REM    Turn on supplemental logging
+REM
+ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY,UNIQUE INDEX) COLUMNS;
+
+REM
+REM    Switch log file
+REM
+ALTER SYSTEM SWITCH LOGFILE;
+
+REM
+REM    Add propagation rules for schemes at the source database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_SCHEMA_PROPAGATION_RULES(
+   schema_name => 'SCOTT',
+   streams_name => 'STRMADMIN_PROPAGATE',
+   source_queue_name => 'STRMADMIN.STREAMS_QUEUE',
+   destination_queue_name => 'STRMADMIN.STREAMS_QUEUE@DG01.SONGDONGSHENG.INFO',
+   include_dml => true,
+   include_ddl => true,
+   source_database => 'DRE.SONGDONGSHENG.INFO');
+END;
+/
+
+REM
+REM    Propagation latency is the maximum wait, in seconds, in the propagation
+REM    window for a message to be propagated after it is enqueued. Set the
+REM    propagation latency to an appropriate value for each propagation in your
+REM    Oracle Streams replication environment. The default propagation latency
+REM    value is 60.
+REM
+BEGIN
+  DBMS_AQADM.ALTER_PROPAGATION_SCHEDULE(
+  queue_name => 'STRMADMIN.STREAMS_QUEUE',
+  destination => 'DG01.SONGDONGSHENG.INFO',
+  latency => 0);
+END;
+/
+
+REM
+REM    Add capture rules for schemes at the source database
+REM
+BEGIN
+ DBMS_STREAMS_ADM.ADD_SCHEMA_RULES(
+   schema_name => 'SCOTT',
+   streams_type => 'CAPTURE',
+   streams_name => 'STRMADMIN_CAPTURE',
+   queue_name => 'STRMADMIN.STREAMS_QUEUE',
+   include_dml => true,
+   include_ddl => true,
+   source_database => 'DRE.SONGDONGSHENG.INFO');
+END;
+/</screen>
+      </section>
+
+      <section>
+        <title>Set the Instantiation SCN for the tables at the destination database</title>
+        <screen>$ exp strmadmin/machine4in@dre OWNER=SCOTT FILE=schemas.dmp OBJECT_CONSISTENT=Y
+
+$ imp strmadmin/machine4in@dg01 FULL=Y FILE=schemas.dmp IGNORE=Y COMMIT=Y STREAMS_CONFIGURATION=N STREAMS_INSTANTIATION=Y</screen>
+      </section>
+
+      <section>
+        <title>Start apply process at the destination database</title>
+        <screen>$ sqlplus strmadmin/machine4in@dg01
+
+REM
+REM Set the disable_on_error parameter to n so that the apply process will not be disabled
+REM if it encounters an error, and start the apply process at DG01.SONGDONGSHENG.INFO.
+REM
+
+BEGIN
+  DBMS_APPLY_ADM.SET_PARAMETER(
+    apply_name  => 'STRMADMIN_APPLY',
+    parameter   => 'disable_on_error',
+    value       => 'N');
+END;
+/
+
+REM
+REM    Start apply process at the destination database
+REM
+DECLARE
+ v_started number;
+BEGIN
+  SELECT decode(status, 'ENABLED', 1, 0) INTO v_started
+    FROM DBA_APPLY WHERE APPLY_NAME = 'STRMADMIN_APPLY';
+
+  if (v_started = 0) then
+    DBMS_APPLY_ADM.START_APPLY(apply_name  => 'STRMADMIN_APPLY');
+  end if;
+END;
+/
+
+$ sqlplus strmadmin/machine4in@dre
+
+DECLARE
+ v_started number;
+BEGIN
+  SELECT decode(status, 'ENABLED', 1, 0) INTO v_started
+    FROM DBA_CAPTURE WHERE CAPTURE_NAME = 'STRMADMIN_CAPTURE';
+
+  if (v_started = 0) then
+    DBMS_CAPTURE_ADM.START_CAPTURE(capture_name  => 'STRMADMIN_CAPTURE');
+  end if;
+END;
+/</screen>
+      </section>
+
+      <section>
+        <title>Two-Way Replication</title>
+        <para>If we redo the replicate process with exchange the destination database and the
+          source database, then we have two-way replication.</para>
+      </section>
     </section>
 
     <section>
@@ -1321,6 +1466,29 @@ HR    DEPARTMENTS  MAXIMUM      TIME          TIME</screen>
     </section>
 
     <section>
+      <title>Restart Broken Propagations</title>
+      <para>Sometimes, the propagation job for a propagation might become "broken"
+        or fail to start after it encounters an error or after a database restart.
+        Typically, stopping and restarting the propagation solves the problem. For
+        example, to stop and restart a propagation named prop1, run the following
+        procedures:</para>
+      <screen>$ sqlplus strmadmin/machine4in@dre
+
+BEGIN
+  DBMS_PROPAGATION_ADM.STOP_PROPAGATION(
+    propagation_name => 'STRMADMIN_PROPAGATE',
+    force            => TRUE);
+END;
+/
+
+BEGIN
+  DBMS_PROPAGATION_ADM.START_PROPAGATION(
+    propagation_name => 'STRMADMIN_PROPAGATE');
+END;
+/</screen>
+    </section>
+
+    <section>
       <title>Stop Streams</title>
       <screen>
 $ sqlplus strmadmin/machine4in@dre
@@ -1363,7 +1531,9 @@ STRMADMIN_CAPTURE, STREAMS_QUEUE, ENABLED, 3440980, 3440980
 
 $ sqlplus strmadmin/machine4in@dg01
 SQL> SELECT apply_name, apply_captured, status FROM dba_apply;
-STRMADMIN_APPLY, YES, ENABLED</screen>
+STRMADMIN_APPLY, YES, ENABLED
+
+SQL> select * from DBA_APPLY_ERROR;</screen>
     </section>
 
   </section>
