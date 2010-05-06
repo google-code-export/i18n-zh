@@ -12,14 +12,14 @@ if "%JAVACMD%" == "" set JAVACMD=java
 :runXep
 @set XEP_HOME=%~dp0..\xep
 
-set CP=%XEP_HOME%\lib\empty-stamp.jar;%XEP_HOME%\lib\xep.jar;%XEP_HOME%\lib\saxon.jar;%XEP_HOME%\lib\xt.jar
+set CP=%XEP_HOME%\lib\xep.jar;%XEP_HOME%\lib\saxon.jar;%XEP_HOME%\lib\xt.jar
 
 if x%OS%==xWindows_NT goto WINNT
-"%JAVACMD%" -Xmx1024m -classpath "%CP%" com.renderx.xep.XSLDriver "-Dcom.renderx.xep.CONFIG=%XEP_HOME%\xep.xml" %1 %2 %3 %4 %5 %6 %7 %8 %9
+"%JAVACMD%" -Xmx1024m -classpath "%CP%" "-Dcom.renderx.xep.CONFIG=%XEP_HOME%\xep.xml" com.renderx.xep.Validator %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto END
 
 :WINNT
-"%JAVACMD%" -Xmx1024m -classpath "%CP%" com.renderx.xep.XSLDriver "-Dcom.renderx.xep.CONFIG=%XEP_HOME%\xep.xml" %*
+"%JAVACMD%" -Xmx1024m -classpath "%CP%" "-Dcom.renderx.xep.CONFIG=%XEP_HOME%\xep.xml" com.renderx.xep.Validator %*
 
 :END
 set CP=

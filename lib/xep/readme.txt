@@ -1,7 +1,7 @@
 XEP - XSL Formatting Engine for Paged Media
 
-Version 4.16 build 20090723
-July 23rd, 2009
+Version 4.18 build 20100322
+March 22th, 2010
 
 
 CONTENTS
@@ -37,7 +37,7 @@ on older Java machines.
     You  can run  the jar  by typing  the following  command  on the
     prompt:
     
-      java -jar setup-4.16-20090723-personal.jar
+      java -jar setup-4.18-20100322-personal.jar
       
     You will be prompted for the  target  directory name.  Type  the 
     path in the edit box, or choose a directory by pressing "Browse" 
@@ -47,7 +47,7 @@ on older Java machines.
     You can also  run setup in console mode by adding '-c' switch to
     the command line:
 
-      java -jar setup-4.16-20090723-personal.jar -c
+      java -jar setup-4.18-20100322-personal.jar -c
     
     During the installation system copies all files to the specified
     location  and sets up necessary configuration files. 
@@ -102,8 +102,8 @@ sales@renderx.com.
 
 6. Copyright notices
 
-Copyright (c) 1999-2004 RenderX Corporation.  All rights reserved.
-Patents pending.
+RenderX (r), Copyright (c) 1999-2009 RenderX, Inc.  All rights reserved.
+Patents issued.
 
 This product includes program code by Sun Microsystems, Inc. 
 Copyright (c) 1999-2001 Sun Microsystems, Inc. All rights reserved.

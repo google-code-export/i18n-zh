@@ -50,5 +50,5 @@ fi
 echo "XEP_HOME: $XEP_HOME"
 
 $JAVACMD -Xmx1024m \
-    -cp $XEP_HOME/lib/empty-stamp.jar:$XEP_HOME/lib/xep.jar:$XEP_HOME/lib/saxon.jar:$XEP_HOME/lib/xt.jar  \
-    "-Dcom.renderx.xep.CONFIG=$XEP_HOME/xep.xml" com.renderx.xep.XSLDriver "$@"
+    -cp $XEP_HOME/lib/xep.jar:$XEP_HOME/lib/saxon.jar:$XEP_HOME/lib/xt.jar  \
+    "-Dcom.renderx.xep.CONFIG=$XEP_HOME/xep.xml" com.renderx.xep.Validator "$@"
