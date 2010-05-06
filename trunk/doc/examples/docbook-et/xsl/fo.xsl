@@ -101,7 +101,6 @@
 
     <fo:block color="#7C1C51">
       <xsl:if test="$position='right'">
-         pageclass=<xsl:value-of select="$pageclass"/>,
          <xsl:apply-templates select="." mode="title.markup"/>
          <fo:retrieve-marker retrieve-class-name="currentSectionTitle" />
       </xsl:if>
@@ -118,12 +117,6 @@
              <xsl:value-of select="/book/bookinfo/title"/>
           </xsl:if>
         </xsl:when>
-
-        <xsl:otherwise>
-          <xsl:if test="$position='left'">
-             other-left-<xsl:value-of select="$pageclass"/>
-          </xsl:if>
-        </xsl:otherwise>
       </xsl:choose>
 
     </fo:block>
