@@ -48,7 +48,7 @@ then
 fi
 
 # add fop.jar, fop-sandbox and fop-hyph.jar, which reside in $FOP_HOME/build
-LOCALCLASSPATH=$FOP_HOME/build/fop.jar:$FOP_HOME/build/fop-hyph.jar:$FOP_HOME/build/fop-sandbox.jar
+LOCALCLASSPATH=$FOP_HOME/build/fop.jar
 
 # add in the dependency .jar files, which reside in $FOP_HOME/lib
 for i in ${FOP_HOME}/lib/*.jar; do
