@@ -1,0 +1,32 @@
+#
+# CFLAGS  = /nologo /c /W3 /EHsc /Zi /MD /arch:SSE2 /O2 /Oy- /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
+#
+
+SET INCLUDE=C:\opt\vs2010\VC\include;C:\opt\vs2010\VC\atlmfc\include;C:\Program Files\Microsoft SDKs\Windows\v7.1\Include
+SET LIB=C:\opt\vs2010\VC\lib;C:\opt\vs2010\VC\atlmfc\lib;C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib
+SET Path=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\vs2010\Common7\IDE;C:\opt\vs2010\Common7\Tools;C:\opt\vs2010\VC\bin;C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin;C:\opt\svn-1.6\bin
+
+from datetime import datetime;
+dt = datetime.utcnow() - datetime(2000, 1, 1, 0, 0, 0, 0, None)
+((dt.days * 24.0 + dt.seconds / 3600.0) / 24)
+
+================================ Build with VC ================================
+copy /Y config.h.W32 config.h
+
+rc gmake.rc
+
+cl /nologo /c /MT /O2 /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Fomisc_w32.obj w32\subproc\misc.c
+
+cl /nologo /MT /O2 /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Iglob -Fegmake.exe w32\subproc\sub_proc.c w32\subproc\w32err.c w32\pathstuff.c w32\compat\dirent.c glob\fnmatch.c glob\glob.c ar.c arscan.c commands.c default.c dir.c expand.c file.c function.c getloadavg.c getopt.c getopt1.c hash.c implicit.c job.c main.c misc.c read.c remake.c remote-stub.c rule.c signame.c strcache.c variable.c version.c vpath.c misc_w32.obj gmake.res user32.lib advapi32.lib oldnames.lib
+
+
+================================ Build with GCC ================================
+Please care about inttypes.h !!!
+
+SET PATH=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\gcc-4.5-w32\bin;C:\opt\svn-1.6\bin
+SET PATH=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;O:\gcc-w32\bin;C:\opt\svn-1.6\bin
+
+copy /Y config.h.W32 config.h
+windres gmake.rc gmake.o
+gcc -O2 -flto -c -o misc_w32.o -I. -I./glob -I./w32/include -DWINDOWS32 -DHAVE_CONFIG_H w32\subproc\misc.c
+gcc -O2 -flto -o gmake.exe -I. -I./glob -I./w32/include -DWINDOWS32 -DHAVE_CONFIG_H ar.c arscan.c commands.c default.c dir.c expand.c file.c function.c getloadavg.c getopt.c getopt1.c hash.c implicit.c job.c main.c misc.c read.c remake.c remote-stub.c rule.c signame.c strcache.c variable.c version.c vpath.c glob/glob.c glob/fnmatch.c w32/subproc/sub_proc.c w32/subproc/w32err.c w32/pathstuff.c gmake.o misc_w32.o
