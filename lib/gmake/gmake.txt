@@ -25,15 +25,18 @@ dt = datetime.utcnow() - datetime(2000, 1, 1, 0, 0, 0, 0, None)
 ================================ Build with VC ================================
 copy /Y config.h.W32 config.h
 
-rc gmake.rc
+rc /nologo gmake.rc
 
-cl /nologo /c /MT /O2 /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Fomisc_w32.obj w32\subproc\misc.c
+cl /nologo /c /MT /Oxs /GL /Gy /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Fomisc_w32.obj w32\subproc\misc.c
 
-cl /nologo /MT /O2 /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Iglob -Fegmake.exe w32\subproc\sub_proc.c w32\subproc\w32err.c w32\pathstuff.c w32\compat\dirent.c glob\fnmatch.c glob\glob.c ar.c arscan.c commands.c default.c dir.c expand.c file.c function.c getloadavg.c getopt.c getopt1.c hash.c implicit.c job.c main.c misc.c read.c remake.c remote-stub.c rule.c signame.c strcache.c variable.c version.c vpath.c misc_w32.obj gmake.res user32.lib advapi32.lib oldnames.lib
+cl /nologo /MT /Oxs /GL /Gy /D"_WIN32_WINNT=0x0502" /D _CONSOLE /DWINDOWS32 /D HAVE_CONFIG_H -I. -Iw32\include -Iglob -Fegmake.exe w32\subproc\sub_proc.c w32\subproc\w32err.c w32\pathstuff.c w32\compat\dirent.c glob\fnmatch.c glob\glob.c ar.c arscan.c commands.c default.c dir.c expand.c file.c function.c getloadavg.c getopt.c getopt1.c hash.c implicit.c job.c main.c misc.c read.c remake.c remote-stub.c rule.c signame.c strcache.c variable.c version.c vpath.c misc_w32.obj gmake.res user32.lib advapi32.lib oldnames.lib /link /opt:ref,icf
 
 
 ================================ Build with GCC ================================
 Please care about inttypes.h !!!
+Remove from config.h.W32:
+    ++ #define HAVE_INTTYPES_H 1
+    -- #define uintmax_t unsigned long
 
 SET PATH=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\gcc-4.5-w32\bin;C:\opt\svn-1.6\bin
 SET PATH=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;O:\gcc-w32\bin;C:\opt\svn-1.6\bin
