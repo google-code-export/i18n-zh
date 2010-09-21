@@ -1,0 +1,79 @@
+//
+// asciidoc -a toc -a toclevels=3 -a numbered sync-brief.txt
+//
+
+= building brief
+
+== build number
+------------------------------------------------------------------------
+from datetime import datetime;
+dt = datetime.utcnow() - datetime(2000, 1, 1, 0, 0, 0, 0, None)
+((dt.days * 24.0 + dt.seconds / 3600.0) / 24)
+------------------------------------------------------------------------
+
+signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll bzip2.dll bzip2.exe
+
+
+== gcc 4.5
+------------------------------------------------------------------------
+SET PATH=C:\gcc-4.5-w32\bin;%PATH%
+
+gcc -O2 -c -flto -DNO_VIZ -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
+
+windres --define GCC_WINDRES -o bzip2rc.o bzip2.rc
+
+gcc -O2 -s -flto -shared -o bzip2.dll -Wl,--enable-stdcall-fixup,--out-implib,libbz2.dll.a libbz2.def bzip2rc.o blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+gcc -O2 -s -flto -o bzip2.exe -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 bzip2.c bzip2rc.o blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+
+ar rcs libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+ranlib libbz2.a
+------------------------------------------------------------------------
+
+== Windows DDK 7.1
+------------------------------------------------------------------------
+#
+# CFLAGS  = /nologo /c /W3 /EHsc /Zi /MD /arch:SSE2 /O2 /Oy- /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
+#
+# msvcrt_win2003.obj
+#
+
+SET EXTRA_OBJ=msvcrt_win2003.obj
+SET INCLUDE=C:\opt\WinDDK\7.1\inc\crt;C:\opt\WinDDK\7.1\inc\api\crt\stl70;C:\opt\WinDDK\7.1\inc\api
+SET LIB=C:\opt\WinDDK\7.1\lib\Crt\i386;C:\opt\WinDDK\7.1\lib\wnet\i386
+SET PATH=C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\WinDDK\7.1\bin\x86;C:\opt\WinDDK\7.1\bin\x86\x86;C:\WINDOWS\system32;C:\opt\perl-5.12\bin;C:\opt\svn-1.6\bin
+SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
+
+cl /c %CFLAGS% blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
+
+rc bzip2.rc
+
+cl /LD /Febzip2.dll %CFLAGS% %EXTRA_OBJ% libbz2.def bzip2.res blocksort.obj huffman.obj crctable.obj randtable.obj compress.obj decompress.obj bzlib.obj /link /opt:ref,icf
+cl /MD /Febzip2.exe %CFLAGS% %EXTRA_OBJ% bzip2.c    bzip2.res blocksort.obj huffman.obj crctable.obj randtable.obj compress.obj decompress.obj bzlib.obj /link /opt:ref,icf
+
+dlltool -x -c -k --input-def libbz2.def --dllname bzip2.dll --output-lib libbz2.dll.a
+gcc -Wl,--enable-stdcall-fixup bzip2.c bzip2.dll
+------------------------------------------------------------------------
+
+
+== VC 2010
+------------------------------------------------------------------------
+#
+# CFLAGS  = /nologo /c /W3 /EHsc /Zi /MD /arch:SSE2 /O2 /Oy- /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
+#
+
+SET INCLUDE=C:\opt\vs2010\VC\INCLUDE;C:\Program Files\Microsoft SDKs\Windows\v7.1\INCLUDE;C:\opt\vs2010\VC\ATLMFC\INCLUDE
+SET LIB=C:\opt\vs2010\VC\Lib;C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;C:\opt\vs2010\VC\ATLMFC\LIB
+SET PATH=C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\vs2010\Common7\IDE;C:\opt\vs2010\Common7\Tools;C:\opt\vs2010\VC\Bin;C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin;C:\opt\perl-5.12\bin;C:\opt\svn-1.6\bin
+
+SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
+
+cl /c %CFLAGS% blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
+
+rc bzip2.rc
+
+cl /LD /Febzip2.dll %CFLAGS% libbz2.def bzip2.res blocksort.obj huffman.obj crctable.obj randtable.obj compress.obj decompress.obj bzlib.obj /link /opt:ref,icf
+cl /MD /Febzip2.exe %CFLAGS% bzip2.c    bzip2.res blocksort.obj huffman.obj crctable.obj randtable.obj compress.obj decompress.obj bzlib.obj /link /opt:ref,icf
+
+dlltool -x -c -k --input-def libbz2.def --dllname bzip2.dll --output-lib libbz2.dll.a
+gcc -Wl,--enable-stdcall-fixup bzip2.c bzip2.dll
+------------------------------------------------------------------------
