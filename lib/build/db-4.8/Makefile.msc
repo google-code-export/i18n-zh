@@ -240,17 +240,72 @@ DB_SRC= \
 ..\txn\txn_stat.c \
 ..\txn\txn_util.c
 
+DB_UTIL= \
+db_archive.exe \
+db_checkpoint.exe \
+db_deadlock.exe \
+db_dump.exe \
+db_hotbackup.exe \
+db_load.exe \
+db_printlog.exe \
+db_recover.exe \
+db_stat.exe \
+db_upgrade.exe \
+db_verify.exe
+
 CC := cl
+LDFLAGS := /OPT:ref,icf /SUBSYSTEM:CONSOLE /RELEASE /VERSION:4.8
 
-# VC
-# CFLAGS := /nologo /MD /W3 /O2 /EHsc /I . /I .. /D_WIN32_WINNT=0x0502 /D DB_CREATE_DLL /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE
-
-# WDK
+ifdef USE_WDK
 EXTRA_OBJ := msvcrt_win2003.obj
 CFLAGS := /nologo /MD /W3 /O2 /EHsc /I . /I .. /D_WIN32_WINNT=0x0502 /D DB_CREATE_DLL
+else
+EXTRA_OBJ := 
+CFLAGS := /nologo /MD /W3 /O2 /EHsc /I . /I .. /D_WIN32_WINNT=0x0502 /D DB_CREATE_DLL /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE
+endif
+
+all: libdb48.dll $(DB_UTIL)
+clean:
+	del /Q *.res *.lib *.exp *.dll *.exe 2>NUL
+
+sign: all
+	signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll libdb*.dll db*_*.exe
 
 libdb48.dll: libdb.def libdb.res $(DB_SRC) $(DB_CXX_SRC)
-	$(CC) /LD /Fe$@ $(CFLAGS) $(EXTRA_OBJ) $? ws2_32.lib advapi32.lib /link /OPT:ref,icf /IMPLIB:libdb48.lib /SUBSYSTEM:CONSOLE /RELEASE /VERSION:4.8
+	$(CC) /LD /Fe$@ $(CFLAGS) $(EXTRA_OBJ) $? ws2_32.lib advapi32.lib /link $(LDFLAGS) /IMPLIB:libdb48.lib
 
 libdb.res: libdb.rc
-	rc /nologo $?
+	rc $?
+
+db_archive.exe: libdb.res libdb48.dll ../db_archive/db_archive.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_archive/db_archive.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_checkpoint.exe: libdb.res libdb48.dll ../db_checkpoint/db_checkpoint.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_checkpoint/db_checkpoint.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_deadlock.exe: libdb.res libdb48.dll ../db_deadlock/db_deadlock.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_deadlock/db_deadlock.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_dump.exe: libdb.res libdb48.dll ../db_dump/db_dump.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_dump/db_dump.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_hotbackup.exe: libdb.res libdb48.dll ../db_hotbackup/db_hotbackup.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_hotbackup/db_hotbackup.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_load.exe: libdb.res libdb48.dll ../db_load/db_load.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_load/db_load.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_printlog.exe: libdb.res libdb48.dll ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c 
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c  libdb48.lib /link $(LDFLAGS)
+
+db_recover.exe: libdb.res libdb48.dll ../db_recover/db_recover.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_recover/db_recover.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_stat.exe: libdb.res libdb48.dll ../db_stat/db_stat.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_stat/db_stat.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_upgrade.exe: libdb.res libdb48.dll ../db_upgrade/db_upgrade.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_upgrade/db_upgrade.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
+
+db_verify.exe: libdb.res libdb48.dll ../db_verify/db_verify.c ../clib/getopt.c
+	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_verify/db_verify.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
