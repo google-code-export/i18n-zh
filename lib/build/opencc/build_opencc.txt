@@ -1,14 +1,31 @@
-1. version
+//
+// asciidoc -a toc -a toclevels=3 -a numbered build_opencc.txt
+//
+
+= building brief
+
+== build version
+------------------------------------------------------------------------
 commit 74e73d6a137a0680b3985035749099ca7dbeb1e9
 Author: BYVoid <byvoid.kcp@gmail.com>
 Date:   Fri Sep 17 09:05:48 2010 +0800
+AKA:    ver.0.1.2
 
     更新版本、翻譯。
+------------------------------------------------------------------------
 
-2. compile
-SET PATH=C:\gcc-4.5-w32\bin;C:\msys\bin;%PATH%
+== compile
+------------------------------------------------------------------------
+SET PATH=C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;O:\gcc-4.5-w32\bin;C:\opt\perl-5.12\bin;C:\opt\python-2.6;C:\opt\python-2.6\Scripts;C:\opt\svn-1.6\bin
+
 cd OpenCC\win32
-build.bat
+gmake all
 
-2. sign code
+ar rcs libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+ranlib libbz2.a
+------------------------------------------------------------------------
+
+== sign code
+------------------------------------------------------------------------
 signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll opencc_dict.exe opencc.exe libiconv-2.dll opencc.dll
+------------------------------------------------------------------------
