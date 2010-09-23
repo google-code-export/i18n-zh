@@ -1,5 +1,5 @@
 //
-// asciidoc -a toc -a toclevels=3 -a numbered sync-brief.txt
+// asciidoc -a toc -a toclevels=3 -a numbered build_bzip2.txt
 //
 
 = building brief
@@ -7,16 +7,23 @@
 == build number
 ------------------------------------------------------------------------
 from datetime import datetime;
-dt = datetime.utcnow() - datetime(2000, 1, 1, 0, 0, 0, 0, None)
-((dt.days * 24.0 + dt.seconds / 3600.0) / 24)
+dt = datetime.utcnow() - datetime(1970, 1, 1, 0, 0, 0, 0, None)
+(dt.days + (dt.seconds + dt.microseconds / 1000000.0) / 86400) % 65536
 ------------------------------------------------------------------------
 
+== sign code
+------------------------------------------------------------------------
 signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll bzip2.dll bzip2.exe
+------------------------------------------------------------------------
 
+== link order
+------------------------------------------------------------------------
+-lshell32 -ladvapi32 -luser32 -lkernel32
+------------------------------------------------------------------------
 
 == gcc 4.5
 ------------------------------------------------------------------------
-SET PATH=C:\gcc-4.5-w32\bin;%PATH%
+SET PATH=C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;C:\gcc-4.5-w32\bin;C:\opt\perl-5.12\bin;C:\opt\python-2.6;C:\opt\python-2.6\Scripts;C:\opt\svn-1.6\bin
 
 gcc -O2 -c -flto -DNO_VIZ -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
 
@@ -38,10 +45,10 @@ ranlib libbz2.a
 #
 
 SET EXTRA_OBJ=msvcrt_win2003.obj
-SET INCLUDE=C:\opt\WinDDK\7.1\inc\crt;C:\opt\WinDDK\7.1\inc\api\crt\stl70;C:\opt\WinDDK\7.1\inc\api
+SET INCLUDE=C:\opt\WinDDK\7.1\inc\crt;C:\opt\WinDDK\7.1\inc\api;C:\opt\WinDDK\7.1\inc\ddk
 SET LIB=C:\opt\WinDDK\7.1\lib\Crt\i386;C:\opt\WinDDK\7.1\lib\wnet\i386
-SET PATH=C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\WinDDK\7.1\bin\x86;C:\opt\WinDDK\7.1\bin\x86\x86;C:\WINDOWS\system32;C:\opt\perl-5.12\bin;C:\opt\svn-1.6\bin
-SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
+SET PATH=C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;C:\opt\WinDDK\7.1\bin\x86;C:\opt\WinDDK\7.1\bin\x86\x86;C:\opt\perl-5.12\bin;C:\opt\python-2.6;C:\opt\python-2.6\Scripts;C:\opt\svn-1.6\bin
+SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
 
 cl /c %CFLAGS% blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
 
@@ -63,9 +70,9 @@ gcc -Wl,--enable-stdcall-fixup bzip2.c bzip2.dll
 
 SET INCLUDE=C:\opt\vs2010\VC\INCLUDE;C:\Program Files\Microsoft SDKs\Windows\v7.1\INCLUDE;C:\opt\vs2010\VC\ATLMFC\INCLUDE
 SET LIB=C:\opt\vs2010\VC\Lib;C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;C:\opt\vs2010\VC\ATLMFC\LIB
-SET PATH=C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\opt\vs2010\Common7\IDE;C:\opt\vs2010\Common7\Tools;C:\opt\vs2010\VC\Bin;C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin;C:\opt\perl-5.12\bin;C:\opt\svn-1.6\bin
+SET PATH=C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;C:\opt\vs2010\Common7\IDE;C:\opt\vs2010\Common7\Tools;C:\opt\vs2010\VC\Bin;C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin;C:\opt\perl-5.12\bin;C:\opt\python-2.6;C:\opt\python-2.6\Scripts;C:\opt\svn-1.6\bin
 
-SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
+SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
 
 cl /c %CFLAGS% blocksort.c huffman.c crctable.c randtable.c compress.c decompress.c bzlib.c
 
