@@ -255,7 +255,7 @@ db_verify.exe
 
 CC := gcc
 CXX := g++
-CFLAGS := -O2 -s -flto -I. -I .. -L. -D_WIN32_WINNT=0x0502 -DDB_CREATE_DLL
+CFLAGS := -O2 -s -flto -I. -I.. -D_WIN32_WINNT=0x0502 -DDB_CREATE_DLL
 # dbinc\win_db.h        => _WIN32_WINNT
 # db_config.h           => HAVE_MUTEX_WIN32/HAVE_MUTEX_WIN32_GCC
 
@@ -266,41 +266,42 @@ clean:
 sign: all
 	signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll libdb*.dll db*_*.exe
 
-libdb48.dll: libdb.def libdb.o $(DB_SRC) $(DB_CXX_SRC)
-	$(CXX) -o $@ -shared $(CFLAGS) $? -lws2_32 -ladvapi32
+# GCC 4 no longer supports the old K&R syntax, so we must borrow libdb48.dll from VC !!!
+libdb48.dll: libdb.def libdb.o $(DB_SRC)
+	$(CXX) -o $@ -shared $(CFLAGS) -traditional $^ -lws2_32 -ladvapi32
 
 libdb.o: libdb.rc
-	windres --define GCC_WINDRES -o $@ $?
+	windres --define GCC_WINDRES -o $@ $^
 
 db_archive.exe: libdb.o libdb48.dll ../db_archive/db_archive.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_archive/db_archive.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_archive/db_archive.c ../clib/getopt.c -L. -ldb48
 
 db_checkpoint.exe: libdb.o libdb48.dll ../db_checkpoint/db_checkpoint.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_checkpoint/db_checkpoint.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_checkpoint/db_checkpoint.c ../clib/getopt.c -L. -ldb48
 
 db_deadlock.exe: libdb.o libdb48.dll ../db_deadlock/db_deadlock.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_deadlock/db_deadlock.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_deadlock/db_deadlock.c ../clib/getopt.c -L. -ldb48
 
 db_dump.exe: libdb.o libdb48.dll ../db_dump/db_dump.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_dump/db_dump.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_dump/db_dump.c ../clib/getopt.c -L. -ldb48
 
 db_hotbackup.exe: libdb.o libdb48.dll ../db_hotbackup/db_hotbackup.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_hotbackup/db_hotbackup.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_hotbackup/db_hotbackup.c ../clib/getopt.c -L. -ldb48
 
 db_load.exe: libdb.o libdb48.dll ../db_load/db_load.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_load/db_load.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_load/db_load.c ../clib/getopt.c -L. -ldb48
 
 db_printlog.exe: libdb.o libdb48.dll ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c -L. -ldb48
 
 db_recover.exe: libdb.o libdb48.dll ../db_recover/db_recover.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_recover/db_recover.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_recover/db_recover.c ../clib/getopt.c -L. -ldb48
 
 db_stat.exe: libdb.o libdb48.dll ../db_stat/db_stat.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_stat/db_stat.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_stat/db_stat.c ../clib/getopt.c -L. -ldb48
 
 db_upgrade.exe: libdb.o libdb48.dll ../db_upgrade/db_upgrade.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_upgrade/db_upgrade.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_upgrade/db_upgrade.c ../clib/getopt.c -L. -ldb48
 
 db_verify.exe: libdb.o libdb48.dll ../db_verify/db_verify.c ../clib/getopt.c
-	$(CC) -o $@ $(CFLAGS) libdb.o ../db_verify/db_verify.c ../clib/getopt.c -ldb48
+	$(CC) -o $@ $(CFLAGS) libdb.o ../db_verify/db_verify.c ../clib/getopt.c -L. -ldb48
