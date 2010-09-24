@@ -260,7 +260,7 @@ ifdef USE_WDK
 EXTRA_OBJ := msvcrt_win2003.obj
 CFLAGS := /nologo /MD /W3 /O2 /EHsc /I . /I .. /D_WIN32_WINNT=0x0502 /D DB_CREATE_DLL
 else
-EXTRA_OBJ := 
+EXTRA_OBJ :=
 CFLAGS := /nologo /MD /W3 /O2 /EHsc /I . /I .. /D_WIN32_WINNT=0x0502 /D DB_CREATE_DLL /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE
 endif
 
@@ -272,7 +272,7 @@ sign: all
 	signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll libdb*.dll db*_*.exe
 
 libdb48.dll: libdb.def libdb.res $(DB_SRC) $(DB_CXX_SRC)
-	$(CC) /LD /Fe$@ $(CFLAGS) $(EXTRA_OBJ) $? ws2_32.lib advapi32.lib /link $(LDFLAGS) /IMPLIB:libdb48.lib
+	$(CC) /LD /Fe$@ $(CFLAGS) $(EXTRA_OBJ) $^ ws2_32.lib advapi32.lib /link $(LDFLAGS) /IMPLIB:libdb48.lib
 
 libdb.res: libdb.rc
 	rc $?
@@ -295,7 +295,7 @@ db_hotbackup.exe: libdb.res libdb48.dll ../db_hotbackup/db_hotbackup.c ../clib/g
 db_load.exe: libdb.res libdb48.dll ../db_load/db_load.c ../clib/getopt.c
 	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../db_load/db_load.c ../clib/getopt.c libdb48.lib /link $(LDFLAGS)
 
-db_printlog.exe: libdb.res libdb48.dll ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c 
+db_printlog.exe: libdb.res libdb48.dll ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c
 	$(CC) /Fe$@ $(CFLAGS) $(EXTRA_OBJ) libdb.res ../clib/getopt.c ..\btree\btree_autop.c ..\db\crdel_autop.c ..\db\db_autop.c ..\db_printlog\db_printlog.c ..\dbreg\dbreg_autop.c ..\fileops\fileops_autop.c ..\hash\hash_autop.c ..\qam\qam_autop.c ..\txn\txn_autop.c  libdb48.lib /link $(LDFLAGS)
 
 db_recover.exe: libdb.res libdb48.dll ../db_recover/db_recover.c ../clib/getopt.c
