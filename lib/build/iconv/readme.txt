@@ -13,7 +13,7 @@ CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
 2. gettext 0.18.1.1
 CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
 ../gettext-0.18.1.1/configure --prefix=/home/oracle/tmp/w32 --host=i686-w64-mingw32 --with-libiconv-prefix=/home/oracle/tmp/w32 \
-  --enable-relocatable --disable-static
+  --enable-relocatable --disable-static --disable-threads --disable-nls
 
 vi gettext-0.18.1.1/gettext-tools/libgettextpo/Makefile
 
