@@ -1,0 +1,81 @@
+!IF "$(CFG)" == ""
+CFG=Release
+!MESSAGE No configuration specified. Defaulting to "Release".
+!MESSAGE
+!ENDIF
+
+!IF "$(CFG)" != "Release" && "$(CFG)" != "Debug"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "Makefile.win" CFG="Release"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "Release"
+!MESSAGE "Debug"
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
+
+!IF "$(OS)" == "Windows_NT"
+NULL=
+!ELSE
+NULL=nul
+!ENDIF
+
+#
+# SET INCLUDE=C:\opt\WinDDK\7.1\inc\crt;C:\opt\WinDDK\7.1\inc\api\crt\stl70;C:\opt\WinDDK\7.1\inc\api
+# SET LIB=C:\opt\WinDDK\7.1\lib\Crt\i386;C:\opt\WinDDK\7.1\lib\wxp\i386
+#
+# windres -i decNumber.rc -o dec.o
+# gcc -O2 -flto -shared -o decNumber.dll decNumber.def dec.o decContext.c decNumber.c decQuad.c decDouble.c -Wl,--out-implib,libdecNumber.dll.a
+# gcc -O2 -flto -shared -o decFloat.dll   decFloat.def dec.o decContext.c decQuad.c decDouble.c -Wl,--out-implib,libdecFloat.dll.a
+#
+
+!IF "$(CFG)" == "Release"
+OUTDIR  = .\Release
+CFLAGS  = /nologo /c /W3 /EHsc /Zi /Fd"$(OUTDIR)\\" /MD  /arch:SSE2 /O2 /Oy- /D "_WIN32_WINNT=0x0501" /D _CRT_SECURE_NO_WARNINGS
+LDFLAGS = /NOLOGO /VERSION:5.1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /OPT:REF,ICF /DEBUG
+!ELSE
+OUTDIR  = .\Debug
+CFLAGS  = /nologo /c /W3 /EHsc /Zi /Fd"$(OUTDIR)\\" /MDd /arch:SSE2 /D "_WIN32_WINNT=0x0501" /D _CRT_SECURE_NO_WARNINGS
+LDFLAGS = /NOLOGO /VERSION:5.1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /OPT:REF,ICF /DEBUG
+!ENDIF
+
+LIB_OBJS = \
+    "$(OUTDIR)\decContext.obj" \
+    "$(OUTDIR)\decDouble.obj" \
+    "$(OUTDIR)\decQuad.obj" \
+    "$(OUTDIR)\decNumber.obj" 
+
+all: $(OUTDIR) $(OUTDIR)\decNumber.dll $(OUTDIR)\decDouble.dll $(OUTDIR)\decQuad.dll $(OUTDIR)\decFloat.dll
+
+clean:
+	-@erase /q "$(OUTDIR)" >nul
+
+$(OUTDIR):
+	-@if not exist $(OUTDIR)/$(NULL) mkdir $(OUTDIR)
+
+$(OUTDIR)\decNumber.dll: $(OUTDIR)\decNumber.res decNumber.def decContext.c decDouble.c decQuad.c decNumber.c decCommon.c decBasic.c \
+        decContext.h decDouble.h decQuad.h decNumber.h decDPD.h decNumberLocal.h $(LIB_OBJS)
+	link $(LDFLAGS) /DEF:decNumber.def /OUT:$(OUTDIR)\decNumber.dll /PDB:$(OUTDIR)\decNumber.pdb /DLL $(OUTDIR)\decNumber.res $(LIB_OBJS) msvcrt_winxp.obj
+
+$(OUTDIR)\decFloat.dll: $(OUTDIR)\decNumber.res decFloat.def decContext.c decDouble.c decQuad.c decCommon.c decBasic.c \
+        decContext.h decDouble.h decQuad.h decDPD.h decNumberLocal.h $(LIB_OBJS)
+	link $(LDFLAGS) /DEF:decFloat.def /OUT:$(OUTDIR)\decFloat.dll /PDB:$(OUTDIR)\decFloat.pdb /DLL $(OUTDIR)\decNumber.res $(LIB_OBJS) msvcrt_winxp.obj
+
+$(OUTDIR)\decDouble.dll: $(OUTDIR)\decNumber.res decDouble.def decContext.c decDouble.c decCommon.c decBasic.c \
+        decContext.h decDouble.h decDPD.h decNumberLocal.h $(LIB_OBJS)
+	link $(LDFLAGS) /DEF:decDouble.def /OUT:$(OUTDIR)\decDouble.dll /PDB:$(OUTDIR)\decDouble.pdb /DLL $(OUTDIR)\decNumber.res $(LIB_OBJS) msvcrt_winxp.obj
+
+$(OUTDIR)\decQuad.dll: $(OUTDIR)\decNumber.res decQuad.def decContext.c decQuad.c decCommon.c decBasic.c \
+        decContext.h decQuad.h decDPD.h decNumberLocal.h $(LIB_OBJS)
+	link $(LDFLAGS) /DEF:decQuad.def /OUT:$(OUTDIR)\decQuad.dll /PDB:$(OUTDIR)\decQuad.pdb /DLL $(OUTDIR)\decNumber.res $(LIB_OBJS) msvcrt_winxp.obj
+
+.c{$(OUTDIR)}.obj:
+	cl $(CFLAGS) /Fo$@ $<
+
+$(OUTDIR)\decNumber.res: decNumber.rc
+	rc /v /fo"$(OUTDIR)\decNumber.res" $**
