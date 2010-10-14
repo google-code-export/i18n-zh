@@ -1,0 +1,98 @@
+ filename.c |   15 ++++++---------
+ main.c     |    2 +-
+ signal.c   |    9 +++------
+ 3 files changed, 10 insertions(+), 16 deletions(-)
+diff -ur less-436.orig/filename.c less-436/filename.c
+--- less-436.orig/filename.c	2009-07-07 04:52:23.000000000 +0800
++++ less-436/filename.c	2010-10-14 10:40:23.000000000 +0800
+@@ -561,9 +561,6 @@
+ 
+ 
+ #if HAVE_POPEN
+-
+-FILE *popen();
+-
+ /*
+  * Execute a shell command.
+  * Return a pointer to a pipe connected to the shell command's standard output.
+@@ -957,9 +954,9 @@
+ #if HAVE_STAT
+ {
+ 	int r;
+-	struct stat statbuf;
++	struct _stat statbuf;
+ 
+-	r = stat(filename, &statbuf);
++	r = _stat(filename, &statbuf);
+ 	isdir = (r >= 0 && S_ISDIR(statbuf.st_mode));
+ }
+ #else
+@@ -1002,9 +999,9 @@
+ 	{
+ #if HAVE_STAT
+ 		int r;
+-		struct stat statbuf;
++		struct _stat statbuf;
+ 
+-		r = stat(filename, &statbuf);
++		r = _stat(filename, &statbuf);
+ 		if (r < 0)
+ 		{
+ 			m = errno_message(filename);
+@@ -1034,9 +1031,9 @@
+ 	int f;
+ {
+ #if HAVE_STAT
+-	struct stat statbuf;
++	struct _stat statbuf;
+ 
+-	if (fstat(f, &statbuf) >= 0)
++	if (_fstat(f, &statbuf) >= 0)
+ 		return ((POSITION) statbuf.st_size);
+ #else
+ #ifdef _OSK
+diff -ur less-436.orig/main.c less-436/main.c
+--- less-436.orig/main.c	2009-07-07 04:52:23.000000000 +0800
++++ less-436/main.c	2010-10-14 10:36:34.000000000 +0800
+@@ -406,7 +406,7 @@
+ 	 */
+ 	close(2);
+ #endif
+-#if WIN32
++#ifdef WIN32
+ 	SetConsoleTitle(consoleTitle);
+ #endif
+ 	close_getchr();
+diff -ur less-436.orig/signal.c less-436/signal.c
+--- less-436.orig/signal.c	2009-07-07 04:52:25.000000000 +0800
++++ less-436/signal.c	2010-10-14 10:43:12.000000000 +0800
+@@ -41,8 +41,7 @@
+  */
+ 	/* ARGSUSED*/
+ 	static RETSIGTYPE
+-u_interrupt(type)
+-	int type;
++u_interrupt(int type)
+ {
+ 	bell();
+ #if OS2
+@@ -118,8 +117,7 @@
+ #include "windows.h"
+ 
+ 	static BOOL WINAPI 
+-wbreak_handler(dwCtrlType)
+-	DWORD dwCtrlType;
++wbreak_handler(DWORD dwCtrlType)
+ {
+ 	switch (dwCtrlType)
+ 	{
+@@ -138,8 +136,7 @@
+  * Set up the signal handlers.
+  */
+ 	public void
+-init_signals(on)
+-	int on;
++init_signals(int on)
+ {
+ 	if (on)
+ 	{
