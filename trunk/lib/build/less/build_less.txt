@@ -1,0 +1,29 @@
+
+== Windows DDK 7.1
+------------------------------------------------------------------------
+#
+# CFLAGS  = /nologo /c /W3 /EHsc /Zi /MD /arch:SSE2 /O2 /Oy- /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
+#
+# msvcrt_win2003.obj
+#
+
+SET WinDDK_ROOT=C:\opt\WinDDK\7.1
+SET EXTRA_OBJ=msvcrt_win2003.obj
+SET INCLUDE=%WinDDK_ROOT%\inc\api\crt\stl60;%WinDDK_ROOT%\inc\crt;%WinDDK_ROOT%\inc\api;%WinDDK_ROOT%\inc\ddk
+SET LIB=%WinDDK_ROOT%\lib\Crt\i386;%WinDDK_ROOT%\lib\wnet\i386
+SET PATH=C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;%WinDDK_ROOT%\bin\x86;%WinDDK_ROOT%\bin\x86\x86;C:\opt\perl-5.12\bin;C:\opt\python-2.6;C:\opt\python-2.6\Scripts;C:\opt\svn-1.6\bin
+SET CFLAGS=/nologo /W3 /EHsc /MD /arch:SSE2 /O2 /D"_WIN32_WINNT=0x0502" /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS
+
+copy defines.wn defines.h
+
+rc less.rc
+
+cl /c %CFLAGS%  %EXTRA_OBJ%  /link /opt:ref,icf
+
+cl %CFLAGS% /I. /Felesskey.exe %EXTRA_OBJ% less.res lesskey.c version.c /link /opt:ref,icf
+
+cl %CFLAGS% /I. /Feless.exe %EXTRA_OBJ% less.res main.c screen.c brac.c ch.c charset.c cmdbuf.c command.c cvt.c decode.c edit.c filename.c forwback.c help.c ifile.c input.c jump.c line.c linenum.c lsystem.c mark.c optfunc.c option.c opttbl.c os.c output.c pattern.c position.c prompt.c search.c signal.c tags.c ttyin.c version.c regexp.c User32.lib /link /opt:ref,icf
+
+
+signtool sign /t http://timestamp.verisign.com/scripts/timstamp.dll less.exe lesskey.exe
+------------------------------------------------------------------------
