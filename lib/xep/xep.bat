@@ -1,5 +1,5 @@
-rem @echo off
-rem   This batch file encapsulates a standard XEP call.
+@echo off
+rem This batch file encapsulates a standard XEP call.
 
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
