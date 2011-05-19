@@ -88,7 +88,6 @@ static int use_redirector = 0; /* Use/Disable FS redirector */
 #endif
 
 static int std_output = 0;
-static int no_waring = 0;
 static int assume_stdcall = 0; /* Set to one, if function symbols should be assumed to have stdcall.  */
 static int no_forward_output = 0; /* Set to one, if in .def files forwarders shouldn't be displayed.  */
 
@@ -115,11 +114,6 @@ opt_chain (const char *opts, const char *next)
   if (!strcmp (opts, "--assume-stdcall") || !strcmp (opts, "-a"))
     {
       assume_stdcall = 1;
-      return 0;
-    }
-  if (!strcmp (opts, "--no-waring") || !strcmp (opts, "-n"))
-    {
-      no_waring = 1;
       return 0;
     }
   if (!strcmp (opts, "--include-def-path") || !strcmp (opts, "-I"))
@@ -192,7 +186,6 @@ show_usage (void)
     "  -h, --help               Show this help.\n"
     "  -a, --assume-stdcall     Assume functions with ambiguous call\n"
     "                           convention as stdcall.\n"
-    "  -n, --no-waring          Do not print warning in .def file\n"
     "  -I, --include-def-path <path>\n"
     "                           Add additional search paths to find\n"
     "                           hint .def files.\n"
@@ -723,19 +716,16 @@ dump_def (void)
 	}
       else if (pimpname)
         {
-	  if (no_waring != 0)
-	      fprintf (fp, " ; Check!!! forwards to %s in %s (ordinal %u)",
-	        pimpname->name, pimpname->dll, pimpname->ord);
+	  fprintf (fp, " ; Check!!! forwards to %s in %s (ordinal %u)",
+	    pimpname->name, pimpname->dll, pimpname->ord);
         }
       else if (exp->func == 0 && !exp->beData)
 	{
-	  if (no_waring != 0)
-	      fprintf (fp, " ; Check!!! forwards to %s", exp->forward);
+	  fprintf (fp, " ; Check!!! forwards to %s", exp->forward);
 	}
       else if (seen_ret == 0 && !exp->beData)
         {
-	  if (no_waring != 0)
-	      fprintf (fp, " ; Check!!! Couldn't determine function argument count. Function doesn't return. ");
+	  fprintf (fp, " ; Check!!! Couldn't determine function argument count. Function doesn't return. ");
         }
       fprintf(fp,"\n");
       free (exp);

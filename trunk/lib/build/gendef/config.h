@@ -11,7 +11,7 @@
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `memset' function. */
-#define HAVE_MEMSET 1
+/* #undef HAVE_MEMSET */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -20,7 +20,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the `strdup' function. */
-#define HAVE_STRDUP 1
+/* #undef HAVE_STRDUP */
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
@@ -29,10 +29,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlwr' function. */
-#define HAVE_STRLWR 1
+/* #undef HAVE_STRLWR */
 
 /* Define to 1 if you have the `strrchr' function. */
-#define HAVE_STRRCHR 1
+/* #undef HAVE_STRRCHR */
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
