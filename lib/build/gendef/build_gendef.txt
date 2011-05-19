@@ -1,2 +1,7 @@
-export PATH=/home/oracle/gcc-4.5-w32_i686-linux/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH=${HOME}/gcc-4.6-windows-linux/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+mingw-w64-libraries/libmangle$ CFLAGS="-O2 -flto" ./configure --host=i686-w64-mingw32
+
+mingw-w64-tools/gendef$ CFLAGS="-flto" ./configure --host=i686-w64-mingw32 --with-mangle=path/to/libmangle
+
 i686-w64-mingw32-gcc -Werror -Wall -Wextra -march=core2 -mno-sse3 -mtune=generic -pipe -O2 -funroll-loops -ftree-vectorize -s -DHAVE_CONFIG_H -I. -o gendef.exe src/gendef.c src/gendef_def.c src/compat_string.c src/fsredir.c -L. -lmangle
